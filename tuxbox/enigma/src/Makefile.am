@@ -25,6 +25,7 @@ enigma_LDADD_WHOLE = \
 
 enigma_LDADD = \
 	@FREETYPE_LIBS@ \
+	@FRIBIDI_LIBS@ \
 	@ID3TAG_LIBS@ \
 	@MAD_LIBS@ \
 	@MD5SUM_LIBS@ \
@@ -32,10 +33,6 @@ enigma_LDADD = \
 	@SIGC_LIBS@ \
 	@XMLTREE_LIBS@ \
 	-ldl -lpthread -lcrypt -lresolv
-#-lfribidi
-
-#\
-#	/dbox2/cdkroot/lib/libmpatrolmt.a -lbfd -liberty
 
 enigma$(EXEEXT): $(enigma_OBJECTS) $(enigma_DEPENDENCIES) $(enigma_LDADD_WHOLE)
 	@rm -f enigma$(EXEEXT)
