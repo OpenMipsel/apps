@@ -114,6 +114,7 @@ int eComboBox::moveSelection ( int dir )
 	eListBoxEntryText *cur = listbox.getCurrent();
 	if ( cur )
 		setText( cur->getText() );
+	return ret;
 }
 
 
@@ -125,7 +126,7 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 
 	if (e && button.getText() != e->getText() )
 	{
-		setText( e->getText() );
+		setText( e->getText(), false );
 		setFocus( this );
 		if ( parent->LCDElement )
 			parent->LCDElement->setText("");

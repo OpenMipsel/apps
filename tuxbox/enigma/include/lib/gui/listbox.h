@@ -363,8 +363,6 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 
 		i++;
 	}
-
-	target->flush();
 }
 
 template <class T>
