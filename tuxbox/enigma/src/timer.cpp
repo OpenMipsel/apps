@@ -807,7 +807,7 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	bday = new eComboBox(this);
 	bday->setName("b_day");
 
-	btime = new eNumber( this, 2, 0, 59, 2, 0);
+	btime = new eNumber( this, 2, 0, 59, 2, 0, 0);
 	btime->setName("b_time");
 	btime->setFlags( eNumber::flagDrawPoints|eNumber::flagFillWithZeros|eNumber::flagTime );
 	CONNECT( btime->selected, eTimerView::focusNext );
@@ -821,7 +821,7 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	eday = new eComboBox(this);
 	eday->setName("e_day");
 
-	etime = new eNumber( this, 2, 0, 59, 2, 0 );
+	etime = new eNumber( this, 2, 0, 59, 2, 0, 0 );
 	etime->setName("e_time");
 	etime->setFlags( eNumber::flagDrawPoints|eNumber::flagFillWithZeros|eNumber::flagTime );
 	CONNECT( etime->selected, eTimerView::focusNext );

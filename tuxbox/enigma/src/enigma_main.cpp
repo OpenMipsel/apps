@@ -32,6 +32,7 @@
 #include <lib/gui/eskin.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/actions.h>
+#include <lib/gui/echeckbox.h>
 #include <lib/driver/rc.h>
 #include <lib/driver/streamwd.h>
 #include <lib/driver/eavswitch.h>
@@ -532,6 +533,9 @@ eZapMain::eZapMain()
 	dvrFunctions->setName("dvrFunctions");
 	dvrFunctions->hide();
 
+	DVRSpaceLeft=new eLabel(dvrFunctions);
+	DVRSpaceLeft->setName("TimeLeft");
+
 	nonDVRfunctions=new eWidget(this);
 	nonDVRfunctions->setName("nonDVRfunctions");
 	
@@ -545,6 +549,10 @@ eZapMain::eZapMain()
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "ezap_main"))
 		eFatal("skin load of \"ezap_main\" failed");
+
+	eDebug("DVRSpaceLeft position x = %d, y = %d, height = %d, width = %d",
+		DVRSpaceLeft->getPosition().x(), DVRSpaceLeft->getPosition().y(),
+		DVRSpaceLeft->height(), DVRSpaceLeft->width() );
 
 	eDebug("[PROFILE] eZapMain");
 	lcdmain.show();
@@ -1333,6 +1341,8 @@ void eZapMain::record()
 	}
 }
 
+extern int freeDiskspace(int dev, eString mp="");
+
 int eZapMain::recordDVR(int onoff, int user, eString name)
 {
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -1364,7 +1374,7 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 		
 		for (unsigned int i=0; i<name.length(); ++i)
 		{
-			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-()", name[i]))
+			if (strchr("abcdefghijklkmnopqrstuvwxyzäüößABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖ01234567890_- ()", name[i]))
 				cname+=name[i];
 			else
 				cname+='_';
@@ -1412,6 +1422,40 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			eDebug("ok, recording...");
 			state |= (stateRecording|recDVR);
 			recstatus->show();
+
+// DETECT HARDDISC
+			hddDev=-1;
+			for (int host=0; host<1; host++)
+			{
+				for (int bus=0; bus<1; bus++)
+				{
+					for (int target=0; target<1; target++)
+					{
+						int num=target+bus*2+host*4;
+
+						int c='a'+num;
+
+						char line[1024];
+						int ok=1;
+						FILE *f=fopen(eString().sprintf("/proc/ide/hd%c/media", c).c_str(), "r");
+						if (!f)
+							continue;
+						if ((!fgets(line, 1024, f)) || strcmp(line, "disk\n"))
+							ok=0;
+						fclose(f);
+
+						if (ok)
+						{
+							if ( freeDiskspace(num, "/hdd" ) != -1 )
+							{
+								hddDev = num;
+								bus=host=target=0; // found... leave all for loops...
+								DVRSpaceLeft->show();
+							}
+						}
+					}
+				}
+			}
 			recStatusBlink.start(500, 1);
 		}
 		return 0;
@@ -1425,6 +1469,7 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStop));
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordClose));
+		DVRSpaceLeft->hide();
 		recStatusBlink.stop();
 		recstatus->hide();
 		if (user)
@@ -1973,10 +2018,25 @@ void eZapMain::blinkRecord()
 	if (state & stateRecording)
 	{
 		if (isVisible())
+		{
 			if (recstatus->isVisible())
 				recstatus->hide();
 			else
 				recstatus->show();
+
+			if ( hddDev != 1 )
+			{
+				static int cnt=0;
+				static int swp=0;
+				int fds=freeDiskspace( hddDev );
+				if (!(cnt++ % 7))
+					swp^=1;
+				if (swp)
+					DVRSpaceLeft->setText(eString().sprintf("%d.%03d GB free", fds/1000, fds%1000 ));
+				else
+					DVRSpaceLeft->setText(eString().sprintf("~%d min free", fds/33 ));
+			}
+		}
 		recStatusBlink.start(500, 1);
 	}
 }
@@ -2083,7 +2143,51 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			pause();
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->record )
 		{
-			if ( handleState(1) )
+			if ( state & stateRecording )
+			{
+				eRecordContextMenu menu;
+				if (isVisible())
+					hide();
+				menu.show();
+				int ret = menu.exec();
+				menu.hide();
+				switch ( ret )
+				{
+					case 1: // stop record now
+						record();
+					break;
+
+					case 2: // set Record Duration...
+					{
+						eTimerInput e;
+						e.show();
+						EITEvent *evt = (EITEvent*) e.exec();
+						
+						if (evt != (EITEvent*)-1)
+							eTimerManager::getInstance()->addEventToTimerList( &e, &eServiceInterface::getInstance()->service, evt, ePlaylistEntry::stateWaiting|ePlaylistEntry::typeShutOffTimer );	
+										
+						e.hide();
+					}
+					break;
+
+					case 3: // set Record Stop Time...
+					{
+						eRecTimeInput e;
+						e.show();
+						EITEvent *evt = (EITEvent*) e.exec();
+
+						if (evt)
+						
+						e.hide();
+					}
+					break;
+					
+					case 0:
+					default:
+						;
+				}
+			}
+			else if ( handleState(1) )
 				record();
 		}
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->startSkipForward)
@@ -2883,11 +2987,115 @@ void eServiceContextMenu::entrySelected(eListBoxEntryText *test)
 		close((int)test->getKey());
 }
 
-/*
-eRecordingStatus::eRecordingStatus()
+eRecordContextMenu::eRecordContextMenu()
+	: eListBoxWindow<eListBoxEntryText>(_("Record Menu"), 5)
 {
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eRecordingStatus"))
-		eFatal("skin load of \"eRecordingStatus\" failed");
+	move(ePoint(150, 200));
+	new eListBoxEntryText(&list, _("back"), (void*)0);
+	new eListBoxEntryText(&list, _("stop record now"), (void*)1);
+	new eListBoxEntryText(&list, _("set record duration"), (void*)2);
+//	new eListBoxEntryText(&list, _("set record stop time"), (void*)3);	
+	CONNECT(list.selected, eRecordContextMenu::entrySelected);
 }
-*/
+
+void eRecordContextMenu::entrySelected( eListBoxEntryText *sel )
+{
+	if (!sel)
+		close(0);
+	else
+		close((int)sel->getKey());
+}
+
+eRecStopWindow::eRecStopWindow(eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive, eWidget* descr, int grabfocus, const char* deco )
+{
+	num = new eNumber( parent, len, min, max, maxdigits, init, isactive, descr, grabfocus, deco );
+	Shutdown = new eCheckbox(this);
+	Shutdown->setName("shutdown");
+	Standby = new eCheckbox(this);
+	Standby->setName("standby");
+	set = new eButton(this);
+	set->setName("set");
+	cancel = new eButton(this);
+	cancel->setName("abort");
+	CONNECT( Shutdown->checked, eRecStopWindow::ShutdownChanged );
+	CONNECT( Standby->checked, eRecStopWindow::StandbyChanged );
+	CONNECT( cancel->selected, eWidget::reject );
+}
+
+void eRecStopWindow::StandbyChanged( int checked )
+{
+	if ( checked )
+		Shutdown->setCheck( 0 );
+}
+
+void eRecStopWindow::ShutdownChanged( int checked )
+{
+	if ( checked )
+		Standby->setCheck( 0 );
+}
+
+eTimerInput::eTimerInput()
+:eRecStopWindow( this, 1, 1, 240, 3, 0, 0 )
+{
+	eLabel *l = new eLabel(this);
+	l->setName("lrec_duration");
+	num->setDescr(l);
+	num->setName("rec_duration");
+	num->setNumber(10);
+	if (eSkin::getActive()->build(this, "recording_duration"))
+		eFatal("skin load of \"recording_duration\" failed");
+	CONNECT( set->selected, eTimerInput::setPressed );
+}
+
+void eTimerInput::setPressed()
+{
+	EITEvent *evt = new EITEvent();
+	evt->start_time = time(0)+eDVB::getInstance()->time_difference;
+	evt->duration = num->getNumber()*60;
+	evt->event_id = -1;
+	evt->free_CA_mode = -1;
+	evt->running_status = -1;
+	close((int)evt);
+}
+
+eRecTimeInput::eRecTimeInput()
+:eRecStopWindow( this, 2, 0, 59, 2, 0, 0 )
+{
+	eLabel *l = new eLabel(this);
+	l->setName("lrec_end_time");
+	num->setDescr(l);
+	num->setName("rec_end_time");
+	num->setFlags( eNumber::flagFillWithZeros|eNumber::flagTime );
+
+	time_t now = time(0)+eDVB::getInstance()->time_difference;
+	struct tm *t = localtime( &now );
+	num->setNumber(0, t->tm_hour);
+	num->setNumber(1, t->tm_min);
+
+	if (eSkin::getActive()->build(this, "recording_end_time"))
+		eFatal("skin load of \"recording_end_time\" failed");
+
+	CONNECT( set->selected, eRecTimeInput::setPressed );
+}
+
+void eRecTimeInput::setPressed()
+{
+/*	time_t now = time(0)+eDVB::getInstance()->time_difference;
+	struct tm *t = localtime( &now );
+	t.tm_year = (int)byear->getCurrent()->getKey();
+	t.tm_mon = (int)bmonth->getCurrent()->getKey();
+	t.tm_mday = (int)bday->getCurrent()->getKey();
+	t.tm_hour = btime->getNumber(0);
+	t.tm_min = btime->getNumber(1);
+	t.tm_sec = 0;
+	bTime = mktime( &beginTime );
+
+
+	EITEvent *evt = new EITEvent();
+	evt.start_time = time(0)+eDVB::getInstance()->time_difference;
+	evt.duration = num->getNumber();
+	evt.event_id = -1;
+	evt.free_CA_mode = -1;
+	evt.running_status = -1;
+	return evt;*/
+}

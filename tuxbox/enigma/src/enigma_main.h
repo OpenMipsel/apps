@@ -23,6 +23,8 @@ class SDTEntry;
 class PMT;
 class PMTEntry;
 class eNumber;
+class eCheckbox;
+class eButton;
 class gPainter;
 class NVODReferenceEntry;
 class eServiceSelector;
@@ -175,10 +177,10 @@ private:
 		*ButtonRedEn, *ButtonRedDis, 
 		*ButtonGreenEn, *ButtonGreenDis, 
 		*ButtonYellowEn, *ButtonYellowDis,
-		*ButtonBlueEn, *ButtonBlueDis;
-
-	eLabel *DolbyOn, *DolbyOff, *CryptOn, *CryptOff, *WideOn, *WideOff, *recstatus;
-	eLabel mute, volume;
+		*ButtonBlueEn, *ButtonBlueDis,
+		*DolbyOn, *DolbyOff, *CryptOn, *CryptOff, *WideOn, *WideOff, *recstatus,
+		mute, volume,
+		*DVRSpaceLeft;
 
 	eWidget *dvrFunctions, *nonDVRfunctions;
 	int dvrfunctions;
@@ -282,6 +284,7 @@ private:
 
 	eServicePath modeLast[modeEnd];
 	int mode, last_mode, state;
+	int hddDev;
 protected:
 	int eventHandler(const eWidgetEvent &event);
 private:
@@ -344,6 +347,42 @@ class eServiceContextMenu: public eListBoxWindow<eListBoxEntryText>
 	void entrySelected(eListBoxEntryText *s);
 public:
 	eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path);
+};
+
+class eRecordContextMenu: public eListBoxWindow<eListBoxEntryText>
+{
+	eServiceReference ref;
+	void entrySelected(eListBoxEntryText *s);
+public:
+	eRecordContextMenu();
+};
+
+class eRecStopWindow: public eWindow
+{
+	eCheckbox *Standby, *Shutdown;
+	eButton *cancel;
+	void StandbyChanged( int );
+	void ShutdownChanged( int );
+protected:
+	virtual void setPressed()=0;
+	eButton *set;
+	eNumber *num;
+public:
+	eRecStopWindow( eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive=0, eWidget* descr=0, int grabfocus=1, const char* deco="eNumber" );
+};
+
+class eTimerInput: public eRecStopWindow
+{
+	void setPressed();
+public:
+	eTimerInput();
+};
+
+class eRecTimeInput: public eRecStopWindow
+{
+	void setPressed();
+public:
+	eRecTimeInput();
 };
 
 #endif /* __enigma_main_h */

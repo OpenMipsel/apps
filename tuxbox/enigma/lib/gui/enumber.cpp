@@ -22,11 +22,11 @@ void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 
 	if (!area.contains(pos) )
 		return;
-		
+
 	p->setForegroundColor((have_focus && n==active)?cursorB:normalB);
 	p->fill(pos);
 	p->setFont(font);
-	
+
 	eString t;
 	if (flags & flagFillWithZeros)
 	{
@@ -39,20 +39,23 @@ void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 	}
 	else
 	{
-    if (flags&flagHideInput)
-      t="*";
-    else if (base==10)
+		if (flags&flagHideInput)
+			t="*";
+		else if (base==10)
 			t.sprintf("%d", number[n]);
 		else if (base==0x10)
 			t.sprintf("%X", number[n]);
 	}
 
-  if (!n && flags & flagPosNeg && neg)
-    t="-"+t;
-  
-	if (n && (flags & flagDrawPoints))
+	if (!n && flags & flagPosNeg && neg)
+		t="-"+t;
+
+	if (n && (flags & flagTime))
+		t=":"+t;
+
+	else if (n && (flags & flagDrawPoints))
 		t="."+t;
-	
+
 	p->setForegroundColor((have_focus && n==active)?cursorF:normalF);
 	p->setBackgroundColor((have_focus && n==active)?cursorB:normalB);
 	p->renderText(pos, t);
@@ -96,9 +99,9 @@ int eNumber::eventHandler(const eWidgetEvent &event)
 			space_selected = (crect_selected.width()-2) / len;
 		break;
 	case eWidgetEvent::evtAction:
-		if (event.action == &i_cursorActions->left)
+		if ( len > 1 && event.action == &i_cursorActions->left)
 		{
-      int oldac=active;
+			int oldac=active;
 			active--;
 			invalidate(getNumberRect(oldac));
 			if (active<0)
@@ -106,18 +109,17 @@ int eNumber::eventHandler(const eWidgetEvent &event)
 			if (active!=oldac)
 				invalidate(getNumberRect(active));
 			digit=0;
-		} else if ((event.action == &i_cursorActions->right) || (event.action == &i_cursorActions->ok))
+		} else if ( len > 1 && (event.action == &i_cursorActions->right) || (event.action == &i_cursorActions->ok))
 		{
-      int oldac=active;
+			int oldac=active;
 			active++;
 			invalidate(getNumberRect(oldac));
 			if (active>=len)
 			{
 				if (event.action == &i_cursorActions->ok)
-					/*emit*/ selected(number);
+				/*emit*/ selected(number);
 				active=0;
 			}
-	
 			if (active!=oldac)
 				invalidate(getNumberRect(active));
 			digit=0;
@@ -131,7 +133,7 @@ int eNumber::eventHandler(const eWidgetEvent &event)
 }
 
 eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, int *init, int isactive, eWidget* descr, int grabfocus, const char *deco)
-	:eDecoWidget(parent, grabfocus, deco ),
+ :eDecoWidget(parent, grabfocus, deco ),
 	active(0), 
 	cursorB(eSkin::getActive()->queryScheme("global.selected.background")),	
 	cursorF(eSkin::getActive()->queryScheme("global.selected.foreground")),	
@@ -192,22 +194,22 @@ int eNumber::keyDown(int key)
 		}
 		break;
 
-  break;
+	break;
 	}
-  case eRCInput::RC_PLUS:
-    if (flags & flagPosNeg && neg )
-    {
-      neg=false;
-      invalidate(getNumberRect(0));
-    }
-  break;
+	case eRCInput::RC_PLUS:
+		if (flags & flagPosNeg && neg )
+		{
+			neg=false;
+			invalidate(getNumberRect(0));
+		}
+	break;
 
-  case eRCInput::RC_MINUS:
-    if (flags & flagPosNeg && !neg )
-    {
-      neg=true;
-      invalidate(getNumberRect(0));
-    }
+	case eRCInput::RC_MINUS:
+		if (flags & flagPosNeg && !neg )
+		{
+			neg=true;
+			invalidate(getNumberRect(0));
+		}
 	default:
 		return 0;
 	}
@@ -318,7 +320,7 @@ void eNumber::setBase(int _base)
 
 void eNumber::setNumber(int n)
 {
-  for (int i=len-1; i>=0; --i)
+	for (int i=len-1; i>=0; --i)
 	{
 		number[i]=n%base;
 		n/=base;
