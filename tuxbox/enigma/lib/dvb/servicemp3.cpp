@@ -947,7 +947,7 @@ std::map<eString,eString> &eServiceID3::getID3Tags()
 				for (unsigned int j = 0; j < nstrings; ++j)
 				{
 					ucs4 = id3_field_getstrings(field, j);
-					assert(ucs4);
+					ASSERT(ucs4);
 
 					if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
 						ucs4 = id3_genre_name(ucs4);
