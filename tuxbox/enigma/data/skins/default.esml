@@ -575,9 +575,6 @@
 			<eNumber name="symbolrate" position="164:52" size="e-150:32" helptext="enter symbol rate (0..9, left, right)" loadDeco="" />
 			<eLabel text="KSymb/s" position="e-145:52" size="e:32" vcenter="on" />
 
-			<eLabel name="lMod" text="Modulation:" position="10:52" size="150:35" vcenter="on" />
-			<eComboBox name="mod" position="164:52" size="e-10:35" helptext="choose wished modulation (ok)" loadDeco=""  />
-
 			<eLabel text="Inversion:" position="10:130" size="150:32" vcenter="on" />
 			<eCheckbox name="inversion" position="164:130" size="30:32" helptext="enable/disable inversion (ok)" />
 		</eTranspondersettings>
