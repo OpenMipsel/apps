@@ -30,6 +30,7 @@ class eFrontend: public Object
 	int fd, secfd;
 
 	int lastcsw,
+			lastToneBurst,
 			lastRotorCmd,
 			lastSmatvFreq,
 			curRotorPos;    // current Orbital Position

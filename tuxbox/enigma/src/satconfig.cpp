@@ -850,7 +850,8 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 	lOrbitalPosition = new eLabel(this);
 	lOrbitalPosition->setName("lOrbitalPosition");
 	lOrbitalPosition->hide();
-	orbital_position = new eNumber( this, 1, 0, 450, 3, 0, 0, lOrbitalPosition);
+	orbital_position = new eNumber( this, 1, 0, 360, 3, 0, 0, lOrbitalPosition);
+
 	orbital_position->setName("OrbitalPosition");
 	orbital_position->hide();
   

@@ -403,17 +403,20 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 			const char *afrequency=node->GetAttributeValue("frequency"),
 					*asymbol_rate=node->GetAttributeValue("symbol_rate"),
 					*ainversion=node->GetAttributeValue("inversion"),
-					*modulation=node->GetAttributeValue("modulation");
+					*amodulation=node->GetAttributeValue("modulation");
 			if (!afrequency)
 				continue;
 			if (!asymbol_rate)
 				asymbol_rate="6900000";
 			if (!ainversion)
 				ainversion="0";
-			if (!modulation)
+			if (!amodulation)
 				modulation="3";
-			int frequency=atoi(afrequency)/1000, symbol_rate=atoi(asymbol_rate), inversion=atoi(ainversion);;
-			t.setCable(frequency, symbol_rate, inversion, atoi(modulation) );
+			int frequency=atoi(afrequency)/1000,
+					symbol_rate=atoi(asymbol_rate),
+					inversion=atoi(ainversion),
+					modulation=atoi(amodulation),
+			t.setCable(frequency, symbol_rate, inversion, modulation );
 			break;
 		}
 		case eFrontend::feSatellite:

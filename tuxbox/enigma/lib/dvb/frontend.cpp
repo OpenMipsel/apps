@@ -453,8 +453,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 
 double eFrontend::calcAzimuth( double Longitude, double Latitude, int OrbitalPos )
 {
-	double p = (double)OrbitalPos/10;
-	double a;
+	double a, p = (double)OrbitalPos/10;
 	eDebug("Longitude=%lf, Latitude=%lf, OrbitalPos=%lf", Longitude, Latitude, p);
 	// Berechnung Azimuth
 	a = 180 / M_PI * std::atan ( std::tan ( ( p - Longitude ) * M_PI / 180 ) / std::sin ( Latitude * M_PI / 180 ) );
@@ -495,8 +494,9 @@ int eFrontend::tune(eTransponder *trans,
 		eLNB *lnb = sat->getLNB();
 		// Variables to detect if DiSEqC must sent .. or not
 		int csw = lnb->getDiSEqC().DiSEqCParam,
-							RotorCmd=-1,
-							SmatvFreq=-1;
+				ToneBurst = lnb->getDiSEqC().MiniDiSEqCParam,
+				RotorCmd = -1,
+				SmatvFreq = -1;
 
 		secCmdSequence seq;
 		secCommand *commands=0; // pointer to all sec commands
@@ -609,7 +609,7 @@ int eFrontend::tune(eTransponder *trans,
 		}
 		if ( lnb->getDiSEqC().DiSEqCMode >= eDiSEqC::V1_0 )
 		{
-			if (csw != lastcsw)
+			if (csw != lastcsw || (ToneBurst && ToneBurst != lastToneBurst) )
 			{
 				int loops;
 				if ( cmdCount )  // Smatv or Rotor is avail...
@@ -673,7 +673,7 @@ int eFrontend::tune(eTransponder *trans,
 		}
 
 		seq.miniCommand = SEC_MINI_NONE;
-		if ( csw != lastcsw )
+		if ( csw != lastcsw || (ToneBurst && ToneBurst != lastToneBurst) )
 		{
 			if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::A )
 			{
@@ -687,8 +687,6 @@ int eFrontend::tune(eTransponder *trans,
 			}
 			else
 				eDebug("no Toneburst (MiniDiSEqC)");
-
-			lastcsw = csw;
 		}
      
 			// no DiSEqC related Stuff
@@ -707,10 +705,12 @@ int eFrontend::tune(eTransponder *trans,
 		int voltage = SEC_VOLTAGE_OFF;
 		if ( swParams.VoltageMode == eSwitchParameter::_14V || ( polarisation == polVert && swParams.VoltageMode == eSwitchParameter::HV )  )
 		{
+      eDebug("increased=%d", lnb->getIncreasedVoltage() );
 			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_13_5 : SEC_VOLTAGE_13;
 		}
 		else if ( swParams.VoltageMode == eSwitchParameter::_18V || ( polarisation==polHor && swParams.VoltageMode == eSwitchParameter::HV)  )
 		{
+      eDebug("increased=%d", lnb->getIncreasedVoltage() );
 			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_18_5 : SEC_VOLTAGE_18;
 		}
     
@@ -741,7 +741,7 @@ int eFrontend::tune(eTransponder *trans,
 				}
 			}
 		}
-		else
+		else if ( lastcsw != csw || ( ToneBurst && lastToneBurst != ToneBurst) )
 		{
 			seq.voltage=voltage;
 			if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
@@ -755,6 +755,10 @@ int eFrontend::tune(eTransponder *trans,
 				ioctl(secfd, SEC_SEND_SEQUENCE, &seq);  // just do it *g*
 			}
 		}
+
+		lastcsw = csw;
+		lastToneBurst = ToneBurst;
+
 		// delete allocated memory...
 		delete [] commands;
 	}

@@ -689,14 +689,14 @@ eString eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColor coAct
 	eString descr;
 	if (!paraDescr)
 	{
-		eService* s = eServiceInterface::getInstance()->addRef( entry->service );
+/*		eService* s = eServiceInterface::getInstance()->addRef( entry->service );
 		if (s)
 		{
 			descr = s->service_name;
 			eServiceInterface::getInstance()->removeRef( entry->service );
 		}
-		if (entry->service.descr)
-			descr += " - "+entry->service.descr;
+		if (entry->service.descr)*/
+			descr += /*" - "+*/entry->service.descr;
 		paraDescr = new eTextPara( eRect( 0 ,0, rect.width(), rect.height()) );
 		paraDescr->setFont( DescrFont );
 		paraDescr->renderString( descr );

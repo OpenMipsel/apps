@@ -36,7 +36,7 @@ void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 		char* tmp = new char[10];
 		strcpy( tmp, p );
 		t.sprintf(tmp, number[n]);
-		delete tmp;
+		delete [] tmp;
 	}
 	else
 	{
@@ -87,7 +87,7 @@ double eNumber::getFixedNum()
 		}
 		else
 		{
-			double d = (double)number[0]+(double)number[1]/1000;
+			float d = (double)number[0]+(double)number[1]/1000;
 			eDebug("getFixedNum %lf", d);
 			return d;
 		}
@@ -99,14 +99,13 @@ double eNumber::getFixedNum()
 void eNumber::setFixedNum(double d)
 {
 	eDebug("setFixedNum %lf", d);
-	if (flags & flagPosNeg && d < 0)
-	{
-		d = -d;
-		neg=1;
-	}
+	if (flags & flagPosNeg)
+		neg=d<0;
 	else
 		neg=0;
-		
+
+	d=abs(d);
+
 	if (flags & flagFixedNum)
 	{
 		number[0]=(int)d;
@@ -346,8 +345,18 @@ void eNumber::lostFocus()
 
 void eNumber::setNumber(int f, int n)
 {
+	if (flags & flagPosNeg)
+	{
+		if(!f && n<0)
+			neg=true;
+		else
+			neg=false;
+	}
+	else
+		neg=false;
+
 	if ((f>=0) && (f<len))
-		number[f]=n;
+		number[f]=abs(n);
 
 	invalidate(getNumberRect(f));
 }
@@ -384,22 +393,19 @@ void eNumber::setBase(int _base)
 
 void eNumber::setNumber(int n)
 {
-	if (len == 1)
-	{
-		if ( flags&flagPosNeg && n < 0 )
-		{
-			neg=1;
-			n = abs(n);
-		}
-		number[0]=n;
-	}
+	if ( flags&flagPosNeg )
+		neg = n < 0;
+	else
+		neg=0;
+
+	if( len == 1 )
+		number[0]=abs(n);
 	else
 		for (int i=len-1; i>=0; --i)
 		{
 			number[i]=n%base;
 			n/=base;
 		}
-
 	invalidateNum();
 }
 
