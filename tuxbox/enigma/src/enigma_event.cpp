@@ -144,8 +144,8 @@ eEventDisplay::eEventDisplay(eString service, const ePtrList<EITEvent>* e, EITEv
 	// try to recalc long description label... ( no broken text lines.. )
 	float lineheight=fontRenderClass::getInstance()->getLineHeight( long_description->getFont() );
 	int lines = descr->getSize().height() / (int)lineheight;
-	int newheight = lines * (int)lineheight + (round(lineheight) - (int)lineheight);
-	descr->resize( eSize( descr->getSize().width(), newheight + lineheight/6 ) );
+	int newheight = lines * (int)lineheight + (int)(round(lineheight) - (int)lineheight);
+	descr->resize( eSize( descr->getSize().width(), newheight + (int)lineheight/6 ) );
 	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
 
 	if (e)

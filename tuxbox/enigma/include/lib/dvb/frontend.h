@@ -41,7 +41,7 @@ class eFrontend: public Object
 	eFrontend(int type, const char *demod="/dev/dvb/card0/frontend0", const char *sec="/dev/dvb/card0/sec0");
 	static eFrontend *frontend;
 	eTimer *timer, timer2;
-	int tries;
+	int tries, noRotorCmd;
 	int tune(eTransponder *transponder, 
 			uint32_t Frequency, int polarisation,
 			uint32_t SymbolRate, CodeRate FEC_inner,
@@ -50,9 +50,7 @@ class eFrontend: public Object
 	void timeout();
 	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec);
 	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA, int newPos );
-	int noRotorCmd;
 public:
-//	double calcAzimuth( double Longitude, double Latitude, int OrbitalPos );
 	void disableRotor() { noRotorCmd = 1, lastcsw=0, lastRotorCmd=0; }  // no more rotor cmd is sent when tune
 	void enableRotor() { noRotorCmd = 0, lastcsw=0, lastRotorCmd=0; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
@@ -75,7 +73,7 @@ public:
 	
 	int Status();
 	int Locked() { return Status()&FE_HAS_LOCK; }
-	void Reset();
+	void InitDiSEqC();
 	void readInputPower();
      	
 	uint32_t BER();

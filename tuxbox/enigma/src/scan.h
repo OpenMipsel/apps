@@ -42,9 +42,11 @@ class tsManual: public eWidget
 	eTransponderWidget *transponder_widget;
 	eFEStatusWidget *festatus_widget;
 	eCheckbox *c_clearlist, *c_searchnit, *c_useonit, *c_usebat;
+	eTimer updateTimer;
 	void start();
 	void abort();
 	void retune();
+	void update();
 	int eventHandler(const eWidgetEvent &event);
 public:
 	tsManual(eWidget *parent, const eTransponder &transponder, eWidget* LCDTitle, eWidget* LCDElement);

@@ -104,7 +104,7 @@ eMainMenu::eMainMenu()
 			eFatal("error, mainmenu bug, mainmenu.%s.sel not defined", pixmap_name[i]);
 	}
 
-	setActive(active=eZapMain::getInstance()->getRealMode());		
+	setActive(active=eZapMain::getInstance()->getMode());		
 }
 
 void eMainMenu::sel_tv()

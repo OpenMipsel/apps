@@ -29,7 +29,7 @@ void eDVBSettings::removeDVBBouquets()
 	}
 }
 
-void eDVBSettings::addDVBBouquet(const BAT *bat)
+void eDVBSettings::addDVBBouquet(const BAT *bat )
 {
 	eDebug("wir haben da eine bat, id %x", bat->bouquet_id);
 	eString bouquet_name="Weiteres Bouquet";
@@ -64,14 +64,14 @@ eBouquet *eDVBSettings::getBouquet(int bouquet_id)
 
 static eString beautifyBouquetName(eString bouquet_name)
 {
-	if ( (bouquet_name.find("ARD") != eString::npos)
+/*	if ( (bouquet_name.find("ARD") != eString::npos)
 		  || (bouquet_name.find("ZDF") != eString::npos)
 			|| (bouquet_name.find("RTL") != eString::npos)
 			|| (bouquet_name.find("n-tv") != eString::npos)
 			|| (bouquet_name.find("ProSieben") != eString::npos)
 			|| (bouquet_name.find("VIVA") != eString::npos) )
 		bouquet_name="German Free";		
-	else if (bouquet_name.find("POLSAT") != eString::npos)
+	else*/ if (bouquet_name.find("POLSAT") != eString::npos)
 		bouquet_name="POLSAT";
 	else if (bouquet_name.find("HRT") != eString::npos)
 		bouquet_name="HRT Zagreb";

@@ -123,7 +123,7 @@ install_location=
 type=DATA
 
 [data/skins/Makefile.am]
-files=data/skins/chk_blue2.esml,data/skins/chk_blue2.info,data/skins/chkdesign.info,data/skins/chkv2.info,data/skins/default.esml,data/skins/dream.info,data/skins/neutrino.esml,data/skins/neutrino.info,data/skins/stone.esml
+files=data/skins/chk_blue2.esml,data/skins/chk_blue2.info,data/skins/chkdesign.info,data/skins/chkv2.info,data/skins/default.esml,data/skins/dream.info,data/skins/neutrino.esml,data/skins/neutrino.info,data/skins/stone.esml,data/skins/silver.esml
 sub_dirs=
 type=normal
 
@@ -170,6 +170,12 @@ install_location=
 type=DATA
 
 [data/skins/neutrino.info]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[data/skins/silver.esml]
 dist=true
 install=false
 install_location=
@@ -410,7 +416,7 @@ type=HEADER
 
 [include/lib/dvb/Makefile.am]
 dist=true
-files=include/lib/dvb/decoder.h,include/lib/dvb/dvb.h,include/lib/dvb/dvbci.h,include/lib/dvb/dvbscan.h,include/lib/dvb/dvbservice.h,include/lib/dvb/dvbwidgets.h,include/lib/dvb/edvb.h,include/lib/dvb/epgcache.h,include/lib/dvb/esection.h,include/lib/dvb/eaudio.h,include/lib/dvb/frontend.h,include/lib/dvb/iso639.h,include/lib/dvb/Makefile.am,include/lib/dvb/record.h,include/lib/dvb/service.h,include/lib/dvb/servicecache.h,include/lib/dvb/servicedvb.h,include/lib/dvb/servicefile.h,include/lib/dvb/servicemp3.h,include/lib/dvb/serviceplaylist.h,include/lib/dvb/servicestructure.h,include/lib/dvb/settings.h,include/lib/dvb/si.h
+files=include/lib/dvb/decoder.h,include/lib/dvb/dvb.h,include/lib/dvb/dvbci.h,include/lib/dvb/dvbscan.h,include/lib/dvb/dvbservice.h,include/lib/dvb/dvbwidgets.h,include/lib/dvb/edvb.h,include/lib/dvb/epgcache.h,include/lib/dvb/esection.h,include/lib/dvb/frontend.h,include/lib/dvb/iso639.h,include/lib/dvb/Makefile.am,include/lib/dvb/record.h,include/lib/dvb/service.h,include/lib/dvb/servicecache.h,include/lib/dvb/servicedvb.h,include/lib/dvb/servicefile.h,include/lib/dvb/servicemp3.h,include/lib/dvb/serviceplaylist.h,include/lib/dvb/servicestructure.h,include/lib/dvb/settings.h,include/lib/dvb/si.h
 install=false
 install_location=
 sub_dirs=lowlevel
@@ -701,7 +707,7 @@ type=HEADER
 
 [include/lib/gui/Makefile.am]
 dist=true
-files=include/lib/gui/actions.h,include/lib/gui/combobox.h,include/lib/gui/decoration.h,include/lib/gui/ebutton.h,include/lib/gui/echeckbox.h,include/lib/gui/elabel.h,include/lib/gui/emessage.h,include/lib/gui/enumber.h,include/lib/gui/epixmap.h,include/lib/gui/eprogress.h,include/lib/gui/eservicegrid.h,include/lib/gui/eskin.h,include/lib/gui/eskin_register.h,include/lib/gui/ewidget.h,include/lib/gui/ewindow.h,include/lib/gui/guiactions.h,include/lib/gui/listbox.h,include/lib/gui/Makefile.am,include/lib/gui/multipage.h,include/lib/gui/numberactions.h,include/lib/gui/slider.h,include/lib/gui/statusbar.h
+files=include/lib/gui/actions.h,include/lib/gui/combobox.h,include/lib/gui/decoration.h,include/lib/gui/ebutton.h,include/lib/gui/echeckbox.h,include/lib/gui/elabel.h,include/lib/gui/emessage.h,include/lib/gui/enumber.h,include/lib/gui/epixmap.h,include/lib/gui/eprogress.h,include/lib/gui/eservicegrid.h,include/lib/gui/eskin.h,include/lib/gui/eskin_register.h,include/lib/gui/ewidget.h,include/lib/gui/ewindow.h,include/lib/gui/guiactions.h,include/lib/gui/listbox.h,include/lib/gui/Makefile.am,include/lib/gui/multipage.h,include/lib/gui/numberactions.h,include/lib/gui/slider.h,include/lib/gui/statusbar.h,include/lib/gui/textinput.h
 install=false
 install_location=
 sub_dirs=
@@ -828,6 +834,12 @@ install_location=
 type=HEADER
 
 [include/lib/gui/statusbar.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[include/lib/gui/textinput.h]
 dist=true
 install=false
 install_location=
@@ -1087,7 +1099,7 @@ type=SOURCE
 
 [lib/dvb/Makefile.am]
 dist=true
-files=lib/dvb/decoder.cpp,lib/dvb/dvb.cpp,lib/dvb/dvbci.cpp,lib/dvb/dvbscan.cpp,lib/dvb/dvbservice.cpp,lib/dvb/dvbwidgets.cpp,lib/dvb/edvb.cpp,lib/dvb/epgcache.cpp,lib/dvb/esection.cpp,lib/dvb/eaudio.cpp,lib/dvb/frontend.cpp,lib/dvb/Makefile.am,lib/dvb/record.cpp,lib/dvb/service.cpp,lib/dvb/servicedvb.cpp,lib/dvb/servicefile.cpp,lib/dvb/servicemp3.cpp,lib/dvb/serviceplaylist.cpp,lib/dvb/servicestructure.cpp,lib/dvb/settings.cpp,lib/dvb/si.cpp
+files=lib/dvb/decoder.cpp,lib/dvb/dvb.cpp,lib/dvb/dvbci.cpp,lib/dvb/dvbscan.cpp,lib/dvb/dvbservice.cpp,lib/dvb/dvbwidgets.cpp,lib/dvb/edvb.cpp,lib/dvb/epgcache.cpp,lib/dvb/esection.cpp,lib/dvb/frontend.cpp,lib/dvb/Makefile.am,lib/dvb/record.cpp,lib/dvb/service.cpp,lib/dvb/servicedvb.cpp,lib/dvb/servicefile.cpp,lib/dvb/servicemp3.cpp,lib/dvb/serviceplaylist.cpp,lib/dvb/servicestructure.cpp,lib/dvb/settings.cpp,lib/dvb/si.cpp
 install=false
 install_location=
 sub_dirs=lowlevel
@@ -1124,12 +1136,6 @@ install_location=
 type=SOURCE
 
 [lib/dvb/dvbwidgets.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[lib/dvb/eaudio.cpp]
 dist=true
 install=false
 install_location=
@@ -1287,13 +1293,13 @@ type=SOURCE
 
 [lib/gui/Makefile.am]
 dist=true
-files=lib/gui/actions.cpp,lib/gui/combobox.cpp,lib/gui/decoration.cpp,lib/gui/ebutton.cpp,lib/gui/echeckbox.cpp,lib/gui/elabel.cpp,lib/gui/emessage.cpp,lib/gui/enumber.cpp,lib/gui/epixmap.cpp,lib/gui/eprogress.cpp,lib/gui/eservicegrid.cpp,lib/gui/eskin.cpp,lib/gui/eskin_register.cpp,lib/gui/ewidget.cpp,lib/gui/ewindow.cpp,lib/gui/guiactions.cpp,lib/gui/libenigma_gui.la,lib/gui/listbox.cpp,lib/gui/Makefile.am,lib/gui/multipage.cpp,lib/gui/numberactions.cpp,lib/gui/slider.cpp,lib/gui/statusbar.cpp
+files=lib/gui/actions.cpp,lib/gui/combobox.cpp,lib/gui/decoration.cpp,lib/gui/ebutton.cpp,lib/gui/echeckbox.cpp,lib/gui/elabel.cpp,lib/gui/emessage.cpp,lib/gui/enumber.cpp,lib/gui/epixmap.cpp,lib/gui/eprogress.cpp,lib/gui/eservicegrid.cpp,lib/gui/eskin.cpp,lib/gui/eskin_register.cpp,lib/gui/ewidget.cpp,lib/gui/ewindow.cpp,lib/gui/guiactions.cpp,lib/gui/libenigma_gui.la,lib/gui/listbox.cpp,lib/gui/Makefile.am,lib/gui/multipage.cpp,lib/gui/numberactions.cpp,lib/gui/slider.cpp,lib/gui/statusbar.cpp,lib/gui/textiinput.cpp,lib/gui/textinput.cpp
 install=false
 install_location=
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=gui
 sub_dirs=
-type=DATA
+type=static_library
 
 [lib/gui/actions.cpp]
 dist=true
@@ -1427,6 +1433,18 @@ install=false
 install_location=
 type=SOURCE
 
+[lib/gui/textiinput.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[lib/gui/textinput.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
 [lib/socket/Makefile.am]
 dist=true
 files=lib/socket/Makefile.am,lib/socket/serversocket.cpp,lib/socket/socket.cpp
@@ -1542,7 +1560,7 @@ type=PO
 
 [src/Makefile.am]
 dist=true
-files=src/channelinfo.cpp,src/channelinfo.h,src/download.cpp,src/download.h,src/enigma.cpp,src/enigma.h,src/enigma_dyn.h,src/enigma_event.cpp,src/enigma_event.h,src/enigma_info.cpp,src/enigma_info.h,src/enigma_lcd.cpp,src/enigma_lcd.h,src/enigma_main.cpp,src/enigma_main.h,src/enigma_mainmenu.cpp,src/enigma_mainmenu.h,src/enigma_plugins.cpp,src/enigma_plugins.h,src/enigma_scan.cpp,src/enigma_scan.h,src/enigma_setup.cpp,src/enigma_setup.h,src/enigma_vcr.cpp,src/enigma_vcr.h,src/enigma_xmlrpc.cpp,src/enigma_xmlrpc.h,src/epgwindow.cpp,src/epgwindow.h,src/Makefile.am,src/satconfig.cpp,src/satconfig.h,src/scan.cpp,src/scan.h,src/setup_harddisk.cpp,src/setup_harddisk.h,src/setup_language.cpp,src/setup_language.h,src/setup_lcd.cpp,src/setup_lcd.h,src/setup_osd.cpp,src/setup_osd.h,src/setup_rc.cpp,src/setup_rc.h,src/setupnetwork.cpp,src/setupnetwork.h,src/setup_audio.cpp,src/setup_audio.h,src/setupskin.cpp,src/setupskin.h,src/setupvideo.cpp,src/setupvideo.h,src/showbnversion.cpp,src/showbnversion.h,src/sselect.cpp,src/sselect.h,src/streaminfo.cpp,src/streaminfo.h,src/timer.cpp,src/timer.h,src/enigma_ci.h,src/enigma_ci.cpp,src/enigma_dyn.cpp,src/satfind.cpp,src/satfind.h,src/rotorconfig.cpp,src/rotorconfig.h,src/upgrade.cpp,src/upgrade.h,src/setup_rfmod.cpp,src/setup_rfmod.h
+files=src/channelinfo.cpp,src/channelinfo.h,src/download.cpp,src/download.h,src/enigma.cpp,src/enigma.h,src/enigma_dyn.h,src/enigma_event.cpp,src/enigma_event.h,src/enigma_info.cpp,src/enigma_info.h,src/enigma_lcd.cpp,src/enigma_lcd.h,src/enigma_main.cpp,src/enigma_main.h,src/enigma_mainmenu.cpp,src/enigma_mainmenu.h,src/enigma_plugins.cpp,src/enigma_plugins.h,src/enigma_scan.cpp,src/enigma_scan.h,src/enigma_setup.cpp,src/enigma_setup.h,src/enigma_vcr.cpp,src/enigma_vcr.h,src/enigma_xmlrpc.cpp,src/enigma_xmlrpc.h,src/epgwindow.cpp,src/epgwindow.h,src/Makefile.am,src/satconfig.cpp,src/satconfig.h,src/scan.cpp,src/scan.h,src/setup_harddisk.cpp,src/setup_harddisk.h,src/setup_language.cpp,src/setup_language.h,src/setup_lcd.cpp,src/setup_lcd.h,src/setup_osd.cpp,src/setup_osd.h,src/setup_rc.cpp,src/setup_rc.h,src/setupnetwork.cpp,src/setupnetwork.h,src/setupskin.cpp,src/setupskin.h,src/setupvideo.cpp,src/setupvideo.h,src/showbnversion.cpp,src/showbnversion.h,src/sselect.cpp,src/sselect.h,src/streaminfo.cpp,src/streaminfo.h,src/timer.cpp,src/timer.h,src/enigma_ci.h,src/enigma_ci.cpp,src/enigma_dyn.cpp,src/satfind.cpp,src/satfind.h,src/rotorconfig.cpp,src/rotorconfig.h,src/upgrade.cpp,src/upgrade.h,src/setup_rfmod.cpp,src/setup_rfmod.h
 install=false
 install_location=
 sharedlib_LDFLAGS=-version-info 0:0:0
@@ -1785,18 +1803,6 @@ install_location=
 type=SOURCE
 
 [src/scan.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[src/setup_audio.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-
-[src/setup_audio.h]
 dist=true
 install=false
 install_location=

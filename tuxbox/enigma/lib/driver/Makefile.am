@@ -1,9 +1,8 @@
 INCLUDES = \
 	-I$(top_srcdir)/include
 
-lib_LTLIBRARIES = libenigma_driver.la
+noinst_LIBRARIES = libenigma_driver.a
 
-libenigma_driver_la_SOURCES = \
+libenigma_driver_a_SOURCES = \
 	eavswitch.cpp rc.cpp rcdbox.cpp streamwd.cpp rcdreambox2.cpp rfmod.cpp
-
-libenigma_driver_la_LDFLAGS = @SIGC_LIBS@
+	

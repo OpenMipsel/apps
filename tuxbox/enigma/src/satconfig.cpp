@@ -829,7 +829,7 @@ void eLNBSetup::onSave()
 		close(0); // we must not reposition...
 
 	eTransponderList::getInstance()->writeLNBData();
-	eFrontend::getInstance()->Reset();
+	eFrontend::getInstance()->InitDiSEqC();
 }
 
 int eLNBSetup::eventHandler(const eWidgetEvent &event)

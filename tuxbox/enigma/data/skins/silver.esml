@@ -12,7 +12,6 @@
 		<font file="v5loxical.ttf" name="v5Lixera" /> <!-- Found at dafont.com freeware -->
 		<font file="pakenham.ttf" name="lcd" /> <!-- Found at dafont.com freeware -->
 	</fonts>
-
 	<fontalias>
 		<map name="eServiceSelector.Entry.Description" font="Blue.Regular" size="26" />
 		<map name="eStatusBar" font="Blue.Regular" size="24" />
@@ -404,12 +403,10 @@
 			<eLabel position="443:22" size="70:70" name="r1" alphatest="on" />
 			<eLabel position="537:34" size="70:70" name="r2" alphatest="on" />
 			<eLabel position="629:54" size="70:70" name="r3" alphatest="on" />
-			<eLabe  position="200:200" size="320:48" align="center" font="eWindow.TitleBar"	foregroundColor="white" backgroundColor="content"  name="description" alphatest="on" />
+			<eLabel position="200:200" size="320:48" align="center" font="eWindow.TitleBar"	foregroundColor="white" backgroundColor="content"  name="description" alphatest="on" />
 		
 		</eWidget>
 	</object>
-	
-	
 	
 	<object name="enigma_lcd_main">
 		<eZapLCDMain position="0:0" size="120:64">
@@ -435,7 +432,7 @@
 		<eZapMain position="42:300" size="634:222">
                         
 			<eLabel position="0:0" size="634:224" pixmap="info-bg" name="info-bg" />
-			
+		
 			<!--texte    -->     
 			<eLabel position="55:12" size="120:22" font="Blue.Regular;30" name="ch_number" backgroundColor="selected" foregroundColor="white" />
 
@@ -487,9 +484,7 @@
 
 				<eLabel position="404:0" size="80:26" font="Blue.Regular;26" name="e_now_duration" align="right" backgroundColor="content" foregroundColor="white" alphatest="on" />
 				<eLabel position="404:27" size="80:26" font="Blue.Regular;26" name="e_next_duration" align="right" backgroundColor="content" foregroundColor="white" alphatest="on" />
- 
-	  </eWidget>
-			
+			</eWidget>
 		</eZapMain>
 	</object>
 

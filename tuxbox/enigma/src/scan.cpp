@@ -56,14 +56,14 @@ int tsSelectType::eventHandler( const eWidgetEvent &e )
 
 void tsSelectType::selected(eListBoxEntryText *entry)
 {
-	if (!entry)
-		close(0);
-	else
+	if (entry && entry->getKey())
 		close((int)entry->getKey());
+	else
+		close(0);
 }
 
 tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LCDTitle, eWidget *LCDElement)
-:eWidget(parent), transponder(transponder)
+:eWidget(parent), transponder(transponder), updateTimer(eApp)
 {
 	addActionMap(&i_cursorActions->map);
 	setLCD(LCDTitle, LCDElement);
@@ -115,6 +115,17 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	CONNECT(b_start->selected, tsManual::start);
 	CONNECT(b_abort->selected, tsManual::abort);
 	CONNECT(transponder_widget->updated, tsManual::retune);
+//	CONNECT(updateTimer.timeout, tsManual::update );
+}
+
+void tsManual::update()
+{
+	int status=eFrontend::getInstance()->Status();
+	if (!(status & FE_HAS_LOCK))
+	{
+		if (!transponder_widget->getTransponder(&transponder))
+			transponder.tune();
+	}
 }
 
 void tsManual::start()
@@ -158,8 +169,10 @@ int tsManual::eventHandler(const eWidgetEvent &event)
 			break;
 		return 1;
 	case eWidgetEvent::execBegin:
-//			retune();
+		updateTimer.start(1000);
 		break;
+	case eWidgetEvent::execDone:
+		updateTimer.stop();
 	default:
 		break;
 	}
@@ -281,12 +294,13 @@ void tsAutomatic::abort()
 
 void tsAutomatic::networkSelected(eListBoxEntryText *l)
 {
-	if (nextNetwork(-1))		// if "automatic" selected,
-	{
+	if (nextNetwork(-1)) // if "automatic" selected,
+ {
 		automatic=1;
-		nextNetwork();				// begin with first
+		nextNetwork();  // begin with first
 	} else
 		automatic=0;
+
 	tuneNext(0);
 }
 
@@ -497,7 +511,7 @@ int tsAutomatic::nextNetwork(int first)
 		
 	tpPacket *pkt=(tpPacket*)(l_network->getCurrent() -> getKey());
 	
-//	eDebug("pkt: %p", pkt);
+	eDebug("pkt: %p", pkt);
 
 	if (!pkt)
 		return -1;
@@ -531,7 +545,8 @@ int tsAutomatic::tuneNext(int next)
 					"if its some obscure satellite/network."));
 				return -1;
 			}
-		} else
+		}
+		else
 		{
 			l_status->setText(_("All known transponders have been tried,"
 				" but no lock was possible. Verify antenna-/cable-setup or try another satellite/network."));

@@ -33,7 +33,7 @@ class eListBoxEntryService: public eListBoxEntry
 	int num;
 public:
 	static eListBoxEntryService *selectedToMove;
-	static std::map< eServiceReference, int> favourites;
+	static std::set<eServiceReference> hilitedEntrys;
 	int getNum() const { return num; }
 	void invalidate();
 	void invalidateDescr();
@@ -88,17 +88,24 @@ private:
 	void updateCi();
 public:
 	int movemode;
-	int FavouriteMode;
+	int editMode;
 	enum { styleInvalid, styleCombiColumn, styleSingleColumn, styleMultiColumn };
 	enum { dirNo, dirUp, dirDown };
 
 	eServiceSelector();
 	~eServiceSelector();
 
-	Signal1<void,const eServiceReference &> addServiceToList, removeServiceFromFavourite;
-	Signal2<void,eServiceSelector*,int> addServiceToFavourite;
-	Signal1<void,eServiceSelector*> showFavourite, showMenu, toggleStyle;
-	Signal1<void,int> setMode;
+	Signal0<void> rotateRoot;
+
+	Signal1<void,const eServiceReference &> addServiceToPlaylist; // add service to the Playlist
+	Signal2<void,eServiceSelector*,int> addServiceToUserBouquet,  // add current service to selected User Bouquet
+																			removeServiceFromUserBouquet; // remove service from selected User Bouquet
+
+	Signal1<void,int> setMode;        // set TV, Radio or File
+
+	Signal1<void,eServiceSelector*> showMenu, // shows the contextmenu
+																	toggleStyle; // switch service selector style
+
 	Signal3<void,
 		const eServiceReference &, 		// path
 		const eServiceReference &, 		// service to move
@@ -122,8 +129,8 @@ public:
 	const eServiceReference *next();
 	const eServiceReference *prev();
 
-	void toggleMoveMode();
-	void toggleFavouriteMode();
+	int toggleMoveMode();  // enable / disable move entry Mode ( only in userBouquets )
+	int toggleEditMode();  // enable / disable edit UserBouquet Mode
 };
 
 #endif

@@ -35,7 +35,6 @@ eConfig::~eConfig()
 {
 	if (instance==this)
 		instance=0;
-	close();
 }
 
 eAutoInitP0<eConfig> init_eRCConfig(eAutoInitNumbers::configuration, "Configuration");

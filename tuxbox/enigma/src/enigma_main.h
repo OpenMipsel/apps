@@ -11,6 +11,7 @@
 #include <lib/gui/multipage.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/numberactions.h>
+#include <lib/gui/textinput.h>
 #include <lib/base/message.h>
 #include <lib/dvb/service.h>
 
@@ -28,6 +29,7 @@ class gPainter;
 class NVODReferenceEntry;
 class eServiceSelector;
 class eRecordingStatus;
+class ePlaylistEntry;
 
 class eZapMessage
 {
@@ -95,6 +97,7 @@ class NVODStream: public eListBoxEntryTextStream
 	friend class eListBox<NVODStream>;
 	friend class eNVODSelector;
 private:
+	eString redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 	void EITready(int error);
 public:
 	NVODStream(eListBox<NVODStream> *listbox, const NVODReferenceEntry *ref, int type);
@@ -169,6 +172,7 @@ class eServiceNumberWidget: public eWindow
 private:
 	void selected(int*);
 	void timeout();
+	void numberChanged();
 public:
 	eServiceNumberWidget(int initial);
 	~eServiceNumberWidget();
@@ -183,11 +187,31 @@ class eServiceEvent;
 
 class ePlaylist;
 
+class TextEditWindow: public eWindow
+{
+	eTextInputField *input;
+	eLabel *descr, *image;
+	eButton *save, *cancel;
+public:
+	TextEditWindow( const char *InputFieldDescr, const char* useableChar=0 );
+	const eString& getEditText() { return input->getText(); }
+	void setEditText( const eString& str ) { input->setText( str ); }
+};
+
+class UserBouquetSelector: public eListBoxWindow<eListBoxEntryText>
+{
+	std::list<ePlaylistEntry> &SourceList;
+	void selected( eListBoxEntryText * );
+public:
+	UserBouquetSelector( std::list<ePlaylistEntry> &list );
+	eServiceReference curSel;
+};
+
 class eZapMain: public eWidget
 {
 	friend class eEPGSelector;
 public:
-	enum { modeTV, modeRadio, modeFile, modePlaylist, modeEnd };
+	enum { modeTV, modeRadio, modeFile, modeEnd };
 	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32 };
 	enum { messageGoSleep=2, messageShutdown=3 };
 
@@ -226,15 +250,28 @@ private:
 	eEventDisplay *actual_eventDisplay;
 	eServiceReferenceDVB refservice;
 	
-	ePlaylist *curlist;		// history / current playlist entries
+	ePlaylist *playlist; // history / current playlist entries
 	eServiceReference playlistref;
-
-	ePlaylist *favourite[modeFile+1];
-	eServiceReference favouriteref[modeFile+1];
 
 	ePlaylist *recordings;
 	eServiceReference recordingsref;
 
+	ePlaylist *userTVBouquets;
+	eServiceReference userTVBouquetsRef;
+
+	ePlaylist *userRadioBouquets;
+	eServiceReference userRadioBouquetsRef;
+
+	ePlaylist *userFileBouquets;
+	eServiceReference userFileBouquetsRef;
+
+	ePlaylist *currentSelectedUserBouquet; // in addToFavourite Mode...
+	eServiceReference currentSelectedUserBouquetRef;
+
+	eString eplPath; // where we store Favlists? user changeable...
+
+	ePlaylist *addUserBouquet( ePlaylist*, const eString&, const eString&, eServiceReference &, bool );
+	
   int wasSleeping;
 	int playlistmode; // curlist is a list controlled by the user (not just a history).
 	int entered_playlistmode;
@@ -288,26 +325,29 @@ private:
 	void stopSkip(int dir);
 
 	void showServiceMenu(eServiceSelector*);
-	void showFavourite(eServiceSelector*);
 
 	void addService(const eServiceReference &service);
 
 	void doPlaylistAdd(const eServiceReference &service);
-	void addServiceToFavourite(eServiceSelector *s, int dontask=0);
-	void removeServiceFromFavourite( const eServiceReference &service );
+	void addServiceToUserBouquet(eServiceSelector *s, int dontask=0);
+	void addServiceToCurUserBouquet(const eServiceReference &ref);
+	void removeServiceFromUserBouquet( eServiceSelector *s, int dontask=0 );
 
-	void showFavourites(int user);
 	void showBouquetList(int sellast);
 
 	void showDVRFunctions(int show);
 
 	static eZapMain *instance;
 
-	eServicePath modeLast[modeEnd];
-	int mode, last_mode, state;
+	eServicePath modeLast[modeEnd][3];
+	
+	int mode,             // current mode .. TV, Radio, File
+			currentRoot,      // normal, user, playlist ( the one and only )
+			state;
 	int hddDev;
 	void onRotorStart( int newPos );
 	void onRotorStop();
+	void onRotorTimeout();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 private:
@@ -346,18 +386,26 @@ public:
 
 // methods used from the timer
 	enum {
-		psAdd=1,	// just add, to not change current
-		psRemove=2, // remove before add
+		psAdd=1,      // just add, to not change current
+		psRemove=2,   // remove before add
 		psActivate=4, // use existing entry if available
-		psDontAdd=8, // just play
+		psDontAdd=8,  // just play
 	};
 	void playService(const eServiceReference &service, int flags);
 	int recordDVR(int onoff, int user, eString name="");	// starts recording
 //////////////////////////////
 
 	void setMode(int mode, int user=0); // user made change?
-	void setModeD(int mode);
-	int getRealMode() { return last_mode==-1 ? mode : last_mode; }
+	int getMode() { return mode; }
+	void rotateRoot()
+	{
+		getServiceSelectorPath(modeLast[mode][0]); // save current path
+		eServicePath tmp=modeLast[mode][0];
+		modeLast[mode][0]=modeLast[mode][1];
+		modeLast[mode][1]=modeLast[mode][2];
+		modeLast[mode][2]=tmp;
+		setServiceSelectorPath(modeLast[mode][0]); // set new path
+	}
 	void toggleTimerMode();
 	void handleStandby();
 

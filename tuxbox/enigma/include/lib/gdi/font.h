@@ -128,6 +128,11 @@ public:
 
 		return boundBox;
 	}
+
+	const eRect& getGlyphBBox(int num) const
+	{
+		return *glyphs[num].bbox;
+	}
 };
 
 class Font

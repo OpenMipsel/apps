@@ -114,6 +114,7 @@
 		<img name="ok_symbol" src="event_ok-fs8.png" />
 		<img name="failed_symbol" src="event_failed-fs8.png" />
 		<img name="dreamlogo" src="dreamlogo-fs8.png" />
+		<img name="textinput_white" src="zahlen_w.png" />
 	</images>
 	
 	<images basepath="countries">
@@ -167,8 +168,12 @@
 		<color name="folder3" color="#808080" />
 		<color name="folder4" color="#c0c0c0" />
 		<color name="folder5" color="#efe6e6" />
+		<color name="button_red" color="#db2020" />
+		<color name="button_green" color="#1fe039" />
+		<color name="button_yellow" color="#e2e21d" />
+		<color name="button_blue" color="#1f5ce0" />
 		<color name="eServiceSelector.entrySelectedToMove" color="#ff0303" />
-		<color name="eServiceSelector.entryInFavourite" color="#ff0303" />
+		<color name="eServiceSelector.entryHilited" color="#ff0303" />
 	</colors>
 
 	<colorscheme>
@@ -259,9 +264,9 @@
 			<eLabel text="Voltage" name="lVoltage" position="440:55" size="90:30" align="center"/>
 			<eWidget name="buttons" position="10:90" size="e-40:e-80" />
 			<eProgress name="scrollbar" position="e-35:90" size="20:e-90" direction="1" />
-			<eButton name="new" position="10:e-80" size="175:40" text="new" helptext="add a new Satellite" loadDeco="" shortcut="green" />
-			<eButton name="erase" position="195:e-80" size="175:40" text="erase" helptext="remove the selected Satellite" loadDeco="" shortcut="red" />
-			<eButton name="close" position="380:e-80" size="175:40" text="close" helptext="close Satellite Configuration" loadDeco="" />
+			<eButton name="new" position="10:e-80" size="175:40" text="new" shortcut="green" backgroundColor="button_green" />
+			<eButton name="erase" position="195:e-80" size="175:40" text="erase" shortcut="red" backgroundColor="button_red"  />
+			<eButton name="lnbsetup" position="380:e-80" size="175:40" text="lnb setup" shortcut="yellow" backgroundColor="button_yellow" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eSatelliteConfigurationManager>
 	</object>
@@ -639,7 +644,18 @@
 			<eLabel name="changes" position="10:200" size="e-10:e-30" font="eUpgradeChanges" />
 		</eUpgrade>
 	</object>
-	
+
+	<object name="TextEditWindow">
+		<TextEditWindow cposition="120:100" csize="450:380" >
+			<eLabel name="descr" position="10:10" size="e-10:30" />
+			<eTextInputField name="inputfield" position="10:50" size="e-10:40" loadDeco="eNumber" helptext="press ok to enter the name" />
+			<eLabel name="image" pixmap="textinput_white" position="10:105" size="367:178" alphatest="on" />
+			<eButton name="save" text="save" position="10:e-80" size="170:40" loadDeco="" helptext="save changes and close window" shortcut="green" />
+			<eButton name="cancel" text="cancel" position="190:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" />
+			<eStatusbar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
+		</TextEditWindow>
+	</object>
+
 	<object name="eWizardLanguage">
 		<eWizardLanguage cposition="120:100" csize="500:400" text="Your language">
 			<eLabel name="head" position="40:50" size="e:50" font="head" />

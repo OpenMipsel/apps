@@ -81,13 +81,13 @@ int eButton::eventHandler(const eWidgetEvent &event)
 				/*emit*/ selected();
 				/*emit*/ selected_id(this);
 		
-				if (parent && parent->LCDElement)
+/*				if (parent && parent->LCDElement)
 				{
 					if (LCDTmp)
 						LCDTmp->setText(text);
 					else
 						parent->LCDElement->setText(text);
-				}
+				}*/
 			}
 			else
 				return eLabel::eventHandler(event);

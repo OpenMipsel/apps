@@ -23,14 +23,11 @@
 eFrontend* eFrontend::frontend;
 
 eFrontend::eFrontend(int type, const char *demod, const char *sec)
-:type(type), curRotorPos( 1000 ), timer2(eApp), noRotorCmd(0)
+:type(type), curRotorPos( 1000 ), timer2(eApp), noRotorCmd(0)//, checkTunerStateInterval(0)
 {
 	state=stateIdle;
 	timer=new eTimer(eApp);
 
-/*	CONNECT(timer2.timeout, eFrontend::readInputPower);
-	timer2.start(250);*/
-  
 	CONNECT(timer->timeout, eFrontend::timeout);
 	fd=::open(demod, O_RDWR);
 	if (fd<0)
@@ -85,7 +82,7 @@ eFrontend::eFrontend(int type, const char *demod, const char *sec)
 	lastSmatvFreq=-1;
 }
 
-void eFrontend::Reset()
+void eFrontend::InitDiSEqC()
 {
 	lastcsw = lastSmatvFreq = lastRotorCmd = -1;
 	sendDiSEqCCmd( 0, 0 );
@@ -920,7 +917,7 @@ int eFrontend::tune(eTransponder *trans,
  	}
 	eDebug("FE_SET_FRONTEND OK");
 	state=stateTuning;
-	tries=10; // 1.0 second timeout
+	tries=40; // 1.0 second timeout
 	timer->start(50, true);
 
 	return 0;

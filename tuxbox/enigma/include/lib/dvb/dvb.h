@@ -27,8 +27,6 @@ class eDVB;
 	#define MAX(a,b) (a > b ? a : b)
 #endif
 
-#define MAXDIFF(a,b) (MAX(a,b)-MIN(a,b))
-
 class eTransponderList;
 class eServiceReference;
 class eLNB;
@@ -136,7 +134,7 @@ public:
 			if (valid != c.valid)
 				return 0;
 //   		eDebug("frequency %i - %i = %i", frequency, c.frequency, MAXDIFF(frequency,c.frequency) );
-			if ( MAXDIFF(frequency,c.frequency) > 1000 )
+			if ( abs( frequency-c.frequency ) > 1000 )
 				return 0;
 //   		eDebug("symbol_rate -> %i != %i", symbol_rate, c.symbol_rate );
 			if (symbol_rate != c.symbol_rate)
@@ -226,7 +224,7 @@ class eService
 {
 public:
 	eService(const eString &service_name);
-	~eService();
+	virtual ~eService();
 	
 	eLock access;
 

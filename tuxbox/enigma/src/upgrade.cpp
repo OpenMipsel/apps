@@ -98,6 +98,7 @@ void eHTTPDownloadXML::haveData(void *data, int len)
 }
 
 eUpgrade::eUpgrade()
+:http(0), changelog(0)
 {
 	status = new eStatusBar(this);
 	status->setFlags(eStatusBar::flagOwnerDraw);
@@ -515,6 +516,7 @@ void eUpgrade::flashImage(int checkmd5)
 					void *ptr;
 					volatile int a;
 					if ((fd < 0) || !(ptr=mmap(0, 0x600000, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0)))
+
 					{
 						eMessageBox mb(
 							_("upgrade failed with errorcode UD0"),

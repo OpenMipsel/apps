@@ -113,7 +113,10 @@ int eComboBox::moveSelection ( int dir )
 	int ret = listbox.moveSelection( dir );
 	eListBoxEntryText *cur = listbox.getCurrent();
 	if ( cur )
+	{
 		setText( cur->getText() );
+		current = cur;
+	}
 	return ret;
 }
 
@@ -130,8 +133,9 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 		setFocus( this );
 		if ( parent->LCDElement )
 			parent->LCDElement->setText("");
-		/* emit */ selchanged_id(this, e);
-		/* emit */ selchanged(e);
+		current = e;
+		/* emit */ selchanged_id(this, current);
+		/* emit */ selchanged(current);
 	}
 	else
 		setFocus( this );
@@ -194,6 +198,7 @@ int eComboBox::setCurrent( eListBoxEntryText* le )
 		return err;
 
 	setText( listbox.getCurrent()->getText() );
+	current = listbox.getCurrent();
 
 	return OK;
 }
@@ -228,6 +233,7 @@ int eComboBox::setCurrent( int num )
 		return E_COULDNT_FIND;
 
 	setText( listbox.getCurrent()->getText() );
+	current = listbox.getCurrent();
 
 	return OK;
 }
@@ -261,21 +267,20 @@ int eComboBox::setCurrent( void* key )
 	eListBoxEntryText* cur = listbox.getCurrent();
 
   if ( cur && cur->getKey() == key )
-  {
-		setText( listbox.getCurrent()->getText() );
-		return OK;
-	}
+		goto ok;
 	
 	int err;
 	if ( (err=listbox.forEachEntry( selectEntryByKey(key, &listbox ) ) ) )
 		return E_COULDNT_FIND;
 
+ok:
 	setText( listbox.getCurrent()->getText() );
+	current = listbox.getCurrent();
 
 	return OK; 
 }
 
 eListBoxEntryText* eComboBox::getCurrent()
 {
-	return listbox.getCurrent();
+	return current;
 }

@@ -434,12 +434,12 @@ check_result (tk, tmk, tl, lt)
   return 0;
 }
 
+#if 0
 int
 main (argc, argv)
      int argc;
      char **argv;
 {
-#if 0
   int status = 0;
   struct tm tm, tmk, tml;
   struct tm *lt;
@@ -518,10 +518,9 @@ main (argc, argv)
 	    argv[0], argv[0], argv[0]);
 
   return status;
-#endif
   return 0;
 }
-
+#endif 
 #endif /* DEBUG */
 
 /*

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.10 2003/01/20 14:24:53 tmbinc Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.11 2003/02/04 02:32:14 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-// #define EXT3
+ #define EXT3
 
 static int getCapacity(int dev)
 {

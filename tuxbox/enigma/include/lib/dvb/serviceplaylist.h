@@ -51,17 +51,22 @@ struct ePlaylistEntry
 class ePlaylist: public eService
 {
 	std::string filename;
-public:
 	std::list<ePlaylistEntry> list;
-	std::list<ePlaylistEntry>::iterator current;
-
+	__u8 changed;
+public:
 	int load(const char *filename);
 	int save(const char *filename=0);
-	
+
+	std::list<ePlaylistEntry>::iterator current;
+
+	const std::list<ePlaylistEntry>& getConstList() const { return list; }
+	std::list<ePlaylistEntry>& getList() { changed=1;return list; }
+
 	int deleteService(std::list<ePlaylistEntry>::iterator it);
 	int moveService(std::list<ePlaylistEntry>::iterator it, std::list<ePlaylistEntry>::iterator before);
 
 	ePlaylist();
+	~ePlaylist();
 };
 
 class eServicePlaylistHandler: public eServiceHandler
@@ -70,7 +75,7 @@ class eServicePlaylistHandler: public eServiceHandler
 	void addFile(void *node, const eString &filename);
 
 	std::multimap<eServiceReference,eServiceReference> playlists;
-
+	std::set<int> usedUniqueIDs;
 public:
 	enum { ID = 0x1001 } ;
 	static eServicePlaylistHandler *getInstance() { return instance; }
@@ -89,6 +94,7 @@ public:
 
 		// playlist functions
 	eServiceReference newPlaylist(const eServiceReference &parent=eServiceReference(), const eServiceReference &serviceref=eServiceReference());
+	int addNum( int );
 	void removePlaylist(const eServiceReference &service);
 };
 
