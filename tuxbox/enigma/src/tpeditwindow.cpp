@@ -216,9 +216,9 @@ void eTransponderEditWindow::addPressed()
 		if ( !dest )
 			return;
 		dest->possibleTransponders.push_back( t );
+		transponders->beginAtomic();
 		eListBoxEntryTransponder *e = new eListBoxEntryTransponder( transponders, &dest->possibleTransponders.back() );
 		dest->possibleTransponders.sort();
-		transponders->beginAtomic();
 		transponders->sort();
 		transponders->setCurrent(e);
 		transponders->endAtomic();

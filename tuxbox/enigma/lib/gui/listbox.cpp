@@ -468,14 +468,17 @@ void eListBoxBase::lostFocus()
 void eListBoxBase::init()
 {
 	current = top = bottom = childs.begin();
-
 	for (int i = 0; i < (MaxEntries*columns); ++i, ++bottom)
 		if (bottom == childs.end() )
 			break;
 	if (!in_atomic)
+	{
 		invalidateContent();
+	}
 	else
+	{
 		atomic_redraw=arAll;
+	}
 }
 
 int eListBoxBase::moveSelection(int dir, bool sendSelected)
