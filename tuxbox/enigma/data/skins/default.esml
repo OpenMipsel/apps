@@ -128,6 +128,7 @@
 	</images>
 	
 	<images basepath="countries">
+		<img name="country_ae" src="ae.png" />
 		<img name="country_de" src="de.png" />
 		<img name="country_es" src="es.png" />
 		<img name="country_en" src="en.png" />
@@ -135,10 +136,12 @@
 		<img name="country_se" src="se.png" />
 		<img name="country_cz" src="cz.png" />
 		<img name="country_gr" src="gr.png" />
+		<img name="country_hr" src="hr.png" />
 		<img name="country_fr" src="fr.png" />
 		<img name="country_it" src="it.png" />
 		<img name="country_nl" src="nl.png" />
 		<img name="country_pl" src="pl.png" />
+		<img name="country_pt" src="pt.png" />
 		<img name="country_tr" src="tr.png" />
 		<img name="country_missing" src="missing.png" />
 	</images>

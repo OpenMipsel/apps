@@ -27,6 +27,8 @@ public:
 		if (id.find('_') != eString::npos)
 			id=id.left(id.find('_'));
 		pixmap=eSkin::getActive()->queryImage(eString("country_") + getCountry(id.c_str()));
+		if (!pixmap)
+			pixmap=eSkin::getActive()->queryImage(eString("country_missing"));
 		if (!font.pointSize)
 			font = eSkin::getActive()->queryFont("eListBox.EntryText.normal");
 		para=0;
@@ -77,12 +79,8 @@ static struct
 } language2country[]={
 		{"C", "en"},
 		{"ar", "ae"},
-		{"hu", "missing"},
-		{"sk", "missing"},
 		{"cs", "cz"},
 		{"el", "gr"},
-		{"hr", "missing"},
-		{"sl", "missing"},
 		{"sv", "se"}};
 
 static const char * getCountry(const char *language)
