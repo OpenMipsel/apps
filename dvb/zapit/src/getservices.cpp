@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.cpp,v 1.67.2.6 2003/05/11 11:36:18 digi_casi Exp $
+ * $Id: getservices.cpp,v 1.67.2.7 2003/05/14 18:48:10 digi_casi Exp $
  *
  * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -170,6 +170,54 @@ void FindTransponder(xmlNodePtr search)
 	}
 }
 
+int LoadMotorPositions(void)
+{
+	FILE *fd = NULL;
+	int motorPosition = 0;
+	char buffer[256] = "";
+	char pos[10] = "";
+	char satellite[32] = "";
+	uint i = 0;
+	uint j = 0;
+	
+	if ((fd = fopen(MOTORCONFIGFILE, "r")))
+	{
+		fgets(buffer, 255, fd);
+		while(!feof(fd))
+		{
+			i = 0; j = 0;
+			while ((buffer[i] != ':') && (i < strlen(buffer)))
+			{
+				satellite[i] = buffer[i];
+				i++;
+			}
+			satellite[i] = 0;
+			
+			i++;
+			while (i < strlen(buffer))
+			{
+				pos[j] = buffer[i];
+				i++;
+				j++;
+			}
+			pos[j] = 0;
+			
+			sscanf(pos, "%d", &motorPosition);
+			motorPositions[satellite]++;
+			motorPositions[satellite] = motorPosition;
+			fgets(buffer, 255, fd);	
+		}
+		fclose(fd);
+	}
+	std::map<std::string, uint8_t>::iterator it;
+	for (it = motorPositions.begin(); it != motorPositions.end(); it++)
+	{
+		printf("satellite = %s, motorPosition = %d\n", it->first.c_str(), it->second);
+	}
+	
+	return 0;
+}
+
 int LoadSatellitePositions(void)
 {
 	string satellite;
@@ -191,9 +239,6 @@ int LoadSatellitePositions(void)
 		{	
 			satellite = xmlGetAttribute(search, "name");
 			satellitePosition = xmlGetSignedNumericAttribute(search, "position", 10);
-			
-			printf("[getservices] %s: %d\n", satellite.c_str(), satellitePosition);
-			
 			satellitePositions[satellite]++;
 			satellitePositions[satellite] = satellitePosition;
 		}
@@ -202,31 +247,12 @@ int LoadSatellitePositions(void)
 	}
 	
 	xmlFreeDoc(parser);
-	return 0;
-}
-
-int LoadMotorPositions(void)
-{
-	FILE *fd = NULL;
-	int motorPosition = 0;
-	char buffer[256] = "";
-	char satellite[32] = "";
 	
-	if ((fd = fopen(MOTORCONFIGFILE, "r")))
+	std::map<std::string, int32_t>::iterator it;
+	for (it = satellitePositions.begin(); it != satellitePositions.end(); it++)
 	{
-		while(!feof(fd))
-		{
-			fgets(buffer, 255, fd);
-			printf("[getservices] %s\n", buffer);
-			sscanf(buffer, "%s %d", satellite, &motorPosition);
-			printf("[getservices] motorPosition %s: %d\n", satellite, motorPosition);
-			motorPositions[satellite]++;
-			motorPositions[satellite] = motorPosition;	
-			
-		}
-		fclose(fd);
+		printf("satellite = %s, satellitePosition = %d\n", it->first.c_str(), it->second);
 	}
-	
 	return 0;
 }
 
