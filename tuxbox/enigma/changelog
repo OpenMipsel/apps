@@ -42,4 +42,4 @@
 200302190420 2 * Add full DiSEqC 1.1 support ( uncommitted switches )
 200302190420 3 * Fix support for Rotors behind DiSEqC Switches
 200302190420 6 * Show Streaminfo on doubleklick Info Button
-
+200302242113 4 * Volume&mute keys will work everywhere
