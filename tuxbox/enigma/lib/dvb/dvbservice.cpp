@@ -82,7 +82,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 			}
 			if (n->state!=eTransponder::stateOK)
 			{
-				eDebug("couldn't tune");
+				eDebug("couldn't tune (state is %x)", n->state);
 				service_state=ENOENT;
 				dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceFailed));
 				return;
@@ -97,10 +97,8 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 				/*emit*/ dvb.leaveTransponder(transponder);
 				transponder=n;
 				if (n->tune())
-				{
-					eDebug("tune failed");
 					dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceTuneFailed));
-				} else
+				else
 					dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceTune));
 			}
 			eDebug("<-- tuned");

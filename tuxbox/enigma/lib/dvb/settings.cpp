@@ -251,7 +251,7 @@ void eDVBSettings::saveServices()
 	FILE *f=fopen(CONFIGDIR "/enigma/services", "wt");
 	if (!f)
 		eFatal("couldn't open servicefile - create " CONFIGDIR "/enigma!");
-	fprintf(f, "eDVB services /1/\n");
+	fprintf(f, "eDVB services /2/\n");
 
 	getTransponders()->forEachTransponder(saveTransponder(f));
 	getTransponders()->forEachService(saveService(f));
@@ -289,11 +289,11 @@ void eDVBSettings::loadServices()
 		if (!strcmp(line, "end\n"))
 			break;
 		int dvb_namespace=-1, transport_stream_id=-1, original_network_id=-1;
-		sscanf(line, "%08x:%04x:%04x", &dvb_namespace, &transport_stream_id, &original_network_id);
+		sscanf(line, "%x:%x:%x", &dvb_namespace, &transport_stream_id, &original_network_id);
 		if (original_network_id == -1)
 			continue;
 		eTransponder &t=transponderlist->createTransponder(eDVBNamespace(dvb_namespace), eTransportStreamID(transport_stream_id), eOriginalNetworkID(original_network_id));
-		t.state=original_network_id;
+		t.state=eTransponder::stateOK;
 		while (!feof(f))
 		{
 			fgets(line, 256, f);
@@ -401,7 +401,7 @@ void eDVBSettings::saveBouquets()
 	FILE *f=fopen(CONFIGDIR "/enigma/bouquets", "wt");
 	if (!f)
 		eFatal("couldn't open bouquetfile - create " CONFIGDIR "/enigma!");
-	fprintf(f, "eDVB bouquets /1/\n");
+	fprintf(f, "eDVB bouquets /2/\n");
 	fprintf(f, "bouquets\n");
 	for (ePtrList<eBouquet>::iterator i(*getBouquets()); i != getBouquets()->end(); ++i)
 	{
@@ -409,7 +409,7 @@ void eDVBSettings::saveBouquets()
 		fprintf(f, "%0d\n", b->bouquet_id);
 		fprintf(f, "%s\n", b->bouquet_name.c_str());
 		for (ServiceReferenceDVBIterator s = b->list.begin(); s != b->list.end(); s++)
-			fprintf(f, "%04x:%04x:%04x:%d\n", s->getServiceID().get(), s->getTransportStreamID().get(), s->getOriginalNetworkID().get(), s->getServiceType());
+			fprintf(f, "%04x:%08x:%04x:%04x:%d\n", s->getServiceID().get(), s->getDVBNamespace().get(), s->getTransportStreamID().get(), s->getOriginalNetworkID().get(), s->getServiceType());
 		fprintf(f, "/\n");
 	}
 	fprintf(f, "end\n");
