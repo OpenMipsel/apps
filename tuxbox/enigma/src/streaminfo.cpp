@@ -139,8 +139,12 @@ static eString getCAName(int casysid, int always)
 	return "";
 }
 
-class siTags: public eLabel
+class siTags: public eWidget
 {
+	void willShow();
+	eString tagString, descrString;
+	bool ok;
+	eLabel *tags, *descr;
 public:
 	siTags(const eService *service, eWidget *parent);
 };
@@ -157,20 +161,51 @@ static eString getDescription(eString tag)
 		return _("genre");
 	else if (tag == "TDRC")
 		return _("year");
+	else if (tag == "TCOM")
+		return _("composer");
+	else if (tag == "TRCK")
+		return _("track");
+	else if (tag == "TLEN")
+		return _("length");
 	else
 		return tag;
 }
 
-siTags::siTags(const eService *service, eWidget *parent): eLabel(parent)
+siTags::siTags(const eService *service, eWidget *parent)
+: eWidget(parent), ok(false)
 {
 	if (!service->id3)
 		return;
-	eString description;
-	
+
+	tags = new eLabel(this);
+	descr = new eLabel(this);
 	for (std::map<eString,eString>::const_iterator i(service->id3->tags.begin());
 			i != service->id3->tags.end(); ++i)
-		description+=getDescription(i->first) + ":\t" + i->second+"\n";
-	setText(description);
+	{
+		tagString+=getDescription(i->first)+'\n';
+		if ( i->first.find("TLEN") != eString::npos )
+		{
+			int len = atoi( i->second.c_str() ) / 1000;
+			descrString+=eString().sprintf("%d:%02d", len/60, len%60)+'\n';
+		}
+		else
+			descrString+=i->second+'\n';
+	}
+}
+
+void siTags::willShow()
+{
+	if ( !ok )
+	{
+		ok=true;
+		tags->move(ePoint(0,0));
+		tags->resize( eSize(width()/3, height()) );
+		descr->move( ePoint(width()/3, 0) );
+		descr->resize( eSize((width()/3)*2, height()) );
+		tags->setText(tagString);
+		descr->setText(descrString);
+	}
+	eWidget::willShow();
 }
 
 class siPID: public eWidget
