@@ -42,6 +42,8 @@ class eSatelliteConfigurationManager: public eWindow, public existNetworks
 	eSatellite *getSat4LnbButton( const eButton* );
 	void createControlElements();
 	void addSatellite(eSatellite* sat);
+	void updateButtons(int comp);
+	void cleanupWidgets();
 	void repositionWidgets();
 	void closePressed();
 	void erasePressed();

@@ -135,7 +135,69 @@ void eSatelliteConfigurationManager::setComplexity(int complexity)
 {
 	eDebug("setComplexitiy = %d", complexity);
 	int i=0;
-	if (complexity < 3)
+
+	switch (complexity)
+	{
+	case 0:
+		deleteSatellitesAbove(1);
+		while (eTransponderList::getInstance()->getLNBs().size() < 1)
+			newPressed();
+		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
+			setSimpleDiseqc(it->getSatelliteList().first(), i);
+		break;
+	case 1:
+		deleteSatellitesAbove(2);
+		while (eTransponderList::getInstance()->getLNBs().size() < 2)
+			newPressed();
+		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
+			setSimpleDiseqc(it->getSatelliteList().first(), i);
+		break;
+	case 2:
+		deleteSatellitesAbove(4);
+		while (eTransponderList::getInstance()->getLNBs().size() < 4)
+			newPressed();
+		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
+			setSimpleDiseqc(it->getSatelliteList().first(), i);
+		break;
+	case 3:
+		break;
+	}
+	checkComplexity();
+	repositionWidgets();
+}
+
+int eSatelliteConfigurationManager::checkComplexity()
+{
+	int c=0, comp=0;
+	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
+	{
+		if (it->getSatelliteList().size() != 1)
+		{
+			eDebug("complexity is 3 since lnb %d has more than one satellite.", c);
+			updateButtons(3);
+			return 3;
+		} else
+			++c;
+		int dc=checkDiseqcComplexity(it->getSatelliteList().first());
+		eDebug("LNB %d has %d", c, dc);
+		if (dc > comp)
+			comp=dc;
+	}
+	if (c > 4)
+		comp=3;
+		
+	if ((comp < 2) && c>2)
+		comp=2;
+	if ((comp < 1) && c>1)
+		comp=1;
+
+	updateButtons(comp);
+	return comp;
+}
+
+void eSatelliteConfigurationManager::updateButtons(int comp)
+{
+	if (comp < 3)
 	{
 		lLNB->hide();
 		l22Khz->hide();
@@ -157,63 +219,6 @@ void eSatelliteConfigurationManager::setComplexity(int complexity)
 		button_new->show();
 		button_erase->show();
 	}
-
-	switch (complexity)
-	{
-	case 0:
-		deleteSatellitesAbove(1);
-		while (eTransponderList::getInstance()->getLNBs().size() < 1)
-			newPressed();
-		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
-			setSimpleDiseqc(it->getSatelliteList().first(), i);
-		break;
-	case 1:
-		deleteSatellitesAbove(2);
-		while (eTransponderList::getInstance()->getLNBs().size() < 2)
-			newPressed();
-		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
-			setSimpleDiseqc(it->getSatelliteList().first(), i);
-		break;
-	case 2:
-		deleteSatellitesAbove(4);		
-		while (eTransponderList::getInstance()->getLNBs().size() < 4)
-			newPressed();
-		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
-			setSimpleDiseqc(it->getSatelliteList().first(), i);
-		break;
-	case 3:
-		break;
-	}
-	checkComplexity();
-	repositionWidgets();
-}
-
-int eSatelliteConfigurationManager::checkComplexity()
-{
-	int c=0, comp=0;
-	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
-	{
-		if (it->getSatelliteList().size() != 1)
-		{
-			eDebug("complexity is 3 since lnb %d has more than one satellite.", c);
-			return 3;
-		} else
-			++c;
-		int dc=checkDiseqcComplexity(it->getSatelliteList().first());
-		eDebug("LNB %d has %d", c, dc);
-		if (dc > comp)
-			comp=dc;
-	}
-	if (c > 4)
-		comp=3;
-		
-	if ((comp < 2) && c>2)
-		comp=2;
-	if ((comp < 1) && c>1)
-		comp=1;
-
-	eDebug("complexity is %d", comp);
-	return comp;
 }
 
 int eSatelliteConfigurationManager::checkDiseqcComplexity(eSatellite *s)
@@ -294,7 +299,7 @@ start:
 				}
 
 		// redraw satellites
-		repositionWidgets();
+		cleanupWidgets();
 }
 
 void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr)
@@ -377,7 +382,8 @@ eSatellite *eSatelliteConfigurationManager::getSat4LnbButton( const eButton *b )
 #define VOLTAGE_POS_X  430
 
 #define POS_Y 0
-void eSatelliteConfigurationManager::repositionWidgets()
+
+void eSatelliteConfigurationManager::cleanupWidgets()
 {
 	for (std::list<SatelliteEntry*>::iterator It( deleteEntryList.begin() ); It != deleteEntryList.end();)
 	{
@@ -393,13 +399,22 @@ void eSatelliteConfigurationManager::repositionWidgets()
 		delete (**It).hilo;
 		delete (**It).fixed;
 		delete (**It).description;
-		// search Entry in Map;		
+
+		// search Entry in Map;
 		std::map< eSatellite*, SatelliteEntry >::iterator it( entryMap.begin() );
-		for ( ; it != entryMap.end() && &it->second != *It ; it++);
+		for ( ; it != entryMap.end() && &it->second != *It ; it++)
+			;
+
 		if (it != entryMap.end() )
-			entryMap.erase( it );
+				entryMap.erase( it );
+
 		It = deleteEntryList.erase(It);
 	}
+}
+
+void eSatelliteConfigurationManager::repositionWidgets()
+{
+	cleanupWidgets();
 	int count=0, y=POS_Y;
 
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
@@ -420,7 +435,10 @@ void eSatelliteConfigurationManager::repositionWidgets()
 			entry.fixed->move( ePoint(0, y) );
 			entry.description->move( ePoint(DESC_POS_X, y) );
 			entry.lnb->move( ePoint(LNB_POS_X, y) );
-			entry.lnb->setText( eString().sprintf("%i", count) );
+			entry.lnb->setText( eString().sprintf("%d", count) );
+			entry.fixed->setShortcut(eString().sprintf("%d", (y - POS_Y) / 40 + 1 ) );
+			entry.fixed->setShortcutPixmap(eString().sprintf("%d", (y - POS_Y) / 40 + 1 ));
+
 			entry.hilo->move( ePoint(HILO_POS_X, y) );
 			entry.voltage->move( ePoint(VOLTAGE_POS_X, y) );
 
@@ -580,13 +598,10 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 	b->setHelpText( _("press ok to goto LNB config"));
 	CONNECT(b->selected_id, eSatelliteConfigurationManager::lnbSelected);
 
-	int index=entryMap.size()+1;
 	sat.fixed=new eLabel(w_buttons);
 //	sat.fixed->setText(eString().sprintf(_("Sat %d"), index));
 		// don't ask...
-	sat.fixed->setShortcut(eString().sprintf("%d", index));
 	sat.fixed->setShortcutFocus(sat.sat);
-	sat.fixed->setShortcutPixmap(eString().sprintf("%d", index));
 	sat.fixed->resize(eSize(130, 30));
 
 	sat.description=new eLabel(w_buttons);
@@ -734,25 +749,20 @@ int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
 eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	:sat(sat)
 {
-	eDebug("bla1");
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eLNBSetup"))
 		eFatal("skin load of \"eLNBSetup\" failed");
-	eDebug("bla2");
 	DiSEqCPage = new eDiSEqCPage( this, sat );
 	DiSEqCPage->setLCD( lcdTitle, lcdElement );
 	LNBPage = new eLNBPage( this, sat );
 	LNBPage->setLCD( lcdTitle, lcdElement );
-	eDebug("bla3");    
 	DiSEqCPage->hide();
 	LNBPage->hide();
 	mp.addPage(LNBPage);
 	mp.addPage(DiSEqCPage);
-	eDebug("bla4");
 // here we can not use the Makro CONNECT ... slot (*this, .... is here not okay..
 	LNBPage->lnb_list->selchanged.connect( slot( *LNBPage, &eLNBPage::lnbChanged) );
 	LNBPage->lnb_list->selchanged.connect( slot( *DiSEqCPage, &eDiSEqCPage::lnbChanged) );
-	eDebug("bla5");   
 //	CONNECT( DiSEqCPage->next->selected, eLNBSetup::onNext );
 	CONNECT( LNBPage->next->selected, eLNBSetup::onNext );
 	CONNECT( DiSEqCPage->prev->selected, eLNBSetup::onPrev );  
@@ -810,7 +820,6 @@ void eLNBSetup::onSave()
 	else
 		close(0); // we must not reposition...
 
-	eDebug("flush");
 	eTransponderList::getInstance()->writeLNBData();
 	eFrontend::getInstance()->Reset();
 }
