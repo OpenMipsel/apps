@@ -2,6 +2,7 @@
 
 #include <enigma.h>
 #include <enigma_main.h>
+#include <sselect.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/elabel.h>
@@ -43,7 +44,7 @@ eParentalSetup::eParentalSetup():
 {
 	setText(_("Parental setup"));
 	cmove(ePoint(170, 186));
-	cresize(eSize(400, 210));
+	cresize(eSize(400, 260));
 
 	loadSettings();
 
@@ -81,11 +82,21 @@ eParentalSetup::eParentalSetup():
 	if ( !ssetuplock )
 		changeSetupPin->hide();
 
+	hidelocked=new eCheckbox(this, shidelocked, 1);
+	hidelocked->setText(_("Hide locked services"));
+	hidelocked->move(ePoint(20, 120));
+	hidelocked->resize(eSize(370, 30));
+	hidelocked->setHelpText(_("don't show locked services in any list"));
+	hidelocked->loadDeco();
+	CONNECT(hidelocked->checked, eParentalSetup::hidelockChecked );
+	if ( !sparentallock )
+		hidelocked->hide();
+
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 125));
+	ok->move(ePoint(20, 175));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -103,16 +114,23 @@ eParentalSetup::eParentalSetup():
 void eParentalSetup::plockChecked(int i)
 {
 	if ( i && !changeParentalPin->isVisible() )
+	{
 		changeParentalPin->show();
+		hidelocked->show();
+	}
 	else
 	{
 		if ( checkPin( parentalpin, _("parental") ) )
 		{
 			parentalpin=0;
 			changeParentalPin->hide();
+			hidelocked->hide();
 		}
 		else
+		{
+			hidelocked->show();
 			parentallock->setCheck(1);
+		}
 	}
 }
 
@@ -192,6 +210,10 @@ void eParentalSetup::changePin(eButton *p)
 	mb.hide();
 }
 
+void eParentalSetup::hidelockChecked(int i)
+{
+	shidelocked = i;
+}
 
 void eParentalSetup::loadSettings()
 {
@@ -202,14 +224,19 @@ void eParentalSetup::loadSettings()
 	if (eConfig::getInstance()->getKey("/elitedvb/pins/setuplock", setuppin))
 		setuppin=0;
 
+	if (eConfig::getInstance()->getKey("/elitedvb/hidelocked", shidelocked ))
+		shidelocked=0;
+
 	ssetuplock = setuppin != 0;
 }
 
 void eParentalSetup::saveSettings()
 {
 	eConfig::getInstance()->setKey("/elitedvb/pins/setuplock", setuppin);
+	eConfig::getInstance()->setKey("/elitedvb/hidelocked", shidelocked);
 	eConfig::getInstance()->setParentalPin(parentalpin);
 	eConfig::getInstance()->flush();
+	eZap::getInstance()->getServiceSelector()->actualize();
 }
 
 eParentalSetup::~eParentalSetup()

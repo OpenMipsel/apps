@@ -107,8 +107,6 @@ public:
 	eServiceSelector();
 	~eServiceSelector();
 
-	Signal0<void> rotateRoot;
-
 	enum { listAll, listSatellites, listProvider, listBouquets };
 	Signal1<eServicePath,int> getRoot;
 

@@ -15,7 +15,7 @@ void eServiceCacheBase::enterDirectory(const eServiceReference &parent, Signal1<
 	node->addRef();
 	for (std::list<eServiceReference>::iterator i(node->content.begin()); i != node->content.end(); ++i)
 	{
-/*		if ( pLockActive && i->isLocked() )
+/*		if ( (pLockActive & 2) && i->isLocked() )
 			continue;*/
 		callback(*i);
 	}

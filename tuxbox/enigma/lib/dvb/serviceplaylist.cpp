@@ -264,7 +264,7 @@ void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signa
 	
 		for (std::list<ePlaylistEntry>::const_iterator i(service->getConstList().begin()); i != service->getConstList().end(); ++i)
 		{
-/*			if ( pLockActive && i->service.isLocked() )
+/*			if ( (pLockActive & 2) && i->service.isLocked() )
 				continue;*/
 			callback(*i);
 		}
@@ -275,7 +275,7 @@ void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signa
 		range=playlists.equal_range(dir);
 	while (range.first != range.second)
 	{
-/*		if ( pLockActive && range.first->second.isLocked() )
+/*		if ( (pLockActive & 2) && range.first->second.isLocked() )
 			continue;*/
 		callback(range.first->second);
 		++range.first;

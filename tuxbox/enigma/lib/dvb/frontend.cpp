@@ -153,7 +153,8 @@ int eFrontend::Status()
 	if ((type<feCable) && (secfd<0))
 		return secfd;
 	FrontendStatus status=0;
-	ioctl(fd, FE_READ_STATUS, &status);
+	if ( ioctl(fd, FE_READ_STATUS, &status) < 0 )
+		eDebug("FE_READ_STATUS failed (%m)");
 	return status;
 }
  

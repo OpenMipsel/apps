@@ -641,7 +641,6 @@ int TransponderScan::exec(tState initial)
 			current = &select;
 			select.show();
 			state = (tState) select.exec();
-			eDebug("state = %d", (int) state);
 			current=0;
 			select.hide();
 			break;
@@ -651,7 +650,7 @@ int TransponderScan::exec(tState initial)
 			eTransponder transponder(*eDVB::getInstance()->settings->getTransponders());
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 
-			if ( initial==stateManual )
+			if ( oldTp.isValid() )
 				transponder=oldTp;
 			else if (sapi && sapi->transponder)
 				transponder=*sapi->transponder;

@@ -826,15 +826,15 @@ struct eServiceHandlerDVB_addService
 	Signal1<void,const eServiceReference&> &callback;
 	int type;
 	int DVBNamespace;
-	int pLockActive;
+//	int pLockActive;
 	eServiceHandlerDVB_addService(Signal1<void,const eServiceReference&> &callback, int type, int DVBNamespace)
-	: callback(callback), type(type), DVBNamespace(DVBNamespace), pLockActive(0)
+	: callback(callback), type(type), DVBNamespace(DVBNamespace)//, pLockActive(0)
 	{
 //		pLockActive = eConfig::getInstance()->pLockActive();
 	}
 	void operator()(const eServiceReference &service)
 	{
-/*		if ( pLockActive && service.isLocked() )
+/*		if ( (pLockActive & 2) && service.isLocked() )
 			return;*/
 		eService *s = eTransponderList::getInstance()->searchService( service );
 		if ( !s )  // dont show "removed services"

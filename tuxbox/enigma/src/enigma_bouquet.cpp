@@ -3,6 +3,7 @@
 #include <enigma_main.h>
 #include <sselect.h>
 #include <lib/dvb/servicestructure.h>
+#include <lib/dvb/frontend.h>
 #include <lib/gui/actions.h>
 
 class eModeSelector: public eListBoxWindow<eListBoxEntryText>
@@ -82,10 +83,22 @@ void eZapBouquetSetup::editModeSelected()
 		eServiceReference ref = sel.getSelected();
 
 		// set new service selector path... ( bouquet list root... )
-		if ( ret == eZapMain::modeTV )
-			sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
-		else
-			sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2) );
+
+		// when satellite frontend exist we show the satellites root
+		if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+		{
+			if ( ret == eZapMain::modeTV )
+				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
+			else
+				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2) );
+		}
+		else  // cable or dvb-t
+		{
+			if ( ret == eZapMain::modeTV )
+				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF) );
+			else
+				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF) );
+		}
 
 		// save current service selector style
 		int sstyle = sel.getStyle();

@@ -135,7 +135,7 @@ int eZapPlugins::exec()
 	for ( int i = 0; i < 2; i++ )
 	{
 		DIR *d=opendir(PluginPath[i].c_str());
-		if (!d && i)
+		if (!d && !i)
 		{
 			eString err;
 			err.sprintf(_("Couldn't read plugin directory %s"), PluginPath[i].c_str() );

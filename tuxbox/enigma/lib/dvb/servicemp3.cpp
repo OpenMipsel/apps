@@ -663,7 +663,6 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			br/=128;
 			br*=message.parm;
 			offset=input.size();
-			input.clear();
 			if ( type == codecMPG )
 				offset+=br/125;
 			else
@@ -674,12 +673,11 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			if (offset<0)
 				offset=0;
 			eDebug("so final offset is %d", offset);
-		} else
-		{
-			input.clear();
-			offset=message.parm;
 		}
-		
+		else
+			offset=message.parm;
+
+		input.clear();
 		if ( ::lseek(sourcefd, offset, SEEK_SET) < 0 )
 			eDebug("seek error (%m)");
 		dspSync();

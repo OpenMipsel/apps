@@ -108,7 +108,9 @@ a:
 		if (!maxsamples)
 			break;
 		unsigned int code=getBits(8);
-//		eDebug("startcode: %08x\n", code|0x100);
+#ifdef DEMUX_DEBUG
+		eDebug("startcode: %08x\n", code|0x100);
+#endif
 		switch(code)
 		{
 			case 0xb9: // MPEG_program_end_code
@@ -205,7 +207,6 @@ a:
 				break;
 			}
 #endif
-		  // if (((code & 0xE0) == 0xC0) || ((code & 0xF0)==0xE0))
 			case 0xBD ... 0xFF:
 			{
 //				eDebug("PES: %x", code);
@@ -221,23 +222,22 @@ a:
 				buffer[p++]=length>>8;
 				buffer[p++]=length&0xFF;
 
-					// empty bitbuffer
-				while (length && remaining)
+				while ( length && remaining )
 				{
 					buffer[p++]=getBits(8);
-					length--;
+					--length;
 				}
 
-				if ( minFrameLength < length )
-					minFrameLength = length;
-
-				// now we are synced (if still something to read)
 				if ( length )
 				{
 					if ( input.read(buffer+p, length) != length )
+					{
 						eDebug("read Error");
+						minFrameLength+=4096;
+					}
 					p+=length;
 				}
+
 				if (code == 0xE0)
 				{
 					video.write(buffer, p);
@@ -248,6 +248,8 @@ a:
 					audio.write(buffer, p);
 					written+=p;
 				}
+				else
+					eDebug("code == %02x", code );
 				break;
 			}
 			default:
@@ -265,7 +267,7 @@ void eMPEGDemux::resync()
 
 int eMPEGDemux::getMinimumFramelength()
 {
-	return minFrameLength*15;
+	return minFrameLength;
 }
 
 int eMPEGDemux::getAverageBitrate()

@@ -95,7 +95,7 @@ struct serviceSelectorActions
 {
 	eActionMap map;
 	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
-			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio,
+			addService, addServiceToUserBouquet, modeTV, modeRadio,
 			modeFile, toggleStyle, toggleFocus, gotoPrevMarker, gotoNextMarker,
 			showAll, showSatellites, showProvider, showBouquets, deletePressed,
 			markPressed, renamePressed, newMarkerPressed;
@@ -106,7 +106,6 @@ struct serviceSelectorActions
 		pathUp(map, "pathUp", _("go up a directory"), eAction::prioDialog),
 		showEPGSelector(map, "showEPGSelector", _("shows the EPG selector for the highlighted channel"), eAction::prioDialog),
 		showMenu(map, "showMenu", _("show service selector menu"), eAction::prioDialog),
-		toggleRoot(map, "toggleRoot", _("toggle between provider and bouquet list"), eAction::prioDialog),
 		addService(map, "addService", _("add service to playlist"), eAction::prioDialog),
 		addServiceToUserBouquet(map, "addServiceToUserBouquet", _("add service to a specific bouquet"), eAction::prioDialog),
 		modeTV(map, "modeTV", _("switch to TV mode"), eAction::prioDialog),
@@ -312,6 +311,7 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 					}
 					if (sdescr.length())
 					{
+						sdescr.removeChars('\n').removeChars('\t');
 						curEventId = e->event_id;
 						descrPara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
 						descrPara->setFont( descrFont );
@@ -379,11 +379,14 @@ void eServiceSelector::setKeyDescriptions( bool editMode )
 
 void eServiceSelector::addService(const eServiceReference &ref)
 {
+	if ( ref.isLocked() && (eConfig::getInstance()->pLockActive() & 2) )
+		return;
+
 	int flags=serviceentryflags;
 
 	if ( ref.flags & eServiceReference::isDirectory)
 		flags &= ~ eListBoxEntryService::flagShowNumber;
-	
+
 	new eListBoxEntryService(services, ref, flags);
 }
 
@@ -441,6 +444,12 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	services->beginAtomic();
 	services->clearList();
 
+	if ( eZapMain::getInstance()->getMode() == eZapMain::modeFile
+		&& !movemode && path.size() > 1 && style != styleCombiColumn )
+		goUpEntry = new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
+	else
+		goUpEntry = 0;
+
 /*
 	if (!movemode && style != styleCombiColumn )
 	{
@@ -453,10 +462,6 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 			alt = !strcmp(sstyle, "sselect_classic");
 			free(sstyle);
 		}
-		if (path.size() > 1 && !alt )
-			goUpEntry = new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
-		else
-			goUpEntry = 0;
 	}*/
 	
 	eServiceInterface *iface=eServiceInterface::getInstance();
@@ -470,7 +475,7 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 
 	if (ref.type == eServicePlaylistHandler::ID) // playlists have own numbers
 		serviceentryflags|=eListBoxEntryService::flagOwnNumber;
-	
+
 	iface->enterDirectory(ref, signal);
 	iface->leaveDirectory(ref);	// we have a copy.
 
@@ -1044,8 +1049,6 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				/*emit*/ showMenu(this);
 				show();
 			}
-			else if (event.action == &i_serviceSelectorActions->toggleRoot && !movemode )
-				/*emit*/ rotateRoot();
 			else if (event.action == &i_serviceSelectorActions->addService && !movemode && !editMode)
 				/*emit*/ addServiceToPlaylist(selected);
 			else if (event.action == &i_serviceSelectorActions->addServiceToUserBouquet && !movemode && !editMode)
@@ -1488,7 +1491,6 @@ eServiceSelector::eServiceSelector()
 	addActionToHelpList(&i_serviceSelectorActions->showMenu);
 	addActionToHelpList(&i_serviceSelectorActions->toggleStyle);
 	addActionToHelpList(&i_serviceSelectorActions->toggleFocus);
-	addActionToHelpList(&i_serviceSelectorActions->toggleRoot);
 	addActionToHelpList(&i_serviceSelectorActions->gotoPrevMarker);
 	addActionToHelpList(&i_serviceSelectorActions->gotoNextMarker);
 	addActionToHelpList(&i_serviceSelectorActions->showEPGSelector);

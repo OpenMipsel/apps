@@ -442,7 +442,7 @@ private:
 
 	static eZapMain *instance;
 
-	eServicePath modeLast[modeEnd][2];
+	eServicePath modeLast[modeEnd];
 
 	int mode,             // current mode .. TV, Radio, File
 			state;
@@ -524,13 +524,11 @@ public:
 	void setMode(int mode, int user=0); // user made change?
 	int getMode() { return mode; }
 
-	void rotateRoot();
 	void toggleTimerMode();
 	int toggleEditMode(eServiceSelector *, int mode=-1);
 	void toggleMoveMode(eServiceSelector *);
 	void handleStandby(int i=0);
 
-	void setNewServiceSelectorRoot( eServiceReference root=eServiceReference(), eServiceReference path=eServiceReference() );
 	void setServiceSelectorPath(eServicePath path);
 	void getServiceSelectorPath(eServicePath &path);
 

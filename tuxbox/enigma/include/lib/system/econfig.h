@@ -12,13 +12,22 @@ public:
 	static eConfig *getInstance() { return instance; }
 	void setParentalPin( int pin )
 	{
-		 ppin = pin;
-		 setKey("/elitedvb/pins/parentallock", ppin );
+		ppin = pin;
+		setKey("/elitedvb/pins/parentallock", ppin );
 	}
 	int getParentalPin() { return ppin; }
-	bool pLockActive()
+	int pLockActive()
 	{
-		return ppin && locked;
+		int tmp = ppin && locked;
+		if ( tmp )
+		{
+			int hidelocked=0;
+			if (eConfig::getInstance()->getKey("/elitedvb/hidelocked", hidelocked ))
+				hidelocked=0;
+			if ( hidelocked )
+				tmp |= 2;
+		}
+		return tmp;
 	}
 	eConfig();
 	~eConfig();

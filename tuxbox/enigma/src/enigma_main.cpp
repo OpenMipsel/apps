@@ -1270,38 +1270,16 @@ void eZapMain::reloadPaths(int reset)
 	for (int m=modeTV; m < modeEnd; m++)
 	{
 		char* str;
-		// normale dvb bouquet pathes...
-		if ((!reset) && !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path0", m).c_str(), str)
-				&& eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", m).c_str(), str) )
+		if ( !reset && !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path0", m).c_str(), str ) )
 		{
-			modeLast[m][0].setString(str);
+			modeLast[m].setString(str);
 			//			eDebug(str);
 			free(str);
 		}
 		else  // no path in registry... create default..
 		{
-			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
-			// 3 roots rotiert wird ( history ).. kann irgendwann wieder raus..
-			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", m ).c_str() );
-
-			modeLast[m][0]=eServiceStructureHandler::getRoot(m+1);
-			modeLast[m][0].down( eServiceReference() );
-		}
-		if ((!reset) && !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path1", m).c_str(), str)
-				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", m).c_str(), str) )
-		{
-			modeLast[m][1].setString(str);
-			//			eDebug(str);
-			free(str);
-		}
-		else  // no path in registry... create default..
-		{
-			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
-			// 3 roots rotiert wird ( history )
-			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", m ).c_str());
-
-			modeLast[m][1]=(m==modeTV)?userTVBouquetsRef:(m==modeRadio)?userRadioBouquetsRef:playlistref;
-			modeLast[m][1].down( eServiceReference() );
+			modeLast[m]=eServiceStructureHandler::getRoot(m+1);
+			modeLast[m].down( eServiceReference() );
 		}
 	}
 
@@ -1311,7 +1289,7 @@ void eZapMain::reloadPaths(int reset)
 		style=eServiceSelector::styleSingleColumn;  // default we use single Column Style
 
 	eZap::getInstance()->getServiceSelector()->setStyle(style);
-		
+
 	if (reset)
 	{
 		int oldm=mode;
@@ -1541,7 +1519,6 @@ eZapMain::eZapMain()
 	CONNECT(sel->removeServiceFromUserBouquet, eZapMain::removeServiceFromUserBouquet );
 	CONNECT(sel->showMenu, eZapMain::showServiceMenu);
 	CONNECT_2_1(sel->setMode, eZapMain::setMode, 0);
-	CONNECT(sel->rotateRoot, eZapMain::rotateRoot);
 	CONNECT(sel->moveEntry, eZapMain::moveService);
 	CONNECT(sel->showMultiEPG, eZapMain::showMultiEPG);
 	CONNECT(sel->showEPGList, eZapMain::showEPGList);
@@ -1574,8 +1551,8 @@ eZapMain::eZapMain()
 
 	if ( playlist->current != playlist->getConstList().end() )
 		playService( playlist->current->service, psDontAdd|psSeekPos);  // then play the last service
-	else if ( modeLast[mode][0].current() )
-		playService( modeLast[mode][0].current() ,0 );  // then play the last service
+	else if ( modeLast[mode].current() )
+		playService( modeLast[mode].current() ,0 );  // then play the last service
 
 	startMessages();
 
@@ -1606,7 +1583,7 @@ eZapMain::~eZapMain()
 
 	// get current selected serviceselector path
 	if ( mode != -1 ) // valid mode?
-		getServiceSelectorPath(modeLast[mode][0]);
+		getServiceSelectorPath(modeLast[mode]);
 
   // save last mode to registry
 	eConfig::getInstance()->setKey("ezap/ui/lastmode", mode );
@@ -1614,11 +1591,8 @@ eZapMain::~eZapMain()
 	// save for all modes the servicePath to registry
 	for (mode=modeTV; mode < modeEnd; mode++ )
 	{
-		for (int i=0; i < 2; i++)
-		{
-			eString str = modeLast[mode][i].toString();
-			eConfig::getInstance()->setKey( eString().sprintf("/ezap/ui/modes/%d/path%d", mode, i).c_str(), str.c_str() );
-		}
+		eString str = modeLast[mode].toString();
+		eConfig::getInstance()->setKey( eString().sprintf("/ezap/ui/modes/%d/path0", mode).c_str(), str.c_str() );
 	}
 
 	if (instance == this)
@@ -2037,50 +2011,6 @@ void eZapMain::handleNVODService(SDTEntry *sdtentry)
 	eServiceInterface::getInstance()->removeRef(eServiceInterface::getInstance()->service);
 }
 
-void eZapMain::setNewServiceSelectorRoot( eServiceReference root, eServiceReference path )
-{
-	if ( root )
-	{
-start:
-		int cnt=0;
-		int changed=0;
-		eServicePath p=modeLast[mode][0];
-		eServiceReference ref = p.current();
-		p.up();
-
-// evtl schon das passende root gefunden
-		while ( p.current() != root )
-		{
-			while (p.size() > 1 )
-				p.up();
-
-			if( p.current() == root )  // gefunden...
-			{
-				changed=1;
-				break;
-			}
-
-			rotateRoot();
-			p=modeLast[mode][0];
-
-// START WORKAROUND.. EIGENTLICH DARF DAS NICHT PASSIEREN
-			if ( ++cnt > 5 )		// irgendwas läuft hier ganz gewaltig schief...
-			{
-				reloadPaths(1);
-				// da stellen wir doch ganz gemein die roots wieder her
-				// besser als in der endlos loop zu verbleiben....
-				goto start;
-		// also wenns dann immer noch nicht geht..
-		// dann ist eh alles kaputt.. und es gibt ne endlos loop
-			}
-		}
-		if ( path )
-			p.down( path );
-		p.down( changed?eServiceReference():ref );
-		setServiceSelectorPath(p);
-	}
-}
-
 void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceReference path, int newmode )
 {
 	hide();
@@ -2095,19 +2025,15 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 	e->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 #endif
 
-	getServiceSelectorPath(modeLast[mode][0]);
+	getServiceSelectorPath(modeLast[mode]);
 
-	eServicePath savedmode[modeEnd][2];
+	eServicePath savedmode[modeEnd];
 	for ( int m=modeTV; m < modeEnd; m++ )
-		for ( int i=0; i < 2; i++ )
-			savedmode[m][i]=modeLast[m][i];
+			savedmode[m]=modeLast[m];
 	int oldmode=mode;
 
 	if ( newmode != -1 && newmode != mode )
 		setMode(newmode);
-
-	// this only have a effect, wher root is != eServiceReference()
-	setNewServiceSelectorRoot( root, path );
 
 	e->selectService(eServiceInterface::getInstance()->service);
 	const eServiceReference *service = e->choose(dir); // reset path only when NOT showing specific list
@@ -2128,13 +2054,12 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 		if ( !entered_playlistmode )
 		{
 			for ( int m=modeTV; m < modeEnd; m++ )
-				for ( int i=0; i < 2; i++ )
-					modeLast[m][i]=savedmode[m][i];
+					modeLast[m]=savedmode[m];
 
 			if ( mode != oldmode ) // restore mode..
 				setMode(oldmode);
 			else // restore old path
-				setServiceSelectorPath(modeLast[mode][0]);
+				setServiceSelectorPath(modeLast[mode]);
 		}
 		else // push playlistref to top of current path
 		{
@@ -2154,7 +2079,7 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 
 	if ( handleState() )
 	{
-		getServiceSelectorPath(modeLast[mode][0]);
+		getServiceSelectorPath(modeLast[mode]);
 
 		if (eZap::getInstance()->getServiceSelector()->getPath().current() != playlistref)
 		{
@@ -2179,7 +2104,7 @@ void eZapMain::nextService(int add)
 		if (!service)
 			return;
 		else
-			getServiceSelectorPath( modeLast[mode][0] );
+			getServiceSelectorPath( modeLast[mode] );
 
 		if (service->flags & eServiceReference::isDirectory)
 			return;
@@ -2201,7 +2126,7 @@ void eZapMain::prevService()
 		if (!service)
 			return;
 		else
-			getServiceSelectorPath( modeLast[mode][0] );
+			getServiceSelectorPath( modeLast[mode] );
 
 		if (service->flags & eServiceReference::isDirectory)
 			return;
@@ -3419,15 +3344,6 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 		eZap::getInstance()->getServiceSelector()->actualize();
 }
 
-void eZapMain::rotateRoot()
-{
-	eServicePath tmp;
-	getServiceSelectorPath(tmp); // save current path
-	modeLast[mode][0]=modeLast[mode][1];
-	modeLast[mode][1]=tmp;
-	setServiceSelectorPath(modeLast[mode][0]); // set new path
-}
-
 void eZapMain::addService(const eServiceReference &service)
 {
 	if (service.flags & eServiceReference::mustDescent) // recursive add services..
@@ -4124,7 +4040,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 #ifndef DISABLE_FILE
 		else if (event.action == &i_enigmaMainActions->showRecMovies)
 			showServiceSelector( eServiceSelector::dirLast, eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile), recordingsref, modeFile );
-		else if (event.action == &i_enigmaMainActions->showPlaylist && mode == modeFile)
+		else if (event.action == &i_enigmaMainActions->showPlaylist)
 			showServiceSelector( -1, playlistref );
 #endif
 		else if (event.action == &i_enigmaMainActions->modeRadio)
@@ -4975,7 +4891,7 @@ void eZapMain::setMode(int newmode, int user)
 
 		// save oldMode
 		if (mode != -1)
-			getServiceSelectorPath(modeLast[mode][0]);
+			getServiceSelectorPath(modeLast[mode]);
 
 		if (mode == newmode)
 			user=0;
@@ -4986,13 +4902,13 @@ void eZapMain::setMode(int newmode, int user)
 		if (user)
 		{
 //			eDebug("playservice");
-			playService(modeLast[mode][0].current(), psDontAdd|psSeekPos);
+			playService(modeLast[mode].current(), psDontAdd|psSeekPos);
 		}
 
 		if (mode != -1)
 		{
 //			eDebug("setServiceSelectorPath");
-			setServiceSelectorPath(modeLast[mode][0]);
+			setServiceSelectorPath(modeLast[mode]);
 		}
 		eZap::getInstance()->getServiceSelector()->setKeyDescriptions();
 	}

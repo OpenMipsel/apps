@@ -9,7 +9,7 @@
 #include <lib/dvb/eaudio.h>
 
 eDVBServiceController::eDVBServiceController(eDVB &dvb)
-: eDVBController(dvb)
+: eDVBController(dvb), DVBCI(0), DVBCI2(0)
 {
 	CONNECT(dvb.tPAT.tableReady, eDVBServiceController::PATready);
 	CONNECT(dvb.tPMT.tableReady, eDVBServiceController::PMTready);
