@@ -390,7 +390,7 @@ void eDVBSettings::saveBouquets()
 	FILE *f=fopen(CONFIGDIR "/enigma/bouquets", "wt");
 	if (!f)
 		eFatal("couldn't open bouquetfile - create " CONFIGDIR "/enigma!");
-	fprintf(f, "eDVB bouquets /1/");
+	fprintf(f, "eDVB bouquets /1/\n");
 	fprintf(f, "bouquets\n");
 	for (ePtrList<eBouquet>::iterator i(*getBouquets()); i != getBouquets()->end(); ++i)
 	{
