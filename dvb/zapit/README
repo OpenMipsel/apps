@@ -5,3 +5,7 @@ apps/dvb/zapit/lib
 apps/dvb/zapit/include/zapit/client
 apps/dvb/zapit/src/pzapit.cpp
 apps/dvb/zapit/src/zapci
+apps/dvb/zapit/src/bouquets.cpp
+apps/dvb/zapit/src/channel.cpp
+apps/dvb/zapit/src/dvbstring.cpp
+apps/dvb/zapit/src/xmlinterface.cpp
