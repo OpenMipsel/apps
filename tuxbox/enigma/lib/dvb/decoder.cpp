@@ -604,6 +604,8 @@ void Decoder::addCADescriptor(__u8 *descriptor)
 
 int Decoder::displayIFrame(const char *frame, int len)
 {
+	(void)frame;
+	(void)len;
 /*	int fd=::open("/dev/video", O_WRONLY);
 	eDebug("opening /dev/video: %d", fd);
 	if (fd < 0)

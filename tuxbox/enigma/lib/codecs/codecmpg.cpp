@@ -62,6 +62,7 @@ eMPEGDemux::eMPEGDemux(eIOBuffer &input, eIOBuffer &video, eIOBuffer &audio)
 int eMPEGDemux::decodeMore(int last, int maxsamples)
 {
 	int written=0;
+	(void)last;
 	
 	while (written < maxsamples)
 	{
