@@ -166,23 +166,9 @@ struct enigmaStandbyActions
 
 eAutoInitP0<enigmaStandbyActions> i_enigmaStandbyActions(eAutoInitNumbers::actions, "enigma standby actions");
 
-class eZapStandby: public eWidget
-{
-	static eZapStandby *instance;
-	eServiceReference ref;
-	int rezap;
-protected:
-	int eventHandler(const eWidgetEvent &);
-public:
-	void wakeUp(int norezap);
-	static eZapStandby *getInstance() { return instance; }
-	eZapStandby();
-	~eZapStandby()
-	{
-		instance=0;
-	}
-};
 eZapStandby* eZapStandby::instance=0;
+
+Signal0<void> eZapStandby::enterStandby, eZapStandby::leaveStandby;
 
 void eZapStandby::wakeUp(int norezap)
 {
@@ -204,6 +190,7 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		return 0;
 	case eWidgetEvent::execBegin:
 	{
+		/*emit*/ enterStandby();
 #ifndef DISABLE_LCD
 		eDBoxLCD::getInstance()->switchLCD(0);
 		eZapLCD *pLCD=eZapLCD::getInstance();
@@ -276,6 +263,7 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 			::ioctl(fd,11,&stdby);
 			::close(fd);
 		}
+		/*emit*/ leaveStandby();
 		break;
 	}
 	default:

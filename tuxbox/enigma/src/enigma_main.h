@@ -1,8 +1,8 @@
 #ifndef __enigma_main_h
 #define __enigma_main_h
 
-#include <sselect.h>
-#include <enigma_lcd.h>
+#include <src/sselect.h>
+#include <src/enigma_lcd.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/edvb.h>
@@ -33,6 +33,24 @@ class eRecordingStatus;
 class ePlaylistEntry;
 class eHelpWindow;
 class eEPGWindow;
+
+class eZapStandby: public eWidget
+{
+	static eZapStandby *instance;
+	eServiceReference ref;
+	int rezap;
+protected:
+	int eventHandler(const eWidgetEvent &);
+public:
+	void wakeUp(int norezap);
+	static eZapStandby *getInstance() { return instance; }
+	static Signal0<void> enterStandby, leaveStandby;
+	eZapStandby();
+	~eZapStandby()
+	{
+		instance=0;
+	}
+};
 
 class eZapMessage
 {
