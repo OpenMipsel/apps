@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.6 2003/05/11 15:24:26 digi_casi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.7 2003/05/16 19:04:12 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -450,6 +450,8 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 
 #define UNKNOWN_PROVIDER_NAME "Unknown Provider"
 
+ //scanifostruct scaninfo;
+
 	if (providerName == "")
 		providerName = CDVBString(UNKNOWN_PROVIDER_NAME, strlen(UNKNOWN_PROVIDER_NAME)).getContent();
 
@@ -458,7 +460,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		lastProviderName = providerName;
 		eventServer->sendEvent(CZapitClient::EVT_SCAN_PROVIDER, CEventServer::INITID_ZAPIT, (void *) lastProviderName.c_str(), lastProviderName.length() + 1);
 	}
-	
+
 	switch (service_type) {
 	case ST_DIGITAL_TELEVISION_SERVICE:
  		found_tv_chans++;
@@ -470,7 +472,20 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
  		break;
  	case ST_NVOD_REFERENCE_SERVICE:
  	case ST_NVOD_TIME_SHIFTED_SERVICE:
- 	{
+ 	case ST_DATA_BROADCAST_SERVICE:
+ 	case ST_RCS_MAP:
+ 	case ST_RCS_FLS:
+ 	default:
+ 		found_data_chans++;
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_DATA_CHAN, CEventServer::INITID_ZAPIT, &found_data_chans, sizeof(found_data_chans));
+ 		break;
+ 	}
+ 	switch (service_type) {
+ 	case ST_DIGITAL_TELEVISION_SERVICE:
+	case ST_DIGITAL_RADIO_SOUND_SERVICE:
+	case ST_NVOD_REFERENCE_SERVICE:
+	case ST_NVOD_TIME_SHIFTED_SERVICE:
+	{
 		CBouquet* bouquet;
 		int bouquetId;
 
@@ -485,16 +500,22 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
  		eventServer->sendEvent(CZapitClient::EVT_SCAN_SERVICENAME, CEventServer::INITID_ZAPIT, (void *) lastServiceName.c_str(), lastServiceName.length() + 1);
 
 		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, satelliteName, satellitePosition));
+
+ // thegoodguy schau dir das hier mal an
+ //		scaninfo  test;
+ //		test.found_tv_chans = found_tv_chans;
+ //		test.found_radio_chans = found_radio_chans;
+ //		test.found_data_chans = found_data_chans;
+ //		strncpy(test.ServiceName,serviceName.c_str(),30);
+ //		test.ServiceName = serviceName;
+ //		INFO ( " Sendername : %s ! " , test.ServiceName);
+ //		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_A_CHAN, CEventServer::INITID_ZAPIT, &test, sizeof(test));
+
 		break;
 	}
- 	case ST_DATA_BROADCAST_SERVICE:
- 	case ST_RCS_MAP:
- 	case ST_RCS_FLS:
- 	default:
- 		found_data_chans++;
- 		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_DATA_CHAN, CEventServer::INITID_ZAPIT, &found_data_chans, sizeof(found_data_chans));
- 		break;
- 	}
+	default:
+		break;
+	}
 }
 
 /* 0x49 */
