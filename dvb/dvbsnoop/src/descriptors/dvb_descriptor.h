@@ -1,5 +1,5 @@
 /*
-$Id: dvb_descriptor.h,v 1.3.2.3 2003/11/26 20:38:04 coronas Exp $ 
+$Id: dvb_descriptor.h,v 1.3.2.4 2003/11/27 08:40:30 coronas Exp $ 
 
 
  DVBSNOOP
@@ -17,8 +17,11 @@ $Id: dvb_descriptor.h,v 1.3.2.3 2003/11/26 20:38:04 coronas Exp $
 
 
 $Log: dvb_descriptor.h,v $
-Revision 1.3.2.3  2003/11/26 20:38:04  coronas
-Compilefix rel-branch/Update from HEAD
+Revision 1.3.2.4  2003/11/27 08:40:30  coronas
+Sync with HEAD
+
+Revision 1.5  2003/11/26 23:54:47  rasc
+-- bugfixes on Linkage descriptor
 
 Revision 1.4  2003/11/26 19:55:32  rasc
 no message
@@ -56,6 +59,7 @@ void  descriptorDVB_Service (u_char *b);
 void  descriptorDVB_CountryAvail (u_char *b);
 void  descriptorDVB_Linkage (u_char *b);
   void sub_descriptorDVB_Linkage0x08 (u_char *b, int len);
+  void sub_descriptorDVB_Linkage0x09 (u_char *b, int len);
   void sub_descriptorDVB_Linkage0x0B (u_char *b, int len);
   void sub_descriptorDVB_Linkage0x0C (u_char *b, int len);
 void  descriptorDVB_NVOD_Reference (u_char *b);

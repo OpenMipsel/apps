@@ -1,5 +1,5 @@
 /*
-$Id: output.c,v 1.2.2.3 2003/11/26 20:38:08 coronas Exp $
+$Id: output.c,v 1.2.2.4 2003/11/27 08:40:31 coronas Exp $
 
 
  DVBSNOOP
@@ -15,8 +15,11 @@ $Id: output.c,v 1.2.2.3 2003/11/26 20:38:08 coronas Exp $
 
 
 $Log: output.c,v $
-Revision 1.2.2.3  2003/11/26 20:38:08  coronas
-Compilefix rel-branch/Update from HEAD
+Revision 1.2.2.4  2003/11/27 08:40:31  coronas
+Sync with HEAD
+
+Revision 1.5  2003/11/26 23:54:48  rasc
+-- bugfixes on Linkage descriptor
 
 Revision 1.4  2003/11/26 16:27:46  rasc
 - mpeg4 descriptors
@@ -47,7 +50,7 @@ trying to include DSM-CC, Well someone a ISO13818-6 and latest version of ISO 18
 static int  verbose_level = 0;
 
 static int  indent_level = 0;
-int   table_indent [] = {0,4,8,12,15};
+int   table_indent [] = {0,4,8,12,15,18,21};
 
 #define MAX_INDENT_LEVEL  ( (sizeof(table_indent)/sizeof(int)) - 1)
 

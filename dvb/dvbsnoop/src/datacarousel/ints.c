@@ -1,5 +1,5 @@
 /*
-$Id: ints.c,v 1.7.2.2 2003/11/17 07:07:41 coronas Exp $
+$Id: ints.c,v 1.7.2.3 2003/11/27 08:40:29 coronas Exp $
 
    INT Section
    IP/MAC Notification Section
@@ -9,8 +9,11 @@ $Id: ints.c,v 1.7.2.2 2003/11/17 07:07:41 coronas Exp $
 
 
 $Log: ints.c,v $
-Revision 1.7.2.2  2003/11/17 07:07:41  coronas
-Compilefix rel-branch/Update from HEAD
+Revision 1.7.2.3  2003/11/27 08:40:29  coronas
+Sync with HEAD
+
+Revision 1.9  2003/11/26 23:54:46  rasc
+-- bugfixes on Linkage descriptor
 
 Revision 1.8  2003/10/29 20:54:56  rasc
 more PES stuff, DSM descriptors, testdata
@@ -31,7 +34,7 @@ more PES stuff, DSM descriptors, testdata
 
 
 
-void decode_INT_DSMCC (u_char *b, int len)
+void decode_DSMCC_INT (u_char *b, int len)
 {
  /* EN 301 192 7.x */
 

@@ -1,5 +1,5 @@
 /*
-$Id: test0x1d.c,v 1.1.2.2 2003/11/26 20:38:13 coronas Exp $
+$Id: test0x1d.c,v 1.1.2.3 2003/11/27 08:40:33 coronas Exp $
 
 
  DVBSNOOP
@@ -20,8 +20,11 @@ $Id: test0x1d.c,v 1.1.2.2 2003/11/26 20:38:13 coronas Exp $
 
 
 $Log: test0x1d.c,v $
-Revision 1.1.2.2  2003/11/26 20:38:13  coronas
-Compilefix rel-branch/Update from HEAD
+Revision 1.1.2.3  2003/11/27 08:40:33  coronas
+Sync with HEAD
+
+Revision 1.3  2003/11/26 20:31:51  rasc
+no message
 
 Revision 1.2  2003/11/26 16:27:48  rasc
 - mpeg4 descriptors
@@ -77,6 +80,7 @@ void decode_TESTDATA (u_char *b, int len)
 
 
  out_nl (3,"... $$$ TODO ....");
+ out_nl (3,"... Report!!! if you find a transponder with test data!!! ....");
  // $$$ TODO   ...
 
 }

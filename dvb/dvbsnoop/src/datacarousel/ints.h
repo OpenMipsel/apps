@@ -1,5 +1,5 @@
 /*
-$Id: ints.h,v 1.2.2.2 2003/11/26 20:38:02 coronas Exp $
+$Id: ints.h,v 1.2.2.3 2003/11/27 08:40:29 coronas Exp $
 
 
  DVBSNOOP
@@ -19,7 +19,7 @@ $Id: ints.h,v 1.2.2.2 2003/11/26 20:38:02 coronas Exp $
 #define __INTS_H 1
 
 
-void  decode_INT_DSMCC (u_char *b, int len);
+void  decode_DSMCC_INT (u_char *b, int len);
 int   pto_descriptor_loop (u_char *name, u_char *b);
 
 
