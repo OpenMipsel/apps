@@ -325,7 +325,7 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 	lnb->getDiSEqC().uncommitted_switch=0;
 	lnb->getDiSEqC().uncommitted_gap=0;
 	lnb->getDiSEqC().useGotoXX=1;
-	lnb->getDiSEqC().useRotorInPower=0;
+	lnb->getDiSEqC().useRotorInPower=70 << 8;
 	lnb->getDiSEqC().DegPerSec=1.0;
 	lnb->getDiSEqC().gotoXXLatitude=0.0;
 	lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
@@ -679,7 +679,7 @@ void eSatelliteConfigurationManager::newPressed()
 		lnb->getDiSEqC().uncommitted_switch=0;
 		lnb->getDiSEqC().uncommitted_gap=0;
 		lnb->getDiSEqC().useGotoXX=1;
-		lnb->getDiSEqC().useRotorInPower=0;
+		lnb->getDiSEqC().useRotorInPower=70<<8;
 		lnb->getDiSEqC().DegPerSec=1.0;
 		lnb->getDiSEqC().gotoXXLatitude=0.0;
 		lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;

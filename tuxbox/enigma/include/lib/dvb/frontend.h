@@ -49,7 +49,7 @@ class eFrontend: public Object
 
 	void timeout();
 	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec );
-	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat );
+	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA );
 	int noRotorCmd;
 public:
 //	double calcAzimuth( double Longitude, double Latitude, int OrbitalPos );

@@ -310,7 +310,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, int newPosition, double degP
 	return 0;
 }
 
-int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat )
+int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat, int DeltaA )
 {
 	secCommand *commands = (secCommand*) cmds;
 	int idlePowerInput=0;
@@ -664,13 +664,21 @@ int eFrontend::tune(eTransponder *trans,
 				double satHourAngle=calcSatHourangle( azimuth, elevation, declination, SiteLat );
 				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
 				int east = satHourAngle < 180;
-				int tmp = (int)round( fabs( 180 - satHourAngle ) * 10.0 );
+				int tmp=0;
 				if ( east && !(lnb->getDiSEqC().useGotoXX & 65536) )
-					tmp = -tmp;
+					tmp = (int)round( (256.00 - fabs( 180 - satHourAngle )) * 10.0 );
+				else
+					tmp = (int)round( fabs( 180 - satHourAngle ) * 10.0 );
+
 				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
 				// East Fix for SG-2100 and .... other Rotors ??
-				if (east && (lnb->getDiSEqC().useGotoXX & 65536) )
-					RotorCmd |= 0xE000;
+				if (east)
+				{
+					if (lnb->getDiSEqC().useGotoXX & 65536)
+						RotorCmd |= 0xE000;
+					else
+						RotorCmd |= 0xF000;
+				} 
 			}
 			else  // we use builtin rotor sat table
 			{
@@ -853,8 +861,8 @@ int eFrontend::tune(eTransponder *trans,
 			// drive rotor always with 18V ( is faster )
 			seq.voltage = SEC_VOLTAGE_18;
 
-			if ( lnb->getDiSEqC().useRotorInPower )
-				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
+			if ( lnb->getDiSEqC().useRotorInPower & 1 )
+				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat, (lnb->getDiSEqC().useRotorInPower & 0x0FFFFFFF) >> 8 );
 			else
 				RotorUseTimeout(seq, sat->getOrbitalPosition(), lnb->getDiSEqC().DegPerSec );
 
