@@ -1,5 +1,5 @@
 /*
-$Id: ints.c,v 1.7.2.1 2003/10/28 19:33:11 coronas Exp $
+$Id: ints.c,v 1.7.2.2 2003/11/17 07:07:41 coronas Exp $
 
    INT Section
    IP/MAC Notification Section
@@ -9,30 +9,11 @@ $Id: ints.c,v 1.7.2.1 2003/10/28 19:33:11 coronas Exp $
 
 
 $Log: ints.c,v $
-Revision 1.7.2.1  2003/10/28 19:33:11  coronas
+Revision 1.7.2.2  2003/11/17 07:07:41  coronas
 Compilefix rel-branch/Update from HEAD
 
-Revision 1.7  2003/10/26 21:36:18  rasc
-private DSM-CC descriptor Tags started,
-INT-Section completed..
-
-Revision 1.6  2003/10/26 19:15:00  rasc
-no message
-
-Revision 1.5  2003/10/26 19:06:26  rasc
-no message
-
-Revision 1.4  2003/10/25 19:11:49  rasc
-no message
-
-Revision 1.3  2003/10/24 22:17:14  rasc
-code reorg...
-
-Revision 1.2  2003/10/21 21:31:29  rasc
-no message
-
-Revision 1.1  2003/10/21 19:54:44  rasc
-no message
+Revision 1.8  2003/10/29 20:54:56  rasc
+more PES stuff, DSM descriptors, testdata
 
 
 
@@ -43,7 +24,7 @@ no message
 
 #include "dvbsnoop.h"
 #include "ints.h"
-#include "descriptors/dsm_descriptor.h"
+#include "descriptors/dsm_int_unt_descriptor.h"
 #include "strings/dvb_str.h"
 #include "strings/dsmcc_str.h"
 
@@ -193,7 +174,7 @@ int pto_descriptor_loop (u_char *name, u_char *b)
 
      indent (+1);
      while (len > 0) {
-	 i   = descriptorDSMCCPrivate (b);
+	 i   = descriptorDSMCC_INT_UNT_Private (b);
 	 b   += i;
 	 len -= i;
 	

@@ -1,5 +1,5 @@
 /*
-$Id: emm_ecm.c,v 1.4.2.3 2003/10/28 19:33:19 coronas Exp $
+$Id: emm_ecm.c,v 1.4.2.4 2003/11/17 07:07:46 coronas Exp $
 
 
    -- EMM / ECM Data packet
@@ -8,7 +8,7 @@ $Id: emm_ecm.c,v 1.4.2.3 2003/10/28 19:33:19 coronas Exp $
 
 
 $Log: emm_ecm.c,v $
-Revision 1.4.2.3  2003/10/28 19:33:19  coronas
+Revision 1.4.2.4  2003/11/17 07:07:46  coronas
 Compilefix rel-branch/Update from HEAD
 
 Revision 1.7  2003/10/24 22:17:21  rasc

@@ -1,5 +1,5 @@
 /*
-$Id: dvb_descriptor.h,v 1.3.2.1 2003/10/28 19:33:13 coronas Exp $ 
+$Id: dvb_descriptor.h,v 1.3.2.2 2003/11/17 07:07:42 coronas Exp $ 
 
 
   dvbsnoop
@@ -9,7 +9,7 @@ $Id: dvb_descriptor.h,v 1.3.2.1 2003/10/28 19:33:13 coronas Exp $
 
 
 $Log: dvb_descriptor.h,v $
-Revision 1.3.2.1  2003/10/28 19:33:13  coronas
+Revision 1.3.2.2  2003/11/17 07:07:42  coronas
 Compilefix rel-branch/Update from HEAD
 
 Revision 1.3  2003/10/25 19:11:49  rasc

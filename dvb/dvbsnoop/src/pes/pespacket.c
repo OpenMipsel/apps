@@ -1,5 +1,5 @@
 /*
-$Id: pespacket.c,v 1.5.2.1 2003/10/28 19:33:18 coronas Exp $
+$Id: pespacket.c,v 1.5.2.2 2003/11/17 07:07:45 coronas Exp $
 
    -- PES Decode/Table section
 
@@ -7,8 +7,20 @@ $Id: pespacket.c,v 1.5.2.1 2003/10/28 19:33:18 coronas Exp $
 
 
 $Log: pespacket.c,v $
-Revision 1.5.2.1  2003/10/28 19:33:18  coronas
+Revision 1.5.2.2  2003/11/17 07:07:45  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.10  2003/11/09 20:48:35  rasc
+pes data packet (DSM-CC)
+
+Revision 1.9  2003/11/01 17:05:47  rasc
+no message
+
+Revision 1.8  2003/10/29 22:39:18  rasc
+pes packet complete now...
+
+Revision 1.7  2003/10/29 20:54:56  rasc
+more PES stuff, DSM descriptors, testdata
 
 Revision 1.6  2003/10/24 22:17:20  rasc
 code reorg...
@@ -41,8 +53,11 @@ dvbsnoop v0.7  -- Commit to CVS
 #include "misc/hexprint.h"
 
 
-int PES_decode2 (u_char *b, int len, int pid);
+void PES_decode2 (u_char *b, int len, int pid);
 void print_xTS_field (u_char *b, int bit_offset);
+void pack_header (u_char *b, int len);
+void PES_data_packet (u_char *b, int len);
+
 
 
 
@@ -86,10 +101,11 @@ void decodePES_buf (u_char *b, int len, int pid)
  len2  = p.PES_packet_length;
 
 
+ n = 0;
  switch (p.stream_id) {
 
 	case 0xBC:		// program_stream_map
-	case 0xBF:		// private_stream_2
+	case 0xBF:		// private_stream_2  (EN301192-1.3.1 S.10)
 	case 0xF0:		// ECM
 	case 0xF1:		// EMM
 	case 0xF2:		// DSMCC stream
@@ -97,20 +113,28 @@ void decodePES_buf (u_char *b, int len, int pid)
 	case 0xFF:		// program_stream_directory
     		out_nl (4,"PES_packet_data_bytes:");
 		printhexdump_buf (4, b, len2);
+		n = len2;
 		break;
 
+
+	case 0xBD:		// Data Stream, privat_stream_1 (EN301192-1.3.1 S.11)
+    		out_nl (3,"PES_data_packet:");
+		indent (+1);
+		PES_data_packet (b, len2);
+		indent (-1);
+		break;
 
 	case 0xBE:		// padding stream!
     		out_nl (4,"Padding_bytes:");
 		printhexdump_buf (4, b, len2);
+		n = len2;
 		break;
 
 	default:
-		n = PES_decode2 (b, len2, pid);
-
-		b    += n;
-		len2 -= n;
-		len  -= n;
+    		out_nl (4,"Default PES decoding:");
+		indent (+1);
+		PES_decode2 (b, len2, pid);
+		indent (-1);
 		break;
 
  }
@@ -120,7 +144,7 @@ void decodePES_buf (u_char *b, int len, int pid)
 
 
 
-int  PES_decode2 (u_char *b, int len, int pid)
+void  PES_decode2 (u_char *b, int len, int pid)
 
 {
  /* IS13818-1  2.4.3.6  */
@@ -149,8 +173,7 @@ int  PES_decode2 (u_char *b, int len, int pid)
 
 
  PES2_Packet  p;
- //int          len2;
- //int          n;
+ u_char       *b_start = b;
 
 
  p.reserved1				= getBits (b, 0,  0, 2);
@@ -200,7 +223,7 @@ int  PES_decode2 (u_char *b, int len, int pid)
    // PTS from "if" before...
    out_nl (3,"DTS: ");
    indent (+1);
-   out_SB_NL  (3,"Fixed: ", getBits (b, 0,  0, 4) );
+   out_SB_NL  (6,"Fixed: ", getBits (b, 0,  0, 4) );
    print_xTS_field (b, 4) ;
    indent (-1);
    b += 5;
@@ -213,10 +236,12 @@ int  PES_decode2 (u_char *b, int len, int pid)
    out_SB_NL  (3,"Reserved: ", getBits (b, 0,  0, 2) );
    print_xTS_field (b, 2) ;
    out_SW_NL  (3,"ESCR_extension: ", getBits (b, 0, 38, 9) );
-   out_SW_NL  (3,"marker_bit: ",     getBits (b, 0, 47, 1) );
+   out_SB_NL  (3,"marker_bit: ",     getBits (b, 0, 47, 1) );
    indent (-1);
    b += 6;
  }
+
+
 
  if (p.ES_rate_flag == 0x01) {
    out_nl (3,"ES_rate_flag: ");
@@ -228,13 +253,203 @@ int  PES_decode2 (u_char *b, int len, int pid)
    b += 3;
  }
 
+ if (p.DSM_trick_mode_flag == 0x01) {
+   u_int  trick_mode_control;
+   u_int  field_id;
+   u_int  intra_slice_refresh;
+   u_int  frequency_truncation;
+   u_int  rep_control;
+   u_int  reserved;
+
+   out_nl (3,"Trick_mode_control: ");
+   indent (+1);
+
+   trick_mode_control			= getBits (b, 0,  0,  3);
+   out_S2B_NL  (3,"trick_mode_control: ", trick_mode_control,
+		   dvbstrPESTrickModeControl (trick_mode_control) );
+
+   if ( (trick_mode_control == 0x0) ||			/* fast forward */
+        (trick_mode_control == 0x3) ) {			/* fast reverse */
+
+	   field_id 			= getBits (b, 0,  3,  2);
+	   intra_slice_refresh		= getBits (b, 0,  5,  1);
+	   frequency_truncation		= getBits (b, 0,  6,  2);
+
+   	   out_SB_NL  (3,"field_id: ", field_id);	/* $$$ Table */
+   	   out_SB_NL  (3,"intra_slice_refresh: ", intra_slice_refresh);
+   	   out_SB_NL  (3,"frequency_truncation: ", frequency_truncation);
+
+   } else if ( (trick_mode_control == 0x1) ||		/* slow motion  */
+               (trick_mode_control == 0x4) ) {		/* slow reverse */
+
+	   rep_control 			= getBits (b, 0,  3,  5);
+
+   	   out_SB_NL  (3,"rep_control: ", rep_control);
+
+   } else if (trick_mode_control == 0x2) {		/* freeze frame */
+
+	   field_id 			= getBits (b, 0,  3,  2);
+	   reserved 			= getBits (b, 0,  3,  5);
+
+   	   out_SB_NL  (3,"field_id: ", field_id);	/* $$$ Table */
+   	   out_SB_NL  (6,"reserved: ", reserved);
+
+   } else {						/* reserved     */
+
+	   reserved 			= getBits (b, 0,  3,  8);
+   	   out_SB_NL  (6,"reserved: ", reserved);
+
+   }
+
+   indent (-1);
+   b += 1;
+
+ }  /* p.DSM_trick_mode_flag  */
 
 
- out_nl (3,".... rest still unimplemented.... ");
- // $$$ hier muss auch noch einiges gemacht werden (aber zur Zeit
- // $$$ so gut wie keine Zeit
+ if (p.additional_copy_info_flag == 0x01) {
 
- return 0;
+   out_nl (3,"additional_copy_info: ");
+   indent (+1);
+   out_SB_NL  (3,"marker_bit: ", getBits (b, 0,  0,  1) );
+   out_SB_NL  (3,"additional_copy_info: ", getBits (b, 0,  1,  7) );
+   b += 1;
+   indent (-1);
+
+ }
+
+
+ if (p.PES_CRC_flag == 0x01) {
+
+   out_nl (3,"PES_CRC: ");
+   indent (+1);
+   out_SW_NL  (3,"previous_PES_packet_CRC: ", getBits (b, 0,  0, 16) );
+   b += 2;
+   indent (-1);
+
+ }
+
+
+ if (p.PES_extension_flag == 0x01) {
+
+   u_int  PES_private_data_flag;
+   u_int  pack_header_field_flag;
+   u_int  program_packet_sequence_counter_flag;
+   u_int  P_STD_buffer_flag;
+   u_int  reserved;
+   u_int  PES_extension_flag2;
+
+
+   out_nl (3,"PES_extension: ");
+   indent (+1);
+
+   PES_private_data_flag                  = getBits (b, 0,  0,  1);
+   pack_header_field_flag                 = getBits (b, 0,  1,  1);
+   program_packet_sequence_counter_flag   = getBits (b, 0,  2,  1);
+   P_STD_buffer_flag                      = getBits (b, 0,  3,  1);
+   reserved                               = getBits (b, 0,  4,  3);
+   PES_extension_flag2                    = getBits (b, 0,  7,  1);
+   b += 1;
+
+   out_SB_NL  (3,"PES_private_data_flag: ", PES_private_data_flag);
+   out_SB_NL  (3,"pack_header_field_flag: ",  pack_header_field_flag);
+   out_SB_NL  (3,"program_packet_sequence_counter_flag: ", program_packet_sequence_counter_flag);
+   out_SB_NL  (3,"P-STD_buffer_flag: ", P_STD_buffer_flag);
+   out_SB_NL  (6,"reserved: ", reserved);
+   out_SB_NL  (3,"PES_extension_flag2: ", PES_extension_flag2);
+
+
+   if (PES_private_data_flag == 0x01) {
+
+   	out_nl (3,"PES_private_data: ");
+	indent (+1);
+	printhexdump_buf (4, b, 16);
+   	b += 16;
+   	indent (-1);
+
+   }
+
+
+   if (pack_header_field_flag == 0x01) {		/* ISO 11172-1 pack header */
+	
+	int pack_field_length;
+
+   	out_nl (3,"pack_header_field: ");
+	indent (+1);
+	pack_field_length             = getBits (b, 0,  0,  8);
+   	out_SB_NL  (3,"pack_field_length: ", pack_field_length);
+   	out_nl (3,"Pack_header: ");
+	indent (+1);
+	pack_header (b+1, pack_field_length);
+   	b += pack_field_length +1;
+   	indent (-2);
+
+   }
+
+
+
+   if (program_packet_sequence_counter_flag == 0x01) {
+
+   	out_nl (3,"program_packet_sequence_counter: ");
+	indent (+1);
+	out_SB_NL  (3,"Marker_bit: ", getBits (b, 0,  0,  1) );
+	out_SB_NL  (3,"program_packet_sequence_counter: ", getBits (b, 0,  1,  7) );
+	out_SB_NL  (3,"Marker_bit: ", getBits (b, 0,  8,  1) );
+	out_SB_NL  (3,"MPEG1_MPEG2_identifier: ", getBits (b, 0,  9,  1) );
+	out_SB_NL  (3,"original_stuff_length: ", getBits (b, 0, 10,  6) );
+	b += 2;
+   	indent (-1);
+
+   }
+
+
+   if (P_STD_buffer_flag == 0x01) {
+
+   	out_nl (3,"P-STD_buffer: ");
+	indent (+1);
+	out_SB_NL  (6,"Fix 01: ",             getBits (b, 0,  0,  2) );
+	out_SB_NL  (3,"P-STD_buffer_scale: ", getBits (b, 0,  2,  1) );
+	out_SB_NL  (3,"P-STD_buffer_size: ",  getBits (b, 0, 3,  13) );
+	b += 2;
+   	indent (-1);
+
+   }
+
+
+   if (PES_extension_flag2 == 0x01) {
+
+	u_int  PES_extension_field_length;
+
+   	out_nl (3,"PES_extension_2: ");
+	indent (+1);
+	out_SB_NL  (3,"Marker_bit: ", getBits (b, 0,  0,  1) );
+	PES_extension_field_length =  getBits (b, 0,  1,  7);
+   	out_nl (3,"reserved: ");
+	indent (+1);
+	printhexdump_buf (6, b+1, PES_extension_field_length);
+	b += PES_extension_field_length + 1;
+   	indent (-2);
+
+   }
+
+   indent (-1);
+
+ } /* p.PES_extension_flag */
+
+
+
+ /* 
+  * -- stuffing bytes
+  * -- PES packet_data_bytes
+  */
+
+ out_nl (3,"PES_packet_data_bytes / stuffing bytes: ");
+   indent (+1);
+   printhexdump_buf (4, b, len - (b - b_start) );
+   indent (-1);
+
+
+
 }
 
 
@@ -271,5 +486,109 @@ void print_xTS_field (u_char *b, int bit_offset)
  out_SW_NL  (4,"Marker_bit_3: ",f.marker_bit_3);
 
 }
+
+
+
+void pack_header (u_char *b, int len)
+
+{
+
+	/*  ... $$$ TODO   */
+	/* z.B. H.222 ISO 13818-1 Table 2-33 */
+	/* 	ISO 11172-1 pack header */
+
+   printhexdump_buf (4, b, len);
+
+}
+
+
+
+/*
+   -- Data Packet Synchronous and synchronized data streaming
+   -- EN 301 192  v1.3.1  S. 11
+
+*/
+void PES_data_packet (u_char *b, int len)
+
+{
+
+ typedef struct  _PES_DATA {
+        u_int     data_identifier;
+        u_int     sub_stream_id;
+        u_int     PTS_extension_flag;
+        u_int     output_data_rate_flag;
+        u_int     reserved;
+        u_int     PES_data_packet_header_length;
+
+	// N ... optional data
+
+ } PES_DATA;
+
+ PES_DATA   p;
+ int        len2;
+
+
+   p.data_identifier			= getBits (b, 0,  0,  8);
+   p.sub_stream_id			= getBits (b, 0,  8,  8);
+   p.PTS_extension_flag			= getBits (b, 0, 16,  1);
+   p.output_data_rate_flag		= getBits (b, 0, 17,  1);
+   p.reserved                           = getBits (b, 0, 18,  2);
+   p.PES_data_packet_header_length	= getBits (b, 0, 20,  4);
+   b   += 3;
+   len -= 3;
+   len2 = p.PES_data_packet_header_length;
+
+
+   out_S2B_NL  (3,"data_identifier: ", p.data_identifier,
+		   dvbstrPESDataIdentifier (p.data_identifier) );
+   out_SB_NL  (3,"sub_stream_id: ", p.sub_stream_id);
+   out_SB_NL  (3,"PTS_extension_flag: ", p.PTS_extension_flag);
+   out_SB_NL  (3,"output_data_rate_flag: ", p.output_data_rate_flag);
+   out_SB_NL  (6,"reserved_1: ", p.reserved);
+   out_SB_NL  (3,"PES_data_packet_header_length: ", p.PES_data_packet_header_length);
+
+   if (p.PTS_extension_flag = 0x01) {
+   	out_nl (3,"PTS_extension:");
+	indent (+1);
+	out_SB_NL  (6,"reserved: ", getBits (b, 0,  0,  7) );
+	out_SW_NL  (6,"PTS_extension: ", getBits (b, 0,  7, 9) );
+	/* $$$ TODO  PCR extension output in clear text, see ISO 13818-1*/
+	b   += 2;
+	len -= 2;
+	len2 -= 2;
+	indent (-1);
+   }
+
+   if (p.output_data_rate_flag == 0x01) {
+   	out_nl (3,"output_data_rate:");
+	indent (+1);
+	out_SB_NL  (6,"reserved: ", getBits (b, 0,  0,  4) );
+	out_SL_NL  (6,"output_data_rate: ", getBits (b, 0,  4, 28) );
+	b   += 4;
+	len -= 4;
+	len2 -= 4;
+	indent (-1);
+   }
+
+
+   out_nl (3,"PES_data_private_byte: ");
+   indent (+1);
+   printhexdump_buf (3, b, len2);
+   b   += len2;
+   len -= len2;
+   indent (-1);
+
+
+   out_nl (3,"PES_data_byte: ");
+   indent (+1);
+   printhexdump_buf (3, b, len);
+   b   += len;
+   len -= len;
+   indent (-1);
+
+}
+
+
+
 
 

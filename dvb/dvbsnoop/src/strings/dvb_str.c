@@ -1,5 +1,5 @@
 /*
-$Id: dvb_str.c,v 1.8.2.2 2003/10/28 19:33:22 coronas Exp $
+$Id: dvb_str.c,v 1.8.2.3 2003/11/17 07:07:48 coronas Exp $
 
   dvbsnoop
   (c) Rainer Scherg 2001-2003
@@ -15,8 +15,20 @@ $Id: dvb_str.c,v 1.8.2.2 2003/10/28 19:33:22 coronas Exp $
 
 
 $Log: dvb_str.c,v $
-Revision 1.8.2.2  2003/10/28 19:33:22  coronas
+Revision 1.8.2.3  2003/11/17 07:07:48  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.24  2003/11/09 20:48:35  rasc
+pes data packet (DSM-CC)
+
+Revision 1.23  2003/11/07 16:33:32  rasc
+no message
+
+Revision 1.22  2003/11/01 21:40:28  rasc
+some broadcast/linkage descriptor stuff
+
+Revision 1.21  2003/10/29 20:54:57  rasc
+more PES stuff, DSM descriptors, testdata
 
 Revision 1.20  2003/10/27 22:43:50  rasc
 carousel info descriptor and more
@@ -130,7 +142,7 @@ static char *findTableID (STR_TABLE *t, u_int id)
 
 
 /*
-  --  Table IDs (stream)
+  --  Table IDs (sections)
  ETSI EN 468   5.2
  EN 301 192
  TR 102 006
@@ -143,17 +155,21 @@ char *dvbstrTableID (u_int id)
 {
   STR_TABLE  TableIDs[] = {
 
+ 	// $$$ TODO DSM-CC  anyone a ISO 13818-6 tp spare???
+ 	// updated -- 2003-11-04
+	// ATSC Table IDs could be included...
      {  0x00, 0x00,  "program_association_section" },
      {  0x01, 0x01,  "conditional_access_section" },
      {  0x02, 0x02,  "program_map_section" },
      {  0x03, 0x03,  "transport_stream_description_section" },
- // $$$ TODO DSM-CC  anyone a ISO 13818-6 tp spare???
-      {  0x04, 0x3d,  "ITU-T Rec. H.222.0|ISO/IEC13818 reserved" },
-      {  0x3b, 0x3b,  "DSM-CC - DSI or DII (DownloadServerInitiate or -InfoIndication" },
-      {  0x3c, 0x3c,  "DSM-CC - DDB (DownloadDataBlock)" },    /* TR 101 202 */
-      {  0x3d, 0x3d,  "reserved" },
-      {  0x3e, 0x3e,  "DSM-CC - Datagram" },
-      {  0x3f, 0x3f,  "ITU-T Rec. H.222.0|ISO/IEC13818 reserved" },
+      {  0x04, 0x38,  "ITU-T Rec. H.222.0|ISO/IEC13818 reserved" },
+      {  0x39, 0x39,  "DSM-CC - addressable sections" },		/* $$$ ??? TODO */
+      {  0x3a, 0x3a,  "DSM-CC - multiprotocol encapsulated data" },		/* $$$ ??? TODO */
+      {  0x3b, 0x3b,  "DSM-CC - U-N messages (DSI or DII)" },
+      {  0x3c, 0x3c,  "DSM-CC - Download Data Messages (DDB)" },    /* TR 101 202 */
+      {  0x3d, 0x3d,  "DSM-CC - stream descriptorlist" },	/* $$$ ??? TODO */
+      {  0x3e, 0x3e,  "DSM-CC - private data section (datagram)" },
+      {  0x3f, 0x3f,  "DSM-CC - addressable sections" },
 
      {  0x40, 0x40,  "network_information_section - actual network" },
      {  0x41, 0x41,  "network_information_section - other network" },
@@ -178,7 +194,7 @@ char *dvbstrTableID (u_int id)
      {  0x75, 0x7D,  "reserved" },
      {  0x7E, 0x7E,  "discontinuity_information_section" },
      {  0x7F, 0x7F,  "selection_information_section" },
-     {  0x80, 0x8F,  "User private (EMM/ECM)" },   /* $$$ own definition! */
+     {  0x80, 0x8F,  "DVB CA message section (EMM/ECM)" },   /* ITU-R BT.1300 ref. */
      {  0x90, 0xFE,  "User private" },
      {  0xFF, 0xFF,  "forbidden" },
      {  0,0, NULL }
@@ -205,7 +221,7 @@ char *dvbstrMPEGDescriptorTAG (u_int tag)
      {  0x05, 0x05,  "registration_descriptor" },
      {  0x06, 0x06,  "data_stream_alignment_descriptor" },
      {  0x07, 0x07,  "target_background_grid_descriptor" },
-     {  0x08, 0x08,  "videa_window_descriptor" },
+     {  0x08, 0x08,  "video_window_descriptor" },
      {  0x09, 0x09,  "CA_descriptor" },
      {  0x0A, 0x0A,  "ISO_639_language_descriptor" },
      {  0x0B, 0x0B,  "system_clock_descriptor" },
@@ -217,11 +233,16 @@ char *dvbstrMPEGDescriptorTAG (u_int tag)
      {  0x11, 0x11,  "STD_descriptor" },
      {  0x12, 0x12,  "IBP_descriptor" },
           /* MPEG DSM-CC */
-     {  0x13, 0x13,  "Carousel_identifier_descriptor" },
-     {  0x14, 0x14,  "Association_tag_descriptor" },
-     {  0x15, 0x15,  "Deferred_association_tag_descriptor" },
-     	{  0x16, 0x1A,  "ISO/IEC13818-6 Reserved" },
-
+     {  0x13, 0x13,  "carousel_identifier_descriptor" },
+     {  0x14, 0x14,  "association_tag_descriptor" },
+     {  0x15, 0x15,  "deferred_association_tag_descriptor" },
+     {  0x16, 0x16,  "ISO/IEC13818-6 Reserved" },
+     /* $$$ TODO... vvvvvvv */
+     {  0x17, 0x17,  "NPT_reference_descriptor" },
+     {  0x18, 0x18,  "NPT_endpoint_descriptor" },
+     {  0x19, 0x19,  "stream_mode_descriptor" },
+     {  0x1A, 0x1A,  "stream_event_descriptor" },
+     /* $$$ TODO... ^^^^^^^^ */
      {  0x1B, 0x1B,  "MPEG4_video_descriptor" },
      {  0x1C, 0x1C,  "MPEG4_audio_descriptor" },
      {  0x1D, 0x1D,  "IOD_descriptor" },
@@ -541,6 +562,7 @@ char *dvbstrStream_TYPE (u_int flag)
 
   STR_TABLE  Table[] = {
 	  // -- updated 2003-10-17  from H.220
+	  // -- updated 2003-11-04  from ATSC Code_Point
      {  0x00, 0x00,  "ITU-T | ISO-IE Reserved" },
      {  0x01, 0x01,  "ISO/IEC 11172 Video" },
      {  0x02, 0x02,  "ITU-T Rec. H.262 | ISO/IEC 13818-2 Video | ISO/IEC 11172-2 constr. parameter video stream" },
@@ -550,20 +572,21 @@ char *dvbstrStream_TYPE (u_int flag)
      {  0x06, 0x06,  "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 PES packets containing private data" },
      {  0x07, 0x07,  "ISO/IEC 13512 MHEG" },
      {  0x08, 0x08,  "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 Annex A  DSM CC" },
-     {  0x09, 0x09,  "ITU-T Rec. H.222.1" },
-     {  0x0A, 0x0A,  "ISO/IEC 13818-6 Type A" },
-     {  0x0B, 0x0B,  "ISO/IEC 13818-6 Type B" },
-     {  0x0C, 0x0C,  "ISO/IEC 13818-6 Type C" },
-     {  0x0D, 0x0D,  "ISO/IEC 13818-6 Type D" },
+     {  0x09, 0x09,  "ITU-T Rec. H.222.0 | ISO/IEC 13818-1/11172-1 auxiliary" },
+     {  0x0A, 0x0A,  "ISO/IEC 13818-6 Multiprotocol encapsulation" },
+     {  0x0B, 0x0B,  "ISO/IEC 13818-6 DSM-CC U-N Messages" },
+     {  0x0C, 0x0C,  "ISO/IEC 13818-6 Stream Descriptors" },
+     {  0x0D, 0x0D,  "ISO/IEC 13818-6 Sections (any type, including private data)" },
      {  0x0E, 0x0E,  "ISO/IEC 13818-1 auxiliary" },
      {  0x0F, 0x0F,  "ISO/IEC 13818-7 Audio with ADTS transport sytax" },
      {  0x10, 0x10,  "ISO/IEC 14496-2 Visual" },
      {  0x11, 0x11,  "ISO/IEC 14496-3 Audio with LATM transport syntax as def. in ISO/IEC 14496-3/AMD1" },
      {  0x12, 0x12,  "ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in PES packets" },
      {  0x13, 0x13,  "ISO/IEC 14496-1 SL-packetized stream or FlexMux stream carried in ISO/IEC 14496 sections" },
-     {  0x14, 0x14,  "ISO/IEC 13818-6 synchronized download protocol" },
+     {  0x14, 0x14,  "ISO/IEC 13818-6 DSM-CC synchronized download protocol" },
 
      {  0x15, 0x7F,  "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 reserved" },
+     // $$$ ATSC ID Names could be includes...
      {  0x80, 0xFF,  "User private" },
      {  0,0, NULL }
   };
@@ -683,6 +706,7 @@ char *dvbstrDataBroadcast_ID (u_int flag)
 	{ 0x0007, 0x0007,   "Object Carousel" },
 	{ 0x0008, 0x0008,   "DVB ATM streams" },
 	{ 0x0009, 0x0009,   "Higher Protocols based on asynchronous data streams" },
+	// $$$ 0x0A = System Software Update   $$$ TODO TR 102 006
 	{ 0x000A, 0x00ef,   "Reserved for future use by DVB" },
 	{ 0x00F0, 0x00F0,   "MHP Object Carousel" },
 	{ 0x00F1, 0x00F1,   "reserved for MHP Multi Protocol Encapsulation" },
@@ -1825,7 +1849,7 @@ char *dvbstrPESstream_ID (u_int i)
 
 {
   STR_TABLE  Table[] = {
-     {  0x00, 0xBB,  "???? report!" },
+     {  0x00, 0xBB,  "??$$$?? report!" },
      {  0xBC, 0xBC,  "program_stream_map" },
      {  0xBD, 0xBD,  "private_stream_1" },
      {  0xBE, 0xBE,  "padding_stream" },
@@ -2300,10 +2324,63 @@ char *dvbstrBouquetTable_ID (u_int i)
 	{ 0xC000, 0xC01f,   "Canal+ | 902 | Canal +" },
 	{ 0xFC00, 0xFCff,   "France Telecom | 902 | France Telecom" },
 	{ 0xFD08, 0xFD08,   "Xtra Music | 902 | Xtra Music " },
+	{ 0xFFFF, 0xFFFF,   "?????? whatever this is..." },
 
      	{  0,0, NULL }
   };
 
+
+  return findTableID (Table, i);
+}
+
+
+
+
+
+
+
+/*
+  -- Trick Mode Control
+  -- ISO 13818-1
+*/
+
+char *dvbstrPESTrickModeControl (u_int i)
+
+{
+  STR_TABLE  Table[] = {
+	{ 0x0, 0x0,   "fast forward" },
+	{ 0x1, 0x1,   "slow motion" },
+	{ 0x2, 0x2,   "freeze frame" },
+	{ 0x3, 0x3,   "fast reverse" },
+	{ 0x4, 0x4,   "slow reverse" },
+	{ 0x5, 0x7,   "reserved" },
+     	{  0,0, NULL }
+  };
+
+  return findTableID (Table, i);
+}
+
+
+
+
+/*
+  -- Data Identifier 
+  -- ETR 162 [3] and EN 300 472 [6]).
+*/
+
+char *dvbstrPESDataIdentifier (u_int i)
+
+{
+  STR_TABLE  Table[] = {
+	{ 0x00, 0x0F,   "reserved" },
+	{ 0x10, 0x1F,   "EBU data EN 300 472" },
+	{ 0x20, 0x20,   "DVB subtitling EN 300 743" },
+	{ 0x21, 0x21,   "DVB synchronous data stream" },
+	{ 0x22, 0x22,   "DVB synchronized data stream" },
+	{ 0x23, 0x7F,   "reserved" },
+	{ 0x80, 0xFF,   "user defined" },
+     	{  0,0, NULL }
+  };
 
   return findTableID (Table, i);
 }

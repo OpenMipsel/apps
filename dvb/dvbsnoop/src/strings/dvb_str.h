@@ -1,5 +1,5 @@
 /*
-$Id: dvb_str.h,v 1.5.2.2 2003/10/28 19:33:23 coronas Exp $ 
+$Id: dvb_str.h,v 1.5.2.3 2003/11/17 07:07:48 coronas Exp $ 
 
   dvbsnoop
   (c) Rainer Scherg 2001-2003
@@ -8,8 +8,14 @@ $Id: dvb_str.h,v 1.5.2.2 2003/10/28 19:33:23 coronas Exp $
 
 
 $Log: dvb_str.h,v $
-Revision 1.5.2.2  2003/10/28 19:33:23  coronas
+Revision 1.5.2.3  2003/11/17 07:07:48  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.13  2003/11/09 20:48:35  rasc
+pes data packet (DSM-CC)
+
+Revision 1.12  2003/10/29 20:54:57  rasc
+more PES stuff, DSM descriptors, testdata
 
 Revision 1.11  2003/10/25 19:11:50  rasc
 no message
@@ -93,6 +99,10 @@ char *dvbstrTS_ScramblingCtrl_TYPE (u_int id);
 
 char *dvbstrPESstream_ID(u_int id);
 char *dvbstrPESscrambling_ctrl_TYPE(u_int id);
+char *dvbstrPESTrickModeControl (u_int i);
+char *dvbstrPESDataIdentifier (u_int i);
+
+
 
 
 /* -- Div Stuff */

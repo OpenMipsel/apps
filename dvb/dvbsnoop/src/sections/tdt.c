@@ -1,5 +1,5 @@
 /*
-$Id: tdt.c,v 1.3.2.1 2003/10/28 19:33:19 coronas Exp $
+$Id: tdt.c,v 1.3.2.2 2003/11/17 07:07:46 coronas Exp $
 
    -- TDT section
    -- Time Date Table
@@ -9,7 +9,7 @@ $Id: tdt.c,v 1.3.2.1 2003/10/28 19:33:19 coronas Exp $
 
 
 $Log: tdt.c,v $
-Revision 1.3.2.1  2003/10/28 19:33:19  coronas
+Revision 1.3.2.2  2003/11/17 07:07:46  coronas
 Compilefix rel-branch/Update from HEAD
 
 Revision 1.4  2003/10/24 22:17:21  rasc

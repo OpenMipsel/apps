@@ -1,25 +1,26 @@
 /*
-$Id: dsm_descriptor.c,v 1.7.2.2 2003/11/17 07:07:41 coronas Exp $ 
+$Id: dsmcc_int_unt_descriptor.c,v 1.2.2.1 2003/11/17 07:07:41 coronas Exp $ 
 
 
   dvbsnoop
   (c) Rainer Scherg 2001-2003
 
-  Private TAG Space  DSM-CC
+  Private TAG Space  DSM-CC INT UNT
   DSM-CC Descriptors  ISO 13818-6  // TR 102 006
 
 
 
 
-$Log: dsm_descriptor.c,v $
-Revision 1.7.2.2  2003/11/17 07:07:41  coronas
+$Log: dsmcc_int_unt_descriptor.c,v $
+Revision 1.2.2.1  2003/11/17 07:07:41  coronas
 Compilefix rel-branch/Update from HEAD
 
-Revision 1.9  2003/11/01 21:40:27  rasc
+Revision 1.2  2003/11/01 21:40:27  rasc
 some broadcast/linkage descriptor stuff
 
-Revision 1.8  2003/10/29 20:54:56  rasc
+Revision 1.1  2003/10/29 20:56:18  rasc
 more PES stuff, DSM descriptors, testdata
+
 
 
 
@@ -44,7 +45,7 @@ more PES stuff, DSM descriptors, testdata
   return byte length
 */
 
-int  descriptorDSMCC_DataCarousel_Private  (u_char *b)
+int  descriptorDSMCC_INT_UNT_Private  (u_char *b)
 
 {
  int len;
@@ -55,8 +56,8 @@ int  descriptorDSMCC_DataCarousel_Private  (u_char *b)
   len = ((int) b[1]) + 2;
 
   out_NL (4);
-  out_S2B_NL (4,"DSM_CC-DataCarousel-DescriptorTag: ",id,
-		  dsmccStrDSMCC_DataCarousel_DescriptorTAG (id));
+  out_S2B_NL (4,"DSM_CC-INT-UNT-DescriptorTag: ",id,
+		  dsmccStrDSMCC_INT_UNT_DescriptorTAG(id));
   out_SB_NL  (5,"Descriptor_length: ",b[1]);
   /* $$$$ TODO */
 out_nl (1," ... TODO... $$$ not yet done");
@@ -99,7 +100,7 @@ return len;
   ETSI  TR 102 206  (ISO 13818-6)
 */
 
-void descriptorDSMCC_any (u_char *b)
+void descriptorDSMCC_INT_UNT_any (u_char *b)
 
 {
 
@@ -133,9 +134,11 @@ void descriptorDSMCC_any (u_char *b)
 
 /* $$$ TODO   EN 301 192  / TR 102 006
  *
- * private DSM-CC descriptors
+ * private DSM-CC INT UNT descriptors
  *
  * */
 
+
+// EN 301 192  S. 26  $$$
 
 

@@ -1,5 +1,5 @@
 /*
-$Id: sectables.c,v 1.2.2.2 2003/10/28 19:33:19 coronas Exp $
+$Id: sectables.c,v 1.2.2.3 2003/11/17 07:07:46 coronas Exp $
 
  --  For more information please see: ISO 13818 (-1) and ETSI 300 468
  -- Verbose Level >= 2
@@ -7,8 +7,14 @@ $Id: sectables.c,v 1.2.2.2 2003/10/28 19:33:19 coronas Exp $
 
 
 $Log: sectables.c,v $
-Revision 1.2.2.2  2003/10/28 19:33:19  coronas
+Revision 1.2.2.3  2003/11/17 07:07:46  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.12  2003/11/09 22:54:16  rasc
+no message
+
+Revision 1.11  2003/10/29 20:54:57  rasc
+more PES stuff, DSM descriptors, testdata
 
 Revision 1.10  2003/10/26 23:00:43  rasc
 fix
@@ -63,8 +69,9 @@ dvbsnoop v0.7  -- Commit to CVS
 #include "eit.h"
 #include "emm_ecm.h"
 #include "userdef.h"
-#include "datacarousel/datagram.h"
+#include "datacarousel/dsmcc_addr.h"
 #include "datacarousel/ints.h"
+#include "testdata/test0x1d.h"
 
 
 
@@ -144,7 +151,7 @@ void decodeSections_buf (u_char *buf, int len, u_int pid)
 		break; 
 
 	case  0x01D:		/* Measurement */
-		// $$$$
+		decode_TESTDATA  (buf, len);
 		break; 
 
 	case  0x01E:		/* DIT */
@@ -214,7 +221,7 @@ static TABLE_ID_FUNC table_id_func[] = {
      {  0x02, 0x02,  decode_PMT	},
      {  0x03, 0x03,  decode_TSDT },
      /* res. */
-     {  0x3e, 0x3e,  decode_DATAGRAM_DSMCC },
+     {  0x3e, 0x3e,  decode_DSMCC_ADDR },
      {  0x40, 0x41,  decode_NIT	},
      {  0x42, 0x42,  decode_SDT	},
      /* res. */
