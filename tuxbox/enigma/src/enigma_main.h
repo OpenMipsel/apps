@@ -349,7 +349,7 @@ private:
 	void toggleMute();
 	void showMainMenu();
 
-	time_t standbyTime;
+	timeval standbyTime;
 
 	void delayedStandby();
 	void standbyPress();
@@ -515,12 +515,12 @@ public:
 
 class eShutdownStandbySelWindow: public eWindow
 {
+protected:
 	eCheckbox *Standby, *Shutdown;
 	eButton *cancel;
 	void StandbyChanged(int);
 	void ShutdownChanged(int);
 	void fieldSelected(int *){focusNext(eWidget::focusDirNext);}
-protected:
 	virtual void setPressed()=0;
 	eButton *set;
 	eNumber *num;

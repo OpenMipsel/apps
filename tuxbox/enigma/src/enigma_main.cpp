@@ -1450,7 +1450,7 @@ eZapMain::eZapMain()
 	actual_eventDisplay=0;
 
 //	clockUpdate();
-	standbyTime=-1;
+	standbyTime.tv_sec=-1;
 
 #ifndef DISABLE_FILE
 	skipcounter=0;
@@ -2238,24 +2238,28 @@ void eZapMain::toggleTimerMode()
 
 void eZapMain::standbyPress()
 {
-	standbyTime = time(0);
+	gettimeofday(&standbyTime,0);
+	standbyTime+=1000;
 }
 
 void eZapMain::standbyRepeat()
 {
-	int diff = time(0) - standbyTime;
-	if (diff > 0)
+	timeval now;
+	gettimeofday(&now,0);	
+	if ( standbyTime < now )
 		standbyRelease();
 }
 
 void eZapMain::standbyRelease()
 {
-	if ( standbyTime == -1) // we come from standby ?
+	if ( standbyTime.tv_sec == -1) // we come from standby ?
 		return;
 
-	int diff = time(0) - standbyTime;
-	standbyTime=-1;
-	if (diff > 0)
+	timeval now;
+	gettimeofday(&now,0);
+	bool b = standbyTime < now;
+	standbyTime.tv_sec=-1;
+	if (b)
 	{
 		hide();
 		eSleepTimerContextMenu m;
@@ -4976,7 +4980,8 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 	setLCD(lcdTitle, lcdElement);
 #endif
 	move(ePoint(150, 200));
-	new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
+	if ( eDVB::getInstance()->getmID() != 6 )
+		new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
 	new eListBoxEntryText(&list, _("goto standby"), (void*)2);
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
 	new eListBoxEntryText(&list, _("[back]"), (void*)0);
@@ -5036,6 +5041,12 @@ eSleepTimer::eSleepTimer()
 	if (eSkin::getActive()->build(this, "sleeptimer"))
 		eFatal("skin load of \"sleeptimer\" failed");
 	CONNECT( set->selected, eSleepTimer::setPressed );
+	if ( eDVB::getInstance()->getmID() == 6 )
+	{
+		Shutdown->hide();
+		Standby->hide();
+		Standby->setCheck(1);
+	}
 }
 
 void eSleepTimer::setPressed()
