@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.15 2003/06/10 17:48:12 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.16 2003/06/13 11:30:43 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -233,7 +233,7 @@ int get_nits(FrontendParameters *feparams, uint8_t polarization, uint8_t DiSEqC)
 	return status;
 }
 
-int get_sdts(void)
+int get_sdts(char * frontendType)
 {
 	stiterator tI;
 
@@ -251,7 +251,8 @@ int get_sdts(void)
 		
  		eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_FREQUENCY,CEventServer::INITID_ZAPIT, &actual_freq,sizeof(actual_freq));
  		actual_polarisation = (uint)tI->second.polarization;
- 		eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_FREQUENCYP,CEventServer::INITID_ZAPIT,&actual_polarisation,sizeof(actual_polarisation));
+ 		if (!strcmp(frontendType, "sat"))
+ 			eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_FREQUENCYP,CEventServer::INITID_ZAPIT,&actual_polarisation,sizeof(actual_polarisation));
 
 		parse_sdt(tI->second.transport_stream_id, tI->second.original_network_id, tI->second.DiSEqC);
 	}
@@ -339,22 +340,22 @@ void write_transponder(FILE *fd, t_transport_stream_id transport_stream_id, t_or
 	return;
 }
 
-int write_provider(FILE *fd, const char *type, const char *provider_name, const uint8_t DiSEqC, t_satellite_position satellitePosition)
+int write_provider(FILE *fd, const char *frontendType, const char *provider_name, const uint8_t DiSEqC, t_satellite_position satellitePosition)
 {
 	int status = -1;
 	
 	if (!scantransponders.empty())
 	{
 		/* cable tag */
-		if (!strcmp(type, "cable"))
+		if (!strcmp(frontendType, "cable"))
 		{
-			fprintf(fd, "\t<%s name=\"%s\">\n", type, provider_name);
+			fprintf(fd, "\t<%s name=\"%s\">\n", frontendType, provider_name);
 		}
 
 		/* satellite tag */
 		else
 		{
-			fprintf(fd, "\t<%s name=\"%s\" diseqc=\"%hd\" position=\"%hd\">\n", type, provider_name, DiSEqC, satellitePosition);
+			fprintf(fd, "\t<%s name=\"%s\" diseqc=\"%hd\" position=\"%hd\">\n", frontendType, provider_name, DiSEqC, satellitePosition);
 		}
 
 		/* channels */
@@ -364,7 +365,7 @@ int write_provider(FILE *fd, const char *type, const char *provider_name, const 
 		}
 
 		/* end tag */
-		fprintf(fd, "\t</%s>\n", type);
+		fprintf(fd, "\t</%s>\n", frontendType);
 		status = 0; // this indicates that services have been found and that bouquets should be written...
 	}
 
@@ -413,7 +414,7 @@ int scan_transponder(xmlNodePtr transponder, bool satfeed, uint8_t diseqc_pos)
 	return 0;
 }
 
-void scan_provider(xmlNodePtr search, char * providerName, bool satfeed, uint8_t diseqc_pos)
+void scan_provider(xmlNodePtr search, char * providerName, bool satfeed, uint8_t diseqc_pos, char * frontendType)
 {
 	xmlNodePtr transponder = NULL;
 
@@ -438,7 +439,7 @@ void scan_provider(xmlNodePtr search, char * providerName, bool satfeed, uint8_t
 	 * bouquet association table,
 	 * network information table
 	 */
-	status = get_sdts();
+	status = get_sdts(frontendType);
 
 	/*
 	 * channels from PAT do not have service_type set.
@@ -470,7 +471,7 @@ void *start_scanthread(void *)
 	FILE *fd = NULL;
 	FILE *fd1 = NULL;
 	char providerName[32] = "";
-	char *type = NULL;
+	char *frontendType = NULL;
 	uint8_t diseqc_pos = 0;
 	bool satfeed = false;
 	int scan_status = -1;
@@ -488,7 +489,7 @@ void *start_scanthread(void *)
 
 	curr_sat = 0;
 
-        if ((type = getFrontendName()) == NULL)
+        if ((frontendType = getFrontendName()) == NULL)
 	{
 		WARN("unable to scan without a supported frontend");
 		stop_scan(false);
@@ -499,14 +500,14 @@ void *start_scanthread(void *)
 	xmlNodePtr search = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
 	xmlNodePtr transponder = NULL;
 	
-	if  (!strcmp(type, "cable"))
+	if  (!strcmp(frontendType, "cable"))
 	{
 		fd = fopen(SERVICES_XML, "w");
 		write_xml_header(fd);
 	}
 
 	/* read all sat or cable sections */
-	while ((search = xmlGetNextOccurence(search, type)) != NULL)
+	while ((search = xmlGetNextOccurence(search, frontendType)) != NULL)
 	{
 		/* get name of current satellite oder cable provider */
 		strcpy(providerName, xmlGetAttribute(search, "name"));
@@ -521,14 +522,14 @@ void *start_scanthread(void *)
 		{
 			/* Special mode for cable-users with sat-feed */
 			if (frontend->getInfo()->type == FE_QAM)
-				if (!strcmp(type, "cable") && xmlGetAttribute(search, "satfeed"))
+				if (!strcmp(frontendType, "cable") && xmlGetAttribute(search, "satfeed"))
 					if (!strcmp(xmlGetAttribute(search, "satfeed"), "true"))
 						satfeed = true;
 
 			/* increase sat counter */
 			curr_sat++;
 
-			if  (!strcmp(type, "sat"))
+			if  (!strcmp(frontendType, "sat"))
 			{
 				/* copy services.xml to /tmp directory */
 				cp(SERVICES_XML, SERVICES_TMP);
@@ -546,16 +547,16 @@ void *start_scanthread(void *)
 			if (diseqc_pos == 255 /* = -1 */)
 				diseqc_pos = 0; 
 				
-			printf("[scan] type = %s, diseqcType = %d\n", type, frontend->getDiseqcType());
-			if (!strcmp(type, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
+			printf("[scan] frontendType = %s, diseqcType = %d\n", frontendType, frontend->getDiseqcType());
+			if (!strcmp(frontendType, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
 				satellitePosition = driveMotorToSatellitePosition(providerName);
 				
-			scan_provider(search, providerName, satfeed, diseqc_pos);
+			scan_provider(search, providerName, satfeed, diseqc_pos, frontendType);
 					
 			/* write services */
-			scan_status = write_provider(fd, type, providerName, diseqc_pos, satellitePosition);
+			scan_status = write_provider(fd, frontendType, providerName, diseqc_pos, satellitePosition);
 			
-			if (!strcmp(type, "sat"))
+			if (!strcmp(frontendType, "sat"))
 			{
 				if (fd1)		
 					copy_to_end(fd, fd1, providerName);
@@ -568,7 +569,7 @@ void *start_scanthread(void *)
 		search = search->xmlNextNode;
 	}
 	
-	if  (!strcmp(type, "cable"))
+	if  (!strcmp(frontendType, "cable"))
 		write_xml_footer(fd);
 
 	/* clean up - should this be done before every xmlNextNode ? */
