@@ -18,7 +18,7 @@ class eEventDisplay: public eWindow
 	void nextEvent();
 	void prevEvent();
 	int total;
-	void updateScrollbar(int show=1);
+	void updateScrollbar();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:

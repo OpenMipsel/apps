@@ -181,6 +181,27 @@ fontRenderClass::fontRenderClass(): fb(fbClass::getInstance())
 	return;
 }
 
+float fontRenderClass::getLineHeight(const gFont& font)
+{
+	if (!instance)
+		return 0;
+	Font *fnt = getFont( font.family.c_str(), font.pointSize);
+	if (!fnt)
+		return 0;
+	eLocker lock(ftlock);
+	FT_Face current_face;
+	if (FTC_Manager_Lookup_Size(cacheManager, &fnt->font.font, &current_face, &fnt->size)<0)
+	{
+		eDebug("FTC_Manager_Lookup_Size failed!");
+		return 0;
+	}
+	int linegap=current_face->size->metrics.height-(current_face->size->metrics.ascender+current_face->size->metrics.descender);
+	float height=(current_face->size->metrics.ascender+current_face->size->metrics.descender+linegap/2.0)/64;
+	delete fnt;
+	return height;
+}
+
+
 fontRenderClass::~fontRenderClass()
 {
 	ftlock.lock();
@@ -306,7 +327,7 @@ int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags, int rflags)
 	}
 
   eRect* bbox = new eRect();
-	bbox->setLeft( (flags&GS_ISFIRST|glyphs.empty()?cursor.x():cursor.x()-1) + glyph->left );	
+	bbox->setLeft( (flags&GS_ISFIRST|glyphs.empty()?cursor.x():cursor.x()-1) + glyph->left );
 	bbox->setTop( cursor.y() - glyph->top );
 	bbox->setWidth( glyph->width );
 	bbox->setHeight( glyph->height );

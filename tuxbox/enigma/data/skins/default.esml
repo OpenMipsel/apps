@@ -172,7 +172,7 @@
 	</object>
  
 	<object name="eventview">
-		<eWindow cposition="80:80" csize="550:400" >
+		<eWindow cposition="100:100" csize="520:380" >
 			<eWidget position="10:5" size="e-40:e-45" name="epg_description" font="eventview.description" />
 			<eLabel position="10:e-35" size="150:e-10" name="date" font="eventview.date" />
 			<eLabel position="130:e-35" size="150:e-10" name="time" font="eventview.time" />

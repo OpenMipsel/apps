@@ -188,6 +188,8 @@ protected:
 	gPixmap *pixmap;
 
 	eString descr;
+
+	int atomic_counter;
 public:
 	inline eWidget *getNonTransparentBackground()
 	{
@@ -475,6 +477,12 @@ public:
 	 */
 	void setShortcut(const eString &shortcut);
 	void setShortcutFocus(eWidget *focus);
+	
+	/**
+	 * \brief Begin atomic.
+	 */
+	void beginAtomic();
+	void endAtomic();
 };
 
 class eDecoWidget:public eWidget

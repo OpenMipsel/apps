@@ -66,7 +66,7 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 				else
 					close(2);  // this go the next event and call exec()   (in epgwindow.cpp)
 			}
-			else if (event.action == &i_cursorActions->up)
+			else if (total && event.action == &i_cursorActions->up)
 			{
 				ePoint curPos = long_description->getPosition();
 				if ( curPos.y() < 0 )
@@ -76,14 +76,13 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 					updateScrollbar();
 				}
 			}
-			else if (event.action == &i_cursorActions->down)
+			else if (total && event.action == &i_cursorActions->down)
 			{
 				ePoint curPos = long_description->getPosition();
 				if ( (total - descr->getSize().height() ) >= abs( curPos.y() - descr->getSize().height() ) )
 				{
 					long_description->move( ePoint( curPos.x(), curPos.y() - descr->getSize().height() ) );
 					long_description->invalidate();
-					eDebug("long_description->getPosition.x = %d, long_description->getPosition().y = %d", long_description->getPosition().x(), long_description->getPosition().y() );
 					updateScrollbar();
 				}
 			}
@@ -140,9 +139,14 @@ eEventDisplay::eEventDisplay(eString service, const ePtrList<EITEvent>* e, EITEv
 		eFatal("skin load of \"eventview\" failed");
 
 	long_description=new eLabel(descr);
-// 	long_description->move(ePoint(0,20)); // netter effekt ... vielleicht hilfts beim bug suchen..
-	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
 	long_description->setFlags(RS_WRAP);
+
+	// try to recalc long description label... ( no broken text lines.. )
+	float lineheight=fontRenderClass::getInstance()->getLineHeight( long_description->getFont() );
+	int lines = descr->getSize().height() / (int)lineheight;
+	int newheight = lines * (int)lineheight + (round(lineheight) - (int)lineheight);
+	descr->resize( eSize( descr->getSize().width(), newheight + lineheight/6 ) );
+	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
 
 	if (e)
 		setList(*e);
@@ -157,30 +161,29 @@ eEventDisplay::~eEventDisplay()
 	delete eventlist;
 }
 
-void eEventDisplay::updateScrollbar(int show)
+void eEventDisplay::updateScrollbar()
 {
-	if (!show)
-	{
-		scrollbar->hide();
-		return;
-	}
 	total = descr->getSize().height();
+	int pages=1;
 	while( total < long_description->getExtend().height() )
+	{
 		total += descr->getSize().height();
-
-	if (!total)
-		total=1;
+		pages++;
+	}
 
 	int start=-long_description->getPosition().y()*100/total;
 	int vis=descr->getSize().height()*100/total;
 	scrollbar->setStart(start);
 	scrollbar->setPerc(vis);
 	scrollbar->show();
+	if (pages == 1)
+		total=0;
 }
-
 
 void eEventDisplay::setEvent(EITEvent *event)
 {
+	long_description->hide();
+	long_description->move( ePoint(0,0) );
 	if (event)
 	{
 		eString _title=0, _long_description="";
@@ -242,11 +245,8 @@ void eEventDisplay::setEvent(EITEvent *event)
 		setText(service);
 		long_description->setText(_("no description available"));
 	}
-	eDebug("visible width = %d, height = %d\ndescr width = %d, height = %d",
-	descr->getSize().width(),
-	descr->getSize().height(),
-	long_description->getExtend().width(), long_description->getExtend().height() );
 	updateScrollbar();
+	long_description->show();
 }
 
 void eEventDisplay::setList(const ePtrList<EITEvent> &e)

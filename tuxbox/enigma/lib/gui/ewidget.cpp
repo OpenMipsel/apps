@@ -19,7 +19,8 @@ eWidget::eWidget(eWidget *_parent, int takefocus):
 	focus(0), takefocus(takefocus),
 	font( parent ? parent->font : eSkin::getActive()->queryFont("global.normal") ),
 	backgroundColor(_parent?gColor(-1):gColor(eSkin::getActive()->queryScheme("global.normal.background"))),
-	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground")))
+	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground"))),
+	atomic_counter(0)	
 {
 	LCDTitle=0;
 	LCDElement=0;
@@ -205,6 +206,7 @@ void eWidget::invalidate(eRect area, int force)
 	if ( (!(state & stateVisible)) && (!force))
 		return;
 
+	beginAtomic();
 	if (area.isNull())
 		area=eRect(0, 0, size.width(), size.height());
 
@@ -224,6 +226,7 @@ void eWidget::invalidate(eRect area, int force)
 		area&=w->clientrect;
 	}
 	w->redraw(area);
+	endAtomic();
 }
 
 int eWidget::event(const eWidgetEvent &event)
@@ -298,6 +301,8 @@ void eWidget::show()
 	ASSERT(!(state&stateVisible));
 
 	state|=stateShow;
+	
+	beginAtomic();
 
 	if (!parent || (parent->state&stateVisible))
 	{
@@ -308,6 +313,8 @@ void eWidget::show()
 		getTLW()->just_showing--;
 		redraw();
 	}
+	
+	endAtomic();
 }
 
 void eWidget::accept()
@@ -542,10 +549,7 @@ void eWidget::redrawWidget(gPainter *target, const eRect &clip)
 void eWidget::eraseBackground(gPainter *target, const eRect &clip)
 {
 	if (((int)getBackgroundColor())!=-1)
-	{
 		target->clear();
-		target->flush();
-	}
 }
 
 void eWidget::focusNext(int dir)
@@ -1048,6 +1052,33 @@ void eWidget::setShortcutFocus(eWidget *focus)
 	shortcutFocusWidget=focus;
 	if (!focus)
 		eFatal("setShortcutFocus with unknown widget!");
+}
+
+void eWidget::beginAtomic()
+{
+	eWidget *p=this;
+	while (p->parent)
+		p=p->parent;
+
+	++p->atomic_counter;
+//	eDebug("begin atomic (%d)", p->atomic_counter);
+}
+
+void eWidget::endAtomic()
+{
+	eWidget *p=this;
+	while (p->parent)
+		p=p->parent;
+
+//	eDebug("end atomic (%d)", p->atomic_counter);
+
+	if (!--p->atomic_counter)
+		if (gPainter *p=getPainter())
+		{
+//			eDebug("FLUSH.");
+			p->flush();
+			delete p;
+		}
 }
 
 static eWidget *create_eWidget(eWidget *parent)
