@@ -4,7 +4,7 @@
 	Copyright (C) 2001 Steffen Hehn 'McClean'
 	Homepage: http://dbox.cyberphoria.org/
 
-	$Id: timerdtypes.h,v 1.3 2002/10/18 00:18:31 woglinde Exp $
+	$Id: timerdtypes.h,v 1.3.2.1 2002/10/24 20:33:23 thegoodguy Exp $
 
 	License: GPL
 
@@ -29,7 +29,7 @@
 
 #include <vector>
 
-#include <zapit/zapittypes.h>
+#include <zapit/client/zapittypes.h>
 
 
 #define REMINDER_MESSAGE_MAXLEN 31
