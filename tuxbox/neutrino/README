@@ -1,3 +1,4 @@
-Please check out HEAD and apply the patch:
+Please check out the HEAD version of apps/tuxbox/neutrino and apply the
+patch apps/tuxbox/neutrino/patch.HEAD.for.alexW found in rel_alexW:
 
-patch -p0 < patch.HEAD.for.alexW
+patch -p0 < apps/tuxbox/neutrino/patch.HEAD.for.alexW
