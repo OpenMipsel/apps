@@ -1,0 +1,11 @@
+200212300350 5 56 Fix mute bug
+200212300350 7 * Fix EPG sort bug
+200301021610 7 * Some speedups
+200301022024 3 5 Support for checking harddisks
+200301050512 2 * Fix timer bugs
+200301070622 5 * Fix skinsetup
+200301130158 5 * TS files contains SIT and default PIDs
+200301130158 2 * Selected language in recording will be default while playing
+200301160000 1 * New languages and fixes
+200301191844 2 * Czech EPG support
+200301200416 3 * Changelog support in upgrade
