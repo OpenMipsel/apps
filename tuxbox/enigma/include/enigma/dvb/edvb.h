@@ -10,6 +10,7 @@
 #include <core/base/estring.h>
 #include <core/base/eptrlist.h>
 #include <core/dvb/settings.h>
+#include <core/dvb/dvbci.h>
 
 class eService;
 class eTransponder;
@@ -39,6 +40,8 @@ class eDVBScanController;
 class eDVB;
 
 class eTransponder;
+
+class eDVBCI;
 
 class eDVBEvent
 {
@@ -99,6 +102,7 @@ public:
 	eAUTable<BAT> tBAT;
 	
 	eDVBRecorder *recorder;
+	eDVBCI *DVBCI;
 
 public:
 	enum
