@@ -164,7 +164,6 @@ int eMainloop::exec()
 		app_quit_now = false;
 		enter_loop();
 	}
-	eDebug("retval = %d", retval);
 	return retval;
 }
 
