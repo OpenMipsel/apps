@@ -851,8 +851,10 @@ void eDVBServiceController::clearCAlist()
 {
 	availableCASystems.clear();
 	initCAlist();
+#ifndef DISABLE_CI
 	if (DVBCI)
 		DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::getcaids));
 	if (DVBCI2)
 		DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::getcaids));
+#endif
 }
