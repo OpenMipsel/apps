@@ -2556,8 +2556,9 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 #if 1
 			if(eDVB::getInstance()->getInfo("mID")=="06")
 			{
+				eDebug("write number to led-display");
 				int fd=::open("/dev/dbox/fp0",O_RDWR);
-				::ioctl(fd,4,(unsigned char*)num);
+				::ioctl(fd,4,&num);
 				::close(fd);
 			}
 #endif
