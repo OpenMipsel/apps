@@ -11,6 +11,22 @@
 
 eTimerManager* eTimerManager::instance=0;
 
+static eString getRight( const eString& str, char c )
+{
+	unsigned int found = str.find(c);
+	unsigned int beg = ( found != eString::npos ? found : 0 );
+	unsigned int len = str.length();
+	if ( found != eString::npos )
+		beg++;
+	return str.mid( beg, len-beg );
+}
+
+static eString getLeft( const eString& str, char c )
+{
+	unsigned int found = str.find(c);
+	return found != eString::npos ? str.left(found):str;
+}
+
 eTimerManager::eTimerManager()
 	:actionTimer(eApp), timer(eApp)
 {
@@ -54,10 +70,10 @@ void eTimerManager::actionHandler()
 			{
 				eDebug("[eTimerManager] change to the right service");
 				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
-				eString descr = nextStartingEvent->service.descr;
-				nextStartingEvent->service.descr="";
+				eString save = nextStartingEvent->service.descr;
+				nextStartingEvent->service.descr = getLeft( nextStartingEvent->service.descr, '/' );
 				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psDontAdd );
-				nextStartingEvent->service.descr=descr;
+				nextStartingEvent->service.descr=save;
 			}
 			else
 			{
@@ -271,7 +287,8 @@ void eTimerManager::actionHandler()
 			{
 //				eDebug("nextStartingEvent->service.data[0] = %d", nextStartingEvent->service.data[0] );
 //				eDebug("nextStartingEvent->service.descr = %s", nextStartingEvent->service.descr.c_str() );
-				eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->service.descr.c_str() );
+				eString descr = getRight( nextStartingEvent->service.descr, '/');
+				eZapMain::getInstance()->recordDVR(1, 0, descr.length()?descr.c_str():0 );
 			}
 			else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
 			{
@@ -593,7 +610,11 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *
 			break;
 		}
 	}
-	e.service.descr = descr;
+	eDebug("e.service.descr = %s", e.service.descr.c_str() );
+	eDebug("descr = %s", descr.c_str() );
+	eString tmp = getLeft(e.service.descr, '/');
+	eDebug("tmp = %s", tmp.c_str() );	
+	e.service.descr = tmp + '/' + descr;
 
 	return addEventToTimerList( sel, e );
 }
@@ -711,7 +732,7 @@ eString eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColor coAct
 	eString descr;
 	if (!paraDescr)
 	{
-		descr = entry->service.descr;
+		descr = getRight( entry->service.descr, '/' );
 		paraDescr = new eTextPara( eRect( 0 ,0, rect.width(), rect.height()) );
 		paraDescr->setFont( DescrFont );
 		paraDescr->renderString( descr );
@@ -1082,6 +1103,7 @@ void eTimerView::selChanged( eListBoxEntryTimer *entry )
 		endTime = *localtime( &tmp );
 		updateDateTime( beginTime, endTime );
 		type->setCurrent( (void*) ( entry->entry->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::recVCR|ePlaylistEntry::recNgrab ) ) );
+		
 		eService *service = eServiceInterface::getInstance()->addRef( entry->entry->service );
 		if (service)
 		{
@@ -1089,8 +1111,17 @@ void eTimerView::selChanged( eListBoxEntryTimer *entry )
 			bSelectService->setText( service->service_name );
 			eServiceInterface::getInstance()->removeRef( eServiceInterface::getInstance()->service );
 		}
-		else // nvod
-			bSelectService->setText("NVOD");
+		else 
+		{
+			eString s = getLeft( entry->entry->service.descr, '/' );
+			if ( s.length() )
+			{
+				tmpService = entry->entry->service;
+				bSelectService->setText(s);
+			}
+			else
+				bSelectService->setText(_("unknown"));
+		}
 	}
 	else
 	{
@@ -1247,9 +1278,19 @@ void eTimerView::showServiceSelector()
 		else if (tmpService != *ref)
 		{
 			tmpService = *ref;
-			eService *service =	eServiceInterface::getInstance()->addRef( tmpService );
-			bSelectService->setText(service->service_name);
-			eServiceInterface::getInstance()->removeRef( tmpService );
+			if ( ref->descr.length() )
+				bSelectService->setText(ref->descr);
+			else
+			{
+				eService *service = eServiceInterface::getInstance()->addRef( tmpService );
+				if ( service )
+				{
+					bSelectService->setText(service->service_name);
+					eServiceInterface::getInstance()->removeRef( tmpService );
+				}
+				else
+					bSelectService->setText(_("unknown"));
+			}
 		}
 	}
 	show();
