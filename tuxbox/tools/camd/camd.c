@@ -1,5 +1,5 @@
 /*
- * $Id: camd.c,v 1.9 2002/08/24 19:59:31 obi Exp $
+ * $Id: camd.c,v 1.9.2.1 2003/03/04 17:12:12 alexw Exp $
  *
  * (C) 2001, 2002 by gillem, Hunz, kwon, tmbinc, TripleDES, obi
  *
@@ -785,7 +785,7 @@ int main (int argc, char ** argv)
 	int connfd;
 	struct sockaddr_un servaddr;
 	int clilen;
-	char msgbuffer[1024];
+	unsigned char msgbuffer[1024];
 
 	switch (fork())
 	{
