@@ -1122,12 +1122,18 @@ void CRCInput::clearRCMsg()
 *       isNumeric - test if key is 0..9
 *
 **************************************************************************/
-bool CRCInput::isNumeric(unsigned int key)
+bool CRCInput::isNumeric(const unsigned int key)
 {
-	if( (key>=RC_0) && (key<=RC_9))
-		return true;
-	else
-		return false;
+	return ((key == RC_0) || ((key >= RC_1) && (key <= RC_9)));
+}
+
+/**************************************************************************
+*       getNumericValue - return numeric value of the key or -1
+*
+**************************************************************************/
+int CRCInput::getNumericValue(const unsigned int key)
+{
+	return ((key == RC_0) ? 0 : (((key >= RC_1) && (key <= RC_9)) ? key - RC_1 + 1 : -1));
 }
 
 /**************************************************************************
@@ -1194,14 +1200,6 @@ string CRCInput:: getKeyName(int code)
 			return "mute";
 			case RC_help:
 			return "help";
-			case RC_top_left:
-			return "cursor top+left";
-			case RC_top_right:
-			return "cursor top+right";
-			case RC_bottom_left:
-			return "cursor bottom+left";
-			case RC_bottom_right:
-			return "cursor bottom+right";
 			case RC_timeout:
 			return "timeout";
 			case RC_nokey:
