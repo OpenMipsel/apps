@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.11 2003/05/18 15:37:21 digi_casi Exp $
+ * $Id: frontend.cpp,v 1.41.2.12 2003/05/20 13:16:17 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -537,8 +537,6 @@ void CFrontend::sendMotorCommand(uint8_t cmdtype, uint8_t address, uint8_t comma
 
 	if (ioctl(sec_fd, SEC_SEND_SEQUENCE, &seq) < 0)
 		printf("[frontend] sending diseqc command failed.\n");
-	else
-		printf("[frontend] diseqc command sent.\n");
 	
 	// set back voltage and tone to where they were...
 	secSetVoltage(state->selVolt);
@@ -625,7 +623,6 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 		/* do diseqc stuff */
 		switch (diseqcType)
 		{
-		case DISEQC_1_2:
 		case NO_DISEQC:
 			if (currentToneMode != toneMode)
 			{
@@ -656,7 +653,7 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 			break;
 
 		case DISEQC_1_1:
-		//case DISEQC_1_2:
+		case DISEQC_1_2:
 			if ((currentVoltage != voltage) || (currentToneMode != toneMode) || (currentDiseqc != diseqc))
 			{
 				sendDiseqcCommand(toneMode, voltage, diseqc, diseqcRepeats);
