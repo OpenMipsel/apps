@@ -2522,7 +2522,9 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 
 void eZapMain::startService(const eServiceReference &_serviceref, int err)
 {
+	skipcounter=0;
 	eServiceHandler *sapi=eServiceInterface::getInstance()->getService();
+	
 	if (!sapi)
 		return;
 
