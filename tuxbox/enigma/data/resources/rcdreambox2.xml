@@ -150,7 +150,7 @@
 			<action name="toggleDVRFunctions" key="video" flags="m" />
 		</actionmap>
 
-		<actionmap name="enigmaMain" style="default">
+		<actionmap name="enigmaMain" style="default" descr="Default (Enigma)" >
 			<action name="showInfobar" key="ok" flags="m" />
 			<action name="hideInfobar" key="ok" flags="m" />
 			<action name="hideInfobar" key="LAME" flags="m" />
@@ -159,7 +159,7 @@
 			<action name="showEPG" key="info" flags="m" />
 		</actionmap>
 
-		<actionmap name="enigmaMain" style="classic">
+		<actionmap name="enigmaMain" style="classic" descr="Classic (Neutrino)" >
 			<!--action name="volumeUp" key="right" flags="mr" />
 			<action name="volumeDown" key="left" flags="mr" /-->
 			<action name="nextService" key="up" flags="mr" />
