@@ -1,6 +1,10 @@
 In order to compile zapit for rel_alexW you have to check out the HEAD
 versions of the following directories/files:
 
+apps/dvb/zapit/.cvsignore                   \
+apps/dvb/zapit/AUTHORS                      \
+apps/dvb/zapit/autogen.sh                   \
+apps/dvb/zapit/ChangeLog                    \
 apps/dvb/zapit/include/zapit/.cvsignore     \
 apps/dvb/zapit/include/zapit/bat.h          \
 apps/dvb/zapit/include/zapit/bouquets.h     \
@@ -22,6 +26,8 @@ apps/dvb/zapit/include/zapit/types.h        \
 apps/dvb/zapit/include/zapit/xmlinterface.h \
 apps/dvb/zapit/include/zapit/zapit.h        \
 apps/dvb/zapit/lib                          \
+apps/dvb/zapit/Makefile.am                  \
+apps/dvb/zapit/NEWS                         \
 apps/dvb/zapit/src/bouquets.cpp             \
 apps/dvb/zapit/src/channel.cpp              \
 apps/dvb/zapit/src/dvbstring.cpp            \
@@ -34,4 +40,5 @@ apps/dvb/zapit/src/zapsi/bat.cpp            \
 apps/dvb/zapit/src/zapsi/nit.cpp            \
 apps/dvb/zapit/src/zapsi/pat.cpp            \
 apps/dvb/zapit/src/zapsi/pmt.cpp            \
-apps/dvb/zapit/src/zapsi/sdt.cpp
+apps/dvb/zapit/src/zapsi/sdt.cpp            \
+apps/dvb/zapit/tuxbox-zapit.pc.in
