@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 #include <enigma_mainmenu.h>
 #include <enigma_event.h>
@@ -2512,7 +2513,17 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			num=service->dvb->service_number;
 
 		if (num != -1)
+		{
+#if 1		
+			if(eDVB::getInstance()->getInfo("mID")=="06")
+			{
+				int fd=::open("/dev/dbox/fp0",O_RDWR);
+				::ioctl(fd,4,(unsigned char*)num);
+				::close(fd);
+			}
+#endif			
 			ChannelNumber->setText(eString().sprintf("%d", num));
+		}	
 		else
 			ChannelNumber->setText("");
 
