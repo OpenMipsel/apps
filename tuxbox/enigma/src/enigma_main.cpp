@@ -3324,7 +3324,7 @@ void eZapMain::updateVolume(int vol)
 			volume.hide();
 		mute.show();
 	}
-	else if (vol < 63 && mute.isVisible() )
+	else if ( mute.isVisible() )
 		mute.hide();
 
 	VolumeBar.setPerc((63-vol)*100/63);
