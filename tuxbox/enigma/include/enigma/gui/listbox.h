@@ -326,7 +326,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 	eListBoxBase::redrawBorder(target, rc);
 
 	// rc wird in eListBoxBase ggf auf den neuen Client Bereich ohne Rand verkleinert
-	
+
 	int i=0;
 	for (ePtrList_T_iterator entry(top); (entry != bottom) && (entry != childs.end()); ++entry)
 	{
@@ -335,6 +335,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 		eString s;
 
 		if ( rc.contains(rect) )
+		{
 			if ( entry == current )
 			{
 				if ( LCDTmp ) // LCDTmp is only valid, when we have the focus
@@ -346,6 +347,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 			}
 			else
 				entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 0 : ( MaxEntries > 1 ? 2 : 0 ) )	);
+		}
 
 		i++;
 	}
@@ -455,7 +457,7 @@ inline int eListBox<T>::moveSelection(int dir)
 				if (current == childs.begin())
 					break;
 
-				if (current-- == top && current != childs.begin() )	// oben (links) angekommen? page up
+				if (current-- == top/* && current != childs.begin()*/ )	// oben (links) angekommen? page up
 				{
 					for (int i = 0; i < MaxEntries * columns; ++i)
 					{
