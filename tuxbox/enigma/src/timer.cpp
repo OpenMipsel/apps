@@ -619,8 +619,8 @@ long eTimerManager::getSecondsToEnd()
 {
 	time_t nowTime = time(0)+eDVB::getInstance()->time_difference;
 	time_t tmp=0;
-	if ( (tmp = getNextEventStartTime( nextStartingEvent->time_begin, nextStartingEvent->type, getDate() == nextStartingEvent->last_activation ) ) )
-		return tmp + nextStartingEvent->duration;
+	if ( (tmp = getNextEventStartTime( nextStartingEvent->time_begin, nextStartingEvent->type, false ) ) )
+		return (tmp + nextStartingEvent->duration) - nowTime;
 	return (nextStartingEvent->time_begin + nextStartingEvent->duration) - nowTime;
 }
 
