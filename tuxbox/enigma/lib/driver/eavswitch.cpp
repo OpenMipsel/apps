@@ -20,12 +20,13 @@
 #define SAAIOSINP               2 /* input control                              */
 #define SAAIOSOUT               3 /* output control                     */
 #define SAAIOSENC               4 /* set encoder (pal/ntsc)             */
-#define SAAIOSMODE              5 /* set mode (rgb/fbas/svideo) */
+#define SAAIOSMODE              5 /* set mode (rgb/fbas/svideo/component) */
 #define SAAIOSWSS							 10 /* set wide screen signaling data */
 
 #define SAA_MODE_RGB    0
 #define SAA_MODE_FBAS   1
 #define SAA_MODE_SVIDEO 2
+#define SAA_MODE_COMPONENT 3
 
 #define SAA_NTSC                0
 #define SAA_PAL                 1
@@ -299,8 +300,11 @@ int eAVSwitch::setColorFormat(eAVColorFormat c)
 	case cfYC:
 		arg=SAA_MODE_SVIDEO;
 		break;
+	case cfYPbPr:
+		arg=SAA_MODE_COMPONENT;
+		break;
 	}
-	int fblk = (c == cfRGB)?1:0;
+	int fblk = ((c == cfRGB) || (c == cfYPbPr))?1:0;
 	ioctl(saafd, SAAIOSMODE, &arg);
 	ioctl(avsfd, AVSIOSFBLK, &fblk);
 	return 0;

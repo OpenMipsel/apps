@@ -13,7 +13,8 @@ enum eAVColorFormat
 	cfNull,
 	cfCVBS, 	// "FBAS"
 	cfRGB,
-	cfYC			// "SVideo"
+	cfYC,			// "SVideo"
+	cfYPbPr		// "Component"
 };
 
 class eAVSwitch

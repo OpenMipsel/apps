@@ -46,6 +46,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	entrys[0]=new eListBoxEntryText(colorformat, _("FBAS"), (void*)1);
 	entrys[1]=new eListBoxEntryText(colorformat, _("RGB"), (void*)2);
 	entrys[2]=new eListBoxEntryText(colorformat, _("SVideo"), (void*)3);
+	entrys[3]=new eListBoxEntryText(colorformat, _("YPbPr"), (void*)4);
 	colorformat->setCurrent(entrys[v_colorformat-1]);
 	colorformat->setHelpText(_("choose colour format ( left, right )"));
 
@@ -63,7 +64,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	pin8->setHelpText(_("choose aspect ratio ( left, right )"));
 	entrys[0]=new eListBoxEntryText(pin8, _("4:3 letterbox"), (void*)0);
 	entrys[1]=new eListBoxEntryText(pin8, _("4:3 panscan"), (void*)1);
-	entrys[2]=new eListBoxEntryText(pin8, _("16:9 (PIN8)"), (void*)2);
+	entrys[2]=new eListBoxEntryText(pin8, _("16:9"), (void*)2);
 	pin8->setCurrent(entrys[v_pin8]);
 
 	ok=new eButton(this);
