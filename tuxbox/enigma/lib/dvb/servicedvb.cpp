@@ -648,7 +648,7 @@ struct eServiceHandlerDVB_addService
 {
 	Signal1<void,const eServiceReference&> &callback;
 	int type;
-	int DVBNamespace;
+	unsigned int DVBNamespace;
 	eServiceHandlerDVB_addService(Signal1<void,const eServiceReference&> &callback, int type, int DVBNamespace)
 	: callback(callback), type(type), DVBNamespace(DVBNamespace)
 	{
@@ -656,7 +656,7 @@ struct eServiceHandlerDVB_addService
 	void operator()(const eServiceReference &service)
 	{
 		int t = ((eServiceReferenceDVB&)service).getServiceType();
-		int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;
+		unsigned int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;
 		if (t < 0)
 			t=0;
 		if (t >= 31)
@@ -688,7 +688,7 @@ void eServiceHandlerDVB::enterDirectory(const eServiceReference &ref, Signal1<vo
 			for (std::list<eServiceReferenceDVB>::iterator i(b->list.begin());  i != b->list.end(); ++i)
 			{
 				int t = i->getServiceType();
-				int nspace = ((eServiceReferenceDVB&)*i).getDVBNamespace().get()&0xFFFF0000;
+				unsigned int nspace = ((eServiceReferenceDVB&)*i).getDVBNamespace().get()&0xFFFF0000;
 				if (t < 0)
 					t=0;
 				if (t >= 31)
@@ -755,7 +755,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 						dvb->set(eServiceDVB::cAC3PID, (descriptor[i+2]<<8)|(descriptor[i+3]));
 					break;
 				case eServiceDVB::cTPID:
-					dvb->set(eServiceDVB::cVPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
+					dvb->set(eServiceDVB::cTPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
 					break;
 				case eServiceDVB::cPCRPID:
 					dvb->set(eServiceDVB::cPCRPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
@@ -863,7 +863,7 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 				for ( std::list<eServiceReferenceDVB>::iterator s(i->list.begin()); s != i->list.end(); ++s)
 				{
 					int t = s->getServiceType();
-					int nspace = ((eServiceReferenceDVB&)*s).getDVBNamespace().get()&0xFFFF0000;
+					unsigned int nspace = ((eServiceReferenceDVB&)*s).getDVBNamespace().get()&0xFFFF0000;
 					if (t < 0)
 						t=0;
 					if (t >= 31)
