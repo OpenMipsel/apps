@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <cmath>
+
 #include <lib/base/ebase.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/esection.h>
@@ -436,6 +438,18 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	return 0;
 }
 
+double eFrontend::calcAzimuth( double Longitude, double Latitude, int OrbitalPos )
+{
+	double p = (double)OrbitalPos/10;
+	double a;
+	eDebug("Longitude=%lf, Latitude=%lf, OrbitalPos=%lf", Longitude, Latitude, p);
+	// Berechnung Azimuth
+	a = 180 / M_PI * std::atan ( std::tan ( ( p - Longitude ) * M_PI / 180 ) / std::sin ( Latitude * M_PI / 180 ) );
+	a = (( 180 - a ) * 100 + 0.5 ) / 100;
+	eDebug("Azimuth=%lf",a);
+	return a;
+}
+     
 int eFrontend::tune(eTransponder *trans,
 		uint32_t Frequency, 		// absolute frequency in kHz
 		int polarisation, 			// polarisation (polHor, polVert, ...)
@@ -466,7 +480,7 @@ int eFrontend::tune(eTransponder *trans,
 	{
 		eSwitchParameter &swParams = sat->getSwitchParams();
 		eLNB *lnb = sat->getLNB();
-    // Variables to detect if DiSEqC must sent .. or not
+		// Variables to detect if DiSEqC must sent .. or not
 		int csw = lnb->getDiSEqC().DiSEqCParam,
 							RotorCmd=-1,
 							SmatvFreq=-1;
@@ -499,13 +513,13 @@ int eFrontend::tune(eTransponder *trans,
 		{           
 			if ( lnb->getDiSEqC().useGotoXX )
 			{
-				int pos = sat->getOrbitalPosition() + lnb->getDiSEqC().rotorOffset;
-				int absPosition = abs(pos);
-				RotorCmd = ( absPosition / 10 * 0x10) + gotoXTable[ absPosition % 10 ];
-
-				// Drive to East ?
-				if ( absPosition == pos )
-					RotorCmd |= 0xE000;  // then add 0xE0
+				int pos = sat->getOrbitalPosition();
+				double azimuth=calcAzimuth(lnb->getDiSEqC().gotoXXLongitude, lnb->getDiSEqC().gotoXXLatitude, pos);
+				int east = azimuth < lnb->getDiSEqC().gotoXXOffset;
+				int tmp = (int)round( fabs( lnb->getDiSEqC().gotoXXOffset - azimuth ) * 10.0 );
+				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
+				if (east)
+					RotorCmd |= 0xE000;
 			}
 			else  // we use builtin rotor sat table
 			{

@@ -51,6 +51,7 @@ class eFrontend: public Object
 	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat );
 	int noRotorCmd;
 public:
+	double calcAzimuth( double Longitude, double Latitude, int OrbitalPos );
 	void disableRotor() { noRotorCmd = 1; }  // no more rotor cmd is sent when tune
 	void enableRotor() { noRotorCmd = 0; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );

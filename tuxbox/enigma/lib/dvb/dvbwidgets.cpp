@@ -187,7 +187,7 @@ int eTransponderWidget::getTransponder(eTransponder *transponder)
 	switch (type)
 	{
 	case deliveryCable:
-		transponder->setCable(frequency->getNumber()*1000, symbolrate->getNumber()*1000, inversion->isChecked() );
+		transponder->setCable(frequency->getNumber()*1000, symbolrate->getNumber()*1000, inversion->isChecked(), 3 );
 		return 0;
 	case deliverySatellite:
 		eDebug("setting to: %d %d %d %d %d %d", frequency->getNumber(), symbolrate->getNumber(), (int)polarity->getCurrent()->getKey(), (int)fec->getCurrent()->getKey(), ((eSatellite*)sat->getCurrent()->getKey())->getOrbitalPosition(), inversion->isChecked());
@@ -254,14 +254,14 @@ eFEStatusWidget::eFEStatusWidget(eWidget *parent, eFrontend *fe): eWidget(parent
 
 void eFEStatusWidget::update()
 {
-	int snr=fe->SNR(),
-			agc=fe->SignalStrength(),
+	int snr=fe->SNR()*100/65536,
+			agc=fe->SignalStrength()*100/65536,
 			ber=fe->BER();
-	p_agc->setPerc((agc*100/65536));
-	p_snr->setPerc((snr*100/65536));
-	p_ber->setPerc(log2(ber));
-	lsnr_num->setText(eString().sprintf("%d",snr));
-	lsync_num->setText(eString().sprintf("%d",agc));
+	p_agc->setPerc((agc));
+	p_snr->setPerc((snr));
+	p_ber->setPerc((int)log2(ber));
+	lsnr_num->setText(eString().sprintf("%d%%",snr));
+	lsync_num->setText(eString().sprintf("%d%%",agc));
 	lber_num->setText(eString().sprintf("%d",ber));	
 	int status=fe->Status();
 	c_lock->setCheck(!!(status & FE_HAS_LOCK));

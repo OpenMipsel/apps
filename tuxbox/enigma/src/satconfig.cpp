@@ -354,9 +354,9 @@ void eSatelliteConfigurationManager::newPressed()
 		lnb->getDiSEqC().uncommitted_switch=0;
 		lnb->getDiSEqC().uncommitted_gap=0;
 		lnb->getDiSEqC().useGotoXX=1;
-		lnb->getDiSEqC().rotorOffset=0;
-		lnb->getDiSEqC().gotoXXLatitude=0;
-		lnb->getDiSEqC().gotoXXLongitude=0;
+		lnb->getDiSEqC().gotoXXOffset=180.0;
+		lnb->getDiSEqC().gotoXXLatitude=0.0;
+		lnb->getDiSEqC().gotoXXLongitude=0.0;
 	}
 	else // we use the last lnb in the list for the new Satellite
 		lnb = &eTransponderList::getInstance()->getLNBs().back();
@@ -487,9 +487,9 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().uncommitted_switch = DiSEqCPage->uncommitted->isChecked();
 	p->getDiSEqC().uncommitted_gap = DiSEqCPage->uncommitted_gap->isChecked();
 	p->getDiSEqC().useGotoXX = RotorPage->useGotoXX->isChecked();
-	p->getDiSEqC().rotorOffset = RotorPage->RotorOffset->getNumber();
-	p->getDiSEqC().gotoXXLatitude = RotorPage->Latitude->getNumber();
-	p->getDiSEqC().gotoXXLongitude = RotorPage->Longitude->getNumber();	
+	p->getDiSEqC().gotoXXOffset = RotorPage->RotorOffset->getFixedNum();
+	p->getDiSEqC().gotoXXLatitude = RotorPage->Latitude->getFixedNum();
+	p->getDiSEqC().gotoXXLongitude = RotorPage->Longitude->getFixedNum();
 	p->getDiSEqC().RotorTable.clear();
 	RotorPage->positions->forEachEntry( savePosition( p->getDiSEqC().RotorTable ) );
                 
@@ -515,6 +515,8 @@ void eLNBSetup::onSave()
 	else
 		close(0); // we must not reposition...
 
+	eDebug("flush");
+	eTransponderList::getInstance()->writeLNBData();
 	eFrontend::getInstance()->Reset();
 }
 
@@ -810,8 +812,8 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 	lRotorOffset->setName("lRotorOffset");
 	lRotorOffset->hide();
 
-	RotorOffset = new eNumber(this, 1, 0, 3600, 4, 0, 0, lRotorOffset );
-	RotorOffset->setFlags( eNumber::flagPosNeg );
+	RotorOffset = new eNumber(this, 2, 0, 360, 3, 0, 0, lRotorOffset );
+	RotorOffset->setFlags( eNumber::flagPosNeg|eNumber::flagFixedNum );
 	RotorOffset->setName("RotorOffset");
 	RotorOffset->hide();
 
@@ -819,8 +821,8 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 	lLongitude->setName("lLongitude");
 	lLongitude->hide();
 
-	Longitude = new eNumber(this, 1, 0, 3600, 4, 0, 0, lLongitude );
-/*	Longitude->setFlags( eNumber::flagPosNeg );*/
+	Longitude = new eNumber(this, 2, 0, 360, 3, 0, 0, lLongitude );
+	Longitude->setFlags( eNumber::flagFixedNum );
 	Longitude->setName("Longitude");
 	Longitude->hide();
 
@@ -828,8 +830,8 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 	lLatitude->setName("lLatitude");
 	lLatitude->hide();
 
-	Latitude = new eNumber(this, 1, 0, 3600, 4, 0, 0, lLatitude );
-/*	Latitude->setFlags( eNumber::flagPosNeg );*/
+	Latitude = new eNumber(this, 2, 0, 360, 3, 0, 0, lLatitude );
+	Latitude->setFlags( eNumber::flagFixedNum );
 	Latitude->setName("Latitude");
 	Latitude->hide();
 
@@ -884,6 +886,8 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 
 	CONNECT( RotorOffset->selected, eRotorPage::numSelected );    
 	CONNECT( orbital_position->selected, eRotorPage::numSelected );
+	CONNECT( Longitude->selected, eRotorPage::numSelected );
+	CONNECT( Latitude->selected, eRotorPage::numSelected );
 	CONNECT( number->selected, eRotorPage::numSelected );    
 	CONNECT( add->selected, eRotorPage::onAdd );
 	CONNECT( remove->selected, eRotorPage::onRemove );
@@ -895,6 +899,7 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 
 void eRotorPage::gotoXXChanged( int state )
 {
+	eDebug("gotoXXChanged to %d", state);
 	if ( state )
 	{
 		add->hide();
@@ -951,13 +956,17 @@ void eRotorPage::lnbChanged( eListBoxEntryText *lnb )
 			new eListBoxEntryText( positions, eString().sprintf(" %d / %03d %c", it->second, abs(it->first), it->first > 0 ? 'E' : 'W'), (void*) it->first );
 
 		useGotoXX->setCheck( (int) ((eLNB*)lnb->getKey())->getDiSEqC().useGotoXX );
-		eDebug("lnbChanged....rotorOffset = %d", ((eLNB*)lnb->getKey())->getDiSEqC().rotorOffset );
-		RotorOffset->setNumber( (int) ((eLNB*)lnb->getKey())->getDiSEqC().rotorOffset );
+		gotoXXChanged( (int) ((eLNB*)lnb->getKey())->getDiSEqC().useGotoXX );
+		RotorOffset->setFixedNum( ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXOffset );
+		Latitude->setFixedNum( ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXLatitude );
+		Longitude->setFixedNum( ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXLongitude );
 	}
 	else
 	{
+		RotorOffset->setFixedNum( 0 );
+		Latitude->setFixedNum(0);
+		Longitude->setFixedNum(0);
 		useGotoXX->setCheck( 1 );
-		RotorOffset->setNumber( 0 );
 	}
 
 	if ( positions->getCount() )
@@ -1087,7 +1096,7 @@ int eManuallyRotorPage::eventHandler( const eWidgetEvent &event )
 				switch (eFrontend::getInstance()->Type())
 				{
 				case eFrontend::feCable:
-					transponder.setCable(402000, 6900000, 0);	// some cable transponder
+					transponder.setCable(402000, 6900000, 0, 3);	// some cable transponder
 					break;
 				case eFrontend::feSatellite:
 					transponder.setSatellite(12551500, 22000000, eFrontend::polVert, 4, 0, 0);	// some astra transponder

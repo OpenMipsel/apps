@@ -4,6 +4,7 @@
 #include <lib/gui/elabel.h>
 #include <lib/gdi/fb.h>
 #include <lib/gdi/grc.h>
+#include <lib/gdi/font.h>
 #include <lib/gui/guiactions.h>
 
 eRect eNumber::getNumberRect(int n)
@@ -28,7 +29,7 @@ void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 	p->setFont(font);
 
 	eString t;
-	if (flags & flagFillWithZeros)
+	if (flags & flagFillWithZeros || ( (flags & flagFixedNum) && n ))
 	{
     eString s = "%0"+eString().setNum(maxdigits)+(base==10?"d":"X");
 		const char* p = s.c_str();
@@ -53,13 +54,66 @@ void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 	if (n && (flags & flagTime))
 		t=":"+t;
 
-	else if (n && (flags & flagDrawPoints))
+	else if (n && ( (flags & flagDrawPoints) || (flags & flagFixedNum)) )
 		t="."+t;
 
 	p->setForegroundColor((have_focus && n==active)?cursorF:normalF);
 	p->setBackgroundColor((have_focus && n==active)?cursorB:normalB);
-	p->renderText(pos, t);
+
+	if (!n && len==2 && ((flags & flagFixedNum) || (flags & flagTime)) ) // first element...
+	{
+		eTextPara *para = new eTextPara( pos );
+		para->setFont( font );
+		para->renderString( t );
+		para->realign( eTextPara::dirRight );
+		p->renderPara( *para );
+		para->destroy();
+	}
+	else
+		p->renderText(pos, t);
+		
 	p->flush();
+}
+
+double eNumber::getFixedNum()
+{
+	if (flags & flagFixedNum)
+	{
+		if (flags&flagPosNeg && neg)
+		{
+			double d = -((double)number[0]+(double)number[1]/1000);
+			eDebug("getFixedNum %lf", d);
+			return d;
+		}
+		else
+		{
+			double d = (double)number[0]+(double)number[1]/1000;
+			eDebug("getFixedNum %lf", d);
+			return d;
+		}
+	}
+	else
+		return 0;
+}
+
+void eNumber::setFixedNum(double d)
+{
+	eDebug("setFixedNum %lf", d);
+	if (flags & flagPosNeg && d < 0)
+	{
+		d = -d;
+		neg=1;
+	}
+	else
+		neg=0;
+		
+	if (flags & flagFixedNum)
+	{
+		number[0]=(int)d;
+		number[1]=(int)round(((d - number[0]) * 1000));
+	}
+	else
+		eDebug("eNumber bug... the Number %s is not a fixed Point number", name.c_str());
 }
 
 void eNumber::redrawWidget(gPainter *p, const eRect &area)
@@ -168,10 +222,20 @@ int eNumber::keyDown(int key)
 		int nn=(digit!=0)?number[active]*10:0;
 		nn+=key-eRCInput::RC_0;
 		if (flags & flagTime)
-			if ( active == 0 )
-				min=0, max = 23;
+		{
+			if ( active )
+				max = 59;
 			else
-				min=0, max = 59;
+				max = 23;
+		}
+		else if (flags & flagFixedNum)
+		{
+			static int oldmax = max;
+			if (active)
+				max=999;
+			else
+				max=oldmax;
+		}
 		if (nn>=min && nn<=max)
 		{
 			number[active]=nn;
@@ -320,8 +384,8 @@ void eNumber::setBase(int _base)
 
 void eNumber::setNumber(int n)
 {
-  if (len == 1)
-  {
+	if (len == 1)
+	{
 		if ( flags&flagPosNeg && n < 0 )
 		{
 			neg=1;

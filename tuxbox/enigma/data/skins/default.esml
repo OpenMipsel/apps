@@ -59,6 +59,7 @@
 		<map name="eventview.time" font="Nimbus" size="18" />
 		<map name="eventview.channel" font="Nimbus" size="18" />
 		<map name="eFEStatus.values" font="Nimbus" size="20" />
+		<map name="eSatfind" font="Nimbus" size="30" />
 	</fontalias>
 
 	<images basepath="" target="fb">
@@ -267,15 +268,35 @@
 		</eDiSEqCPage>
 	</object>
 
+	<object name="eSatfind">
+		<eSatfind position="80:40" csize="550:420">
+			<eLabel text="SNR:" position="10:10" size="190:50" font="eSatfind" vcenter="on" />
+			<eLabel name="snr_num" position="210:10" size="150:50" font="eSatfind" vcenter="on" />
+			<eProgress name="snr" position="10:70" size="e-10:50" />
+
+			<eLabel text="AGC:" position="10:130" size="190:50" font="eSatfind" vcenter="on" />
+			<eLabel name="agc_num" position="210:130" size="150:50" font="eSatfind" vcenter="on" />
+			<eProgress name="agc" position="20:190" size="e-10:50" />
+
+			<eLabel text="BER" position="10:250" size="190:50" font="eSatfind" vcenter="on" />
+			<eLabel name="ber_num" position="210:250" size="150:50" font="eSatfind" vcenter="on" />
+			<eProgress name="ber" position="20:310" size="e-10:50" />
+
+			<eButton name="ok" position="e-90:e-50" size="80:40" text="ok" vcenter="on" loadDeco="" />
+			<eCheckbox text="LOCK" name="lock" position="10:e-50" size="140:40" font="eSatfind" vcenter="on" />
+			<eCheckbox text="SYNC" name="sync" position="160:e-50" size="140:40" font="eSatfind" vcenter="on"  />
+		</eSatfind>
+	</object>
+	
 	<object name="eRotorPage">
 		<eRotorPage position="0:0" size="550:400" >
 			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use" vcenter="on" />
-			<eLabel text="GotoXX offset" name="lRotorOffset" position="10:55" size="150:35" vcenter="on" />
-			<eNumber name="RotorOffset" position="200:55" size="150:35" helptext="enter Rotor Offset (0..9, +, -, ok)" loadDeco="" />
+			<eLabel text="Offset" name="lRotorOffset" position="10:55" size="150:35" vcenter="on" />
+			<eNumber name="RotorOffset" position="200:55" size="100:35" helptext="enter Rotor Offset (0..9, +, -, ok)" loadDeco="" />
 			<eLabel name="lLongitude" text="Longitude:" position="10:100" size="150:35" vcenter="on" />
-			<eNumber name="Longitude" position="200:100" size="90:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
+			<eNumber name="Longitude" position="200:100" size="100:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
 			<eLabel name="lLatitude" text="Latitude:" position="10:145" size="150:35" vcenter="on" />
-			<eNumber name="Latitude" position="200:145" size="90:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
+			<eNumber name="Latitude" position="200:145" size="100:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
 
 			<eListbox name="positions" position="10:55" size="170:175" helptext="choose entry to edit or remove" loadDeco="" />
 
@@ -318,9 +339,9 @@
 			<eTranspondersettings name="transponder" position="0:0" size="400:160" />
 			<eFEStatus name="festatus" position="0:165" size="400:85" />
 			<eCheckbox text="use ONIT" name="useonit" position="10:e-110" size="200:30" helptext="enable/disable check ONIT on any transponder" />
-			<eCheckbox text="use BAT" name="usebat" position="230:e-110" size="e:30" helptext="enable/disable use BAT for scan (if exist)" />
+			<eCheckbox text="use BAT" name="usebat" position="230:e-110" size="200:30" helptext="enable/disable use BAT for scan (if exist)" />
 			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="200:30" helptext="remove all services before scan" />
-			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="e:30" helptext="enable/disable initiate network search" />
+			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="200:30" helptext="enable/disable initiate network search" />
 			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponderscan" loadDeco="" />
 			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" />
 		</tsManual>
@@ -392,10 +413,13 @@
 			<eNumber name="frequency" position="150:10:" size="e-150:32" helptext="enter frequency (0..9, left, right)" loadDeco="" />
 			<eLabel text="MHz" position="e-150:10" size="e:32" vcenter="on" />
 
-			<eLabel name="lSymb" text="Symbolrate:" position="10:100" size="140:32" vcenter="on" />
-			<eNumber name="symbolrate" position="150:100:" size="e-150:32" helptext="enter symbolrate (0..9, left, right)" loadDeco="" />
-			<eLabel text="KSymb/s" position="e-150:100" size="e:32" vcenter="on" />
-			
+			<eLabel name="lSymb" text="Symbolrate:" position="10:52" size="140:32" vcenter="on" />
+			<eNumber name="symbolrate" position="150:52" size="e-150:32" helptext="enter symbolrate (0..9, left, right)" loadDeco="" />
+			<eLabel text="KSymb/s" position="e-150:52" size="e:32" vcenter="on" />
+
+			<eLabel name="lMod" text="Modulation:" position="10:52" size="140:35" vcenter="on" />
+			<eComboBox name="mod" position="150:52" size="e-10:35" helptext="choose wished modulation (ok)" loadDeco=""  />
+      
 			<eLabel text="Inversion:" position="10:130" size="140:32" vcenter="on" />
 			<eCheckbox name="inversion" position="150:130" size="30:32" helptext="enable/disable inversion (ok)" />
 		</eTranspondersettings>

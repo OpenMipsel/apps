@@ -160,7 +160,7 @@ public:
 	void setSatellite(SatelliteDeliverySystemDescriptor *descr) { satellite.set(descr); }
 	void setCable(CableDeliverySystemDescriptor *descr) { cable.set(descr); }
 	void setSatellite(int frequency, int symbol_rate, int polarisation, int fec, int orbital_position, int inversion);
-	void setCable(int frequency, int symbol_rate, int inversion);
+	void setCable(int frequency, int symbol_rate, int inversion, int modulation );
 	
 	eTransponder &operator=(const eTransponder &ref)
 	{
@@ -536,9 +536,9 @@ struct eDiSEqC
 	int uncommitted_switch; // send to uncommited switch
 	int uncommitted_gap;    // send uncommitted switch in DiSEqC Repeat gap
 	int useGotoXX;          // Rotor Support gotoXX Position ?
-	int rotorOffset;        // Rotor Offset in
-	int gotoXXLongitude;    // Longitude for gotoXX° Function
-	int gotoXXLatitude;     // Latitude for gotoXX° Function
+	double gotoXXOffset;    // Offset for gotoXX° Function
+	double gotoXXLongitude; // Longitude for gotoXX° Function
+	double gotoXXLatitude;  // Latitude for gotoXX° Function
 };
 
 class eLNB

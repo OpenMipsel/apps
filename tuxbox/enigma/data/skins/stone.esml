@@ -364,15 +364,15 @@
 		<map name="eButton.topLeft" img="3DBorder.unselected.corner.light" />
 		<map name="eButton.bottom" img="3DBorder.unselected.hor.dark" />
 		<map name="eButton.right" img="3DBorder.unselected.ver.dark" />
-		<map name="eButton.bottomRight" img="3DBorder.unselected.corner.dark" />		
+		<map name="eButton.bottomRight" img="3DBorder.unselected.corner.dark" />
 		<map name="eButton.topRight" img="3DBorder.unselected.corner.lightDark" />
-		<map name="eButton.bottomLeft" img="3DBorder.unselected.corner.lightDark" />		
+		<map name="eButton.bottomLeft" img="3DBorder.unselected.corner.lightDark" />
 
 		<map name="eNumber.top" img="3DBorder.unselected.hor.dark" />
 		<map name="eNumber.left" img="3DBorder.unselected.ver.dark" />
-		<map name="eNumber.topLeft" img="3DBorder.unselected.corner.dark.swap" />
 		<map name="eNumber.bottom" img="3DBorder.unselected.hor.light" />
 		<map name="eNumber.right" img="3DBorder.unselected.ver.light" />
+		<map name="eNumber.topLeft" img="3DBorder.unselected.corner.dark.swap" />
 		<map name="eNumber.bottomRight" img="3DBorder.unselected.corner.light.swap" />		
 		<map name="eNumber.topRight" img="3DBorder.unselected.corner.darkLight.swap" />
 		<map name="eNumber.bottomLeft" img="3DBorder.unselected.corner.darkLight.swap" />		

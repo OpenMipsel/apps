@@ -1032,15 +1032,15 @@ int eDecoWidget::eventFilter( const eWidgetEvent &evt )
 		{
 			crect.setLeft( deco.borderLeft );
 			crect.setTop( deco.borderTop );
-			crect.setRight( width() - 1 - deco.borderRight );
-			crect.setBottom( height() - 1 - deco.borderBottom );
+			crect.setRight( width() - deco.borderRight );
+			crect.setBottom( height() - deco.borderBottom );
 		}
 		if (deco_selected)
 		{
 			crect_selected.setLeft( deco_selected.borderLeft );
 			crect_selected.setTop( deco_selected.borderTop );
-			crect_selected.setRight( width() - 1 - deco_selected.borderRight );
-			crect_selected.setBottom( height() - 1 - deco_selected.borderBottom );
+			crect_selected.setRight( width() - deco.borderRight );
+			crect_selected.setBottom( height() - deco.borderBottom );
 		}
 	}
 	return 0; //always return 0... the eventHandler must been called...
