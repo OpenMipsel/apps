@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-01 17:13+0100\n"
+"POT-Creation-Date: 2003-01-03 15:10+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: TeeBee <sales@dream-multimedia.nl>\n"
 "Language-Team: Dutch <nl@tuxbox.org>\n"
@@ -22,6 +22,10 @@ msgstr "voer de lage band offset frequentie in (0..9, ok)"
 #: chk_blue2.esml:309 stone.esml:490
 msgid "FF "
 msgstr "FF"
+
+#: default.esml:606
+msgid "cancel partition check"
+msgstr ""
 
 #: default.esml:525
 msgid "press ok to edit the selected event"
@@ -325,6 +329,11 @@ msgstr "voortgang:"
 msgid "SNR:"
 msgstr "SNR"
 
+#: default.esml:607
+#, fuzzy
+msgid "close window"
+msgstr "venster sluiten en niet scannen"
+
 #: default.esml:302 default.esml:483
 msgid "BER"
 msgstr ""
@@ -397,7 +406,7 @@ msgstr "venster sluiten en niet scannen"
 msgid "erase all"
 msgstr "alles wissen"
 
-#: default.esml:245 default.esml:536 default.esml:595
+#: default.esml:245 default.esml:536 default.esml:595 default.esml:607
 msgid "close"
 msgstr "sluiten"
 
@@ -1379,7 +1388,7 @@ msgid "Infos"
 msgstr "info"
 
 #: src/enigma_info.cpp:43 src/enigma_setup.cpp:72 src/enigma_scan.cpp:40
-#: src/enigma_scan.cpp:139
+#: src/enigma_scan.cpp:154
 msgid "[back]"
 msgstr "[terug]"
 
@@ -2228,38 +2237,43 @@ msgstr "Rotor instellingen"
 msgid "goto Rotor Setup"
 msgstr "Rotor instellingen"
 
-#: src/enigma_scan.cpp:95
+#: src/enigma_scan.cpp:47
+#, fuzzy
+msgid "SID..."
+msgstr "OSD..."
+
+#: src/enigma_scan.cpp:110
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
 
-#: src/enigma_scan.cpp:95
+#: src/enigma_scan.cpp:110
 #, fuzzy
 msgid "Info"
 msgstr "info"
 
-#: src/enigma_scan.cpp:109
+#: src/enigma_scan.cpp:124
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
 
-#: src/enigma_scan.cpp:109
+#: src/enigma_scan.cpp:124
 msgid "Warning"
 msgstr ""
 
-#: src/enigma_scan.cpp:136
+#: src/enigma_scan.cpp:151
 msgid "Select LNB"
 msgstr ""
 
 # 
-#: src/enigma_scan.cpp:139
+#: src/enigma_scan.cpp:154
 #, fuzzy
 msgid "go to prev menu"
 msgstr "ga naar de vorige pagina"
 
-#: src/enigma_scan.cpp:144
+#: src/enigma_scan.cpp:159
 #, c-format
 msgid "use LNB %d for Rotor"
 msgstr ""
@@ -2589,7 +2603,7 @@ msgid "Service Menu"
 msgstr "Service menu"
 
 #: src/enigma_main.cpp:3063 src/enigma_main.cpp:3101
-#: src/setup_harddisk.cpp:212
+#: src/setup_harddisk.cpp:177
 msgid "back"
 msgstr "[terug]"
 
@@ -2689,21 +2703,21 @@ msgstr "Inverteren:"
 msgid "enable/disable inverted lcd (ok)"
 msgstr "LCD Inversie aan-/uitschakelen (ok)"
 
-#: src/setup_harddisk.cpp:206
+#: src/setup_harddisk.cpp:171
 msgid "harddisk setup..."
 msgstr "Harddisk instellingen"
 
-#: src/setup_harddisk.cpp:294
+#: src/setup_harddisk.cpp:260
 msgid "Are you SURE that you want to format this disk?\n"
 msgstr "Weet u zeker dat u deze disk wilt formatteren?\n"
 
-#: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:308
-#: src/setup_harddisk.cpp:329 src/setup_harddisk.cpp:339
-#: src/setup_harddisk.cpp:377 src/setup_harddisk.cpp:388
+#: src/setup_harddisk.cpp:261 src/setup_harddisk.cpp:274
+#: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:305
+#: src/setup_harddisk.cpp:343 src/setup_harddisk.cpp:354
 msgid "formatting harddisk..."
 msgstr "De HD wordt geformatteerd...."
 
-#: src/setup_harddisk.cpp:306
+#: src/setup_harddisk.cpp:272
 msgid ""
 "There's data on this harddisk.\n"
 "You will loose that data. Proceed?"
@@ -2711,7 +2725,7 @@ msgstr ""
 "Er staat gegevens op uw HD.\n"
 " Alle gegevens worden verwijderd. Doorgaan?"
 
-#: src/setup_harddisk.cpp:328
+#: src/setup_harddisk.cpp:294
 msgid ""
 "please wait while initializing harddisk.\n"
 "This might take some minutes.\n"
@@ -2719,55 +2733,55 @@ msgstr ""
 "Een ogenblink geduld a.u.b.\n"
 " Dit kan enkele minuten duren.\n"
 
-#: src/setup_harddisk.cpp:338
+#: src/setup_harddisk.cpp:304
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
 msgstr ""
 "sorry, het programma sfdisk t.b.v. het partitioneren van de HD kon niet "
 "worden gevonden."
 
-#: src/setup_harddisk.cpp:376
+#: src/setup_harddisk.cpp:342
 msgid "creating filesystem failed."
 msgstr "Het aanmaken van de bestandsindeling is mislukt."
 
-#: src/setup_harddisk.cpp:387
+#: src/setup_harddisk.cpp:353
 msgid "successfully formated your disk!"
 msgstr "Uw HD is geformatteerd!"
 
-#: src/setup_harddisk.cpp:420
+#: src/setup_harddisk.cpp:386
 msgid "(error reading information)"
 msgstr "(fout bij het lezen van de informatie)"
 
-#: src/setup_harddisk.cpp:422
+#: src/setup_harddisk.cpp:388
 msgid "uninitialized - format it to use!"
 msgstr "geinitialiseerd - voor gebruik eerst formatteren"
 
-#: src/setup_harddisk.cpp:424
+#: src/setup_harddisk.cpp:390
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
 msgstr "in gebruik, %d.%03d GB (~%d minuten) vrij"
 
-#: src/setup_harddisk.cpp:426
+#: src/setup_harddisk.cpp:392
 msgid "initialized, but unknown filesystem"
 msgstr "geinitialiseerd - onbekende bestandsindeling"
 
-#: src/setup_harddisk.cpp:488
+#: src/setup_harddisk.cpp:455
 msgid "could not unmount the filesystem... "
 msgstr ""
 
-#: src/setup_harddisk.cpp:489 src/setup_harddisk.cpp:508
-#: src/setup_harddisk.cpp:522
+#: src/setup_harddisk.cpp:456 src/setup_harddisk.cpp:468
+#: src/setup_harddisk.cpp:490
 #, fuzzy
 msgid "check filesystem..."
 msgstr "Het aanmaken van de bestandsindeling is mislukt."
 
-#: src/setup_harddisk.cpp:507
+#: src/setup_harddisk.cpp:467
 #, fuzzy
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr ""
 "sorry, het programma sfdisk t.b.v. het partitioneren van de HD kon niet "
 "worden gevonden."
 
-#: src/setup_harddisk.cpp:521
+#: src/setup_harddisk.cpp:489
 msgid "not supportet filesystem for check."
 msgstr ""
 
@@ -2827,20 +2841,20 @@ msgstr ""
 "Wissen....\n"
 "Schakel de box nu NIET uit!"
 
-#: src/upgrade.cpp:413 src/upgrade.cpp:452
+#: src/upgrade.cpp:413 src/upgrade.cpp:456
 msgid "upgrade in progress"
 msgstr "update bezig"
 
-#: src/upgrade.cpp:437
+#: src/upgrade.cpp:439
 #, fuzzy
 msgid "upgrade failed with errorcode UD0"
 msgstr "Update mislukt. Foutcode UA15"
 
-#: src/upgrade.cpp:438 src/upgrade.cpp:474
+#: src/upgrade.cpp:440 src/upgrade.cpp:478
 msgid "upgrade failed"
 msgstr "Upgrade mislukt"
 
-#: src/upgrade.cpp:451
+#: src/upgrade.cpp:455
 msgid ""
 "Writing software to flash...\n"
 "Please do not switch off box now!"
@@ -2848,7 +2862,7 @@ msgstr ""
 "Software wordt naar het flash geschreven...\n"
 "Schakel de box nu NIET uit!"
 
-#: src/upgrade.cpp:459
+#: src/upgrade.cpp:463
 msgid ""
 "upgrade successful!\n"
 "restarting..."
@@ -2856,11 +2870,11 @@ msgstr ""
 "Upgrade voltooid!\n"
 " Herstart..."
 
-#: src/upgrade.cpp:460
+#: src/upgrade.cpp:464
 msgid "upgrade ok"
 msgstr "Upgrade voltooid"
 
-#: src/upgrade.cpp:473
+#: src/upgrade.cpp:477
 msgid "upgrade failed with errorcode UA15"
 msgstr "Update mislukt. Foutcode UA15"
 

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-01 17:13+0100\n"
+"POT-Creation-Date: 2003-01-03 15:10+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: coronas@gmx.net\n"
 "Language-Team: Spanish <es@tuxbox.org>\n"
@@ -22,6 +22,10 @@ msgstr "Frecuencia LNB banda baja (0..9, OK)"
 #: chk_blue2.esml:309 stone.esml:490
 msgid "FF "
 msgstr "FF"
+
+#: default.esml:606
+msgid "cancel partition check"
+msgstr ""
 
 #: default.esml:525
 msgid "press ok to edit the selected event"
@@ -319,6 +323,11 @@ msgstr "Progreso:"
 msgid "SNR:"
 msgstr "SNR"
 
+#: default.esml:607
+#, fuzzy
+msgid "close window"
+msgstr "Cerrar ventana y cancelar búsqueda"
+
 #: default.esml:302 default.esml:483
 msgid "BER"
 msgstr ""
@@ -391,7 +400,7 @@ msgstr "Cerrar ventana y cancelar búsqueda"
 msgid "erase all"
 msgstr "borrar todo"
 
-#: default.esml:245 default.esml:536 default.esml:595
+#: default.esml:245 default.esml:536 default.esml:595 default.esml:607
 msgid "close"
 msgstr "cerrar"
 
@@ -1366,7 +1375,7 @@ msgid "Infos"
 msgstr "Infos"
 
 #: src/enigma_info.cpp:43 src/enigma_setup.cpp:72 src/enigma_scan.cpp:40
-#: src/enigma_scan.cpp:139
+#: src/enigma_scan.cpp:154
 msgid "[back]"
 msgstr "[vuelta]"
 
@@ -2215,38 +2224,43 @@ msgstr "Ajustes del rotor"
 msgid "goto Rotor Setup"
 msgstr "Ajustes del rotor"
 
-#: src/enigma_scan.cpp:95
+#: src/enigma_scan.cpp:47
+#, fuzzy
+msgid "SID..."
+msgstr "Menú de pantalla..."
+
+#: src/enigma_scan.cpp:110
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
 
-#: src/enigma_scan.cpp:95
+#: src/enigma_scan.cpp:110
 #, fuzzy
 msgid "Info"
 msgstr "Infos"
 
-#: src/enigma_scan.cpp:109
+#: src/enigma_scan.cpp:124
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
 
-#: src/enigma_scan.cpp:109
+#: src/enigma_scan.cpp:124
 msgid "Warning"
 msgstr ""
 
-#: src/enigma_scan.cpp:136
+#: src/enigma_scan.cpp:151
 msgid "Select LNB"
 msgstr ""
 
 # 
-#: src/enigma_scan.cpp:139
+#: src/enigma_scan.cpp:154
 #, fuzzy
 msgid "go to prev menu"
 msgstr "Ir a la página anterior"
 
-#: src/enigma_scan.cpp:144
+#: src/enigma_scan.cpp:159
 #, c-format
 msgid "use LNB %d for Rotor"
 msgstr ""
@@ -2574,7 +2588,7 @@ msgid "Service Menu"
 msgstr "Menú servicios"
 
 #: src/enigma_main.cpp:3063 src/enigma_main.cpp:3101
-#: src/setup_harddisk.cpp:212
+#: src/setup_harddisk.cpp:177
 msgid "back"
 msgstr "vuelta"
 
@@ -2674,21 +2688,21 @@ msgstr "Invertido:"
 msgid "enable/disable inverted lcd (ok)"
 msgstr "Activar/desactivar LCD invertido (ok)"
 
-#: src/setup_harddisk.cpp:206
+#: src/setup_harddisk.cpp:171
 msgid "harddisk setup..."
 msgstr "Ajustes disco duro"
 
-#: src/setup_harddisk.cpp:294
+#: src/setup_harddisk.cpp:260
 msgid "Are you SURE that you want to format this disk?\n"
 msgstr "SEGURO que deseen formatear el disco duro?\n"
 
-#: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:308
-#: src/setup_harddisk.cpp:329 src/setup_harddisk.cpp:339
-#: src/setup_harddisk.cpp:377 src/setup_harddisk.cpp:388
+#: src/setup_harddisk.cpp:261 src/setup_harddisk.cpp:274
+#: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:305
+#: src/setup_harddisk.cpp:343 src/setup_harddisk.cpp:354
 msgid "formatting harddisk..."
 msgstr "Formateando disco duro..."
 
-#: src/setup_harddisk.cpp:306
+#: src/setup_harddisk.cpp:272
 msgid ""
 "There's data on this harddisk.\n"
 "You will loose that data. Proceed?"
@@ -2696,7 +2710,7 @@ msgstr ""
 "Hay datos en el disco duro. \n"
 "Vd. lo va a perder. Seguir?"
 
-#: src/setup_harddisk.cpp:328
+#: src/setup_harddisk.cpp:294
 msgid ""
 "please wait while initializing harddisk.\n"
 "This might take some minutes.\n"
@@ -2704,51 +2718,51 @@ msgstr ""
 "Espere mientras se prepara el disco duro.\n"
 "Eso puede tardar unos minutos.\n"
 
-#: src/setup_harddisk.cpp:338
+#: src/setup_harddisk.cpp:304
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
 msgstr "No he encontrado sfdisk para particionar el disco duro."
 
-#: src/setup_harddisk.cpp:376
+#: src/setup_harddisk.cpp:342
 msgid "creating filesystem failed."
 msgstr "Creación del sistema ficheros erronea."
 
-#: src/setup_harddisk.cpp:387
+#: src/setup_harddisk.cpp:353
 msgid "successfully formated your disk!"
 msgstr "Disco duro formateado con exito!"
 
-#: src/setup_harddisk.cpp:420
+#: src/setup_harddisk.cpp:386
 msgid "(error reading information)"
 msgstr "(error leyendo información)"
 
-#: src/setup_harddisk.cpp:422
+#: src/setup_harddisk.cpp:388
 msgid "uninitialized - format it to use!"
 msgstr "No inicializado - utilize format para utilizarlo!"
 
-#: src/setup_harddisk.cpp:424
+#: src/setup_harddisk.cpp:390
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
 msgstr "en uso, %d.%03d GB (~ %d minutos) libres"
 
-#: src/setup_harddisk.cpp:426
+#: src/setup_harddisk.cpp:392
 msgid "initialized, but unknown filesystem"
 msgstr "inicializado, sistema ficheros desconocido"
 
-#: src/setup_harddisk.cpp:488
+#: src/setup_harddisk.cpp:455
 msgid "could not unmount the filesystem... "
 msgstr ""
 
-#: src/setup_harddisk.cpp:489 src/setup_harddisk.cpp:508
-#: src/setup_harddisk.cpp:522
+#: src/setup_harddisk.cpp:456 src/setup_harddisk.cpp:468
+#: src/setup_harddisk.cpp:490
 #, fuzzy
 msgid "check filesystem..."
 msgstr "Creación del sistema ficheros erronea."
 
-#: src/setup_harddisk.cpp:507
+#: src/setup_harddisk.cpp:467
 #, fuzzy
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr "No he encontrado sfdisk para particionar el disco duro."
 
-#: src/setup_harddisk.cpp:521
+#: src/setup_harddisk.cpp:489
 msgid "not supportet filesystem for check."
 msgstr ""
 
@@ -2808,20 +2822,20 @@ msgstr ""
 "Borrando...\n"
 "No apague el receptor ahora!"
 
-#: src/upgrade.cpp:413 src/upgrade.cpp:452
+#: src/upgrade.cpp:413 src/upgrade.cpp:456
 msgid "upgrade in progress"
 msgstr "actualización en progreso"
 
-#: src/upgrade.cpp:437
+#: src/upgrade.cpp:439
 #, fuzzy
 msgid "upgrade failed with errorcode UD0"
 msgstr "actualización errónea (Error UA15)"
 
-#: src/upgrade.cpp:438 src/upgrade.cpp:474
+#: src/upgrade.cpp:440 src/upgrade.cpp:478
 msgid "upgrade failed"
 msgstr "actualización errónea"
 
-#: src/upgrade.cpp:451
+#: src/upgrade.cpp:455
 msgid ""
 "Writing software to flash...\n"
 "Please do not switch off box now!"
@@ -2829,7 +2843,7 @@ msgstr ""
 "Grabando en la memoria...\n"
 "No apague el receptor ahora!"
 
-#: src/upgrade.cpp:459
+#: src/upgrade.cpp:463
 msgid ""
 "upgrade successful!\n"
 "restarting..."
@@ -2837,11 +2851,11 @@ msgstr ""
 "Actualización acceptada!\n"
 "reiniciando..."
 
-#: src/upgrade.cpp:460
+#: src/upgrade.cpp:464
 msgid "upgrade ok"
 msgstr "actualización ok"
 
-#: src/upgrade.cpp:473
+#: src/upgrade.cpp:477
 msgid "upgrade failed with errorcode UA15"
 msgstr "actualización errónea (Error UA15)"
 

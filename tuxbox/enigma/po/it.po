@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-01 17:13+0100\n"
+"POT-Creation-Date: 2003-01-03 15:10+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: unknown>\n"
 "Language-Team: German <it@tuxbox.org>\n"
@@ -21,6 +21,10 @@ msgstr "Inserire la frequenza offset della banda bassa (lowband)"
 
 #: chk_blue2.esml:309 stone.esml:490
 msgid "FF "
+msgstr ""
+
+#: default.esml:606
+msgid "cancel partition check"
 msgstr ""
 
 #: default.esml:525
@@ -337,6 +341,11 @@ msgstr "Progresso:"
 msgid "SNR:"
 msgstr ""
 
+#: default.esml:607
+#, fuzzy
+msgid "close window"
+msgstr "Chiudere il pannello senza cercare"
+
 #: default.esml:302 default.esml:483
 msgid "BER"
 msgstr ""
@@ -410,7 +419,7 @@ msgstr "Chiudere il pannello senza cercare"
 msgid "erase all"
 msgstr "cancellare tutti"
 
-#: default.esml:245 default.esml:536 default.esml:595
+#: default.esml:245 default.esml:536 default.esml:595 default.esml:607
 msgid "close"
 msgstr "chiudere"
 
@@ -1430,7 +1439,7 @@ msgid "Infos"
 msgstr "informazioni"
 
 #: src/enigma_info.cpp:43 src/enigma_setup.cpp:72 src/enigma_scan.cpp:40
-#: src/enigma_scan.cpp:139
+#: src/enigma_scan.cpp:154
 msgid "[back]"
 msgstr "[indietro]"
 
@@ -2327,36 +2336,41 @@ msgstr "Impostazioni telecomando"
 msgid "goto Rotor Setup"
 msgstr "Impostazioni telecomando"
 
-#: src/enigma_scan.cpp:95
+#: src/enigma_scan.cpp:47
+#, fuzzy
+msgid "SID..."
+msgstr "OSD..."
+
+#: src/enigma_scan.cpp:110
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
 
-#: src/enigma_scan.cpp:95
+#: src/enigma_scan.cpp:110
 #, fuzzy
 msgid "Info"
 msgstr "informazioni"
 
-#: src/enigma_scan.cpp:109
+#: src/enigma_scan.cpp:124
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
 
-#: src/enigma_scan.cpp:109
+#: src/enigma_scan.cpp:124
 msgid "Warning"
 msgstr ""
 
-#: src/enigma_scan.cpp:136
+#: src/enigma_scan.cpp:151
 msgid "Select LNB"
 msgstr ""
 
-#: src/enigma_scan.cpp:139
+#: src/enigma_scan.cpp:154
 msgid "go to prev menu"
 msgstr ""
 
-#: src/enigma_scan.cpp:144
+#: src/enigma_scan.cpp:159
 #, c-format
 msgid "use LNB %d for Rotor"
 msgstr ""
@@ -2688,7 +2702,7 @@ msgid "Service Menu"
 msgstr "Menú di servizio"
 
 #: src/enigma_main.cpp:3063 src/enigma_main.cpp:3101
-#: src/setup_harddisk.cpp:212
+#: src/setup_harddisk.cpp:177
 msgid "back"
 msgstr "[Indietro]"
 
@@ -2796,21 +2810,21 @@ msgstr "Inversione:"
 msgid "enable/disable inverted lcd (ok)"
 msgstr "accendere/spegnere inversione (OK)"
 
-#: src/setup_harddisk.cpp:206
+#: src/setup_harddisk.cpp:171
 msgid "harddisk setup..."
 msgstr "setup dell'harddisk"
 
-#: src/setup_harddisk.cpp:294
+#: src/setup_harddisk.cpp:260
 msgid "Are you SURE that you want to format this disk?\n"
 msgstr "é sicuro di voler formattare l'harddisk?\n"
 
-#: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:308
-#: src/setup_harddisk.cpp:329 src/setup_harddisk.cpp:339
-#: src/setup_harddisk.cpp:377 src/setup_harddisk.cpp:388
+#: src/setup_harddisk.cpp:261 src/setup_harddisk.cpp:274
+#: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:305
+#: src/setup_harddisk.cpp:343 src/setup_harddisk.cpp:354
 msgid "formatting harddisk..."
 msgstr "formattazione del disco in corso....."
 
-#: src/setup_harddisk.cpp:306
+#: src/setup_harddisk.cpp:272
 msgid ""
 "There's data on this harddisk.\n"
 "You will loose that data. Proceed?"
@@ -2818,7 +2832,7 @@ msgstr ""
 "Ci sono dati sull' harddisk! \n"
 "I dati verranno cancellati!!! Vado avanti?"
 
-#: src/setup_harddisk.cpp:328
+#: src/setup_harddisk.cpp:294
 msgid ""
 "please wait while initializing harddisk.\n"
 "This might take some minutes.\n"
@@ -2826,51 +2840,51 @@ msgstr ""
 "Inizializzazione Disco Fisso, porta pazienza... \n"
 "Può durare qualche minuto. \n"
 
-#: src/setup_harddisk.cpp:338
+#: src/setup_harddisk.cpp:304
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
 msgstr "spiacente, l'utility sfdisk non é stato trovato."
 
-#: src/setup_harddisk.cpp:376
+#: src/setup_harddisk.cpp:342
 msgid "creating filesystem failed."
 msgstr "Creazione sistema File fallito."
 
-#: src/setup_harddisk.cpp:387
+#: src/setup_harddisk.cpp:353
 msgid "successfully formated your disk!"
 msgstr "la formattazione dell' harddisk é correttamente avvenuta!"
 
-#: src/setup_harddisk.cpp:420
+#: src/setup_harddisk.cpp:386
 msgid "(error reading information)"
 msgstr "(errore di lettura informazioni)"
 
-#: src/setup_harddisk.cpp:422
+#: src/setup_harddisk.cpp:388
 msgid "uninitialized - format it to use!"
 msgstr "non inizializzato, per uso formattare"
 
-#: src/setup_harddisk.cpp:424
+#: src/setup_harddisk.cpp:390
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
 msgstr "in uso, %d.%03d GB (~%d minuti) libero"
 
-#: src/setup_harddisk.cpp:426
+#: src/setup_harddisk.cpp:392
 msgid "initialized, but unknown filesystem"
 msgstr "inizializzato, ma il sistema file é sconosciuto"
 
-#: src/setup_harddisk.cpp:488
+#: src/setup_harddisk.cpp:455
 msgid "could not unmount the filesystem... "
 msgstr ""
 
-#: src/setup_harddisk.cpp:489 src/setup_harddisk.cpp:508
-#: src/setup_harddisk.cpp:522
+#: src/setup_harddisk.cpp:456 src/setup_harddisk.cpp:468
+#: src/setup_harddisk.cpp:490
 #, fuzzy
 msgid "check filesystem..."
 msgstr "Creazione sistema File fallito."
 
-#: src/setup_harddisk.cpp:507
+#: src/setup_harddisk.cpp:467
 #, fuzzy
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr "spiacente, l'utility sfdisk non é stato trovato."
 
-#: src/setup_harddisk.cpp:521
+#: src/setup_harddisk.cpp:489
 msgid "not supportet filesystem for check."
 msgstr ""
 
@@ -2932,21 +2946,21 @@ msgstr ""
 "Sto Cancellando... \n"
 "Non spegnere il tuo DreamBox!!!"
 
-#: src/upgrade.cpp:413 src/upgrade.cpp:452
+#: src/upgrade.cpp:413 src/upgrade.cpp:456
 #, fuzzy
 msgid "upgrade in progress"
 msgstr "aggiornamento in corso"
 
-#: src/upgrade.cpp:437
+#: src/upgrade.cpp:439
 #, fuzzy
 msgid "upgrade failed with errorcode UD0"
 msgstr "aggiornamento fallito, codice errore UA15"
 
-#: src/upgrade.cpp:438 src/upgrade.cpp:474
+#: src/upgrade.cpp:440 src/upgrade.cpp:478
 msgid "upgrade failed"
 msgstr "aggiornamento fallito"
 
-#: src/upgrade.cpp:451
+#: src/upgrade.cpp:455
 msgid ""
 "Writing software to flash...\n"
 "Please do not switch off box now!"
@@ -2954,17 +2968,17 @@ msgstr ""
 "Caricamento Software in memoria... \n"
 "Non spegnere il DreamBox!!!"
 
-#: src/upgrade.cpp:459
+#: src/upgrade.cpp:463
 msgid ""
 "upgrade successful!\n"
 "restarting..."
 msgstr "aggiornamento riuscito! Il DreamBox riparte... (Boot)"
 
-#: src/upgrade.cpp:460
+#: src/upgrade.cpp:464
 msgid "upgrade ok"
 msgstr "aggiornamento correttamente effettuato"
 
-#: src/upgrade.cpp:473
+#: src/upgrade.cpp:477
 msgid "upgrade failed with errorcode UA15"
 msgstr "aggiornamento fallito, codice errore UA15"
 

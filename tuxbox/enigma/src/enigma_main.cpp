@@ -1325,7 +1325,6 @@ void eZapMain::stop()
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
-	eDebug("stop");
 	handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
 	handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
 	updateProgress();
@@ -1336,7 +1335,6 @@ void eZapMain::pause()
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
-	eDebug("pause");
 	if (handler->getState() == eServiceHandler::statePause)
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
 	else
@@ -1348,9 +1346,7 @@ void eZapMain::record()
 	if ( state & stateRecording )
 	{
 		if ( state & stateInTimerMode )
-		{
 			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
-		}
 		else
 			recordDVR(0,1);
 	}
@@ -2043,7 +2039,9 @@ bool eZapMain::handleState(int justask)
 	if (b && !justask)
 	{
 		if (state & stateInTimerMode)
+		{
 			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
+		}
 		else if (state & stateRecording)
 		{
 			if (state & recDVR)
@@ -2115,8 +2113,8 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showEPG();
 		else if (event.action == &i_enigmaMainActions->showServiceSelector)
 		{
-			if (handleState())
-				showServiceSelector(-1, 1);
+//			if (handleState())
+			showServiceSelector(-1, 1);
 		}
 		else if (event.action == &i_enigmaMainActions->showSubservices )
 		{
@@ -2125,12 +2123,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		}
 		else if (event.action == &i_enigmaMainActions->showAudio)
 		{
-			if ( handleState() )
+//			if ( handleState() )
 				showAudioMenu();
 		}
 		else if (event.action == &i_enigmaMainActions->pluginVTXT)
 		{
-			if ( handleState() )
+//			if ( handleState() )
 				runVTXT();
 		}
 		else if (event.action == &i_enigmaMainActions->showEPGList)
@@ -2156,12 +2154,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		}
 		else if (event.action == &i_enigmaMainActions->serviceListDown)
 		{
-			if ( handleState() )
+//			if ( handleState() )
 				showServiceSelector(eServiceSelector::dirDown, 1);
 		}
 		else if (event.action == &i_enigmaMainActions->serviceListUp)
 		{
-			if ( handleState() )
+//			if ( handleState() )
 				showServiceSelector(eServiceSelector::dirUp, 1);
 		}
 		else if (event.action == &i_enigmaMainActions->volumeUp)
@@ -2177,7 +2175,9 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			if ( state & stateRecording )
 			{
 				if ( handleState(1) )
-				record();
+				{
+					record();
+				}
 			}
 			else
 				stop();
@@ -2186,7 +2186,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			pause();
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->record )
 		{
-			if ( state & stateRecording )
+			if ( state & stateRecording && !(state & stateInTimerMode) )
 			{
 				eRecordContextMenu menu;
 				if (isVisible())
@@ -2238,7 +2238,9 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 				}
 			}
 			else if ( handleState(1) )
+			{
 				record();
+			}
 		}
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->startSkipForward)
 			startSkip(skipForward);
@@ -2274,12 +2276,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			num=9;
 		else if (event.action == &i_enigmaMainActions->showBouquets)
 		{
-			if ( handleState() )
+//			if ( handleState() )
 				showBouquetList(0);
 		}
 		else if (event.action == &i_enigmaMainActions->showFavourites)
 		{
-			if ( handleState() )
+//			if ( handleState() )
 				showFavourites(1);
 		}
 		else if (event.action == &i_enigmaMainActions->modeRadio)
@@ -2301,8 +2303,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_enigmaMainActions->toggleDVRFunctions)
 		{
 			showDVRFunctions(!dvrfunctions);
-			if (!isVisible())
-				showInfobar();
+			showInfobar();
 		}
 		else
 		{
@@ -2395,12 +2396,8 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		gotPMT();
 		break;
 	case eServiceEvent::evtRecordFailed:
-		eDebug("state = %d", state);
 		if ( state&stateInTimerMode )
-		{
-			eDebug("stateInTimerMode");
 			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorNoSpaceLeft );
-		}
 		else
 			recordDVR(0,1);  // stop Recording
 		break;
@@ -2555,7 +2552,6 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
 		if ((num == -1) && service)
 			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-
 		if ((num == -1) && service && service->dvb)
 			num=service->dvb->service_number;
 
@@ -2630,7 +2626,10 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 	}
 
 	if (!eZap::getInstance()->focus)
+	{
+		showDVRFunctions(0);
 		show();
+	}
 
 	eServiceInterface::getInstance()->removeRef(_serviceref);
 
@@ -2638,7 +2637,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 	eAVSwitch::getInstance()->sendVolumeChanged();
 
 	if ( eServiceInterface::getInstance()->service.type == eServiceReference::idDVB )
-		timeout.start((sapi->getState() == eServiceHandler::statePlaying)?10000:2000, 1);
+		timeout.start((sapi->getState() == eServiceHandler::statePlaying)?5000:2000, 1);
 }
 
 void eZapMain::gotEIT()

@@ -50,13 +50,8 @@ void eTimerManager::actionHandler()
 			if ( eServiceInterface::getInstance()->service != nextStartingEvent->service )
 			{
 				eDebug("[eTimerManager] change to the right service");
-				nextAction=stopEvent;
-				// when service is changed we set it back to stateWaiting..
-				nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
-				nextStartingEvent->type |= (ePlaylistEntry::stateError|ePlaylistEntry::errorZapFailed);
-				actionTimer.start(5000, true);  // this is the zap Timeout
-				conn = CONNECT( eDVB::getInstance()->enterService, eTimerManager::serviceChanged );
-				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psDontAdd ); // start Zap
+				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
+				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psDontAdd );
 			}
 			else
 			{
@@ -164,12 +159,13 @@ void eTimerManager::actionHandler()
 				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
 				if ( !(nextStartingEvent->type & ePlaylistEntry::stateError) )
 					nextStartingEvent->type |= ePlaylistEntry::stateFinished;
-          // when no ErrorCode is set the we set the state to finished
+					// when no ErrorCode is set the we set the state to finished
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 				{
 					nextAction=stopRecording;
 					actionHandler();
 				}
+				eZapMain::getInstance()->toggleTimerMode();
 			}
 			nextAction=setNextEvent;	// we set the Next Event... a new beginning *g*
 			actionTimer.start(0, true);
@@ -265,12 +261,9 @@ void eTimerManager::actionHandler()
 			break;
 
 		case stopRecording:
-			eDebug("stopRecording");
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
-				eDebug("recDVR");
 				eZapMain::getInstance()->recordDVR(0, 0);
-				eZapMain::getInstance()->toggleTimerMode();        
 			}
 			else  // insert lirc ( VCR stop ) here
 			{
@@ -315,17 +308,18 @@ void eTimerManager::actionHandler()
 	}
 }                                                                                                   
 
-void eTimerManager::serviceChanged( const eServiceReferenceDVB& ref )
+void eTimerManager::switchedService( const eServiceReferenceDVB &ref, int err)
 {
-	eDebug("[eTimerManager] serviceChanged");
-	if ( nextStartingEvent->service == (eServiceReference&)ref )
+	if ( err || nextStartingEvent->service != (eServiceReference&)ref )
 	{
-		actionTimer.stop(); // stop zapTimeout
-		nextStartingEvent->type &= ~(ePlaylistEntry::stateError|ePlaylistEntry::errorZapFailed);
-		nextStartingEvent->type |= ePlaylistEntry::stateWaiting;
-		nextAction=startCountdown;
-		actionTimer.start(0,true);
+		nextAction=stopEvent;
+		nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
+		nextStartingEvent->type |= (ePlaylistEntry::stateError|ePlaylistEntry::errorZapFailed);
 	}
+	else  // zap okay
+		nextAction=startCountdown;
+
+	actionTimer.start(0,true);
 }
 
 void eTimerManager::abortEvent( int err )
@@ -333,7 +327,7 @@ void eTimerManager::abortEvent( int err )
 	eDebug("[eTimerManager] abortEvent");
 	nextAction=stopEvent;
 	nextStartingEvent->type |= (ePlaylistEntry::stateError|err);
-	actionTimer.start(0, true);
+	actionHandler();
 }
 
 void eTimerManager::leaveService( const eServiceReferenceDVB& ref )
@@ -372,7 +366,7 @@ void eTimerManager::EITready( int error )
 					break;
 
 					case 3:
-						eDebug("pausing");					
+						eDebug("pausing");
 						if ( nextStartingEvent->type & ePlaylistEntry::stateRunning )
 						{
 							nextAction=pauseEvent;
@@ -521,7 +515,7 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 			sel->show();
 			return false;
 		}
-		else if ( Overlap( entry.time_begin, entry.duration, i->time_begin, i->duration) )
+		else if ( !(i->type & (ePlaylistEntry::stateError|ePlaylistEntry::stateFinished)) && Overlap( entry.time_begin, entry.duration, i->time_begin, i->duration) )
 		{
 			if ( entry.type & ePlaylistEntry::typeShutOffTimer )
 			{
@@ -556,10 +550,8 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 
 bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *ref, const EITEvent *evt, int type )
 {
-  eDebug("addEventToTimer");
 	ePlaylistEntry e( *ref, evt->start_time, evt->duration, evt->event_id, type );
-  eDebug("after ePlaylistEntry");	
-// add the event description	
+// add the event description
 	eString descr	= _("no description avail");
 	for (ePtrList<Descriptor>::const_iterator d(evt->descriptor); d != evt->descriptor.end(); ++d)
 	{
@@ -1143,7 +1135,7 @@ int eTimerView::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
-/*			if (event.action == &i_focusActions->left && focus != events)
+			if (event.action == &i_focusActions->left && focus != events)
 				eWidget::focusNext(eWidget::focusDirW);
 			else if (event.action == &i_focusActions->right && focus != events)
 				eWidget::focusNext(eWidget::focusDirE);
@@ -1151,10 +1143,6 @@ int eTimerView::eventHandler(const eWidgetEvent &event)
 				eWidget::focusNext(eWidget::focusDirN);
 			else if (event.action == &i_focusActions->down && focus != events)
 				eWidget::focusNext(eWidget::focusDirS);
-			else*/ if (event.action == &i_TimerViewActions->removeTimerEntry)
-			{
-				erasePressed();
-			}
 			else
 				break;
 			return 1;
