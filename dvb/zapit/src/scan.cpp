@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.9 2003/05/21 19:00:47 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.10 2003/05/21 21:11:23 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -501,6 +501,8 @@ void *start_scanthread(void *)
 				/* satellite receivers might need diseqc */
 				if (frontend->getInfo()->type == FE_QPSK)
 					diseqc_pos = spI->first;
+				if (diseqc_pos = 255 /* = -1 */)
+					diseqc_pos = 0; 
 				
 				/* position satellite dish if provider is on a different satellite */
 				currentSatellitePosition = frontend->getCurrentSatellitePosition();
