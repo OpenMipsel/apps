@@ -62,6 +62,8 @@ class eServiceSelector: public eWindow
 	eServiceReference selected;
 	eServiceReference *result;
 	eListBox<eListBoxEntryService> *services, *bouquets;
+	
+	eLabel *alt[4];
 
 	eChannelInfo* ci;
 

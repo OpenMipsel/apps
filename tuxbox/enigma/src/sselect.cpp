@@ -1047,25 +1047,42 @@ void eServiceSelector::setStyle(int newStyle)
 		bouquets->setName("bouquets");
 		bouquets->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
 		bouquets->hide();
+		
+		eString alts;
+		char *sselect_style = 0;
+		eConfig::getInstance()->getKey("/ezap/rc/sselect_style", sselect_style);
+		if (sselect_style)
+		{
+			if (!strcmp(sselect_style, "sselect_classic"))
+				alts = "_alt";
+			::free(sselect_style);
+		}
 
 		if ( newStyle == styleSingleColumn )
 		{
-			if (eSkin::getActive()->build(this, "eServiceSelector_singleColumn"))
+			if (eSkin::getActive()->build(this, ("eServiceSelector_singleColumn" + alts).c_str()))
 				eFatal("Service selector widget build failed!");
 		}
 		else if ( newStyle == styleMultiColumn )
 		{
-			if (eSkin::getActive()->build(this, "eServiceSelector_multiColumn"))
+			if (eSkin::getActive()->build(this, ("eServiceSelector_multiColumn" + alts).c_str()))
 				eFatal("Service selector widget build failed!");
 		}
 		else
 		{
-			if (eSkin::getActive()->build(this, "eServiceSelector_combiColumn"))
+			if (eSkin::getActive()->build(this, ("eServiceSelector_combiColumn" + alts).c_str()))
 				eFatal("Service selector widget build failed!");
 			CONNECT( bouquets->selchanged, eServiceSelector::bouquetSelChanged );
 			CONNECT( bouquets->selected, eServiceSelector::bouquetSelected );
 			bouquets->show();
 		}
+		
+		alt[0] = alt[1] = alt[2] = alt[3] = 0;
+		alt[0] = (eLabel*)search("alt_all");
+		alt[1] = (eLabel*)search("alt_satellites");
+		alt[2] = (eLabel*)search("alt_provider");
+		alt[3] = (eLabel*)search("alt_bouquets");
+
 		style = newStyle;
 		CONNECT(services->selected, eServiceSelector::serviceSelected);
 		CONNECT(services->selchanged, eServiceSelector::serviceSelChanged);
