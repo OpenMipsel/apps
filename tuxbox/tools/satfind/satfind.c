@@ -52,8 +52,8 @@ typedef unsigned char screen_t[LCD_BUFFER_SIZE];
 
 struct signal {
   uint32_t ber;
-  int32_t snr;
-  int32_t strength;
+  uint16_t snr;
+  uint16_t strength;
   FrontendStatus status;
 };
 
@@ -275,7 +275,7 @@ int main(int argc, char **argv) {
     return -1;
   }
   
-  if((qpsk_fd=open(QPSK,O_RDWR))<0) {
+  if((qpsk_fd=open(QPSK,O_RDONLY))<0) {
     fprintf(stderr,"frontend open - Can't open Tuner: %d\n",errno);
     return -1;
   }
