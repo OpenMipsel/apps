@@ -5,6 +5,7 @@
 #include <list>
 #include <ext/hash_map>
 #include <ext/stl_hash_fun.h>
+#include <errno.h>
 
 #include "si.h"
 #include "dvb.h"
@@ -42,10 +43,12 @@ struct uniqueEPGKey
 #if defined(__GNUC__) && __GNUC__ >= 3 && __GNUC_MINOR__ >= 1  // check if gcc version >= 3.1
 	#define eventCache __gnu_cxx::hash_map<uniqueEPGKey, eventMap, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal>
 	#define updateMap __gnu_cxx::hash_map<uniqueEPGKey, time_t, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal >
+	#define tmpMap __gnu_cxx::hash_map<uniqueEPGKey, std::pair<time_t, int>, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal >
 	namespace __gnu_cxx
 #else																													// for older gcc use following
 	#define eventCache std::hash_map<uniqueEPGKey, eventMap, std::hash<uniqueEPGKey>, uniqueEPGKey::equalONIDSID >
-	#define updateMap std::hash_map<uniqueEPGKey, time_t, std::hash<uniqueEPGKey>, uniqueEPGKey::equalONIDSID >
+	#define updateMap __gnu_cxx::hash_map<uniqueEPGKey, time_t, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal >
+	#define tmpMap std::hash_map<uniqueEPGKey, std::pair<time_t, int>, std::hash<uniqueEPGKey>, uniqueEPGKey::equalONIDSID >
 	namespace std
 #endif
 {
@@ -62,16 +65,14 @@ struct hash<uniqueEPGKey>
 
 class eventData
 {
-public:
-	enum TYP {SCHEDULE, NOWNEXT};
 private:
 	__u8* EITdata;
 	int ByteSize;
 public:
-	TYP type;
+	int type;
 	static int CacheSize;
-	eventData(const eit_event_struct* e, int size, enum TYP t)
-	:ByteSize(size), type(t)
+	eventData(const eit_event_struct* e, int size, int type)
+	:ByteSize(size), type(type)
 	{
 		CacheSize+=size;
 		EITdata = new __u8[size];
@@ -98,8 +99,9 @@ class eSchedule: public eSection
 {
 	friend class eEPGCache;
 	inline int sectionRead(__u8 *data);
+	inline void sectionFinish(int);
 	eSchedule()  // 0x50, Filter 0xF0
-		:eSection(0x12, 80, -1, -1, SECREAD_CRC|SECREAD_NOTIMEOUT, 240)
+		:eSection(0x12, 80, -1, -1, SECREAD_CRC, 240)
 	{
 	}
 };
@@ -108,14 +110,18 @@ class eNowNext: public eSection
 {
 	friend class eEPGCache;
 	inline int sectionRead(__u8 *data);
+	inline void sectionFinish(int);
 	eNowNext()  // 0x4E, 0x4F
-		:eSection(0x12, 78 , -1, -1, SECREAD_CRC|SECREAD_NOTIMEOUT, 254)
+		:eSection(0x12, 78 , -1, -1, SECREAD_CRC, 254)
 	{
 	}
 };
 
 class eEPGCache: public Object
 {
+public:
+	enum {SCHEDULE, NOWNEXT};
+
 	friend class eSchedule;
 	friend class eNowNext;
 private:
@@ -124,24 +130,24 @@ private:
 	int firstScheduleEventId;
 	int firstNowNextEventId;
 	int isRunning;
-	int sectionRead(__u8 *data, eventData::TYP type);
+	int sectionRead(__u8 *data, int source);
 	static eEPGCache *instance;
 
 	eventCache eventDB;
 	updateMap serviceLastUpdated;
-	updateMap temp;
+	tmpMap temp;
 
 	eSchedule scheduleReader;
 	eNowNext nownextReader;
 	eTimer CleanTimer;
 	eTimer zapTimer;
+	bool finishEPG();
 public:
 	void startEPG();
-	void stopEPG(const eServiceReferenceDVB &);
+	void abortEPG(const eServiceReferenceDVB& s=eServiceReferenceDVB());
 	void enterService(const eServiceReferenceDVB &, int);
 	void cleanLoop();
 	void timeUpdated();
-public:
 	eEPGCache();
 	~eEPGCache();
 	static eEPGCache *getInstance() { return instance; }
@@ -150,23 +156,48 @@ public:
 	inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service);
 
 	Signal1<void, bool> EPGAvail;
-	Signal1<void, const updateMap*> EPGUpdated;
+	Signal1<void, const tmpMap*> EPGUpdated;
 };
 
 inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service)
 {
 	eventCache::iterator It = eventDB.find( uniqueEPGKey( service.getServiceID().get(), service.getOriginalNetworkID().get() ) );
-	return (It != eventDB.end())?(&(It->second)):0;
+	if ( It != eventDB.end() && It->second.size() )
+		return &(It->second);
+	else
+		return 0;
 }
 
 inline int eNowNext::sectionRead(__u8 *data)
 {
-	return eEPGCache::getInstance()->sectionRead(data, eventData::NOWNEXT);
+	return eEPGCache::getInstance()->sectionRead(data, eEPGCache::NOWNEXT);
 }
 
 inline int eSchedule::sectionRead(__u8 *data)
 {
-	return eEPGCache::getInstance()->sectionRead(data, eventData::SCHEDULE);
+	return eEPGCache::getInstance()->sectionRead(data, eEPGCache::SCHEDULE);
+}
+
+inline void eSchedule::sectionFinish(int err)
+{
+	eEPGCache *e = eEPGCache::getInstance();
+	if ( (e->isRunning & 1) && (err == -ETIMEDOUT || err == -ECANCELED ) )
+	{
+		e->isRunning &= ~1;
+		if ( e->firstScheduleEventId != -1 || e->firstNowNextEventId != -1 )
+			e->finishEPG();
+	}
+}
+
+inline void eNowNext::sectionFinish(int err)
+{
+	eEPGCache *e = eEPGCache::getInstance();
+	if ( (e->isRunning & 2) && (err == -ETIMEDOUT || err == -ECANCELED ) )
+	{
+		e->isRunning &= ~2;
+		if ( e->firstScheduleEventId != -1 || e->firstNowNextEventId != -1 )
+			e->finishEPG();
+	}
 }
 
 #endif

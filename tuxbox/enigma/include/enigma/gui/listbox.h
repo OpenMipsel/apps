@@ -669,14 +669,14 @@ inline int eListBox<T>::setCurrent(const T *c)
 		}
 		if (isVisible())
 		{
-			if (in_atomic)
+			if (!in_atomic)
 				invalidate();   // Draw all
 			else
 				atomic_redraw=arAll;
 		}
   }
 
-	if (! in_atomic)
+	if (!in_atomic)
 		selchanged(*current);
 	else
 		atomic_selchanged=1;
@@ -720,6 +720,11 @@ void eListBox<T>::endAtomic()
 {
 	if (!--in_atomic)
 	{
+		if (atomic_selchanged)
+			if (childs.empty())
+				selchanged(0);
+			else
+				selchanged(*current);
 		if (atomic_redraw == arAll)
 			invalidate();
 		else if (atomic_redraw == arCurrentOld)
@@ -729,12 +734,6 @@ void eListBox<T>::endAtomic()
 			if (atomic_old != -1)
 				invalidateEntry(atomic_old);
 		}
-		if (atomic_selchanged)
-			if (childs.empty())
-				selchanged(0);
-			else
-				selchanged(*current);
-			
 	}
 }
 

@@ -400,8 +400,8 @@ struct eServiceReferenceDVB: public eServiceReference
 	eOriginalNetworkID getOriginalNetworkID() const { return eOriginalNetworkID(data[3]); }
 	void setOriginalNetworkID(eOriginalNetworkID original_network_id) { data[3]=original_network_id.get(); }
 
-	eServiceReferenceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_type):
-		eServiceReference(eServiceReference::idDVB, 0)
+	eServiceReferenceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_type)
+		:eServiceReference(eServiceReference::idDVB, 0)
 	{
 		setTransportStreamID(transport_stream_id);
 		setOriginalNetworkID(original_network_id);
