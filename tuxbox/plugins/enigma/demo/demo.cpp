@@ -157,7 +157,7 @@ void eDemoDialog::selectedItem(eListBoxEntryText *item)
 				break;
 			case 3:
 				if (counter & 1)
-					message="My wiest enemies run away at the first sight of me!";
+					message="My wisest enemies run away at the first sight of me!";
 				else
 					message="Even BEFORE they smell your breath?";
 				break;
