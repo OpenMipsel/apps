@@ -608,14 +608,32 @@ void eWidget::focusNext(int dir)
 				continue;
 			if (!(i->state&stateVisible))
 				continue;
-			ePoint m1=i->getPosition();
-			m1+=ePoint(i->getSize().width()/2, i->getSize().height()/2);
-			ePoint m2=_focusList.current()->getPosition();
-			m2+=ePoint(_focusList.current()->getSize().width()/2, _focusList.current()->getSize().height()/2);
-
+			ePoint m1=i->getAbsolutePosition();
+			ePoint m2=_focusList.current()->getAbsolutePosition();
+			switch (dir)
+			{
+			case focusDirN:		// diff between our TOP and new BOTTOM
+				m1+=ePoint(i->getSize().width()/2, i->getSize().height());
+				m2+=ePoint(_focusList.current()->getSize().width()/2, 0);
+				break;
+			case focusDirS:		// diff between our BOTTOM and new TOP
+				m1+=ePoint(i->getSize().width()/2, 0);
+				m2+=ePoint(_focusList.current()->getSize().width()/2, _focusList.current()->getSize().height());
+				break;
+			case focusDirE:		// diff between our RIGHT and new LEFT border
+				m1+=ePoint(0, i->getSize().height()/2);
+				m2+=ePoint(_focusList.current()->getSize().width(), _focusList.current()->getSize().height()/2);
+				break;
+			case focusDirW:		// diff between our LEFT and new RIGHT border
+				m1+=ePoint(i->getSize().width(), i->getSize().height()/2);
+				m2+=ePoint(0, _focusList.current()->getSize().height()/2);
+				break;
+			}
+			
 			int xd=m1.x()-m2.x();
 			int yd=m1.y()-m2.y();
-#if 0
+#define METHOD 0
+#if METHOD == 0
 			int dif=xd*xd+yd*yd;
 			int eff=0;
 
@@ -644,7 +662,7 @@ void eWidget::focusNext(int dir)
 				difference=eff;
 				nearest=*i;
 			}
-#else
+#elif METHOD == 1
 			int ldir=focusDirN;
 			int mydiff=0;
 
@@ -677,6 +695,8 @@ void eWidget::focusNext(int dir)
 					nearest=*i;
 				}
 			}
+#elif METHOD == 2
+
 #endif
 
 		}
