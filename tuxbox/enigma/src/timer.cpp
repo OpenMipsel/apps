@@ -1106,8 +1106,9 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 	{
 		if ( exclude && *exclude == *i )
 			continue;
-		if ( ( entry.event_id != -1 && entry.event_id == i->event_id ) ||
-				 ( entry.service == i->service && entry.time_begin == i->time_begin ) )
+		if ( !(entry.type & ePlaylistEntry::isRepeating) &&
+			 ( ( entry.event_id != -1 && entry.event_id == i->event_id ) ||
+				 ( entry.service == i->service && entry.time_begin == i->time_begin ) ) )
 		{
 			eMessageBox box(_("This event is already in the timerlist."), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
 			sel->hide();
