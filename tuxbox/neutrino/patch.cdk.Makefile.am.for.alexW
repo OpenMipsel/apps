@@ -1,0 +1,11 @@
+--- cdk/Makefile.am	2003-03-03 14:40:53.000000000 +0100
++++ cdk/Makefile.am.oldapi	2003-03-03 14:53:43.000000000 +0100
+@@ -1116,7 +1116,7 @@
+ 	--host=$(target) \
+ 	--prefix=$(targetprefix) \
+ 	--with-driver=$(driverdir) \
+-	--with-dvbincludes=$(driverdir)/dvb/include \
++	--with-dvbincludes=$(driverdir)/include \
+ 	--with-target=cdk
+ 
+ if MAINTAINER_MODE
