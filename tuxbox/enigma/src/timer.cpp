@@ -1,5 +1,5 @@
 #include <timer.h>
-
+#include <engrab.h>
 #include <enigma_main.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -261,6 +261,9 @@ void eTimerManager::actionHandler()
 				else
 				{
 					// insert lirc ( VCR start ) here
+					eDebug("Starte Ngrab aufnahme");
+					ENgrab ngrab;
+					ngrab.sendstart();
 				}
 			}
 			else
@@ -274,7 +277,10 @@ void eTimerManager::actionHandler()
 			}
 			else  // insert lirc ( VCR stop ) here
 			{
-				eDebug("recVCR");
+				eDebug("Stope Ngrab aufnahme");
+				ENgrab ngrab;
+				ngrab.sendstopp();
+
 			}
 			break;
 
@@ -918,6 +924,7 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	if(eDVB::getInstance()->getInfo("mID") != "06")
 		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 //	new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );  
+		new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
 
 	if ( events->getCount() )
 		selChanged( events->getCurrent() );
