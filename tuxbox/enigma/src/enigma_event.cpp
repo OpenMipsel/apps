@@ -71,7 +71,6 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 				ePoint curPos = long_description->getPosition();
 				if ( curPos.y() < 0 )
 				{
-					long_description->invalidate();
 					long_description->move( ePoint( curPos.x(), curPos.y() + descr->getSize().height() ) );
 					updateScrollbar();
 				}
@@ -82,7 +81,6 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 				if ( (total - descr->getSize().height() ) >= abs( curPos.y() - descr->getSize().height() ) )
 				{
 					long_description->move( ePoint( curPos.x(), curPos.y() - descr->getSize().height() ) );
-					long_description->invalidate();
 					updateScrollbar();
 				}
 			}

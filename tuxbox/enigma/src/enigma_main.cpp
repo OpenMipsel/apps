@@ -1194,20 +1194,16 @@ void eZapMain::volumeUp()
 {
 	eAVSwitch::getInstance()->changeVolume(0, -2);
 	if (!volume.isVisible())
-	{
 		volume.show();
-		volumeTimer.start(2000, true);
-	}
+	volumeTimer.start(2000, true);
 }
 
 void eZapMain::volumeDown()
 {
 	eAVSwitch::getInstance()->changeVolume(0, +2);
 	if (!volume.isVisible())
-	{
 		volume.show();
-		volumeTimer.start(2000, true);
-	}
+	volumeTimer.start(2000, true);
 }
 
 void eZapMain::hideVolumeSlider()
