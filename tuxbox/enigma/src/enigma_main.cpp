@@ -2044,10 +2044,15 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			}
 			else
 				sel->next();
-			
+
+			eServicePath p;
+			getServiceSelectorPath(p);
+			eServiceReference ref = p.current();
+			p.up();
+
 			pl->deleteService(it);
 			pl->save();
-			sel->actualize();
+			sel->setPath( p, ref );
 		}
 		break;
 	}
