@@ -18,7 +18,5 @@ libavs/Makefile
 libavs/tuxbox-avs.pc
 liblcddisplay/Makefile
 liblcddisplay/tuxbox-lcddisplay.pc
-libtuxbox/Makefile
-libtuxbox/tuxbox.pc
 ])
 
