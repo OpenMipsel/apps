@@ -9,17 +9,20 @@
 class eNumber;
 class eButton;
 class eCheckbox;
+class eTextInputField;
 
-  class ENgrabSetup: public eWindow
+class ENgrabSetup: public eWindow
 {
 	eButton *type;
 	eNumber *inet_address, *srvport;
-	eButton *ok, *abort;
+	eButton *ok, *abort, *bServerMAC;
 	eStatusBar *statusbar;
+	eTextInputField *serverMAC;
 private:
 	void fieldSelected(int *number);
 	void okPressed();
 	void abortPressed();
+	void detectMAC();
 public:
 	ENgrabSetup();
 	~ENgrabSetup();

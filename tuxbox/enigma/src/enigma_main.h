@@ -255,7 +255,7 @@ class eZapMain: public eWidget
 public:
 	enum { modeTV, modeRadio, modeFile, modeEnd };
 	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32, recNgrab=64 };
-	enum { messageGoSleep=2, messageShutdown=3, messageNoRecordSpaceLeft=4 };
+	enum { messageGoSleep=2, messageShutdown, messageNoRecordSpaceLeft };
 
 private:
 	eLabel 	*ChannelNumber, *ChannelName, *Clock,
@@ -436,6 +436,7 @@ private:
 	void redrawIndexmarks();
 #endif // DISABLE_FILE
 public:
+	void toggleScart( int state );
 	void postMessage(const eZapMessage &message, int clear=0);
 	void gotMessage(const int &);
 	void startMessages();

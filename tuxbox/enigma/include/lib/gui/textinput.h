@@ -21,7 +21,7 @@ class eTextInputField: public eButton
 	bool capslock;
 	eString isotext;
 public:
-	eTextInputField( eWidget* parent, eLabel *descr=0, const char *deco="eLabel" );
+	eTextInputField( eWidget* parent, eLabel *descr=0, const char *deco="eNumber" );
 	void setMaxChars( int i ) { maxChars = i; }
 	void setUseableChars( const char* );
 	void setNextCharTimeout( unsigned int );

@@ -85,8 +85,8 @@ int	eRFmod::save()
 	eConfig::getInstance()->setKey("/elitedvb/rfmod/so", soundenable);
 	eConfig::getInstance()->setKey("/elitedvb/rfmod/channel", channel);
 	eConfig::getInstance()->setKey("/elitedvb/rfmod/finetune", finetune);
-		
-	return 0;	
+	eConfig::getInstance()->flush();
+	return 0;
 }
 
 

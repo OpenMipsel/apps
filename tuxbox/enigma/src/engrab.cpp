@@ -65,7 +65,7 @@ ENgrab::~ENgrab()
 {
 }
  
-eString ENgrab::startxml()
+eString ENgrab::startxml( const char* descr )
 {
 	eString xmlstart;
 
@@ -73,7 +73,7 @@ eString ENgrab::startxml()
 	xmlstart+=" <neutrino commandversion=\"1\">\n";
 	xmlstart+="   <record command=\"record\">\n";
 	xmlstart+="    <channelname>"+getServiceName()+"</channelname>\n";//übernommen von trh
-	xmlstart+="    <epgtitle>"+getEPGTitle()+"</epgtitle>\n"; //übernommen von trh
+	xmlstart+="    <epgtitle>"+(descr?eString(descr):getEPGTitle())+"</epgtitle>\n"; //übernommen von trh
 	xmlstart+="    <onidsid>123456</onidsid>\n"; // keine ahnung aber wies aussieht wird die sid und die onid nicht gebraucht von ngrab
 	xmlstart+="    <epgid>123456</epgid>\n"; // und die epgid auch nicht
 	xmlstart+="    <videopid>"+eString().sprintf("%d", Decoder::parms.vpid)+"</videopid>\n";
@@ -123,10 +123,10 @@ eString ENgrab::stopxml()
 	return xmlstop;
 }
 
-void ENgrab::sendstart()
+void ENgrab::sendstart( const char *descr )
 {
 	eDebug("ngrab sendstart requested");
-	sendStr = startxml();
+	sendStr = startxml(descr);
 	sending();
 }
 

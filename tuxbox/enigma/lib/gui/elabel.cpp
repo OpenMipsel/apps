@@ -86,6 +86,9 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 
 	target->clip( rc );
 	eRect area=eRect(ePoint(0, 0), ePoint(width(), height()));
+/*	eDebug("area left = %d, top = %d, width = %d, height = %d",
+		area.left(), area.top(),
+		area.width(), area.height() );*/
 
 	if (deco_selected && have_focus)
 	{
@@ -96,6 +99,9 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 		deco.drawDecoration(target, ePoint(width(), height()));
 		area=crect;
 	}
+/*	eDebug("area left = %d, top = %d, width = %d, height = %d",
+		area.left(), area.top(),
+		area.width(), area.height() );*/
 
 	if (shortcutPixmap)
 	{

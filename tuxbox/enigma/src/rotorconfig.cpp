@@ -182,6 +182,7 @@ void RotorConfig::onSavePressed()
 	lnb->getDiSEqC().RotorTable.clear();
 	positions->forEachEntry( savePosition( lnb->getDiSEqC().RotorTable ) );
 	eTransponderList::getInstance()->writeLNBData();	
+	eConfig::getInstance()->flush();
 	close(0);
 }
 

@@ -870,6 +870,7 @@ void eLNBSetup::onSave()
 
 	eTransponderList::getInstance()->writeLNBData();
 	eFrontend::getInstance()->InitDiSEqC();
+	eConfig::getInstance()->flush();
 }
 
 int eLNBSetup::eventHandler(const eWidgetEvent &event)

@@ -64,15 +64,31 @@ void eStreamWatchdog::check(int)
 	{
 		switch(event.event)
 		{
-        		case EVENT_ARATIO_CHANGE:
-    				reloadSettings();
+			case EVENT_ARATIO_CHANGE:
+				reloadSettings();
 				break;
 			case EVENT_VCR_CHANGED:
+				if ( eDVB::getInstance()->getmID() < 5 ) // @ moment only dbox2
+					/*emit*/VCRActivityChanged( getVCRActivity() );
 				break;
 			default: 
 				eDebug("unspecified event %d from Event Device", event.event);
 		}
 	}
+}
+
+#define FP_IOCTL_GET_VCR 7
+
+int eStreamWatchdog::getVCRActivity()
+{
+	int val;
+	int fp = open("/dev/dbox/fp0",O_RDWR);
+
+	ioctl(fp, FP_IOCTL_GET_VCR, &val);
+
+	close(fp);
+
+	return val;
 }
 
 void eStreamWatchdog::reloadSettings()

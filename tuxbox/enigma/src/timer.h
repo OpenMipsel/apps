@@ -19,7 +19,7 @@ class eTimerManager: public Object
 // eTimerManager actionHandler stuff
 	enum
 	{
-		zap, showMessage, startCountdown, setNextEvent,
+		zap, prepareEvent, startCountdown, setNextEvent,
 		startEvent, pauseEvent, restartEvent, stopEvent,
 		startRecording, stopRecording, restartRecording,
 		pauseRecording, spinUpHarddiscs

@@ -4,8 +4,8 @@
 #include <enigma_setup.h>
 #include <enigma_plugins.h>
 #include <enigma_info.h>
-#include <enigma_lcd.h>
 #include <enigma_vcr.h>
+#include <enigma_lcd.h>
 #include <timer.h>
 
 #include <lib/gui/eskin.h>
@@ -181,21 +181,7 @@ void eMainMenu::sel_file()
 void eMainMenu::sel_vcr()
 {
 	hide();
-	eAVSwitch::getInstance()->setInput(1);
-	enigmaVCR mb("If you can read this, your scartswitch doesn't work", "VCR");
-	mb.show();
-#ifndef DISABLE_LCD
-	eZapLCD *pLCD=eZapLCD::getInstance();
-	pLCD->lcdMenu->hide();
-	pLCD->lcdScart->show();
-#endif
-	mb.exec();
-#ifndef DISABLE_LCD
-	pLCD->lcdScart->hide();
-	pLCD->lcdMenu->show();
-#endif
-	mb.hide();
-	eAVSwitch::getInstance()->setInput(0);
+	eZapMain::getInstance()->toggleScart(1);
 	show();
 }
 

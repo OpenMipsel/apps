@@ -151,7 +151,7 @@ eZapRFmodSetup::~eZapRFmodSetup()
 
 void eZapRFmodSetup::okPressed()
 {
-	eRFmod::getInstance()->save();		
+	eRFmod::getInstance()->save();
 	close(1);
 }
 

@@ -191,6 +191,10 @@ void eTimerManager::saveTimerList()
 	timerlist->save();
 }
 
+#define WOL_PREPARE_TIME 240
+#define ZAP_BEFORE_TIME 60
+#define HDD_PREPARE_TIME 10
+
 void eTimerManager::actionHandler()
 {
 	switch( nextAction )
@@ -229,22 +233,25 @@ void eTimerManager::actionHandler()
 			}
 			break;
 
-		case showMessage:
-			eDebug("[eTimerManager] showMessage");
-			long t;
-			if ( (t = getSecondsToBegin()) ) // event is not running
+		case prepareEvent:
+			eDebug("[eTimerManager] prepareEvent");
+			if ( nextStartingEvent->type & ePlaylistEntry::recNgrab )
 			{
+				char *serverMAC=0;
+				if ( !eConfig::getInstance()->getKey("/elitedvb/network/hwaddress", serverMAC ) )
+				{
+					if ( system( eString().sprintf("etherwake -i eth0 %s", serverMAC ).c_str() ) )
+						eDebug("[eTimerManager] could not execute etherwake");
+					else
+						eDebug("[eTimerManager] Wake On Lan sent to %s", serverMAC );
+					free( serverMAC );
+				}
+				long t = getSecondsToBegin();
+				t -= ZAP_BEFORE_TIME;
+				eDebug("[eTimerManager] zap in %d seconds", t );
 				nextAction=zap;
-				actionTimer.start(60000, true ); // restart timer
-				eDebug("[eTimerManager] event starts in 6 min");
-				// here we can show a messagebox... event begin in bla minutes... ok.. abort...
-				// messagebox timout 1 min..
+				actionTimer.start( t*1000, true );
 			}
-		/*	else
-			{
-				conn = CONNECT( timer.timeout, eTimerManager::stopEvent );
-				int t = getTimeout();
-			}*/
 			break;
 
 		case startCountdown:
@@ -270,7 +277,7 @@ void eTimerManager::actionHandler()
 				long t = getSecondsToBegin();
 				nextAction=startEvent;
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
-					t-=10;  // 10 seconds for HDD Wakeup
+					t -= HDD_PREPARE_TIME;  // for HDD Wakeup or whatever
 				actionTimer.start( t*1000 , true );
 			}
 			break;
@@ -387,8 +394,8 @@ void eTimerManager::actionHandler()
 					{
 						nextStartingEvent=i;
 						timeToNextEvent = tmp-nowTime;
-						count++;
 					}
+					count++;
 				}
 				else if ( i->type & ePlaylistEntry::stateWaiting )
 				{
@@ -438,14 +445,12 @@ void eTimerManager::actionHandler()
 					evtTime = localtime( &nextStartingEvent->time_begin );
 				eDebug("[eTimerManager] next event starts at %02d.%02d, %02d:%02d", evtTime->tm_mday, evtTime->tm_mon+1, evtTime->tm_hour, evtTime->tm_min );
 				long t = getSecondsToBegin();
-				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
-					t -= 40; // we zap 40 sec before... ( for EPGCache... )
-				int prepareTime = 0;
+/*				int prepareTime = 0;
 				if ( nextStartingEvent->type & ePlaylistEntry::typeSmartTimer )
 				{  // EIT related zapping ....
 					if ( t > prepareTime )
 					{
-						nextAction=showMessage;
+						nextAction=prepareEvent;
 						actionTimer.start( (t - 360) * 1000, true ); // set the Timer to eventBegin - 6 min
 					}
 					else  // time to begin is under 6 min or the event is currently running
@@ -454,9 +459,19 @@ void eTimerManager::actionHandler()
 						actionHandler();
 					}
 				}
-				else
+				else*/
 				{
 					nextAction=zap;
+					if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
+					{
+						if ( nextStartingEvent->type & ePlaylistEntry::recNgrab )
+						{
+							t -= WOL_PREPARE_TIME; // for send WOL Signal
+							nextAction=prepareEvent;
+						}
+						else
+							t -= ZAP_BEFORE_TIME;
+					}
 					// set the Timer to eventBegin
 					actionTimer.start( t * 1000, true );
 				}
@@ -467,7 +482,7 @@ void eTimerManager::actionHandler()
 #ifndef DISABLE_FILE
 		case startRecording:
 			eDebug("[eTimerManager] start recording");
-			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
+			if (nextStartingEvent->type & (ePlaylistEntry::recDVR|ePlaylistEntry::recNgrab) )
 			{
 //				eDebug("nextStartingEvent->service.data[0] = %d", nextStartingEvent->service.data[0] );
 //				eDebug("nextStartingEvent->service.descr = %s", nextStartingEvent->service.descr.c_str() );
@@ -491,12 +506,17 @@ void eTimerManager::actionHandler()
 				eString descr = getRight( nextStartingEvent->service.descr, '/');
 				if ( recordDescr )
 					descr += recordDescr;
-				eZapMain::getInstance()->recordDVR(1, 0, descr.length()?descr.c_str():0 );
-			}
-			else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
-			{
-				eDebug("Starte Ngrab aufnahme");
-				ENgrab::getNew()->sendstart();
+
+				if ( nextStartingEvent->type & ePlaylistEntry::recDVR )
+				{
+					eDebug("[eTimerManager] start DVR");
+					eZapMain::getInstance()->recordDVR(1, 0, descr.length()?descr.c_str():0 );
+				}
+				else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
+				{
+					eDebug("[eTimerManager] start Ngrab");
+					ENgrab::getNew()->sendstart(descr.length()?descr.c_str():0);
+				}
 			}
 			else
 			{
@@ -508,11 +528,12 @@ void eTimerManager::actionHandler()
 			eDebug("[eTimerManager] stop recording");
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
+				eDebug("[eTimerManager] stop DVR");
 				eZapMain::getInstance()->recordDVR(0, 0);
 			}
 			else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
 			{
-				eDebug("Stope Ngrab aufnahme");
+				eDebug("[eTimerManager] stop Ngrab");
 				ENgrab::getNew()->sendstop();
 			}
 			else  // insert lirc ( VCR stop ) here

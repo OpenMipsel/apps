@@ -53,6 +53,30 @@ void eDecoration::drawDecoration(gPainter *target, ePoint size)
 {
   int x=0, xm=size.x(), y, ym;
 
+	if (iBottomLeft)
+	{
+    target->blit(*iBottomLeft, ePoint(0, size.y()-iBottomLeft->y));
+		x+=iBottomLeft->x;
+	}
+
+	if (iBottomRight)
+	{
+		xm-=iBottomRight->x;
+		target->blit(*iBottomRight, ePoint(xm, size.y()-iBottomRight->y), eRect(x, size.y()-iBottomRight->y, size.x()-x, iBottomRight->y));
+	}
+
+	if (iBottom)
+	{
+    while (x<xm)
+		{
+			target->blit(*iBottom, ePoint(x, size.y()-iBottom->y), eRect(x, size.y()-iBottom->y, xm-x, size.y()));
+			x+=iBottom->x;
+		}
+	}
+
+	x=0;
+	xm=size.x();
+
 	if (iTopLeft)
 	{
 		target->blit(*iTopLeft, ePoint(0, 0) );
@@ -72,32 +96,8 @@ void eDecoration::drawDecoration(gPainter *target, ePoint size)
 			target->blit(*iTop, ePoint(x, 0), eRect(x, 0, xm-x, size.y()));
 			x+=iTop->x;
 		}
-  }
-
-	x=0;
-	xm=size.x();
-
-	if (iBottomLeft)
-	{
-    target->blit(*iBottomLeft, ePoint(0, size.y()-iBottomLeft->y));
-		x+=iBottomLeft->x;
 	}
 
-	if (iBottomRight)
-	{
-		xm-=iBottomRight->x;
-		target->blit(*iBottomRight, ePoint(xm, size.y()-iBottomRight->y), eRect(x, size.y()-iBottomRight->y, size.x()-x, iBottomRight->y));
-	}
-	
-	if (iBottom)
-	{
-    while (x<xm)
-		{
-			target->blit(*iBottom, ePoint(x, size.y()-iBottom->y), eRect(x, size.y()-iBottom->y, xm-x, iBottom->y));
-			x+=iBottom->x;
-		}
-	}
-	
 	y=0; ym=size.y();
 	
 	if (iTopLeft)

@@ -216,6 +216,7 @@ void eParentalSetup::saveSettings()
 {
 	eConfig::getInstance()->setKey("/elitedvb/pins/setuplock", setuppin);
 	eConfig::getInstance()->setParentalPin(parentalpin);
+	eConfig::getInstance()->flush();
 }
 
 eParentalSetup::~eParentalSetup()

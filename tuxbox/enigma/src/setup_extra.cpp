@@ -86,6 +86,7 @@ void eZapExtraSetup::saveSettings()
 	eConfig::getInstance()->setKey("/elitedvb/extra/profimode", sprofimode);
 	eConfig::getInstance()->setKey("/elitedvb/extra/hideerror", shideerror);
 	eConfig::getInstance()->setKey("/elitedvb/extra/extzapping", sextzap);
+	eConfig::getInstance()->flush();
 }
 
 eZapExtraSetup::~eZapExtraSetup()

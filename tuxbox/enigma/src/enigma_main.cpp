@@ -16,6 +16,7 @@
 #include <enigma_mainmenu.h>
 #include <enigma_event.h>
 #include <enigma.h>
+#include <enigma_vcr.h>
 #include <enigma_lcd.h>
 #include <enigma_plugins.h>
 #include <helpwindow.h>
@@ -1511,6 +1512,7 @@ eZapMain::eZapMain()
 
 	dvrInfoBar->zOrderRaise();
 	dvbInfoBar->zOrderRaise();
+	CONNECT( eStreamWatchdog::getInstance()->VCRActivityChanged, eZapMain::toggleScart );
 }
 
 eZapMain::~eZapMain()
@@ -4899,6 +4901,39 @@ void eZapMain::redrawIndexmarks()
 	}
 }
 #endif // DISABLE_FILE
+
+void eZapMain::toggleScart( int state )
+{
+	enigmaVCR *instance = enigmaVCR::getInstance();
+	if ( state )
+	{
+		if ( !instance )
+		{
+			enigmaVCR mb("If you can read this, your scartswitch doesn't work", "VCR");
+			mb.show();
+#ifndef DISABLE_LCD
+			eZapLCD *pLCD=eZapLCD::getInstance();
+			eWidget *oldlcd=0;
+			if ( pLCD->lcdMenu->isVisible() )
+				oldlcd = pLCD->lcdMenu;
+			else if ( pLCD->lcdMain->isVisible() )
+				oldlcd = pLCD->lcdMain;
+			if ( oldlcd )
+				oldlcd->hide();
+			pLCD->lcdScart->show();
+#endif
+			mb.exec();
+#ifndef DISABLE_LCD
+			pLCD->lcdScart->hide();
+			if ( oldlcd )
+				oldlcd->show();
+#endif
+			mb.hide();
+		}
+	}
+	else if ( instance )
+		instance->switchBack();
+}
 
 eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path, eWidget *lcdTitle, eWidget *lcdElement)
 : eListBoxWindow<eListBoxEntryText>(_("Service Menu"), 8), ref(ref)

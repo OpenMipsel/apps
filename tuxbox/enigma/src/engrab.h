@@ -10,7 +10,7 @@
 class ENgrab: public Object
 {
 	eString sendStr;
-	eString startxml();
+	eString startxml( const char * descr=0 );
 	eString stopxml();
 	void sending();
 	void connected();
@@ -23,7 +23,7 @@ class ENgrab: public Object
 	~ENgrab();
 public:
 	static ENgrab *getNew() { return new ENgrab(); }
-	void sendstart();
+	void sendstart( const char* descr=0 );
 	void sendstop();
 };
 
