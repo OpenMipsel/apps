@@ -33,6 +33,7 @@ class Descriptor;
 class eBouquet;
 class eAVSwitch;
 class eStreamWatchdog;
+class eRFmod;
 class MHWEIT;
 class eDVBRecorder;
 class eDVBScanController;

@@ -17,6 +17,7 @@
 
 #include <lib/driver/eavswitch.h>
 #include <lib/driver/streamwd.h>
+#include <lib/driver/rfmod.h>
 #include <lib/dvb/esection.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/frontend.h>
@@ -125,7 +126,14 @@ eDVB::eDVB(): state(eDVBState::stateIdle)
 		new eAVSwitchNokia;
 		break;
 	}
-
+	
+	if(type==6)
+	{
+		// start rf mod
+		new eRFmod;
+		eRFmod::getInstance()->init();
+	}
+	
 	// init stream watchdog
 	eStreamWatchdog::getInstance()->reloadSettings();
 
