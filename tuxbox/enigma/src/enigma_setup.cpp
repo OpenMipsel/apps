@@ -17,10 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.31 2003/07/31 16:44:53 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.32 2003/07/31 17:13:14 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
+#include <lib/dvb/edvb.h>
 #include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
 #include <system_settings.h>
