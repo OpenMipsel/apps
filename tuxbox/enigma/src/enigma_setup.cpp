@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.28 2003/06/10 23:08:47 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.29 2003/07/17 11:23:52 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -98,7 +98,7 @@ eZapSetup::eZapSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("A/V Setup..."), eString().sprintf("(%d) %s", ++entry, _("open audio/video setup")) ))->selected, eZapSetup::sel_setup_av);
 #ifndef DISABLE_NETWORK
 	if (havenetwork)
-		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), eString().sprintf("(%d) %s", ++entry, _("open network setup")) ))->selected, eZapSetup::sel_network);
+		CONNECT((new eListBoxEntryMenu(&list, _("Communication..."), eString().sprintf("(%d) %s", ++entry, _("open communication setup")) ))->selected, eZapSetup::sel_network);
 #endif
 	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), eString().sprintf("(%d) %s", ++entry, _("open on screen display setup")) ))->selected, eZapSetup::sel_osd);
 #ifndef DISABLE_LCD

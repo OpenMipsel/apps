@@ -61,7 +61,7 @@ eSatEditDialog::eSatEditDialog( tpPacket *tp )
 	name->move(ePoint(10,10));
 	name->resize(eSize(clientrect.size().width()-20, 35));
 	name->setHelpText(_("press ok to change satellite name"));
-	name->setMaxChars(30);
+	name->setMaxChars(50);
 	name->loadDeco();
 	name->setText( tp->name );
 	name->setUseableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/-°");

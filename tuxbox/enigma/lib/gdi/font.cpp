@@ -321,7 +321,7 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 
 	pGlyph ng;
 
-	ng.bbox.setLeft( (flags&GS_ISFIRST|glyphs.empty()?cursor.x():cursor.x()-1) + glyph->left );
+	ng.bbox.setLeft( (flags&GS_ISFIRST | /*glyphs.empty() ? cursor.x() : */cursor.x() - 1 ) + glyph->left );
 	ng.bbox.setTop( cursor.y() - glyph->top );
 	ng.bbox.setWidth( glyph->width );
 	ng.bbox.setHeight( glyph->height );

@@ -9,11 +9,12 @@
 #include <lib/gdi/font.h>
 
 eTextInputField::eTextInputField( eWidget *parent, eLabel *descr, const char *deco )
-	:eButton( parent, descr, 1, deco), maxChars(0), lastKey(-1), editMode(false), nextCharTimer(eApp),
-    useableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	:eButton( parent, descr, 1, deco), maxChars(0), lastKey(-1), editMode(false),
+	editHelpText(_("press ok to leave edit mode, yellow=capslock")), nextCharTimer(eApp),
+	useableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 //						 " +-.,:?!\"';_*/()<=>%#@&"),
              "ĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîï°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ"
-						 " +-.,:?!\"';_*/()<=>%#@&"), capslock(0)
+						 " +-.,:?!\"';_*/()<=>%#@&"), capslock(0), editLabel(0)
 {
 	if ( eConfig::getInstance()->getKey("/ezap/rc/TextInputField/nextCharTimeout", nextCharTimeout ) )
 		nextCharTimeout=0;
@@ -28,8 +29,10 @@ void eTextInputField::updated()
 	unsigned char c[4096];
 	strcpy((char *)c,isotext.c_str());
 
-	text=convertDVBUTF8(c,strlen((char*)c));
-	eLabel::invalidate();
+	if ( editLabel )
+		editLabel->setText(convertDVBUTF8(c,strlen((char*)c)));
+	else
+		text=convertDVBUTF8(c,strlen((char*)c));
 	drawCursor();
 }
 
@@ -96,68 +99,89 @@ void eTextInputField::setNextCharTimeout( unsigned int newtimeout )
 void eTextInputField::drawCursor()
 {
 //	eDebug("length = %d", isotext.length());
-	eRect rc;
-	rc.setTop(crect.bottom()-4);
-	rc.setHeight( 3 );
+	if ( !cursorRect.isEmpty() )
+		eWidget::invalidate(cursorRect);
+
+	cursorRect.setTop((deco_selected?crect_selected.bottom():crect.bottom())-4);
+	cursorRect.setHeight( 3 );
 	if ( isotext.length() )  // text exist?
 	{
 		if ( (int)isotext.length() > curPos) // before or on the last char?
 		{
-			const eRect &bbox = para->getGlyphBBox(curPos);
+			const eRect &bbox = editLabel->getPara()->getGlyphBBox(curPos);
 			if ( !bbox.width() )  // Space
 			{
 				if (curPos)  // char before space?
 				{
-					const eRect &bbBefore = para->getGlyphBBox(curPos-1);
-					rc.setLeft( bbBefore.right()+2 );
+					const eRect &bbBefore = editLabel->getPara()->getGlyphBBox(curPos-1);
+					cursorRect.setLeft( bbBefore.right()+2 );
 				}
 				if ( (int)isotext.length() > curPos+1) // char after space ?
 				{
-					const eRect &bbAfter = para->getGlyphBBox(curPos+1);
-					rc.setRight( bbAfter.left()-2 );
+					const eRect &bbAfter = editLabel->getPara()->getGlyphBBox(curPos+1);
+					cursorRect.setRight( bbAfter.left()-2 );
 				}
 				else  // no char behind Space
-					rc.setWidth( 10 );
+					cursorRect.setWidth( 10 );
 			}
 			else
 			{
-				rc.setLeft( bbox.left() );
-				rc.setWidth( bbox.width() );
+				cursorRect.setLeft( bbox.left() );
+				cursorRect.setWidth( bbox.width() );
 			}
 		}
 		else // we are behind the last character
 		{
-			const eRect &bbox = para->getGlyphBBox(isotext.length()-1);
-			rc.setLeft( bbox.right() + ( ( curPos-isotext.length() ) * 10 ) + 2 );
-			rc.setWidth( 10 );
+			const eRect &bbox = editLabel->getPara()->getGlyphBBox(isotext.length()-1);
+			cursorRect.setLeft( bbox.right() + ( ( curPos-isotext.length() ) * 10 ) + 2 );
+			cursorRect.setWidth( 10 );
 		}
 	}
 	else  //  no one character in text
 	{
-		rc.setLeft( 2 );
-		rc.setWidth( 10 );
+		cursorRect.setLeft( 0 );
+		cursorRect.setWidth( 10 );
 	}
-	rc.moveBy( (deco_selected?crect_selected.left():crect.left())+1, 0 );
-	gPainter *painter = getPainter( deco_selected?crect_selected:crect );
+	eRect tmp = deco_selected?crect_selected:crect;
+	if ( cursorRect.right() > scroll.top().second )
+	{
+		int newpos = scroll.top().first + cursorRect.left();
+		scroll.push( std::pair<int,int>( newpos, newpos+tmp.width() ) );
+		editLabel->move( ePoint( (-newpos)+tmp.left(), editLabel->getPosition().y() ) );
+	}
+	else if ( scroll.size() > 1 && cursorRect.left() < scroll.top().first )
+	{
+		scroll.pop();
+		editLabel->move( ePoint( (-scroll.top().first)+tmp.left() , editLabel->getPosition().y() ) );
+	}
+	cursorRect.moveBy( (deco_selected?crect_selected.left():crect.left())-scroll.top().first+1, 0 );
+	gPainter *painter = getPainter( eRect( ePoint(0,0), size ) );
 	painter->setForegroundColor( getForegroundColor() );
 	painter->setBackgroundColor( getBackgroundColor() );
-	painter->clip( rc );
-	painter->fill( rc );
-	painter->clippop();
+	painter->fill( cursorRect );
 	if(capslock)
 	{
-		rc.setTop(crect.top());
-		rc.setHeight( 3 );
-		painter->clip( rc );
-		painter->fill( rc );
-		painter->clippop();
+		if ( !capsRect.isEmpty() )
+			eWidget::invalidate( capsRect );
+		capsRect=cursorRect;
+		capsRect.setTop(deco_selected?crect_selected.top():crect.top());
+		capsRect.setHeight( 3 );
+		painter->fill( capsRect );
 	}
+	if (deco_selected && have_focus)
+		deco_selected.drawDecoration(painter, ePoint(width(), height()));
+	else if (deco)
+		deco.drawDecoration(painter, ePoint(width(), height()));
+
 	delete painter;
 }
 
 int eTextInputField::eventHandler( const eWidgetEvent &event )
 {
-	isotext=convertUTF8DVB(text);
+	if (editLabel)
+		isotext=convertUTF8DVB(editLabel->getText());
+	else
+		isotext=convertUTF8DVB(text);
 	switch (event.type)
 	{
 		case eWidgetEvent::changedText:
@@ -174,8 +198,10 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			if ( event.action == &i_cursorActions->capslock && editMode)
 			{
 				capslock^=1;
-				eLabel::invalidate();
-				drawCursor();
+				if ( capslock )
+					drawCursor();
+				else if ( !capsRect.isEmpty() )
+					eWidget::invalidate( capsRect );
 			}
 			else if ( (event.action == &i_cursorActions->up ||
 				event.action == &i_cursorActions->down) && editMode )
@@ -248,23 +274,42 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				nextCharTimer.stop();
 				if ( editMode )
 				{
+					editLabel->hide();
+					setText(editLabel->getText());
+					delete editLabel;
+					editLabel=0;
+
 					setHelpText(oldHelpText);
 
-					if(isotext.length()>0)
-						while ( isotext[isotext.length()-1] == ' ' )
-							isotext.erase( isotext.length()-1 );
+					while ( text.length() && text[text.length()-1] == ' ' )
+						text.erase( text.length()-1 );
 
-					updated();
-					eButton::invalidate();  // remove the underline
 					editMode=false;
+					/* emit */ selected();
+
 					eWindow::globalCancel(eWindow::ON);
 				}
 				else
 				{
-					oldHelpText=helptext;
 					oldText=text;
-					setHelpText(_("press ok to leave edit mode, yellow=capslock"));
 					editMode=true;
+					/* emit */ selected();
+					capslock=0;
+					while(scroll.size())
+						scroll.pop();
+					eRect tmp = deco_selected?crect_selected:crect;
+					editLabel=new eLabel(this,0,0);
+					editLabel->hide();
+					editLabel->move(tmp.topLeft());
+					scroll.push( std::pair<int,int>(0,tmp.width()) );
+					eSize tmpSize=tmp.size();
+					tmpSize.setWidth( tmp.width()*5 );
+					editLabel->resize(tmpSize);
+					editLabel->setText(text);
+					oldHelpText=helptext;
+					setText("");
+					editLabel->show();
+					setHelpText(editHelpText);
 					curPos=0;
 					drawCursor();
 					eWindow::globalCancel(eWindow::OFF);
@@ -272,6 +317,8 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			}
 			else if ( editMode && event.action == &i_cursorActions->cancel)
 			{
+				delete editLabel;
+				editLabel=0;
 				nextCharTimer.stop();
 				editMode=false;
 				setText(oldText);

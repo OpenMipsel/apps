@@ -99,10 +99,8 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 		deco.drawDecoration(target, ePoint(width(), height()));
 		area=crect;
 	}
-/*	eDebug("area left = %d, top = %d, width = %d, height = %d",
-		area.left(), area.top(),
-		area.width(), area.height() );*/
-
+	target->clippop();
+	target->clip( area );
 	if (shortcutPixmap)
 	{
 		//area.setWidth(area.width()-area.height());

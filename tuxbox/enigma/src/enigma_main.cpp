@@ -2867,7 +2867,7 @@ void eZapMain::renameService( eServiceSelector *sel )
 				eServiceInterface::getInstance()->removeRef( it->service );
 			}
 		}
-		wnd.setMaxChars(50);
+		wnd.setMaxChars(100);
 		int ret = wnd.exec();
 		wnd.hide();
 		if ( !ret )
@@ -2995,7 +2995,7 @@ void eZapMain::renameBouquet( eServiceSelector *sel)
 	wnd.setText(_("Rename bouquet"));
 	wnd.show();
 	wnd.setEditText(p->service_name);
-	wnd.setMaxChars(50);
+	wnd.setMaxChars(100);
 	int ret = wnd.exec();
 	wnd.hide();
 	if ( !ret )
@@ -3022,7 +3022,7 @@ void eZapMain::createEmptyBouquet(int mode)
 	wnd.setText(_("Add new bouquet"));
 	wnd.show();
 	wnd.setEditText(eString(""));
-	wnd.setMaxChars(50);
+	wnd.setMaxChars(100);
 	int ret = wnd.exec();
 	wnd.hide();
 	if ( !ret )
@@ -5463,7 +5463,7 @@ TextEditWindow::TextEditWindow( const char *InputFieldDescr, const char* useable
 {
 	input = new eTextInputField(this);
 	input->setName("inputfield");
-	input->setMaxChars(20);
+	input->setMaxChars(100);
 	input->setHelpText(_("press ok to start edit mode"));
 	if (useableChars)
 		input->setUseableChars( useableChars );

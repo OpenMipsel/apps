@@ -1318,7 +1318,7 @@ void eTimerEditView::createWidgets()
 										_("November"), _("December") };
 	event_name = new eTextInputField(this);
 	event_name->setName("event_name");
-	event_name->setMaxChars(50);
+	event_name->setMaxChars(100);
 
 	multiple = new eCheckbox(this);
 	multiple->setName("multiple");
