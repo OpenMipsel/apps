@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.10 2003/01/20 14:24:53 tmbinc Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.11 2003/02/17 15:29:38 tmbinc Exp $
  */
 
 #include <enigma_scan.h>
@@ -99,7 +99,7 @@ void eZapScan::sel_satconfig()
 	show();
 }
 
-eLNB* eZapScan::getRotorLNB()
+eLNB* eZapScan::getRotorLNB(int silent)
 {
 	int c=0;
 	std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin());
@@ -110,7 +110,6 @@ eLNB* eZapScan::getRotorLNB()
 	}
 	if ( c > 1 )  // we have more than one LNBs with DiSEqC 1.2
 	{
-		hide();
 		eMessageBox mb( _("More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the motor is connected"), _("Info"), eMessageBox::iconWarning|eMessageBox::btOK );
 		mb.show();
 		mb.exec();
@@ -119,17 +118,17 @@ eLNB* eZapScan::getRotorLNB()
 		sel.show();
 		int ret = sel.exec();
 		sel.hide();
-		show();
 		return (eLNB*) ret;
 	}
 	else if ( !c )
 	{
-		hide();
-		eMessageBox mb( _("Found no LNB with DiSEqC 1.2 enabled,\nplease goto Satellite Config first, and enable DiSEqC 1.2"), _("Warning"), eMessageBox::iconWarning|eMessageBox::btOK );
-		mb.show();
-		mb.exec();
-		mb.hide();
-		show();
+		if (!silent)
+		{
+			eMessageBox mb( _("Found no LNB with DiSEqC 1.2 enabled,\nplease goto Satellite Config first, and enable DiSEqC 1.2"), _("Warning"), eMessageBox::iconWarning|eMessageBox::btOK );
+			mb.show();
+			mb.exec();
+			mb.hide();
+		}
 		return 0;
 	}
 	else // only one lnb with DiSEqC 1.2 is found.. this is correct :)
@@ -138,17 +137,17 @@ eLNB* eZapScan::getRotorLNB()
 
 void eZapScan::sel_rotorConfig()
 {
-	eLNB* lnb = getRotorLNB();
+	hide();
+	eLNB* lnb = getRotorLNB(0);
 	if (lnb)
 	{
-		hide();
 		RotorConfig c(lnb);
 		c.setLCD( LCDTitle, LCDElement );
 		c.show();
 		c.exec();
 		c.hide();
-		show();
 	}
+	show();
 }
 
 eLNBSelector::eLNBSelector()

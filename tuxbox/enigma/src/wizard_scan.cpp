@@ -1,10 +1,12 @@
 #include <src/wizard_scan.h>
+#include <rotorconfig.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/listbox.h>
 #include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
 #include <src/satconfig.h>
 #include <src/scan.h>
+#include <src/enigma_scan.h>
 
 class eDiseqcChoice: public eListBoxEntry
 {
@@ -156,6 +158,17 @@ again_satconfig:
 				
 				if (res != 1)
 					goto again;
+					
+				{
+					eLNB *l=eZapScan::getRotorLNB(1);
+					if (l)
+					{
+						RotorConfig c(l);
+						c.show();
+						c.exec();
+						c.hide();
+					}
+				}
 
 				{
 					TransponderScan scan(0, 0);
