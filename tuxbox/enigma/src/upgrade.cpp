@@ -541,7 +541,7 @@ void eUpgrade::flashImage(int checkmd5)
 					strcpy(mtd,"/dev/null");
 					mtdsize=0;
 				}
-				int fd1=0,fd_fp=0,fd2=0;
+				int fd1=0,fd2=0;
 
 				if( (fd1 = open( TMP_IMAGE, O_RDONLY )) < 0 )
 				{
@@ -568,11 +568,10 @@ void eUpgrade::flashImage(int checkmd5)
 					return;
 				}
 
-				if ((fd_fp = open("/dev/dbox/fp0",O_RDWR)) <= 0)
-				{
-					perror("[flashing] open fp0");
-					fd_fp = -1;
-				}
+				// without this nice we have not enough priority for
+				// file operations... then the update ist very slow on the
+				// dreambox
+				nice(-10);
 
 				if(!erase(mtd))
 				{
@@ -585,14 +584,13 @@ void eUpgrade::flashImage(int checkmd5)
 					return;
 				}
 
-				if( (fd2 = open(mtd, O_WRONLY )) < 0 )
+				if( (fd2 = open(mtd, O_RDWR )) < 0 )
 				{
 					mb.hide();
 					eMessageBox box(_("Can't open mtd!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
 					box.show();
 					box.exec();
 					box.hide();
-					close(fd2);
 					close(0);
 					return;
 				}
@@ -608,22 +606,20 @@ void eUpgrade::flashImage(int checkmd5)
 				wnd.show();
 
 				char buf[meminfo.erasesize];
+
 				int fsize=filesize;
-				int written=0;
-				printf("flashing now...\n");
-				while(fsize>0)
+
+				eDebug("flashing now...");
+
+				int rbytes=0;
+				while( ( rbytes = read( fd1, buf, sizeof(buf) ) ) )
 				{
-					wnd.progress.setPerc( (int)(((double)100/filesize)*written) );
-					long block = fsize;
-
-					if(block>(long)sizeof(buf))
-						block = sizeof(buf);
-
-					read( fd1, &buf, block);
-					write( fd2, &buf, block);
-					fsize -= block;
-					written+=block;
+					fsize -= write( fd2, buf, rbytes );
+					wnd.progress.setPerc( ((filesize-fsize)*100)/filesize );
 				}
+
+				nice(0);
+
 				mb.hide();
 				wnd.hide();
 
