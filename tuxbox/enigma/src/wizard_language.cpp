@@ -181,7 +181,7 @@ public:
 	{
 			// only run wizzard when language not yet setup'ed
 		char *temp;
-		if ( eConfig::getInstance()->getKey("/elitedvb/language", temp) )
+		if (! eConfig::getInstance()->getKey("/elitedvb/language", temp) )
 			free(temp);
 		else
 			eWizardLanguage::run();
