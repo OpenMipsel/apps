@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.4 2002/12/16 21:58:45 tmbinc Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.5 2002/12/16 23:00:21 TripleDES Exp $
  */
 
 #include <enigma_info.h>
@@ -42,7 +42,7 @@ eZapInfo::eZapInfo()
 	move(ePoint(150, 136));
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("go back to mainmenu")))->selected, eZapInfo::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Streaminfo"), _("open the Streaminfo")))->selected, eZapInfo::sel_streaminfo);
-	if ( eDVB::getInstance()->getInfo("mID") != "05" )
+	if ( eDVB::getInstance()->getInfo("mID") != "05" && eDVB::getInstance()->getInfo("mID") != "06" )
 		CONNECT((new eListBoxEntryMenu(&list, _("Show BN version"),_("show the Current Version of the Betanova FW")))->selected, eZapInfo::sel_bnversion);
 
 	CONNECT((new eListBoxEntryMenu(&list, _("About..."), _("open the about dialog")))->selected, eZapInfo::sel_about);
@@ -137,7 +137,7 @@ public:
 
 		harddisks=new eLabel(this);
 		harddisks->setName("harddisks");
-		
+
 		okButton=new eButton(this);
 		okButton->setName("okButton");
 		
@@ -149,6 +149,14 @@ public:
 
 		if (eSkin::getActive()->build(this, "eAboutScreen"))
 			eFatal("skin load of \"eAboutScreen\" failed");
+
+		if(mID==6)
+		{
+			harddisks->hide();
+			eWidget *h=search("harddisk_label");
+			if(h)
+				h->hide();
+		}
 		
 		dreamlogo->hide();
 		

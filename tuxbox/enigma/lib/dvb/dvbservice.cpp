@@ -11,7 +11,7 @@ eDVBServiceController::eDVBServiceController(eDVB &dvb): eDVBController(dvb)
 	CONNECT(dvb.tSDT.tableReady, eDVBServiceController::SDTready);
 	CONNECT(dvb.tEIT.tableReady, eDVBServiceController::EITready);
 
-	if ( dvb.getInfo("mID") != "05" )  // no dreambox
+	if ( dvb.getInfo("mID") != "05" && dvb.getInfo("mID") != "06" )  // no dreambox
 	{
 		eDebug("add CAs");
 		availableCASystems.push_back(0x1702);	// BetaCrypt C (sat)

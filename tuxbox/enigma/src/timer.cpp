@@ -921,7 +921,8 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 		new eListBoxEntryText( *emonth, monthStr[i], (void*) i );
 
 	new eListBoxEntryText( *type, _("switch"), (void*) ePlaylistEntry::SwitchTimerEntry );
-	new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
+	if(eDVB::getInstance()->getInfo("mID") != "06")
+		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 //	new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );  
 
 	if ( events->getCount() )
