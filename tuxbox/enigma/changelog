@@ -35,4 +35,11 @@
 200302112101 5 * Show correct free diskspace on mounted nfs shares
 200302112101 5 * Add partitioncheck support for reiserfs partitions
 200302112101 3 * Add for each satellit two new folders in serviceselector ( on contains all services of ths satellite, and the other contains all bouquets of ths satellite )
+200302122208 4 * Show Orbital Position in Channelinfo and OSD Info bar
+200302122243 5 * Add nGrab Streaming Server Support ( PES Streaming over Network)
 200302131538 5 * Translation info will be shown in "about" dialog
+200302182213 4 * Add help window support
+200302190420 2 * Add full DiSEqC 1.1 support ( uncommitted switches )
+200302190420 3 * Fix support for Rotors behind DiSEqC Switches
+200302190420 6 * Show Streaminfo on doubleklick Info Button
+

@@ -3,15 +3,13 @@
 #include <unistd.h>
 
 #include <lib/base/i18n.h>
+#include <lib/dvb/edvb.h>
+#include <lib/gdi/font.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
-#include <lib/gui/ebutton.h>
+#include <lib/gui/eprogress.h>
 #include <lib/gui/guiactions.h>
-#include <lib/gdi/epng.h>
-#include <lib/gdi/font.h>
-#include <lib/dvb/edvb.h>
 #include <lib/system/init_num.h>
-
 
 struct enigmaHelpWindowActions
 {
@@ -28,102 +26,116 @@ struct enigmaHelpWindowActions
 
 eAutoInitP0<enigmaHelpWindowActions> i_helpwindowActions(eAutoInitNumbers::actions, "enigma helpwindow actions");
 
-
 eHelpWindow::eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID):
-	eWindow(1)
+	eWindow(1), curPage(0)
 {
-	int xpos, ypos=10;
-	int imgwidth, imgheight;
+	int xpos=60, ypos=0, labelheight, imgheight;
 
-	scrollypos=0;
+	scrollbar = new eProgress(this);
+	scrollbar->setName("scrollbar");
+	scrollbar->setStart(0);
+	scrollbar->setPerc(100);
 
-	setText(_("Help"));
-	cmove(ePoint(125, 120));
-	cresize(eSize(500, 250));
+	visible = new eWidget(this);
+	visible->setName("visible");
 
-	scrollbox = new eWidget(this);
+	eSkin *skin=eSkin::getActive();
+	if (skin->build(this, "eHelpWindow"))
+		eFatal("skin load of \"eHelpWindow\" failed");
+
+	scrollbox = new eWidget(visible);
 	scrollbox->move(ePoint(0, 0));
-	scrollbox->resize(eSize(width(), height()*8));
+	scrollbox->resize(eSize(visible->width(), visible->height()*8));
 
 	eString style=eActionMapList::getInstance()->getCurrentStyle();
-	int mID=eDVB::getInstance()->getmID();
+
+	const char *hwstr = (eDVB::getInstance()->getmID() < 5)?"d-box":"dreambox";
+
+	entryBeg.push_back(0);
+	int pageend=visible->height();
 
 	for ( ePtrList<eAction>::iterator it( parseActionHelpList.begin() ); it != parseActionHelpList.end() ; it++ )
 	{
-			std::map< eString, keylist >::iterator b = it->keys.find( style );
-			
-			if ( b == it->keys.end() )
-				b = it->keys.find("");
+		std::map< eString, keylist >::iterator b = it->keys.find( style );
 
-			if ( b != it->keys.end() )
+		if ( b == it->keys.end() )
+			b = it->keys.find("");
+
+		if ( b != it->keys.end() )
+		{
+			keylist &keys = b->second;
+			for ( keylist::iterator i( keys.begin() ); i != keys.end() ; i++ )
 			{
-				keylist &keys = b->second;
-				for ( keylist::iterator i( keys.begin() ); i != keys.end() ; i++ )
-				{
 /*
 					eDebug("****** ----> %s    %s", i->producer->getDescription(), i->picture.c_str());
 					eDebug("****** ----> %s", it->getDescription());
 					eDebug("Picture: %s",eString((DATADIR)+eString("/enigma/pictures/")+i->picture).c_str());
 */
-					xpos=10;
-
-					if ((eString(i->producer->getDescription()).find("dreambox") != eString::npos) && ((mID == 5) || (mID == 6)))
+				imgheight=0;
+				if ( strstr( i->producer->getDescription(), hwstr ) )
+				{
+					if (i->picture)
 					{
-						imgheight=0;
-						if (i->picture)
+						gPixmap *image=eSkin::getActive()->queryImage(i->picture);
+
+						if (image)
 						{
-							gPixmap *image=eSkin::getActive()->queryImage(i->picture);
-							
-							if (image)
-							{
-								label = new eLabel(scrollbox);
-								label->setFlags(eLabel::flagVCenter);
-								label->move(ePoint(10, ypos));
-								imgwidth=image->getSize().width();
-								imgheight=image->getSize().height();
-								label->resize(eSize(imgwidth, imgheight));
-								label->setBlitFlags(BF_ALPHATEST);
-								label->setPixmap(image);
-								label->setPixmapPosition(ePoint(1, 1));
-								xpos=20+imgwidth;
-							}
+							label = new eLabel(scrollbox);
+							label->setFlags(eLabel::flagVCenter);
+							label->move(ePoint(0, ypos));
+							label->resize(eSize(xpos,image->y));
+							label->setBlitFlags(BF_ALPHATEST);
+							label->setPixmap(image);
+							label->setPixmapPosition(ePoint((xpos-10)/2-image->x/2, 0));
 						}
-
-						label = new eLabel(scrollbox);
-						label->setFlags(eLabel::flagVCenter);
-						label->setFlags(RS_WRAP);
-						label->move(ePoint(xpos, ypos));
-						label->resize(eSize(width()-xpos-20, 200));
-						label->setText(it->getDescription());
-						int labelheight=label->getExtend().height();
-						label->resize(eSize(width()-xpos-20, labelheight));
-
-						ypos+=(labelheight>imgheight?labelheight:imgheight)+20;
 					}
+
+					label = new eLabel(scrollbox);
+					label->setFlags(eLabel::flagVCenter);
+					label->setFlags(RS_WRAP);
+					label->move(ePoint(xpos, ypos));
+					label->resize(eSize(visible->width()-xpos-20, 200));
+					label->setText(it->getDescription());
+					labelheight=label->getExtend().height();
+					label->resize(eSize(visible->width()-xpos-20, labelheight));
+
+					ypos+=(labelheight>imgheight?labelheight:imgheight)+20;
+					if ( ypos-20 > pageend )
+					{
+						entryBeg.push_back(ypos-(labelheight>imgheight?labelheight:imgheight)-20);
+						pageend=entryBeg.back()+visible->height();
+					}
+					break;  // add only once :)
 				}
-				
 			}
+		}
 	}
 
 	if (helpID)
 	{
-		xpos+=20;
-
 		eString helptext=loadHelpText(helpID);
 
 		label = new eLabel(scrollbox);
 		label->setFlags(eLabel::flagVCenter);
 		label->setFlags(RS_WRAP);
-		label->move(ePoint(10, ypos));
-		label->resize(eSize(width()-40, 200));
+		label->move(ePoint(0, ypos));
+		label->resize(eSize(visible->width(), 200));
 		label->setText(helptext.c_str());
-		label->resize(eSize(width()-40, label->getExtend().height()));
-		ypos+=label->getExtend().height();
+		labelheight = label->getExtend().height();
+		label->resize(eSize(visible->width(), labelheight));
+		ypos+=labelheight;
+		if ( ypos > pageend )
+			entryBeg.push_back(ypos-labelheight);
 	}
 
-	doscroll=ypos>height();
-	scrollmax=ypos;
+	cur = entryBeg.begin();
+	doscroll=ypos>visible->height();
 
+	if (!doscroll)
+		scrollbar->hide();
+	else
+	  updateScrollbar();
+	  
 	addActionMap(&i_helpwindowActions->map);
 }
 
@@ -185,42 +197,51 @@ eString eHelpWindow::loadHelpText(int helpIDtoLoad)
 	return "";
 }
 
-
-
 int eHelpWindow::eventHandler(const eWidgetEvent &event)
 {
-	int fd=eSkin::getActive()->queryValue("fontsize", 20)*2;
-	
 	switch (event.type)
 	{
 	case eWidgetEvent::evtAction:
 		if (event.action == &i_helpwindowActions->up)
 		{
-			if (doscroll)
+			if (doscroll && *cur != entryBeg.front() ) // valid it
 			{
-				if (scrollypos)
-				{
-					scrollypos+=fd;
-					if (scrollypos>0) scrollypos=0;
-					scrollbox->move(ePoint(0, scrollypos));
-				}
+				cur--;
+				curPage--;
+				scrollbox->move(ePoint(0, -(*cur)));
+				updateScrollbar();
 			}
-		}	else
-		if (event.action == &i_helpwindowActions->down)
+		}
+		else if (event.action == &i_helpwindowActions->down)
 		{
-			if (doscroll && (scrollypos+scrollmax+2*fd>=height()))
+			if (doscroll && *cur != entryBeg.back() ) // valid it
 			{
-				scrollypos-=fd;
-				scrollbox->move(ePoint(0, scrollypos));
+				cur++;
+				curPage++;
+				scrollbox->move(ePoint(0, -(*cur)));
+				updateScrollbar();
 			}
-		}	else
-		if (event.action == &i_helpwindowActions->close)
+		}
+		else if (event.action == &i_helpwindowActions->close)
 			close(0);
+		else
+			return eWindow::eventHandler(event);
 		return 1;
 	default:
 		break;
 	}
 	return eWindow::eventHandler(event);
+}
+
+void eHelpWindow::updateScrollbar()
+{
+	int total=entryBeg.size()*visible->height();
+	int start=curPage*visible->height()*100/total;
+	int vis=visible->getSize().height()*100/total;
+//	eDebug("total=%d, start = %d, vis = %d", total, start, vis);
+	scrollbar->setStart(start);
+	scrollbar->setPerc(vis);
+	scrollbar->show();
 }
 
 eHelpWindow::~eHelpWindow()

@@ -56,7 +56,7 @@ void eDVB::tunedIn(eTransponder *trans, int err)
 }
 
 eDVB::eDVB()
-	: state(eDVBState::stateIdle), parentEIT(0)
+	:parentEIT(0), state(eDVBState::stateIdle)
 {
 	settings=0;
 	time_difference=0;

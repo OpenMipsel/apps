@@ -782,7 +782,7 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 						eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x68, "00" );
 						retuneTimer->start(500, false);
 					}
-					Direction->setText(_("driving to east..."));
+					Direction->setText(_("turning to east..."));
 				}
 				else if (e.action == &i_rotorMenuActions->west)
 				{
@@ -795,7 +795,7 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 						eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x69, "00" );
 						retuneTimer->start(500, false);
 					}
-					Direction->setText(_("driving to west..."));
+					Direction->setText(_("turning to west..."));
 				}
 				else if (e.action == &i_rotorMenuActions->eastStop || e.action == &i_rotorMenuActions->westStop )
 				{

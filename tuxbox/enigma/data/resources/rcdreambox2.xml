@@ -38,8 +38,8 @@
 			<key name="blue" code="43" picture="key.20" />
 			<key name="mute" code="44" />
 			<key name="text" code="45" picture="key.22" />
-			<key name="next" code="50" />
-			<key name="prev" code="51" />
+			<key name="next" code="50" picture="key.25" />
+			<key name="prev" code="51" picture="key.24" />
 			<key name="LAME" code="52" picture="key.21" />
 			<key name="radio" code="53" picture="key.16" />
 			<key name="help" code="54" picture="key.23" />
@@ -136,6 +136,7 @@
 			<action name="stop" key="tv" flags="m" />
 
 			<action name="showBouquets" key="bouqup" flags="m" />
+			<action name="showBouquets" key="bouqdown" flags="m" />
 			<action name="modeTV" key="tv" flags="m" />
 			<action name="modeRadio" key="radio" flags="m" />
 			<action name="modeFile" key="text" flags="m" />

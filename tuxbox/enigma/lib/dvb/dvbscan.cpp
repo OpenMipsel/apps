@@ -10,6 +10,12 @@ int isValidONIDTSID(eOriginalNetworkID onid, eTransportStreamID tsid)
 		return 0;
 	if (onid == 0xFFFF)
 		return 0;
+	if (onid == 0x1111)
+		return 0;
+	if (onid == 0x00B1 && tsid == 0x00B0)
+		return 0;
+	if (onid == 0x0002 && tsid == 0x07E8)
+		return 0;
 	return 1;
 }
 

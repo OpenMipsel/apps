@@ -12,7 +12,6 @@
 #include <lib/driver/rc.h>
 #include <lib/gui/actions.h>
 #include <lib/gui/decoration.h>
-#include <list>
 
 class eWidgetEvent
 {
@@ -101,6 +100,7 @@ public:
 	 * \sa eWidget::focusChanged
 	 */
 	Signal1<void, const eWidget*> focusChanged;
+	static Signal2< void, ePtrList<eAction>*, int > showHelp;
 protected:
 	ePtrList<eAction> actionHelpList;
 	int helpID;
@@ -175,8 +175,6 @@ protected:
 	void recalcClip();
 	void checkFocus();
 
-	void showHelp();
-	
 	typedef ePtrList<eActionMap> actionMapList;
 
 	void findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *context);

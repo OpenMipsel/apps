@@ -2,23 +2,22 @@
 #define __helpwindow_h
 
 #include <lib/gui/ewindow.h>
-#include <lib/gui/ewidget.h>
-#include <lib/gui/elabel.h>
-#include <lib/gui/statusbar.h>
 
-//class eButton;
-//class eCheckbox;
+class eLabel;
+class eProgress;
 
 class eHelpWindow: public eWindow
 {
-		eLabel *label;
-		eWidget *scrollbox;
-		int scrollypos;
-		int scrollmax;
-		bool doscroll;
-private:
+	std::list<int> entryBeg;
+	std::list<int>::iterator cur;
+	eLabel *label;
+	eWidget *scrollbox, *visible;
+	eProgress *scrollbar;
+	int curPage;
+	bool doscroll;
 	eString loadHelpText(int helpIDtoLoad);
 	int eventHandler(const eWidgetEvent &event);
+	void updateScrollbar();
 public:
 	eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID);
 	~eHelpWindow();

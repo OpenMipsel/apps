@@ -596,7 +596,7 @@ TransponderScan::TransponderScan( eWidget *LCDTitle, eWidget *LCDElement)
 {
 	window=new eWindow(0);
 	window->setText(_("Transponder Scan"));
-	window->cmove(ePoint(100, 100));
+	window->cmove(ePoint(130, 110));
 	window->cresize(eSize(460, 400));
 	
 	statusbar=new eStatusBar(window);

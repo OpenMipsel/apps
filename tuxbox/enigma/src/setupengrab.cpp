@@ -20,7 +20,7 @@ ENgrabSetup::ENgrabSetup():
 	eWindow(0)
 {
 	setText(_("Ngrab Server"));
-	cmove(ePoint(150, 136));
+	cmove(ePoint(170, 186));
 	cresize(eSize(390, 210));
 
 	struct in_addr sinet_address;

@@ -5,15 +5,15 @@
 	</author>
 
 	<help>
-	    <helptext id="1" text="This is the service selector. Here you can select the service you may want to view. Bla, bla, bla...." />
-	    <helptext id="2" text="Test 2" />
-	    <helptext id="3" text="Test 3" />
-	    <helptext id="4" text="Test 4" />
-	    <helptext id="5" text="Test 5" />
-	    <helptext id="6" text="Test 6" />
-	    <helptext id="7" text="Test 7" />
-	    <helptext id="8" text="Test 8" />	
-	    <helptext id="9" text="Test 9" />
+			<helptext id="1" text="This is the service selector. Here you can select the service you may want to view. Bla, bla, bla...." />
+			<helptext id="2" text="Test 2" />
+			<helptext id="3" text="Test 3" />
+			<helptext id="4" text="Test 4" />
+			<helptext id="5" text="Test 5" />
+			<helptext id="6" text="Test 6" />
+			<helptext id="7" text="Test 7" />
+			<helptext id="8" text="Test 8" />	
+			<helptext id="9" text="Test 9" />
 	</help>
 
 </enigmahelp>

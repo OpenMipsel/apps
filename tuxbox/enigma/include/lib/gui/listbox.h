@@ -25,6 +25,7 @@ protected:
 	enum  { arNothing, arCurrentOld, arAll};
 	int movemode, MaxEntries, item_height, flags, columns, in_atomic, atomic_redraw, atomic_old, atomic_new;
 	bool atomic_selchanged;
+	bool atomic_selected;
 public:
 	enum	{		flagNoUpDownMovement=1,		flagNoPageMovement=2,		flagShowEntryHelp=4, flagShowPartial=8 };
 	enum	{		OK = 0,		ERROR=1,		E_ALLREADY_SELECTED = 2,		E_COULDNT_FIND = 4,		E_INVALID_ENTRY = 8,	 E_NOT_VISIBLE = 16		};
@@ -73,7 +74,7 @@ public:
 	Signal1<void, T*> selected;	
 	Signal1<void, T*> selchanged;
 
-	int setCurrent(const T *c);
+	int setCurrent(const T *c, bool sendSelected=false);
 	T* getCurrent()	{ return current != childs.end() ? *current : 0; }
 	T *getNext() { ePtrList_T_iterator c=current; ++c; return c != childs.end() ? *c : 0; }
 	T* goNext();
@@ -117,7 +118,7 @@ public:
 		dirPageDown, dirPageUp, dirDown, dirUp, dirFirst, dirLast
 	};
 
-	int moveSelection(int dir);
+	int moveSelection(int dir, bool sendSelected=false);
 	void setActiveColor(gColor back, gColor front);
 
 	void beginAtomic();
@@ -277,6 +278,7 @@ inline void eListBox<T>::clearList()
 		invalidateContent();
 	} else
 	{
+		atomic_selected=0;
 		atomic_selchanged=0;
 		atomic_redraw=arAll;
 		atomic_new=0;
@@ -436,7 +438,7 @@ inline void eListBox<T>::init()
 }
 
 template <class T>
-inline int eListBox<T>::moveSelection(int dir)
+inline int eListBox<T>::moveSelection(int dir, bool sendSelected)
 {
 	int direction=0, forceredraw=0;
 
@@ -605,9 +607,17 @@ inline int eListBox<T>::moveSelection(int dir)
 	}
 
 	if (!in_atomic)
+	{
 		selchanged(*current);
+		if ( sendSelected )
+			selected(*current);
+	}
 	else
+	{
 		atomic_selchanged=1;
+		if ( sendSelected )
+			atomic_selected=1;
+	}
 
 	if (flags & flagShowEntryHelp)
 	{
@@ -693,7 +703,7 @@ inline int eListBox<T>::eventHandler(const eWidgetEvent &event)
 }
 
 template <class T>
-inline int eListBox<T>::setCurrent(const T *c)
+inline int eListBox<T>::setCurrent(const T *c, bool sendSelected )
 {
 /*	if (childs.empty() || ((current != childs.end()) && (*current == c)))  // no entries or current is equal the entry to search
 		return E_ALLREADY_SELECTED;	// do nothing*/
@@ -775,9 +785,17 @@ inline int eListBox<T>::setCurrent(const T *c)
   }
 
 	if (!in_atomic)
+	{
 		selchanged(*current);
+		if ( sendSelected )
+			selected(*current);
+	}
 	else
+	{
 		atomic_selchanged=1;
+		if ( sendSelected )
+			atomic_selected=1;
+	}
 
 	return OK;
 }
@@ -809,6 +827,7 @@ void eListBox<T>::beginAtomic()
 	{
 		atomic_redraw=arNothing;
 		atomic_selchanged=0;
+		atomic_selected=0;
 		atomic_new=-1;
 	}
 }
@@ -832,6 +851,12 @@ void eListBox<T>::endAtomic()
 				selchanged(0);
 			else
 				selchanged(*current);
+
+		if (atomic_selected)
+			if (childs.empty())
+				selected(0);
+			else
+				selected(*current);
 	}
 }
 

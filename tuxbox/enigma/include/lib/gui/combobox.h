@@ -29,11 +29,11 @@ public:
 	void removeEntry( int );
 	void removeEntry( void* );
 	void sort() { listbox.sort(); }
-	int setCurrent( eListBoxEntryText* );
-	int setCurrent( int );
-	int setCurrent( void* );
+	int setCurrent( eListBoxEntryText*, bool=false );
+	int setCurrent( int, bool=false );
+	int setCurrent( void*, bool=false );
 	int getCount() { return listbox.getCount(); }
-	int moveSelection ( int dir );
+	int moveSelection ( int dir, bool=false );
 	void clear() { listbox.clearList(); }
 	eListBoxEntryText* getCurrent();
 	operator eListBox<eListBoxEntryText>*()	{	return &listbox; }

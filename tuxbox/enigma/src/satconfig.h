@@ -41,7 +41,8 @@ class eSatelliteConfigurationManager: public eWindow
 	eSatellite *getSat4VoltageCombo( const eComboBox* );
 	eSatellite *getSat4LnbButton( const eButton* );
 	void createControlElements();
-	void addSatellite(eSatellite* sat);
+	void createSatWidgets(eSatellite* sat);
+	eSatellite *createSatellite();
 	void updateButtons(int comp);
 	void cleanupWidgets();
 	void setComplexity(int complexity);
@@ -113,13 +114,14 @@ class eDiSEqCPage : public eWidget
 {
 	friend class eLNBSetup;
 	eSatellite *sat;
-	eComboBox *DiSEqCMode, *DiSEqCParam, *MiniDiSEqCParam, *DiSEqCRepeats;
-	eCheckbox *SeqRepeat, *uncommitted, *uncommitted_gap;
+	eComboBox *DiSEqCMode, *DiSEqCParam, *MiniDiSEqCParam, *DiSEqCRepeats,
+						*uSwitch1, *uSwitch2, *uSwitch3, *uSwitch4;
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
 	eButton *cancel; // close the window without apply changes
 	eButton *prev; // shows the LNB Configuration Dialog
 //	eButton *next; // shows the Rotor Setup (for non GotoXX Rotors)
-	eLabel *lDiSEqCRepeats, *lDiSEqCParam;
+	eCheckbox *SeqRepeat, *SwapCmds;
+	eLabel *lDiSEqCRepeats, *lDiSEqCParam, *luSwitch1, *luSwitch2, *luSwitch3, *luSwitch4;
 	eStatusBar *statusbar;
          
 	void lnbChanged( eListBoxEntryText* );

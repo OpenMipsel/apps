@@ -1,8 +1,6 @@
 #ifndef __enigma_main_h
 #define __enigma_main_h
 
-#include <epgwindow.h>
-#include <helpwindow.h>
 #include <enigma_lcd.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>
@@ -31,6 +29,8 @@ class NVODReferenceEntry;
 class eServiceSelector;
 class eRecordingStatus;
 class ePlaylistEntry;
+class eHelpWindow;
+class eEPGWindow;
 
 class eZapMessage
 {
@@ -242,7 +242,9 @@ private:
 	std::list<eZapMessage> messages;
 	eFixedMessagePump<int> message_notifier;
 
-	eTimer timeout, clocktimer, messagetimeout, progresstimer, volumeTimer, recStatusBlink;
+	eTimer timeout, clocktimer, messagetimeout, progresstimer, volumeTimer, recStatusBlink, doubleklickTimer;
+
+	Connection doubleklickTimerConnection;
 
 	int cur_start, cur_duration, cur_event_id;
 	eString cur_event_text;
@@ -313,8 +315,10 @@ private:
 	void runVTXT();
 	void showEPGList();
 	void showEPG();
+	void showEPG_Streaminfo();	
 	void showInfobar();
 	void hideInfobar();
+	void showHelp( ePtrList<eAction>*, int );
 
 	void play();
 	void stop();
@@ -345,7 +349,6 @@ private:
 	eServicePath modeLast[modeEnd][3];
 	
 	int mode,             // current mode .. TV, Radio, File
-			currentRoot,      // normal, user, playlist ( the one and only )
 			state;
 	int hddDev;
 	void onRotorStart( int newPos );
@@ -402,8 +405,8 @@ public:
 	int getMode() { return mode; }
 	void rotateRoot()
 	{
-		getServiceSelectorPath(modeLast[mode][0]); // save current path
-		eServicePath tmp=modeLast[mode][0];
+		eServicePath tmp;
+		getServiceSelectorPath(tmp); // save current path
 		modeLast[mode][0]=modeLast[mode][1];
 		modeLast[mode][1]=modeLast[mode][2];
 		modeLast[mode][2]=tmp;

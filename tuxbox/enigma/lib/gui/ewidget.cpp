@@ -1,7 +1,6 @@
 #include <errno.h>
 
 #include <enigma.h>
-#include <helpwindow.h>
 #include <lib/base/eptrlist.h>
 #include <lib/base/eerror.h>
 #include <lib/gdi/gfbdc.h>
@@ -14,6 +13,7 @@
 #include <lib/system/init_num.h>
 
 eWidget *eWidget::root;
+Signal2< void, ePtrList<eAction>*, int >eWidget::showHelp;
 
 eWidget::eWidget(eWidget *_parent, int takefocus):
 	parent(_parent ? _parent : root),
@@ -402,18 +402,6 @@ void eWidget::setHelpID(int fHelpID)
 	helpID=fHelpID;
 }
 
-void eWidget::showHelp()
-{
-	if (actionHelpList.size())
-	{
-		eHelpWindow helpwin(actionHelpList, helpID);
-
-		helpwin.show();
-		helpwin.exec();
-		helpwin.hide();
-	}
-}
-
 int eWidget::eventHandler(const eWidgetEvent &evt)
 {
 	switch (evt.type)
@@ -434,7 +422,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		else if (evt.action == &i_focusActions->right)
 			focusNext(focusDirNext);
 		else if (evt.action == &i_cursorActions->help)
-			showHelp();
+			/* emit */ showHelp( &actionHelpList, helpID );
 		else
 			return 0;
 		return 1;

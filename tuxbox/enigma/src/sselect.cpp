@@ -1025,23 +1025,17 @@ eServiceSelector::eServiceSelector()
 	addActionMap(&i_numberActions->map);
 
 	setHelpID(1);
-
-	addActionToHelpList(&i_serviceSelectorActions->nextBouquet);
-	addActionToHelpList(&i_serviceSelectorActions->prevBouquet);
-	addActionToHelpList(&i_serviceSelectorActions->pathUp);
-	addActionToHelpList(&i_serviceSelectorActions->showEPGSelector);
 	addActionToHelpList(&i_serviceSelectorActions->showMenu);
+	addActionToHelpList(&i_serviceSelectorActions->toggleStyle);
+	addActionToHelpList(&i_serviceSelectorActions->toggleFocus);
 	addActionToHelpList(&i_serviceSelectorActions->toggleRoot);
-	addActionToHelpList(&i_serviceSelectorActions->addService);
-	addActionToHelpList(&i_serviceSelectorActions->addServiceToUserBouquet);
+	addActionToHelpList(&i_serviceSelectorActions->gotoFirstService);
+	addActionToHelpList(&i_serviceSelectorActions->gotoLastService);
+	addActionToHelpList(&i_serviceSelectorActions->showEPGSelector);
+	addActionToHelpList(&i_serviceSelectorActions->pathUp);
 	addActionToHelpList(&i_serviceSelectorActions->modeTV);
 	addActionToHelpList(&i_serviceSelectorActions->modeRadio);
 	addActionToHelpList(&i_serviceSelectorActions->modeFile);
-	addActionToHelpList(&i_serviceSelectorActions->toggleStyle);
-	addActionToHelpList(&i_serviceSelectorActions->toggleFocus);
-	addActionToHelpList(&i_serviceSelectorActions->gotoFirstService);
-	addActionToHelpList(&i_serviceSelectorActions->gotoLastService);
-
 }
 
 eServiceSelector::~eServiceSelector()

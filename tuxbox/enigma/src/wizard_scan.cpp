@@ -147,7 +147,7 @@ again: // gotos considered harmless.. :)
 					satconfig.extSetComplexity(1); // diseqc 1.0
 					break;
 				case 2:
-					satconfig.extSetComplexity(3); // diseqc 1.0
+					satconfig.extSetComplexity(3); // diseqc 1.2
 					break;
 				}
 
@@ -158,7 +158,7 @@ again_satconfig:
 				
 				if (res != 1)
 					goto again;
-					
+
 				{
 					eLNB *l=eZapScan::getRotorLNB(1);
 					if (l)

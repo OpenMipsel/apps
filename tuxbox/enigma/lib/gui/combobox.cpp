@@ -101,9 +101,9 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 	return 1;
 }
 
-int eComboBox::moveSelection ( int dir )
+int eComboBox::moveSelection ( int dir, bool sendSelChanged )
 {
-	int ret = listbox.moveSelection( dir );
+	int ret = listbox.moveSelection( dir, sendSelChanged );
 	eListBoxEntryText *cur = listbox.getCurrent();
 	if ( cur )
 	{
@@ -181,12 +181,12 @@ void eComboBox::removeEntry( void* key )
 	}
 }
 
-int eComboBox::setCurrent( eListBoxEntryText* le )
+int eComboBox::setCurrent( eListBoxEntryText* le, bool sendSelChanged )
 {
 	if (!le)
 		return E_INVALID_ENTRY;
 
-	int err = listbox.setCurrent( le );
+	int err = listbox.setCurrent( le, sendSelChanged );
 	if( err && err != E_ALLREADY_SELECTED )
 		return err;
 
@@ -200,8 +200,9 @@ struct selectEntryByNum: public std::unary_function<const eListBoxEntryText&, vo
 {
 	int num;
 	eListBox<eListBoxEntryText>* lb;
+	bool sendSelChanged;
 
-	selectEntryByNum(int num, eListBox<eListBoxEntryText> *lb): num(num), lb(lb)
+	selectEntryByNum(int num, eListBox<eListBoxEntryText> *lb, bool sendSelChanged=false): num(num), lb(lb), sendSelChanged(sendSelChanged)
 	{
 	}
 
@@ -209,19 +210,19 @@ struct selectEntryByNum: public std::unary_function<const eListBoxEntryText&, vo
 	{
 		if (!num--)
 		{
-			lb->setCurrent(&le);
+			lb->setCurrent(&le, sendSelChanged);
 	 		return 1;
 		}
 		return 0;
 	}
 };
 
-int eComboBox::setCurrent( int num )
+int eComboBox::setCurrent( int num, bool sendSelChanged )
 {
 	if ( num > listbox.getCount() )
 		return E_INVALID_ENTRY;
 
-	int err = listbox.forEachEntry( selectEntryByNum(num, &listbox ) );
+	int err = listbox.forEachEntry( selectEntryByNum(num, &listbox, sendSelChanged ) );
 	if ( err )
 		return E_COULDNT_FIND;
 
@@ -235,8 +236,9 @@ struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, vo
 {
 	void* key;
 	eListBox<eListBoxEntryText>* lb;
+	bool sendSelChanged;
 
-	selectEntryByKey(void *key, eListBox<eListBoxEntryText> *lb):key(key), lb(lb)
+	selectEntryByKey(void *key, eListBox<eListBoxEntryText> *lb, bool sendSelChanged=false):key(key), lb(lb), sendSelChanged(sendSelChanged)
 	{
 	}
 
@@ -244,7 +246,7 @@ struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, vo
 	{
 		if ( le.getKey() == key )
 		{
-			lb->setCurrent(&le);
+			lb->setCurrent(&le, sendSelChanged );
 			return 1;
 		}
 
@@ -252,7 +254,7 @@ struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, vo
 	}
 };
 
-int eComboBox::setCurrent( void* key )
+int eComboBox::setCurrent( void* key, bool sendSelChanged )
 {
 	if (!listbox.getCount())
 		return E_INVALID_ENTRY;
@@ -263,7 +265,7 @@ int eComboBox::setCurrent( void* key )
 		goto ok;
 	
 	int err;
-	if ( (err=listbox.forEachEntry( selectEntryByKey(key, &listbox ) ) ) )
+	if ( (err=listbox.forEachEntry( selectEntryByKey(key, &listbox, sendSelChanged ) ) ) )
 		return E_COULDNT_FIND;
 
 ok:

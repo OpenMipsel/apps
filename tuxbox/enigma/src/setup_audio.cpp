@@ -17,7 +17,7 @@ eZapAudioSetup::eZapAudioSetup():
 	eWindow(0)
 {
 	setText(_("Audio setup"));
-	cmove(ePoint(150, 136));
+	cmove(ePoint(160, 166));
 	cresize(eSize(390, 200));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
@@ -27,7 +27,7 @@ eZapAudioSetup::eZapAudioSetup():
 
 	ac3default=new eCheckbox(this, sac3default, 1);
 	ac3default->setText("AC3 default output");
-	ac3default->move(ePoint(10, 20));
+	ac3default->move(ePoint(20, 20));
 	ac3default->resize(eSize(fd+4+240, fd+4));
 	ac3default->setHelpText(_("enable/disable ac3 default output (ok)"));
 	CONNECT( ac3default->checked, eZapAudioSetup::ac3defaultChanged );

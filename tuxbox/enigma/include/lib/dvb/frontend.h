@@ -15,6 +15,7 @@
 #include <lib/base/ebase.h>
 #include <lib/base/estring.h>
 
+class eLNB;
 class eTransponder;
 class eSatellite;
 class eSwitchParameter;
@@ -30,11 +31,14 @@ class eFrontend: public Object
 	int fd, secfd;
 
 	int lastcsw,
+			lastucsw,
 			lastToneBurst,
 			lastRotorCmd,
 			lastSmatvFreq,
 			curRotorPos;    // current Orbital Position
-      
+
+	eLNB *lastLNB;
+         
 	enum { stateIdle, stateTuning };
 	int state;
 	eTransponder *transponder;
@@ -48,11 +52,11 @@ class eFrontend: public Object
 			SpectralInversion Inversion, eSatellite* sat, Modulation QAM);
 	Signal1<void, eTransponder*> tpChanged;
 	void timeout();
-	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec);
-	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA, int newPos );
+	int RotorUseTimeout(secCmdSequence& seq, void *commands, int newPos, double DegPerSec, int SeqRepeat, eLNB *lnb);
+	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA, int newPos, eLNB *lnb);
 public:
-	void disableRotor() { noRotorCmd = 1, lastcsw=0, lastRotorCmd=0; }  // no more rotor cmd is sent when tune
-	void enableRotor() { noRotorCmd = 0, lastcsw=0, lastRotorCmd=0; }  // rotor cmd is sent when tune
+	void disableRotor() { noRotorCmd = 1, lastRotorCmd=-1; } // no more rotor cmd is sent when tune
+	void enableRotor() { noRotorCmd = 0, lastRotorCmd=-1; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
 
 	Signal1<void, int> rotorRunning;

@@ -140,7 +140,7 @@ UnknownDescriptor::~UnknownDescriptor()
 eString UnknownDescriptor::toString()
 {
 	std::stringstream res;
-	res << "UnknownDescriptor: " << decode_descr(data[0]) << " (" << std::hex << std::setfill('0') << std::setw(4) << data[0] << ")\n" << "	rawData:";
+	res << "UnknownDescriptor: " << decode_descr(data[0]) << " (" << std::hex << std::setfill('0') << std::setw(4) << (int)data[0] << ")\n" << "	rawData:";
 	for (int i=0; i<len; i++)
 		res << std::setw(2) << data[i];
 	res << std::endl;

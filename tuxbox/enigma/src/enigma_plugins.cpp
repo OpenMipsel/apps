@@ -123,7 +123,7 @@ eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400, true)
 {
 	setHelpText(_("select plugin and press ok"));
-	move(ePoint(150, 50));
+	move(ePoint(150, 100));
 	setLCD(lcdTitle, lcdElement);
 	new ePlugin(&list, 0);
 	CONNECT(list.selected, eZapPlugins::selected);

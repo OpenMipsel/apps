@@ -11,14 +11,17 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
+#include <streaminfo.h>
 #include <enigma_mainmenu.h>
 #include <enigma_event.h>
 #include <sselect.h>
 #include <enigma.h>
 #include <enigma_lcd.h>
 #include <enigma_plugins.h>
+#include <helpwindow.h>
 #include <timer.h>
 #include <download.h>
+#include <epgwindow.h>
 #include <lib/base/i18n.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -591,7 +594,7 @@ void eZapMain::onRotorStart( int newPos )
 {
 	if (!pRotorMsg)
 	{
-		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the motor is driving to %d.%d°%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
+		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the motor is turning to %d.%d°%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
 		pRotorMsg->show();
 	}
 }
@@ -631,7 +634,7 @@ eZapMain::eZapMain()
 	,volume( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
 	,VolumeBar( &volume ), pMsg(0), pRotorMsg(0), message_notifier(eApp, 0), timeout(eApp)
 	,clocktimer(eApp), messagetimeout(eApp), progresstimer(eApp)
-	,volumeTimer(eApp), recStatusBlink(eApp), currentSelectedUserBouquet(0)
+	,volumeTimer(eApp), recStatusBlink(eApp), doubleklickTimer(eApp), currentSelectedUserBouquet(0)
 	,wasSleeping(0), state( 0 )
 {
 
@@ -784,6 +787,8 @@ eZapMain::eZapMain()
 	CONNECT( eFrontend::getInstance()->rotorRunning, eZapMain::onRotorStart );
 	CONNECT( eFrontend::getInstance()->rotorStopped, eZapMain::onRotorStop );
 	CONNECT( eFrontend::getInstance()->rotorTimeout, eZapMain::onRotorTimeout );
+
+	CONNECT( eWidget::showHelp, eZapMain::showHelp );
 
 	actual_eventDisplay=0;
 
@@ -1314,8 +1319,12 @@ void eZapMain::handleNVODService(SDTEntry *sdtentry)
 	nvodsel.clear();
 	for (ePtrList<Descriptor>::iterator i(sdtentry->descriptors); i != sdtentry->descriptors.end(); ++i)
 		if (i->Tag()==DESCR_NVOD_REF)
+		{
+//			eDebug("nvod ref descr");
 			for (ePtrList<NVODReferenceEntry>::iterator e(((NVODReferenceDescriptor*)*i)->entries); e != ((NVODReferenceDescriptor*)*i)->entries.end(); ++e)
 				nvodsel.add(((eServiceReferenceDVB&)eServiceInterface::getInstance()->service).getDVBNamespace(), *e);
+		}
+
 	eService *service=eServiceInterface::getInstance()->addRef(eServiceInterface::getInstance()->service);
 	if (service)
 		nvodsel.setText(service->service_name.c_str());
@@ -1762,8 +1771,36 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 		recstatus->hide();
 		if (user)
 		{
-			setMode(modeFile);
-			showBouquetList(1);
+			eMessageBox mb(_("Show recorded movies?"), _("recording finished"),  eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+			mb.show();
+			int ret = mb.exec();
+			mb.hide();
+			if ( ret == eMessageBox::btYes )
+			{
+				setMode(modeFile);
+				do
+				{
+					eServicePath p;
+					getServiceSelectorPath(p);
+					while (p.size() > 1 )
+						p.up();
+
+					if( p.current() == eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile) )
+					{ // found file mode :) enter into recordings
+						p.down( recordingsref );
+						if ( !recordings->getConstList().size() )
+							p.down( eServiceReference() );
+						else
+							p.down( recordings->getConstList().back().service );
+						setServiceSelectorPath(p);
+						showServiceSelector(-1, 0);
+						break;
+					}
+					else
+						rotateRoot();
+				}
+				while( true );
+			}
 		}
 		else
 		{
@@ -2423,6 +2460,9 @@ void eZapMain::showEPGList()
 
 void eZapMain::showEPG()
 {
+	if ( doubleklickTimerConnection.connected() )
+		doubleklickTimerConnection.disconnect();
+
 	if ( eServiceInterface::getInstance()->service.type != eServiceReference::idDVB)
 		return;
 
@@ -2481,6 +2521,18 @@ void eZapMain::showEPG()
 	actual_eventDisplay=0;
 
 	eServiceInterface::getInstance()->removeRef( ref );
+}
+
+void eZapMain::showHelp( ePtrList<eAction>* actionHelpList, int helpID )
+{
+	if ( actionHelpList && actionHelpList->size() )
+	{
+		eHelpWindow helpwin(*actionHelpList, helpID);
+
+		helpwin.show();
+		helpwin.exec();
+		helpwin.hide();
+	}
 }
 
 bool eZapMain::handleState(int justask)
@@ -2749,7 +2801,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->stopSkipReverse)
 			stopSkip(skipReverse);
 		else if (event.action == &i_enigmaMainActions->showEPG)
-			showEPG();
+			showEPG_Streaminfo();
 		else if (event.action == &i_numberActions->key0)
 		{
 			if ( playlist->getConstList().size() > 1 )
@@ -2787,13 +2839,13 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_enigmaMainActions->showBouquets)
 		{
 //			if ( handleState() )
-				showBouquetList(0);
+//				showBouquetList(0);
 		}
 		else if (event.action == &i_enigmaMainActions->modeRadio)
 		{
 			if ( handleState() )
 			{
-				if (mode != modeRadio)
+				if ( mode != modeRadio )
 					setMode(modeRadio, 1);
 				showServiceSelector(-1, 1);
 			}
@@ -2802,7 +2854,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		{
 			if ( handleState() )
 			{
-				if (mode != modeTV)
+				if ( mode != modeTV )
 					setMode(modeTV, 2);
 				showServiceSelector(-1, 1);
 			}
@@ -2978,6 +3030,25 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 	}}
 }
 
+void eZapMain::showEPG_Streaminfo()
+{
+	if ( doubleklickTimer.isActive() )
+	{
+		doubleklickTimer.stop();
+		doubleklickTimerConnection.disconnect();
+		eStreaminfo si(0, eServiceInterface::getInstance()->service);
+		si.setLCD(LCDTitle, LCDElement);
+		si.show();
+		si.exec();
+		si.hide();
+	}
+	else
+	{
+		doubleklickTimer.start(300,true);
+		doubleklickTimerConnection = CONNECT( doubleklickTimer.timeout, eZapMain::showEPG );
+	}
+}
+
 void eZapMain::startService(const eServiceReference &_serviceref, int err)
 {
 	skipcounter=0;
@@ -3052,6 +3123,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			else
 				opos = serviceref.data[4]>>16;
 			name+=eString().sprintf(" (%d.%d°%c)", abs(opos / 10), abs(opos % 10), opos>0?'E':'W');
+//			name+=eString().sprintf("(%04x)",((eServiceReferenceDVB&)_serviceref).getServiceID().get() );
 		}
 
 		ChannelName->setText(name);
@@ -3558,12 +3630,14 @@ void eZapMain::getServiceSelectorPath(eServicePath &path)
 //	eDebug("stored path for mode %d: %s", mode, eServicePath(path).toString().c_str());
 }
 
+#if 0
 void eZapMain::showBouquetList(int last)
 {
 	eServicePath b=eServiceStructureHandler::getRoot(mode+1);
 	switch (mode)
 	{
 	case modeTV:
+		
 		b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));
 		break;
 	case modeRadio:
@@ -3582,6 +3656,7 @@ void eZapMain::showBouquetList(int last)
 	setServiceSelectorPath(b);
 	showServiceSelector(-1, !last);
 }
+#endif
 
 void eZapMain::showDVRFunctions(int show)
 {

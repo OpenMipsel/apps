@@ -600,8 +600,8 @@ struct eDiSEqC
 	std::map< int, int > RotorTable; // used for Rotors does not support gotoXX Cmd
 	int DiSEqCRepeats;      // for cascaded switches
 	int SeqRepeat;          // send the complete DiSEqC Sequence dupe...
-	int uncommitted_switch; // send to uncommited switch
-	int uncommitted_gap;    // send uncommitted switch in DiSEqC Repeat gap
+	int SwapCmds;           // swaps the committed & uncommitted cmd
+	int uncommitted_cmd;    // state of the 4 uncommitted switches..
 	int useGotoXX;          // Rotor Support gotoXX Position ?
 	int useRotorInPower;    // can we use Rotor Input Power to detect Rotor state ?
 	double DegPerSec;       // degress per Second.. used when no Input Power can used

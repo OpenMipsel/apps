@@ -88,9 +88,15 @@ sub_dirs=skins,resources
 type=normal
 
 [data/resources/Makefile.am]
-files=data/resources/rcdboxbuttons.xml,data/resources/rcdboxnew.xml,data/resources/rcdboxold.xml,data/resources/rcdreambox.xml,data/resources/rcdreambox2.xml
+files=data/resources/rcdboxbuttons.xml,data/resources/rcdboxnew.xml,data/resources/rcdboxold.xml,data/resources/rcdreambox2.xml,data/resources/help.xml
 sub_dirs=
 type=normal
+
+[data/resources/help.xml]
+dist=true
+install=false
+install_location=
+type=DATA
 
 [data/resources/rcdboxbuttons.xml]
 dist=true
@@ -105,12 +111,6 @@ install_location=
 type=DATA
 
 [data/resources/rcdboxold.xml]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[data/resources/rcdreambox.xml]
 dist=true
 install=false
 install_location=
@@ -1560,7 +1560,7 @@ type=PO
 
 [src/Makefile.am]
 dist=true
-files=src/channelinfo.cpp,src/channelinfo.h,src/download.cpp,src/download.h,src/enigma.cpp,src/enigma.h,src/enigma_dyn.h,src/enigma_event.cpp,src/enigma_event.h,src/enigma_info.cpp,src/enigma_info.h,src/enigma_lcd.cpp,src/enigma_lcd.h,src/enigma_main.cpp,src/enigma_main.h,src/enigma_mainmenu.cpp,src/enigma_mainmenu.h,src/enigma_plugins.cpp,src/enigma_plugins.h,src/enigma_scan.cpp,src/enigma_scan.h,src/enigma_setup.cpp,src/enigma_setup.h,src/enigma_vcr.cpp,src/enigma_vcr.h,src/enigma_xmlrpc.cpp,src/enigma_xmlrpc.h,src/epgwindow.cpp,src/epgwindow.h,src/Makefile.am,src/satconfig.cpp,src/satconfig.h,src/scan.cpp,src/scan.h,src/setup_harddisk.cpp,src/setup_harddisk.h,src/setup_language.cpp,src/setup_language.h,src/setup_lcd.cpp,src/setup_lcd.h,src/setup_osd.cpp,src/setup_osd.h,src/setup_rc.cpp,src/setup_rc.h,src/setupnetwork.cpp,src/setupnetwork.h,src/setupskin.cpp,src/setupskin.h,src/setupvideo.cpp,src/setupvideo.h,src/showbnversion.cpp,src/showbnversion.h,src/sselect.cpp,src/sselect.h,src/streaminfo.cpp,src/streaminfo.h,src/timer.cpp,src/timer.h,src/enigma_ci.h,src/enigma_ci.cpp,src/enigma_dyn.cpp,src/satfind.cpp,src/satfind.h,src/rotorconfig.cpp,src/rotorconfig.h,src/upgrade.cpp,src/upgrade.h,src/setup_rfmod.cpp,src/setup_rfmod.h
+files=src/channelinfo.cpp,src/channelinfo.h,src/download.cpp,src/download.h,src/enigma.cpp,src/enigma.h,src/enigma_dyn.h,src/enigma_event.cpp,src/enigma_event.h,src/enigma_info.cpp,src/enigma_info.h,src/enigma_lcd.cpp,src/enigma_lcd.h,src/enigma_main.cpp,src/enigma_main.h,src/enigma_mainmenu.cpp,src/enigma_mainmenu.h,src/enigma_plugins.cpp,src/enigma_plugins.h,src/enigma_scan.cpp,src/enigma_scan.h,src/enigma_setup.cpp,src/enigma_setup.h,src/enigma_vcr.cpp,src/enigma_vcr.h,src/enigma_xmlrpc.cpp,src/enigma_xmlrpc.h,src/epgwindow.cpp,src/epgwindow.h,src/Makefile.am,src/satconfig.cpp,src/satconfig.h,src/scan.cpp,src/scan.h,src/setup_harddisk.cpp,src/setup_harddisk.h,src/setup_language.cpp,src/setup_language.h,src/setup_lcd.cpp,src/setup_lcd.h,src/setup_osd.cpp,src/setup_osd.h,src/setup_rc.cpp,src/setup_rc.h,src/setupnetwork.cpp,src/setupnetwork.h,src/setupskin.cpp,src/setupskin.h,src/setupvideo.cpp,src/setupvideo.h,src/showbnversion.cpp,src/showbnversion.h,src/sselect.cpp,src/sselect.h,src/streaminfo.cpp,src/streaminfo.h,src/timer.cpp,src/timer.h,src/enigma_ci.h,src/enigma_ci.cpp,src/enigma_dyn.cpp,src/satfind.cpp,src/satfind.h,src/rotorconfig.cpp,src/rotorconfig.h,src/upgrade.cpp,src/upgrade.h,src/setup_rfmod.cpp,src/setup_rfmod.h,src/engrab.cpp,src/engrab.h,src/setupengrab.cpp,src/setupengrab.h,src/wizard_language.cpp,src/wizard_language.h,src/wizard_scan.cpp,src/wizard_scan.h,src/helpwindow.cpp,src/helpwindow.h
 install=false
 install_location=
 sharedlib_LDFLAGS=-version-info 0:0:0
@@ -1587,6 +1587,18 @@ install_location=
 type=SOURCE
 
 [src/download.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[src/engrab.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[src/engrab.h]
 dist=true
 install=false
 install_location=
@@ -1760,6 +1772,18 @@ install=false
 install_location=
 type=HEADER
 
+[src/helpwindow.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[src/helpwindow.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [src/rotorconfig.cpp]
 dist=true
 install=false
@@ -1880,6 +1904,18 @@ install=false
 install_location=
 type=HEADER
 
+[src/setupengrab.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[src/setupengrab.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [src/setupnetwork.cpp]
 dist=true
 install=false
@@ -1971,6 +2007,30 @@ install_location=
 type=SOURCE
 
 [src/upgrade.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[src/wizard_language.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[src/wizard_language.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[src/wizard_scan.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[src/wizard_scan.h]
 dist=true
 install=false
 install_location=

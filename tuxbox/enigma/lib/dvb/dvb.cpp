@@ -216,9 +216,15 @@ void eServiceDVB::update(const SDTEntry *sdtentry)
 			
 			if (!service_name)
 				service_name="unnamed service";
-			
+
 			service_type=nd->service_type;
+#if 0
+// fake kiosk service types
+		if ( service_type > 191 )
+			service_type=1;
+#endif
 		}
+
 //	printf("%04x:%04x %02x %s", transport_stream_id, service_id, service_type, (const char*)service_name);
 }
 
@@ -586,6 +592,12 @@ int eTransponderList::handleSDT(const SDT *sdt, eDVBNamespace dvbnamespace, eOri
 				break;
 			}
 
+#if 0
+// fake kiosk service types
+		if ( service_type > 191 )
+			service_type=1;
+#endif
+
 		if (service_type == -1)
 			continue;
 		
@@ -720,14 +732,13 @@ void eTransponderList::readLNBData()
 
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/SeqRepeat").c_str(), tmpint );
 		lnb.getDiSEqC().SeqRepeat = tmpint;
-    
+
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/SwapCmds").c_str(), tmpint );
+		lnb.getDiSEqC().SwapCmds = tmpint;
+
 		tmpint=0;
-		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/uncommitted_switch").c_str(), tmpint );
-		lnb.getDiSEqC().uncommitted_switch = tmpint;
-    
-		tmpint=0;
-		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/uncommitted_gap").c_str(), tmpint );
-		lnb.getDiSEqC().uncommitted_gap = tmpint;
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/uncommitted_cmd").c_str(), tmpint );
+		lnb.getDiSEqC().uncommitted_cmd = tmpint;
     
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/useGotoXX").c_str(), tmpint );
 		lnb.getDiSEqC().useGotoXX = tmpint;
@@ -805,8 +816,8 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;
 			lnb.getDiSEqC().DiSEqCRepeats=0;
 			lnb.getDiSEqC().SeqRepeat=0;
-			lnb.getDiSEqC().uncommitted_switch=0;
-			lnb.getDiSEqC().uncommitted_gap=0;
+			lnb.getDiSEqC().SwapCmds=0;
+			lnb.getDiSEqC().uncommitted_cmd=0;
 			lnb.getDiSEqC().useGotoXX=1;
 			lnb.getDiSEqC().useRotorInPower=40<<8;
 			lnb.getDiSEqC().DegPerSec=1.0;
@@ -832,8 +843,8 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;		
 			lnb.getDiSEqC().DiSEqCRepeats=0;
 			lnb.getDiSEqC().SeqRepeat=0;
-			lnb.getDiSEqC().uncommitted_switch=0;
-			lnb.getDiSEqC().uncommitted_gap=0;
+			lnb.getDiSEqC().SwapCmds=0;
+			lnb.getDiSEqC().uncommitted_cmd=0;
 			lnb.getDiSEqC().useGotoXX=1;
 			lnb.getDiSEqC().useRotorInPower=40<<8;
 			lnb.getDiSEqC().DegPerSec=1.0;
@@ -867,8 +878,8 @@ void eTransponderList::writeLNBData()
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/DiSEqCParam").c_str(), (int) it->getDiSEqC().DiSEqCParam );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/DiSEqCRepeats").c_str(), (int) it->getDiSEqC().DiSEqCRepeats );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/SeqRepeat").c_str(), (int) it->getDiSEqC().SeqRepeat );
-		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_switch").c_str(), (int) it->getDiSEqC().uncommitted_switch );
-		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_gap").c_str(), (int) it->getDiSEqC().uncommitted_gap );
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/SwapCmds").c_str(), (int) it->getDiSEqC().SwapCmds );
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_cmd").c_str(), (int) it->getDiSEqC().uncommitted_cmd );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/useGotoXX").c_str(), (int) it->getDiSEqC().useGotoXX );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/useRotorInPower").c_str(), (int) it->getDiSEqC().useRotorInPower );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/DegPerSec").c_str(), (double) it->getDiSEqC().DegPerSec );

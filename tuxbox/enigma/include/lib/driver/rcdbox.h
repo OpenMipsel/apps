@@ -14,7 +14,6 @@ public:
 	void handleCode(int code);
 	eRCDeviceDBoxOld(eRCDriver *driver);
 	const char *getDescription() const;
-
 	const char *getKeyDescription(const eRCKey &key) const;
 	int getKeyCompatibleCode(const eRCKey &key) const;
 };
@@ -30,7 +29,6 @@ public:
 	void handleCode(int code);
 	eRCDeviceDBoxNew(eRCDriver *driver);
 	const char *getDescription() const;
-
 	const char *getKeyDescription(const eRCKey &key) const;
 	int getKeyCompatibleCode(const eRCKey &key) const;
 };

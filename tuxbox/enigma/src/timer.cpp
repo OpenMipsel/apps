@@ -933,7 +933,7 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	}
 
 	if ( events->getCount() )
-  selChanged( events->getCurrent() );
+		selChanged( events->getCurrent() );
 	else
 		selChanged(0);
 }

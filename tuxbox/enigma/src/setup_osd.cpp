@@ -10,7 +10,7 @@
 eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 {
 	setText("OSD Setup");
-	move(ePoint(150, 136));
+	move(ePoint(120, 110));
 	cresize(eSize(440, 335));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
