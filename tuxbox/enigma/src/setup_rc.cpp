@@ -146,10 +146,9 @@ void eZapRCSetup::styleChanged( eListBoxEntryText* e)
 void eZapRCSetup::okPressed()
 {
 	// save current selected style
-	eConfig::getInstance()->setKey("/ezap/rc/style", curstyle);
+	eConfig::getInstance()->setKey("/ezap/rc/style", curstyle.c_str());
 	eConfig::getInstance()->setKey("/ezap/rc/sselect_style",
 		sselect_style->isChecked() ? "sselect_classic" : "sselect_default");
-		
 	setStyle();
 	
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);
