@@ -184,7 +184,7 @@ eString eDVB::getInfo(const char *info)
 		return "";
 	eString result;
 	while (1)
-	{
+		{
 		char buffer[128];
 		if (!fgets(buffer, 128, f))
 			break;

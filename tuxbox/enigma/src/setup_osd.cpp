@@ -32,7 +32,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	showConsoleOnFB->resize(eSize(fd+4+300, fd+4));
 	showConsoleOnFB->setHelpText(_("shows the linux console on TV"));
                                 
-	if ( eDVB::getInstance()->getInfo("mID").right(1) > 4 )
+	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) > 4 )
 		showConsoleOnFB->hide();
 
 	alpha = gFBDC::getInstance()->getAlpha();
