@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.5 2003/05/15 20:37:15 digi_casi Exp $
+ * $Id: frontend.h,v 1.24.2.6 2003/05/28 08:40:46 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -51,6 +51,8 @@ class CFrontend
 		FrontendInfo *info;
 		/* current tuned transport stream id / original network id */
 		uint32_t currentTsidOnid;
+		/* current tuned satellite position / transport stream id / original network id */
+		uint64_t currentSposTsidOnid;
 		/* current tuned frequency */
 		uint32_t currentFrequency;
 		/* current 22kHz tone mode */
@@ -125,6 +127,7 @@ class CFrontend
 		const diseqc_t getDiseqcType()		{ return diseqcType; }
 		const bool isInitialized()		{ return initialized; }
 		const uint32_t getTsidOnid()		{ return currentTsidOnid; }
+		const uint64_t getSposTsidOnid()	{ return currentSposTsidOnid; }
 
 		void setLnbOffset(bool high, uint8_t index, int32_t offset)
 		{
