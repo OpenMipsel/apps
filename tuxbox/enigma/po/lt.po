@@ -5,5228 +5,4144 @@
 # *************************************
 #
 msgid ""
-msgstr "Project-Id-Version: tuxbox-enigma 0.1\nPOT-Creation-Date: na\nPO-Revision-Date: Fri Jul 18 1:48:18 CEST 2003\nLast-Translator: unknown\nLanguage-Team: Lithuania / rimas@centras.lt\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit"
+msgstr "Project-Id-Version: tuxbox-enigma 0.1\nPOT-Creation-Date: na\nPO-Revision-Date: Sat Aug 30 15:10:41 CEST 2003\nLast-Translator: unknown\nLanguage-Team: Lithuania / rimas@centras.lt\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit"
 
-#: lib/dvb/serviceplaylist.cpp:127
-#, c-format
 
 msgid " (%d entries)"
 msgstr "(%d entries)"
 
-#: lib/dvb/servicedvb.cpp:916
 
 msgid " - bouquets"
 msgstr "- paketai"
 
-#: lib/dvb/servicedvb.cpp:924
 
 msgid " - services"
 msgstr "- kanalai"
 
-#: src/enigma_main.cpp:446
 
 msgid " Euro lost)"
 msgstr ""
 
-#: src/enigma_main.cpp:436
 
 msgid " to "
 msgstr "į"
 
-#: src/scan.cpp:529
-#, c-format
 
 msgid "%02i minutes and %02i seconds left"
 msgstr "Liko %02i minutės ir %02i sekundės"
 
-#: src/scan.cpp:531
-#, c-format
 
 msgid "%02i seconds left"
 msgstr "Liko %02i sekundės"
 
-#: src/rotorconfig.cpp:899
-#, c-format
 
 msgid "%d.%d%c is currently stored at location %d!\nWhen you store this now at Location %d, we must remove the old Location.\nAre you sure you want to do this?"
 msgstr ""
 
-#: default.esml:414
 
 msgid "&#175;/sec"
 msgstr ""
 
-#: default.esml:712
 
 msgid "(0..9, left, right, ok)"
 msgstr "(0..9, kairėn, dešinėn, ok)"
 
-#: src/setup_harddisk.cpp:423
 
 msgid "(error reading information)"
 msgstr "(informacijos nuskaitymo klaida)"
 
-#: src/sselect.cpp:200
 
 msgid "(removed service)"
 msgstr "(pašalintas kanalas)"
 
-#: default.esml:464
 
 msgid "0"
 msgstr "nerasta"
 
-#: default.esml:353
 
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
 msgstr "naudoti 0,5V didesnią LNB įtampą (ilgam kabeliui)"
 
-#: src/satconfig.cpp:62
 
 msgid "1 LNB with DiSEqC Rotor"
 msgstr "1 LNB per DiSEqC pozicionierių"
 
-#: src/setupvideo.cpp:72
 
 msgid "16:9"
 msgstr "19:9"
 
-#: src/satconfig.cpp:60
 
 msgid "2 LNBs via DiSEqC"
 msgstr "2 LNB per DiSEqC"
 
-#: src/satconfig.cpp:60
 
 msgid "2 satellites via DiSEqC A/B"
 msgstr "2 palydovai per DiSEqC A/B"
 
-#: default.esml:327
 
 msgid "22Khz"
 msgstr "22Khz"
 
-#: src/satconfig.cpp:671
 
 msgid "22kHz is always disabled (low band)"
 msgstr "22kHz visada išjungtas (žemas dažnis)"
 
-#: src/satconfig.cpp:670
 
 msgid "22kHz is always enabled (high band)"
 msgstr "22kHz visada įjungtas (aukštas dažnis)"
 
-#: src/satconfig.cpp:669
 
 msgid "22kHz signal is automatically switched"
 msgstr "22kHz signalas junginėjamas automatiškai"
 
-#: src/setup_rfmod.cpp:120
 
 msgid "250Khz steps"
 msgstr ""
 
-#: src/satconfig.cpp:61
 
 msgid "4 LNBs via DiSEqC"
 msgstr "4 LNB per DiSEqC"
 
-#: src/satconfig.cpp:61
 
 msgid "4 satellites via DiSEqC OPT A/B"
 msgstr "4 palydovai per DiSEqC OPT A/B"
 
-#: src/setup_rfmod.cpp:58
 
 msgid "4.5 MHz"
 msgstr "4.5 MHz"
 
-#: src/setupvideo.cpp:70
 
 msgid "4:3 letterbox"
 msgstr "4:3 letterbox"
 
-#: src/setupvideo.cpp:71
 
 msgid "4:3 panscan"
 msgstr "4:3 panscan"
 
-#: src/setup_rfmod.cpp:59
 
 msgid "5.5 MHz"
 msgstr "5.5 MHz"
 
-#: src/setup_rfmod.cpp:60
 
 msgid "6.0 MHz"
 msgstr "6.0 MHz"
 
-#: src/setup_rfmod.cpp:61
 
 msgid "6.5 MHz"
 msgstr "6.5 MHz"
 
-#: src/rotorconfig.cpp:810
 
 msgid "<    Stop    >"
 msgstr "< Stop >"
 
-#: src/enigma_main.cpp:3603
 
 msgid "A digital recording is currently in progress!\nThis stops the digital recording!"
 msgstr "Vyksta rašymas!\nTai sustabdys rašymą!"
 
-#: src/enigma_main.cpp:3593
 
 msgid "A timer based digital recording is currently in progress!\nThis stops the timer, and digital recording!"
 msgstr "Vyksta rašymas pagal taimerį!\nTai sustabdys taimerį ir rašymą!"
 
-#: src/enigma_main.cpp:3615
 
 msgid "A timer event is currently in progress!\nThis stops the timer event!"
 msgstr "Vyksta taimerio veiksmas!\nTai sustabdys taimerį!"
 
-#: src/scan.cpp:335
 
 msgid "A valid transponder has been found. Verify that the right network is selected"
 msgstr ""
 
-#: src/enigma_setup.cpp:97
 
 msgid "A/V Setup..."
 msgstr "A/V Nustatymai"
 
-#: default.esml:488 default.esml:501 default.esml:525 default.esml:704
-#: default.esml:717 default.esml:730 default.esml:770 src/enigma_ci.cpp:79
-#: src/scan.cpp:39 src/setup_lcd.cpp:117 src/setup_osd.cpp:274
-#: src/setup_rc.cpp:132 src/setupnetwork.cpp:111 src/setupvideo.cpp:88
-#: src/setup_rfmod.cpp:135 src/setup_audio.cpp:48 src/parentallock.cpp:95
-#: src/setupengrab.cpp:108 src/setup_timezone.cpp:58
 
 msgid "abort"
 msgstr "nutraukti"
 
-#: default.esml:681 src/enigma_info.cpp:48
 
 msgid "About..."
 msgstr "Apie..."
 
-#: src/setup_audio.cpp:29
 
 msgid "AC3 default output"
 msgstr "įjungti AC3 išėjimą"
 
-#: default.esml:438 default.esml:645 default.esml:808
 
 msgid "add"
 msgstr "pridėti"
 
-#: default.esml:331
 
 msgid "add a new Satellite"
 msgstr "įvesti naują palydovą"
 
-#: src/timer.cpp:873 src/timer.cpp:894 src/timer.cpp:930
 
 msgid "Add event to timerlist"
 msgstr "Įvesti veiksmą į taimerį"
 
-#: src/timer.cpp:1008
 
 msgid "add new event to Timerlist"
 msgstr "įvesti naują veiksmą į taimerį"
 
-#: default.esml:645
 
 msgid "add new Timer (ok)"
 msgstr "pridėti naują Taimerį (ok)"
 
-#: default.esml:808
 
 msgid "add new Transponder to selected sat (ok)"
 msgstr "įvesti nają transponderį į pasirinktą palydovą (ok)"
 
-#: src/enigma_main.cpp:2927
 
 msgid "Add new user bouquet"
 msgstr "Sukurti naują Savą paketą"
 
-#: src/sselect.cpp:49
 
 msgid "add Service"
 msgstr ""
 
-#: src/sselect.cpp:50
 
 msgid "add Service to a specific user bouquet"
 msgstr ""
 
-#: src/enigma_main.cpp:5054
 
 msgid "add service to playlist"
 msgstr ""
 
-#: src/enigma_event.cpp:20
 
 msgid "add this event as DVR Event to timer list"
 msgstr ""
 
-#: src/enigma_event.cpp:21
 
 msgid "add this event as NGRAB Event to timer list"
 msgstr ""
 
-#: src/enigma_event.cpp:22
 
 msgid "add this event as simple Switch Event to timer list"
 msgstr ""
 
-#: default.esml:438
 
 msgid "add to table/existing is overwritten"
 msgstr "pridėti i lentelę/ įrašyti vietoj pasirinkto"
 
-#: src/enigma_main.cpp:818 src/enigma_main.cpp:5080
 
 msgid "add to user bouquet"
 msgstr "pridėti prie savų kanalų"
 
-#: src/channelinfo.cpp:71
 
 msgid "Adult"
 msgstr "Suaugusiems"
 
-#: src/channelinfo.cpp:70
 
 msgid "Adventure"
 msgstr "Nuotykiai"
 
-#: default.esml:578
 
 msgid "AGC"
 msgstr "AGC"
 
-#: default.esml:396
 
 msgid "AGC:"
 msgstr "AGC:"
 
-#: src/channelinfo.cpp:87
 
 msgid "Age 10-16"
 msgstr "10-16m amžiaus"
 
-#: src/channelinfo.cpp:87
 
 msgid "Age 6-14"
 msgstr "6-14m amžiaus"
 
-#: src/streaminfo.cpp:164
 
 msgid "album"
 msgstr "albumas"
 
-#: src/scan.cpp:408
 
 msgid "All known transponders have been tried, but no lock was possible. Verify antenna-/cable-setup or try another satellite/network."
 msgstr "All known transponders have been tried, but no lock was possible. Verify antenna-/cable-setup or try another satellite/network."
 
-#: src/scan.cpp:400
 
 msgid "All known transponders have been tried, but no lock was possible. Verify antenna-/cable-setup or try manual search if its some obscure satellite/network."
 msgstr "All known transponders have been tried, but no lock was possible. Verify antenna-/cable-setup or try manual search if its some obscure satellite/network."
 
-#: src/sselect.cpp:284
 
 msgid "All Service"
 msgstr "Visi Kanalai"
 
-#: src/setup_osd.cpp:209
 
 msgid "Alpha:"
 msgstr "Permatomumas:"
 
-#: default.esml:674
 
 msgid "apply"
 msgstr "vykdyti"
 
-#: src/timer.cpp:23
 
 msgid "April"
 msgstr "Balandis"
 
-#: src/setup_harddisk.cpp:293
 
 msgid "Are you SURE that you want to format this disk?\n"
 msgstr "Ar jūs tikras, kad norite formatuoti šį diską?\n"
 
-#: src/upgrade.cpp:489
 
 msgid "Are you sure you want to upgrade to this new version?"
 msgstr "Ar tikrai atnaujinti softą į šią naują versiją?"
 
-#: src/channelinfo.cpp:97
 
 msgid "Art Mag."
 msgstr "Art Mag."
 
-#: src/streaminfo.cpp:168
 
 msgid "artist"
 msgstr "artistas"
 
-#: src/setupvideo.cpp:59
 
 msgid "Aspect Ratio:"
 msgstr ""
 
-#: src/channelinfo.cpp:83
 
 msgid "Athletics"
 msgstr "Atletika"
 
-#: src/enigma_main.cpp:750
 
 msgid "Audio"
 msgstr "Audio"
 
-#: src/setup_audio.cpp:19
 
 msgid "Audio setup"
 msgstr "Audio nustaymai"
 
-#: stone.esml:464 silver.esml:471
 
 msgid "audio track"
 msgstr "audio takelis"
 
-#: src/timer.cpp:24
 
 msgid "August"
 msgstr "Rugpjūtis"
 
-#: src/scan.cpp:37
 
 msgid "auto scan"
 msgstr "automatinis skanavimas"
 
-#: src/setup_timezone.cpp:44
 
 msgid "Automatically adjust clock for daylight saving changes"
 msgstr "Automatically adjust clock for daylight saving changes"
 
-#: src/channelinfo.cpp:112
 
 msgid "B&W"
 msgstr "B&W"
 
-#: src/enigma_main.cpp:5048 src/enigma_main.cpp:5252
-#: src/setup_harddisk.cpp:181
 
 msgid "back"
 msgstr "grįžti"
 
-#: src/enigma_scan.cpp:41 src/enigma_setup.cpp:95
 
 msgid "back to main menu"
 msgstr "grįžti į pagrininį meniu"
 
-#: src/enigma_info.cpp:44
 
 msgid "back to mainmenu"
 msgstr "grįžti į parindinį meniu"
 
-#: src/channelinfo.cpp:92
 
 msgid "Ballet"
 msgstr "Baletas"
 
-#: default.esml:400 default.esml:579
 
 msgid "BER"
 msgstr "BER"
 
-#: src/enigma_info.cpp:329
 
 msgid "beta"
 msgstr "beta"
 
-#: src/setup_lcd.cpp:63 src/setup_osd.cpp:227
 
 msgid "Brightness:"
 msgstr "Šviesumas:"
 
-#: default.esml:460
 
 msgid "calc param 1 (see your motor manual or let it 00)"
 msgstr "calc param 1 (see your motor manual or let it 00)"
 
-#: default.esml:461
 
 msgid "calc param 2 (see your motor manual or let it 00)"
 msgstr "calc param 2 (see your motor manual or let it 00)"
 
-#: default.esml:462
 
 msgid "calc param 3 (see your motor manual or let it 00)"
 msgstr "calc param 3 (see your motor manual or let it 00)"
 
-#: default.esml:355 default.esml:386 default.esml:442 default.esml:757
-#: default.esml:781 src/enigma_main.cpp:5469
-
-msgid "cancel"
-msgstr "atšaukti"
-
-#: lib/gui/emessage.cpp:100
 
 msgid "Cancel"
 msgstr "Nutraukti"
 
-#: default.esml:757
+
+msgid "cancel"
+msgstr "atšaukti"
+
 
 msgid "cancel partition check"
 msgstr "nutraukti tikrinimą"
 
-#: default.esml:739
 
 msgid "capacity:"
 msgstr "talpa:"
 
-#: src/channelinfo.cpp:88
 
 msgid "Cartoons"
 msgstr "Karikatūros"
 
-#: src/setup_rfmod.cpp:94
 
 msgid "change channel"
 msgstr ""
 
-#: default.esml:499
 
 msgid "change circular to linear polarization"
 msgstr "pakeisti circular į linear palerizaciją"
 
-#: src/satconfig.cpp:129
 
 msgid "Change DiSEqC-Type..."
 msgstr "Pakeisti DiSEqC - Tipą..."
 
-#: src/parentallock.cpp:59
 
 msgid "change Parental PIN (ok)"
 msgstr ""
 
-#: src/parentallock.cpp:56 src/parentallock.cpp:73
 
 msgid "change PIN"
 msgstr "keisti PIN"
 
-#: src/parentallock.cpp:76
 
 msgid "change Setup PIN (ok)"
 msgstr ""
 
-#: src/setup_rfmod.cpp:71
 
 msgid "change sound subcarrier frequency"
 msgstr ""
 
-#: src/rotorconfig.cpp:849
 
 msgid "change storage Location or store"
 msgstr "pakeisti atminties vietą arba išsaugoti"
 
-#: src/setup_osd.cpp:234
 
 msgid "change the brightness correction"
 msgstr "šviesumo derinimas"
 
-#: src/setup_osd.cpp:247
 
 msgid "change the contrast"
 msgstr "kontrasto derinimas"
 
-#: src/setup_osd.cpp:221
 
 msgid "change the transparency correction"
 msgstr "permatomumo derinimas"
 
-#: src/enigma_main.cpp:945
 
 msgid "Channel"
 msgstr "Kanalas"
 
-#: src/enigma_main.cpp:950
 
 msgid "Channel:"
 msgstr "Kanalas:"
 
-#: src/enigma_scan.cpp:38
 
 msgid "Channels"
 msgstr "Kanalai"
 
-#: src/enigma_setup.cpp:96
 
 msgid "Channels..."
 msgstr "Kanalai"
 
-#: default.esml:746
 
 msgid "check"
 msgstr "patikrinti"
 
-#: src/setup_harddisk.cpp:510 src/setup_harddisk.cpp:522
-#: src/setup_harddisk.cpp:544 src/setup_harddisk.cpp:563
 
 msgid "check filesystem..."
 msgstr "failų sistemos tikrinimas"
 
-#: src/upgrade.cpp:457
 
 msgid "checking consistency of file..."
 msgstr ""
 
-#: src/upgrade.cpp:487
 
 msgid "Checksum OK. Ready to upgrade."
 msgstr "Kontrolinė suma gera.Atnaujinimui pasiruošta."
 
-#: src/channelinfo.cpp:87
 
 msgid "Children"
 msgstr "Vaikams"
 
-#: src/setupvideo.cpp:69
 
 msgid "choose aspect ratio ( left, right )"
 msgstr ""
 
-#: src/setupvideo.cpp:55
 
 msgid "choose colour format ( left, right )"
 msgstr "pasirinkite spalvų formatą (kairėn/dešinėn)"
 
-#: default.esml:422 default.esml:425 default.esml:436
 
 msgid "choose direction"
 msgstr "pasirinkite kryptį"
 
-#: default.esml:427
 
 msgid "choose entry to edit or remove"
 msgstr "pasirinkite įrašą redagavimui ar trynimui"
 
-#: default.esml:541
 
 msgid "choose polarity (left, right)"
 msgstr "pasirinkite polerizaciją (karėn, dešinėn)"
 
-#: default.esml:495
 
 msgid "choose satellite/cable provider (ok)"
 msgstr "pasirinkite palydovo operatorių (ok)"
 
-#: default.esml:543
 
 msgid "choose the FEC (left, right)"
 msgstr "FEC pasirinkimas (kairėn, dešinėn)"
 
-#: default.esml:346
 
 msgid "choose the LNB you wish to apply or edit"
 msgstr "pasirinkite LNB konfiguravimui"
 
-#: default.esml:453
 
 msgid "choose the Satellite you wish to find"
 msgstr "išsirinkite palydovą paieškai"
 
-#: default.esml:456
 
 msgid "choose the Transponder you wish to find"
 msgstr "pasirinkite transponderį paieškai"
 
-#: default.esml:451
 
 msgid "choose what you want to do"
 msgstr "pasirinkite - ką daryti"
 
-#: default.esml:562
 
 msgid "choose wished modulation (ok)"
 msgstr "moduliacijos pasirinkimas (ok)"
 
-#: default.esml:533
 
 msgid "choose wished satellite (ok)"
 msgstr "pasirinkite reikalingą palydovą (ok)"
 
-#: src/wizard_language.cpp:154
 
 msgid "Choose your language..."
 msgstr "Pasirinkite savo kalbą..."
 
-#: src/channelinfo.cpp:92
 
 msgid "Classical"
 msgstr "Klasika"
 
-#: default.esml:485
 
 msgid "clear list before"
 msgstr "viską trinti"
 
-#: default.esml:758
 
 msgid "close"
 msgstr "uždaryti"
 
-#: default.esml:465
 
 msgid "close motor setup"
 msgstr "grįžti i ankstesnį nustatymų langą"
 
-#: default.esml:333
 
 msgid "close Satellite Configuration"
 msgstr "uždaryti palydovų konfigūravimą"
 
-#: src/enigma_mainmenu.cpp:25
 
 msgid "close the mainmenu"
 msgstr "išeiti iš pagrindinio meniu"
 
-#: default.esml:758 src/enigma_main.cpp:5472
 
 msgid "close window"
 msgstr "uždaryti langą"
 
-#: src/engrab.cpp:205
 
 msgid "close Window"
 msgstr "uždaryti langą"
 
-#: default.esml:488 default.esml:501
 
 msgid "close window and do not scan"
 msgstr "uždaryti langą ir neskanuoti"
 
-#: default.esml:717
 
 msgid "close window and set no sleep timer (ok)"
 msgstr "išeiti nenustačius miego taimerio (ok)"
 
-#: default.esml:704 default.esml:730
 
 msgid "close window and use no record timer (ok)"
 msgstr "uždaryti langą be taimerio pakeitimų (ok)"
 
-#: src/enigma_event.cpp:24
 
 msgid "closes the Event View"
 msgstr ""
 
-#: src/setupvideo.cpp:37
 
 msgid "Color Format:"
 msgstr "Spalvų Formatas:"
 
-#: src/sselect.cpp:302
 
 msgid "Column"
 msgstr ""
 
-#: src/channelinfo.cpp:70
 
 msgid "Comedy"
 msgstr "Komedijos"
 
-#: src/enigma_ci.cpp:409
 
 msgid "Common Interface Module"
 msgstr "Modulis"
 
-#: src/enigma_ci.cpp:50
 
 msgid "Common Interface Module - mmi"
 msgstr "CI modulis -mmi"
 
-#: src/enigma_ci.cpp:402
 
 msgid "Common Interface Modules"
 msgstr "Moduliai"
 
-#: src/enigma_setup.cpp:122
 
 msgid "Common Interface..."
 msgstr "Modulių Interfeisas"
 
-#: src/streaminfo.cpp:174
 
 msgid "composer"
 msgstr ""
 
-#: src/satconfig.cpp:129
 
 msgid "Configuration contains some elements\nwhich don't fit into new DiSEqC-Type. Drop these items?"
 msgstr "Configuration contains some elements\nwhich don't fit into new DiSEqC-Type. Drop these items?"
 
-#: src/setupnetwork.cpp:93
 
 msgid "Configure Network"
 msgstr "Tinklas Dirba"
 
-#: default.esml:741
 
 msgid "connected:"
 msgstr "pajungta:"
 
-#: lib/dvb/servicemp3.cpp:149
 
 msgid "Connecting..."
 msgstr "Jungiasi..."
 
-#: src/setup_lcd.cpp:68 src/setup_osd.cpp:240
 
 msgid "Contrast:"
 msgstr "Kontrastas:"
 
-#: src/channelinfo.cpp:108
 
 msgid "Cooking"
 msgstr "Virtuvė"
 
-#: src/enigma_main.cpp:5072 src/enigma_main.cpp:5082
 
 msgid "copy to user bouquets"
 msgstr "kopijuoti į savus paketus"
 
-#: src/setup_harddisk.cpp:509
 
 msgid "could not unmount the filesystem... "
 msgstr "could not unmount the filesystem... "
 
-#: src/enigma_plugins.cpp:147
-#, c-format
 
 msgid "Couldn't read plugin directory %s"
 msgstr "Nenuskaitoma priedo direktorija %s"
 
-#: default.esml:463
 
 msgid "Counter(Movement)"
 msgstr "Skaitliukas (Judėjimo)"
 
-#: src/enigma_main.cpp:5099
 
 msgid "create new user bouquet"
 msgstr "sukurti naują savą paketą"
 
-#: src/setup_harddisk.cpp:379
 
 msgid "creating filesystem failed."
 msgstr "Failų sistemos sukūrimo klaida."
 
-#: src/channelinfo.cpp:96
 
 msgid "Culture"
 msgstr "Kultūra"
 
-#: src/parentallock.cpp:241
-#, c-format
 
 msgid "current %s PIN"
 msgstr ""
 
-#: src/setup_rc.cpp:117
 
 msgid "Cursor to next char timeout(msek) in textinputfields)"
 msgstr ""
 
-#: src/setupvideo.cpp:47
 
 msgid "CVBS"
 msgstr "CVBS"
 
-#: src/upgrade.cpp:475 src/upgrade.cpp:477
 
 msgid "Data error. The checksum didn't match."
 msgstr "Duomenų klaida. Bloga kontrolinė suma."
 
-#: src/timer.cpp:25
 
 msgid "December"
 msgstr "Gruodis"
 
-#: src/timer.cpp:1294
 
 msgid "decrease the event begin time in 1 minute steps"
 msgstr ""
 
-#: src/timer.cpp:1296
 
 msgid "decrease the event end time in 1 minute steps"
 msgstr ""
 
-#: src/enigma_main.cpp:5056
 
 msgid "delete"
 msgstr "trinti"
 
-#: src/rotorconfig.cpp:294 src/rotorconfig.cpp:350
 
 msgid "delete me"
 msgstr "trinti"
 
-#: src/enigma_main.cpp:2867
 
 msgid "Delete recorded stream"
 msgstr "Ištrinti įrašą"
 
-#: src/enigma_main.cpp:2843
 
 msgid "delete service"
 msgstr "ištrinti kanalą"
 
-#: default.esml:646
 
 msgid "delete the current selected timer (ok)"
 msgstr "ištrinti pasirinktą (ok)"
 
-#: src/timer.cpp:819
 
 msgid "Delete the event from the timerlist"
 msgstr "Veiksmo trynimas iš taimerio sąrašo"
 
-#: src/setupengrab.cpp:91
 
 msgid "detect MAC Adress"
 msgstr ""
 
-#: src/satconfig.cpp:289
 
 msgid "direct connection"
 msgstr "tiesioginis jungimas"
 
-#: default.esml:435 default.esml:457
 
 msgid "Direction:"
 msgstr "Kryptis:"
 
-#: src/satconfig.cpp:1023
 
 msgid "Disable DiSEqC"
 msgstr "Nenaudoti DiSEqC"
 
-#: src/enigma_main.cpp:5091
 
 msgid "disable edit mode"
 msgstr "išjungti redagavimą"
 
-#: src/rotorconfig.cpp:470
 
 msgid "disable limits"
 msgstr "išjungti limitus"
 
-#: src/enigma_main.cpp:5066
 
 msgid "disable move mode"
 msgstr ""
 
-#: src/enigma_main.cpp:5109
 
 msgid "disable parental lock"
 msgstr "išjunkti užraktą"
 
-#: src/enigma_main.cpp:857
 
 msgid "disable quickzap"
 msgstr ""
 
-#: src/rotorconfig.cpp:470 src/rotorconfig.cpp:533
 
 msgid "disable soft limits"
 msgstr "išjungti tikslius limitus"
 
-#: src/channelinfo.cpp:74
 
 msgid "Discussion"
 msgstr "Diskusijos"
 
-#: default.esml:365
 
 msgid "DiSEqC Mode:"
 msgstr "DiSEqC Režimas:"
 
-#: default.esml:367
 
 msgid "DiSEqC Parameter:"
 msgstr "DiSEqC Parametras:"
 
-#: default.esml:369
 
 msgid "DiSEqC Repeats:"
 msgstr "Kartoti DiSEqC:"
 
-#: default.esml:795
 
 msgid "DiSEqC..."
 msgstr "DiSEqC..."
 
-#: default.esml:746
 
 msgid "do a filesystem check"
 msgstr "patikrinti failų sistemą"
 
-#: src/rotorconfig.cpp:534 src/rotorconfig.cpp:538
 
 msgid "do it"
 msgstr "vykdyti"
 
-#: src/scan.cpp:794
-#, c-format
 
 msgid "Do you want\nto scan another\n%s?"
 msgstr "Ar skanuosite\nkitą palydovą\n%s?"
 
-#: src/channelinfo.cpp:74
 
 msgid "Documentary"
 msgstr "Dokumentika"
 
-#: src/scan.cpp:784
 
 msgid "Done."
 msgstr "Baigta."
 
-#: src/upgrade.cpp:447
 
 msgid "Download aborted."
 msgstr "Krovimas nutrauktas!"
 
-#: src/upgrade.cpp:168
 
 msgid "downloading catalog..."
 msgstr ""
 
-#: src/upgrade.cpp:188
 
 msgid "downloading changelog..."
 msgstr ""
 
-#: src/upgrade.cpp:213
 
 msgid "downloading image..."
 msgstr ""
 
-#: src/rotorconfig.cpp:387 src/rotorconfig.cpp:390
 
 msgid "drive Motor East"
 msgstr ""
 
-#: src/rotorconfig.cpp:388
 
 msgid "drive Motor East.. one step"
 msgstr ""
 
-#: src/rotorconfig.cpp:517
 
 msgid "drive motor to reference position"
 msgstr ""
 
-#: src/rotorconfig.cpp:541
 
 msgid "drive motor to satellite"
 msgstr "sukti lėkštę į palydovą"
 
-#: src/rotorconfig.cpp:513
 
 msgid "drive motor to stored pos"
 msgstr "sukti lėkštę į išsaugotą poziciją"
 
-#: src/rotorconfig.cpp:391
 
 msgid "drive Motor West.. one step"
 msgstr ""
 
-#: src/rotorconfig.cpp:466
 
 msgid "drive to 0"
 msgstr "sukti į 0"
 
-#: src/rotorconfig.cpp:465
 
 msgid "drive to satellite"
 msgstr "sukti į palydovą"
 
-#: src/rotorconfig.cpp:464
 
 msgid "drive to stored pos"
 msgstr ""
 
-#: src/rotorconfig.cpp:464
 
 msgid "drive to stored position"
 msgstr ""
 
-#: src/rotorconfig.cpp:465
 
 msgid "drive to stored satellite"
 msgstr "sukti į išsaugotus palydovus"
 
-#: src/rotorconfig.cpp:466
 
 msgid "drives to 0"
 msgstr ""
 
-#: default.esml:711
 
 msgid "duration:"
 msgstr "duration:"
 
-#: lib/dvb/servicedvb.cpp:549
 
 msgid "DVB - all services"
 msgstr "DVB - Visi Kanalai"
 
-#: lib/dvb/servicedvb.cpp:537
 
 msgid "DVB - bouquets"
 msgstr "DVB - Paketai"
 
-#: lib/dvb/servicedvb.cpp:545
 
 msgid "DVB - bouquets (Radio)"
 msgstr "DVB - Paketai (Radio)"
 
-#: lib/dvb/servicedvb.cpp:541
 
 msgid "DVB - bouquets (TV)"
 msgstr "DVB - Paketai (TV)"
 
-#: lib/dvb/servicedvb.cpp:557
 
 msgid "DVB - Radio services"
 msgstr "DVB - Radio Kanalai"
 
-#: lib/dvb/servicedvb.cpp:553
 
 msgid "DVB - TV services"
 msgstr "DVB - TV Kanalai"
 
-#: src/rotorconfig.cpp:57 src/rotorconfig.cpp:101
 
 msgid "East"
 msgstr "Rytai"
 
-#: src/channelinfo.cpp:100
 
 msgid "Economics"
 msgstr "Ekonomika"
 
-#: default.esml:809
 
 msgid "edit"
 msgstr "redaguoti"
 
-#: default.esml:809
 
 msgid "edit selected transponder (ok)"
 msgstr "redaguoti pasirintą transponderį (ok)"
 
-#: default.esml:671
 
 msgid "edit the end time (0..9, left, right)"
 msgstr "redaguoti pabagos laiką (0..9, karėn, dešinėn)"
 
-#: default.esml:667
 
 msgid "edit the start time (0..9, left, right)"
 msgstr "redaguoti pradžią (0..9, kairėn, dešinėn)"
 
-#: src/channelinfo.cpp:104
 
 msgid "Education"
 msgstr "Mokymas"
 
-#: src/enigma_main.cpp:5093
 
 msgid "enable edit mode"
 msgstr "įjungti redagavimą"
 
-#: src/rotorconfig.cpp:471
 
 msgid "enable limits"
 msgstr "įjungti limitus"
 
-#: src/enigma_main.cpp:5068
 
 msgid "enable move mode"
 msgstr ""
 
-#: src/enigma_main.cpp:5111
 
 msgid "enable parental lock"
 msgstr "įjungti užraktą"
 
-#: src/enigma_main.cpp:810 src/enigma_main.cpp:861 src/enigma_main.cpp:877
 
 msgid "enable quickzap"
 msgstr ""
 
-#: src/setup_osd.cpp:34
 
 msgid "enable set the leftTop Point of the rectangle"
 msgstr "enable set the leftTop Point of the rectangle"
 
-#: src/setup_osd.cpp:35
 
 msgid "enable set the rightBottom Point of the rectangle"
 msgstr ""
 
-#: src/rotorconfig.cpp:471 src/rotorconfig.cpp:537
 
 msgid "enable soft limits"
 msgstr "įjungti tikslius limitus"
 
-#: src/setup_rfmod.cpp:39
 
 msgid "enable Sound"
 msgstr ""
 
-#: src/setup_rfmod.cpp:29
 
 msgid "enable test pattern"
 msgstr "įjungti testinį pavyzdį"
 
-#: src/setup_audio.cpp:32
 
 msgid "enable/disable ac3 default output (ok)"
 msgstr "įjungti/išjungti AC3 išėjimą automatiškai (ok)"
 
-#: default.esml:483
 
 msgid "enable/disable check ONIT on any transponder"
 msgstr "įjungti/išjungti ONIT tikrinimą bet kuriame transponderyje"
 
-#: default.esml:486
 
 msgid "enable/disable initiate network search"
 msgstr "įjungti/išjungti paiešką per tinklus"
 
-#: default.esml:565
 
 msgid "enable/disable inversion (ok)"
 msgstr "ijungta/išjungta inversija (ok) "
 
-#: default.esml:538
 
 msgid "enable/disable inversion here (ok)"
 msgstr "įjungta/išjungta inversija (ok)"
 
-#: src/setup_lcd.cpp:103
 
 msgid "enable/disable inverted LCD (ok)"
 msgstr "invertuotas/neinvertuotas LCD vaizdas (ok)"
 
-#: src/setupnetwork.cpp:96
 
 msgid "enable/disable network config (ok)"
 msgstr "tinklo įjungimas / išjungimas (ok)"
 
-#: src/parentallock.cpp:52
 
 msgid "enable/disable parental lock"
 msgstr ""
 
-#: src/parentallock.cpp:69
 
 msgid "enable/disable setup lock"
 msgstr "Įjungti/išjungti nustatymų užraktą"
 
-#: default.esml:484
 
 msgid "enable/disable use BAT for scan (if exists)"
 msgstr "įjungtas/išjungtas BAT naudojimas skanuojant (jei egzistuoja)"
 
-#: default.esml:655
 
 msgid "Endtime"
 msgstr "Pabaiga"
 
-#: src/enigma_event.cpp:19
 
 msgid "enigma event view"
 msgstr ""
 
-#: src/enigma_mainmenu.cpp:24
 
 msgid "enigma mainmenu"
 msgstr "enigmos pagrindinis meniu"
 
-#: src/enigma_main.cpp:166
 
 msgid "enigma standby"
 msgstr ""
 
-#: src/enigma_main.cpp:75
 
 msgid "enigma Zapp"
 msgstr "enigma Zapp"
 
-#: src/enigma_ci.cpp:436 src/enigma_ci.cpp:465
 
 msgid "enter Common Interface menu (mmi)"
 msgstr "eiti į CI modulio meniu (mmi)"
 
-#: src/enigma_main.cpp:5418
 
 msgid "enter correct time here"
 msgstr "čia įveskite tikslų laiką"
 
-#: default.esml:554
 
 msgid "enter frequency (0..9, left, right)"
 msgstr "įveskite dažnį (0..9, kairėn, dešinėn)"
 
-#: src/setupnetwork.cpp:46
 
 msgid "enter IP Address of the box (0..9, left, right)"
 msgstr ""
 
-#: src/setupengrab.cpp:49
 
 msgid "enter IP Adress of the Ngrab Server (0..9, left, right)"
 msgstr ""
 
-#: default.esml:349
 
 msgid "enter LNB highband offset frequency (0..9, ok)"
 msgstr "įveskite LNB Hi highband offset dažnį (0..9, ok)"
 
-#: default.esml:347
 
 msgid "enter LNB lowband offset frequency (0..9, ok)"
 msgstr "įveskite LNB lowband offset dažnį (0..9, ok)"
 
-#: default.esml:352
 
 msgid "enter LNB threshold frequency (0..9, ok)"
 msgstr "pasirinkit LNB kritinį dažnį (0..9, ok)"
 
-#: src/setupengrab.cpp:72
 
 msgid "enter MAC adress of server (for wake on lan)"
 msgstr ""
 
-#: src/enigma_main.cpp:2926
 
 msgid "Enter name for the new bouquet:"
 msgstr "Įveskite vardą naujam paketui:"
 
-#: src/setupnetwork.cpp:60
 
 msgid "enter netmask of your network (0..9, left, right)"
 msgstr ""
 
-#: src/enigma_main.cpp:2963
 
 msgid "Enter new name for the bouquet:"
 msgstr "Įveskite naują vardą paketui:"
 
-#: src/enigma_main.cpp:3047
 
 msgid "Enter new name:"
 msgstr "Įveskite naują vardą:"
 
-#: src/setupengrab.cpp:61
 
 msgid "enter ngrab server port (standard is 4000)"
 msgstr ""
 
-#: default.esml:433
 
 msgid "enter orbital position without dot (19.2&#175; = 192)"
 msgstr ""
 
-#: default.esml:699 default.esml:725
 
 msgid "enter recording end time (0..9, left, right, ok)"
 msgstr "įveskite įrašymo pabaigos laiką (0..9, kairėn, dešinėn, ok)"
 
-#: default.esml:454
 
 msgid "enter stored satellite pos"
 msgstr "įveskite išsaugotą palydovo poziciją"
 
-#: default.esml:546 default.esml:558
 
 msgid "enter symbol rate (0..9, left, right)"
 msgstr "įveskite simbolių greitį (0..9, kairėn, dešinėn)"
 
-#: default.esml:536
 
 msgid "enter transponder frequeny (0..9, left, right)"
 msgstr "įveskite transponderio dažnį (0..9, kairėn, dešinėn)"
 
-#: default.esml:430
 
 msgid "enter where this orbital position is (to) stored in motor"
 msgstr "įveskite orbitos poziciją, išsaugojimui pozicionieriuje "
 
-#: src/setupnetwork.cpp:74
 
 msgid "enter your domain name server (0..9, left, right)"
 msgstr ""
 
-#: src/setupnetwork.cpp:88
 
 msgid "enter your gateways IP Address (0..9, left, right)"
 msgstr ""
 
-#: default.esml:424
 
 msgid "enter your latitude (0..9, +, -, ok)"
 msgstr "įveskite platumą (0..9, +, -, ok)"
 
-#: default.esml:421
 
 msgid "enter your longitude (0..9, +, -, ok)"
 msgstr "įveskite ilgumą (0..9, +, -, ok)"
 
-#: default.esml:637 default.esml:643 stone.esml:462 silver.esml:469
 
 msgid "EPG"
 msgstr "EPG"
 
-#: src/epgwindow.cpp:173
 
 msgid "EPG - "
 msgstr "EPG -"
 
-#: src/channelinfo.cpp:83
 
 msgid "Equestrian"
 msgstr "Jojimas"
 
-#: default.esml:332
 
 msgid "erase"
 msgstr "trinti"
 
-#: default.esml:498
 
 msgid "erase all"
 msgstr "ištrinti visus"
 
-#: default.esml:498
 
 msgid "erase bouquets and services before scan"
 msgstr "ištrinti paketus ir servizus prieš skanavimą"
 
-#: src/upgrade.cpp:500
 
 msgid "Erasing...\nPlease wait... do NOT switch off the receiver!"
 msgstr "Erasing...\nPlease wait... do NOT switch off the receiver!"
 
-#: src/enigma_plugins.cpp:151
 
 msgid "Error"
 msgstr "Klaida"
 
-#: src/upgrade.cpp:391 src/upgrade.cpp:464 src/upgrade.cpp:478
 
 msgid "Error!"
 msgstr "Klaida!"
 
-#: src/channelinfo.cpp:104
 
 msgid "Expeditions"
 msgstr "Ekspedicijos"
 
-#: src/channelinfo.cpp:97
 
 msgid "Experimental"
 msgstr "Experimentinis"
 
-#: src/enigma_setup.cpp:115
 
 msgid "Extra settings..."
 msgstr "Ekstra Nustatymai"
 
-#: src/channelinfo.cpp:97
 
 msgid "Fashion"
 msgstr "Mados"
 
-#: default.esml:374
 
 msgid "Fast DiSEqC"
 msgstr "Greitas DiSEqC"
 
-#: src/enigma_main.cpp:1247
 
 msgid "Favourites (Radio)"
 msgstr "Favoritai (Radio)"
 
-#: src/enigma_main.cpp:1242
 
 msgid "Favourites (TV)"
 msgstr "Favoritai (TV)"
 
-#: src/timer.cpp:22
 
 msgid "February"
 msgstr "Vasaris"
 
-#: default.esml:542
 
 msgid "FEC:"
 msgstr "FEC:"
 
-#: chk_blue2.esml:316
 
 msgid "FF "
 msgstr "FF"
 
-#: lib/dvb/servicestructure.cpp:14
 
 msgid "File Mode"
 msgstr "File Režimas"
 
-#: src/enigma_mainmenu.cpp:54
 
 msgid "File mode"
 msgstr "File režimas"
 
-#: src/channelinfo.cpp:266
 
 msgid "Filename: "
 msgstr "Filename:"
 
-#: src/channelinfo.cpp:97
 
 msgid "Film"
 msgstr "Filmas"
 
-#: src/channelinfo.cpp:96
 
 msgid "Fine Arts"
 msgstr "Švelnus Menas"
 
-#: src/enigma.cpp:248
 
 msgid "First start of enigma"
 msgstr "Pirmas enigmos startas"
 
-#: src/channelinfo.cpp:108
 
 msgid "Fitness"
 msgstr "Fitnesas"
 
-#: src/channelinfo.cpp:92
 
 msgid "Folk"
 msgstr "Folkloras"
 
-#: src/channelinfo.cpp:82
 
 msgid "Football"
 msgstr "Futbolas"
 
-#: default.esml:656
 
 msgid "for a multiple event enable this"
 msgstr "tai naudokite multiveiksmams"
 
-#: default.esml:745
 
 msgid "format"
 msgstr "formatavimas"
 
-#: src/setup_harddisk.cpp:294 src/setup_harddisk.cpp:307
-#: src/setup_harddisk.cpp:328 src/setup_harddisk.cpp:338
-#: src/setup_harddisk.cpp:380 src/setup_harddisk.cpp:391
 
 msgid "formatting harddisk..."
 msgstr "kieto disko formatavimas"
 
-#: src/enigma_scan.cpp:154
 
 msgid "Found no LNB with DiSEqC 1.2 enabled,\nplease goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr "Nerasta LNB palaikomos DiSEqC 1.2 protokolu,\npirmiausia sukonfigūruokite LNB nustatymus."
 
-#: default.esml:661
 
 msgid "Fr"
 msgstr "Pen"
 
-#: chk_blue2.esml:313
 
 msgid "FR "
 msgstr "FR"
 
-#: default.esml:535 default.esml:553
 
 msgid "Frequency:"
 msgstr "Dažnis:"
 
-#: src/timer.cpp:29
 
 msgid "Fri"
 msgstr "Pen"
 
-#: default.esml:661 src/timer.cpp:27
 
 msgid "Friday"
 msgstr "Penktadienis"
 
-#: default.esml:685
 
 msgid "frontend: "
 msgstr "frontend:"
 
-#: src/enigma_info.cpp:265
 
 msgid "Frontend: Cable"
 msgstr "Frontend: Cable"
 
-#: src/enigma_info.cpp:262
 
 msgid "Frontend: Satellite"
 msgstr "Frontend: Satellite"
 
-#: src/enigma_info.cpp:271
 
 msgid "Frontend: Simulator"
 msgstr "Frontend: Simulator"
 
-#: src/enigma_info.cpp:268
 
 msgid "Frontend: Terrestrial"
 msgstr "Frontend: Terrestrial"
 
-#: src/channelinfo.cpp:105
 
 msgid "Further Ed."
 msgstr "Further Ed."
 
-#: src/channelinfo.cpp:78
 
 msgid "Game Show"
 msgstr "Žaidimų Šou"
 
-#: src/enigma_mainmenu.cpp:66
 
 msgid "Games"
 msgstr "Žaidimai"
 
-#: src/channelinfo.cpp:109
 
 msgid "Gardening"
 msgstr "Sodas"
 
-#: src/streaminfo.cpp:170
 
 msgid "genre"
 msgstr ""
 
-#: src/rotorconfig.cpp:514 src/rotorconfig.cpp:518 src/rotorconfig.cpp:542
 
 msgid "go"
 msgstr "pirmyn"
 
-#: src/sselect.cpp:56
 
 msgid "go to first service"
 msgstr "eiti į pirmą kanalą"
 
-#: src/sselect.cpp:57
 
 msgid "go to last service"
 msgstr "eiti į paskutinį kanalą"
 
-#: src/enigma_scan.cpp:186
 
 msgid "go to prev menu"
 msgstr "grįžti į ankstesnį meniu"
 
-#: src/enigma_main.cpp:77
 
 msgid "go to standby (press)"
 msgstr "eiti į budintį (spausti)"
 
-#: src/enigma_main.cpp:80
 
 msgid "go to standby (release)"
 msgstr "eiti į budintį (atpalaiduoti)"
 
-#: src/enigma_main.cpp:79
 
 msgid "go to standby (repeat)"
 msgstr "eiti į budintį (pakartoti)"
 
-#: src/enigma_main.cpp:78
 
 msgid "go to standby without menu (press)"
 msgstr "eiti į budintį be meniu (spausti)"
 
-#: src/sselect.cpp:45
 
 msgid "go up a directory"
 msgstr "eiti į aukštesnę direktoriją"
 
-#: default.esml:443
 
 msgid "goto advanced motor setup"
 msgstr "eiti i išplėstinį pozicionieriaus konfigūravimą"
 
-#: src/enigma_scan.cpp:47
 
 msgid "goto Motor Setup"
 msgstr "eiti į pozicionieriaus nustatymus"
 
-#: default.esml:356
 
 msgid "goto next page (DiSEqC)"
 msgstr "pereiti į sekantį luslapį (DiSEqC)"
 
-#: default.esml:384
 
 msgid "goto prev page (LNB)"
 msgstr "grįžti į ankstesnį psl (LNB)"
 
-#: src/enigma_scan.cpp:46
 
 msgid "goto satellite config"
 msgstr "eiti į palydovų nustatymus"
 
-#: src/enigma_main.cpp:5140
 
 msgid "goto standby"
 msgstr "eiti į budintį"
 
-#: default.esml:715
 
 msgid "goto standby (ok)"
 msgstr "eiti i budintį (ok)"
 
-#: default.esml:702 default.esml:728
 
 msgid "goto standby after recording (ok)"
 msgstr "eiti į budintį režimą po rašymo (ok)"
 
-#: src/enigma_scan.cpp:45
 
 msgid "goto transponder edit dialog"
 msgstr "eiti į paketų redagavima"
 
-#: src/enigma_scan.cpp:42
 
 msgid "goto transponder scan"
 msgstr "eiti į paketų skanavimą"
 
-#: src/channelinfo.cpp:108
 
 msgid "Handicraft"
 msgstr "Amatai"
 
-#: default.esml:736
 
 msgid "Harddisk"
 msgstr "Kietas Diskas"
 
-#: src/enigma_setup.cpp:290
 
 msgid "Harddisk setup..."
 msgstr "Kieto Disko Nustatymai"
 
-#: src/setup_harddisk.cpp:175
 
 msgid "harddisk setup..."
 msgstr "kieto disko nustatymai"
 
-#: src/enigma_setup.cpp:119
 
 msgid "Harddisk..."
 msgstr "Kietas Diskas"
 
-#: default.esml:687
 
 msgid "harddisk: "
 msgstr "kietas diskas:"
 
-#: default.esml:586
 
 msgid "Help"
 msgstr "Pagalba"
 
-#: src/setup_osd.cpp:159
 
 msgid "here you can center the plugin rectangle...for more infos press help"
 msgstr ""
 
-#: src/enigma_main.cpp:83
 
 msgid "hide infobar"
 msgstr "slėpti infobarą"
 
-#: src/enigma_main.cpp:4768
 
 msgid "History"
 msgstr "History"
 
-#: src/channelinfo.cpp:108
 
 msgid "Hobbies"
 msgstr "Hobi"
 
-#: lib/dvb/dvbwidgets.cpp:54
 
 msgid "horizontal"
 msgstr "horizontali"
 
-#: default.esml:317
 
 msgid "HTTP Download"
 msgstr "HTTP Krovimas"
 
-#: src/setupengrab.cpp:191
 
 msgid "HW Address(MAC) detection failed"
 msgstr "HW Address(MAC) detection failed"
 
-#: src/setup_rfmod.cpp:167
 
 msgid "if you can read this your rfmod will not work."
 msgstr ""
 
-#: default.esml:355 default.esml:386 default.esml:442 default.esml:525
-#: default.esml:781 src/setup_lcd.cpp:120 src/setup_osd.cpp:277
-#: src/setup_rc.cpp:135 src/setupnetwork.cpp:114 src/setupvideo.cpp:91
-#: src/setup_audio.cpp:51 src/parentallock.cpp:98 src/setupengrab.cpp:113
-#: src/setup_timezone.cpp:61
 
 msgid "ignore changes and return"
 msgstr "ignoruoti pakeitimus ir grįžti"
 
-#: src/setup_harddisk.cpp:427
-#, c-format
 
 msgid "in use, %d.%03d GB (~%d minutes) free"
 msgstr "naudojimui %d.%03d GB (~%d min.) laisva "
 
-#: src/timer.cpp:1293
 
 msgid "increase the event begin time in 1 minute steps"
 msgstr ""
 
-#: src/timer.cpp:1295
 
 msgid "increase the event end time in 1 minute steps"
 msgstr ""
 
-#: default.esml:353
 
 msgid "increased voltage"
 msgstr "padidinta įtampa"
 
-#: src/enigma_scan.cpp:140
 
 msgid "Info"
 msgstr "Informacija"
 
-#: src/enigma_mainmenu.cpp:57 src/enigma_mainmenu.cpp:75 src/timer.cpp:1775
-#: src/rotorconfig.cpp:923
 
 msgid "Information"
 msgstr "Informacija"
 
-#: src/enigma_info.cpp:41
 
 msgid "Infos"
 msgstr "Informacija"
 
-#: src/enigma_ci.cpp:424 src/enigma_ci.cpp:453
 
 msgid "Init"
 msgstr "Instaliuoti"
 
-#: default.esml:745
 
 msgid "initialize the disk for use with the dreambox"
 msgstr "instaliuoti diską naudojimui su dreambox"
 
-#: src/setup_harddisk.cpp:429
 
 msgid "initialized, but unknown filesystem"
 msgstr "instaliuota, bet nepažystama failų sistema"
 
-#: src/satconfig.cpp:1071
 
 msgid "Input 1"
 msgstr "Įėjimas 1"
 
-#: src/satconfig.cpp:1080
 
 msgid "Input 10"
 msgstr "Įėjimas 10"
 
-#: src/satconfig.cpp:1081
 
 msgid "Input 11"
 msgstr "Įėjimas 11"
 
-#: src/satconfig.cpp:1082
 
 msgid "Input 12"
 msgstr "Įėjimas 12"
 
-#: src/satconfig.cpp:1083
 
 msgid "Input 13"
 msgstr "Įėjimas 13"
 
-#: src/satconfig.cpp:1084
 
 msgid "Input 14"
 msgstr "Įėjimas 14"
 
-#: src/satconfig.cpp:1085
 
 msgid "Input 15"
 msgstr "Įėjimas 15"
 
-#: src/satconfig.cpp:1086
 
 msgid "Input 16"
 msgstr "Įėjimas 16"
 
-#: src/satconfig.cpp:1072
 
 msgid "Input 2"
 msgstr "Įėjimas 2"
 
-#: src/satconfig.cpp:1073
 
 msgid "Input 3"
 msgstr "Įėjimas 3"
 
-#: src/satconfig.cpp:1074
 
 msgid "Input 4"
 msgstr "Įėjimas 4"
 
-#: src/satconfig.cpp:1075
 
 msgid "Input 5"
 msgstr "Įėjimas 5"
 
-#: src/satconfig.cpp:1076
 
 msgid "Input 6"
 msgstr "Įėjimas 6"
 
-#: src/satconfig.cpp:1077
 
 msgid "Input 7"
 msgstr "Įėjimas 7"
 
-#: src/satconfig.cpp:1078
 
 msgid "Input 8"
 msgstr "Įėjimas 8"
 
-#: src/satconfig.cpp:1079
 
 msgid "Input 9"
 msgstr "Įėjimas 9"
 
-#: src/enigma_info.cpp:330
 
 msgid "internal"
 msgstr "vidinis"
 
-#: default.esml:538
 
 msgid "Inv:"
 msgstr "Inv:"
 
-#: src/timer.cpp:1618
 
 msgid "Invalid begin or end time.!\nPlease check time and date"
 msgstr ""
 
-#: default.esml:564
 
 msgid "Inversion:"
 msgstr "Invertuoti:"
 
-#: src/setup_lcd.cpp:101
 
 msgid "Inverted: "
 msgstr "Invertuota:"
 
-#: src/timer.cpp:22
 
 msgid "January"
 msgstr "Sausis"
 
-#: src/channelinfo.cpp:92
 
 msgid "Jazz"
 msgstr "Džazas"
 
-#: src/timer.cpp:23
 
 msgid "July"
 msgstr "Liepa"
 
-#: src/timer.cpp:23
 
 msgid "June"
 msgstr "Birželis"
 
-#: default.esml:547 default.esml:559
 
 msgid "KSymb/s"
 msgstr "KSymb/s"
 
-#: src/enigma_setup.cpp:109
 
 msgid "Language..."
 msgstr "Kalbos"
 
-#: src/channelinfo.cpp:105
 
 msgid "Languages"
 msgstr "Kalbos"
 
-#: default.esml:423
 
 msgid "Latitude:"
 msgstr "Platuma:"
 
-#: src/setup_lcd.cpp:49
 
 msgid "LC-Display Setup"
 msgstr "LC Ekrano Nustatymai"
 
-#: src/enigma_setup.cpp:105
 
 msgid "LCD..."
 msgstr "LCD"
 
-#: src/enigma_ci.cpp:84
 
 msgid "leave CI mmi"
 msgstr "išeiti iš CI mmi"
 
-#: src/enigma_ci.cpp:474 src/enigma_ci.cpp:483
 
 msgid "leave Common Interface menu"
 msgstr "išeiti iš CI modulio meniu"
 
-#: src/setup_rfmod.cpp:138
 
 msgid "leave rf setup (no changes are saved)"
 msgstr ""
 
-#: src/scan.cpp:39
 
 msgid "leave transponder scan"
 msgstr "išeiti iš skanavimo"
 
-#: src/streaminfo.cpp:178
 
 msgid "length"
 msgstr "ilgis"
 
-#: src/channelinfo.cpp:96
 
 msgid "Literature"
 msgstr "Literatūra"
 
-#: src/channelinfo.cpp:112
 
 msgid "Live"
 msgstr "Gyvenimas"
 
-#: default.esml:326
 
 msgid "LNB"
 msgstr "LNB"
 
-#: default.esml:339
 
 msgid "LNB Configuration"
 msgstr "LNB Konfigūravimas"
 
-#: default.esml:405 default.esml:580
-
-msgid "LOCK"
-msgstr "LOCK"
-
-#: src/enigma_main.cpp:5106
 
 msgid "lock"
 msgstr "užrakinti"
 
-#: default.esml:350
+
+msgid "LOCK"
+msgstr "LOCK"
+
 
 msgid "LOF/H:"
 msgstr "LOF/H:"
 
-#: default.esml:348
 
 msgid "LOF/L:"
 msgstr "LOF/L:"
 
-#: default.esml:420
 
 msgid "Longitude:"
 msgstr "Ilguma:"
 
-#: default.esml:416
 
 msgid "mA"
 msgstr "mA"
 
-#: src/channelinfo.cpp:74
 
 msgid "Magazine"
 msgstr "Parduotuvės"
 
-#: src/enigma_mainmenu.cpp:95 src/enigma_mainmenu.cpp:266
 
 msgid "Mainmenu"
 msgstr "Pagrindinis Meniu"
 
-#: src/scan.cpp:38
 
 msgid "manual scan.."
 msgstr "rankinis skanavimas"
 
-#: src/upgrade.cpp:150
 
 msgid "manual upload"
 msgstr "rankinis krovimas"
 
-#: src/satconfig.cpp:62
 
 msgid "many satellites via DiSEqC Rotor"
 msgstr "daug palydovų per DiSEqC pozicionierių"
 
-#: src/timer.cpp:22
 
 msgid "March"
 msgstr "Kovas"
 
-#: src/channelinfo.cpp:84
 
 msgid "Martial Sports"
 msgstr "Karinis Sportas"
 
-#: src/timer.cpp:23
 
 msgid "May"
 msgstr "Gegužė"
 
-#: src/channelinfo.cpp:104
 
 msgid "Medicine"
 msgstr "Medicina"
 
-#: src/sselect.cpp:299
 
 msgid "Menu"
 msgstr "Meniu"
 
-#: src/enigma_main.cpp:1025
 
 msgid "Message"
 msgstr "Žinutė"
 
-#: default.esml:537 default.esml:555
 
 msgid "MHz"
 msgstr "MHz"
 
-#: default.esml:700 default.esml:713
 
 msgid "min"
 msgstr "min"
 
-#: default.esml:363
 
 msgid "MiniDiSEqC Parameter:"
 msgstr "MiniDiSEqC Parametras:"
 
-#: src/enigma_ci.cpp:200
 
 msgid "mmi input field"
 msgstr ""
 
-#: default.esml:657
 
 msgid "Mo"
 msgstr "Pir"
 
-#: default.esml:450
 
 msgid "Mode:"
 msgstr "Režimas:"
 
-#: default.esml:737
 
 msgid "model:"
 msgstr "modelis:"
 
-#: default.esml:561
 
 msgid "Modulation:"
 msgstr "Moduliacija:"
 
-#: src/timer.cpp:28
 
 msgid "Mon"
 msgstr "Pir"
 
-#: default.esml:657 src/timer.cpp:26
 
 msgid "Monday"
 msgstr "Pirmadienis"
 
-#: src/enigma_scan.cpp:140
 
 msgid "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the motor is connected"
 msgstr "Daugiau kaip viena LNB palaikoma DiSEqC protokolu, pasirinkite LNB pozicionieriaus konfigūravimui."
 
-#: default.esml:411 default.esml:449
 
 msgid "Motor Config"
 msgstr "Pozicionieriaus Nustatymai"
 
-#: default.esml:413
 
 msgid "motor drive speed, in degrees per second"
 msgstr "motoro judėjimo greitis, laipsniais per sekundę"
 
-#: default.esml:415
 
 msgid "motor power input difference between running and not running"
 msgstr "motoro galingumo skirtumas tarp judančio ir sustojusio"
 
-#: default.esml:383
 
 msgid "Motor Setup"
 msgstr "Motoro Nustatymai"
 
-#: src/enigma_scan.cpp:47
 
 msgid "Motor Setup..."
 msgstr "Pozicionierius"
 
-#: src/channelinfo.cpp:83
 
 msgid "Motor Sports"
 msgstr "Motor Sportas"
 
-#: src/channelinfo.cpp:108
 
 msgid "Motoring"
 msgstr "Automobilizmas"
 
-#: src/channelinfo.cpp:70
 
 msgid "Movie"
 msgstr "Filmai"
 
-#: src/sselect.cpp:294
 
 msgid "Movies"
 msgstr "Filmai"
 
-#: src/enigma_main.cpp:799
 
 msgid "multiple Services"
 msgstr ""
 
-#: src/channelinfo.cpp:92
 
 msgid "Music"
 msgstr "Muzika"
 
-#: src/channelinfo.cpp:92
 
 msgid "Musical"
 msgstr "Mjūziklai"
 
-#: src/enigma_info.cpp:218
 
 msgid "my"
 msgstr "mano"
 
-#: src/channelinfo.cpp:104
 
 msgid "Nature"
 msgstr "Gamta"
 
-#: default.esml:486
 
 msgid "network search"
 msgstr "tinklo paieška"
 
-#: src/setupnetwork.cpp:21
 
 msgid "Network setup"
 msgstr "Tinklo Nustatymai"
 
-#: src/enigma_setup.cpp:100
 
 msgid "Network..."
 msgstr "Tinklas"
 
-#: default.esml:494
 
 msgid "Network:"
 msgstr "Tinklas:"
 
-#: default.esml:331
-
-msgid "new"
-msgstr "naujas"
-
-#: src/satconfig.cpp:963
 
 msgid "New"
 msgstr "Naujas"
 
-#: src/parentallock.cpp:160
-#, c-format
+
+msgid "new"
+msgstr "naujas"
+
 
 msgid "New %s PIN"
 msgstr "Naujas %s PIN"
 
-#: src/enigma_main.cpp:5424
 
 msgid "New Date:"
 msgstr "Nauja Data:"
 
-#: src/channelinfo.cpp:97
 
 msgid "New Media"
 msgstr "Naja Media"
 
-#: src/enigma_main.cpp:5405
 
 msgid "New Time:"
 msgstr "Naujas Laikas:"
 
-#: src/channelinfo.cpp:74
 
 msgid "News"
 msgstr "Naujienos"
 
-#: src/setup_rc.cpp:108
 
 msgid "Next Char Timeout:"
 msgstr ""
 
-#: default.esml:356 default.esml:443
 
 msgid "next page"
 msgstr "sekantis psl"
 
-#: src/timer.cpp:1413
 
 msgid "Ngrab"
 msgstr "Ngrab"
 
-#: src/engrab.cpp:203
 
 msgid "ngrab recording"
 msgstr ""
 
-#: src/setupengrab.cpp:25
 
 msgid "Ngrab Server"
 msgstr "Ngrab Serveris"
 
-#: src/enigma_setup.cpp:113
 
 msgid "Ngrab..."
 msgstr "Ngrab"
 
-#: lib/gui/emessage.cpp:102
 
 msgid "No"
 msgstr "Ne"
 
-#: src/upgrade.cpp:596
 
 msgid "No changelog data available."
 msgstr ""
 
-#: default.esml:499
 
 msgid "no circ polariz."
 msgstr "praleisti circ poliariz."
 
-#: src/channelinfo.cpp:233
 
 msgid "no data for this service avail"
 msgstr "nėra duomenų šiam kanalui"
 
-#: lib/gui/listbox.cpp:670 src/enigma_main.cpp:2515
 
 msgid "no description available"
 msgstr "pavaizdavimas negalimas"
 
-#: src/timer.cpp:1819
 
 msgid "no description found"
 msgstr ""
 
-#: src/timer.cpp:1467 src/enigma_event.cpp:278 src/enigma_event.cpp:289
-#: src/engrab.cpp:36
 
 msgid "no description is available"
 msgstr ""
 
-#: src/enigma_main.cpp:1844
 
 msgid "no EPG available"
 msgstr "EPG negalimas"
 
-#: src/streaminfo.cpp:538 src/streaminfo.cpp:579 src/enigma_event.cpp:270
 
 msgid "no information is available"
 msgstr "nėra informacijos"
 
-#: src/enigma_plugins.cpp:210
 
 msgid "no name given"
 msgstr "be vardo"
 
-#: src/upgrade.cpp:610
 
 msgid "No new features were added in this release."
 msgstr ""
 
-#: src/satconfig.cpp:63
 
 msgid "non-standard user defined configuration..."
 msgstr "nestandartinė konfigūracija"
 
-#: src/enigma_info.cpp:317 src/streaminfo.cpp:270 src/streaminfo.cpp:281
-#: src/streaminfo.cpp:293 src/streaminfo.cpp:305 src/streaminfo.cpp:317
-#: src/streaminfo.cpp:441 src/streaminfo.cpp:477
-
-msgid "none"
-msgstr "ne"
-
-#: src/satconfig.cpp:1014 src/satconfig.cpp:1060 src/satconfig.cpp:1070
 
 msgid "None"
 msgstr "Nenaudojamas"
 
-#: src/rotorconfig.cpp:72
+
+msgid "none"
+msgstr "ne"
+
 
 msgid "North"
 msgstr "Šiaurė"
 
-#: src/setup_harddisk.cpp:562
 
 msgid "not supported filesystem for check."
 msgstr "failų sistema netinkama skanavimui."
 
-#: src/enigma_main.cpp:487
 
 msgid "not valid!"
 msgstr "negalimas!"
 
-#: src/timer.cpp:25
 
 msgid "November"
 msgstr "Lapkritis"
 
-#: default.esml:429
 
 msgid "Number in motor:"
 msgstr "Pozicija Pozicionieriuje:"
 
-#: src/enigma_main.cpp:505
 
 msgid "NVOD"
 msgstr "NVOD"
 
-#: src/enigma_main.cpp:4305 src/enigma_main.cpp:4307
 
 msgid "NVOD Service - please select a starttime"
 msgstr ""
 
-#: default.esml:726
 
 msgid "o'clock"
 msgstr "valanda"
 
-#: src/timer.cpp:24
 
 msgid "October"
 msgstr "Spalis"
 
-#: default.esml:404 default.esml:691 src/enigma_ci.cpp:471
-#: src/enigma_ci.cpp:480
-
-msgid "ok"
-msgstr "ok"
-
-#: default.esml:333 lib/gui/emessage.cpp:99 src/enigma_ci.cpp:222
 
 msgid "OK"
 msgstr "OK"
 
-#: src/satconfig.cpp:1061
+
+msgid "ok"
+msgstr "ok"
+
 
 msgid "One"
 msgstr "Vienas"
 
-#: src/satconfig.cpp:59
 
 msgid "one directly connected LNB"
 msgstr "viena tiesiogiai pajungta LNB"
 
-#: src/enigma_main.cpp:4271 src/enigma_main.cpp:4272
 
 msgid "One moment please..."
 msgstr "Minutėlę..."
 
-#: src/satconfig.cpp:59
 
 msgid "one single satellite"
 msgstr "vienas palydovas"
 
-#: src/rotorconfig.cpp:763
 
 msgid "one step East..."
 msgstr "žingsnis į rytus..."
 
-#: src/rotorconfig.cpp:772
 
 msgid "one step west..."
 msgstr "žingsnis į vakarus..."
 
-#: src/enigma_setup.cpp:97
 
 msgid "open audio/video setup"
 msgstr "eiti į audio/video nustatymus"
 
-#: src/scan.cpp:37
 
 msgid "open automatic transponder scan"
 msgstr "eiti į automatinį kanalų skanavimą"
 
-#: src/enigma_setup.cpp:96
 
 msgid "open channel setup"
 msgstr "eiti į kanalų nustatymus"
 
-#: src/enigma_setup.cpp:122
 
 msgid "open common interface menu"
 msgstr "eiti į modulių interfeiso (CI) meniu"
 
-#: src/enigma_setup.cpp:115
 
 msgid "open extra config"
 msgstr "eiti į ekstra nustatymus"
 
-#: src/enigma_setup.cpp:119
 
 msgid "open harddisk setup"
 msgstr "eiti į kieto disko nustatymus"
 
-#: src/enigma_setup.cpp:109
 
 msgid "open language selector"
 msgstr "eiti į kalbos nustaymą"
 
-#: src/enigma_setup.cpp:105
 
 msgid "open LC display setup"
 msgstr "eiti į LC ekrano nustatymus"
 
-#: src/scan.cpp:38
 
 msgid "open manual transponder scan"
 msgstr "eiti į rankinį kanalų skanavimą"
 
-#: src/enigma_setup.cpp:100
 
 msgid "open network setup"
 msgstr "eiti į tinklo nustatymus"
 
-#: src/enigma_setup.cpp:113
 
 msgid "open ngrab config"
 msgstr "eiti į ngrab nustatymus"
 
-#: src/enigma_setup.cpp:102
 
 msgid "open on screen display setup"
 msgstr "eiti į ekrano grafikos nustatymus"
 
-#: src/enigma_setup.cpp:116
 
 msgid "open parental setup"
 msgstr "eiti į užrakto nustatymus"
 
-#: src/enigma_setup.cpp:107
 
 msgid "open remote control setup"
 msgstr "eiti į distancinio valdymo nustatymus"
 
-#: src/enigma_setup.cpp:108
 
 msgid "open skin selector"
 msgstr "eiti į skino nustatymą"
 
-#: src/enigma_info.cpp:48
 
 msgid "open the about dialog"
 msgstr "rodyti dialogą 'apie...'"
 
-#: src/enigma_main.cpp:121
 
 msgid "open the serviceselector and show DVB bouquets"
 msgstr "kanalų sąrašo su paketais atidarymas"
 
-#: src/enigma_main.cpp:122
 
 msgid "open the serviceselector and show recorded movies"
 msgstr "sąrašo su įrašytais filmais atidarymas"
 
-#: src/enigma_main.cpp:120
 
 msgid "open the serviceselector and show user bouquets"
 msgstr "kanalų sąrašo su savais kanalais atidarymas"
 
-#: src/enigma_main.cpp:123
 
 msgid "open the serviceselector and shows the playlist"
 msgstr "paskutinių žiūrėtų kanalų sąršao atidarymas"
 
-#: src/enigma_info.cpp:45
 
 msgid "open the Streaminfo"
 msgstr "rodyti srauto informaciją"
 
-#: src/enigma_setup.cpp:111
 
 msgid "open time correction window"
 msgstr "eiti į laiko nustatymus"
 
-#: src/enigma_setup.cpp:110
 
 msgid "open time zone setup"
 msgstr "eiti į laiko juostos nustatymus"
 
-#: default.esml:467
 
 msgid "open transponder scan"
 msgstr "eiti į transponderių skanavimą"
 
-#: default.esml:383
 
 msgid "opens the motor setup"
 msgstr "atidaryti pozicionieriaus nustatymus"
 
-#: default.esml:432
 
 msgid "Orbital Position:"
 msgstr "Pozicija Orbitoje:"
 
-#: src/channelinfo.cpp:112
 
 msgid "Orig. Lang."
 msgstr "Orgin. Kalba"
 
-#: src/setup_osd.cpp:173
 
 msgid "OSD Setup"
 msgstr "OSD Nustatymai"
 
-#: src/enigma_setup.cpp:102
 
 msgid "OSD..."
 msgstr "OSD"
 
-#: src/setup_rc.cpp:100
 
 msgid "other bouquet selection keys"
 msgstr ""
 
-#: src/enigma_main.cpp:3108 src/timer.cpp:1523 src/parentallock.cpp:116
-#: src/parentallock.cpp:144
 
 msgid "parental"
 msgstr "užraktas"
 
-#: src/parentallock.cpp:49
 
 msgid "Parental lock"
 msgstr "Užraktas"
 
-#: src/enigma_setup.cpp:116
 
 msgid "Parental settings..."
 msgstr "Užrakto Nustatymai"
 
-#: src/parentallock.cpp:42
 
 msgid "Parental setup"
 msgstr "Užrakto nustatymai"
 
-#: default.esml:754
 
 msgid "Partition Check"
 msgstr "HDD Tikrinimas"
 
-#: chk_blue2.esml:315
 
 msgid "Pause "
 msgstr "Pauzė"
 
-#: src/enigma_main.cpp:108
 
 msgid "pause playback"
 msgstr "pauzė"
 
-#: src/channelinfo.cpp:96
 
 msgid "Perf. Arts"
 msgstr "Tobulas Menas"
 
-#: src/parentallock.cpp:193
 
 msgid "PIN change completed"
 msgstr "PIN keitimas pabaigtas"
 
-#: src/parentallock.cpp:194
 
 msgid "PIN changed"
 msgstr "PIN pakeistas"
 
-#: src/parentallock.cpp:176 src/parentallock.cpp:253
 
 msgid "PIN validation failed"
 msgstr ""
 
-#: src/enigma_main.cpp:3255
 
 msgid "Play"
 msgstr "Play"
 
-#: chk_blue2.esml:314
 
 msgid "Play "
 msgstr "Play"
 
-#: lib/dvb/servicemp3.cpp:349
 
 msgid "playing..."
 msgstr "playing..."
 
-#: src/enigma_main.cpp:4766
 
 msgid "Playlist"
 msgstr "Paskutiniai"
 
-#: src/enigma_main.cpp:97
 
 msgid "playlist/history next"
 msgstr ""
 
-#: src/enigma_main.cpp:98
 
 msgid "playlist/history prev"
 msgstr ""
 
-#: src/setupengrab.cpp:190
 
 msgid "Please check your NGrab Server or the IP"
 msgstr ""
 
-#: default.esml:796
 
 msgid "Please choose your DiSEqC-Configuration:"
 msgstr "Pasirinkite DiSEqC Konfigūraciją:"
 
-#: src/parentallock.cpp:22
 
 msgid "please enter pin:"
 msgstr "įveskite pin:"
 
-#: src/upgrade.cpp:116
 
 msgid "Please select the software version to upgrade to:"
 msgstr "Prašome pasirinkti softo versiją atnaujinimui:"
 
-#: src/upgrade.cpp:272
 
 msgid "Please select version to upgrade or LAME! to abort"
 msgstr ""
 
-#: src/setup_harddisk.cpp:327
 
 msgid "please wait while initializing harddisk.\nThis might take some minutes.\n"
 msgstr "Prašome palaukti kol formatuojamas kietas diskas.\nTai užtruks keliatą minučių.\n"
 
-#: src/enigma_main.cpp:1025
-#, c-format
 
 msgid "Please wait while the motor is turning to %d.%d%c ...."
 msgstr "Prašome palaukti, kol lėkštė juda į %d.%d%c ...."
 
-#: src/enigma_plugins.cpp:207
-#, c-format
 
 msgid "plugin '%s' not found"
 msgstr "priedas '%s' nerastas"
 
-#: src/setup_osd.cpp:252
 
 msgid "plugin offset"
 msgstr ""
 
-#: src/setup_osd.cpp:33
 
 msgid "PluginOffsetActions"
 msgstr "PluginOffsetActions"
 
-#: src/enigma_plugins.cpp:123
 
 msgid "Plugins"
 msgstr "Priedai"
 
-#: default.esml:540
 
 msgid "Polarity:"
 msgstr "Poliarizacija:"
 
-#: src/channelinfo.cpp:96
 
 msgid "Pop. Arts"
 msgstr "Populiarus Menas"
 
-#: src/rotorconfig.cpp:463
 
 msgid "position"
 msgstr "pozicija"
 
-#: src/channelinfo.cpp:87
 
 msgid "Pre-School"
 msgstr "Iki mokykliniams"
 
-#: src/channelinfo.cpp:97
 
 msgid "Press"
 msgstr "Spauda"
 
-#: default.esml:458
 
 msgid "press left or right to move motor"
 msgstr "spauskite kairėn arba dešinėn, kad pasukti lėkštę"
 
-#: default.esml:653
 
 msgid "press ok to change event name manually"
 msgstr "spauskite ok redagavimui"
 
-#: default.esml:778
 
 msgid "press ok to enter the name"
 msgstr "spauskite ok vardo įvedimui"
 
-#: src/satconfig.cpp:650
 
 msgid "press ok to goto LNB config"
 msgstr "spauskite ok, kad pereiti į LNB konfigūravimą"
 
-#: lib/gui/textinput.cpp:270
 
 msgid "press ok to leave edit mode, yellow=capslock"
 msgstr "spausti ok - išejimui iš redagavimo, geltoną = capslock"
 
-#: src/satconfig.cpp:668
 
 msgid "press ok to select another 22kHz mode"
 msgstr "spauskite ok 22kHz režimo parinkimui"
 
-#: src/enigma_main.cpp:5433
 
 msgid "press ok to select another day"
 msgstr "spauskite ok, kad pasirinkti dieną"
 
-#: default.esml:644
 
 msgid "press ok to select another event"
 msgstr "spauskite ok kito įvykio pasirinkimui"
 
-#: src/satconfig.cpp:681
 
 msgid "press ok to select another LNB Voltage mode"
 msgstr "spauskite ok LNB įtampos režimo parinkimui"
 
-#: src/enigma_main.cpp:5439
 
 msgid "press ok to select another month"
 msgstr "spauskite ok, kad pasirinkti mėnesį"
 
-#: src/satconfig.cpp:630
 
 msgid "press ok to select another satellite, or delete this satellite"
 msgstr "spauskite ok kito palydovo pasirinkimui, arba trynimui šio"
 
-#: src/enigma_main.cpp:5448
 
 msgid "press ok to select another year"
 msgstr "spauskite ok, kad pasirinkti metus"
 
-#: src/enigma_main.cpp:5329
 
 msgid "press ok to start edit mode"
 msgstr "spauskite ok redagavimui pradėti"
 
-#: src/wizard_language.cpp:155
 
 msgid "press up/down/ok"
 msgstr "naudoti aukštyn/žemyn/ok"
 
-#: default.esml:465
 
 msgid "prev page"
 msgstr "ankstesnis psl"
 
-#: default.esml:384
 
 msgid "prev. page"
 msgstr "ankst. psl"
 
-#: default.esml:684
 
 msgid "processor: "
 msgstr "procesorius:"
 
-#: src/enigma_info.cpp:233
 
 msgid "Processor: STB04500, 252MHz"
 msgstr "Procesorius:STB04500, 252MHz"
 
-#: src/enigma_info.cpp:236
 
 msgid "Processor: STBx25xx, 252MHz"
 msgstr "Procesorius: STBx25xx, 252MHz"
 
-#: src/enigma_info.cpp:227
 
 msgid "Processor: XPC823, 66MHz"
 msgstr "Procesorius: XPC823, 66MHz"
 
-#: src/enigma_info.cpp:230
 
 msgid "Processor: XPC823, 80MHz"
 msgstr "Procesorius: XPC823, 80MHz"
 
-#: default.esml:512
 
 msgid "Progress:"
 msgstr "Nuskanuota:"
 
-#: src/sselect.cpp:286
 
 msgid "Provider"
 msgstr "Operatorius"
 
-#: src/enigma_main.cpp:94
 
 msgid "quickzap next"
 msgstr ""
 
-#: src/enigma_main.cpp:95
 
 msgid "quickzap prev"
 msgstr ""
 
-#: lib/dvb/servicestructure.cpp:12
 
 msgid "Radio Mode"
 msgstr "Radio Režimas"
 
-#: src/enigma_mainmenu.cpp:50
 
 msgid "Radio mode"
 msgstr "Radio režimas"
 
-#: src/upgrade.cpp:490
 
 msgid "Ready to upgrade"
 msgstr "Atnaujinimui pasiruošta"
 
-#: src/timer.cpp:820
 
 msgid "Really delete this event?"
 msgstr "Ar tikrai ištrinti ši veiksmą?"
 
-#: src/enigma_main.cpp:3623
 
 msgid "Really do this?"
 msgstr "Ar tikrai tai daryti?"
 
-#: src/timer.cpp:826
 
 msgid "Really update this event?"
 msgstr "Ar atnaujinti šį veiksmą?"
 
-#: src/enigma_main.cpp:5139
 
 msgid "reboot now"
 msgstr "prekrauti dabar"
 
-#: src/rotorconfig.cpp:522
 
 msgid "recalc"
 msgstr ""
 
-#: default.esml:459
 
 msgid "Recalc Params:"
 msgstr "Perskaičiuoti Parametrus:"
 
-#: src/rotorconfig.cpp:467
 
 msgid "recalculate"
 msgstr "recalculate"
 
-#: src/rotorconfig.cpp:521
 
 msgid "recalculate all stored positions"
 msgstr ""
 
-#: src/rotorconfig.cpp:467
 
 msgid "recalculate stored positions rel. to current pos"
 msgstr ""
 
-#: src/enigma_main.cpp:110 src/enigma_main.cpp:2505
 
 msgid "record"
 msgstr "rašymas"
 
-#: chk_blue2.esml:318
 
 msgid "Record "
 msgstr "Rašymas"
 
-#: src/timer.cpp:1410
 
 msgid "record DVR"
 msgstr ""
 
-#: src/enigma_main.cpp:5246
 
 msgid "Record Menu"
 msgstr "Įrašų Meniu"
 
-#: src/enigma_main.cpp:1115
 
 msgid "recorded movies"
 msgstr "įrašyti filmai"
 
-#: default.esml:698
 
 msgid "recording duration:"
 msgstr "recording duration:"
 
-#: default.esml:724
 
 msgid "recording end time:"
 msgstr "įrašymo pabaigos laikas:"
 
-#: src/enigma_main.cpp:2661
 
 msgid "recording finished"
 msgstr "rašymas baigtas"
 
-#: src/parentallock.cpp:167
-#, c-format
 
 msgid "Reenter %s PIN"
 msgstr "Pakartokite %s PIN"
 
-#: src/enigma_info.cpp:328
 
 msgid "release"
 msgstr "release"
 
-#: src/channelinfo.cpp:96
 
 msgid "Religion"
 msgstr "Religija"
 
-#: src/channelinfo.cpp:100
 
 msgid "Remark. People"
 msgstr "Žymūs Žmonės"
 
-#: src/enigma_setup.cpp:107
 
 msgid "Remote Control..."
 msgstr "Distancinis Valdymas"
 
-#: src/setup_rc.cpp:38
 
 msgid "Remotecontrol Setup"
 msgstr "Distancinio Pulto Nustatymai"
 
-#: default.esml:439 default.esml:646 default.esml:810
 
 msgid "remove"
 msgstr "pašalinti"
 
-#: default.esml:485
 
 msgid "remove all services before scan"
 msgstr "ištrinti visus šio palydovo kanalus prieš skanavimą"
 
-#: default.esml:439
 
 msgid "remove selected entry"
 msgstr "ištrinti pasirinktą"
 
-#: default.esml:810
 
 msgid "remove selected satellite"
 msgstr "pašalinti pasirinktą palydovą"
 
-#: default.esml:332
 
 msgid "remove the selected Satellite"
 msgstr "trinti pasirinktą palydovą"
 
-#: src/timer.cpp:1009
 
 msgid "remove this entry from timer list"
 msgstr "pašalinti šį veiksmą iš taimerio"
 
-#: src/enigma_event.cpp:23
 
 msgid "remove this event from timer list"
 msgstr "pašalinti veiksmą iš taimerio sąrašo"
 
-#: src/enigma_main.cpp:5058 src/enigma_main.cpp:5062
 
 msgid "rename"
 msgstr "pervardinti"
 
-#: src/enigma_main.cpp:2964
 
 msgid "Rename bouquet"
 msgstr "Pervardinti paketą"
 
-#: src/enigma_main.cpp:3048
 
 msgid "Rename entry"
 msgstr "Pervardinti"
 
-#: src/setup_rc.cpp:54
 
 msgid "Repeat Delay:"
 msgstr "Kartojimo Vėlinimas:"
 
-#: src/setup_rc.cpp:49
 
 msgid "Repeat Rate:"
 msgstr "Kartojimas:"
 
-#: src/enigma_main.cpp:113
 
 msgid "repeat skipping forward"
 msgstr "prasukimo pirmyn kartojimas"
 
-#: src/enigma_main.cpp:117
 
 msgid "repeat skipping reverse"
 msgstr "prasukimo atgal kartojimas"
 
-#: default.esml:656
 
 msgid "Repeated timer"
 msgstr "Pasikartojantis taimeris"
 
-#: src/enigma_ci.cpp:415 src/enigma_ci.cpp:444
 
 msgid "Reset"
 msgstr "Resetas"
 
-#: src/enigma_ci.cpp:418 src/enigma_ci.cpp:447
 
 msgid "reset the Common Interface module"
 msgstr "resetuoti modulį"
 
-#: src/enigma_ci.cpp:530 src/enigma_ci.cpp:536
 
 msgid "resetting....please wait"
 msgstr "resetuojama....prašome palaukti"
 
-#: src/enigma_main.cpp:5136
 
 msgid "restart"
 msgstr "perkrauti"
 
-#: src/enigma_main.cpp:109
 
 msgid "resume playback"
 msgstr "įrašo paleidimas"
 
-#: src/setup_rfmod.cpp:21
 
 msgid "RF-Modulator Setup"
 msgstr "RF Moduliatoriaus nustatymai"
 
-#: src/setupvideo.cpp:48
 
 msgid "RGB"
 msgstr "RGB"
 
-#: src/channelinfo.cpp:92
 
 msgid "Rock/Pop"
 msgstr "Rock/Pop"
 
-#: src/channelinfo.cpp:71
 
 msgid "Romance"
 msgstr "Romantika"
 
-#: src/sselect.cpp:293
 
 msgid "Root"
 msgstr "Root"
 
-#: lib/dvb/servicestructure.cpp:10
 
 msgid "root node"
 msgstr "root node"
 
-#: default.esml:662
 
 msgid "Sa"
 msgstr "Palydovas"
 
-#: default.esml:807
 
 msgid "sat"
 msgstr "Palydovas"
 
-#: src/timer.cpp:29
 
 msgid "Sat"
 msgstr "Šeš"
 
-#: default.esml:325
 
 msgid "Sat/Position"
 msgstr "Sat/Position"
 
-#: src/scan.cpp:794
 
 msgid "Satellite"
 msgstr "palydovą"
 
-#: default.esml:323
 
 msgid "Satellite Configuration"
 msgstr "Palydovų Konfigūravimas"
 
-#: default.esml:452 default.esml:532 src/rotorconfig.cpp:599
 
 msgid "Satellite:"
 msgstr "Palydovas"
 
-#: lib/dvb/servicedvb.cpp:561 lib/dvb/servicedvb.cpp:565 src/sselect.cpp:285
 
 msgid "Satellites"
 msgstr "Palydovai"
 
-#: src/enigma_scan.cpp:46
 
 msgid "Satellites..."
 msgstr "Palydovai"
 
-#: default.esml:391 src/enigma_info.cpp:49
 
 msgid "Satfind"
 msgstr "Signalas"
 
-#: default.esml:662 src/timer.cpp:27
 
 msgid "Saturday"
 msgstr "Šeštadienis"
 
-#: default.esml:354 default.esml:385 default.esml:441 default.esml:524
-#: default.esml:780 src/setup_lcd.cpp:107 src/setup_osd.cpp:263
-#: src/setup_rc.cpp:122 src/setupnetwork.cpp:99 src/setupvideo.cpp:77
-#: src/setup_rfmod.cpp:124 src/setup_audio.cpp:36 src/tpeditwindow.cpp:60
-#: src/parentallock.cpp:83 src/setupengrab.cpp:97 src/setup_timezone.cpp:48
 
 msgid "save"
 msgstr "Išsaugoti"
 
-#: src/tpeditwindow.cpp:139
 
 msgid "Save changed Transponders?"
 msgstr "Išsaugoti pakeitimus paketuose?"
 
-#: default.esml:385
 
 msgid "save changes"
 msgstr "išsaugoti pakeitimus"
 
-#: default.esml:780
 
 msgid "save changes and close window"
 msgstr "išsaugoti pakeitimus ir išeiti"
 
-#: default.esml:524 src/setup_lcd.cpp:112 src/setup_osd.cpp:268
-#: src/setup_rc.cpp:127 src/setupnetwork.cpp:104 src/setupvideo.cpp:82
-#: src/setup_audio.cpp:41 src/tpeditwindow.cpp:63 src/parentallock.cpp:88
-#: src/setupengrab.cpp:102 src/setup_timezone.cpp:53
 
 msgid "save changes and return"
 msgstr "išsagoti pakeitimus ir grįžti"
 
-#: default.esml:354
 
 msgid "save changes and use current selected LNB for the chosen satellite"
 msgstr "išsaugoti pakeitimus ir naudoti šią LNB pasirinktam palydovui"
 
-#: default.esml:441
 
 msgid "save changes and use the selected LNB (in first page) for the choosen satellite"
 msgstr "išsaugoti pakeitimus ir naudoti pasirinktą LNB (pirmam puslapy) pasirinktam palydovui"
 
-#: default.esml:674
 
 msgid "save data and close window"
 msgstr "išsaugoti pakeitimus ir išeiti"
 
-#: default.esml:466
 
 msgid "save in motor"
 msgstr "išsaugoti pozicionieriuje"
 
-#: src/setup_rfmod.cpp:130
 
 msgid "save settings and leave rf setup"
 msgstr ""
 
-#: src/setup_osd.cpp:36
 
 msgid "saves the current positions"
 msgstr ""
 
-#: default.esml:675
 
 msgid "scan EPG"
 msgstr "skanuoti EPG"
 
-#: src/scan.cpp:795
 
 msgid "Scan finished"
 msgstr "Skanavimas baigtas"
 
-#: src/scan.cpp:791
 
 msgid "Scan is in finished, press ok to close window"
 msgstr "Skanavimas baigtas, pabaigai spauskite ok"
 
-#: src/scan.cpp:771
 
 msgid "Scan is in progress... please wait"
 msgstr "Skanuojama, prašome palaukti"
 
-#: default.esml:507
 
 msgid "scanning..."
 msgstr "skanuojama..."
 
-#: src/channelinfo.cpp:87
 
 msgid "School"
 msgstr "Mokykla"
 
-#: src/channelinfo.cpp:70
 
 msgid "SciFi"
 msgstr "Moksliniai"
 
-#: src/streaminfo.cpp:601
 
 msgid "Scrambled system information (left, right)"
 msgstr "Kodavimo sistemų informacija (kairėn/dešinėn)"
 
-#: default.esml:467
 
 msgid "search"
 msgstr "paieška"
 
-#: default.esml:675
 
 msgid "search event name for this beg-/end time in epg"
 msgstr "paieška pavadinimo laikui gide"
 
-#: src/scan.cpp:417
 
 msgid "Search in progress "
 msgstr "Skanuojama"
 
-#: src/enigma_main.cpp:132
 
 msgid "seek to next index mark"
 msgstr "seek to next index mark"
 
-#: src/enigma_main.cpp:133
 
 msgid "seek to previous index mark"
 msgstr "seek to previous index mark"
 
-#: default.esml:666 default.esml:670
 
 msgid "select day (ok)"
 msgstr "pasirinkite dieną (ok)"
 
-#: default.esml:364
 
 msgid "select DiSEqC mode (ok)"
 msgstr "pasirinkti DiSEqC režimą (ok)"
 
-#: default.esml:366
 
 msgid "select DiSEqC parameter (ok)"
 msgstr "pasirinkti DiSqC parametrą"
 
-#: default.esml:368
 
 msgid "select DiSEqC repeats (ok)"
 msgstr "DiSEqC kartojimo pasirinkimas (ok)"
 
-#: default.esml:748
 
 msgid "select filsystem to format"
 msgstr "pasirinkite failų sistemą formatavimui"
 
-#: src/enigma_scan.cpp:183
 
 msgid "Select LNB"
 msgstr "Select LNB"
 
-#: default.esml:362
 
 msgid "select MiniDiSEqC parameter (ok)"
 msgstr "pasirinkite MiniDiSEqC parametrą (ok)"
 
-#: default.esml:665 default.esml:669
 
 msgid "select month (ok)"
 msgstr "pasirinkite mėnesį (ok)"
 
-#: src/enigma_plugins.cpp:128
 
 msgid "select plugin and press ok"
 msgstr "pasirinkite priedą ir spauskite ok"
 
-#: default.esml:807
 
 msgid "select sat ( up/down )"
 msgstr "pasirinkite palydovą (aukštyn/žemyn)"
 
-#: default.esml:523
 
 msgid "select skin and press ok or choose save"
 msgstr "pasirinkite skiną ir spauskite ok, kad išsaugoti "
 
-#: default.esml:672
 
 msgid "select the timer type (ok)"
 msgstr "pasirinkite taimerio tipą (ok)"
 
-#: default.esml:370
 
 msgid "select uncommitted input"
 msgstr "naudoti uncommitted input"
 
-#: default.esml:375
 
 msgid "select Uncommitted Switch 1 option"
 msgstr "pasirinkite Uncommitted Switch 1 opciją"
 
-#: default.esml:377
 
 msgid "select Uncommitted Switch 2 option"
 msgstr "pasirinkti Uncommitted Switch 2 opciją"
 
-#: default.esml:379
 
 msgid "select Uncommitted Switch 3 option"
 msgstr "nustatykite Uncommitted Switch 3 opciją"
 
-#: default.esml:381
 
 msgid "select Uncommitted Switch 4 option"
 msgstr "pasirinkite Uncommitted Switch 4 opciją"
 
-#: src/satconfig.cpp:1071
 
 msgid "select uncommitted switch Input 1"
 msgstr "select uncommitted switch Input 1"
 
-#: src/satconfig.cpp:1080
 
 msgid "select uncommitted switch Input 10"
 msgstr "select uncommitted switch Input 10"
 
-#: src/satconfig.cpp:1081
 
 msgid "select uncommitted switch Input 11"
 msgstr "select uncommitted switch Input 11"
 
-#: src/satconfig.cpp:1082
 
 msgid "select uncommitted switch Input 12"
 msgstr "select uncommitted switch Input 12"
 
-#: src/satconfig.cpp:1083
 
 msgid "select uncommitted switch Input 13"
 msgstr "select uncommitted switch Input 13"
 
-#: src/satconfig.cpp:1084
 
 msgid "select uncommitted switch Input 14"
 msgstr "select uncommitted switch Input 14"
 
-#: src/satconfig.cpp:1085
 
 msgid "select uncommitted switch Input 15"
 msgstr "select uncommitted switch Input 15"
 
-#: src/satconfig.cpp:1086
 
 msgid "select uncommitted switch Input 16"
 msgstr "select uncommitted switch Input 16"
 
-#: src/satconfig.cpp:1072
 
 msgid "select uncommitted switch Input 2"
 msgstr "select uncommitted switch Input 2"
 
-#: src/satconfig.cpp:1073
 
 msgid "select uncommitted switch Input 3"
 msgstr "select uncommitted switch Input 3"
 
-#: src/satconfig.cpp:1074
 
 msgid "select uncommitted switch Input 4"
 msgstr "select uncommitted switch Input 4"
 
-#: src/satconfig.cpp:1075
 
 msgid "select uncommitted switch Input 5"
 msgstr "select uncommitted switch Input 5"
 
-#: src/satconfig.cpp:1076
 
 msgid "select uncommitted switch Input 6"
 msgstr "select uncommitted switch Input 6"
 
-#: src/satconfig.cpp:1077
 
 msgid "select uncommitted switch Input 7"
 msgstr "select uncommitted switch Input 7"
 
-#: src/satconfig.cpp:1078
 
 msgid "select uncommitted switch Input 8"
 msgstr "select uncommitted switch Input 8"
 
-#: src/satconfig.cpp:1079
 
 msgid "select uncommitted switch Input 9"
 msgstr "select uncommitted switch Input 9"
 
-#: default.esml:664 default.esml:668
 
 msgid "select year (ok)"
 msgstr "pasirinkite metus (ok)"
 
-#: src/setup_rc.cpp:79
 
 msgid "select your favourite RC style (ok)"
 msgstr "pasirinkite favoritų RC stilių (ok)"
 
-#: src/setup_timezone.cpp:30
 
 msgid "select your time zone (ok)"
 msgstr "pasirinkite savo laiko juostą (ok)"
 
-#: src/enigma_ci.cpp:225
 
 msgid "send data to CI"
 msgstr "siūsti duomenis į modulį"
 
-#: default.esml:374
 
 msgid "send no DiSEqC when only Hi/Lo or H/V changes"
 msgstr "nesiūsti DiSEqC komandos pasikeitus tik Hi/Lo ar H/V"
 
-#: src/enigma_ci.cpp:427 src/enigma_ci.cpp:456
 
 msgid "send the ca-pmt to CI"
 msgstr ""
 
-#: default.esml:372
 
 msgid "send the complete DiSEqC sequence dupe"
 msgstr "siusti pilną DiSEqC komandą du kartus"
 
-#: src/satconfig.cpp:1034
 
 msgid "sends DiSEqC cmd A/A"
 msgstr "sends DiSEqC cmd A/A"
 
-#: src/satconfig.cpp:1035
 
 msgid "sends DiSEqC cmd A/B"
 msgstr "sends DiSEqC cmd A/B"
 
-#: src/satconfig.cpp:1036
 
 msgid "sends DiSEqC cmd B/A"
 msgstr "sends DiSEqC cmd B/A"
 
-#: src/satconfig.cpp:1037
 
 msgid "sends DiSEqC cmd B/B"
 msgstr "sends DiSEqC cmd B/B"
 
-#: src/satconfig.cpp:1015
 
 msgid "sends modulated tone burst"
 msgstr "sends modulated tone burst"
 
-#: src/satconfig.cpp:1038
 
 msgid "sends no committed DiSEqC cmd"
 msgstr "sends no committed DiSEqC cmd"
 
-#: src/satconfig.cpp:1060
 
 msgid "sends no DiSEqC repeats"
 msgstr "sends no DiSEqC repeats"
 
-#: src/satconfig.cpp:1014
 
 msgid "sends no tone burst"
 msgstr "sends no tone burst"
 
-#: src/satconfig.cpp:1070
 
 msgid "sends no uncommitted switch command"
 msgstr "sends no uncommitted switch command"
 
-#: src/satconfig.cpp:1061
 
 msgid "sends one repeat"
 msgstr "pakartoti vieną kartą"
 
-#: src/satconfig.cpp:1039
 
 msgid "sends switch cmd 1"
 msgstr "sends switch cmd 1"
 
-#: src/satconfig.cpp:1048
 
 msgid "sends switch cmd 10"
 msgstr "sends switch cmd 10"
 
-#: src/satconfig.cpp:1049
 
 msgid "sends switch cmd 11"
 msgstr "sends switch cmd 11"
 
-#: src/satconfig.cpp:1050
 
 msgid "sends switch cmd 12"
 msgstr "sends switch cmd 12"
 
-#: src/satconfig.cpp:1051
 
 msgid "sends switch cmd 13"
 msgstr "sends switch cmd 13"
 
-#: src/satconfig.cpp:1052
 
 msgid "sends switch cmd 14"
 msgstr "sends switch cmd 14"
 
-#: src/satconfig.cpp:1053
 
 msgid "sends switch cmd 15"
 msgstr "sends switch cmd 15"
 
-#: src/satconfig.cpp:1054
 
 msgid "sends switch cmd 16"
 msgstr "sends switch cmd 16"
 
-#: src/satconfig.cpp:1040
 
 msgid "sends switch cmd 2"
 msgstr "sends switch cmd 2"
 
-#: src/satconfig.cpp:1041
 
 msgid "sends switch cmd 3"
 msgstr "sends switch cmd 3"
 
-#: src/satconfig.cpp:1042
 
 msgid "sends switch cmd 4"
 msgstr "sends switch cmd 4"
 
-#: src/satconfig.cpp:1043
 
 msgid "sends switch cmd 5"
 msgstr "sends switch cmd 5"
 
-#: src/satconfig.cpp:1044
 
 msgid "sends switch cmd 6"
 msgstr "sends switch cmd 6"
 
-#: src/satconfig.cpp:1045
 
 msgid "sends switch cmd 7"
 msgstr "sends switch cmd 7"
 
-#: src/satconfig.cpp:1046
 
 msgid "sends switch cmd 8"
 msgstr "sends switch cmd 8"
 
-#: src/satconfig.cpp:1047
 
 msgid "sends switch cmd 9"
 msgstr "sends switch cmd 9"
 
-#: src/satconfig.cpp:1063
 
 msgid "sends three repeats"
 msgstr "pakartoti tris kartus"
 
-#: src/satconfig.cpp:1062
 
 msgid "sends two repeats"
 msgstr "pakartoti du kartus"
 
-#: src/satconfig.cpp:1016
 
 msgid "sends unmodulated tone burst"
 msgstr "sends unmodulated tone burst"
 
-#: src/timer.cpp:24
 
 msgid "September"
 msgstr "Rugsėjis"
 
-#: default.esml:372
 
 msgid "Sequence repeat"
 msgstr "Kartojimas"
 
-#: src/channelinfo.cpp:71
 
 msgid "Serious"
 msgstr "Rimta"
 
-#: src/enigma_main.cpp:4276 src/enigma_main.cpp:4277
 
 msgid "Service could not be found !"
 msgstr "Kanalas Nerastas!"
 
-#: src/streaminfo.cpp:600
 
 msgid "Service information (right)"
 msgstr "Kanalo informacija (dešinėn)"
 
-#: src/enigma_main.cpp:100
 
 msgid "service list and down"
 msgstr "kanalų sarašas ir žemyn"
 
-#: src/enigma_main.cpp:101
 
 msgid "service list and up"
 msgstr "kanalų sarašas ir aukštyn"
 
-#: src/enigma_main.cpp:5042
 
 msgid "Service Menu"
 msgstr "Serviso Meniu"
 
-#: src/sselect.cpp:42
 
 msgid "service selector"
 msgstr "kanalų sąrašas"
 
-#: default.esml:593 default.esml:605 default.esml:617
 
 msgid "Services"
 msgstr "Kanalai"
 
-#: default.esml:508
 
 msgid "services scanned     :"
 msgstr "nuskanuota servizų:"
 
-#: default.esml:703 default.esml:716 default.esml:729 src/enigma_main.cpp:5458
 
 msgid "set"
 msgstr "nustatyti"
 
-#: src/rotorconfig.cpp:468
 
 msgid "set east limit"
 msgstr "nustatyti rytų limitą"
 
-#: src/rotorconfig.cpp:468
 
 msgid "set east soft limit"
 msgstr "nustatyti tikslų rytų limitą"
 
-#: src/setup_lcd.cpp:81
 
 msgid "set LCD brightness ( left / right )"
 msgstr "LCD šviesumo nustatymas (kairėn/dešinėn)"
 
-#: src/setup_lcd.cpp:95
 
 msgid "set LCD brightness for Standby Mode ( left / right )"
 msgstr "LCD šviesumo nustatymas budinčiam režimui (kairėn/ dešinėn)"
 
-#: src/setup_lcd.cpp:88
 
 msgid "set LCD contrast ( left / right )"
 msgstr "LCD kontrasto nustatymas (kairėn/dešinėn)"
 
-#: src/enigma_main.cpp:5464
 
 msgid "set new time and close window"
 msgstr "nustatyti naują laiką ir išeiti"
 
-#: src/setup_rc.cpp:69
 
 msgid "set RC repeat delay ( left / right )"
 msgstr "RC komandų kartojimo vėlavimo nustatymas (kairėn/dešinėn)"
 
-#: src/setup_rc.cpp:62
 
 msgid "set RC repeat rate ( left / right )"
 msgstr "pulto komandų kartojimo intensyvumo nustatymas (kairėn/dešinėn)"
 
-#: src/enigma_main.cpp:5254
 
 msgid "set record duration"
 msgstr "nustatytikite rašymo trukmę"
 
-#: src/enigma_main.cpp:5255
 
 msgid "set record stop time"
 msgstr "nustatykite rašymo pabaigos laiką"
 
-#: default.esml:703 default.esml:729
 
 msgid "set recording end time and close window (ok)"
 msgstr "nustatyti rašymo pabaigos laiką ir išeiti (ok) "
 
-#: default.esml:710
-
-msgid "Set Sleeptimer"
-msgstr "Nustatyti Sleep Taimerį"
-
-#: src/enigma_main.cpp:5141
 
 msgid "set sleeptimer"
 msgstr "miego taimerio nustatymas"
 
-#: default.esml:716
+
+msgid "Set Sleeptimer"
+msgstr "Nustatyti Sleep Taimerį"
+
 
 msgid "set sleeptimer and close window (ok)"
 msgstr "nustatyti sleep taimerį ir išeiti (ok)"
 
-#: src/timer.cpp:919
 
 msgid "Set Stop Time"
 msgstr "Pabaiga"
 
-#: src/setup_osd.cpp:253
 
 msgid "set the pluging offset coordinates (tuxtxt, a.o. )"
 msgstr ""
 
-#: src/rotorconfig.cpp:469
 
 msgid "set west limit"
 msgstr "nustatyti vakarų limitą"
 
-#: src/rotorconfig.cpp:469
 
 msgid "set west soft limit"
 msgstr "nustatyti tikslų vakarų limitą"
 
-#: src/enigma_mainmenu.cpp:63 src/enigma_mainmenu.cpp:81
-#: src/enigma_setup.cpp:53
-
-msgid "Setup"
-msgstr "Nustatymai"
-
-#: src/enigma_mainmenu.cpp:209 src/parentallock.cpp:132
-#: src/parentallock.cpp:144
 
 msgid "setup"
 msgstr "nustatymai"
 
-#: src/parentallock.cpp:66
+
+msgid "Setup"
+msgstr "Nustatymai"
+
 
 msgid "Setup lock"
 msgstr "Nustatymų užraktas"
 
-#: src/channelinfo.cpp:109
 
 msgid "Shopping"
 msgstr "Pirkiniai"
 
-#: src/channelinfo.cpp:78
 
 msgid "Show"
 msgstr "Šou"
 
-#: src/sselect.cpp:59
 
 msgid "show all services"
 msgstr "rodyti visus kanalus"
 
-#: src/enigma_main.cpp:87
 
 msgid "show audio selector"
 msgstr "rodyti audio selektorių"
 
-#: src/enigma_info.cpp:47
 
 msgid "Show BN version"
 msgstr "Rodyti BN versiją"
 
-#: src/setup_osd.cpp:199
 
 msgid "Show Console on Framebuffer"
 msgstr ""
 
-#: src/enigma_main.cpp:90
 
 msgid "show epg schedule list"
 msgstr ""
 
-#: src/setup_osd.cpp:191
 
 msgid "Show event remaining time"
 msgstr ""
 
-#: default.esml:747
 
 msgid "show extended configuration"
 msgstr "rodyti išplėstinę konfigūraciją"
 
-#: src/enigma_main.cpp:91
 
 msgid "show extended info"
 msgstr "rodyti išplėstą informaciją"
 
-#: src/enigma_main.cpp:89
 
 msgid "show extension Plugins"
 msgstr ""
 
-#: src/enigma_main.cpp:82
 
 msgid "show infobar"
 msgstr "rodyti infobarą"
 
-#: src/enigma_main.cpp:84
 
 msgid "show infobar or EPG"
 msgstr "rodyti infobarą arba EPG"
 
-#: src/enigma_main.cpp:76
 
 msgid "show main menu"
 msgstr "rodyti pagrindinį meniu"
 
-#: src/setup_osd.cpp:183
 
 msgid "Show OSD on EIT Update"
 msgstr ""
 
-#: src/sselect.cpp:61
 
 msgid "show providers"
 msgstr "rodyti operatorius"
 
-#: src/enigma_main.cpp:2661
 
 msgid "Show recorded movies?"
 msgstr "Rodyti įrašytus filmus?"
 
-#: src/sselect.cpp:60
 
 msgid "show satellites"
 msgstr "rodyti palydovus"
 
-#: src/enigma_main.cpp:85
 
 msgid "show service selector"
 msgstr "rodyti kanalų selektorių"
 
-#: src/sselect.cpp:47
 
 msgid "show service selector menu"
 msgstr "rodyti kanalų sąrašo meniu"
 
-#: src/enigma_main.cpp:86
 
 msgid "show subservices/NVOD"
 msgstr ""
 
-#: src/enigma_info.cpp:47
 
 msgid "show the Current Version of the Betanova FW"
 msgstr "show the Current Version of the Betanova FW"
 
-#: src/sselect.cpp:62
 
 msgid "show user bouquets"
 msgstr "rodyti savus paketus"
 
-#: src/enigma_main.cpp:88
 
 msgid "show Videotext"
 msgstr "rodyti Vidotekstą"
 
-#: src/setup_osd.cpp:186
 
 msgid "shows OSD when now/next info is changed"
 msgstr ""
 
-#: src/sselect.cpp:46
 
 msgid "shows the EPG selector for the highlighted channel"
 msgstr "shows the EPG selector for the highlighted channel"
 
-#: src/setup_osd.cpp:202
 
 msgid "shows the linux console on TV"
 msgstr "rodyti linux konsolę TV ekrane"
 
-#: src/setup_osd.cpp:194
 
 msgid "shows the remaining time for current event (total otherwise)"
 msgstr ""
 
-#: src/enigma_info.cpp:49
 
 msgid "shows the satfinder"
 msgstr "rodyti signalų lygius"
 
-#: src/enigma_mainmenu.cpp:60
 
 msgid "Shutdown"
 msgstr "Išjungimas"
 
-#: default.esml:701 default.esml:714 default.esml:727
 
 msgid "shutdown  "
 msgstr "išjungimas"
 
-#: src/enigma_main.cpp:5135
 
 msgid "shutdown now"
 msgstr "išjungti dabar"
 
-#: default.esml:701 default.esml:727
 
 msgid "shutdown the box after recording (ok)"
 msgstr "pilnai išjungti po įrašymo (ok)"
 
-#: default.esml:714
 
 msgid "shutdown the box to deepstandby (ok)"
 msgstr "išjungti dreambox į gilų budintį (ok)"
 
-#: src/enigma_main.cpp:5126
 
 msgid "Shutdown/Standby Menu"
 msgstr "Išjungimo/Budėjimo Meniu"
 
-#: src/enigma_main.cpp:2347
 
 msgid "ShutdownTimer"
 msgstr "Išjungimo Taimeris"
 
-#: src/enigma_setup.cpp:212
 
 msgid "Skin changed"
 msgstr "Skinas pakeistas"
 
-#: default.esml:521
 
 msgid "Skin Selector"
 msgstr "Skinų Pasirikimas"
 
-#: src/enigma_setup.cpp:108
 
 msgid "Skin..."
 msgstr "Skinai"
 
-#: default.esml:522
 
 msgid "Skins:"
 msgstr "Skinai:"
 
-#: src/enigma_main.cpp:2347
 
 msgid "SleepTimer"
 msgstr "Miego Taimeris"
 
-#: default.esml:577
 
 msgid "SNR"
 msgstr "SNR"
 
-#: default.esml:392
 
 msgid "SNR:"
 msgstr "SNR:"
 
-#: src/channelinfo.cpp:71
 
 msgid "Soap"
 msgstr "Muilas"
 
-#: src/channelinfo.cpp:100
 
 msgid "Soc. Mag."
 msgstr "Soc. Mag."
 
-#: src/channelinfo.cpp:100
 
 msgid "Social"
 msgstr "Social"
 
-#: default.esml:764
 
 msgid "Software upgrade..."
 msgstr "Softo Atnaujinimas"
 
-#: default.esml:689
 
 msgid "Software Version:"
 msgstr "Softo Versija:"
 
-#: src/setup_harddisk.cpp:521
 
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 
-#: src/setup_harddisk.cpp:543
 
 msgid "sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
 msgstr "sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
 
-#: src/setup_harddisk.cpp:337
 
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
 msgstr "Atsiprašome, nerasta sfdisk programa formatavimui."
 
-#: src/enigma_setup.cpp:290
 
 msgid "sorry, no harddisks found!"
 msgstr "Kietas diskas nerastas!"
 
-#: src/timer.cpp:1775
 
 msgid "Sorry, you can not add a time shifted service manually to the timer.\nPlease close the Timer and use the EPG of the service you wish to add!"
 msgstr "Sorry, you can not add a time shifted service manually to the timer.\nPlease close the Timer and use the EPG of the service you wish to add!"
 
-#: src/enigma_main.cpp:2843
 
 msgid "Sorry, you cannot delete this service."
 msgstr "Atsiprašome, jūs negalite tai ištrinti."
 
-#: src/enigma_main.cpp:2505
 
 msgid "Sorry, you cannot record this service."
 msgstr "Atsiprašome, jūs negalite tai įrašyti."
 
-#: src/setup_rfmod.cpp:36
 
 msgid "Sound enable"
 msgstr ""
 
-#: src/rotorconfig.cpp:73
 
 msgid "South"
 msgstr "Pietūs"
 
-#: src/satconfig.cpp:63
 
 msgid "special"
 msgstr "special"
 
-#: src/channelinfo.cpp:82
 
 msgid "Special Event"
 msgstr "Specialūs Įvykiai"
 
-#: src/channelinfo.cpp:104
 
 msgid "Spiritual"
 msgstr "Religija"
 
-#: src/channelinfo.cpp:82
 
 msgid "Sports"
 msgstr "Sportas"
 
-#: src/channelinfo.cpp:82
 
 msgid "Sports Mag."
 msgstr "Sporto Parduotuvės"
 
-#: default.esml:702 default.esml:715 default.esml:728
 
 msgid "standby  "
 msgstr "budintis"
 
-#: src/setup_lcd.cpp:73
 
 msgid "Standby:"
 msgstr "Budinčiame:"
 
-#: src/engrab.cpp:206
 
 msgid "start manual recording"
 msgstr "pradėti rankinį rašymą"
 
-#: src/engrab.cpp:206
 
 msgid "start recording"
 msgstr "pradėti rašymą"
 
-#: default.esml:487 default.esml:500
 
 msgid "start scan"
 msgstr "pradėti skanavimą"
 
-#: src/enigma_main.cpp:112
 
 msgid "start skipping forward"
 msgstr "prasukimas pirmyn su vaizdu"
 
-#: src/enigma_main.cpp:116
 
 msgid "start skipping reverse"
 msgstr "prasukimo atgal su vaizdu"
 
-#: default.esml:487
 
 msgid "start the transponder scan"
 msgstr "pradėti transponderių skanavimą"
 
-#: default.esml:500
 
 msgid "starts the transponder scan"
 msgstr "pradėti transponderių skanavimą"
 
-#: default.esml:654
 
 msgid "Starttime"
 msgstr "Pradžia"
 
-#: default.esml:755
 
 msgid "status output:"
 msgstr "status output:"
 
-#: default.esml:743
 
 msgid "status:"
 msgstr "būsena:"
 
-#: chk_blue2.esml:317
 
 msgid "Stop "
 msgstr "Stop"
 
-#: src/engrab.cpp:207
 
 msgid "stop manual recording"
 msgstr "sustabdyti rankinį rašymą"
 
-#: src/rotorconfig.cpp:389
 
 msgid "stop Motor drive East"
 msgstr ""
 
-#: src/rotorconfig.cpp:392
 
 msgid "stop Motor drive West"
 msgstr ""
 
-#: src/enigma_main.cpp:107
 
 msgid "stop playback"
 msgstr "sustabdymas"
 
-#: default.esml:697 default.esml:723
 
 msgid "Stop Record"
 msgstr "Sustabdyti Rašymą"
 
-#: src/enigma_main.cpp:5253
 
 msgid "stop record now"
 msgstr "sustabdyti rašymą dabar"
 
-#: src/engrab.cpp:207
 
 msgid "stop recording"
 msgstr "sustabdyti rašymą"
 
-#: src/enigma_main.cpp:114
 
 msgid "stop skipping forward"
 msgstr "prasukimo pirmyn sustabdymas"
 
-#: src/enigma_main.cpp:118
 
 msgid "stop skipping reverse"
 msgstr "prasukimo atgal sustabdymas"
 
-#: src/rotorconfig.cpp:847
 
 msgid "Storage Location:"
 msgstr "Atminties Vieta:"
 
-#: src/rotorconfig.cpp:510 src/rotorconfig.cpp:526 src/rotorconfig.cpp:530
-#: src/rotorconfig.cpp:859
 
 msgid "store"
 msgstr "išsaugoti"
 
-#: src/rotorconfig.cpp:921
-#, c-format
 
 msgid "Store %d.%d%c at location %d.\nIf you want another location, then say no and change the location manually.\nAre you sure you want to store at this location?"
 msgstr ""
 
-#: src/rotorconfig.cpp:525
 
 msgid "store current pos as east soft limit"
 msgstr ""
 
-#: src/rotorconfig.cpp:529
 
 msgid "store current pos as west soft limit"
 msgstr ""
 
-#: src/rotorconfig.cpp:509
 
 msgid "store current pos in motor"
 msgstr "išsaugoti šią poziciją pozicionieriuje"
 
-#: src/rotorconfig.cpp:463
 
 msgid "store new sat positions"
 msgstr ""
 
-#: src/enigma_info.cpp:45
 
 msgid "Streaminfo"
 msgstr "Srauto Informacija"
 
-#: src/sselect.cpp:300
 
 msgid "Style"
 msgstr "Stilius"
 
-#: default.esml:663
 
 msgid "Su"
 msgstr "Sek"
 
-#: stone.esml:463 silver.esml:470
 
 msgid "subservices"
 msgstr "subkanalai"
 
-#: src/setup_harddisk.cpp:390
 
 msgid "successfully formatted your disk!"
 msgstr "Jūsų diskas pilnai suformatuotas!"
 
-#: src/timer.cpp:28
 
 msgid "Sun"
 msgstr "Sek"
 
-#: default.esml:663 src/timer.cpp:26
 
 msgid "Sunday"
 msgstr "Sekmadienis"
 
-#: src/streaminfo.cpp:436
 
 msgid "supported coding systems:"
 msgstr "palaikomos kodavimo sistemos:"
 
-#: src/setupvideo.cpp:49
 
 msgid "SVideo"
 msgstr "SVideo"
 
-#: default.esml:373
 
 msgid "Swap Commands"
 msgstr "Mainyti Komandas"
 
-#: default.esml:373
 
 msgid "swaps normal and opt.Switch DiSEqC Cmds"
 msgstr "sukeisti normalias ir Switch DiSEqC komandas"
 
-#: src/enigma_main.cpp:4272 src/enigma_main.cpp:4277 src/enigma_main.cpp:4287
-#: src/enigma_main.cpp:4295 src/enigma_main.cpp:4302 src/enigma_main.cpp:4307
-#: src/enigma_main.cpp:4313 src/timer.cpp:1408
 
 msgid "switch"
 msgstr "perjungti"
 
-#: src/enigma_main.cpp:127 src/sselect.cpp:53
 
 msgid "switch to File mode"
 msgstr "perjungti į File režimą"
 
-#: src/sselect.cpp:43
 
 msgid "switch to next bouquet"
 msgstr "perjungti į sekantį paketą"
 
-#: src/sselect.cpp:44
 
 msgid "switch to previous bouquet"
 msgstr "perjungti į ankstesnį paketą"
 
-#: src/enigma_main.cpp:126 src/sselect.cpp:52
 
 msgid "switch to Radio mode"
 msgstr "perjungti į Radio režimą"
 
-#: src/enigma_main.cpp:125 src/sselect.cpp:51
 
 msgid "switch to TV mode"
 msgstr "perjungti į TV režimą"
 
-#: default.esml:545
 
 msgid "Symbol Rate:"
 msgstr "Simbolių Greitis:"
 
-#: default.esml:557
 
 msgid "Symbolrate:"
 msgstr "Simbolių Greitis:"
 
-#: default.esml:406 default.esml:581
 
 msgid "SYNC"
 msgstr "SYNC"
 
-#: src/streaminfo.cpp:473
 
 msgid "Systems used in service:"
 msgstr "Sistemos naudojamos kanalui:"
 
-#: src/channelinfo.cpp:78
 
 msgid "Talk"
 msgstr "Pokalbiai"
 
-#: src/channelinfo.cpp:82
 
 msgid "Team Sports"
 msgstr "Komandinis Sportas"
 
-#: src/channelinfo.cpp:104
 
 msgid "Technology"
 msgstr "Technologijos"
 
-#: src/channelinfo.cpp:82
 
 msgid "Tennis"
 msgstr "Tenisas"
 
-#: src/setup_rfmod.cpp:26 src/setup_rfmod.cpp:167
 
 msgid "Test Pattern"
 msgstr "Testinis Pavyzdys"
 
-#: src/timer.cpp:919
 
 msgid "The Endtime overlaps with another event in the timerlist"
 msgstr ""
 
-#: src/parentallock.cpp:252
 
 msgid "The entered PIN is incorrect.\nDo you want to retry?"
 msgstr ""
 
-#: src/upgrade.cpp:613
 
 msgid "The following new features were added in this release:\n"
 msgstr ""
 
-#: src/parentallock.cpp:175
 
 msgid "The PINs are not equal!\n\nDo you want to retry?"
 msgstr "PINai yra skirtingi!\n\nBandysite dar kartelį?"
 
-#: src/scan.cpp:775
-#, c-format
 
 msgid "The transponder scan has finished and found \n   %i new Transponders,\n   %i new TV Services,\n   %i new Radio Services and\n   %i new Data Services.\n%i Transponders within %i Services scanned."
 msgstr "Paketų skanavimas baigtas ir rasta:\n %i naujų paketų,\n %i naujų TV kanalų,\n %i naujų Radio kanalų\n %i naujų Dumenų kanalų.\n%i paketų su %i kanalų nuskanuota. "
 
-#: src/setup_harddisk.cpp:305
 
 msgid "There's data on this harddisk.\nYou will lose that data. Proceed?"
 msgstr "Kietame diske yra duomeys.\nFormatuojant jie bus prarasti. Tęsti?"
 
-#: src/enigma_main.cpp:4300 src/enigma_main.cpp:4302
 
 msgid "This content could not be displayed"
 msgstr "Šis turinys nebus parodytas"
 
-#: src/enigma_main.cpp:3254 src/enigma_main.cpp:3255
 
 msgid "This directory doesn't contain anything playable!"
 msgstr ""
 
-#: src/timer.cpp:928
 
 msgid "This event cannot added to the timerlist.\nThe event overlaps with another event in the timerlist\nPlease check the timerlist manually."
 msgstr "This event cannot added to the timerlist.\nThe event overlaps with another event in the timerlist\nPlease check the timerlist manually."
 
-#: src/timer.cpp:872 src/timer.cpp:894
 
 msgid "This event is already in the timerlist."
 msgstr "Šis veiksmas jau yra taimeryje!"
 
-#: src/enigma_main.cpp:2867
 
 msgid "This is a recorded stream!\nReally delete?"
 msgstr "Tikrai ištrinti šį įrašą?"
 
-#: src/upgrade.cpp:593
 
 msgid "This is an older release."
 msgstr ""
 
-#: src/upgrade.cpp:590
 
 msgid "This is the currently installed release."
 msgstr ""
 
-#: src/enigma_main.cpp:4286 src/enigma_main.cpp:4287
 
 msgid "This service could not be descrambled"
 msgstr "Nepavykasta atkoduoti kanalo!"
 
-#: src/enigma_main.cpp:4294 src/enigma_main.cpp:4295
 
 msgid "This service doesn't currently send a signal"
 msgstr "This service doesn't currently send a signal"
 
-#: src/satconfig.cpp:1063
 
 msgid "Three"
 msgstr "Trys"
 
-#: default.esml:351
 
 msgid "Threshold:"
 msgstr "Kritiškumas:"
 
-#: default.esml:660 src/timer.cpp:29
 
 msgid "Thu"
 msgstr "Ket"
 
-#: default.esml:660 src/timer.cpp:27
 
 msgid "Thursday"
 msgstr "Ketvirtadienis"
 
-#: src/enigma_main.cpp:5382
 
 msgid "Time Correction"
 msgstr "Laiko Nustaymas"
 
-#: src/enigma_setup.cpp:376
 
 msgid "time correction change error"
 msgstr "laiko nustatymų pakeitimo klaida"
 
-#: src/enigma_setup.cpp:111
 
 msgid "Time Correction..."
 msgstr "Laiko Nustatymas"
 
-#: src/setup_timezone.cpp:16
 
 msgid "Time Zone Setup"
 msgstr "Laiko Juostos Nustatymas"
 
-#: src/enigma_setup.cpp:110
 
 msgid "Time Zone..."
 msgstr "Laiko Juosta"
 
-#: src/setup_timezone.cpp:25
 
 msgid "Time Zone:"
 msgstr "Laiko Juosta:"
 
-#: src/enigma_mainmenu.cpp:72 src/enigma_mainmenu.cpp:90
 
 msgid "Timer"
 msgstr "Taimeris"
 
-#: default.esml:652
 
 msgid "Timer Edit"
 msgstr "Taimerio Redagavimas"
 
-#: src/timer.cpp:1292
 
 msgid "Timer Edit View"
 msgstr "Timer Edit View"
 
-#: src/timer.cpp:1220
 
 msgid "Timer list"
 msgstr "Taimerio Sąrašas"
 
-#: src/timer.cpp:161
 
 msgid "Timerlist"
 msgstr "Taimerio Sąrašas"
 
-#: src/timer.cpp:1007
 
 msgid "timerView"
 msgstr ""
 
-#: src/streaminfo.cpp:166
 
 msgid "title"
 msgstr "titrai"
 
-#: src/scan.cpp:258
 
 msgid "To begin searching for a valid cable provider press OK, or choose your desired cable provider manually and press OK"
 msgstr ""
 
-#: src/scan.cpp:255
 
 msgid "To begin searching for a valid satellite press OK, or choose your desired satellite manually and press OK"
 msgstr ""
 
-#: default.esml:673
 
 msgid "to change service press ok"
 msgstr "kad pakeisti kanalą spauskite ok"
 
-#: src/enigma_setup.cpp:376
 
 msgid "To change time correction you must tune first to any transponder"
 msgstr "Kad atlikti laiko korekcijas, pirmiausia turite surasti nors vieną kanalą"
 
-#: src/sselect.cpp:54
 
 msgid "toggle between classic and multi column style"
 msgstr ""
 
-#: src/sselect.cpp:48
 
 msgid "toggle between user bouquets, normal dvb bouquets"
 msgstr "perjunginėjimas tarp savų ir paprastų paketų"
 
-#: src/enigma_main.cpp:129
 
 msgid "toggle DVR panel"
 msgstr "perjungti į DVR panelę"
 
-#: src/sselect.cpp:55
 
 msgid "toggle focus between service and bouquet list"
 msgstr ""
 
-#: src/enigma_main.cpp:130
 
 msgid "toggle index mark"
 msgstr "toggle index mark"
 
-#: src/enigma_main.cpp:105 src/enigma_main.cpp:149
 
 msgid "toggle mute flag"
 msgstr ""
 
-#: src/streaminfo.cpp:176
 
 msgid "track"
 msgstr "takelis"
 
-#: src/scan.cpp:794
 
 msgid "Transponder"
 msgstr "paketą"
 
-#: src/enigma_main.cpp:5398
 
 msgid "Transponder Date:"
 msgstr "Transponderio  Data:"
 
-#: src/tpeditwindow.cpp:48
 
 msgid "Transponder Edit"
 msgstr "Paketų Redagavimas"
 
-#: src/streaminfo.cpp:602
 
 msgid "Transponder information (left)"
 msgstr "Paketo informacija (kairėn)"
 
-#: src/enigma_scan.cpp:42
-
-msgid "Transponder scan"
-msgstr "Paketų Skanavimas"
-
-#: src/scan.cpp:622
 
 msgid "Transponder Scan"
 msgstr "Paketų Skanavimas"
 
-#: default.esml:509
+
+msgid "Transponder scan"
+msgstr "Paketų Skanavimas"
+
 
 msgid "transponder scanned:"
 msgstr "transponderių skanavimas:"
 
-#: src/enigma_main.cpp:5389
 
 msgid "Transponder Time:"
 msgstr "Transponderio Laikas:"
 
-#: default.esml:455
 
 msgid "Transponder:"
 msgstr "Transponderis:"
 
-#: default.esml:804
 
 msgid "Transponders"
 msgstr "Paketai"
 
-#: src/tpeditwindow.cpp:140
 
 msgid "Transponders changed"
 msgstr ""
 
-#: src/tpeditwindow.cpp:150
 
 msgid "Transponders couldnt written to file!"
 msgstr ""
 
-#: src/enigma_scan.cpp:45
 
 msgid "Transponders..."
 msgstr "Paketai"
 
-#: src/channelinfo.cpp:108
 
 msgid "Travel"
 msgstr "Kelionės"
 
-#: src/setupengrab.cpp:92
 
 msgid "try to autodetect server MAC adress"
 msgstr ""
 
-#: default.esml:658 src/timer.cpp:28
 
 msgid "Tue"
 msgstr "Antr"
 
-#: default.esml:658 src/timer.cpp:26
 
 msgid "Tuesday"
 msgstr "Ketvirtadienis"
 
-#: src/rotorconfig.cpp:786
 
 msgid "turning to east..."
 msgstr "sukama į rytus..."
 
-#: src/rotorconfig.cpp:797
 
 msgid "turning to west..."
 msgstr "sukama į vakarus..."
 
-#: lib/dvb/servicestructure.cpp:11 src/enigma_mainmenu.cpp:47
 
 msgid "TV mode"
 msgstr "TV Režimas"
 
-#: lib/dvb/servicestructure.cpp:16
 
 msgid "TV/Radio"
 msgstr "TV/Radio"
 
-#: src/satconfig.cpp:1062
 
 msgid "Two"
 msgstr "Du"
 
-#: default.esml:376
 
 msgid "U-Switch 1:"
 msgstr "U-Switch 1:"
 
-#: default.esml:378
 
 msgid "U-Switch 2:"
 msgstr "U-Switch 2: "
 
-#: default.esml:380
 
 msgid "U-Switch 3:"
 msgstr "U-Switch 3:"
 
-#: default.esml:382
 
 msgid "U-Switch 4:"
 msgstr "U-Switch 4: "
 
-#: default.esml:371
 
 msgid "Uncommitted Switch:"
 msgstr "Uncommitted Switch: "
 
-#: src/setup_harddisk.cpp:425
 
 msgid "uninitialized - format it to use!"
 msgstr "Netinkamas formatas!"
 
-#: src/enigma_info.cpp:210
-
-msgid "Unknown"
-msgstr "neatpažinta"
-
-#: src/enigma_info.cpp:323 src/timer.cpp:1796 src/upgrade.cpp:241
 
 msgid "unknown"
 msgstr "neatpažinta"
 
-#: src/enigma_main.cpp:4311 src/enigma_main.cpp:4313
+
+msgid "Unknown"
+msgstr "neatpažinta"
+
 
 msgid "Unknown error!!"
 msgstr "Nepažystama klaida!"
 
-#: src/timer.cpp:1487
 
 msgid "unknown service"
 msgstr "neatpažintas kanalas"
 
-#: src/enigma_main.cpp:5104
 
 msgid "unlock"
 msgstr "atrakinti"
 
-#: src/enigma_main.cpp:3002
 
 msgid "unnamed bouquet"
 msgstr "paketas be vardo"
 
-#: src/channelinfo.cpp:112
 
 msgid "Unpublished"
 msgstr "Nepublikuojama"
 
-#: src/timer.cpp:825 src/timer.cpp:1618
 
 msgid "Update event in timerlist"
 msgstr "Atnaujinti veiksmus taimerio sąraše"
 
-#: src/upgrade.cpp:532 src/upgrade.cpp:570
 
 msgid "upgrade failed"
 msgstr "atnaujinimas nepavyko"
 
-#: src/upgrade.cpp:569
 
 msgid "upgrade failed with errorcode UA15"
 msgstr ""
 
-#: src/upgrade.cpp:531
 
 msgid "upgrade failed with errorcode UD0"
 msgstr ""
 
-#: src/enigma_setup.cpp:124
 
 msgid "upgrade firmware"
 msgstr "softo atnaujinimas"
 
-#: src/upgrade.cpp:501 src/upgrade.cpp:548
 
 msgid "upgrade in progress"
 msgstr "dabar vyksta atnaujinimas"
 
-#: src/upgrade.cpp:556
 
 msgid "upgrade ok"
 msgstr "atnaujinimas baigtas"
 
-#: src/upgrade.cpp:555
 
 msgid "upgrade successful!\nrestarting..."
 msgstr ""
 
-#: src/enigma_setup.cpp:124
 
 msgid "Upgrade..."
 msgstr "Atnaujinimas"
 
-#: src/setup_timezone.cpp:41
 
 msgid "use automatically daylight saving time"
 msgstr "naudoti automatinį dienos šviesos taupymo režimą"
 
-#: default.esml:484
 
 msgid "use BAT"
 msgstr "Naudoti BAT"
 
-#: src/setup_rc.cpp:101
 
 msgid "use classic enigma bouquet selection keys"
 msgstr ""
 
-#: src/satconfig.cpp:1024
 
 msgid "Use DiSEqC Version 1.0"
 msgstr "Naudoti DiSEqC Versiją 1.0"
 
-#: src/satconfig.cpp:1025
 
 msgid "Use DiSEqC Version 1.1"
 msgstr "Naudoti DiSEqC Versiją 1.1"
 
-#: src/satconfig.cpp:1026
 
 msgid "Use DiSEqC Version 1.2"
 msgstr "Naudoti DiSEqC Versiją 1.2"
 
-#: default.esml:418
 
 msgid "Use gotoXX Function"
 msgstr "Naudoti gotoXX Funkciją"
 
-#: src/enigma_scan.cpp:191
-#, c-format
 
 msgid "use LNB %d for Motor"
 msgstr "use LNB %d for Motor"
 
-#: default.esml:412
 
 msgid "Use Motor Input Power"
 msgstr "Naudoti Motoro Galią"
 
-#: default.esml:412
 
 msgid "Use motor input power for running detection.. else use timeout"
 msgstr "lėkštės judėjimo detektavimui naudoti motoro galią, arba laiką"
 
-#: default.esml:483
 
 msgid "use ONIT"
 msgstr "Naudoti ONIT"
 
-#: src/sselect.cpp:305
 
 msgid "User"
 msgstr "Savi"
 
-#: src/enigma_main.cpp:1203
 
 msgid "User - bouquets (Radio)"
 msgstr "Savi - Paketai (Radio)"
 
-#: src/enigma_main.cpp:1193
 
 msgid "User - bouquets (TV)"
 msgstr "Savi - Paketai (TV)"
 
-#: src/enigma_main.cpp:5356 src/sselect.cpp:287
 
 msgid "User Bouquets"
 msgstr "Savi Paketai"
 
-#: src/channelinfo.cpp:78
 
 msgid "Variety"
 msgstr "Įvairūs"
 
-#: src/enigma_mainmenu.cpp:69 src/enigma_mainmenu.cpp:87
 
 msgid "VCR"
 msgstr "VCR"
 
-#: lib/dvb/dvbwidgets.cpp:53
 
 msgid "vertical"
 msgstr "vertikali"
 
-#: src/enigma_main.cpp:641
 
 msgid "Video"
 msgstr "Video"
 
-#: src/streaminfo.cpp:357
 
 msgid "Video format:"
 msgstr "Video formatas:"
 
-#: src/setupvideo.cpp:32
 
 msgid "Video Setup"
 msgstr "Video Nustatymai"
 
-#: stone.esml:465 silver.esml:472
 
 msgid "videotext"
 msgstr "videotekstas"
 
-#: default.esml:328
 
 msgid "Voltage"
 msgstr "Įtampa"
 
-#: src/satconfig.cpp:683
 
 msgid "Voltage is always 14V (vertical)"
 msgstr "Įtampa visada 14V (vertikali)"
 
-#: src/satconfig.cpp:684
 
 msgid "Voltage is always 18V (horizontal)"
 msgstr "Įtampa visada 18V (horizontali)"
 
-#: src/satconfig.cpp:685
 
 msgid "Voltage is always off"
 msgstr "Įtampa visada išjungta"
 
-#: src/satconfig.cpp:682
 
 msgid "Voltage is automatically changed"
 msgstr "Įtampa keičiama automatiškai"
 
-#: src/enigma_main.cpp:104 src/enigma_main.cpp:148
 
 msgid "volume down"
 msgstr "garsas žemyn"
 
-#: src/enigma_main.cpp:103 src/enigma_main.cpp:147
 
 msgid "volume up"
 msgstr "garsas aukštyn"
 
-#: src/enigma_ci.cpp:433 src/enigma_ci.cpp:462
 
 msgid "waiting for module"
 msgstr ""
 
-#: src/enigma_main.cpp:167
 
 msgid "wake up enigma"
 msgstr ""
 
-#: src/enigma_scan.cpp:154 src/rotorconfig.cpp:698 src/rotorconfig.cpp:899
 
 msgid "Warning"
 msgstr "Perspėjimas"
 
-#: src/channelinfo.cpp:83
 
 msgid "Water Sports"
 msgstr "Vandens Sportas"
 
-#: src/channelinfo.cpp:74
 
 msgid "Weather"
 msgstr "Orai"
 
-#: default.esml:659 src/timer.cpp:28
 
 msgid "Wed"
 msgstr "Treč"
 
-#: default.esml:659 src/timer.cpp:26
 
 msgid "Wednesday"
 msgstr "Trečiadienis"
 
-#: src/enigma.cpp:246
 
 msgid "Welcome to enigma.\n\nPlease do a transponder scan first.\n(mainmenu > setup > channels > transponder scan)"
 msgstr ""
 
-#: src/rotorconfig.cpp:58 src/rotorconfig.cpp:102
 
 msgid "West"
 msgstr "Vakarai"
 
-#: default.esml:418
 
 msgid "when the motor support this, then use"
 msgstr "naudokite kai tai palaikoma"
 
-#: src/channelinfo.cpp:83
 
 msgid "Winter Sports"
 msgstr "Žiemos Sportas"
 
-#: src/tpeditwindow.cpp:151
 
 msgid "Write Error"
 msgstr "Įrašymo Klaida"
 
-#: src/upgrade.cpp:461 src/upgrade.cpp:463
 
 msgid "write error while downloading..."
 msgstr ""
 
-#: src/upgrade.cpp:547
 
 msgid "Writing software to flash...\nPlease wait... do NOT switch off the receiver!"
 msgstr ""
 
-#: src/rotorconfig.cpp:697
 
 msgid "Wrong use of this function can corrupt all stored sat positions.\nAre you sure you want to use this function?"
 msgstr ""
 
-#: src/streaminfo.cpp:172
 
 msgid "year"
 msgstr "metai"
 
-#: lib/gui/emessage.cpp:101
 
 msgid "Yes"
 msgstr "Taip"
 
-#: src/enigma_setup.cpp:212
 
 msgid "You have to restart enigma to apply the new skin\nRestart now?"
 msgstr "Turite perkrauti, kad paleisti naują skiną!\nPerkrauti dabar?"
 
-#: src/timer.cpp:818
 
 msgid "You would to delete the running event..\nthis stops the timer mode (recording)!"
 msgstr ""
 
-#: src/timer.cpp:824
 
 msgid "You would to update the running event.. \nthis stops the timer mode (recording)!"
 msgstr ""
 
-#: default.esml:787
 
 msgid "Your language"
 msgstr "Tavo kalba"
 
-#: src/setupvideo.cpp:52
 
 msgid "YPbPr"
 msgstr "YPbPr"
 
-#: src/enigma_main.cpp:92
 
 msgid "zap to next subService"
 msgstr ""
 
-#: src/enigma_main.cpp:93
 
 msgid "zap to prev subService"
 msgstr ""
 
-#: src/enigma_info.cpp:44 src/enigma_main.cpp:5132 src/enigma_main.cpp:5361
-#: src/enigma_scan.cpp:41 src/enigma_scan.cpp:186 src/enigma_setup.cpp:95
 
 msgid "[back]"
 msgstr "[grįžti]"
 
-#: src/engrab.cpp:205
 
 msgid "[close]"
 msgstr "[uždaryti]"
 
-#: src/sselect.cpp:198
 
 msgid "[GO UP]"
 msgstr "[EITI Į  AUKŠTYN]"
 
-#: src/channelinfo.cpp:265
-#, c-format
 
 msgid "\nFilesize: %d MB"
 msgstr "\nFailo Dydis: %d MB"
