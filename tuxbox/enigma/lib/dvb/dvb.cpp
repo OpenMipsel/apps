@@ -12,6 +12,17 @@
 
 eTransponderList* eTransponderList::instance=0;
 
+void eDiSEqC::setRotorDefaultOptions()
+{
+	useGotoXX=1;
+	useRotorInPower=40<<8;
+	DegPerSec=1.0;
+	gotoXXLatitude=0.0;
+	gotoXXLaDirection=eDiSEqC::NORTH;
+	gotoXXLongitude=0.0;
+	gotoXXLoDirection=eDiSEqC::EAST;
+}
+
 void eTransponder::cable::set(const CableDeliverySystemDescriptor *descriptor)
 {
 			// reject <100Mhz, >1000Mhz
@@ -77,7 +88,7 @@ eService::~eService()
 {
 }
 
-eServiceDVB::eServiceDVB(eDVBNamespace dvb_namespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number):
+eServiceDVB::eServiceDVB(eDVBNamespace dvb_namespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number ):
 		eService(""), dvb_namespace(dvb_namespace), transport_stream_id(transport_stream_id), original_network_id(original_network_id), service_id(service_id), service_number(service_number), dxflags(0)
 {
 	dvb=this;
@@ -218,11 +229,6 @@ void eServiceDVB::update(const SDTEntry *sdtentry)
 				service_name="unnamed service";
 
 			service_type=nd->service_type;
-#if 0
-// fake kiosk service types
-		if ( service_type > 191 )
-			service_type=1;
-#endif
 		}
 
 //	printf("%04x:%04x %02x %s", transport_stream_id, service_id, service_type, (const char*)service_name);
@@ -246,6 +252,13 @@ void eSatellite::setOrbitalPosition(int orbital_position)
 	tplist.satellites.insert( std::pair< int, eSatellite*>( orbital_position, this ));
 }
 
+void eLNB::setDefaultOptions()
+{
+	lof_hi=10600000;
+	lof_lo=9750000;
+	lof_threshold=11700000;
+	increased_voltage=0;
+}
 
 eSatellite *eLNB::addSatellite(int orbital_position)
 {
@@ -559,8 +572,11 @@ eServiceDVB &eTransponderList::createService(const eServiceReferenceDVB &service
 		eServiceDVB *n=&services.insert(
 					std::pair<eServiceReferenceDVB,eServiceDVB>
 						(service,
-						eServiceDVB(service.getDVBNamespace(), service.getTransportStreamID(), service.getOriginalNetworkID(), service.getServiceID(), chnum))
-					).first->second;
+							eServiceDVB(service.getDVBNamespace(),
+							service.getTransportStreamID(),
+							service.getOriginalNetworkID(),
+							service.getServiceID(),chnum))
+							).first->second;
 
 		channel_number.insert(std::pair<int,eServiceReferenceDVB>(chnum,service));
 		
@@ -591,12 +607,6 @@ int eTransponderList::handleSDT(const SDT *sdt, eDVBNamespace dvbnamespace, eOri
 				service_type=nd->service_type;
 				break;
 			}
-
-#if 0
-// fake kiosk service types
-		if ( service_type > 191 )
-			service_type=1;
-#endif
 
 		if (service_type == -1)
 			continue;
@@ -807,10 +817,7 @@ void eTransponderList::readLNBData()
 		{	
 			lnbs.push_back(eLNB(*this));
 			eLNB &lnb=lnbs.back();
-			lnb.setLOFHi(10600000);
-			lnb.setLOFLo(9750000);
-			lnb.setLOFThreshold(11700000);
-			lnb.setIncreasedVoltage(0);
+			lnb.setDefaultOptions();
 			lnb.getDiSEqC().MiniDiSEqCParam=eDiSEqC::NO;
 			lnb.getDiSEqC().DiSEqCParam=eDiSEqC::AA;
 			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;
@@ -818,13 +825,7 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().SeqRepeat=0;
 			lnb.getDiSEqC().SwapCmds=0;
 			lnb.getDiSEqC().uncommitted_cmd=0;
-			lnb.getDiSEqC().useGotoXX=1;
-			lnb.getDiSEqC().useRotorInPower=40<<8;
-			lnb.getDiSEqC().DegPerSec=1.0;
-			lnb.getDiSEqC().gotoXXLatitude=0.0;
-			lnb.getDiSEqC().gotoXXLongitude=0.0;
-			lnb.getDiSEqC().gotoXXLoDirection=eDiSEqC::EAST;
-			lnb.getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
+			lnb.getDiSEqC().setRotorDefaultOptions();
 			eSatellite *sat = lnb.addSatellite(192);
 			sat->setDescription("Astra 19.2E");
 			eSwitchParameter &sParams = sat->getSwitchParams();
@@ -834,24 +835,15 @@ void eTransponderList::readLNBData()
 		{
 			lnbs.push_back(eLNB(*this));
 			eLNB &lnb=lnbs.back();
-			lnb.setLOFHi(10600000);
-			lnb.setLOFLo(9750000);
-			lnb.setLOFThreshold(11700000);
-			lnb.setIncreasedVoltage(0);
+			lnb.setDefaultOptions();
 			lnb.getDiSEqC().MiniDiSEqCParam=eDiSEqC::NO;
 			lnb.getDiSEqC().DiSEqCParam=eDiSEqC::AB;
-			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;		
+			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;
 			lnb.getDiSEqC().DiSEqCRepeats=0;
 			lnb.getDiSEqC().SeqRepeat=0;
 			lnb.getDiSEqC().SwapCmds=0;
 			lnb.getDiSEqC().uncommitted_cmd=0;
-			lnb.getDiSEqC().useGotoXX=1;
-			lnb.getDiSEqC().useRotorInPower=40<<8;
-			lnb.getDiSEqC().DegPerSec=1.0;
-			lnb.getDiSEqC().gotoXXLongitude=0.0;
-			lnb.getDiSEqC().gotoXXLatitude=0.0;
-			lnb.getDiSEqC().gotoXXLoDirection=eDiSEqC::EAST;
-			lnb.getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
+			lnb.getDiSEqC().setRotorDefaultOptions();
 			eSatellite *sat = lnb.addSatellite(130);
 			sat->setDescription("Eutelsat 13.0E");
 			eSwitchParameter &sParams = sat->getSwitchParams();

@@ -286,10 +286,11 @@ public:
 	
 	int service_number;		// nur fuer dvb, gleichzeitig sortierkriterium...
 	
-	enum {
-		dxNameFixed=1,
+	enum
+	{
+		dxNoDVB=1,
 		dxDontshow=2,
-		dxNoDVB=4		// no PAT/PMT/...
+		dxNoPMT=4
 	};
 	int dxflags;
 	
@@ -610,34 +611,34 @@ struct eDiSEqC
 	int gotoXXLaDirection;  // NORT, SOUTH
 	double gotoXXLongitude; // Longitude for gotoXX° Function
 	double gotoXXLatitude;  // Latitude for gotoXX° Function
+	void setRotorDefaultOptions(); // set default rotor options
 };
 
 class eLNB
 {
 	unsigned int lof_hi, lof_lo, lof_threshold;
-  int increased_voltage;
-  ePtrList<eSatellite> satellites;
+	int increased_voltage;
+	ePtrList<eSatellite> satellites;
 	eTransponderList &tplist;
 	eDiSEqC DiSEqC;
 public:
-
 	eLNB(eTransponderList &tplist): tplist(tplist)
 	{
 		satellites.setAutoDelete(true);
 	}
-	
 	void setLOFHi(unsigned int lof_hi) { this->lof_hi=lof_hi; }
 	void setLOFLo(unsigned int lof_lo) { this->lof_lo=lof_lo; }
 	void setLOFThreshold(unsigned int lof_threshold) { this->lof_threshold=lof_threshold; }
-  void setIncreasedVoltage( int inc ) { increased_voltage = inc; }
-  unsigned int getLOFHi() const { return lof_hi; }
+	void setIncreasedVoltage( int inc ) { increased_voltage = inc; }
+	unsigned int getLOFHi() const { return lof_hi; }
 	unsigned int getLOFLo() const { return lof_lo; }
 	unsigned int getLOFThreshold() const { return lof_threshold; }
-  int getIncreasedVoltage() const { return increased_voltage; }
+	int getIncreasedVoltage() const { return increased_voltage; }
 	eDiSEqC& getDiSEqC() { return DiSEqC; }	
 	eSatellite *addSatellite(int orbital_position);
 	void deleteSatellite(eSatellite *satellite);
 	void addSatellite( eSatellite *satellite);
+	void setDefaultOptions();
 	eSatellite* takeSatellite( eSatellite *satellite);
 	bool operator==(const eLNB& lnb) { return this == &lnb; }
 	ePtrList<eSatellite> &getSatelliteList() { return satellites; }
@@ -680,7 +681,6 @@ class eTransponderList: public existNetworks
 	friend class eLNB;
 	friend class eSatellite;
 public:
-
 	void clearAllServices()	{	services.clear(); }
 	void clearAllTransponders()	{	transponders.clear(); }
 	

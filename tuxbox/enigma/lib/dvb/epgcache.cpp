@@ -34,7 +34,7 @@ void eEPGCache::timeUpdated()
 int eEPGCache::sectionRead(__u8 *data, int source)
 {
 	eit_t *eit = (eit_t*) data;
-	uniqueEPGKey service( HILO(eit->service_id), HILO(eit->original_network_id) );
+	uniqueEPGKey service( HILO(eit->service_id), HILO(eit->original_network_id), current_service.opos );
 	int len=HILO(eit->section_length)-1;//+3-4;
 	int ptr=EIT_SIZE;
 	eit_event_struct* eit_event = (eit_event_struct*) (data+ptr);
@@ -42,50 +42,56 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 	int duration;
 
 	time_t TM = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
+	time_t now = time(0)+eDVB::getInstance()->time_difference;
 
-	temp[service] = std::pair< time_t, int> (time(0)+eDVB::getInstance()->time_difference, source);
+	tmpMap::iterator it = temp.find( service );
+	if ( it != temp.end() && source == SCHEDULE )
+		temp[service] = std::pair< time_t, int> (now, source);
 
-	uniqueEvent event( TM, HILO(eit_event->event_id), service );
-
-	if ( source == SCHEDULE )
+	if ( TM > now-24*60*60 && TM < now+14*24*60*60 )
 	{
-		if ( !firstScheduleEvent.valid() )
+		uniqueEvent event( TM, HILO(eit_event->event_id), service );
+		if ( source == SCHEDULE )
 		{
-			time_t now = time(0)+eDVB::getInstance()->time_difference;
-			if ( TM >= now && TM < now+(7*24*60*60) )
+			if ( !firstScheduleEvent.valid() )
+			{
+				eDebug("[EPGC] schedule data begin");
 				firstScheduleEvent=event;
+			}
+			else if ( firstScheduleEvent == event )  // epg around
+			{
+				eDebug("[EPGC] schedule data ready");
+				scheduleReader.abort();
+				return -1;
+			}
 		}
-		else if ( firstScheduleEvent == event )  // epg around
+		else // if ( source == NOWNEXT )
 		{
-			eDebug("[EPGC] schedule data ready");
-			scheduleReader.abort();
-			return -1;
-		}
-	}
-	else // if ( source == NOWNEXT )
-	{
-		if ( !firstNowNextEvent.valid() )
-		{
-			time_t now = time(0)+eDVB::getInstance()->time_difference;
-			if ( TM >= now && TM < now+(7*24*60*60) )
+			if ( !firstNowNextEvent.valid() )
+			{
+				eDebug("[EPGC] nownext data begin");
 				firstNowNextEvent = event;
-		}
-		else if ( firstNowNextEvent == event ) // now next ready
-		{
-			eDebug("[EPGC] nownext data ready");
-			nownextReader.abort();
-			return -1;
+			}
+			else if ( firstNowNextEvent == event ) // now next ready
+			{
+				eDebug("[EPGC] nownext data ready");
+				nownextReader.abort();
+				return -1;
+			}
 		}
 	}
+
 	while (ptr<len)
 	{
 		eit_event_size = HILO(eit_event->descriptors_loop_length)+EIT_LOOP_SIZE;
 
 		duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
-
 		TM = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
 
-		if ( (time(0)+eDVB::getInstance()->time_difference) <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
+		if ( (TM+duration < now || TM > now+14*24*60*60) && TM != 3599 )
+			goto next;
+
+		if ( now <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
 		{
 			// hier wird immer eine eventMap zurück gegeben.. entweder eine vorhandene..
 			// oder eine durch [] erzeugte
@@ -97,7 +103,7 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 			{
 				// get Service ID of NVOD Service ( parent )
 				int sid = ((unsigned char*)eit_event)[14] << 8 | ((unsigned char*)eit_event)[15];
-				uniqueEPGKey parent( sid, HILO(eit->original_network_id) );
+				uniqueEPGKey parent( sid, HILO(eit->original_network_id), current_service.opos );
 				// check that this nvod reference currently is not in the NVOD List
 				std::list<NVODReferenceEntry>::iterator it( NVOD[parent].begin() );
 				for ( ; it != NVOD[parent].end(); it++ )
@@ -116,7 +122,7 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 // add new...
 			servicemap[event_id] = new eventData(eit_event, eit_event_size, source);
 		}
-
+next:
 		ptr += eit_event_size;
 		((__u8*)eit_event)+=eit_event_size;
 	}
@@ -175,7 +181,7 @@ void eEPGCache::cleanLoop()
 				{ 
 					for ( std::list<NVODReferenceEntry>::iterator it( NVOD[DBIt->first].begin() ); it != NVOD[DBIt->first].end(); it++ )
 					{
-						eventCache::iterator evIt = eventDB.find(uniqueEPGKey( it->service_id, it->original_network_id ));
+						eventCache::iterator evIt = eventDB.find(uniqueEPGKey( it->service_id, it->original_network_id, current_service.opos ));
 						if ( evIt != eventDB.end() )
 						{
 							for ( eventMap::iterator emIt( evIt->second.begin() ); emIt != evIt->second.end(); emIt++)
@@ -227,7 +233,7 @@ eEPGCache::~eEPGCache()
 
 EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, int event_id)
 {
-	uniqueEPGKey key( service.getServiceID().get(), service.getOriginalNetworkID().get() );
+	uniqueEPGKey key( service );
 
 	eventCache::iterator It =	eventDB.find( key );
 	if ( It != eventDB.end() && !It->second.empty() ) // entrys cached?
@@ -254,7 +260,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, int event_
 EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 // if t == 0 we search the current event...
 {
-	uniqueEPGKey key( service.getServiceID().get(), service.getOriginalNetworkID().get() );
+	uniqueEPGKey key(service);
 
 	// check if EPG for this service is ready...
 	eventCache::iterator It =	eventDB.find( key );
@@ -268,7 +274,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 			// get NVOD Refs from this NVDO Service
 			for ( std::list<NVODReferenceEntry>::iterator it( NVOD[key].begin() ); it != NVOD[key].end(); it++ )
 			{
-				eventCache::iterator evIt = eventDB.find(uniqueEPGKey( it->service_id, it->original_network_id ));
+				eventCache::iterator evIt = eventDB.find(uniqueEPGKey( it->service_id, it->original_network_id, key.opos ));
 				if ( evIt != eventDB.end() )
 				{
 					for ( eventMap::iterator emIt( evIt->second.begin() ); emIt != evIt->second.end(); emIt++)
@@ -317,8 +323,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 
 void eEPGCache::enterService(const eServiceReferenceDVB &service, int err)
 {
-	current_service.sid = service.getServiceID().get();
-	current_service.onid = service.getOriginalNetworkID().get();
+	current_service = service;
 
 	updateMap::iterator It = serviceLastUpdated.find( current_service );
 

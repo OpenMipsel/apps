@@ -114,6 +114,7 @@ void eFrontend::timeout()
 				transponder->satellite.fec = front.u.qpsk.FEC_inner;
 				transponder->satellite.symbol_rate = front.u.qpsk.SymbolRate;*/
 				transponder->satellite.inversion=front.Inversion;
+//				eDebug("NEW INVERSION = %d", front.Inversion );
 			}
 		}
 
@@ -122,7 +123,7 @@ void eFrontend::timeout()
 	else
 		if (--tries)
 		{
-			eDebug("-: %x", Status());
+			eDebugNoNewLine("-: %x,", Status());
 			timer->start(100, true);
 		}
 		else
@@ -286,7 +287,7 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	for (int i=0; i < cnt; i++)
 		parms+=eString().sprintf("0x%02x ",cmd.u.diseqc.params[i]);
   
-  eDebug("cmdtype = %02x, addr = %02x, cmd = %02x, numParams = %02x, params=%s", frame, addr, Cmd, cnt, parms.c_str() );
+//  eDebug("cmdtype = %02x, addr = %02x, cmd = %02x, numParams = %02x, params=%s", frame, addr, Cmd, cnt, parms.c_str() );
 
 	seq.miniCommand = SEC_MINI_NONE;
 	seq.continuousTone = SEC_TONE_OFF;
@@ -636,7 +637,7 @@ int eFrontend::tune(eTransponder *trans,
 		eSatellite* sat,
 		Modulation QAM)					// Modulation, QAM_xx
 {
-	eDebug("op = %d", trans->satellite.orbital_position );
+//	eDebug("op = %d", trans->satellite.orbital_position );
 	FrontendParameters front;
 	Decoder::Flush();
 	eSection::abortAll();
@@ -678,7 +679,7 @@ int eFrontend::tune(eTransponder *trans,
 
 		if (csw <= eDiSEqC::SENDNO)  // use AA/AB/BA/BB/SENDNO
 		{
-			eDebug("csw=%d, csw<<2=%d", csw, csw << 2);
+//			eDebug("csw=%d, csw<<2=%d", csw, csw << 2);
 			if ( csw != eDiSEqC::SENDNO )
 				csw = 0xF0 | ( csw << 2 );
 			if ( polarisation==polHor)
@@ -730,7 +731,7 @@ int eFrontend::tune(eTransponder *trans,
 				double elevation=calcElevation( SatLon, SiteLat, SiteLon );
 				double declination=calcDeclination( SiteLat, azimuth, elevation );
 				double satHourAngle=calcSatHourangle( azimuth, elevation, declination, SiteLat );
-				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
+//				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
 				
 				int tmp=(int)round( fabs( 180 - satHourAngle ) * 10.0 );
 				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
@@ -809,10 +810,10 @@ int eFrontend::tune(eTransponder *trans,
 		}*/
 		if ( lnb->getDiSEqC().DiSEqCMode >= eDiSEqC::V1_0 )
 		{
-			eDebug("ucsw=%d lastucsw=%d csw=%d lastcsw=%d", ucsw, lastucsw, csw, lastcsw);
+//			eDebug("ucsw=%d lastucsw=%d csw=%d lastcsw=%d", ucsw, lastucsw, csw, lastcsw);
 			if ( ucsw != lastucsw || csw != lastcsw || (ToneBurst && ToneBurst != lastToneBurst) )
 			{
-				eDebug("cmdCount=%d", cmdCount);
+//				eDebug("cmdCount=%d", cmdCount);
 				int loops;
 				if ( cmdCount )  // Smatv or Rotor is avail...
 					loops = cmdCount - 1;  // do not overwrite rotor cmd
@@ -853,7 +854,7 @@ int eFrontend::tune(eTransponder *trans,
 						commands[i].u.diseqc.cmd=0x38;
 					}
 
-					eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
+//					eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
 					i++;
 					if ( i < loops
 						&& ( ( (cmdbefore == COMMITTED) && ucsw )
@@ -870,7 +871,7 @@ int eFrontend::tune(eTransponder *trans,
 							commands[i].u.diseqc.cmd=0x38;
 							commands[i].u.diseqc.params[0]=csw;
 						}
-						eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
+//						eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
 						i++;
 					}
 				}
@@ -878,23 +879,23 @@ int eFrontend::tune(eTransponder *trans,
 		}
 		if ( !cmdCount)
 		{
-			eDebug("no DiSEqC");
+			eDebug("send no DiSEqC");
 			seq.commands=0;
 		}
 		seq.numCommands=cmdCount;
-		eDebug("Commands to send = %d", cmdCount);
+		eDebug("%d DiSEqC cmds to send", cmdCount);
 
 		seq.miniCommand = SEC_MINI_NONE;
 		if ( ucsw != lastucsw || csw != lastcsw || (ToneBurst && ToneBurst != lastToneBurst) )
 		{
 			if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::A )
 			{
-				eDebug("MiniDiSEqC A");
+				eDebug("Toneburst A");
 				seq.miniCommand=SEC_MINI_A;
 			}
 			else if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::B )
 			{
-				eDebug("MiniDiSEqC B");
+				eDebug("Toneburst B");
 				seq.miniCommand=SEC_MINI_B;
 			}
 			else
@@ -916,16 +917,12 @@ int eFrontend::tune(eTransponder *trans,
 		// Voltage( 0/14/18V  vertical/horizontal )
 		int voltage = SEC_VOLTAGE_OFF;
 		if ( swParams.VoltageMode == eSwitchParameter::_14V || ( polarisation == polVert && swParams.VoltageMode == eSwitchParameter::HV )  )
-		{
-      eDebug("increased=%d", lnb->getIncreasedVoltage() );
 			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_13_5 : SEC_VOLTAGE_13;
-		}
 		else if ( swParams.VoltageMode == eSwitchParameter::_18V || ( polarisation==polHor && swParams.VoltageMode == eSwitchParameter::HV)  )
-		{
-      eDebug("increased=%d", lnb->getIncreasedVoltage() );
 			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_18_5 : SEC_VOLTAGE_18;
-		}
-    
+
+		eDebug("increased=%d", lnb->getIncreasedVoltage() );
+
 		// set cmd ptr in sequence..
 		seq.commands=commands;
     
@@ -979,7 +976,6 @@ int eFrontend::tune(eTransponder *trans,
 	}
 
 	front.Inversion=Inversion;
-	eDebug("Inversion = %d", Inversion);
 	switch (type)
 	{
 		case feCable:
@@ -1004,12 +1000,12 @@ int eFrontend::tune(eTransponder *trans,
 		return -1;
  	}
 	eDebug("FE_SET_FRONTEND OK");
-	eDebug("Symbolrate = %d", SymbolRate );
+//	eDebug("Symbolrate = %d", SymbolRate );
 	state=stateTuning;
 //	tries=30000000*2 / SymbolRate; // 1.0 second timeout
 //	tries=tries<5?5:tries;
 	tries=30;
-	eDebug("tries=%d", tries);
+//	eDebug("tries=%d", tries);
 	timer->start(50, true);
 
 	return 0;

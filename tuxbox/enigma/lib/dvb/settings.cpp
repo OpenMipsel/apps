@@ -337,10 +337,10 @@ void eDVBSettings::loadServices()
 		if (service_number == -1)
 			continue;
 		eServiceDVB &s=transponderlist->createService(
-				eServiceReferenceDVB(
+					eServiceReferenceDVB(
 						eDVBNamespace(dvb_namespace),
-						eTransportStreamID(transport_stream_id), 
-						eOriginalNetworkID(original_network_id), 
+						eTransportStreamID(transport_stream_id),
+						eOriginalNetworkID(original_network_id),
 						eServiceID(service_id),
 						service_type), service_number);
 		count++;
@@ -354,7 +354,7 @@ void eDVBSettings::loadServices()
 			line[strlen(line)-1]=0;
 
 		eString str=line;
-		
+
 		if (str[1]!=':')	// old ... (only service_provider)
 		{
 			s.service_provider=line;
@@ -388,7 +388,7 @@ void eDVBSettings::loadServices()
 				}
 			}
 	}
-	
+
 	eDebug("loaded %d services", count);
 	
 	fclose(f);

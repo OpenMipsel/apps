@@ -535,10 +535,9 @@ struct updateEPGChangedService: public std::unary_function<eListBoxEntryService&
 	{
 		if ( l.service.type == eServiceReference::idDVB && !( l.service.flags & eServiceReference::isDirectory) )
 		{
-			uniqueEPGKey key( ((const eServiceReferenceDVB&)l.service).getServiceID().get(), ((const eServiceReferenceDVB&)l.service).getOriginalNetworkID().get() );
 			tmpMap::const_iterator it;
 			if (updatedEntrys)
-			 it = updatedEntrys->find( key );
+			 it = updatedEntrys->find( (const eServiceReferenceDVB&)l.service );
 			if ( (updatedEntrys && it != updatedEntrys->end()) )  // entry is updated
 			{
 				l.invalidateDescr();

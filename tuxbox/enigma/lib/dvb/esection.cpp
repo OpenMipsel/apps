@@ -11,8 +11,6 @@
 #include <lib/base/ebase.h>
 #include <lib/base/eerror.h>
 
-#define DEMUX "/dev/dvb/card0/demux0"
-
 #include <ost/dmx.h>
 
 ePtrList<eSection> eSection::active;
@@ -34,17 +32,17 @@ void eSectionReader::close()
 	handle=-1;
 }
 
-int eSectionReader::open(int pid, __u8 *data, __u8 *mask, int len, int _flags)
+int eSectionReader::open(int pid, __u8 *data, __u8 *mask, int len, int _flags, const char* dmxdev)
 {
 	flags=flags;
 	dmxSctFilterParams secFilterParams;
 	close();
 
-	handle=::open(DEMUX, O_RDWR|O_NONBLOCK);
+	handle=::open(dmxdev, O_RDWR|O_NONBLOCK);
 	eDebug("opened handle %d", handle);
 	if (handle<0)
 	{
-		perror(DEMUX);
+		perror(dmxdev);
 		return -errno;
 	}
 
@@ -100,7 +98,8 @@ int eSectionReader::read(__u8 *buf)
 	return 0;
 }
 
-eSection::eSection(int _pid, int _tableid, int _tableidext, int _version, int _flags, int _tableidmask): pid(_pid), tableid(_tableid), tableidext(_tableidext), tableidmask(_tableidmask), flags(_flags), version(_version)
+eSection::eSection(int _pid, int _tableid, int _tableidext, int _version, int _flags, int _tableidmask)
+	: pid(_pid), tableid(_tableid), tableidext(_tableidext), tableidmask(_tableidmask), flags(_flags), version(_version)
 {
 	notifier=0;
 	section=0;
@@ -127,14 +126,14 @@ eSection::~eSection()
 		eDebug("deleted still locked table");
 }
 
-	int eSection::start()
+int eSection::start( const char* dmxdev )
 {
 	if (timer && (version==-1) && !(flags&SECREAD_NOTIMEOUT))
 		timer->start((pid==0x14)?60000:10000, true);
-	return setFilter(pid, tableid, tableidext, version);
+	return setFilter(pid, tableid, tableidext, version, dmxdev);
 }
 
-int eSection::setFilter(int pid, int tableid, int tableidext, int version)
+int eSection::setFilter(int pid, int tableid, int tableidext, int version, const char *dmxdev)
 {
 	closeFilter();
 	__u8 data[4], mask[4];
@@ -152,7 +151,7 @@ int eSection::setFilter(int pid, int tableid, int tableidext, int version)
 		data[3]=version; mask[3]=0xFF;
 	}
 
-	reader.open(pid, data, mask, 4, flags);
+	reader.open(pid, data, mask, 4, flags, dmxdev);
 	if (reader.getHandle() < 0)
 		return -ENOENT;
 

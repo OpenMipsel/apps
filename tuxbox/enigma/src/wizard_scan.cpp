@@ -1,5 +1,6 @@
 #include <src/wizard_scan.h>
 #include <rotorconfig.h>
+#include <lib/dvb/frontend.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/listbox.h>
 #include <lib/system/init_num.h>
@@ -128,11 +129,15 @@ public:
 	eWizardScanInit()
 	{
 		int diseqc=0;
+		if ( !eFrontend::getInstance()->Type() /* == DBOX_FE_CABLE */ )
+			return;
 again: // gotos considered harmless.. :)
 		eConfig::getInstance()->getKey("/elitedvb/wizards/diseqc", diseqc);
 		if (diseqc < 1)
 		{
-			int res=eWizardSelectDiseqc::run();
+			int res = 0;
+
+			res=eWizardSelectDiseqc::run();
 			
 			if (res >= 0)
 			{
@@ -151,7 +156,7 @@ again: // gotos considered harmless.. :)
 					break;
 				}
 
-again_satconfig:				
+again_satconfig:
 				satconfig.show();
 				res=satconfig.exec();
 				satconfig.hide();

@@ -12,6 +12,9 @@
 #define SECREAD_NOTIMEOUT	4		// never timeout
 #define SECREAD_NOABORT	8			// do not abort on transponderchange
 
+#define DEMUX0 "/dev/dvb/card0/demux0"
+#define DEMUX1 "/dev/dvb/card0/demux1"
+
 class eSectionReader
 {
 	int handle;
@@ -20,7 +23,7 @@ public:
 	eSectionReader();
 	int getHandle();		// for SocketNotifiers
 	void close();
-	int open(int pid, __u8 *data, __u8 *mask, int len, int flags);
+	int open(int pid, __u8 *data, __u8 *mask, int len, int flags, const char* dmxdev = DEMUX0 );
 	int read(__u8 *data);
 };
 
@@ -38,7 +41,7 @@ class eSection: public Object
 	eTimer *timer;
 	__u8 buf[65536];
 	int lockcount;
-	int setFilter(int pid, int tableid, int tableidext, int version);
+	int setFilter(int pid, int tableid, int tableidext, int version, const char *dmxdev=DEMUX0);
 public:
 	void data(int socket);
 	void timeout();
@@ -47,7 +50,7 @@ public:
 	eSection();
 	virtual ~eSection();
 
-	int start();
+	int start(const char *dmxdev=DEMUX0);
 	int abort();
 	static int abortAll();
 	int getLockCount() { return lockcount; }

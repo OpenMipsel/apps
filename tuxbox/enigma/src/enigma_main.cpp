@@ -1711,7 +1711,7 @@ int freeRecordSpace()
 	return free;
 }
 
-int eZapMain::recordDVR(int onoff, int user, int event_id)
+int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 {
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
@@ -1723,7 +1723,9 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 			recordDVR(0, 0); // try to stop recording.. should not happen
 		if (state & stateRecording)
 			return -2; // already recording
-		eServiceReference ref_=eServiceInterface::getInstance()->service;
+
+		eServiceReference &ref_= eServiceInterface::getInstance()->service;
+
 		if ( (ref_.type != eServiceReference::idDVB) ||
 				(ref_.data[0] < 0) || ref_.path.size())
 		{
@@ -1742,15 +1744,11 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 		eString servicename, descr = _("no description available");
 
 		eService *service=0;
-		EITEvent *event=0;
 
-		if ( ref.getServiceType() > 4 )  // nvod or linkage
+		if ( ref.getServiceType() > 4 && !timer_descr )  // nvod or linkage
 			service = eServiceInterface::getInstance()->addRef(refservice);
 		else
 			service = eServiceInterface::getInstance()->addRef(ref);
-
-		if (event_id != -1)
-			event = eEPGCache::getInstance()->lookupEvent( ref, event_id );
 
 		if (service)
 		{
@@ -1765,27 +1763,33 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 			else
 				eServiceInterface::getInstance()->removeRef(ref);
 		}
-		else
-			servicename="record";
 
-		if ( event )
+		if ( timer_descr )
 		{
-			for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
-			{
-				Descriptor *descriptor=*d;
-				if (descriptor->Tag()==DESCR_SHORT_EVENT)
-				{
-					ShortEventDescriptor *ss=(ShortEventDescriptor*)descriptor;
-					descr = ss->event_name;
-					delete event;
-					break;
-				}
-			}
+//			eDebug("timer_descr = %s", timer_descr );
+			descr = timer_descr;
 		}
 		else if (cur_event_text.length())
+		{
+//			eDebug("no timer_descr");
+//			eDebug("use cur_event_text %s", cur_event_text.c_str() );
 			descr = cur_event_text;
+		}
+//		else
+//			eDebug("no timer_descr");
 
-		eString filename = servicename + " - " + descr;
+		eString filename;
+		if ( servicename )
+		{
+//			eDebug("we have servicename... sname + \" - \" + descr(%s)",descr.c_str());
+			filename = servicename + " - " + descr;
+		}
+		else
+		{
+//			eDebug("filename = descr = %s", descr.c_str() );
+			filename = descr;
+		}
+
 		eString cname="";
 
 		for (unsigned int i=0; i<filename.length(); ++i)
@@ -2454,28 +2458,15 @@ void eZapMain::addServiceToUserBouquet(eServiceReference *service, int dontask)
 	}
 
 	if (currentSelectedUserBouquet)
-/*	{
+	{
+		currentSelectedUserBouquet->getList().push_back(*service);
 		if (!dontask)
 		{
-			for (std::list<ePlaylistEntry>::const_iterator i(currentSelectedUserBouquet->getConstList().begin()); i != currentSelectedUserBouquet->getConstList().end(); ++i)
-				if (i->service == *service)
-				{
-					eMessageBox box(_("This service is already in this user bouquet."), _("Add channel to user bouquet"), eMessageBox::iconWarning|eMessageBox::btOK);
-					box.show();
-					box.exec();
-					box.hide();
-					goto ret;
-				}
-		}*/
-		currentSelectedUserBouquet->getList().push_back(*service);
-/*	}
-ret:*/
-	if (!dontask)
-	{
-		currentSelectedUserBouquet->save();
-		currentSelectedUserBouquet=0;
-		eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
-		currentSelectedUserBouquetRef = eServiceReference();
+			currentSelectedUserBouquet->save();
+			currentSelectedUserBouquet=0;
+			eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
+			currentSelectedUserBouquetRef = eServiceReference();
+		}
 	}
 }
 
@@ -3245,7 +3236,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		if (service)
 			switch (serviceref.getServiceType())
 			{
-			case 1:	// TV
+			case 1: // TV
 			case 2: // radio
 			case 4: // nvod ref
 				refservice=serviceref;
@@ -3253,31 +3244,38 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			}
 
 		eService *rservice=0;
-		if ( refservice.getServiceType() != 1 && refservice != serviceref && !( refservice.flags & eServiceReference::flagDirectory ) )
+
+		if ( refservice != serviceref  // linkage or nvod
+			&& !( refservice.flags & eServiceReference::flagDirectory ) )
 		{
-			rservice=eDVB::getInstance()->settings->getTransponders()->searchService(refservice);
+			rservice=eServiceInterface::getInstance()->addRef(refservice);
 
 			if (refservice.getServiceType()==4) // nvod ref service
 				flags|=ENIGMA_NVOD;
 		}
-		else
-		{
-			if (serviceref.getServiceType()==4) // nvod ref service
-				flags|=ENIGMA_NVOD;
-		}
 
-		if (serviceref.getServiceType()==6)  // linkage service
-			flags|=ENIGMA_SUBSERVICES;
-		else
-			subservicesel.clear();
+		switch ( serviceref.getServiceType() )
+		{
+			case 4:
+				flags|=ENIGMA_NVOD;
+				break;
+			case 6:
+				flags|=ENIGMA_SUBSERVICES;
+				break;
+			default:
+				subservicesel.clear();
+		}
 
 		eString name="";
 
-		if (rservice && service)
+		if (rservice)
 		{
-			name=rservice->service_name;
-			if (serviceref.getServiceType() == 6)  // linkage service..
-				name+=" - " + serviceref.descr;
+			if ( refservice.descr.length() )
+				name = refservice.descr;
+			else
+				name = rservice->service_name;
+
+			eServiceInterface::getInstance()->removeRef( refservice );
 		}
 		else if (serviceref.descr.length())
 			name = serviceref.descr;
@@ -3286,6 +3284,9 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		if (!name.length())
 			name="unknown service";
+
+		if (serviceref.getServiceType() == 6)  // linkage service..
+			name+=" - " + serviceref.descr;
 
 		eZapLCD::getInstance()->lcdMain->setServiceName(name);
 
@@ -4138,6 +4139,7 @@ UserBouquetSelector::UserBouquetSelector( std::list<ePlaylistEntry>&list )
 {
 	move(ePoint(100,80));
 
+	new eListBoxEntryText( &this->list, _("[back]"), (void*) 0 );
 	for (std::list<ePlaylistEntry>::iterator it( SourceList.begin() ); it != SourceList.end(); it++)
 	{
 		ePlaylist *pl = (ePlaylist*)eServiceInterface::getInstance()->addRef( it->service );

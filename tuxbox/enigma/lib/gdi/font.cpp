@@ -18,7 +18,7 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
-// #define HAVE_FRIBIDI
+//#define HAVE_FRIBIDI
 // until we have it in the cdk
 
 #ifdef HAVE_FRIBIDI

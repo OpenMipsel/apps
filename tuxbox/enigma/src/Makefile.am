@@ -32,6 +32,7 @@ enigma_LDADD = \
 	@SIGC_LIBS@ \
 	@XMLTREE_LIBS@ \
 	-ldl -lpthread -lcrypt -lresolv
+#-lfribidi
 
 #\
 #	/dbox2/cdkroot/lib/libmpatrolmt.a -lbfd -liberty

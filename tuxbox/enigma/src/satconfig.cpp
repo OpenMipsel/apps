@@ -67,7 +67,7 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 		eFatal("skin load of \"eSatelliteConfigurationManager\" failed");
 
 	eSize s = buttonWidget->getSize();
-	s.setHeight( s.height()*8 );
+	s.setHeight( s.height()*12 );
 
 	w_buttons = new eWidget(buttonWidget);
 	w_buttons->resize( s );
@@ -81,6 +81,11 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	combo_type->setCurrent( (void*)complexity );
 	typeChanged( combo_type->getCurrent() );
 
+	for ( int i = 0; i < 13; i++ )
+		pageEnds.push_back( i * 240 );
+
+	curScrollPos = pageEnds.begin();
+
 	repositionWidgets();
 
 	CONNECT( eWidget::focusChanged, eSatelliteConfigurationManager::focusChanged );
@@ -90,23 +95,24 @@ void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
 {
 	if ( focus && focus->getName() == "satWidget" )
 	{
-// get Current Sat Widget Position
-		const ePoint &wPosition = w_buttons->getPosition();
-
-// get Visible Rect
-		eRect rcVisible( wPosition, buttonWidget->getSize() );
-
-		ePoint relFocusPos(focus->getPosition() );
-		relFocusPos+=ePoint( 0, wPosition.y()*2 );
-    
-		if ( relFocusPos.y()+40 > rcVisible.bottom() )
+		std::list<int>::iterator tmp = curScrollPos;
+		tmp++;
+		if ( focus->getPosition().y() >= *tmp )
 		{
-			w_buttons->move( ePoint( wPosition.x(), wPosition.y()-40 ) );
+			curScrollPos=tmp;
+			w_buttons->move( ePoint(0, -(*tmp)) );
 			updateScrollbar(complexity > 2);
-		} else if ( relFocusPos.y() < rcVisible.top() ) // we must scroll down
+		}
+		else if ( curScrollPos != pageEnds.begin() )
 		{
-			w_buttons->move( ePoint( wPosition.x(), wPosition.y()+40 ) );
-			updateScrollbar(complexity > 2);
+			tmp = curScrollPos;
+			tmp--;
+			if ( focus->getPosition().y() < (*tmp)+230 )
+			{
+				curScrollPos=tmp;
+				w_buttons->move(ePoint(0, -(*tmp)) );
+				updateScrollbar(complexity > 2);
+			}
 		}
 	}
 }
@@ -344,10 +350,7 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 {
 	eLNB *lnb=s->getLNB();
 
-	lnb->setLOFHi(10600000);
-	lnb->setLOFLo(9750000);
-	lnb->setLOFThreshold(11700000);
-	lnb->setIncreasedVoltage(0);
+	lnb->setDefaultOptions();
 	lnb->getDiSEqC().MiniDiSEqCParam=eDiSEqC::NO;
 	switch (complexity) // if we have diseqc at all
 	{
@@ -372,13 +375,7 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 	lnb->getDiSEqC().SeqRepeat=0;
 	lnb->getDiSEqC().SwapCmds=0;	
 	lnb->getDiSEqC().uncommitted_cmd=0;
-	lnb->getDiSEqC().useGotoXX=1;
-	lnb->getDiSEqC().useRotorInPower=40<<8;
-	lnb->getDiSEqC().DegPerSec=1.0;
-	lnb->getDiSEqC().gotoXXLatitude=0.0;
-	lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
-	lnb->getDiSEqC().gotoXXLongitude=0.0;
-	lnb->getDiSEqC().gotoXXLoDirection=eDiSEqC::EAST;
+	lnb->getDiSEqC().setRotorDefaultOptions();
 }
 
 eSatelliteConfigurationManager::~eSatelliteConfigurationManager()
@@ -725,10 +722,7 @@ eSatellite *eSatelliteConfigurationManager::createSatellite()
 	{
 		eTransponderList::getInstance()->getLNBs().push_back( eLNB(*eTransponderList::getInstance()) );
 		lnb = &eTransponderList::getInstance()->getLNBs().back();
-		lnb->setLOFHi(10600000);
-		lnb->setLOFLo(9750000);
-		lnb->setLOFThreshold(11700000);
-		lnb->setIncreasedVoltage(0);
+		lnb->setDefaultOptions();
 	}
 	else // we use the last lnb in the list for the new Satellite
 		lnb = &eTransponderList::getInstance()->getLNBs().back();
@@ -842,6 +836,8 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().SeqRepeat = DiSEqCPage->SeqRepeat->isChecked();
 	p->getDiSEqC().SwapCmds = DiSEqCPage->SwapCmds->isChecked();	
 	p->getDiSEqC().uncommitted_cmd = (int)DiSEqCPage->ucInput->getCurrent()->getKey();
+	p->getDiSEqC().setRotorDefaultOptions();
+
 	if ( p != sat->getLNB() )  // the satellite must removed from the old lnb and inserts in the new
 	{
 		p->addSatellite( sat->getLNB()->takeSatellite( sat ) );

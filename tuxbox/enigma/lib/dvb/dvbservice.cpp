@@ -111,51 +111,71 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 	}
 	case eDVBServiceEvent::eventServiceTuneOK:
 	{
-		int nodvb=0;
+//		eDebug("apid = %04x, vpid = %04x, pcrpid = %04x, tpid = %04x", Decoder::parms.apid, Decoder::parms.vpid, Decoder::parms.pcrpid, Decoder::parms.tpid );
 		/*emit*/ dvb.enterTransponder(event.transponder);
-		
+		int nopmt=0;
 				// do we haved fixed or cached PID values?
 		{
-		  eService *sp=eServiceInterface::getInstance()->addRef(service);
-		  if (sp)
-		  {
-		  	if (sp->dvb)
-		  	{
-		  		if (sp->dvb->dxflags & eServiceDVB::dxNoDVB)
-		  			nodvb=1;
-		  		// set cached pids...
-		  		Decoder::parms.vpid=sp->dvb->get(eServiceDVB::cVPID);
-		  		if (sp->dvb->get(eServiceDVB::cAC3PID) != -1)
-		  		{
-		  			Decoder::parms.audio_type=DECODE_AUDIO_AC3;
-			  		Decoder::parms.apid=sp->dvb->get(eServiceDVB::cAC3PID);
-					} else
+			eService *sp=eServiceInterface::getInstance()->addRef(service);
+			if (sp)
+			{
+				if (sp->dvb) // set cached pids...
+				{
+// VPID
+					int tmp = sp->dvb->get(eServiceDVB::cVPID);
+					if ( tmp != -1)
+						Decoder::parms.vpid=tmp;
+
+// AC3PID
+					tmp = sp->dvb->get(eServiceDVB::cAC3PID);
+					if ( tmp != -1)
 					{
-		  			Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
-			  		Decoder::parms.apid=sp->dvb->get(eServiceDVB::cAPID);
-			  	}
-		  		Decoder::parms.tpid=sp->dvb->get(eServiceDVB::cTPID);
-		  		Decoder::parms.pcrpid=sp->dvb->get(eServiceDVB::cPCRPID);
-		  		Decoder::Set();
-		  	}
-		  	eServiceInterface::getInstance()->removeRef(service);
-		  }
+						Decoder::parms.audio_type=DECODE_AUDIO_AC3;
+						Decoder::parms.apid=tmp;
+					}
+/* APID*/ else
+					{
+						tmp = sp->dvb->get(eServiceDVB::cAPID);
+						if ( tmp != -1)
+						{
+							Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
+							Decoder::parms.apid=tmp;
+						}
+					}
+// TPID
+					tmp = sp->dvb->get(eServiceDVB::cTPID);
+					if (tmp != -1)
+						Decoder::parms.tpid=tmp;
+// PCRPID
+					tmp = sp->dvb->get(eServiceDVB::cPCRPID);
+					if ( tmp != -1)
+						Decoder::parms.pcrpid=tmp;
+// start yet...
+					if (sp->dvb->dxflags & eServiceDVB::dxNoPMT)
+					{
+						nopmt=1;
+						Decoder::Set();
+					}
+				}
+				eServiceInterface::getInstance()->removeRef(service);
+			}
 		}
-		
-		if (!nodvb)		// if not a dvb service, don't even try to search a PAT, PMT etc.
+
+		if (!nopmt)		// if not a dvb service, don't even try to search a PAT, PMT etc.
 			dvb.tPAT.start(new PAT());
 			
 		if (tdt)
 			delete tdt;
+			
 		if (tMHWEIT)
 			delete tMHWEIT;
+			
 		tMHWEIT=0;
 		tdt=new TDT();
 		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
 		tdt->start();
 
-
-		if (nodvb)
+		if (nopmt)
 		{
 			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
 			service_state=0;
@@ -397,12 +417,8 @@ void eDVBServiceController::scanPMT()
 		return;
 	}
 	Decoder::parms.pmtpid=pmtpid;
-	if (!service.path.size())
-		Decoder::parms.pcrpid=pmt->PCR_PID;
-	else
-		Decoder::parms.pcrpid=-1;
+
 	Decoder::parms.ecmpid=Decoder::parms.emmpid=Decoder::parms.casystemid=-1;
-	Decoder::parms.vpid=Decoder::parms.apid=-1;
 	
 	int isca=0;
 
@@ -429,6 +445,7 @@ void eDVBServiceController::scanPMT()
 
 	int audiopid=-1, videopid=-1;
 
+/*
 		// check formerly selected languages
   eService *sp=eServiceInterface::getInstance()->addRef(service);
   if (sp)
@@ -440,7 +457,7 @@ void eDVBServiceController::scanPMT()
   		sp->dvb->set(eServiceDVB::cPCRPID, Decoder::parms.pcrpid);
   	}
   	eServiceInterface::getInstance()->removeRef(service);
-  }
+  }*/
 
 	for (ePtrList<PMTEntry>::iterator i(pmt->streams); i != pmt->streams.end(); ++i)
 	{
@@ -508,11 +525,16 @@ void eDVBServiceController::scanPMT()
   DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
 
 	if (sac3default && ac3_audio)
- 		audio=ac3_audio;
+		audio=ac3_audio;
 
-	setPID(video);
-	setPID(audio);
-	setPID(teletext);
+	if ( Decoder::parms.vpid == -1 )
+		setPID(video);
+	if ( Decoder::parms.apid == -1 )
+		setPID(audio);
+	if ( Decoder::parms.tpid == -1 )
+		setPID(teletext);
+	if ( Decoder::parms.pcrpid == -1 && !service.path.size() )
+		Decoder::parms.pcrpid = pmt->PCR_PID;
 
 	/*emit*/ dvb.scrambled(isca);
 

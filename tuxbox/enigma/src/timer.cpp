@@ -54,7 +54,10 @@ void eTimerManager::actionHandler()
 			{
 				eDebug("[eTimerManager] change to the right service");
 				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
+				eString descr = nextStartingEvent->service.descr;
+				nextStartingEvent->service.descr="";
 				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psDontAdd );
+				nextStartingEvent->service.descr=descr;
 			}
 			else
 			{
@@ -257,7 +260,9 @@ void eTimerManager::actionHandler()
 			{
 				if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 				{
-					eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->event_id );
+//					eDebug("nextStartingEvent->service.data[0] = %d", nextStartingEvent->service.data[0] );
+//					eDebug("nextStartingEvent->service.descr = %s", nextStartingEvent->service.descr.c_str() );
+					eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->service.descr.c_str() );
 				}
 				else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
 				{

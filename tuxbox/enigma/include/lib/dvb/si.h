@@ -87,6 +87,12 @@ public:
 class NVODReferenceEntry
 {
 public:
+	bool operator==( const NVODReferenceEntry &e )
+	{
+		return e.transport_stream_id == transport_stream_id
+				&& e.original_network_id == original_network_id
+				&& e.service_id == service_id;
+	}
   __u16 transport_stream_id, original_network_id, service_id;
   NVODReferenceEntry(__u16 transport_stream_id, __u16 original_network_id, __u16 service_id);
   ~NVODReferenceEntry();
