@@ -181,6 +181,7 @@ eMP3Decoder::eMP3Decoder(int type, const char *filename, eServiceHandlerMP3 *han
 	if (type != codecMPG)
 	{
 		pcmsettings.reconfigure=1;
+		dspfd[1]=-1;
 	
 		dspfd[0]=::open("/dev/sound/dsp", O_WRONLY|O_NONBLOCK);
 		if (dspfd[0]<0)
@@ -956,7 +957,7 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 	service_name=description;
 #endif
 
-	for (int i=0; i<tag->nframes; ++i)
+	for (unsigned int i=0; i<tag->nframes; ++i)
 	{
 		union id3_field const *field;
 		unsigned int nstrings, j;
