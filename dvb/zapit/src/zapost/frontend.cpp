@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.9 2003/05/15 20:37:16 digi_casi Exp $
+ * $Id: frontend.cpp,v 1.41.2.10 2003/05/18 11:50:55 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -506,80 +506,52 @@ void CFrontend::secResetOverload ()
 /*
  * zapit frontend api
  */
-void CFrontend::sendMotorCommand(uint8_t cmdtype, uint8_t cmd, uint8_t address, uint8_t num_parameters, uint8_t parameter1, uint8_t parameter2)
+void CFrontend::sendMotorCommand(uint8_t cmdtype, uint8_t address, uint8_t command, uint8_t num_parameters, uint8_t parameter1, uint8_t parameter2)
 {
+	secCmdSequence seq;
+	secCommand cmd;
 	const secStatus *state;
-  
-	printf("[frontend] positionMotor: ATTENTION this function is not tested yet.\n");
 
-  	secCmdSequence *sequence = new secCmdSequence();
-	sequence->commands = new secCommand[1]; //just one command
-
-	sequence->miniCommand = SEC_MINI_NONE;
-	sequence->continuousTone = currentToneMode;
-	sequence->voltage = SEC_VOLTAGE_18; //full power ;-)
-	sequence->numCommands = 1; //just one command
-
-	sequence->commands[0].type = SEC_CMDTYPE_DISEQC;
-	sequence->commands[0].u.diseqc.cmdtype = cmdtype;
-	sequence->commands[0].u.diseqc.addr = address;
-	sequence->commands[0].u.diseqc.cmd = cmd; 
-	sequence->commands[0].u.diseqc.numParams = num_parameters;
-	sequence->commands[0].u.diseqc.params[0] = parameter1;
-	sequence->commands[0].u.diseqc.params[1] = parameter2;
-
-	secSendSequence(sequence);
-
-	delete sequence->commands;
-	delete sequence;
-	
-	if (failed == false)
-		printf("[frontend] sendMotorCommand: seding diseqc sequence worked.\n");
-	else
-		printf("[frontend] sendMotorCommand: seding diseqc sequence failed.\n");
+	printf("[frontend] sendMotorCommand: ATTENTION this function is not tested yet.\n");
+	printf("[frontend] sendMotorCommand: cmdtype   = %x, address = %x, cmd   = %x\n", cmdtype, address, command);
+	printf("[frontend] sendMotorCommand: num_parms = %d, parm1   = %x, parm2 = %x\n", num_parameters, parameter1, parameter2);
 	
 	state = secGetStatus();
 	printf("[frontend] sendMotorCommand: bus power is: %d\n", state->selVolt);
+	printf("[frontend] sendMotorCommand: tone mode is: %d\n", state->contTone);
+	
+	cmd.u.diseqc.params[0] = parameter1;
+	cmd.u.diseqc.params[1] = parameter2;
+    
+	cmd.type = SEC_CMDTYPE_DISEQC_RAW;
+	cmd.u.diseqc.cmdtype = cmdtype;
+	cmd.u.diseqc.addr = address;
+	cmd.u.diseqc.cmd = command;
+	cmd.u.diseqc.numParams = num_parameters;
+
+	seq.continuousTone = SEC_TONE_OFF;
+	seq.voltage = SEC_VOLTAGE_18;
+	
+	seq.miniCommand = SEC_MINI_NONE;
+	seq.commands=&cmd;
+	seq.numCommands=1;
+
+	if (ioctl(sec_fd, SEC_SEND_SEQUENCE, &seq) < 0)
+		printf("[frontend] sending diseqc command failed.\n");
+	else
+		printf("[frontend] diseqc command sent.\n");
+	
+	// set back voltage and tone to where they were...
+	secSetVoltage(state->selVolt);
+	secSetTone(state->contTone);
+	
 	delete state;
 }
 
 void CFrontend::positionMotor(uint8_t motorPosition)
 {
-	const secStatus *state;
-  
   	if (motorPosition > 0)
-  	{
-		printf("[frontend] positionMotor: ATTENTION this function is not tested yet.\n");
-
-  		secCmdSequence *sequence = new secCmdSequence();
-		sequence->commands = new secCommand[1]; //just one command
-
-		sequence->miniCommand = SEC_MINI_NONE;
-		sequence->continuousTone = currentToneMode;
-		sequence->voltage = SEC_VOLTAGE_18; //full power ;-)
-		sequence->numCommands = 1; //just one command
-
-		sequence->commands[0].type = SEC_CMDTYPE_DISEQC;
-		sequence->commands[0].u.diseqc.cmdtype = 0xE0;	/* from master, no reply, 1st transmission */
-		sequence->commands[0].u.diseqc.addr = 0x31;
-		sequence->commands[0].u.diseqc.cmd = 0x6B;	/* position motor */
-		sequence->commands[0].u.diseqc.numParams = 1;
-		sequence->commands[0].u.diseqc.params[0] = motorPosition; /* goto stored satellite position # */
-
-		secSendSequence(sequence);
-
-		delete sequence->commands;
-		delete sequence;
-	
-		if (failed == false)
-			printf("[frontend] positionMotor: seding diseqc sequence worked.\n");
-		else
-			printf("[frontend] positionMotor: seding diseqc sequence failed.\n");
-	
-		state = secGetStatus();
-		printf("[frontend] positionMotor: bus power is: %d\n", state->selVolt);
-		delete state;
-	}
+  		sendMotorCommand(0xE0, 0x31, 0x6B, 1, motorPosition, 0);
 	else
 		printf("[frontend] no motor position defined.\n");
 }
@@ -654,6 +626,7 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 		/* do diseqc stuff */
 		switch (diseqcType)
 		{
+		case DISEQC_1_2:
 		case NO_DISEQC:
 			if (currentToneMode != toneMode)
 			{
@@ -684,7 +657,7 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 			break;
 
 		case DISEQC_1_1:
-		case DISEQC_1_2:
+		//case DISEQC_1_2:
 			if ((currentVoltage != voltage) || (currentToneMode != toneMode) || (currentDiseqc != diseqc))
 			{
 				sendDiseqcCommand(toneMode, voltage, diseqc, diseqcRepeats);
