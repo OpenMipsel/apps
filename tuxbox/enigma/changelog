@@ -75,3 +75,4 @@
 200304172159 5 * Don't change voltage on PIN8 in Standby
 200304192330 4 * Fix repeated timer.. and overlapping test ( hope its now okay )
 200304211300 4 * Many other timer bugs fixed
+200305180353 2 * Add time zone setup
