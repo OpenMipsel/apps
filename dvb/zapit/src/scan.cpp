@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.11 2003/05/22 12:01:48 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.12 2003/06/05 09:08:25 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -56,10 +56,33 @@ extern uint32_t found_data_chans;
 extern CFrontend *frontend;
 extern xmlDocPtr scanInputParser;
 extern std::map <uint8_t, std::string> scanProviders;
-extern std::map <string, int32_t> satellitePositions;
-extern std::map <string, uint8_t> motorPositions;
+
+extern std::map<t_satellite_position, uint8_t> motorPositions;
+extern std::map<t_satellite_position, uint8_t>::iterator mpos_it;
+
+extern std::map<string, t_satellite_position> satellitePositions;
+extern std::map<string, t_satellite_position>::iterator spos_it;
+
 extern CZapitClient::bouquetMode bouquetMode;
 extern CEventServer *eventServer;
+
+t_satellite_position driveMotorToSatellitePosition(char * providerName)
+{
+	t_satellite_position currentSatellitePosition = 0;
+	t_satellite_position satellitePosition = 0;
+	
+	/* position satellite dish if provider is on a different satellite */
+	currentSatellitePosition = frontend->getCurrentSatellitePosition();
+	satellitePosition = satellitePositions[providerName];
+	if ((currentSatellitePosition != satellitePosition) && (motorPositions[satellitePosition] != 0))
+	{
+		printf("[scan] start_scanthread: moving satellite dish from satellite position %d to %d\n", currentSatellitePosition, satellitePosition);
+		printf("[scan] motorPosition = %d\n", motorPositions[satellitePosition]);
+		frontend->positionMotor(motorPositions[satellitePosition]);
+		frontend->setCurrentSatellitePosition(currentSatellitePosition);
+	}
+	return satellitePosition;
+}
 
 void cp(char * from, char * to)
 {
@@ -304,7 +327,7 @@ void write_transponder(FILE *fd, t_transport_stream_id transport_stream_id, t_or
 	return;
 }
 
-int write_provider(FILE *fd, const char *type, const char *provider_name, const uint8_t DiSEqC)
+int write_provider(FILE *fd, const char *type, const char *provider_name, const uint8_t DiSEqC, t_satellite_position satellitePosition)
 {
 	int status = -1;
 	
@@ -319,7 +342,7 @@ int write_provider(FILE *fd, const char *type, const char *provider_name, const 
 		/* satellite tag */
 		else
 		{
-			fprintf(fd, "\t<%s name=\"%s\" diseqc=\"%hd\">\n", type, provider_name, DiSEqC);
+			fprintf(fd, "\t<%s name=\"%s\" diseqc=\"%hd\" position=\"%hd\">\n", type, provider_name, DiSEqC, satellitePosition);
 		}
 
 		/* channels */
@@ -444,8 +467,7 @@ void *start_scanthread(void *)
  	found_tv_chans = 0;
  	found_radio_chans = 0;
  	found_data_chans = 0;
- 	int32_t currentSatellitePosition = 0;
- 	int32_t satellitePosition = 0;
+ 	t_satellite_position satellitePosition = 0;
 
 
 	curr_sat = 0;
@@ -504,21 +526,13 @@ void *start_scanthread(void *)
 				if (diseqc_pos == 255 /* = -1 */)
 					diseqc_pos = 0; 
 				
-				/* position satellite dish if provider is on a different satellite */
-				currentSatellitePosition = frontend->getCurrentSatellitePosition();
-				satellitePosition = satellitePositions[providerName];
-				if ((frontend->getDiseqcType() == DISEQC_1_2) && (currentSatellitePosition != satellitePosition) && (motorPositions[providerName] != 0))
-				{
-					printf("[scan] start_scanthread: moving satellite dish from satellite position %d to %d\n", currentSatellitePosition, satellitePosition);
-					printf("[scan] motorPosition = %d\n", motorPositions[providerName]);
-					frontend->positionMotor(motorPositions[providerName]);
-					frontend->setCurrentSatellitePosition(currentSatellitePosition);
-				}
+				if (strcmp(type, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
+					satellitePosition = driveMotorToSatellitePosition(providerName);
 						
 				scan_provider(search, providerName, satfeed, diseqc_pos);
 					
 				/* write services */
-				scan_status = write_provider(fd, type, providerName, diseqc_pos);
+				scan_status = write_provider(fd, type, providerName, diseqc_pos, satellitePosition);
 			
 				if (fd1)		
 					copy_to_end(fd, fd1, providerName);
