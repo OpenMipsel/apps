@@ -132,6 +132,7 @@ int eZapPlugins::exec()
 {
 	int cnt=0;
 	ePlugin *plg=0;
+	std::set<eString> exist;
 	for ( int i = 0; i < 2; i++ )
 	{
 		DIR *d=opendir(PluginPath[i].c_str());
@@ -150,16 +151,26 @@ int eZapPlugins::exec()
 			}
 			continue;
 		}
+		int connType=0;
+		eConfig::getInstance()->getKey("/elitedvb/network/connectionType", connType);
 		while (struct dirent *e=readdir(d))
 		{
 			eString FileName = e->d_name;
-			
 			if ( FileName.find(".cfg") != eString::npos )
 			{
 				eString cfgname=(PluginPath[i]+FileName).c_str();
 				int ttype=atoi(getInfo(cfgname.c_str(), "type").c_str());
 				if ((type == -1) || (type == ttype))
 				{
+					// do not add existing plugins twice
+					if ( exist.find(FileName) != exist.end() )
+						continue;
+					exist.insert(FileName);
+					// EVIL HACK
+					if ( !connType && cfgname.find("dsl") != eString::npos &&
+						cfgname.find("connect") != eString::npos )
+						continue;
+					////////////
 					plg = new ePlugin(&list, cfgname.c_str());
 					++cnt;
 				}
