@@ -112,7 +112,7 @@ int eString::icompare(const eString& s)
 		else
 			p++, p2++;
 
-	return 0;
+	return length() == s.length() ? 0 : length() < s.length() ? -1 : 1;
 }
 
 		// 8859-x to dvb coding tables. taken from www.unicode.org/Public/MAPPINGS/ISO8859/

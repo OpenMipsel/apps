@@ -1754,16 +1754,20 @@ void eZapMain::setNewServiceSelectorRoot( eServiceReference root, eServiceRefere
 {
 	if ( root )
 	{
+start:
+		int cnt=0;
 		int changed=0;
 		eServicePath p=modeLast[mode][0];
 		eServiceReference ref = p.current();
 		p.up();
-		while ( p.current() != root )
+
+// evtl schon das passende root gefunden
+		while ( p.current() != root )  
 		{
 			while (p.size() > 1 )
 				p.up();
 
-			if( p.current() == root )
+			if( p.current() == root )  // gefunden...
 			{
 				changed=1;
 				break;
@@ -1771,6 +1775,17 @@ void eZapMain::setNewServiceSelectorRoot( eServiceReference root, eServiceRefere
 
 			rotateRoot();
 			p=modeLast[mode][0];
+
+// START WORKAROUND.. EIGENTLICH DARF DAS NICHT PASSIEREN
+			if ( ++cnt > 5 )		// irgendwas läuft hier ganz gewaltig schief...
+			{
+				reloadPaths(1);
+				// da stellen wir doch ganz gemein die roots wieder her
+				// besser als in der endlos loop zu verbleiben....
+				goto start;
+		// also wenns dann immer noch nicht geht..
+		// dann ist eh alles kaputt.. und es gibt ne endlos loop
+			}
 		}
 		if ( path )
 			p.down( path );

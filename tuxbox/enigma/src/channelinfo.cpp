@@ -15,8 +15,6 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	cgenre(this), cdolby(this), cstereo(this),
 	cformat(this), cscrambled(this), eit(0)
 {
-	cflags = 0;
-
 	gFont fn = eSkin::getActive()->queryFont("eStatusBar");
 	fn.pointSize = 28;
 	cdescr.setFont( fn );
@@ -135,6 +133,8 @@ const char *eChannelInfo::genresTableShort[256] =
 
 void eChannelInfo::ParseEITInfo(EITEvent *e)
 {
+		name=descr=genre=starttime="";
+		cflags=0;
 		eString t;
 			
 		if(e->start_time!=0)
@@ -289,11 +289,6 @@ void eChannelInfo::update( const eServiceReferenceDVB& service )
 
 void eChannelInfo::clear()
 {
-	name="";
-	descr="";
-	genre="";
-	starttime="";
-	cflags=0;
 	cname.setText("");
 	cdescr.setText("");
 	cgenre.setText("");
