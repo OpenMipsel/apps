@@ -198,13 +198,16 @@ void eSatelliteConfigurationManager::satChanged(eComboBox* who, eListBoxEntryTex
 	eSatellite *s = getSat4SatCombo(who);
 	if ( le->getKey() && le->getText() )
 	{
+			// delete old orbital position services
+		if ((int)le->getKey() != s->getOrbitalPosition())
+			eDVB::getInstance()->settings->removeOrbitalPosition(s->getOrbitalPosition());
 		s->setOrbitalPosition( (int) le->getKey() );
 		s->setDescription( le->getText() );
 	}
 	else  // *delete* selected -->> satellite and empty lnbs were now deleted
 	{
-		eLNB* lnb = s->getLNB();
 		eDVB::getInstance()->settings->removeOrbitalPosition(s->getOrbitalPosition());
+		eLNB* lnb = s->getLNB();
 		lnb->deleteSatellite( s );
 		eDebug("Satellite is now removed");
 		if ( !lnb->getSatelliteList().size() )   // the lnb that have no more satellites must be deleted

@@ -437,6 +437,7 @@ void eDVBSettings::removeOrbitalPosition(int orbital_position)
 	if (transponderlist)
 	{
 		transponderlist->removeOrbitalPosition(orbital_position);
+		removeDVBBouquets();
 		sortInChannels();
 	}
 

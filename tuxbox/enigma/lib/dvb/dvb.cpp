@@ -260,11 +260,14 @@ void eTransponderList::removeOrbitalPosition(int orbital_position)
 	{
 		eTransponder &t=it->second;
 				// is this transponder on the removed orbital_position ?
+		eDebug("transponder on %d, remove %d", t.satellite.orbital_position, orbital_position);
 		if (t.satellite.isValid() && t.satellite.orbital_position == orbital_position)
 		{
+			eDebug("found transponder to remove");
 			t.satellite.valid=0;
 			if (!t.cable.isValid())
 			{
+				eDebug("removing transponder");
 				// delete this transponder (including services)
 				eTransportStreamID tsid=it->first.first;
 				eOriginalNetworkID onid=it->first.second;
@@ -280,6 +283,7 @@ void eTransponderList::removeOrbitalPosition(int orbital_position)
 					if ((ref.getOriginalNetworkID() == onid) &&
 							(ref.getTransportStreamID() == tsid))
 					{
+						eDebug("removing service");
 						std::map<eServiceReferenceDVB,eService>::iterator i=sit;
 						++sit;
 								// if yes, get rid of it.
