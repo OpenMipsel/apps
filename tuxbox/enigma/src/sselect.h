@@ -62,7 +62,8 @@ class eServiceSelector: public eWindow
 	eServiceReference *result;
 	eListBox<eListBoxEntryService> *services, *bouquets;
 	
-	eLabel *alt[4];
+	eLabel *key[4];
+	void setKeyDescriptions();
 
 	eChannelInfo* ci;
 
