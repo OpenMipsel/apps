@@ -69,20 +69,16 @@
 			<action name="standby_press" key="power" flags="m" />
 			<action name="standby_repeat" key="power" flags="r" />
 			<action name="standby_release" key="power" flags="b" />
-			<action name="toggleInfobar" key="ok" flags="m" />
 			<action name="showSubservices" key="green" flags="m" />
 			<action name="showAudio" key="yellow" flags="m" />
 			<action name="showAudio" key="audio" flags="m" />
 			<action name="pluginVTXT" key="blue" flags="m" />
 			<action name="pluginVTXT" key="text" flags="m" />
 			<action name="showEPGList" key="red" flags="m" />
-			<action name="showEPG" key="info" flags="m" />
 			<action name="playlistNextService" key="next" flags="mr" />
 			<action name="playlistPrevService" key="prev" flags="mr" />
 			<action name="nextService" key="right" flags="mr" />
 			<action name="prevService" key="left" flags="mr" />
-			<action name="serviceListDown" key="down" flags="m" />
-			<action name="serviceListUp" key="up" flags="m" />
 			<action name="volumeUp" key="volup" flags="mr" />
 			<action name="volumeDown" key="voldown" flags="mr" />
 			<action name="toggleMute" key="mute" flags="mr" />
@@ -110,6 +106,18 @@
 			<action name="modeRadio" key="radio" flags="m" />
 			<action name="modeFile" key="text" flags="m" />
 			<action name="toggleDVRFunctions" key="video" flags="m" />
+		</actionmap>
+		<actionmap name="enigmaMain" style="default">
+			<action name="toggleInfobar" key="ok" flags="m" />
+			<action name="serviceListDown" key="down" flags="m" />
+			<action name="serviceListUp" key="up" flags="m" />
+			<action name="showEPG" key="info" flags="m" />
+		</actionmap>
+		<actionmap name="enigmaMain" style="classic">
+			<action name="nextService" key="up" flags="mr" /> <!-- falschrum -->
+			<action name="prevService" key="down" flags="mr" />
+			<action name="showInfobarEPG" key="info" flags="m" />
+			<action name="showServiceSelector" key="ok" flags="m" />
 		</actionmap>
 		<actionmap name="serviceSelector">
 			<action name="nextBouquet" key="next" flags="mr" />

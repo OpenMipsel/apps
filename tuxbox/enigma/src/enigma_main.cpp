@@ -48,7 +48,8 @@
 struct enigmaMainActions
 {
 	eActionMap map;
-	eAction showMainMenu, standby_press, standby_repeat, standby_release, toggleInfobar, showServiceSelector,
+	eAction showMainMenu, standby_press, standby_repeat, standby_release, 
+		toggleInfobar, showInfobarEPG, showServiceSelector,
 		showSubservices, showAudio, pluginVTXT, showEPGList, showEPG, 
 		nextService, prevService, playlistNextService, playlistPrevService,
 		serviceListDown, serviceListUp, volumeUp, volumeDown, toggleMute,
@@ -64,7 +65,9 @@ struct enigmaMainActions
 		standby_press(map, "standby_press", _("go to standby (press)"), eAction::prioDialog),
 		standby_repeat(map, "standby_repeat", _("go to standby (repeat)"), eAction::prioDialog),
 		standby_release(map, "standby_release", _("go to standby (release)"), eAction::prioDialog),
+
 		toggleInfobar(map, "toggleInfobar", _("toggle infobar"), eAction::prioDialog),
+		showInfobarEPG(map, "showInfobarEPG", _("show infobar or EPG"), eAction::prioDialog),
 		showServiceSelector(map, "showServiceSelector", _("show service selector"), eAction::prioDialog),
 		showSubservices(map, "showSubservices", _("show subservices/NVOD"), eAction::prioDialog),
 		showAudio(map, "showAudio", _("show audio selector"), eAction::prioDialog),
@@ -79,6 +82,7 @@ struct enigmaMainActions
 		
 		serviceListDown(map, "serviceListDown", _("service list and down"), eAction::prioDialog),
 		serviceListUp(map, "serviceListUp", _("service list and up"), eAction::prioDialog),
+
 		volumeUp(map, "volumeUp", _("volume up"), eAction::prioDialog),
 		volumeDown(map, "volumeDown", _("volume down"), eAction::prioDialog),
 		toggleMute(map, "toggleMute", _("toggle mute flag"), eAction::prioDialog),
@@ -2066,6 +2070,13 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showInfobar();
 		else if (isVisible() && (event.action == &i_enigmaMainActions->toggleInfobar))
 			hideInfobar();
+		else if ((!isVisible()) && (event.action == &i_enigmaMainActions->showInfobarEPG))
+		{
+			if (!isVisible())
+				showInfobar();
+			else
+				showEPG();
+		}
 		else if (event.action == &i_enigmaMainActions->showServiceSelector)
 		{
 			if (handleState())
@@ -2092,8 +2103,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		{
 			if ( handleState() )
 				nextService();
-			 }
-		else if (event.action == &i_enigmaMainActions->prevService)
+		}	else if (event.action == &i_enigmaMainActions->prevService)
 		{
 			if ( handleState() )
 				prevService();

@@ -79,15 +79,16 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	rcStyle->setHelpText(_("select your favourite rc style (ok)"));
 	rcStyle->loadDeco();
 	CONNECT( rcStyle->selchanged, eZapRCSetup::styleChanged );
-  eListBoxEntryText *current=new eListBoxEntryText( *rcStyle, _("default") );
-	for (std::set<eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin()); it != eActionMapList::getInstance()->getExistingStyles().end(); it++ )
+  eListBoxEntryText *current=0;
+	for (std::map<eString, eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin()); it != eActionMapList::getInstance()->getExistingStyles().end(); ++it)
 	{
-		if ( *it == eActionMapList::getInstance()->getCurrentStyle() )
-			current = new eListBoxEntryText( *rcStyle, *it );
+		if ( it->first == eActionMapList::getInstance()->getCurrentStyle() )
+			current = new eListBoxEntryText( *rcStyle, it->first );
 		else
-			new eListBoxEntryText( *rcStyle, *it );
+			new eListBoxEntryText( *rcStyle, it->first );
 	}
-	rcStyle->setCurrent( current );
+	if (current)
+		rcStyle->setCurrent( current );
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->move(ePoint(20, clientrect.height()-80));

@@ -22,7 +22,7 @@ eAction::~eAction()
 	std::map<eString, keylist>::iterator it=keys.find( eActionMapList::getInstance()->getCurrentStyle() );
 	if ( it != keys.end() )
 		return it->second;
-	it = keys.find(_("default"));
+	it = keys.find("default);
 	return it->second;
 }*/
 
@@ -39,11 +39,13 @@ int eAction::containsKey(const eRCKey &key, const eString &style ) const
 
 // ---------------------------------------------------------------------------
 
-void eActionMap::findAction(eActionPrioritySet &list, const eRCKey &key, void *context, const eString& style ) const
+void eActionMap::findAction(eActionPrioritySet &list, const eRCKey &key, void *context, const eString &style) const
 {
 	for (std::list<eAction*>::const_iterator i=actions.begin(); i!=actions.end(); ++i)
+	{
 		if ((*i)->containsKey(key, style))
 			list.insert(eAction::directedAction(context, *i));
+	}
 }
 
 eAction *eActionMap::findAction(const char *id) const
@@ -189,7 +191,7 @@ eActionMapList::eActionMapList()
 		instance=this;
 	char * tmp;
 	if ( eConfig::getInstance()->getKey("/ezap/rc/style", tmp ) )
-		currentStyle=_("default");
+		currentStyle="default";
 	else
 	{
 		currentStyle=tmp;
@@ -296,7 +298,7 @@ int eActionMapList::loadXML(const char *filename)
 					const char *style=xam->GetAttributeValue("style");
 					if (style)
 					{
-						existingStyles.insert(style);
+						existingStyles[style]=eString(_("style: ")) + style;
 						am->loadXML(device, keymap, xam, style );
 					}
 					else

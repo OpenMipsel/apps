@@ -55,7 +55,7 @@
 			<action name="pageup" key="left" flags="mr" />
 		</actionmap>
 
-		<actionmap name="enigmaMain" style="neutrino" >
+		<actionmap name="enigmaMain" style="classic" >
 			<action name="showEPGList" key="?" flags="m" />
 		</actionmap>
 		

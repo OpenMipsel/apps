@@ -88,12 +88,12 @@ public:
 	{
 		actions.remove(action);
 	}
-	void findAction(eActionPrioritySet &list, const eRCKey &key, void *context, const eString &style ) const;
+	void findAction(eActionPrioritySet &list, const eRCKey &key, void *context, const eString &style) const;
 	eAction *findAction(const char *id) const;
 	const char *getDescription() const { return description; }
 	const char *getIdentifier() const { return identifier; }
 	void reloadConfig();
-	void loadXML(eRCDevice *device, std::map<std::string,int> &keymap, const XMLTreeNode *node, const eString& s=_("default") );
+	void loadXML(eRCDevice *device, std::map<std::string,int> &keymap, const XMLTreeNode *node, const eString& s="");
 	void saveConfig();
 };
 
@@ -110,8 +110,10 @@ class eActionMapList
 
 	actionMapList actionmaps;
 
-	std::set<eString> existingStyles;
+	std::map<eString, eString> existingStyles;
+
 	// this contains the full filename of all loaded actionMaps
+	// ???? WHAT contains the full filename?
 
 	eString currentStyle;
 
@@ -121,7 +123,8 @@ public:
 	~eActionMapList();
 	const eString &getCurrentStyle() const { return currentStyle; }
 	void setCurrentStyle( const eString& style ) { currentStyle = style; }
-	const std::set<eString> &getExistingStyles() const { return existingStyles; }
+	eString getStyleDescription(const eString &style) const { std::map<eString, eString>::const_iterator i=existingStyles.find(style); if (i==existingStyles.end()) return ""; else return i->second; }
+	const std::map<eString, eString> &getExistingStyles() const { return existingStyles; }
 	void addActionMap(const char *, eActionMap * );
 	void removeActionMap(const char *);
 	int loadXML(const char *filename);

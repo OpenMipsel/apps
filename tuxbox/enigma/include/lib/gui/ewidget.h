@@ -170,7 +170,7 @@ protected:
 	
 	typedef ePtrList<eActionMap> actionMapList;
 
-	void findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *context, const eString& style );
+	void findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *context);
 	void addActionMap(eActionMap *map);
 	void removeActionMap(eActionMap *map);
 	actionMapList actionmaps;
