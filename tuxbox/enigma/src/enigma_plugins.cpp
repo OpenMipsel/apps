@@ -180,12 +180,27 @@ int eZapPlugins::exec()
 	return res;
 }
 
-void eZapPlugins::execPluginByName(const char* name)
+eString eZapPlugins::execPluginByName(const char* name)
 {
-	eString PluginPath = PLUGINDIR "/";
-	PluginPath+=name;
-	ePlugin p(0, PluginPath.c_str());
-	execPlugin(&p);
+	if ( name )
+	{
+		eString PluginPath;
+		if ( name[0]!='/' ) // absolute path...
+			PluginPath = PLUGINDIR "/";
+		PluginPath+=name;
+		FILE *fp=fopen(PluginPath.c_str(), "rb");
+		if ( fp )
+		{
+			fclose(fp);
+			ePlugin p(0, PluginPath.c_str());
+			execPlugin(&p);
+			return "OK";
+		}
+		else
+			return eString().sprintf(_("file '%s' not found"), name );
+	}
+	else
+		return _("no name given");
 }
 
 void eZapPlugins::execPlugin(ePlugin* plugin)

@@ -21,7 +21,7 @@ private:
 	void selected(ePlugin *);
 public:
 	eZapPlugins(eWidget* lcdTitle=0, eWidget* lcdElement=0);
-	void execPluginByName(const char* name);
+	eString execPluginByName(const char* name);
 	void execPlugin(ePlugin* plugin);
 	int exec();
 };

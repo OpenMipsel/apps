@@ -159,8 +159,7 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 				descr += ss->text;
 				if( (!descr.isNull()) && (descr.c_str()[0])) descr += " ";
 			}
-
-			if (descriptor->Tag()==DESCR_COMPONENT)
+      else if (descriptor->Tag()==DESCR_COMPONENT)
 			{
 				ComponentDescriptor *cd=(ComponentDescriptor*)descriptor;
 				
@@ -171,8 +170,7 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 				else if( cd->stream_content == 1 && (cd->component_type == 2 || cd->component_type == 3) )
 					cflags |= cflagWide;
 			}
-
-			if(descriptor->Tag()==DESCR_CONTENT)
+			else if(descriptor->Tag()==DESCR_CONTENT)
 			{
 				ContentDescriptor *cod=(ContentDescriptor*)descriptor;
 

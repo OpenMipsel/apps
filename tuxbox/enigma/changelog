@@ -45,3 +45,17 @@
 200302242113 4 * Volume&mute keys will work everywhere
 200302242125 6 * Add support to zap with numbers in the service selector ( only in user bouquets )
 200302242125 6 * Add support to rename each service in a user bouquet ( recorded movies / DVB services )
+200302242125 6 * Add support to add single linkage services in user bouquets
+200303040053 5 * Add support to add and remove timers in eventview
+200303070225 4 * Add support for subservice zapping ( F1, Bundesliga )
+200303070225 4 * Fix Timer ugly timer bug.. timer is now okay
+200303080430 5 * Delayed go to standby after running timer event
+200303081912 6 * MP3 ID3 Tag improvements... parse on demand
+200303100238 3 * add many funktions to reload settings on run time... ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010829.html )
+200303110429 6 * reenable bouquet + - keys with closed service selector ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010845.html )
+200303141538 7 * add second plugin directory (/var/tuxbox/plugins)
+200303141538 5 * now timers kann directly added with  - green button for DVR Timer,  - yellow button for NGRAB Timer,  - blue button for switch timer in EPG and eventview
+200303141538 7 * add plugin offset setup dialog ( in osd setup ) ( tuxtxt )
+200303150314 5 * on recorded movies "This service could not be descrambled" never more appear on screen
+200303150314 3 * remove bug which prevent pause and play on recorded ts which was recorded  on a scrambles service
+200303152100 7 * now plugins can be started with http://boxip/cgi-bin/startPlugin?path=/bla&name=pluginname.cfg

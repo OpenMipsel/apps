@@ -3017,6 +3017,7 @@ extern eString getInfo(const char *file, const char *info);
 
 void eZapMain::runVTXT()
 {
+	eDebug("runVTXT");
 	if (isVT)
 	{
 		eZapPlugins plugins;
@@ -3048,6 +3049,7 @@ void eZapMain::runVTXT()
 				if ((aneedvtxtpid.isNull() ? false : atoi(aneedvtxtpid.c_str())) &&
             (aneedlcd.isNull() ? false : atoi(aneedlcd.c_str())) )
 				{
+					eDebug("pluginname = %s", namelist[count]->d_name);
 					plugins.execPluginByName(namelist[count]->d_name);
 					executed=1;
 				}

@@ -17,6 +17,7 @@
 #include <enigma.h>
 #include <timer.h>
 #include <enigma_main.h>
+#include <enigma_plugins.h>
 #include <sselect.h>
 
 #include <lib/system/http_dyn.h>
@@ -34,7 +35,6 @@
 #include <lib/gdi/epng.h>
 #include <lib/driver/eavswitch.h>
 #include <lib/dvb/service.h>
-
 
 // #include <lib/dvr/dvrsocket.h>
 
@@ -880,6 +880,25 @@ static eString message(eString request, eString dirpath, eString opt, eHTTPConne
 		return eString("error\n");
 }
 
+static eString start_plugin(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	std::map<eString,eString> opts=getRequestOptions(opt);
+
+	if (opts.find("path") == opts.end())
+		return "E: no path set";
+
+	if (opts.find("name") == opts.end())
+		return "E: no name set";
+
+	eZapPlugins plugins;
+
+	eString path = opts["path"];
+	if ( path[path.length()-1] != '/' )
+		path+='/';
+
+	return plugins.execPluginByName( (path+opts["name"]).c_str() );
+}
+
 static eString xmessage(eString request, eString dirpath, eString opt, eHTTPConnection *content)
 {
 	std::map<eString,eString> opts=getRequestOptions(opt);
@@ -1196,7 +1215,8 @@ void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 	dyn_resolver->addDyn("GET", "/cgi-bin/saveUserBouquets", save_userBouquets);
 	dyn_resolver->addDyn("GET", "/cgi-bin/reloadTimerList", load_timerList);
 	dyn_resolver->addDyn("GET", "/cgi-bin/saveTimerList", save_timerList);
-
+	dyn_resolver->addDyn("GET", "/cgi-bin/startPlugin", start_plugin);
+	
 	dyn_resolver->addDyn("GET", "/control/zapto", neutrino_suck_zapto);
 	dyn_resolver->addDyn("GET", "/cgi-bin/screenshot", screenshot);
 /*

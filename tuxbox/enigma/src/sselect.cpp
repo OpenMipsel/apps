@@ -734,6 +734,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->prevBouquet && !movemode && path.size() > 1)
 			{
+				ci->clear();
 				services->beginAtomic();
 				if (style == styleCombiColumn)
 				{
@@ -759,6 +760,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->nextBouquet && !movemode && path.size()>1 )
 			{
+				ci->clear();
 				services->beginAtomic();
 				if (style == styleCombiColumn)
 				{
@@ -843,13 +845,25 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_serviceSelectorActions->gotoLastService)
 				services->moveSelection(services->dirLast);
 			else if (event.action == &i_serviceSelectorActions->showAll && !movemode)
+			{
 				/*emit*/showList(listAll);
+				ci->clear();
+			}
 			else if (event.action == &i_serviceSelectorActions->showSatellites && !movemode)
+			{
 				/*emit*/showList(listSatellites);
+				ci->clear();
+			}
 			else if (event.action == &i_serviceSelectorActions->showProvider && !movemode)
+			{
 				/*emit*/showList(listProvider);
+				ci->clear();
+			}
 			else if (event.action == &i_serviceSelectorActions->showBouquets && !movemode)
+			{
 				/*emit*/showList(listBouquets);
+				ci->clear();
+			}
 			else if (event.action == &i_cursorActions->cancel)
 			{
 				if (movemode)
@@ -870,7 +884,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				if (num != -1)
 				{
 					if (selectService( num ))
-					{
+     {
 						result=&services->getCurrent()->service;
 						close(0);
 					}
