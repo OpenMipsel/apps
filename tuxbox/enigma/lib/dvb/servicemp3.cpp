@@ -17,6 +17,8 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#define VIDEO_FLUSH_BUFFER    0
+
 /*
 	note: mp3 decoding is done in ONE seperate thread with multiplexed input/
 	decoding and output. The only problem arises when the ::read-call,
@@ -200,11 +202,11 @@ eMP3Decoder::eMP3Decoder(int type, const char *filename, eServiceHandlerMP3 *han
 		} else
 			outputsn[0]=0;
 		outputsn[1]=0;
-		Decoder::displayIFrameFromFile("/iframe");
+		Decoder::displayIFrameFromFile(DATADIR "/iframe");
 	} else
 	{
-		Decoder::parms.vpid=0x1fff;
-		Decoder::parms.apid=0x1fff;
+		Decoder::parms.vpid=0x1ffe;
+		Decoder::parms.apid=0x1ffe;
 		Decoder::parms.pcrpid=-1;
 		Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
 		Decoder::Set();
@@ -492,7 +494,10 @@ void eMP3Decoder::recalcPosition()
 			position=::lseek(sourcefd, 0, SEEK_CUR);
 			position+=input.size();
 			position/=(audiodecoder->getAverageBitrate()>>3);
-			position+=output.size()/pcmsettings.samplerate/pcmsettings.channels/2;
+			if (type != codecMPG)
+				position+=output.size()/pcmsettings.samplerate/pcmsettings.channels/2;
+			else
+				position+=(output.size() + output2.size())/audiodecoder->getAverageBitrate();
 		} else
 			position=-1;
 	} else
@@ -501,8 +506,16 @@ void eMP3Decoder::recalcPosition()
 
 void eMP3Decoder::dspSync()
 {
-	if (dspfd[0] >= 0)
-		::ioctl(dspfd[0], SNDCTL_DSP_RESET);
+	if (type != codecMPG)
+	{
+		if (dspfd[0] >= 0)
+			::ioctl(dspfd[0], SNDCTL_DSP_RESET);
+	} else
+	{
+		::ioctl(dspfd[0], VIDEO_FLUSH_BUFFER);
+		::ioctl(dspfd[1], SNDCTL_DSP_RESET);
+		Decoder::flushBuffer();
+	}
 }
 
 void eMP3Decoder::decodeMoreHTTP()
@@ -558,6 +571,11 @@ eMP3Decoder::~eMP3Decoder()
 	if (http)
 		delete http;
 	delete audiodecoder;
+	Decoder::parms.vpid=-1;
+	Decoder::parms.apid=-1;
+	Decoder::parms.pcrpid=-1;
+	Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
+	Decoder::Set();
 }
 
 void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
@@ -578,6 +596,7 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 		break;
 	case eMP3DecoderMessage::exit:
 		eDebug("got quit message..");
+		dspSync();
 		quit();
 		break;
 	case eMP3DecoderMessage::setSpeed:
