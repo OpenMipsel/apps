@@ -347,7 +347,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 					entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 1 : ( MaxEntries > 1 ? 2 : 0 ) )	);		
 			}
 			else
-				entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 0 : ( MaxEntries > 1 ? 2 : 0 ) )	);
+				entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), 0 /*( have_focus ? 0 : ( MaxEntries > 1 ? 2 : 0 ) )*/	);
 			target->clippop();
 		}
 
