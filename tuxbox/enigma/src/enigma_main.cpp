@@ -1305,6 +1305,20 @@ void eZapMain::reloadPaths(int reset)
 	}
 }
 
+int eZapMain::doHideInfobar()
+{
+	eServiceReference &ref = eServiceInterface::getInstance()->service;
+	if ( ((mode != modeRadio) && ref.type == eServiceReference::idDVB)
+#ifndef DISABLE_FILE
+		||
+			(ref.type == eServiceReference::idUser &&
+			ref.data[0] == eMP3Decoder::codecMPG )
+#endif
+		 )
+		return 1;
+	return 0;
+}
+
 eZapMain::eZapMain()
 	:eWidget(0, 1)
 	,mute( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
@@ -2351,20 +2365,13 @@ void eZapMain::showInfobar()
 		 )
 		show();
 
-	if (eServiceInterface::getInstance()->service.type == eServiceReference::idDVB)
+	if (doHideInfobar())
 		timeout.start(6000, 1);
 }
 
 void eZapMain::hideInfobar()
 {
-	eServiceReference &ref = eServiceInterface::getInstance()->service;
-	if ( ref.type == eServiceReference::idDVB
-#ifndef DISABLE_FILE
-		||
-			(ref.type == eServiceReference::idUser &&
-			ref.data[0] == eMP3Decoder::codecMPG )
-#endif
-		 )
+	if (doHideInfobar())
 	{
 		timeout.stop();
 		hide();
@@ -4482,7 +4489,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 // Quick und Dirty ... damit die aktuelle Volume sofort angezeigt wird.
 	eAVSwitch::getInstance()->sendVolumeChanged();
 
-	if ( eServiceInterface::getInstance()->service.type == eServiceReference::idDVB )
+	if (doHideInfobar())
 		timeout.start((sapi->getState() == eServiceHandler::statePlaying)?5000:2000, 1);
 }
 
@@ -4512,7 +4519,7 @@ void eZapMain::gotEIT()
 			if (state)
 			{
 				showInfobar();
-				if (eServiceInterface::getInstance()->service.type == eServiceReference::idDVB)
+				if (doHideInfobar())
 					timeout.start((sapi->getState() == eServiceHandler::statePlaying)?10000:2000, 1);
 			}
 		}

@@ -551,6 +551,8 @@ public:
 	void saveUserBouquets();  // only save
 	
 	void reloadPaths(int reset=0);
+	
+	int doHideInfobar();
 
 	eZapMain();
 	~eZapMain();
