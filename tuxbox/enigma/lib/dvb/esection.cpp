@@ -192,7 +192,7 @@ void eSection::closeFilter()
 
 void eSection::data(int socket)
 {
-	int max = 50;
+	int max = 200;
 	while (max--)
 	{
 		if (lockcount)
@@ -205,21 +205,10 @@ void eSection::data(int socket)
 
 		//  printf("%d/%d, we want %d  | service_id %04x | version %04x\n", buf[6], maxsec, section, (buf[3]<<8)|buf[4], buf[5]);
 
-		bool tmp=false;
 		if (flags&SECREAD_INORDER)
-		{
 			version=buf[5];
-			if (section>maxsec)    // last section?
-			{
-				closeFilter();       // stop feeding
-				sectionFinish(0);
-				break;
-			}
-		}
-		else
-			tmp=true;
 
-		if ( tmp || section==buf[6] )
+		if ((!(flags&SECREAD_INORDER)) || (section==buf[6]))
 		{
 			int err;
 			if ((err=sectionRead(buf)))
@@ -231,6 +220,13 @@ void eSection::data(int socket)
 				return;
 			}
 			section=buf[6]+1;
+		}
+
+		if ((section>maxsec) && (flags&SECREAD_INORDER))		// last section?
+		{
+			closeFilter();										// stop feeding
+			sectionFinish(0);
+			break;
 		}
 	}
 }

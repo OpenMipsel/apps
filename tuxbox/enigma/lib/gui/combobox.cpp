@@ -124,7 +124,7 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 
 	if (e && button.getText() != e->getText() )
 	{
-		text=e->getText();
+		setText(e->getText());
 		setFocus( this );
 #ifndef DISABLE_LCD
 		if ( parent->LCDElement )
