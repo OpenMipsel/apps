@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.21 2003/03/30 12:25:03 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.22 2003/03/30 12:59:49 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -1342,6 +1342,11 @@ void leaveStandby(void)
 	}
 	if (!frontend) {
 		frontend = new CFrontend();
+		if (!frontend->isInitialized())
+		{
+			printf("[zapit] unable to open frontend devices. bye.\n");
+			return -1;
+		}
 	}
 	if (!videoDecoder) {
 		videoDecoder = new CVideo();
@@ -1446,7 +1451,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.21 2003/03/30 12:25:03 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.22 2003/03/30 12:59:49 thegoodguy Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
@@ -1493,32 +1498,6 @@ int main(int argc, char **argv)
 		WARN("error parsing services");
 	else
 		INFO("channels have been loaded succesfully");
-
-	/* initialize frontend */
-	frontend = new CFrontend();
-
-	if (!frontend->isInitialized())
-	{
-		printf("[zapit] unable to open frontend devices. bye.\n");
-		return -1;
-	}
-	else
-	{
-		char tmp[16];
-
-		frontend->setDiseqcType((diseqc_t) config.getInt32("diseqcType", NO_DISEQC));
-		frontend->setDiseqcRepeats(config.getInt32("diseqcRepeats", 0));
-
-		for (int i = 0; i < MAX_LNBS; i++)
-		{
-			/* low offset */
-			sprintf(tmp, "lnb%d_OffsetLow", i);
-			frontend->setLnbOffset(false, i, config.getInt32(tmp, 9750000));
-			/* high offset */
-			sprintf(tmp, "lnb%d_OffsetHigh", i);
-			frontend->setLnbOffset(true, i, config.getInt32(tmp, 10600000));
-		}
-	}
 
 	audioDecoder = new CAudio();
 
