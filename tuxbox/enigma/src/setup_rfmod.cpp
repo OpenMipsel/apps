@@ -126,18 +126,10 @@ eZapRFmodSetup::eZapRFmodSetup(): eWindow(0)
 	ok->setShortcutPixmap("green");
 
 	ok->move(ePoint(20, 230));
-	ok->resize(eSize(170, 40));
+	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save settings and leave rf setup"));
 	ok->loadDeco();
 	CONNECT(ok->selected, eZapRFmodSetup::okPressed);		
-
-	abort=new eButton(this);
-	abort->setText(_("abort"));
-	abort->move(ePoint(210, 230));
-	abort->resize(eSize(170, 40));
-	abort->setHelpText(_("leave rf setup (no changes are saved)"));
-	abort->loadDeco();
-	CONNECT(abort->selected, eZapRFmodSetup::abortPressed);
 
 	status = new eStatusBar(this);	
 	status->move( ePoint(0, clientrect.height()-30) );
@@ -152,11 +144,6 @@ eZapRFmodSetup::~eZapRFmodSetup()
 void eZapRFmodSetup::okPressed()
 {
 	eRFmod::getInstance()->save();
-	close(1);
-}
-
-void eZapRFmodSetup::abortPressed()
-{
 	close(0);
 }
 

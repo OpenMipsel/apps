@@ -98,20 +98,10 @@ ENgrabSetup::ENgrabSetup():
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
 	ok->move(ePoint(10, 190));
-	ok->resize(eSize(170, 40));
+	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
 	CONNECT(ok->selected, ENgrabSetup::okPressed);
-
-	abort=new eButton(this);
-	abort->loadDeco();
-	abort->setText(_("abort"));
-	abort->setShortcut("red");
-	abort->setShortcutPixmap("red");
-	abort->move(ePoint(200, 190));
-	abort->resize(eSize(170, 40));
-	abort->setHelpText(_("ignore changes and return"));
-	CONNECT(abort->selected, ENgrabSetup::abortPressed);
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -196,11 +186,6 @@ void ENgrabSetup::detectMAC()
 		mb.hide();
 		show();
 	}
-}
-
-void ENgrabSetup::abortPressed()
-{
-	close(0);
 }
 
 #endif // DISABLE_NETWORK

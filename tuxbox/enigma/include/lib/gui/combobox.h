@@ -19,6 +19,7 @@ class eComboBox: public eButton
 	int setProperty( const eString&, const eString& );
 	void redrawWidget(gPainter *target, const eRect &rc);
 public:
+	~eComboBox();
 	void setOpenWidth( int w ) { listbox.resize( eSize(w, listbox.getSize().height()) ); }
 	enum	{		OK = 0,		ERROR=1,		E_ALLREADY_SELECTED = 2,		E_COULDNT_FIND = 4,		E_INVALID_ENTRY = 8	};
 	Signal1< void, eListBoxEntryText* > selchanged;	

@@ -815,9 +815,7 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	CONNECT( LNBPage->next->selected, eLNBSetup::onNext );
 	CONNECT( DiSEqCPage->prev->selected, eLNBSetup::onPrev );  
 	CONNECT( LNBPage->save->selected, eLNBSetup::onSave );
-	CONNECT( LNBPage->cancel->selected, eLNBSetup::reject);
 	CONNECT( DiSEqCPage->save->selected, eLNBSetup::onSave);
-	CONNECT( DiSEqCPage->cancel->selected, eLNBSetup::reject);
 	setHelpID(67);
 } 
 
@@ -942,9 +940,6 @@ eLNBPage::eLNBPage( eWidget *parent, eSatellite* sat )
                                        
 	save = new eButton(this);
 	save->setName("save");
-
-	cancel = new eButton(this);
-	cancel->setName("cancel");
 
 	next = new eButton(this);
 	next->setName("next");
@@ -1102,9 +1097,6 @@ eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
   
 	save = new eButton(this);
 	save->setName("save");
-
-	cancel = new eButton(this);
-	cancel->setName("cancel");
 
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eDiSEqCPage"))

@@ -84,20 +84,11 @@ eParentalSetup::eParentalSetup():
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
 	ok->move(ePoint(10, 140));
-	ok->resize(eSize(170, 40));
+	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
 
 	CONNECT(ok->selected, eParentalSetup::okPressed);
-
-	abort=new eButton(this);
-	abort->loadDeco();
-	abort->setText(_("abort"));
-	abort->move(ePoint(210, 140));
-	abort->resize(eSize(170, 40));
-	abort->setHelpText(_("ignore changes and return"));
-
-	CONNECT(abort->selected, eParentalSetup::abortPressed);
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -227,11 +218,6 @@ void eParentalSetup::okPressed()
 {
 	saveSettings();
 	close(1);
-}
-
-void eParentalSetup::abortPressed()
-{
-	close(0);
 }
 
 bool checkPin( int pin, const char * text )

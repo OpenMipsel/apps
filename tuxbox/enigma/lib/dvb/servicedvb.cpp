@@ -804,7 +804,9 @@ struct eServiceHandlerDVB_addService
 		if ( pLockActive && service.isLocked() )
 			return;
 		eService *s = eTransponderList::getInstance()->searchService( service );
-		if ( s && s->spflags & eServiceDVB::dxDontshow )
+		if ( !s )  // dont show "removed services"
+			return;
+		else if ( s->spflags & eServiceDVB::dxDontshow )
 			return;
 		int t = ((eServiceReferenceDVB&)service).getServiceType();
 		int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;

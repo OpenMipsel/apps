@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.7 2003/06/02 20:37:05 tmbinc Exp $
+ * $Id: setupskin.cpp,v 1.11.2.8 2003/06/15 02:08:29 ghostrider Exp $
  */
 
 #include <setupskin.h>
@@ -115,8 +115,6 @@ eSkinSetup::eSkinSetup()
 {
 	baccept=new eButton(this);
 	baccept->setName("accept");
-	breject=new eButton(this);
-	breject->setName("reject");
 	lskins=new eListBox<eListBoxEntrySkin>(this);
 	lskins->setName("skins");
 	lskins->setFlags(eListBoxBase::flagNoPageMovement);
@@ -124,7 +122,6 @@ eSkinSetup::eSkinSetup()
 	statusbar->setName("statusbar");
 
 	CONNECT(baccept->selected, eSkinSetup::accept);
-	CONNECT(breject->selected, eSkinSetup::reject);
 	CONNECT(lskins->selected, eSkinSetup::skinSelected);
 	
 	setFocus(lskins);

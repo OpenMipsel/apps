@@ -25,8 +25,8 @@ class eZapRCSetup: public eWindow
 
 	int rdelay;
 	int rrate;
-	                	
-	eButton *ok, *abort;
+	           
+	eButton *ok;
 	void okPressed();
 	int eventHandler( const eWidgetEvent& );
 	void repeatChanged( int );

@@ -49,18 +49,10 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
 	ok->move(ePoint(20, clientrect.height()-80));
-	ok->resize(eSize(170, 40));
+	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
 	CONNECT(ok->selected, eZapTimeZoneSetup::okPressed);
-
-	abort=new eButton(this);
-	abort->setText(_("abort"));
-	abort->move(ePoint(210, clientrect.height()-80));
-	abort->resize(eSize(170, 40));
-	abort->setHelpText(_("ignore changes and return"));
-	abort->loadDeco();
-	CONNECT(abort->selected, eZapTimeZoneSetup::abortPressed);
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -93,11 +85,6 @@ void eZapTimeZoneSetup::okPressed()
 		setTimeZone();                         
 		/* emit */ eDVB::getInstance()->timeUpdated();
 	}
-	close(1);
-}
-
-void eZapTimeZoneSetup::abortPressed()
-{
 	close(0);
 }
 

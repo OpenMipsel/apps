@@ -112,9 +112,6 @@ RotorConfig::RotorConfig(eLNB *lnb )
 	save = new eButton(this);
 	save->setName("save");
 
-	cancel = new eButton(this);
-	cancel->setName("cancel");
-
 	next = new eButton(this);
 	next->setName("next");
 
@@ -135,7 +132,6 @@ RotorConfig::RotorConfig(eLNB *lnb )
 	CONNECT( useRotorInPower->checked, RotorConfig::useRotorInPowerChanged );	
 
 	CONNECT( save->selected, RotorConfig::onSavePressed );
-	CONNECT( cancel->selected, RotorConfig::reject );
 	CONNECT( next->selected, RotorConfig::onNextPressed );
 
 	addActionMap(&i_focusActions->map);
@@ -853,16 +849,10 @@ eStoreWindow::eStoreWindow(eLNB *lnb, int orbital_pos)
 	Store->setShortcut("green");
 	Store->setShortcutPixmap("green");
 	Store->move(ePoint(10,60));
-	Store->resize(eSize(170,40));
+	Store->resize(eSize(220,40));
 	Store->setText(_("store"));
 	Store->loadDeco();
 	CONNECT( Store->selected, eStoreWindow::onStorePressed );
-	Cancel = new eButton(this);
-	Cancel->move(ePoint(190, 60));
-	Cancel->resize(eSize(170, 40));
-	Cancel->setText("Cancel");
-	Cancel->loadDeco();
-	CONNECT( Cancel->selected, eStoreWindow::reject );
 	eStatusBar *sbar = new eStatusBar(this);
 	sbar->move( ePoint(0, getClientSize().height()-30) );
 	sbar->resize( eSize( getClientSize().width(), 30) );

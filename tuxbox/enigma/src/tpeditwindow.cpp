@@ -61,8 +61,10 @@ eSatEditDialog::eSatEditDialog( tpPacket *tp )
 	name->move(ePoint(10,10));
 	name->resize(eSize(clientrect.size().width()-20, 35));
 	name->setHelpText(_("press ok to change satellite name"));
+	name->setMaxChars(30);
 	name->loadDeco();
 	name->setText( tp->name );
+	name->setUseableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/-°");
 	eLabel *l = new eLabel(this);
 	l->move( ePoint(10, 55) );
 	l->resize( eSize(250, 35) );
@@ -80,7 +82,6 @@ eSatEditDialog::eSatEditDialog( tpPacket *tp )
 	direction->loadDeco();
 	new eListBoxEntryText( *direction, _("East"), (void*)0, 0, _("East") );
 	new eListBoxEntryText( *direction, _("West"), (void*)1, 0, _("West") );
-	eDebug("orbital_position = %d", tp->orbital_position );
 	direction->setCurrent( (void*) (tp->orbital_position<0) );
 	eSize cwidth=eSize(clientrect.width()-20,30);
 	doNetworkSearch = new eCheckbox(this);
@@ -116,15 +117,6 @@ eSatEditDialog::eSatEditDialog( tpPacket *tp )
 	save->setShortcutPixmap("green");
 	save->setHelpText(_("save changes and return"));
 	CONNECT(save->selected, eSatEditDialog::savePressed );
-	cancel = new eButton(this);
-	cancel->setText(_("cancel"));
-	cancel->move( ePoint( 220, 255));
-	cancel->resize( eSize( 200, 40));
-	cancel->loadDeco();
-	cancel->setShortcut("red");
-	cancel->setShortcutPixmap("red");
-	cancel->setHelpText(_("ignore changes and return"));
-	CONNECT(cancel->selected, eWidget::reject );
 	sbar=new eStatusBar(this);
 	sbar->move( ePoint(0, clientrect.height()-50) );
 	sbar->resize( eSize( clientrect.width(), 50) );
@@ -171,7 +163,7 @@ eTPEditDialog::eTPEditDialog( eTransponder *tp )
 	save->setShortcutPixmap("green");
 	save->setHelpText(_("save changes and return"));
 	save->move(ePoint( 10, getClientSize().height()-80) );
-	save->resize( eSize( 170, 40 ) );
+	save->resize( eSize( 220, 40 ) );
 	save->loadDeco();
 	CONNECT( save->selected, eTPEditDialog::savePressed );
 	eStatusBar *sbar = new eStatusBar(this);

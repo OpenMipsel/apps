@@ -100,7 +100,6 @@ class eLNBPage : public eWidget
 	eListBox<eListBoxEntryText> *lnb_list;
 	eNumber *lofH, *lofL, *threshold;
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
-	eButton *cancel; // close the window without apply changes
 	eButton *next; // shows the DiSEqC Configuration Dialog
 	eCheckbox *increased_voltage;
 	eStatusBar *statusbar;
@@ -119,7 +118,6 @@ class eDiSEqCPage : public eWidget
 	eComboBox *DiSEqCMode, *DiSEqCParam, *MiniDiSEqCParam, *DiSEqCRepeats,
 						*ucInput;
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
-	eButton *cancel; // close the window without apply changes
 	eButton *prev; // shows the LNB Configuration Dialog
 //	eButton *next; // shows the Rotor Setup (for non GotoXX Rotors)
 	eCheckbox *SeqRepeat, *SwapCmds,

@@ -11,7 +11,7 @@ class eCheckbox;
 
 class eZapVideoSetup: public eWindow
 {
-	eButton *abort, *ok;
+	eButton *ok;
 	eStatusBar *status;
   eCheckbox *c_disableWSS;
 	eListBox<eListBoxEntryText> *colorformat, *pin8;

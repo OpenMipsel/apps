@@ -45,51 +45,32 @@ static time_t getNextEventStartTime( time_t t, int duration, int type, bool notT
 	tm tmp = *localtime( &now ),  // now
 		tmp2 = *localtime( &t );    // activation hour:min
 
-	bool found=false;
-
-// set mask for current weekday
+// calc mask for today weekday
 	int i = ePlaylistEntry::Su;
 	for ( int x = 0; x < tmp.tm_wday; x++ )
 		i*=2;
 
-	int mask=i;
+	bool found=false;
 
-	for (; i <= ePlaylistEntry::Sa; i*=2, tmp.tm_mday++ )
+	for ( int d=0; d<8; d++,
+											i*=2,
+											tmp.tm_mday++ )
 	{
-		if ( type & i ) // next day found for this event
+		if ( i > ePlaylistEntry::Sa )
+			i = ePlaylistEntry::Su;
+
+		if ( type & i )
 		{
-			if ( i == mask )  // today is in event mask...
+			if ( !d ) // this is today
 			{
 				int begTimeSec = tmp2.tm_hour*3600+tmp2.tm_min*60+tmp2.tm_sec;
 				int nowTimeSec = tmp.tm_hour*3600+tmp.tm_min*60+tmp.tm_sec;
 				// but event has already ended
-				if ( nowTimeSec > begTimeSec+duration )
+				if ( nowTimeSec > begTimeSec+duration || notToday )
 					continue;
 			}
-			if ( notToday )
-			{
-				notToday=false;
-				continue;
-			}
-			found=true;
+			found = true;
 			break;
-		}
-	}
-
-	if ( !found )
-	{
-		for ( int i=ePlaylistEntry::Su; i <= mask; i*=2, tmp.tm_mday++ )
-		{
-			if ( type & i ) // next day found for this event
-			{
-				if ( notToday )
-				{
-					notToday=false;
-					continue;
-				}
-				found=true;
-				break;
-			}
 		}
 	}
 	if ( !found )  // No day(s) selected
@@ -100,6 +81,7 @@ static time_t getNextEventStartTime( time_t t, int duration, int type, bool notT
 	normalize( tmp );
 	return mktime(&tmp);
 }
+
 
 static eString getRight(const eString& str, char c )
 {
@@ -202,12 +184,16 @@ void eTimerManager::saveTimerList()
 
 void eTimerManager::timeChanged()
 {
+	eDebug("timeChanged");
 	if ( nextStartingEvent != timerlist->getConstList().end()
 		&& nextStartingEvent->type & ePlaylistEntry::stateWaiting )
 	{
+		eDebug("update");
 		nextAction=setNextEvent;
 		actionTimer.start(0, true);
 	}
+	else
+		eDebug("not update");	
 }
 
 #define WOL_PREPARE_TIME 240
@@ -322,9 +308,7 @@ void eTimerManager::actionHandler()
 			nextStartingEvent->type |= ePlaylistEntry::stateRunning;
 
 			if (nextStartingEvent->type & ePlaylistEntry::doFinishOnly )
-			{
 				eDebug("[eTimerManager] only Finish an running event");
-			}
 			else if (nextStartingEvent->type & ePlaylistEntry::RecTimerEntry)
 			{
 				nextAction = startRecording;
@@ -371,9 +355,7 @@ void eTimerManager::actionHandler()
 				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
 				// when no ErrorCode is set the we set the state to finished
 				if ( !(nextStartingEvent->type & ePlaylistEntry::stateError) )
-				{
 					nextStartingEvent->type |= ePlaylistEntry::stateFinished;
-				}
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 				{
 					nextAction=stopRecording;
@@ -865,7 +847,8 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 			if (r == eMessageBox::btYes)
 			{
 				timerlist->getList().erase(i);
-				if ( &(*nextStartingEvent) == &entry )
+				if ( &(*nextStartingEvent) == &entry &&
+					nextStartingEvent->type & ePlaylistEntry::stateRunning )
 				{
 					nextAction=stopEvent;
 					nextStartingEvent->type |= (ePlaylistEntry::stateError | ePlaylistEntry::errorUserAborted);

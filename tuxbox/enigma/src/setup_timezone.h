@@ -18,11 +18,10 @@ class eZapTimeZoneSetup: public eWindow
 	eStatusBar* statusbar;
 	eComboBox* timeZone;
 	eCheckbox *useDst;
-	eButton *ok, *abort;
+	eButton *ok;
 private:
 	void okPressed();
-	void abortPressed();
-	
+
 	int loadTimeZones();
 	const char *cmdTimeZones();
 public:

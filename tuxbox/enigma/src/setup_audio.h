@@ -9,7 +9,7 @@ class eCheckbox;
 
 class eZapAudioSetup: public eWindow
 {
-	eButton *ok, *abort;
+	eButton *ok;
 	eCheckbox *ac3default;
 	eStatusBar *statusbar;
 private:

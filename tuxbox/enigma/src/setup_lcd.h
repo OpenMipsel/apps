@@ -23,7 +23,7 @@ class eZapLCDSetup: public eWindow
 	int lcdstandby;
 	unsigned char lcdinverted;
 
-	eButton *ok, *abort;
+	eButton *ok;
 	void okPressed();
 	int eventHandler( const eWidgetEvent&);
 	void brightnessChanged( int );

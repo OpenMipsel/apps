@@ -164,11 +164,10 @@ protected:
 	 * not processed by the widget.
 	 * \return 1 if the event was processed, 0 if ignored. it might be forwarded to other widgets then.
 	 */
-	virtual int eventHandler(const eWidgetEvent &event);
-	
+
 	virtual int keyDown(int rc);
 	virtual int keyUp(int rc);
-	
+
 	virtual void gotFocus();
 	virtual void lostFocus();
 	
@@ -194,6 +193,7 @@ protected:
 	eString descr;
 
 public:
+	virtual int eventHandler(const eWidgetEvent &event);
 	static void addGlobalActionMap(eActionMap *map);
 	static void removeGlobalActionMap(eActionMap *map);
 	inline eWidget *getNonTransparentBackground()

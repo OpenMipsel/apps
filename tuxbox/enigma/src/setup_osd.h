@@ -16,7 +16,7 @@ class eZapOsdSetup: public eWindow
 	eCheckbox* showCurrentRemaining;
 	eStatusBar* statusbar;
 
-	eButton *ok, *abort, *pluginoffs;
+	eButton *ok, *pluginoffs;
 	int alpha, brightness, gamma;
 private:
 	int eventHandler(const eWidgetEvent&);

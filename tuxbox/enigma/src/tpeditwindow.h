@@ -48,7 +48,7 @@ public:
 class eTPEditDialog: public eWindow
 {
 	eTransponderWidget *tpWidget;
-	eButton *save, *cancel;
+	eButton *save;
 	eTransponder *tp;
 	void savePressed();
 public:
@@ -61,7 +61,7 @@ class eSatEditDialog: public eWindow
 	eNumber *OrbitalPos;
 	eCheckbox *skipKnownNIT, *useBAT, *useONIT, *doNetworkSearch;
 	eComboBox *direction;
-	eButton *save, *cancel;
+	eButton *save;
 	eStatusBar *sbar;
 	tpPacket *tp;
 	void savePressed();

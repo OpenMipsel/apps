@@ -24,6 +24,17 @@ pm(0), entries(OpenEntries), current(0)
 	addActionMap(&i_cursorActions->map);
 }
 
+eComboBox::~eComboBox()
+{
+	if ( listbox.isVisible() )
+	{
+		eDebug("KILL COMBOBOX WITH OPEN LISTBOX");
+		listbox.hide();
+		setFocus(this);
+		eWindow::globalCancel( eWindow::ON );
+	}
+}
+
 void eComboBox::redrawWidget(gPainter *target, const eRect &rc)
 {
 //	target->clip( eRect( rc.left(), rc.top(), rc.width()-button.width(), rc.bottom() ) );

@@ -145,7 +145,7 @@ int eListBoxBase::eventHandler(const eWidgetEvent &event)
 				else
 					/*emit*/ SendSelected(*current);
 			}
-			else if (event.action == &i_cursorActions->cancel)
+			else if (event.action == &i_cursorActions->cancel && MaxEntries > 1 )
 				/*emit*/ SendSelected(0);
 			else
 				break;
@@ -430,9 +430,7 @@ void eListBoxBase::gotFocus()
 		}
 	}
 	if (flags & flagShowEntryHelp)
-	{
 		setHelpText( current != childs.end() ? current->getHelpText(): eString(" ")); // eString(_("no description available")));
-	}
 }
 
 void eListBoxBase::lostFocus()
@@ -666,9 +664,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 	}
 
 	if (flags & flagShowEntryHelp)
-	{
 		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
-	}
 
 	if (isVisible())
 	{

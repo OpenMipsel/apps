@@ -19,7 +19,7 @@ class RotorConfig: public eWindow
 	eListBox<eListBoxEntryText> *positions;
 	eLabel *lLatitude, *lLongitude, *lOrbitalPosition, *lStoredRotorNo, *lDirection, *lDegPerSec, *lDeltaA;
 	eNumber *orbital_position, *number, *Latitude, *Longitude, *DegPerSec, *DeltaA;
-	eButton *add, *remove, *save, *cancel, *next;
+	eButton *add, *remove, *save, *next;
 	eCheckbox *useGotoXX, *useRotorInPower;
 	eComboBox *direction, *LaDirection, *LoDirection;
 	eStatusBar* statusbar;

@@ -352,9 +352,8 @@
 			<eLabel text="Threshold:" name="lThreshold" position="130:100" size="200:35" vcenter="on"/>
 			<eNumber name="threshold" position="350:100" size="e-10:35" helptext="enter LNB threshold frequency (0..9, ok)" loadDeco="" />
 			<eCheckbox name="increased_voltage" text="increased voltage" position="130:145" size="e-10:30" helptext="0,5V higher LNB Voltage (for long cables) (ok)" loadDeco="" />
-			<eButton name="save" text="save" position="10:e-80" size="170:40" helptext="save changes and use current selected LNB for the chosen satellite" loadDeco="" shortcut="green" />
-			<eButton name="cancel" text="cancel" position="190:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" shortcut="escape" />
-			<eButton name="next" text="next page" position="370:e-80" size="170:40" helptext="goto next page (DiSEqC)" loadDeco="" shortcut="blue" />
+			<eButton name="save" text="save" position="10:e-80" size="220:40" helptext="save changes and use current selected LNB for the chosen satellite" loadDeco="" shortcut="green" />
+			<eButton name="next" text="next page" position="240:e-80" size="220:40" helptext="goto next page (DiSEqC)" loadDeco="" shortcut="blue" />
 		</eLNBPage>
 	</object>
 
@@ -382,9 +381,8 @@
 			<eComboBox name="uSwitch4" position="450:275" size="90:35" helptext="select Uncommitted Switch 4 option" loadDeco="" />
 			<eLabel name="luSwitch4" text="U-Switch 4:" position="290:275" size="150:35" vcenter="on" shortcut="0" shortcutFocus="uSwitch4" />
 			<eButton name="next" text="Motor Setup" position="10:270" size="e-10:40" helptext="opens the motor setup" loadDeco="" shortcut="blue" /-->
-			<eButton name="prev" text="prev. page" position="10:e-80" size="170:40" helptext="goto prev page (LNB)" loadDeco="" shortcut="yellow" />
-			<eButton name="save" text="save" position="190:e-80" size="170:40" helptext="save changes" loadDeco="" shortcut="green" />
-			<eButton name="cancel" text="cancel" position="370:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" shortcut="escape" />
+			<eButton name="prev" text="prev. page" position="10:e-80" size="220:40" helptext="goto prev page (LNB)" loadDeco="" shortcut="yellow" />
+			<eButton name="save" text="save" position="240:e-80" size="220:40" helptext="save changes" loadDeco="" shortcut="green" />
 		</eDiSEqCPage>
 	</object>
 
@@ -439,9 +437,8 @@
 			<eButton name="add" text="add" position="190:240" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" shortcut="yellow" />
 			<eButton name="remove" text="remove" position="370:240" size="170:40" helptext="remove selected entry" loadDeco="" shortcut="red" />
 
-			<eButton name="save" text="save" position="10:e-80" size="170:40" helptext="save changes and use the selected LNB (in first page) for the choosen satellite" loadDeco="" shortcut="green" />
-			<eButton name="cancel" text="cancel" position="190:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" />
-			<eButton name="next" text="next page" position="370:e-80" size="170:40" helptext="goto advanced motor setup" loadDeco="" shortcut="blue" />
+			<eButton name="save" text="save" position="10:e-80" size="220:40" helptext="save changes and use the selected LNB (in first page) for the choosen satellite" loadDeco="" shortcut="green" />
+			<eButton name="next" text="next page" position="240:e-80" size="220:40" helptext="goto advanced motor setup" loadDeco="" shortcut="blue" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</RotorConfig>
 	</object>
@@ -485,8 +482,7 @@
 			<eCheckbox text="use BAT" name="usebat" position="240:e-110" size="200:30" helptext="enable/disable use BAT for scan (if exists)" />
 			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="230:30" helptext="remove all services before scan" />
 			<eCheckbox text="network search" name="searchnit" position="240:e-80" size="200:30" helptext="enable/disable initiate network search" />
-			<eButton text="start scan" name="start" position="10:e-40" size="260:40" helptext="start the transponder scan" loadDeco="" vcenter="on" />
-			<eButton text="abort" name="abort" position="290:e-40" size="140:40" helptext="close window and do not scan" loadDeco="" vcenter="on" shortcut="escape" />
+			<eButton text="start scan" name="start" position="10:e-40" size="260:40" helptext="start the transponder scan" loadDeco="" vcenter="on" shortcut="green" />
 		</tsManual>
 	</object>
 
@@ -498,8 +494,7 @@
 			<eFEStatus name="festatus" position="0:190" size="400:85" />
 			<eCheckBox name="eraseall" text="erase all" position="4:e-80" size="200:30" helptext="erase bouquets and services before scan" />
 			<eCheckBox name="nocircular" text="no circ polariz." position="210:e-80" size="e-10:30" helptext="change circular to linear polarization" />
-	  		<eButton text="start scan" name="start" position="10:e-40" size="260:40" align="center" helptext="starts the transponder scan" loadDeco="" />
-			<eButton text="abort" name="abort" position="290:e-40" size="140:40" helptext="close window and do not scan" loadDeco="" shortcut="escape" />
+  		<eButton text="start scan" name="start" position="10:e-40" size="260:40" align="center" helptext="starts the transponder scan" loadDeco="" shortcut="green" />
 		</tsAutomatic>
 	</object>
 
@@ -522,8 +517,7 @@
 		<eSkinSetup cposition="160:150" csize="400:300" text="Skin Selector">
 			<eLabel text="Skins:" position="20:10" size="100:30"/> <!-- shortcut="1" shortcutFocus="skins" -->
 			<eListbox name="skins" position="120:10" size="e-20:e-90" helptext="select skin and press ok or choose save" loadDeco="" />
-			<eButton text="save" name="accept" position="20:e-80" size="170:40" helptext="save changes and return" loadDeco="" shortcut="green" />
-			<eButton text="abort" name="reject" position="210:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" shortcut="escape" />
+			<eButton text="save" name="accept" position="20:e-80" size="220:40" helptext="save changes and return" loadDeco="" shortcut="green" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eSkinSetup>
 	</object>
@@ -719,8 +713,7 @@
 			<eLabel text="min" position="266:10" size="e-10:35" vcenter="on"/>
 			<eCheckbox name="shutdown" text="shutdown  " position="10:55" size="170:35" helptext="shutdown the box after recording (ok)" swaptxtpixmap="on" vcenter="on" />
 			<eCheckbox name="standby" text="standby  " position="210:55" size="170:35" helptext="goto standby after recording (ok)"  swaptxtpixmap="on" vcenter="on" />
-			<eButton text="set" name="set" position="10:95" size="170:40" helptext="set recording end time and close window (ok)" loadDeco="" shortcut="green" />
-			<eButton text="abort" name="abort" position="210:95" size="170:40" helptext="close window and use no record timer (ok)" loadDeco="" shortcut="escape" />
+			<eButton text="set" name="set" position="10:95" size="220:40" helptext="set recording end time and close window (ok)" loadDeco="" shortcut="green" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</recording_duration>
 	</object>
@@ -732,8 +725,7 @@
 			<eLabel text="min" position="266:10" size="e-10:35" vcenter="on"/>
 			<eCheckbox name="shutdown" text="shutdown  " position="10:55" size="170:35" helptext="shutdown the box to deepstandby (ok)" swaptxtpixmap="on" vcenter="on" />
 			<eCheckbox name="standby" text="standby  " position="210:55" size="170:35" helptext="goto standby (ok)"  swaptxtpixmap="on" vcenter="on" />
-			<eButton text="set" name="set" position="10:95" size="170:40" helptext="set sleeptimer and close window (ok)" loadDeco="" shortcut="green" />
-			<eButton text="abort" name="abort" position="210:95" size="170:40" helptext="close window and set no sleep timer (ok)" loadDeco="" shortcut="escape" />
+			<eButton text="set" name="set" position="10:95" size="220:40" helptext="set sleeptimer and close window (ok)" loadDeco="" shortcut="green" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</sleeptimer>
 	</object>
@@ -745,8 +737,7 @@
 			<eLabel text="o'clock" position="290:10" size="e-10:35" vcenter="on"/>
 			<eCheckbox name="shutdown" text="shutdown  " position="10:55" size="170:35" helptext="shutdown the box after recording (ok)" swaptxtpixmap="on" vcenter="on" />
 			<eCheckbox name="standby" text="standby  " position="210:55" size="170:35" helptext="goto standby after recording (ok)"  swaptxtpixmap="on" vcenter="on" />
-			<eButton name="set" text="set" position="10:95" size="170:40" helptext="set recording end time and close window (ok)" loadDeco="" shortcut="green" />
-			<eButton name="abort" text="abort"  position="210:95" size="170:40" helptext="close window and use no record timer (ok)" loadDeco="" />
+			<eButton name="set" text="set" position="10:95" size="220:40" helptext="set recording end time and close window (ok)" loadDeco="" shortcut="green" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</recording_end_time>
 	</object>
@@ -773,7 +764,6 @@
 		<ePartitionCheck text="Partition Check" cposition="90:120" csize="550:400" >
 			<eLabel text="status output:" position="10:10" size="e-10:30" />
 			<eLabel name="state" position="10:50" size="e-10:e-100" loadDeco="eNumber" wrap="on" font="partitionCheck.status" />
-			<eButton name="cancel" text="cancel" position="e-180:e-80" size="170:40" helptext="cancel partition check" loadDeco="" />
 			<eButton name="close" text="close" position="e-360:e-80" size="170:40" helptext="close window" loadDeco="" shortcut="green" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</ePartitionCheck>
@@ -786,7 +776,7 @@
 			<eLabel name="imagehelp" position="10:0" size="460:30" />
 			<eProgress name="progress" position="10:160" size="250:30" />
 			<eLabel name="progresstext" position="270:165" size="210:30" />
-			<eButton name="abort" position="40:40" size="150:50" text="abort" loadDeco="" />
+			<!--eButton name="abort" position="40:40" size="150:50" text="abort" loadDeco="" /-->
 			<eLabel name="changes" position="10:200" size="e-10:e-30" font="eUpgradeChanges" />
 		</eUpgrade>
 	</object>
@@ -796,8 +786,7 @@
 			<eLabel name="descr" position="10:10" size="e-10:30" />
 			<eTextInputField name="inputfield" position="10:50" size="e-10:40" loadDeco="eNumber" helptext="press ok to enter the name" />
 			<eLabel name="image" pixmap="textinput_white" position="10:105" size="367:178" alphatest="on" />
-			<eButton name="save" text="save" position="10:e-80" size="170:40" loadDeco="" helptext="save changes and close window" shortcut="green" />
-			<eButton name="cancel" text="cancel" position="190:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" />
+			<eButton name="save" text="save" position="10:e-80" size="220:40" loadDeco="" helptext="save changes and close window" shortcut="green" />
 			<eStatusbar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</TextEditWindow>
 	</object>

@@ -644,7 +644,7 @@ void eServiceSelector::pathUp()
 			actualize();
 			selectService( last );
 			services->endAtomic();
-		} else if (style == styleCombiColumn)
+		} else if ( style == styleCombiColumn && bouquets->isVisible() )
 			setFocus(bouquets);
 	}
 }
@@ -712,7 +712,8 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 
 void eServiceSelector::bouquetSelected(eListBoxEntryService*)
 {
-	setFocus(services);
+	if ( services->isVisible() )
+		setFocus(services);
 }
 
 void eServiceSelector::serviceSelChanged(eListBoxEntryService *entry)
@@ -1090,7 +1091,7 @@ bool eServiceSelector::selectService(const eServiceReference &ref)
 {
 	if ( services->forEachEntry( _selectService(ref) ) )
 	{
-		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
+//		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
 		// ersten service NICHT selecten (warum auch - evtl. ist ja der aktuelle sinnvoller,
 		// und bei einem entsprechenden returncode kann ja jeder sehen was er will)
 		return false;
@@ -1198,7 +1199,8 @@ void eServiceSelector::setStyle(int newStyle, bool force)
 		actualize();
 		selectService( currentService );  // select the old service
 		services->show();
-		setFocus(services);
+		if ( services->isVisible() )
+			setFocus(services);
 		setKeyDescriptions();
 	}
 	ci->show();
@@ -1213,7 +1215,8 @@ void eServiceSelector::bouquetSelChanged( eListBoxEntryService *entry)
 		path.up();
 		path.down(entry->service);
 		fillServiceList( entry->service );
-		selectService( eServiceInterface::getInstance()->service );
+		if (!selectService( eServiceInterface::getInstance()->service ))
+			services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
 		services->endAtomic();
 	}
 }
@@ -1292,6 +1295,7 @@ eServiceSelector::eServiceSelector()
 
 eServiceSelector::~eServiceSelector()
 {
+	eDebug("~eServiceSelector");
 }
 
 void eServiceSelector::enterDirectory(const eServiceReference &ref)
@@ -1300,7 +1304,8 @@ void eServiceSelector::enterDirectory(const eServiceReference &ref)
 	doSPFlags(ref);
 	services->beginAtomic();
 	actualize();
-	selectService( eServiceInterface::getInstance()->service );
+	if (!selectService( eServiceInterface::getInstance()->service ))
+		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
 	services->endAtomic();
 }
 
@@ -1377,10 +1382,11 @@ const eServiceReference *eServiceSelector::next()
 	services->beginAtomic();
 	selectService(eServiceInterface::getInstance()->service);
 
-	eListBoxEntryService *s=0;
+	eListBoxEntryService *s=0, *cur=services->getCurrent();
 	do
 		s=services->goNext();
-	while ( s && s->flags & eListBoxEntryService::flagIsReturn );
+	while ( s != cur && s &&
+			s->flags & eListBoxEntryService::flagIsReturn );
 
 	services->endAtomic();
 	if (s)
@@ -1393,10 +1399,11 @@ const eServiceReference *eServiceSelector::prev()
 {
 	services->beginAtomic();
 	selectService(eServiceInterface::getInstance()->service);
-	eListBoxEntryService *s=0;
+	eListBoxEntryService *s=0, *cur=services->getCurrent();
 	do
 		s=services->goPrev();
-	while ( s && s->flags & eListBoxEntryService::flagIsReturn );
+	while ( s != cur && s &&
+			s->flags & eListBoxEntryService::flagIsReturn );
 
 	services->endAtomic();
 	if (s)

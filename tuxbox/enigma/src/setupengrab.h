@@ -15,13 +15,12 @@ class ENgrabSetup: public eWindow
 {
 	eButton *type;
 	eNumber *inet_address, *srvport;
-	eButton *ok, *abort, *bServerMAC;
+	eButton *ok, *bServerMAC;
 	eStatusBar *statusbar;
 	eTextInputField *serverMAC;
 private:
 	void fieldSelected(int *number);
 	void okPressed();
-	void abortPressed();
 	void detectMAC();
 public:
 	ENgrabSetup();

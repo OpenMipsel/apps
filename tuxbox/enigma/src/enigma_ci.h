@@ -34,7 +34,7 @@ public:
 
 class enigmaCImmi: public eWindow
 {
-	eButton *ok,*abort,*answok;
+	eButton *ok,*answok;
 	eListBox<eListBoxMenuEntry> *lentrys;
 	eStatusBar *status;
 	eLabel *tt,*stt,*bt,*cistate,*headansw;
@@ -44,7 +44,6 @@ class enigmaCImmi: public eWindow
 
 private:
 	void okPressed();
-	void abortPressed();
 	void entrySelected(eListBoxMenuEntry *choice);
 	void getmmi(const char *buffer);
 	long LengthField(unsigned char *lengthfield,long maxlength,int *fieldlen);
@@ -70,7 +69,6 @@ class enigmaCI: public eWindow
 
 private:
 	void okPressed();
-	void abortPressed();
 	void resetPressed();
 	void initPressed();
 	void appPressed();

@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.19 2003/05/07 16:57:57 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.20 2003/06/15 02:08:29 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -472,11 +472,8 @@ ePartitionCheck::ePartitionCheck( int dev )
 {
 	lState = new eLabel(this);
 	lState->setName("state");
-	bCancel = new eButton(this);
-	bCancel->setName("cancel");
 	bClose = new eButton(this);
 	bClose->setName("close");
-	CONNECT( bCancel->selected, ePartitionCheck::onCancel );
 	CONNECT( bClose->selected, ePartitionCheck::accept );
 	if (eSkin::getActive()->build(this, "ePartitionCheck"))
 		eFatal("skin load of \"ePartitionCheck\" failed");

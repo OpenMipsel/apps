@@ -74,17 +74,6 @@ enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0), DVBCI(DVBCI)
 	cistate->setText("ci-status: waitung for module");
 	cistate->move(ePoint(20,280));
 	cistate->resize(eSize(460,fd+4));
-	
-	abort=new eButton(this);
-	abort->setText(_("abort"));
-
-	abort->move(ePoint(450, 280));
-	abort->resize(eSize(90, fd+4));
-
-	abort->setHelpText(_("leave CI mmi"));
-	abort->loadDeco();
-
-	CONNECT(abort->selected, enigmaCImmi::abortPressed);
 
 	lentrys=new eListBox<eListBoxMenuEntry>(this);
 	lentrys->setName("MenuEntrys");
@@ -110,11 +99,6 @@ enigmaCImmi::~enigmaCImmi()
 
 	if (status)
 		delete status;
-}
-
-void enigmaCImmi::abortPressed()
-{
-	close(0);
 }
 
 long enigmaCImmi::LengthField(unsigned char *lengthfield,long maxlength,int *fieldlen)

@@ -271,7 +271,7 @@ class TextEditWindow: public eWindow
 {
 	eTextInputField *input;
 	eLabel *descr, *image;
-	eButton *save, *cancel;
+	eButton *save;
 public:
 	TextEditWindow( const char *InputFieldDescr, const char* useableChar=0 );
 	const eString& getEditText() { return input->getText(); }
@@ -564,7 +564,6 @@ class eShutdownStandbySelWindow: public eWindow
 {
 protected:
 	eCheckbox *Standby, *Shutdown;
-	eButton *cancel;
 	void StandbyChanged(int);
 	void ShutdownChanged(int);
 	void fieldSelected(int *){focusNext(eWidget::focusDirNext);}

@@ -22,7 +22,8 @@
 
 #include <string>
 
-tsSelectType::tsSelectType(eWidget *parent): eWidget(parent)
+tsSelectType::tsSelectType(eWidget *parent)
+	:eWidget(parent,1)
 {
 	list=new eListBox<eListBoxEntryText>(this);
 	list->setName("menu");
@@ -41,20 +42,6 @@ tsSelectType::tsSelectType(eWidget *parent): eWidget(parent)
 	CONNECT(list->selected, tsSelectType::selected);
 }
 
-int tsSelectType::eventHandler( const eWidgetEvent &e )
-{
-	switch (e.type)
-	{
-		case eWidgetEvent::execBegin:
-		case eWidgetEvent::childChangedHelpText:
-			parent->focusChanged( list );
-		break;
-		default:
-			return eWidget::eventHandler( e );
-	}
-	return 1;
-}
-
 void tsSelectType::selected(eListBoxEntryText *entry)
 {
 	if (entry && entry->getKey())
@@ -63,10 +50,24 @@ void tsSelectType::selected(eListBoxEntryText *entry)
 		close(0);
 }
 
+int tsSelectType::eventHandler(const eWidgetEvent &event)
+{
+	switch (event.type)
+	{
+	case eWidgetEvent::execBegin:
+		setFocus(list);
+		break;
+	case eWidgetEvent::childChangedHelpText:
+		return parent->eventHandler( event );
+	default:
+		break;
+	}
+	return 0;
+}
+
 tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LCDTitle, eWidget *LCDElement)
 :eWidget(parent), transponder(transponder), updateTimer(eApp)
 {
-	addActionMap(&i_cursorActions->map);
 #ifndef DISABLE_LCD
 	setLCD(LCDTitle, LCDElement);
 #endif
@@ -105,9 +106,6 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	b_start=new eButton(this);
 	b_start->setName("start");
 
-	b_abort=new eButton(this);
-	b_abort->setName("abort");
-
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "tsManual"))
 		eFatal("skin load of \"tsManual\" failed");
@@ -116,7 +114,6 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	transponder_widget->setTransponder(&transponder);
 
 	CONNECT(b_start->selected, tsManual::start);
-	CONNECT(b_abort->selected, tsManual::abort);
 	CONNECT(transponder_widget->updated, tsManual::retune);
 //	CONNECT(updateTimer.timeout, tsManual::update );
 	setHelpID(62);
@@ -151,11 +148,6 @@ void tsManual::start()
 	}
 }
 
-void tsManual::abort()
-{
-	close(1);
-}
-
 void tsManual::retune()
 {
 	if (!transponder_widget->getTransponder(&transponder))
@@ -166,12 +158,6 @@ int tsManual::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
-	case eWidgetEvent::evtAction:
-		if (event.action == &i_cursorActions->cancel)
-			close(2);
-		else
-			break;
-		return 1;
 	case eWidgetEvent::execBegin:
 		updateTimer.start(1000);
 		break;
@@ -183,25 +169,9 @@ int tsManual::eventHandler(const eWidgetEvent &event)
 	return 0;
 }
 
-int tsAutomatic::eventHandler(const eWidgetEvent &event)
+tsAutomatic::tsAutomatic(eWidget *parent)
+	:eWidget(parent)
 {
-	switch (event.type)
-	{
-	case eWidgetEvent::evtAction:
-		if (event.action == &i_cursorActions->cancel)
-			close(2);
-		else
-			break;
-		return 1;
-	default:
-		break;
-	}
-	return 0;
-}
-
-tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
-{
-	addActionMap(&i_cursorActions->map);
 	eLabel* l = new eLabel(this);
 	l->setName("lNet");
 	l_network=new eComboBox(this, 3, l);
@@ -222,14 +192,10 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 	c_nocircular=new eCheckbox(this,snocircular);
 	c_nocircular->setName("nocircular");
 	c_nocircular->hide();
-	
 
 	b_start=new eButton(this);
 	b_start->setName("start");
 	b_start->hide();
-	
-	b_abort=new eButton(this);
-	b_abort->setName("abort");
 
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "tsAutomatic"))
@@ -238,7 +204,6 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 //	l_network->setCurrent(new eListBoxEntryText(*l_network, _("automatic"), (void*)0, eTextPara::dirCenter) );
 
 	CONNECT(b_start->selected, tsAutomatic::start);
-	CONNECT(b_abort->selected, tsAutomatic::abort);
 	CONNECT(l_network->selchanged, tsAutomatic::networkSelected);
 
 	CONNECT(eDVB::getInstance()->eventOccured, tsAutomatic::dvbEvent);
@@ -296,11 +261,6 @@ void tsAutomatic::start()
 
 		close(0);
 	}
-}
-
-void tsAutomatic::abort()
-{
-	close(1);
 }
 
 void tsAutomatic::networkSelected(eListBoxEntryText *l)
@@ -423,7 +383,8 @@ int tsAutomatic::tuneNext(int next)
 	return 0;
 }
 
-tsText::tsText(eString sheadline, eString sbody, eWidget *parent): eWidget(parent, 1)
+tsText::tsText(eString sheadline, eString sbody, eWidget *parent)
+	:eWidget(parent, 1)
 {
 	addActionMap(&i_cursorActions->map);
 	headline=new eLabel(this);
@@ -440,7 +401,6 @@ int tsText::eventHandler(const eWidgetEvent &event)
 	case eWidgetEvent::changedSize:
 		headline->move(ePoint(0, 0));
 		headline->resize(eSize(size.width(), 40));
-
 		body->move(ePoint(0, 40));
 		body->resize(eSize(size.width(), size.height()-40));
 		return 1;
@@ -458,7 +418,8 @@ int tsText::eventHandler(const eWidgetEvent &event)
 	return eWidget::eventHandler(event);
 }
 
-tsScan::tsScan(eWidget *parent): eWidget(parent, 1), timer(eApp)
+tsScan::tsScan(eWidget *parent)
+	:eWidget(parent, 1), timer(eApp)
 {
 	addActionMap(&i_cursorActions->map);
 
@@ -617,28 +578,27 @@ void tsScan::dvbState(const eDVBState &state)
 
 TransponderScan::TransponderScan( eWidget *LCDTitle, eWidget *LCDElement)
 #ifndef DISABLE_LCD
-	:LCDElement(LCDElement), LCDTitle(LCDTitle)
+	:eWindow(0), current(0), LCDElement(LCDElement), LCDTitle(LCDTitle)
 #endif
 {
-	window=new eWindow(0);
-	window->setText(_("Transponder Scan"));
-	window->cmove(ePoint(130, 110));
-	window->cresize(eSize(460, 400));
-	
-	statusbar=new eStatusBar(window);
+	addActionMap(&i_cursorActions->map);
+	setText(_("Transponder Scan"));
+	cmove(ePoint(130, 110));
+	cresize(eSize(460, 400));
+
+	statusbar=new eStatusBar(this);
 	statusbar->loadDeco();
-	statusbar->move(ePoint(0, window->getClientSize().height()-30) );
-	statusbar->resize( eSize( window->getClientSize().width(), 30 ) );
+	statusbar->move(ePoint(0, getClientSize().height()-30) );
+	statusbar->resize( eSize( getClientSize().width(), 30 ) );
 }
 
 TransponderScan::~TransponderScan()
 {
-	delete window;
 }
 
 int TransponderScan::exec(int initial)
 {
-	eSize size=eSize(window->getClientSize().width(), window->getClientSize().height()-30);
+	eSize size=getClientSize()-eSize(0,30);
 	int scanok=0;
 
 	eString text;
@@ -658,7 +618,7 @@ int TransponderScan::exec(int initial)
 	else if (initial == initialAutomatic)
 		state=stateAutomatic;
 
-	window->show();
+	show();
 	Decoder::displayIFrameFromFile(DATADIR "/pictures/scan.mvi");
 
 	eTransponder oldTp(*eDVB::getInstance()->settings->getTransponders());
@@ -675,10 +635,11 @@ int TransponderScan::exec(int initial)
 		{
 		case stateMenu:
 		{
-			tsSelectType select(window);
+			tsSelectType select(this);
 #ifndef DISABLE_LCD
 			select.setLCD( LCDTitle, LCDElement);
 #endif
+			current = &select;
 			select.show();
 			switch (select.exec())
 			{
@@ -692,13 +653,13 @@ int TransponderScan::exec(int initial)
 				state=stateManual;
 				break;
 			}
+			current=0;
 			select.hide();
 			break;
 		}
 		case stateManual:
 		{
 			eTransponder transponder(*eDVB::getInstance()->settings->getTransponders());
-
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 
 			if ( oldstate==stateManual )
@@ -720,12 +681,13 @@ int TransponderScan::exec(int initial)
 
 			eDVB::getInstance()->setMode(eDVB::controllerScan);        
 #ifndef DISABLE_LCD
-			tsManual manual_scan(window, transponder, LCDTitle, LCDElement);
+			tsManual manual_scan(this, transponder, LCDTitle, LCDElement);
 #else
-			tsManual manual_scan(window, transponder);
+			tsManual manual_scan(this, transponder);
 #endif
 			oldstate=stateManual;
 			manual_scan.show();
+			current = &manual_scan;
 			switch (manual_scan.exec())
 			{
 			case 0:
@@ -736,18 +698,20 @@ int TransponderScan::exec(int initial)
 				break;
 			}
 			manual_scan.hide();
+			current=0;
 			oldTp=manual_scan.getTransponder();
 			break;
 		}
 		case stateAutomatic:
 		{
 			eDVB::getInstance()->setMode(eDVB::controllerScan);
-			tsAutomatic automatic_scan(window);
+			tsAutomatic automatic_scan(this);
 #ifndef DISABLE_LCD
 			automatic_scan.setLCD( LCDTitle, LCDElement);
 #endif
 			automatic_scan.show();
 			oldstate=stateAutomatic;
+			current = &automatic_scan;
 			switch (automatic_scan.exec())
 			{
 			case 0:
@@ -758,11 +722,12 @@ int TransponderScan::exec(int initial)
 				break;
 			}
 			automatic_scan.hide();
+			current=0;
 			break;
 		}
 		case stateScan:
 		{
-			tsScan scan(window);
+			tsScan scan(this);
 #ifndef DISABLE_LCD
 			scan.setLCD( LCDTitle, LCDElement);
 #endif
@@ -783,7 +748,7 @@ int TransponderScan::exec(int initial)
 		case stateDone:
 		{
 			eDVB::getInstance()->setMode(eDVB::controllerService);  
-			tsText finish(_("Done."), text, window);
+			tsText finish(_("Done."), text, this);
 #ifndef DISABLE_LCD
 			finish.setLCD( LCDTitle, LCDElement);
 #endif
@@ -817,9 +782,36 @@ int TransponderScan::exec(int initial)
 	}
 
 	eDVB::getInstance()->setMode(eDVB::controllerService);  
-	window->hide();
+	hide();
 
 	Decoder::Flush();
 
 	return scanok;
+}
+
+int TransponderScan::eventHandler( const eWidgetEvent &event )
+{
+	switch (event.type)
+	{
+		case eWidgetEvent::childChangedHelpText:
+			if (focus)
+				statusbar->setText(focus->getHelpText());
+			break;
+		case eWidgetEvent::evtAction:
+		{
+			if ( event.action == &i_cursorActions->cancel && current )  // don't ask !
+			{
+				if ( focus && focus != this && focus->eventHandler(event) )
+					;
+				else if ( current && focus != this )
+					current->close(1);
+			}
+			else
+				break;
+			return 1;
+		}
+		default:
+			break;
+	}
+	return eWindow::eventHandler( event );
 }

@@ -9,7 +9,7 @@ class eCheckbox;
 
 class eZapExtraSetup: public eWindow
 {
-	eButton *ok, *abort;
+	eButton *ok;
 	eCheckbox *profimode, *hideerror, *extZap;
 	eStatusBar *statusbar;
 
@@ -18,7 +18,6 @@ class eZapExtraSetup: public eWindow
 	int sextzap;
 private:
 	void okPressed();
-	void abortPressed();
 	void loadSettings();
 	void saveSettings();
 public:

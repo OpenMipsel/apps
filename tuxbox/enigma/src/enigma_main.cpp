@@ -2165,11 +2165,8 @@ void eZapMain::nextService(int add)
 	else
 	{
 		const eServiceReference *service=eZap::getInstance()->getServiceSelector()->next();
-
 		if (!service)
-		{
 			return;
-		}
 		else
 			getServiceSelectorPath( modeLast[mode][0] );
 
@@ -5188,12 +5185,9 @@ eShutdownStandbySelWindow::eShutdownStandbySelWindow(eWidget *parent, int len, i
 	Standby->setName("standby");
 	set = new eButton(this);
 	set->setName("set");
-	cancel = new eButton(this);
-	cancel->setName("abort");
 	CONNECT( num->selected, eShutdownStandbySelWindow::fieldSelected );
 	CONNECT( Shutdown->checked, eShutdownStandbySelWindow::ShutdownChanged );
 	CONNECT( Standby->checked, eShutdownStandbySelWindow::StandbyChanged );
-	CONNECT( cancel->selected, eWidget::reject );
 }
 
 void eShutdownStandbySelWindow::StandbyChanged( int checked )
@@ -5367,10 +5361,6 @@ TextEditWindow::TextEditWindow( const char *InputFieldDescr, const char* useable
 	save = new eButton(this);
 	save->setName("save");
 	CONNECT( save->selected, TextEditWindow::accept );
-	
-	cancel = new eButton(this);
-	cancel->setName("cancel");
-	CONNECT( cancel->selected, TextEditWindow::reject );
 
 	eStatusBar *n = new eStatusBar(this);
 	n->setName("statusbar");
@@ -5487,18 +5477,10 @@ eTimeCorrectionEditWindow::eTimeCorrectionEditWindow( tsref tp )
 	bSet->setShortcutPixmap("green");
 
 	bSet->move(ePoint(10, clientrect.height()-80));
-	bSet->resize(eSize(170,40));
+	bSet->resize(eSize(220,40));
 	bSet->setHelpText(_("set new time and close window"));
 	bSet->loadDeco();
 	CONNECT(bSet->selected, eTimeCorrectionEditWindow::savePressed);
-
-	bReject=new eButton(this);
-	bReject->setText(_("cancel"));
-	bReject->move(ePoint(190, clientrect.height()-80));
-	bReject->resize(eSize(170,40));
-	bReject->setHelpText(_("close window"));
-	bReject->loadDeco();
-	CONNECT(bReject->selected, eWidget::reject );
 
 	sbar = new eStatusBar(this);
 	sbar->move( ePoint(0, clientrect.height()-30) );

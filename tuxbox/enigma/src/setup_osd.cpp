@@ -264,20 +264,11 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
 	ok->move(ePoint(20, 320));
-	ok->resize(eSize(170, 40));
+	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
 
 	CONNECT(ok->selected, eZapOsdSetup::okPressed);
-
-	abort=new eButton(this);
-	abort->setText(_("abort"));
-	abort->move(ePoint(210, 320));
-	abort->resize(eSize(170, 40));
-	abort->setHelpText(_("ignore changes and return"));
-	abort->loadDeco();
-
-	CONNECT(abort->selected, eWidget::reject );
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );

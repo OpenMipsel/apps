@@ -595,9 +595,7 @@ void eTransponderList::removeOrbitalPosition(int orbital_position)
 				eTransportStreamID tsid=it->first.tsid;
 				eOriginalNetworkID onid=it->first.onid;
 				eDVBNamespace dvbnamespace=it->first.dvbnamespace;
-				std::map<tsref,eTransponder>::iterator i=it;
-				++it;
-				transponders.erase(i); // remove transponder from list
+				transponders.erase(it++); // remove transponder from list
 
 				for (std::map<eServiceReferenceDVB,eServiceDVB>::iterator sit=services.begin();
 					sit != services.end(); )
@@ -609,16 +607,14 @@ void eTransponderList::removeOrbitalPosition(int orbital_position)
 							(ref.getDVBNamespace() == dvbnamespace))
 					{
 //						eDebug("removing service");
-						std::map<eServiceReferenceDVB,eServiceDVB>::iterator i=sit;
-						++sit;
-								// if yes, get rid of it.
-						services.erase(i);
+						services.erase(sit++);
 					}
 					else
 						++sit;
 				}
 			}
-		} else
+		}
+		else
 			++it;
 	}
 }
@@ -733,7 +729,7 @@ int eTransponderList::handleSDT(const SDT *sdt, eDVBNamespace dvbnamespace, eOri
 				(i->first.getOriginalNetworkID() == onid)	&& // if service on this on
 				(i->first.getTransportStreamID() == tsid) && 	// and on this transponder (war das "first" hier wichtig?)
 				(i->first.getDVBNamespace() == dvbnamespace) && // and in this namespace
-				(!s.count(i->first.getServiceID()))) // but does not exist
+				(s.find(i->first.getServiceID())==s.end())) // but does not exist
 			{
 				for (std::map<int,eServiceReferenceDVB>::iterator m(channel_number.begin()); m != channel_number.end(); ++m)
 					if (i->first == m->second)
