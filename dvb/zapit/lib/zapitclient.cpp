@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/dvb/zapit/lib/zapitclient.cpp,v 1.76.2.4 2003/02/26 11:28:45 thegoodguy Exp $ *
+ * $Header: /cvs/tuxbox/apps/dvb/zapit/lib/zapitclient.cpp,v 1.76.2.5 2003/03/02 11:27:02 thegoodguy Exp $ *
  *
  * Zapit client interface - DBoxII-Project
  *
@@ -309,6 +309,9 @@ void CZapitClient::getBouquets(BouquetList& bouquets, const bool emptyBouquetsTo
 	responseGetBouquets response;
 	while (CBasicClient::receive_data((char*)&response, sizeof(responseGetBouquets)))
 	{
+		if (response.bouquet_nr == 0xFFFF) /* <- end marker */
+			break;
+
 		if (!utf_encoded)
 		{
 			buffer[30] = (char) 0x00;
