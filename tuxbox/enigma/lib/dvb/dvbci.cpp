@@ -19,39 +19,45 @@
 #define STATE_FREE				0
 #define STATE_OPEN				1
 
+int eDVBCI::instance_count=0;
+
 eDVBCI::eDVBCI()
 	:pollTimer(this), caidcount(0), ml_bufferlen(0), messages(this, 1)
 {
+	instance_count++;
+
 	state=stateInit;
 
 	eDebug("[DVBCI] start");
 
-	fd=::open("/dev/ci",O_RDWR|O_NONBLOCK);
+	if (instance_count == 1)
+		fd=::open("/dev/ci",O_RDWR|O_NONBLOCK);
+	else
+		fd=::open("/dev/ci1",O_RDWR|O_NONBLOCK);
+		
 	if (fd<0)
 	{
-		eDebug("[DVBCI] error opening /dev/ci");
-
-		fd=::open("/dev/ci1",O_RDWR|O_NONBLOCK);
-		if (fd<0)
-		{
+		if (instance_count == 1)
+			eDebug("[DVBCI] error opening /dev/ci");
+		else
 			eDebug("[DVBCI] error opening /dev/ci1");
-			state=stateError;
-		}
+
+		state=stateError;
 	}
 	
-  if(state!=stateError)
-  {
-  	ci=new eSocketNotifier(this, fd, eSocketNotifier::Read, 0);
-  	CONNECT(ci->activated, eDVBCI::dataAvailable);
-  }
-  
+	if(state!=stateError)
+	{
+		ci=new eSocketNotifier(this, fd, eSocketNotifier::Read, 0);
+		CONNECT(ci->activated, eDVBCI::dataAvailable);
+	}
+ 
 	CONNECT(pollTimer.timeout,eDVBCI::poll);
 	CONNECT(messages.recv_msg, eDVBCI::gotMessage);
-	
+
 	memset(appName,0,sizeof(appName));
 	tempPMTentrys=0;		
 
-  run();
+	run();
 }
 
 void eDVBCI::thread()
@@ -67,6 +73,7 @@ eDVBCI::~eDVBCI()
 	delete ci;
 	if (fd >= 0)
 		close(fd);
+	instance_count--;
 }
 
 void eDVBCI::gotMessage(const eDVBCIMessage &message)
@@ -185,9 +192,9 @@ void eDVBCI::PMTflush(int program)
 		{
 			free(tempPMT[i].descriptor);
 			tempPMT[i].type=0;
-		}		
+		}
 	}
-	
+
 	tempPMT[0].type=0;
 	tempPMT[0].pid=program;	
 	tempPMTentrys=1;		
@@ -217,7 +224,7 @@ void eDVBCI::newService()
 	ci_progress(appName);	
 	unsigned char capmt[2048];
 	int session;
-	
+
 	int i;
 	for(i=0;i<MAX_SESSIONS;i++)
 		if(sessions[i].state && (sessions[i].service_class==0x30041 || sessions[i].service_class==0x34100))
@@ -228,7 +235,7 @@ void eDVBCI::newService()
 		return;
 	}	
 	session=i;
-	
+
 	memcpy(capmt,"\x90\x2\x0\x3\x9f\x80\x32",7); //session nr.3 & capmt-tag
 	capmt[3]=i;			//session_id
 	capmt[7]=0x81;
@@ -239,12 +246,12 @@ void eDVBCI::newService()
 	capmt[12]=0x00;	//reserved - version - current/next
 	capmt[13]=0x00;	//reserved - prg-info len
 	capmt[14]=0x00;	//prg-info len
-	
+
 	int lenpos=13;
 	int len=0;
 	int first=1;
 	int wp=15;
-		
+
 	for(int i=0;i<tempPMTentrys;i++)
 	{
 		switch(tempPMT[i].type)
@@ -267,23 +274,21 @@ void eDVBCI::newService()
 						if(caids[x]==((tempPMT[i].descriptor[2]<<8)|tempPMT[i].descriptor[3]))
 						//if(caids[x]==(unsigned short)tempPMT[i].descriptor[3])
 							break;
-				}			
+				}
 
 				if(x!=caidcount)
-				{		
+				{
 					if(first)
 					{
 						first=0;
 						capmt[wp++]=0x01;				//ca_pmt_command_id
 						len++;
 					}
-					
-					
-					
+
 					memcpy(capmt+wp,tempPMT[i].descriptor,tempPMT[i].descriptor[1]+2);
 					wp+=tempPMT[i].descriptor[1]+2;
 					len+=tempPMT[i].descriptor[1]+2;
-				}															
+				}
 				break;
 		}
 	}			
@@ -292,8 +297,6 @@ void eDVBCI::newService()
 
 	capmt[lenpos]=((len & 0xf00)>>8);
 	capmt[lenpos+1]=(len & 0xff);
-
-	
 
 	//sendTPDU(0xA0,wp,1,capmt);
 	
@@ -467,106 +470,105 @@ void eDVBCI::sendData(unsigned char tc_id,unsigned char *data,unsigned int len)
 
 void eDVBCI::help_manager(unsigned int session)
 {
-  switch(sessions[session].internal_state)
-  {
-    case 0:
-      {
-        unsigned char buffer[12];
-        eDebug("[DVBCI] [HELP MANAGER] up to now nothing happens -> profile_enq");
+	switch(sessions[session].internal_state)
+	{
+		case 0:
+		 {
+				unsigned char buffer[12];
+				eDebug("[DVBCI] [HELP MANAGER] up to now nothing happens -> profile_enq");
 
-        memcpy(buffer,"\x90\x2\x0\x1\x9f\x80\x10\x0",8);
-        sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
+				memcpy(buffer,"\x90\x2\x0\x1\x9f\x80\x10\x0",8);
+				sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
 
-        sessions[session].internal_state=1;
-        break;
-      }
-    case 1:
-      {
-        unsigned char buffer[12];
+				sessions[session].internal_state=1;
+				break;
+			}
+		case 1:
+			{
+				unsigned char buffer[12];
 
- 				eDebug("[DVBCI] [HELP MANAGER] profile_change");
+				eDebug("[DVBCI] [HELP MANAGER] profile_change");
 
-        memcpy(buffer,"\x90\x2\x0\x1\x9f\x80\x12\x0",8);
-        sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
+				memcpy(buffer,"\x90\x2\x0\x1\x9f\x80\x12\x0",8);
+				sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
 
-        sessions[session].internal_state=2;
-        break;
-      }
-    case 2:
-      {
-        unsigned char buffer[40];
+				sessions[session].internal_state=2;
+				break;
+			}
+		case 2:
+			{
+				unsigned char buffer[40];
 
-        eDebug("[DVBCI] [HELP MANAGER] profile_reply");
-        //was wir alles koennen :)
-        memcpy(buffer,"\x90\x2\x0\x1\x9f\x80\x11",7);
+				eDebug("[DVBCI] [HELP MANAGER] profile_reply");
+				//was wir alles koennen :)
+				memcpy(buffer,"\x90\x2\x0\x1\x9f\x80\x11",7);
 
-        buffer[7]=0x10;
-        buffer[8]=0x00;			//res. manager
-        buffer[9]=0x01;
-        buffer[10]=0x00;
-        buffer[11]=0x41;		//? :)
-				
-        buffer[12]=0x00;
-        buffer[13]=0x02; //02
-        buffer[14]=0x00;
-        buffer[15]=0x41;		//CA
-				
-        buffer[16]=0x00;
-        buffer[17]=0x03;
-        buffer[18]=0x00; //00		//date-time
-        buffer[19]=0x41;		
-				
-        buffer[20]=0x00;
-        buffer[21]=0x40;
-        buffer[22]=0x00;		//mmi
-        buffer[23]=0x41;
+				buffer[7]=0x10;
+				buffer[8]=0x00;			//res. manager
+				buffer[9]=0x01;
+				buffer[10]=0x00;
+				buffer[11]=0x41;		//? :)
 
-        sendTPDU(0xA0,24,sessions[session].tc_id,buffer);
-        sessions[session].internal_state=3;
-        break;
-      }
-    default:
-      //printf("[HELP MANAGER] undefined state\n");  //or ready ;)
-      break;
-  }
+				buffer[12]=0x00;
+				buffer[13]=0x02; //02
+				buffer[14]=0x00;
+				buffer[15]=0x41;		//CA
+
+				buffer[16]=0x00;
+				buffer[17]=0x03;
+				buffer[18]=0x00; //00		//date-time
+				buffer[19]=0x41;
+				buffer[20]=0x00;
+				buffer[21]=0x40;
+				buffer[22]=0x00;		//mmi
+				buffer[23]=0x41;
+
+				sendTPDU(0xA0,24,sessions[session].tc_id,buffer);
+				sessions[session].internal_state=3;
+				break;
+			}
+		default:
+			//printf("[HELP MANAGER] undefined state\n");  //or ready ;)
+			break;
+	}
 }
 
 void eDVBCI::app_manager(unsigned int session)
 {
-  switch(sessions[session].internal_state)
-  {
-    case 0:
-      {
-        unsigned char buffer[12];
-        eDebug("[DVBCI] [APPLICATION MANAGER] up to now nothing happens -> app_info_enq");
-        memcpy(buffer,"\x90\x2\x0\x2\x9f\x80\x20\x0",8);
-        sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
-        sessions[session].internal_state=1;
-        break;
-      }
-    case 1:
-      break;
-    default:
-      break;
-  }
+	switch(sessions[session].internal_state)
+	{
+		case 0:
+			{
+				unsigned char buffer[12];
+				eDebug("[DVBCI] [APPLICATION MANAGER] up to now nothing happens -> app_info_enq");
+				memcpy(buffer,"\x90\x2\x0\x2\x9f\x80\x20\x0",8);
+				sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
+				sessions[session].internal_state=1;
+				break;
+			}
+			case 1:
+			break;
+			default:
+			break;
+	}
 }
 
 
 void eDVBCI::ca_manager(unsigned int session)
 {
-  switch(sessions[session].internal_state)
-  {
-    case 0:
-      {
-        unsigned char buffer[12];
-        sessions[session].internal_state=1;
+	switch(sessions[session].internal_state)
+	{
+		case 0:
+			{
+				unsigned char buffer[12];
+				sessions[session].internal_state=1;
 
 				::ioctl(fd,CI_TS_ACTIVATE);	
 
 				clearCAIDs();
-        eDebug("[DVBCI] [CA MANAGER] up to now nothing happens -> ca_info_enq");
+				eDebug("[DVBCI] [CA MANAGER] up to now nothing happens -> ca_info_enq");
 
-        memcpy(buffer,"\x90\x2\x0\x3\x9f\x80\x30\x0",8);
+				memcpy(buffer,"\x90\x2\x0\x3\x9f\x80\x30\x0",8);
 
 				int i;
 				for(i=0;i<MAX_SESSIONS;i++)
@@ -578,23 +580,23 @@ void eDVBCI::ca_manager(unsigned int session)
 					return;
 				}	
 				buffer[3]=i;
-        sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
+				sendTPDU(0xA0,8,sessions[session].tc_id,buffer);
 
-        break;
-      }
-    case 1:
-      {
-        eDebug("[DVBCI] [CA MANAGER] send ca_pmt\n");
+				break;
+			}
+		case 1:
+			{
+				eDebug("[DVBCI] [CA MANAGER] send ca_pmt\n");
 
 				//sendCAPMT();
 				newService();
-        sessions[session].internal_state=2;
+				sessions[session].internal_state=2;
 
-        break;
-      }
-    default:
-      break;
-  }
+				break;
+			}
+		default:
+			break;
+	}
 }
 
 void eDVBCI::handle_session(unsigned char *data,int len)

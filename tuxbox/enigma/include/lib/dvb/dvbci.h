@@ -11,25 +11,26 @@
 
 struct session_struct
 {
-  unsigned int tc_id;
-  unsigned long service_class;
-  unsigned int state;
-  unsigned int internal_state;
+	unsigned int tc_id;
+	unsigned long service_class;
+	unsigned int state;
+	unsigned int internal_state;
 };
 				
 struct tempPMT_t
 {
-  int type;     //0=prg-nr 1=pid 2=descriptor
-  unsigned char *descriptor;
-  unsigned short pid;
-  unsigned short streamtype;
+	int type;     //0=prg-nr 1=pid 2=descriptor
+	unsigned char *descriptor;
+	unsigned short pid;
+	unsigned short streamtype;
 };
 
 
 class eDVBCI: private eThread, public eMainloop, public Object
 {
+	static int instance_count;
 protected:
-	enum
+ enum
 	{
 		stateInit, stateError, statePlaying, statePause
 	};
@@ -51,11 +52,11 @@ protected:
 	char appName[256];
 	unsigned short caids[256];
 	unsigned int caidcount;
-	
+
 	unsigned char ml_buffer[1024];
 	int ml_bufferlen;
 	int ml_buffersize;
-			
+
 	void clearCAIDs();
 	void addCAID(int caid);	
 	void pushCAIDs();	
@@ -70,7 +71,7 @@ protected:
 	void help_manager(unsigned int session);
 	void app_manager(unsigned int session);
 	void ca_manager(unsigned int session);
-	
+
 	void handle_session(unsigned char *data,int len);
 	int service_available(unsigned long service_class);
 	void handle_spdu(unsigned int tpdu_tc_id,unsigned char *data,int len);	
@@ -85,7 +86,6 @@ protected:
 	void mmi_answ(unsigned char *answ,int len);
 	void mmi_menuansw(int);
 
-					
 public:
 	struct eDVBCIMessage
 	{

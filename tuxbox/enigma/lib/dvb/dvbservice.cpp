@@ -388,7 +388,7 @@ void eDVBServiceController::scanPMT()
   	}
   	eServiceInterface::getInstance()->removeRef(service);
   }
-	
+
 	for (ePtrList<PMTEntry>::iterator i(pmt->streams); i != pmt->streams.end(); ++i)
 	{
 		PMTEntry *pe=*i;
@@ -629,7 +629,7 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
 					CA *n=new CA;
 					n->ecmpid=ca->CA_PID;
 					n->casysid=ca->CA_system_ID;
-					n->emmpid=-1;					
+					n->emmpid=-1;
 					list.push_back(n);
 				}
 			}

@@ -147,7 +147,7 @@ public:
 		return instance;
 	}
 
-	eString getInfo(const char *info);
+	static eString getInfo(const char *info);
 	
 	PMT *getPMT();
 	EIT *getEIT();

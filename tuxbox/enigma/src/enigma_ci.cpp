@@ -498,8 +498,8 @@ enigmaCI::enigmaCI(): eWindow(0)
 	{
 		CONNECT(DVBCI2->ci_progress, enigmaCI::updateCI2info);		
 		DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));
-	}	
-
+	}
+	
 }
 
 enigmaCI::~enigmaCI()
