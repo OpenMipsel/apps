@@ -75,6 +75,15 @@
 			<action name="toggleMute" key="mute" flags="mr" />
 			<!--action name="playlistNextService" key="3" flags="mr" />
 			<action name="playlistPrevService" key="1" flags="mr" /-->
+  		<action name="startSkipR" key="red" flags="m" />
+			<action name="repeatSkipR" key="red" flags="r" />
+			<action name="stopSkipR" key="red" flags="b" />
+			<action name="play" key="green" flags="m" />
+			<action name="pause" key="yellow" flags="m" />
+			<action name="stop" key="home" flags="m" />
+			<action name="startSkipF" key="blue" flags="m" />
+			<action name="repeatSkipF" key="blue" flags="r" />
+			<action name="stopSkipF" key="blue" flags="b" />
 		</actionmap>
 
 		<actionmap name="serviceSelector">
