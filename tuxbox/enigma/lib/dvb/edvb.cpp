@@ -342,11 +342,11 @@ void eDVB::recBegin(const char *filename, eServiceReferenceDVB service)
 		}
 		pmt->unlock();
 	}
-	
+
 	recorder->addPID(0); // PAT
 	if (Decoder::parms.pmtpid != -1)
 		recorder->addPID(Decoder::parms.pmtpid);
-		
+
 	// build SMI table.
 	
 	// build SIT:

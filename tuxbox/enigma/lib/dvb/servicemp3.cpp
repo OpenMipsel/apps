@@ -873,13 +873,15 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 		return;
 		
 	id3=&id3tags;
-	
+
 	id3_tag *tag=id3_file_tag(file);
-	if (!tag)
+	if ( !tag )
 	{
 		id3_file_close(file);
 		return;
 	}
+	else
+		eDebug("id3tag version = %d", tag->version );
 
   struct id3_frame const *frame;
   id3_ucs4_t const *ucs4;
@@ -887,27 +889,33 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 
 	for (unsigned int i=0; i<tag->nframes; ++i)
 	{
-		union id3_field const *field;
-		unsigned int nstrings, j;
 		frame=tag->frames[i];
-		
-		field    = &frame->fields[1];
-		nstrings = id3_field_getnstrings(field);
-	
-		for (j = 0; j < nstrings; ++j)
+		if ( !frame->nfields )
+			continue;
+		for ( unsigned int fr=0; fr < frame->nfields; fr++ )
 		{
-			ucs4 = id3_field_getstrings(field, j);
-			assert(ucs4);
+			union id3_field const *field;
+			field    = &frame->fields[fr];
+			if ( field->type != ID3_FIELD_TYPE_STRINGLIST )
+				continue;
+
+			unsigned int nstrings = id3_field_getnstrings(field);
+
+			for (unsigned int j = 0; j < nstrings; ++j)
+			{
+				ucs4 = id3_field_getstrings(field, j);
+				assert(ucs4);
 			
-			if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
-				ucs4 = id3_genre_name(ucs4);
+				if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
+					ucs4 = id3_genre_name(ucs4);
 				
-			utf8 = id3_ucs4_utf8duplicate(ucs4);
-			if (utf8 == 0)
-				break;
+				utf8 = id3_ucs4_utf8duplicate(ucs4);
+				if (utf8 == 0)
+					break;
 			
-			id3tags.tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
-			free(utf8);
+				id3tags.tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
+				free(utf8);
+			}
 		}
 	}
 	
