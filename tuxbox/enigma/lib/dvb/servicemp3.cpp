@@ -852,7 +852,8 @@ void eServiceHandlerMP3::addFile(void *node, const eString &filename)
 		eServiceReference ref(id, 0, filename);
 		ref.data[0]=eMP3Decoder::codecMP3;
 		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
-	} else if ((filename.right(4).upper()==".MPG")
+	} else if ((filename.right(4).upper()==".MPEG")
+		|| (filename.right(4).upper()==".MPG")
 		|| (filename.right(4).upper()==".VOB")
 		|| (filename.right(4).upper()==".VDR"))
 	{

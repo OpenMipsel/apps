@@ -18,7 +18,7 @@
 #include <lib/gui/combobox.h>
 #include <lib/gui/echeckbox.h>
 
-#define TIMER_LOGFILE "/var/timer.log"
+#define TIMER_LOGFILE CONFIGDIR "/enigma/timer.log"
 
 static const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 /* bug fix - at localization, 
@@ -94,14 +94,11 @@ static eString getRight(const eString& str, char c )
 	return str.mid( beg, len-beg );
 }
 
-static time_t getDate()
+static int getDate()
 {
-	static time_t tmp = time(0)+eDVB::getInstance()->time_difference;
+	time_t tmp = time(0)+eDVB::getInstance()->time_difference;
 	tm now = *localtime(&tmp);
-	now.tm_min=0;
-	now.tm_hour=0;
-	now.tm_sec=0;
-	return mktime(&now);
+	return ((100+now.tm_mday)*1000000)+((100+now.tm_mon+1)*1000)+now.tm_year;
 }
 
 static eString getLeft( const eString& str, char c )
@@ -525,6 +522,9 @@ void eTimerManager::actionHandler()
 				time_t nowTime=time(0)+eDVB::getInstance()->time_difference;
 				if ( i->type & ePlaylistEntry::isRepeating )
 				{
+					writeToLogfile(eString().sprintf(" - time_begin = %d, getDate()=%d, lastActivation=%d", i->time_begin,
+						getDate(),
+						i->last_activation ));
 					time_t tmp = getNextEventStartTime( i->time_begin, i->duration, i->type, getDate() == i->last_activation );
 					tm evtTime = *localtime( &tmp );
 					writeToLogfile(eString().sprintf(" - isRepeating event (days %s)", buildDayString(i->type).c_str() ));
@@ -595,11 +595,13 @@ void eTimerManager::actionHandler()
 				if ( nextStartingEvent->type & ePlaylistEntry::isRepeating )
 				{
 					writeToLogfile(" - is a repeating event");
+
 					if ( nextStartingEvent->last_activation != -1 )
-					{
-						tm tmp = *localtime( (const time_t*)&nextStartingEvent->last_activation );
-						writeToLogfile(eString().sprintf(" - lastActivation was at %02d.%02d.%04d", tmp.tm_mday, tmp.tm_mon+1, 1900+tmp.tm_year ));
-					}
+						writeToLogfile(eString().sprintf(" - lastActivation was at %02d.%02d.%04d", 
+								(nextStartingEvent->last_activation / 1000000)-100,
+								(nextStartingEvent->last_activation % 100000)/1000,
+								(nextStartingEvent->last_activation % 100) + 2000 ));
+
 					time_t tmp = getNextEventStartTime( nextStartingEvent->time_begin, nextStartingEvent->duration, nextStartingEvent->type, getDate() == nextStartingEvent->last_activation );
 					if ( tmp )
 						evtTime=*localtime( &tmp );
