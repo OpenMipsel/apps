@@ -9,6 +9,15 @@ $Id $
 
 
 $Log: dit.c,v $
+Revision 1.2.2.1  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.4  2003/10/24 22:45:06  rasc
+code reorg...
+
+Revision 1.3  2003/10/24 22:17:20  rasc
+code reorg...
+
 Revision 1.2  2001/10/06 18:19:18  Toerli
 Steuerzeichen entfernt. rasc wuerdest du mal bitte nen gescheiten unix-konformen Editor verwenden... windows editoren sind ungeeignet
 
@@ -24,7 +33,8 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "dit.h"
-
+#include "strings/dvb_str.h"
+#include "misc/output.h"
 
 
 

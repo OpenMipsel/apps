@@ -1,11 +1,17 @@
 /*
-$Id: pkt_time.c,v 1.2 2001/10/02 21:52:44 rasc Exp $
+$Id: pkt_time.c,v 1.2.2.1 2003/10/28 19:33:17 coronas Exp $
 
  -- Print Packet receive time
  -- (c) 2001 rasc
 
 
 $Log: pkt_time.c,v $
+Revision 1.2.2.1  2003/10/28 19:33:17  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.3  2003/10/26 19:06:27  rasc
+no message
+
 Revision 1.2  2001/10/02 21:52:44  rasc
 - init der time_delta
 - PES erweitert, PES arbeitet im read() noch nicht richtig!!
@@ -48,7 +54,7 @@ void  out_receive_time (int verbose, OPTION *opt)
 
     case FULL_TIME:
             t = time (&t);
-            strftime (tstr,sizeof(tstr)-1,"%a %d.%m.%Y  %H:%M:%S",
+            strftime (tstr,sizeof(tstr)-1,"%a %Y-%m-%d  %H:%M:%S",
 			localtime(&t));
             gettimeofday (&tv, NULL);
             out (verbose,"Time received: %s.%03ld\n", tstr, tv.tv_usec/1000 );

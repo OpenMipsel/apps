@@ -1,5 +1,5 @@
 /*
-$Id: dvbsnoop.h,v 1.4.2.1 2003/07/06 05:23:31 obi Exp $
+$Id: dvbsnoop.h,v 1.4.2.2 2003/10/28 19:33:10 coronas Exp $
 
  -- dvbsnoop
  -- a dvb sniffer tool
@@ -8,8 +8,30 @@ $Id: dvbsnoop.h,v 1.4.2.1 2003/07/06 05:23:31 obi Exp $
    (c) rasc
 
 $Log: dvbsnoop.h,v $
-Revision 1.4.2.1  2003/07/06 05:23:31  obi
-merge from cvs head
+Revision 1.4.2.2  2003/10/28 19:33:10  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.12  2003/10/24 22:17:13  rasc
+code reorg...
+
+Revision 1.11  2003/10/17 19:14:40  rasc
+no message
+
+Revision 1.10  2003/10/16 19:02:29  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
+
+Revision 1.9  2003/10/13 23:35:35  rasc
+Bugfix, verbose < 4 segfaulted, tnx to 'mws'  for reporting.
+
+Revision 1.8  2003/07/08 19:59:50  rasc
+restructuring... some new, some fixes,
+trying to include DSM-CC, Well someone a ISO13818-6 and latest version of ISO 18313-1 to spare?
+
+Revision 1.7  2003/07/06 05:28:52  obi
+compatibility stuff.. now there is only one version for old and new drivers
+which selects the api at configure time
 
 Revision 1.6  2003/06/24 23:51:03  rasc
 bugfixes and enhancements
@@ -32,7 +54,6 @@ dvbsnoop v0.7  -- Commit to CVS
 
 */
 
-#define DVBSNOOP_VERSION  "0.9b"
 
 
 #include <stdio.h>
@@ -59,7 +80,8 @@ dvbsnoop v0.7  -- Commit to CVS
 #define pes_type pesType
 #endif
 
-#include "helper.h"
-#include "dvb_str.h"
-#include "output.h"
+#include "version.h"
+#include "strings/dvb_str.h"
+#include "misc/helper.h"
+#include "misc/output.h"
 

@@ -1,5 +1,5 @@
 /*
-$Id: dvbsnoop.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
+$Id: dvbsnoop.c,v 1.3.2.2 2003/10/28 19:33:10 coronas Exp $
 
 
 
@@ -13,7 +13,7 @@ $Id: dvbsnoop.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
 
  I also don't garantee, that data output is correct in any way.
 
- (c) 2001-2003   Rainer.Scherg@t-online.de
+ (c) 2001-2003   Rainer.Scherg@gmx.de
 
 
  -- Sorry for the bad coding, it's really quick and dirty. ;-)
@@ -24,8 +24,23 @@ $Id: dvbsnoop.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
 
 
 $Log: dvbsnoop.c,v $
-Revision 1.3.2.1  2003/07/06 05:23:31  obi
-merge from cvs head
+Revision 1.3.2.2  2003/10/28 19:33:10  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.10  2003/10/24 23:01:40  rasc
+code reorg...
+
+Revision 1.9  2003/10/24 22:17:13  rasc
+code reorg...
+
+Revision 1.8  2003/10/16 19:02:28  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
+
+Revision 1.7  2003/07/06 05:28:52  obi
+compatibility stuff.. now there is only one version for old and new drivers
+which selects the api at configure time
 
 Revision 1.6  2003/07/06 02:22:46  rasc
 no message
@@ -53,13 +68,14 @@ dvbsnoop v0.7  -- Commit to CVS
 
 
 #include "dvbsnoop.h"
-#include "cmdline.h"
-#include "dmx_sect.h"
-#include "dmx_pes.h"
-#include "dmx_ts.h"
-#include "hexprint.h"
-#include "pkt_time.h"
 
+#include "misc/cmdline.h"
+#include "misc/hexprint.h"
+#include "misc/pkt_time.h"
+
+#include "dvb_api/dmx_sect.h"
+#include "dvb_api/dmx_pes.h"
+#include "dvb_api/dmx_ts.h"
 
 
 

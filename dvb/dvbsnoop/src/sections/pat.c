@@ -1,13 +1,16 @@
 /*
-$Id: pat.c,v 1.2.2.1 2003/07/06 05:23:31 obi Exp $
+$Id: pat.c,v 1.2.2.2 2003/10/28 19:33:19 coronas Exp $
 
    -- PAT section
 
    (c) rasc
 
 $Log: pat.c,v $
-Revision 1.2.2.1  2003/07/06 05:23:31  obi
-merge from cvs head
+Revision 1.2.2.2  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.4  2003/10/24 22:17:21  rasc
+code reorg...
 
 Revision 1.3  2002/12/05 18:33:19  rasc
 bugfix: PAT didn't see the last entry (tnx to obi)
@@ -27,6 +30,10 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "pat.h"
+#include "descriptors/descriptor.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
 
 
 

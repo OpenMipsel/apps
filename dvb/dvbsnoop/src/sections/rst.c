@@ -1,5 +1,5 @@
 /*
-$Id: rst.c,v 1.2 2001/10/06 18:19:18 Toerli Exp $
+$Id: rst.c,v 1.2.2.1 2003/10/28 19:33:19 coronas Exp $
 
    -- RST section
    -- Running Status Table
@@ -9,6 +9,17 @@ $Id: rst.c,v 1.2 2001/10/06 18:19:18 Toerli Exp $
 
 
 $Log: rst.c,v $
+Revision 1.2.2.1  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.4  2003/10/24 22:17:21  rasc
+code reorg...
+
+Revision 1.3  2003/10/16 19:02:29  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
+
 Revision 1.2  2001/10/06 18:19:18  Toerli
 Steuerzeichen entfernt. rasc wuerdest du mal bitte nen gescheiten unix-konformen Editor verwenden... windows editoren sind ungeeignet
 
@@ -24,6 +35,10 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "rst.h"
+#include "descriptors/descriptor.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
 
 
 
@@ -100,7 +115,7 @@ void decode_RST (u_char *b, int len)
    out_NL (3);
    out_SW_NL  (3,"Transport_stream_ID: ",r2.transport_stream_id);
    out_S2W_NL (3,"Original_network_ID: ",r2.original_network_id,
-        dvbstrNetworkIdent_ID(r2.original_network_id));
+        dvbstrOriginalNetwork_ID(r2.original_network_id));
    out_S2W_NL (3,"Service_ID: ",r2.service_id,
 	 " --> refers to PMS program_number"); 
    out_SW_NL  (3,"Event_ID: ",r2.event_id);

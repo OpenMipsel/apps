@@ -1,5 +1,5 @@
 /*
-$Id: emm_ecm.c,v 1.4.2.2 2003/07/06 05:49:33 obi Exp $
+$Id: emm_ecm.c,v 1.4.2.3 2003/10/28 19:33:19 coronas Exp $
 
 
    -- EMM / ECM Data packet
@@ -8,11 +8,14 @@ $Id: emm_ecm.c,v 1.4.2.2 2003/07/06 05:49:33 obi Exp $
 
 
 $Log: emm_ecm.c,v $
-Revision 1.4.2.2  2003/07/06 05:49:33  obi
-CAMT fix and indentation
+Revision 1.4.2.3  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
 
-Revision 1.4.2.1  2003/07/06 05:23:31  obi
-merge from cvs head
+Revision 1.7  2003/10/24 22:17:21  rasc
+code reorg...
+
+Revision 1.6  2003/07/06 05:49:25  obi
+CAMT fix and indentation
 
 Revision 1.5  2003/07/05 21:22:45  rasc
 TypoFix - Tnx MWS
@@ -38,7 +41,10 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "emm_ecm.h"
-#include "hexprint.h"
+#include "descriptors/descriptor.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
 
 
 

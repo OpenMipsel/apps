@@ -1,5 +1,5 @@
 /*
-$Id: tslayer.c,v 1.3 2002/08/17 20:36:12 obi Exp $
+$Id: tslayer.c,v 1.3.2.1 2003/10/28 19:33:24 coronas Exp $
 
    -- Transport Stream Decode/Table section
 
@@ -7,6 +7,12 @@ $Id: tslayer.c,v 1.3 2002/08/17 20:36:12 obi Exp $
 
 
 $Log: tslayer.c,v $
+Revision 1.3.2.1  2003/10/28 19:33:24  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.4  2003/10/24 22:17:24  rasc
+code reorg...
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -24,7 +30,9 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "tslayer.h"
-#include "hexprint.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
 
 
 

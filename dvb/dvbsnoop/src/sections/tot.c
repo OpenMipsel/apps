@@ -1,5 +1,5 @@
 /*
-$Id: tot.c,v 1.3 2002/08/17 20:36:12 obi Exp $
+$Id: tot.c,v 1.3.2.1 2003/10/28 19:33:19 coronas Exp $
 
    -- TOT section
    -- Time Offset Table
@@ -8,6 +8,12 @@ $Id: tot.c,v 1.3 2002/08/17 20:36:12 obi Exp $
    (c) rasc
 
 $Log: tot.c,v $
+Revision 1.3.2.1  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.4  2003/10/24 22:17:21  rasc
+code reorg...
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -25,7 +31,10 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "tot.h"
-#include "descriptor.h"
+#include "descriptors/descriptor.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
 
 
 

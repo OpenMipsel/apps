@@ -1,12 +1,24 @@
 /*
-$Id: cmdline.c,v 1.2.2.1 2003/07/06 05:23:31 obi Exp $
+$Id: cmdline.c,v 1.2.2.2 2003/10/28 19:33:17 coronas Exp $
 
  -- (c) 2001 rasc
 
 
 $Log: cmdline.c,v $
-Revision 1.2.2.1  2003/07/06 05:23:31  obi
-merge from cvs head
+Revision 1.2.2.2  2003/10/28 19:33:17  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.5  2003/10/16 20:45:47  rasc
+no message
+
+Revision 1.4  2003/10/16 19:02:27  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
+
+Revision 1.3  2003/07/06 05:28:52  obi
+compatibility stuff.. now there is only one version for old and new drivers
+which selects the api at configure time
 
 Revision 1.2  2001/10/06 18:19:18  Toerli
 Steuerzeichen entfernt. rasc wuerdest du mal bitte nen gescheiten unix-konformen Editor verwenden... windows editoren sind ungeeignet
@@ -47,6 +59,7 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
   opt->printhex = -1;
   opt->printdecode = -1;
   opt->binary_out = 0;
+  opt->inpPidFile = (char *) NULL;
   opt->help = 0;
   opt->devDemux = DEMUX_DEVICE;
   opt->devDvr = DVR_DEVICE;
@@ -69,6 +82,7 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
 
      if (!strcmp (argv[i],"-demux")) opt->devDemux = argv[++i];
      else if (!strcmp (argv[i],"-dvr")) opt->devDvr = argv[++i];
+     else if (!strcmp (argv[i],"-if")) opt->inpPidFile = argv[++i];
      else if (!strcmp (argv[i],"-f")) opt->filter = str2i(argv[++i]);
      else if (!strcmp (argv[i],"-m")) opt->mask = str2i(argv[++i]);
      else if (!strcmp (argv[i],"-crc")) opt->crc = 1;
@@ -118,7 +132,7 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
     printf("DVB, the streams and the coordination between the streams...\n");
     printf("Tnx to all the guys of the linux-dbox2 project for their help\n");
     printf("Please report errors!\n");
-    printf(" (c) 2001 rasc ...\n");
+    printf(" (c) 2001-2003  Rainer Scherg.\n");
     printf("     Use on your own risk - no warrenty in any way given.\n");
     printf("     Miss-use is prohibited...\n");
     printf("     \n");
@@ -132,6 +146,7 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
     printf("   -nocrc:       No CRC check when reading 'sec' [-nocrc]\n");
     printf("   -n count:     receive count packets (0=no limit) [-n 0]\n");
     printf("   -b:           binary output of packets (disables other output)\n");
+    printf("   -if:          input file, reads from binary file instead of demux device\n");
     printf("   -ph mode:     print hex buffer, modes: [-ph 1]\n");
     printf("                   0=none, 1=hexdump, 2=hex line 3=ascii line\n");
     printf("   -nph:         don't print hex buffer (= -ph 0)\n");

@@ -1,5 +1,5 @@
 /*
-$Id: sdt.c,v 1.3 2002/08/17 20:36:12 obi Exp $
+$Id: sdt.c,v 1.3.2.1 2003/10/28 19:33:19 coronas Exp $
 
    -- SDT section 
    -- Service Description Table
@@ -9,6 +9,17 @@ $Id: sdt.c,v 1.3 2002/08/17 20:36:12 obi Exp $
 
 
 $Log: sdt.c,v $
+Revision 1.3.2.1  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.5  2003/10/24 22:17:21  rasc
+code reorg...
+
+Revision 1.4  2003/10/16 19:02:29  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -27,7 +38,10 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "sdt.h"
-#include "descriptor.h"
+#include "descriptors/descriptor.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
 
 
 /*
@@ -117,7 +131,7 @@ void decode_SDT (u_char *b, int len)
  out_SB_NL (3,"Last_Section_number: ",s.last_section_number);
 
  out_S2W_NL (3,"Original_network_ID:  ",s.original_network_id,
-      dvbstrNetworkIdent_ID(s.original_network_id)); 
+      dvbstrOriginalNetwork_ID(s.original_network_id)); 
  out_SB_NL (6,"reserved_4: ",s.reserved_4);
 
 

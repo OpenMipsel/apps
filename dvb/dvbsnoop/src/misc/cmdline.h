@@ -2,6 +2,10 @@
 
  -- (c) 2001 rasc
 
+
+$Id: cmdline.h,v 1.2.2.1 2003/10/28 19:33:17 coronas Exp $
+
+
 */
 
 
@@ -19,6 +23,7 @@ typedef struct _OPTIONS {
   int         printhex;
   int         printdecode;
   int         binary_out;
+  char        *inpPidFile;	// read from file instead of dmux if not NULL
   int         help;
   char        *devDemux;
   char        *devDvr;

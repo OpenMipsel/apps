@@ -1,10 +1,15 @@
+
 dvbsnoop
-
-a dvb sniffer tool, to trace network traffic on DVB-S (Satellite),
-DVB-C (Cable) & DVB-T (Terrestric) broadcast networks.
+========
 
 
-The programm was mainly written to learn and understand the dvb
+dvbsnoop is a DVB sniffer and monitor program to debug, dump
+or view dvb/mpeg/dsm-cc/MHP stream information (digital
+television) send via satellite, cable or terrestrial.
+Basically dvbsnoop is a simple DVB stream analyzer.
+
+
+The programm was mainly written to learn and understand the DVB 
 protocol structures and streams. This program is not performance
 optimized, but was itself part of the learning process... ;-)
 
@@ -17,10 +22,11 @@ Important:
 
 Disclaimer:
 
-   Program is written under GPL.
-   You may use it at your own risk!
+  You are using this program at your own risk!
 
-	License: GPL
+
+
+License: 
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -43,3 +49,16 @@ commercial purpose without prior written permission by the author. This
 includes also offers in online auctions...
 
 
+
+
+Keywords:
+   dvb stream analyze snoop sniffer dump mpeg descriptor
+   digital television satellite cable dvb-c dvb-s dvb-t TV
+   MHP DSM-CC PES TOT PAT PMT SDT EIT NIT TDST RST SIT DIT
+   BAT EMM ECM sections
+   transport stream   packet elementary stream
+   DEMUX decode filter
+   
+
+
+Rainer Scherg

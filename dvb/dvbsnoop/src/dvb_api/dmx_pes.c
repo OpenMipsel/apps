@@ -1,5 +1,5 @@
 /*
-$Id: dmx_pes.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
+$Id: dmx_pes.c,v 1.3.2.2 2003/10/28 19:33:15 coronas Exp $
 
  -- (c) 2001 rasc
  -- PE Streams
@@ -10,8 +10,19 @@ $Id: dmx_pes.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
 
 
 $Log: dmx_pes.c,v $
-Revision 1.3.2.1  2003/07/06 05:23:31  obi
-merge from cvs head
+Revision 1.3.2.2  2003/10/28 19:33:15  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.9  2003/10/24 22:45:05  rasc
+code reorg...
+
+Revision 1.8  2003/10/24 22:17:18  rasc
+code reorg...
+
+Revision 1.7  2003/10/16 19:02:27  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
 
 Revision 1.6  2003/05/28 01:35:01  obi
 fixed read() return code handling
@@ -36,12 +47,13 @@ dvbsnoop v0.7  -- Commit to CVS
 
 
 #include "dvbsnoop.h"
-#include "cmdline.h"
-#include "hexprint.h"
-#include "pkt_time.h"
-#include "dmx_pes.h"
-#include "pespacket.h"
+#include "misc/cmdline.h"
+#include "misc/output.h"
+#include "misc/hexprint.h"
+#include "misc/pkt_time.h" 
 
+#include "pes/pespacket.h"
+#include "dmx_pes.h"
 
 
 #define PES_BUF_SIZE  (256 * 1024)
@@ -57,45 +69,58 @@ int  doReadPES (OPTION *opt)
   u_char  buf[READ_BUF_SIZE]; /* data buffer */
   long    count;
   int     i;
+  char    *f;
+  int     openMode;
+  int     dmxMode;
 
 
 
+  if (opt->inpPidFile) {
+  	f        = opt->inpPidFile;
+  	openMode = O_RDONLY;
+        dmxMode  = 0;
+  } else {
+  	f        = opt->devDemux;
+  	openMode = O_RDWR;
+        dmxMode  = 1;
+  }
 
 
-  if((fd = open(opt->devDemux,O_RDWR)) < 0){
-      perror(opt->devDemux);
+  if((fd = open(f,openMode)) < 0){
+      perror(f);
       return -1;
   }
-  
+
+
 
 
   /*
    -- init demux
   */
 
-{
-  struct dmx_pes_filter_params flt;
+  if (dmxMode) {
+    struct dmx_pes_filter_params flt;
 
-  ioctl (fd,DMX_SET_BUFFER_SIZE, PES_BUF_SIZE);
-  memset (&flt, 0, sizeof (struct dmx_pes_filter_params));
+    ioctl (fd,DMX_SET_BUFFER_SIZE, PES_BUF_SIZE);
+    memset (&flt, 0, sizeof (struct dmx_pes_filter_params));
 
-  flt.pid = opt->pid;
-  flt.input  = DMX_IN_FRONTEND;
-  flt.output = DMX_OUT_TAP;
-  flt.pes_type = DMX_PES_OTHER;
-  flt.flags = 0;
+    flt.pid = opt->pid;
+    flt.input  = DMX_IN_FRONTEND;
+    flt.output = DMX_OUT_TAP;
+    flt.pes_type = DMX_PES_OTHER;
+    flt.flags = 0;
 
-  if ((i=ioctl(fd,DMX_SET_PES_FILTER,&flt)) < 0) {
-    perror ("DMX_SET_PES_FILTER failed: ");
-    return -1;
+    if ((i=ioctl(fd,DMX_SET_PES_FILTER,&flt)) < 0) {
+      perror ("DMX_SET_PES_FILTER failed: ");
+      return -1;
+    }
+
+    if ((i=ioctl(fd,DMX_START,&flt)) < 0) {
+      perror ("DMX_START failed: ");
+      return -1;
+    }
+
   }
-
-  if ((i=ioctl(fd,DMX_START,&flt)) < 0) {
-    perror ("DMX_START failed: ");
-    return -1;
-  }
-
-}
 
 
 
@@ -125,16 +150,13 @@ int  doReadPES (OPTION *opt)
     }
 
 
-    /*
-      -- error ?
-    */
-
-    if (n == -1)
-	perror("read");
-    
-    if (n <= 0)
-        continue;
-
+    // -- error or eof?
+    if (n == -1) perror("read");
+    if (n < 0)  continue;
+    if (n == 0) {
+	if (dmxMode) continue;	// dmxmode = no eof!
+	else break;		// filemode eof 
+    }
 
 
     count ++;
@@ -188,9 +210,10 @@ int  doReadPES (OPTION *opt)
   /*
     -- Stop Demux
   */
-
+  if (dmxMode) {
     ioctl (fd, DMX_SET_FILTER, 0);
     ioctl (fd, DMX_STOP, 0);
+  }
 
 
   close(fd);

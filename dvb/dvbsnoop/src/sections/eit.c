@@ -9,6 +9,20 @@ $Id :
 
 
 $Log: eit.c,v $
+Revision 1.3.2.1  2003/10/28 19:33:19  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.6  2003/10/24 22:45:07  rasc
+code reorg...
+
+Revision 1.5  2003/10/24 22:17:20  rasc
+code reorg...
+
+Revision 1.4  2003/10/16 19:02:29  rasc
+some updates to dvbsnoop...
+- small bugfixes
+- tables updates from ETR 162
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -27,7 +41,9 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "eit.h"
-#include "descriptor.h"
+#include "descriptors/descriptor.h"
+#include "strings/dvb_str.h"
+#include "misc/output.h"
 
 
 
@@ -121,7 +137,7 @@ void decode_EIT (u_char *b, int len)
 
  out_SW_NL  (3,"Transport_stream_ID: ",e.transport_stream_id);
  out_S2W_NL (3,"Original_network_ID: ",e.original_network_id,
-	 dvbstrNetworkIdent_ID(e.original_network_id)); 
+	 dvbstrOriginalNetwork_ID(e.original_network_id)); 
  out_SB_NL  (3,"Segment_last_Section_number: ",e.segment_last_section_number);
  out_S2B_NL (3,"Last_table_id: ",e.last_table_id,dvbstrTableID(e.last_table_id));
 

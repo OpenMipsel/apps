@@ -1,5 +1,5 @@
 /*
-$Id: pespacket.c,v 1.5 2002/08/17 20:36:12 obi Exp $
+$Id: pespacket.c,v 1.5.2.1 2003/10/28 19:33:18 coronas Exp $
 
    -- PES Decode/Table section
 
@@ -7,6 +7,12 @@ $Id: pespacket.c,v 1.5 2002/08/17 20:36:12 obi Exp $
 
 
 $Log: pespacket.c,v $
+Revision 1.5.2.1  2003/10/28 19:33:18  coronas
+Compilefix rel-branch/Update from HEAD
+
+Revision 1.6  2003/10/24 22:17:20  rasc
+code reorg...
+
 Revision 1.5  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -32,7 +38,7 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #include "dvbsnoop.h"
 #include "pespacket.h"
-#include "hexprint.h"
+#include "misc/hexprint.h"
 
 
 int PES_decode2 (u_char *b, int len, int pid);
