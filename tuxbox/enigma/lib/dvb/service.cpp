@@ -16,16 +16,19 @@ eServiceHandler::~eServiceHandler()
 
 eService *eServiceHandler::createService(const eServiceReference &node)
 {
+	(void)node;
 	return 0;
 }
 
 int eServiceHandler::play(const eServiceReference &service)
 {
+	(void)service;
 	return -1;
 }
 
 int eServiceHandler::serviceCommand(const eServiceCommand &cmd)
 {
+	(void)cmd;
 	return -1;
 }
 
@@ -81,25 +84,31 @@ int eServiceHandler::getPosition(int)
 
 void eServiceHandler::enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback)
 {
+	(void)dir;
+	(void)callback;
 	return;
 }
 
 void eServiceHandler::leaveDirectory(const eServiceReference &dir)
 {
+	(void)dir;
 	return;
 }
 
 eService *eServiceHandler::addRef(const eServiceReference &service)
 {
+	(void)service;
 	return 0;
 }
 
 void eServiceHandler::removeRef(const eServiceReference &service)
 {
+	(void)service;
 }
 
 eString eServiceHandler::getInfo(int id)
 {
+	(void)id;
 	return "";
 }
 
