@@ -489,7 +489,13 @@ void eZapEPG::buildPage(int direction)
 			if ( s != services.begin() )
 				--s;
 			else
-				s = --services.end();
+			{
+				s = services.end();
+				if (s != services.begin())
+					--s;
+				else
+					break;
+			}
 		}
 		while( s != curS );
 		curS=curE=s;

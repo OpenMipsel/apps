@@ -368,9 +368,10 @@ private:
 	void showMainMenu();
 
 	timeval standbyTime;
+	int standby_nomenu;
 
 	void delayedStandby();
-	void standbyPress();
+	void standbyPress(int nomenu);
 	void standbyRepeat();
 	void standbyRelease();
 	void showSubserviceMenu();

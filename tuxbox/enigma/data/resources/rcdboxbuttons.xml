@@ -12,7 +12,7 @@
 		</keys>
 
 		<actionmap name="enigmaMain">
-			<action name="standby_press" key="power" flags="m" />
+			<action name="standby_nomenu_press" key="power" flags="m" />
 			<action name="standby_repeat" key="power" flags="r" />
 			<action name="standby_release" key="power" flags="b" />
 			<action name="nextService" key="down" flags="mr" />

@@ -59,7 +59,7 @@
 struct enigmaMainActions
 {
 	eActionMap map;
-	eAction showMainMenu, standby_press, standby_repeat, standby_release, 
+	eAction showMainMenu, standby_press, standby_nomenu_press, standby_repeat, standby_release, 
 		showInfobar, hideInfobar, showInfobarEPG, showServiceSelector,
 		showSubservices, showAudio, pluginVTXT, pluginExt, showEPGList, showEPG, 
 		nextSubService, prevSubService, nextService, prevService,
@@ -75,6 +75,7 @@ struct enigmaMainActions
 		map("enigmaMain", _("enigma Zapp")),
 		showMainMenu(map, "showMainMenu", _("show main menu"), eAction::prioDialog),
 		standby_press(map, "standby_press", _("go to standby (press)"), eAction::prioDialog),
+		standby_nomenu_press(map, "standby_nomenu_press", _("go to standby without menu (press)"), eAction::prioDialog),
 		standby_repeat(map, "standby_repeat", _("go to standby (repeat)"), eAction::prioDialog),
 		standby_release(map, "standby_release", _("go to standby (release)"), eAction::prioDialog),
 
@@ -2228,8 +2229,9 @@ void eZapMain::toggleTimerMode()
 		state |= stateInTimerMode;
 }
 
-void eZapMain::standbyPress()
+void eZapMain::standbyPress(int n)
 {
+	standby_nomenu = n;
 	gettimeofday(&standbyTime,0);
 	standbyTime+=1000;
 }
@@ -2259,9 +2261,15 @@ void eZapMain::standbyRelease()
 #else
 		eSleepTimerContextMenu m;
 #endif
-		m.show();
-		int ret = m.exec();
-		m.hide();
+		int ret;
+		if (standby_nomenu)
+			ret = 1; // always shutdown if shutdown_nomenu-key is pressed
+		else
+		{
+			m.show();
+			ret = m.exec();
+			m.hide();
+		}
 		switch (ret)
 		{
 			case 2:
@@ -3644,7 +3652,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_enigmaMainActions->standby_press)
 		{
 			if ( handleState() )
-				standbyPress();
+				standbyPress(0);
+		}
+		else if (event.action == &i_enigmaMainActions->standby_nomenu_press)
+		{
+			if ( handleState() )
+				standbyPress(1);
 		}
 		else if (event.action == &i_enigmaMainActions->standby_repeat)
 			standbyRepeat();
@@ -4581,7 +4594,7 @@ void eZapMain::gotMessage(const int &c)
 	if ( c == eZapMain::messageGoSleep )
 	{
 		eDebug("goto Standby (sleep)");
-		standbyPress();
+		standbyPress(0);
 		standbyRelease();
 		return;
 	}

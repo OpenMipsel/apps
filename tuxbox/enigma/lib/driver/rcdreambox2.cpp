@@ -166,11 +166,13 @@ eRCDreamboxDriver2::eRCDreamboxDriver2(): eRCShortDriver("/dev/rawir2")
 void eRCDeviceDreamboxButton::handleCode(int code)
 {
 	code=(~code)&0x7;
+	int l=last;
+	last=code;
 	for (int i=0; i<4; i++)
-		if ((last&~code) & (1<<i))
+		if ((l&~code) & (1<<i))
 		{
 			/*emit*/ input->keyPressed(eRCKey(this, i, eRCKey::flagBreak));
-		} else if ((~last&code)&(1<<i))
+		} else if ((~l&code)&(1<<i))
 		{
 			/*emit*/ input->keyPressed(eRCKey(this, i, 0));
 		}
@@ -178,7 +180,6 @@ void eRCDeviceDreamboxButton::handleCode(int code)
 		repeattimer.start(eRCInput::getInstance()->config.rdelay, 1);
 	else
 		repeattimer.stop();
-	last=code;
 }
 
 void eRCDeviceDreamboxButton::repeat()
