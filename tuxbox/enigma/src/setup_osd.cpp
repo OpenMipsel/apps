@@ -170,8 +170,8 @@ PluginOffsetScreen::PluginOffsetScreen()
 eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 {
 	setText("OSD Setup");
-	move(ePoint(120, 95));
-	cresize(eSize(440, 395));
+	move(ePoint(120, 45));
+	cresize(eSize(440, 435));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
@@ -184,25 +184,34 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	showOSDOnEITUpdate->resize(eSize(fd+4+300, fd+4));
 	showOSDOnEITUpdate->setHelpText(_("shows OSD when now/next info is changed"));
 
+	state=1;
+	eConfig::getInstance()->getKey("/ezap/osd/showCurrentRemaining", state);
+	showCurrentRemaining = new eCheckbox(this, state, fd);
+	showCurrentRemaining->setText(_("Show event remaining time"));
+	showCurrentRemaining->move(ePoint(20, 65));
+	showCurrentRemaining->resize(eSize(fd+4+300, fd+4));
+	showCurrentRemaining->setHelpText(_("shows the remaining time for current event (total otherwise)"));
+
 	state=0;
 	eConfig::getInstance()->getKey("/ezap/osd/showConsoleOnFB", state);
 	showConsoleOnFB = new eCheckbox(this, state, fd);
 	showConsoleOnFB->setText(_("Show Console on Framebuffer"));
-	showConsoleOnFB->move(ePoint(20, 65));
+	showConsoleOnFB->move(ePoint(20, 105));
 	showConsoleOnFB->resize(eSize(fd+4+300, fd+4));
 	showConsoleOnFB->setHelpText(_("shows the linux console on TV"));
 
 	if ( eDVB::getInstance()->getmID() > 4 )
 		showConsoleOnFB->hide();
 
+
 	alpha = gFBDC::getInstance()->getAlpha();
 	eLabel* l = new eLabel(this);
 	l->setText(_("Alpha:"));
-	l->move(ePoint(20, 105));
+	l->move(ePoint(20, 145));
 	l->resize(eSize(110, fd+4));
 	sAlpha = new eSlider( this, l, 0, 512 );
 	sAlpha->setIncrement( 10 ); // Percent !
-	sAlpha->move( ePoint( 140, 105 ) );
+	sAlpha->move( ePoint( 140, 145 ) );
 	sAlpha->resize(eSize( 280, fd+4 ) );
 	sAlpha->setHelpText(_("change the transparency correction"));
 	sAlpha->setValue( alpha);
@@ -211,11 +220,11 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	brightness = gFBDC::getInstance()->getBrightness();
 	l = new eLabel(this);
 	l->setText(_("Brightness:"));
-	l->move(ePoint(20, 145));
+	l->move(ePoint(20, 185));
 	l->resize(eSize(110, fd+4));
 	sBrightness = new eSlider( this, l, 0, 255 );
 	sBrightness->setIncrement( 5 ); // Percent !
-	sBrightness->move( ePoint( 140, 145 ) );
+	sBrightness->move( ePoint( 140, 185 ) );
 	sBrightness->resize(eSize( 280, fd+4 ) );
 	sBrightness->setHelpText(_("change the brightness correction"));
 	sBrightness->setValue( brightness);
@@ -224,11 +233,11 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	gamma = gFBDC::getInstance()->getGamma();
 	l = new eLabel(this);
 	l->setText(_("Contrast:"));
-	l->move(ePoint(20, 185));
+	l->move(ePoint(20, 225));
 	l->resize(eSize(110, fd+4));
 	sGamma = new eSlider( this, l, 0, 255 );
 	sGamma->setIncrement( 5 ); // Percent !
-	sGamma->move( ePoint( 140, 185 ) );
+	sGamma->move( ePoint( 140, 225 ) );
 	sGamma->resize(eSize( 280, fd+4 ) );
 	sGamma->setHelpText(_("change the contrast"));
 	sGamma->setValue( gamma);
@@ -240,7 +249,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 
 	pluginoffs->setShortcut("yellow");
 	pluginoffs->setShortcutPixmap("yellow");
-	pluginoffs->move(ePoint(20, 240));
+	pluginoffs->move(ePoint(20, 280));
 	pluginoffs->resize(eSize(250, 40));
 	pluginoffs->loadDeco();
 	CONNECT( pluginoffs->selected, eZapOsdSetup::PluginOffsetPressed );
@@ -249,7 +258,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 310));
+	ok->move(ePoint(20, 350));
 	ok->resize(eSize(170, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -258,7 +267,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 
 	abort=new eButton(this);
 	abort->setText(_("abort"));
-	abort->move(ePoint(210, 310));
+	abort->move(ePoint(210, 350));
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
@@ -317,6 +326,7 @@ void eZapOsdSetup::okPressed()
 {
 	gFBDC::getInstance()->saveSettings();
 	eConfig::getInstance()->setKey("/ezap/osd/showOSDOnEITUpdate", showOSDOnEITUpdate->isChecked());
+	eConfig::getInstance()->setKey("/ezap/osd/showCurrentRemaining", showCurrentRemaining->isChecked());
 	eConfig::getInstance()->setKey("/ezap/osd/showConsoleOnFB", showConsoleOnFB->isChecked());
 
 	eConfig::getInstance()->flush();

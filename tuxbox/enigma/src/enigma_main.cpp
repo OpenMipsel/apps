@@ -1706,6 +1706,13 @@ void eZapMain::updateProgress()
 			if ((cur_start <= c) && (c < cur_start+cur_duration))
 			{
 				Progress->setPerc((c-cur_start)*100/cur_duration);
+				int show_current_remaining=1;
+				eConfig::getInstance()->getKey("/ezap/osd/showCurrentRemaining", show_current_remaining);
+				if (show_current_remaining)
+					EINowDuration->setText(eString().sprintf("+%d min", ((cur_start+cur_duration) - c) / 60));
+				else
+					EINowDuration->setText(eString().sprintf("%d min", cur_duration / 60));
+					
 				Progress->show();
 				pLCD->lcdMain->Progress->setPerc((c-cur_start)*100/cur_duration);
 				pLCD->lcdMain->Progress->show();

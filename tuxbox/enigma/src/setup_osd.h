@@ -13,6 +13,7 @@ class eZapOsdSetup: public eWindow
 	eSlider *sAlpha, *sBrightness, *sGamma;
 	eCheckbox* showOSDOnEITUpdate;
 	eCheckbox* showConsoleOnFB;
+	eCheckbox* showCurrentRemaining;
 	eStatusBar* statusbar;
 
 	eButton *ok, *abort, *pluginoffs;
