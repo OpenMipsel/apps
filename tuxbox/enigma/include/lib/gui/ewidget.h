@@ -211,7 +211,7 @@ public:
 
 	void recalcAbsolutePosition();
 
-	const inline ePoint &getAbsolutePosition() const
+	inline const ePoint &getAbsolutePosition() const
 	{
 		return absPosition;
 	}
