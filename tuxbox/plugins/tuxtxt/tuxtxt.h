@@ -18,9 +18,25 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_CACHE_H
+#include FT_CACHE_SMALL_BITMAPS_H
+
 #include "config.h"
 
 #define PAGESIZE 40*24
+
+//devices
+
+#define AVS "/dev/dbox/avs0"
+#define DMX "/dev/dvb/card0/demux0"
+#define SAA "/dev/dbox/saa0"
+#define PIG "/dev/dbox/pig0"
+
+//fonts
+
+#define TUXTXT0	FONTDIR "/tuxtxt0.fon"	/* G0 */
+#define TUXTXT1	FONTDIR "/tuxtxt1.fon"	/* G1 */
+#define TUXTXT2	FONTDIR "/tuxtxt2.fon"	/* NS */
 
 #define fixfontheight 21
 
@@ -138,7 +154,7 @@
 
 //functions
 
-void ConfigMenu();
+void ConfigMenu(int Init);
 void CleanUp();
 void PageInput(int Number);
 void Prev100();
@@ -168,7 +184,7 @@ void DecodePage();
 void UpdateLCD();
 void *CacheThread(void *arg);
 int  Init();
-int  GetVideotextPIDs();
+int  GetTeletextPIDs();
 int  GetRCCode();
 
 //framebuffer stuff
@@ -179,8 +195,12 @@ struct fb_fix_screeninfo fix_screeninfo;
 
 //freetype stuff
 
-FT_Library	library;
-FT_Face		face;
+FT_Library		library;
+FTC_Manager		manager;
+FTC_SBitCache	cache;
+FTC_SBit		sbit;
+FTC_Image_Desc	desc0, desc1, desc2;
+FT_Face			face0, face1, face2;
 
 //some data
 
@@ -191,10 +211,9 @@ int PosX, PosY, StartX, StartY;
 int cached_pages, current_page, current_subpage, page, subpage, lastpage, pageupdate, zap_subpage_manual;
 int inputcounter;
 int zoommode, screenmode, transpmode, hintmode, boxed;
-int fontwidth, fontheight;
 int catch_row, catch_col, catched_page, pagecatching;
 int prev_100, prev_10, next_10, next_100;
-int fnc_old, saa_old, screen_mode1, screen_mode2, screen_old1, screen_old2;
+int fnc_old, saa_old, screen_mode1, screen_mode2, screen_old1, screen_old2, color_mode, color_old, national_subset, national_subset_old;
 int clear_page, clear_subpage;
 int pids_found, current_service;
 int SDT_ready;
@@ -217,26 +236,47 @@ struct _pid_table
 	char service_name[24];
 }pid_table[128];
 
+//national subsets
+
+char countrystring[] =	"  CZ/SK  (#$@[\\]^_`{|}~)  "	/* czech, slovak */
+						"    GB (#$@[\\]^_`{|}~)    "	/* english */
+						"    EE (#$@[\\]^_`{|}~)    "	/* estonian */
+						"    FR (#$@[\\]^_`{|}~)    "	/* french */
+						"    DE (#$@[\\]^_`{|}~)    "	/* german */
+						"    IT (#$@[\\]^_`{|}~)    "	/* italian */
+						"  LV/LT  (#$@[\\]^_`{|}~)  "	/* lettish, lithuanian */
+						"    PL (#$@[\\]^_`{|}~)    "	/* polish */
+						"  PT/ES  (#$@[\\]^_`{|}~)  "	/* portuguese, spanish */
+						"    RO (#$@[\\]^_`{|}~)    "	/* rumanian */
+						" SR/HR/SI (#$@[\\]^_`{|}~) "	/* serbian, croatian, slovenian */
+						" SE/FI/HU (#$@[\\]^_`{|}~) "	/* swedish, finnish, hungarian */
+						"    TR (#$@[\\]^_`{|}~)    ";	/* turkish */
 //buffers
 
 unsigned char  backbuffer[720*576];
 unsigned char  lcd_backbuffer[120*64 / 8];
 unsigned char  timestring[8];
 unsigned char  page_char[PAGESIZE];
-unsigned short page_atrb[PAGESIZE];	// ??????:h:c:bbbb:ffff -> ?=reserved, h=double height, c=charset, b=background, f=forground
+unsigned short page_atrb[PAGESIZE];	// ?????:h:cc:bbbb:ffff -> ?=reserved, h=double height, c=charset (0:G0 / 1:G1c / 2:G1s), b=background, f=foreground
 
 //cachetables
 
 unsigned char *cachetable[0x900][0x80];
 unsigned char subpagetable[0x900];
 
-//colormap
+//colormaps
 
-unsigned short rd[] = {0x01<<8, 0xFF<<8, 0x00<<8, 0xFF<<8, 0x00<<8, 0xFF<<8, 0x00<<8, 0xFF<<8, 0x00<<8, 0x00<<8, 0x00<<8, 0x00<<8};
-unsigned short gn[] = {0x01<<8, 0x00<<8, 0xFF<<8, 0xFF<<8, 0x00<<8, 0x00<<8, 0xFF<<8, 0xFF<<8, 0x00<<8, 0x20<<8, 0x10<<8, 0x20<<8};
-unsigned short bl[] = {0x01<<8, 0x00<<8, 0x00<<8, 0x00<<8, 0xFF<<8, 0xFF<<8, 0xFF<<8, 0xFF<<8, 0x00<<8, 0x40<<8, 0x20<<8, 0x40<<8};
-unsigned short tr[] = {0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0xFFFF , 0x0000 , 0x0000 , 0x0A00 };
-struct fb_cmap colormap = {1, 12, rd, gn, bl, tr};
+unsigned short rd1[] = {0x01<<8, 0xFF<<8, 0x00<<8, 0xFF<<8, 0x00<<8, 0xFF<<8, 0x00<<8, 0xFF<<8, 0x00<<8, 0x00<<8, 0x00<<8, 0x00<<8};
+unsigned short gn1[] = {0x01<<8, 0x00<<8, 0xFF<<8, 0xFF<<8, 0x00<<8, 0x00<<8, 0xFF<<8, 0xFF<<8, 0x00<<8, 0x20<<8, 0x10<<8, 0x20<<8};
+unsigned short bl1[] = {0x01<<8, 0x00<<8, 0x00<<8, 0x00<<8, 0xFF<<8, 0xFF<<8, 0xFF<<8, 0xFF<<8, 0x00<<8, 0x40<<8, 0x20<<8, 0x40<<8};
+unsigned short tr1[] = {0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0xFFFF , 0x0000 , 0x0000 , 0x0A00 };
+struct fb_cmap colormap_1 = {1, 12, rd1, gn1, bl1, tr1};
+
+unsigned short rd2[] = {0x01<<8, 0xA8<<8, 0x00<<8, 0xA8<<8, 0x00<<8, 0xA8<<8, 0x00<<8, 0xA8<<8, 0x00<<8, 0x00<<8, 0x00<<8, 0x00<<8};
+unsigned short gn2[] = {0x01<<8, 0x00<<8, 0xA8<<8, 0xA8<<8, 0x00<<8, 0x00<<8, 0xA8<<8, 0xA8<<8, 0x00<<8, 0x20<<8, 0x10<<8, 0x20<<8};
+unsigned short bl2[] = {0x01<<8, 0x00<<8, 0x00<<8, 0x00<<8, 0xA8<<8, 0xA8<<8, 0xA8<<8, 0xA8<<8, 0x00<<8, 0x40<<8, 0x20<<8, 0x40<<8};
+unsigned short tr2[] = {0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0x0000 , 0xFFFF , 0x0000 , 0x0000 , 0x0A00 };
+struct fb_cmap colormap_2 = {1, 12, rd2, gn2, bl2, tr2};
 
 //hamming table
 
