@@ -14,6 +14,7 @@
 
 eWidget *eWidget::root;
 Signal2< void, ePtrList<eAction>*, int >eWidget::showHelp;
+eWidget::actionMapList eWidget::globalActions;
 
 eWidget::eWidget(eWidget *_parent, int takefocus):
 	parent(_parent ? _parent : root),
@@ -422,8 +423,14 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		else if (evt.action == &i_focusActions->right)
 			focusNext(focusDirNext);
 		else if (evt.action == &i_cursorActions->help)
+		{
+			int wasvisible=state&stateShow;
+			if (wasvisible)
+				hide();
 			/* emit */ showHelp( &actionHelpList, helpID );
-		else
+			if (wasvisible)
+				show();
+		} else
 			return 0;
 		return 1;
 	case eWidgetEvent::evtKey:
@@ -435,7 +442,11 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		if (focus && (focus != this))
 			focus->findAction(prio, *evt.key, focus);
 
-		// and look at global ones. NOT YET.
+		for (actionMapList::iterator i = globalActions.begin(); i != globalActions.end(); ++i)
+		{
+			(*i)->findAction(prio, *evt.key, 0, eActionMapList::getInstance()->getCurrentStyle());
+			(*i)->findAction(prio, *evt.key, 0, "");
+		}
 		
 		for (eActionPrioritySet::iterator i(prio.begin()); i != prio.end(); ++i)
 		{
@@ -445,7 +456,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 					break;
 			} else
 			{
-				(const_cast<eAction*>(evt.action))->handler();	// only useful for global actions
+				(const_cast<eAction*>(i->second))->handler();	// only useful for global actions
 				break;
 			}
 		}
@@ -547,6 +558,16 @@ void eWidget::addActionMap(eActionMap *map)
 void eWidget::removeActionMap(eActionMap *map)
 {
 	actionmaps.remove(map);
+}
+
+void eWidget::addGlobalActionMap(eActionMap *map)
+{
+	globalActions.push_back(map);
+}
+
+void eWidget::removeGlobalActionMap(eActionMap *map)
+{
+	globalActions.remove(map);
 }
 
 void eWidget::redrawWidget(gPainter *target, const eRect &clip)

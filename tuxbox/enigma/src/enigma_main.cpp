@@ -123,6 +123,27 @@ struct enigmaMainActions
 
 eAutoInitP0<enigmaMainActions> i_enigmaMainActions(eAutoInitNumbers::actions, "enigma main actions");
 
+struct enigmaGlobalActions
+{
+	eActionMap map;
+	eAction volumeUp, volumeDown, toggleMute;
+	enigmaGlobalActions(): 
+		map("enigmaGlobal", "enigma global"),
+
+		volumeUp(map, "volumeUp", _("volume up"), eAction::prioGlobal),
+		volumeDown(map, "volumeDown", _("volume down"), eAction::prioGlobal),
+		toggleMute(map, "toggleMute", _("toggle mute flag"), eAction::prioGlobal)
+	{
+		eWidget::addGlobalActionMap(&map);
+	}
+	~enigmaGlobalActions()
+	{
+		eWidget::removeGlobalActionMap(&map);
+	}
+};
+
+eAutoInitP0<enigmaGlobalActions> i_enigmaGlobalActions(eAutoInitNumbers::actions, "enigma global actions");
+
 struct enigmaStandbyActions
 {
 	eActionMap map;
@@ -637,10 +658,9 @@ eZapMain::eZapMain()
 	,volumeTimer(eApp), recStatusBlink(eApp), doubleklickTimer(eApp), currentSelectedUserBouquet(0)
 	,wasSleeping(0), state( 0 )
 {
-
 	if (!instance)
 		instance=this;
-
+		
 // Mute Symbol
 	gPixmap *pm = eSkin::getActive()->queryImage("mute_symbol");
 	int x = eSkin::getActive()->queryValue("mute.pos.x", 0),
@@ -789,6 +809,10 @@ eZapMain::eZapMain()
 	CONNECT( eFrontend::getInstance()->rotorTimeout, eZapMain::onRotorTimeout );
 
 	CONNECT( eWidget::showHelp, eZapMain::showHelp );
+	
+	CONNECT( i_enigmaGlobalActions->volumeUp.handler, eZapMain::volumeUp);
+	CONNECT( i_enigmaGlobalActions->volumeDown.handler, eZapMain::volumeDown);
+	CONNECT( i_enigmaGlobalActions->toggleMute.handler, eZapMain::toggleMute);
 
 	actual_eventDisplay=0;
 
@@ -1443,22 +1467,28 @@ void eZapMain::playlistNextService()
 void eZapMain::volumeUp()
 {
 	eAVSwitch::getInstance()->changeVolume(0, -2);
-	if (!volume.isVisible())
-		volume.show();
-	volumeTimer.start(2000, true);
+	if ((!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this))
+	{
+		if (!volume.isVisible())
+			volume.show();
+		volumeTimer.start(2000, true);
+	}
 }
 
 void eZapMain::volumeDown()
 {
 	eAVSwitch::getInstance()->changeVolume(0, +2);
-	if (!volume.isVisible())
-		volume.show();
-	volumeTimer.start(2000, true);
+	if ((!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this))
+	{
+		if (!volume.isVisible())
+			volume.show();
+		volumeTimer.start(2000, true);
+	}
 }
 
 void eZapMain::hideVolumeSlider()
 {
-	if ( volume.isVisible() )
+	if (volume.isVisible())
 		volume.hide();
 }
 
@@ -3436,16 +3466,21 @@ void eZapMain::clockUpdate()
 
 void eZapMain::updateVolume(int vol)
 {
+	int show=(!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this);
+
 	if ( vol == 63 && !mute.isVisible() )
 	{
 		if ( volume.isVisible() )
 			volume.hide();
-		mute.show();
+		if (show)
+			mute.show();
 	}
 	else if ( mute.isVisible() )
 		mute.hide();
-
-	VolumeBar.setPerc((63-vol)*100/63);
+	if (show)
+		VolumeBar.setPerc((63-vol)*100/63);
+	else
+		volume.hide();
 }
 
 void eZapMain::postMessage(const eZapMessage &message, int clear)

@@ -181,6 +181,7 @@ protected:
 	void addActionMap(eActionMap *map);
 	void removeActionMap(eActionMap *map);
 	actionMapList actionmaps;
+	static actionMapList globalActions;
 
 			// generic properties
 	gFont font;
@@ -192,6 +193,8 @@ protected:
 	eString descr;
 
 public:
+	static void addGlobalActionMap(eActionMap *map);
+	static void removeGlobalActionMap(eActionMap *map);
 	inline eWidget *getNonTransparentBackground()
 	{
 		if (backgroundColor != -1)
