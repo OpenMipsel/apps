@@ -110,3 +110,17 @@
 200306011945 5 * Dont scan non locking transponders more than once
 200306030130 5 * Improve transpoder editor ( satellites.xml ) now satellite scan optins and name can changed
 200306061841 5 * Add ability to enable/disable the color buttons in service selector ( in service context menu )
+200309102021 5 * Fix MultiEPG (show correct services after open)
+200309132139 5 * Fix Timer bug (show ngrab timer in timer edit view)
+200309132139 5 * Small overlapp detecion timer fix (aborted repeated events)
+200309132139 5 45 Many work on better CI support
+200309140313 5 * Fix MP3 internet radio support
+200309141456 5 * Marker Support fixed ( add from within enigma was broken)
+200309142349 5 5 Add Auto scart switching support for dreambox (dm7000)
+200309172033 5 45 Fix CI number input fields
+200309202130 5 * Add Multi sat scan
+200309211537 5 * Add only free scan ( unscrambled services )
+200309221720 5 5 Add support to update pids for a running recording
+200309221720 5 * Fix function of bouq up/down keys (when servicelist is closed)
+200309221720 5 * Readd [GO UP] entry in normal service lists
+200309252300 45 * MMI fixes ( another CI number input fix ), better MMI close handling
