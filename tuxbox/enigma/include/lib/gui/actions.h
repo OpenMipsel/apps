@@ -111,10 +111,6 @@ class eActionMapList
 	actionMapList actionmaps;
 
 	std::map<eString, eString> existingStyles;
-
-	// this contains the full filename of all loaded actionMaps
-	// ???? WHAT contains the full filename?
-
 	eString currentStyle;
 
 	static eActionMapList *instance;

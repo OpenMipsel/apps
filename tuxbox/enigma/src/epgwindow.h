@@ -27,7 +27,7 @@ public:
 
 class eEPGSelector: public eWindow
 {
-	eListBox<eListBoxEntryEPG>* events;
+	eListBox<eListBoxEntryEPG> *events;
 	eServiceReferenceDVB current;
 private:
 	void fillEPGList();

@@ -686,7 +686,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					else
 						setFocus( services );
 			}
-			else if (event.action == &i_serviceSelectorActions->showMenu/* && !movemode*/)
+			else if (event.action == &i_serviceSelectorActions->showMenu)
 				/*emit*/ showMenu(this);
 			else if (event.action == &i_serviceSelectorActions->showFavourite && !movemode && !FavouriteMode)
 				/*emit*/ showFavourite(this);

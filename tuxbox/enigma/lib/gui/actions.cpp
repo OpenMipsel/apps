@@ -298,7 +298,17 @@ int eActionMapList::loadXML(const char *filename)
 					const char *style=xam->GetAttributeValue("style");
 					if (style)
 					{
-						existingStyles[style]=eString(_("style: ")) + style;
+						const char *descr=xam->GetAttributeValue("descr");
+						std::map<eString,eString>::iterator it = existingStyles.find(style);
+						if ( it == existingStyles.end() ) // not in map..
+						{
+							if (descr)
+								existingStyles[style]=descr;
+							else
+								existingStyles[style]=style;
+						}
+						else if ( descr && existingStyles[style] == style )
+							existingStyles[style]=descr;
 						am->loadXML(device, keymap, xam, style );
 					}
 					else

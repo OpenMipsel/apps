@@ -49,7 +49,7 @@ struct enigmaMainActions
 {
 	eActionMap map;
 	eAction showMainMenu, standby_press, standby_repeat, standby_release, 
-		toggleInfobar, showInfobarEPG, showServiceSelector,
+		showInfobar, hideInfobar, showInfobarEPG, showServiceSelector,
 		showSubservices, showAudio, pluginVTXT, showEPGList, showEPG, 
 		nextService, prevService, playlistNextService, playlistPrevService,
 		serviceListDown, serviceListUp, volumeUp, volumeDown, toggleMute,
@@ -66,7 +66,8 @@ struct enigmaMainActions
 		standby_repeat(map, "standby_repeat", _("go to standby (repeat)"), eAction::prioDialog),
 		standby_release(map, "standby_release", _("go to standby (release)"), eAction::prioDialog),
 
-		toggleInfobar(map, "toggleInfobar", _("toggle infobar"), eAction::prioDialog),
+		showInfobar(map, "showInfobar", _("show infobar"), eAction::prioDialog),
+		hideInfobar(map, "hideInfobar", _("hide infobar"), eAction::prioDialog),
 		showInfobarEPG(map, "showInfobarEPG", _("show infobar or EPG"), eAction::prioDialog),
 		showServiceSelector(map, "showServiceSelector", _("show service selector"), eAction::prioDialog),
 		showSubservices(map, "showSubservices", _("show subservices/NVOD"), eAction::prioDialog),
@@ -696,7 +697,10 @@ eZapMain::eZapMain()
 	{
 		char* str;
 		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%i", mode).c_str(), str) )
+		{
 			modeLast[mode++].setString(str);
+			free(str);
+		}
 		else
 		{
 			modeLast[mode]=eServiceStructureHandler::getRoot(mode+1);
@@ -774,8 +778,8 @@ eZapMain::~eZapMain()
 	pLCD->lcdMain->hide();
 	pLCD->lcdShutdown->show();
 	gLCDDC::getInstance()->setUpdate(0);
-	eDBoxLCD::getInstance()->switchLCD(0); // BITTE lasst das doch einfach drin :/
-
+	if ( eDVB::getInstance()->getInfo("mID") == "05" )
+		eDBoxLCD::getInstance()->switchLCD(0); 
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
 }
 
@@ -2066,17 +2070,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			standbyRepeat();
 		else if (event.action == &i_enigmaMainActions->standby_release)
 			standbyRelease();
-		else if ((!isVisible()) && (event.action == &i_enigmaMainActions->toggleInfobar))
+		else if ( !isVisible() && event.action == &i_enigmaMainActions->showInfobar)
 			showInfobar();
-		else if (isVisible() && (event.action == &i_enigmaMainActions->toggleInfobar))
+		else if (event.action == &i_enigmaMainActions->hideInfobar)
 			hideInfobar();
-		else if (event.action == &i_enigmaMainActions->showInfobarEPG)
-		{
-			if (!isVisible())
-				showInfobar();
-			else
-				showEPG();
-		}
+		else if ( isVisible() && event.action == &i_enigmaMainActions->showInfobarEPG)
+			showEPG();
 		else if (event.action == &i_enigmaMainActions->showServiceSelector)
 		{
 			if (handleState())

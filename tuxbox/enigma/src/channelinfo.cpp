@@ -18,7 +18,7 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	cdescr.setFont( fn );
 	cdescr.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
 	cdescr.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
-	cdescr.setFlags( RS_FADE | eLabel::flagVCenter );
+	cdescr.setFlags( RS_WRAP | eLabel::flagVCenter );
 
 	fn.pointSize = 30;
 	cname.setFont( fn );
@@ -57,49 +57,49 @@ const char *eChannelInfo::genresTableShort[256] =
 	/* 0x0 undefined */    	NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL, 
 
-	/* 0x1 Movie */        	"Movie","Thriller","Adventure","SciFi","Comedy",
-							"Soap","Romance","Serious","Adult",
+	/* 0x1 Movie */        	_("Movie"),("Thriller"),_("Adventure"),_("SciFi"),_("Comedy"),
+							_("Soap"),_("Romance"),_("Serious"),_("Adult"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 
-	/* 0x2 News */         	"News","Weather","Magazine","Documentary","Discussion",
+	/* 0x2 News */         	_("News"),_("Weather"),_("Magazine"),_("Documentary"),_("Discussion"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,
 
-	/* 0x3 Show */         	"Show","Game Show","Variety","Talk",
+	/* 0x3 Show */         	_("Show"),_("Game Show"),_("Variety"),_("Talk"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,
 
-	/* 0x4 Sports */       	"Sports","Special Event","Sports Mag.","Football","Tennis","Team Sports",
-							"Athletics","Motor Sports","Water Sports","Winter Sports","Equestrian",
-							"Martial Sports",
+	/* 0x4 Sports */       	_("Sports"),("Special Event"),("Sports Mag."),("Football"),("Tennis"),("Team Sports"),
+							_("Athletics"),("Motor Sports"),("Water Sports"),("Winter Sports"),("Equestrian"),
+							_("Martial Sports"),
 							NULL,NULL,NULL,NULL,
 
-	/* 0x5 Children */     	"Children","Pre-School","Age 6-14","Age 10-16","School",
-							"Cartoons",
+	/* 0x5 Children */     	_("Children"),("Pre-School"),("Age 6-14"),("Age 10-16"),("School"),
+							_("Cartoons"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,
 
-	/* 0x6 Music */        	"Music","Rock/Pop","Classical","Folk","Jazz","Musical","Ballet",
+	/* 0x6 Music */        	("Music"),("Rock/Pop"),("Classical"),("Folk"),("Jazz"),("Musical"),("Ballet"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,
 
-	/* 0x7 Culture */      	"Culture","Perf. Arts","Fine Arts","Religion","Pop. Arts","Literatur",
-							"Film","Experimental","Press","New Media","Art Mag.","Fashion",
+	/* 0x7 Culture */      	_("Culture"),("Perf. Arts"),("Fine Arts"),("Religion"),("Pop. Arts"),("Literatur"),
+							_("Film"),("Experimental"),("Press"),("New Media"),("Art Mag."),("Fashion"),
 							NULL,NULL,NULL,NULL,
 
-	/* 0x8 Social */       	"Social","Soc. Mag.","Economics","Remark. People",
+	/* 0x8 Social */       	_("Social"),("Soc. Mag."),("Economics"),("Remark. People"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,
 
-	/* 0x9 Education */    	"Education","Nature","Technology","Medicine","Expeditions","Spiritual",
-							"Further Ed.","Languages",
+	/* 0x9 Education */    	_("Education"),("Nature"),("Technology"),("Medicine"),("Expeditions"),("Spiritual"),
+							_("Further Ed."),("Languages"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 
-	/* 0xa Leisure */      	"Hobbies","Travel","Handicraft","Motoring","Fitness","Cooking",
-							"Shopping","Gardening",
+	/* 0xa Leisure */      	_("Hobbies"),("Travel"),("Handicraft"),("Motoring"),("Fitness"),("Cooking"),
+							_("Shopping"),("Gardening"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 
-	/* 0xb Special */      	"Orig. Lang.","B&W","Unpublished","Live",
+	/* 0xb Special */      	_("Orig. Lang."),("B&W"),("Unpublished"),("Live"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,
 
@@ -173,7 +173,7 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 //		eDebug( "CINF: Genres found -> %s", genre.c_str() );
 		if((!genre.isNull()) && (genre.c_str()[0]))
 		{
-			descr += "GENRE: ";
+			descr += "\nGENRE: ";
 			descr += genre;
 		}
 		if(!t.isNull()) name += t;
@@ -349,7 +349,7 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 			cstereo.resize( eSize(25,15) );
 			cformat.resize( eSize(25,15) );
 			cscrambled.resize( eSize(25,15) );
-					 
+
 			invalidate();
 		break;
 

@@ -75,7 +75,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	lrcStyle->setText("Remotecontrol Style:");
 	rcStyle=new eComboBox(this, 4, lrcStyle);
 	rcStyle->move(ePoint(20, 140));
-	rcStyle->resize(eSize(170, 35));
+	rcStyle->resize(eSize(220, 35));
 	rcStyle->setHelpText(_("select your favourite rc style (ok)"));
 	rcStyle->loadDeco();
 	CONNECT( rcStyle->selchanged, eZapRCSetup::styleChanged );
@@ -83,9 +83,9 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	for (std::map<eString, eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin()); it != eActionMapList::getInstance()->getExistingStyles().end(); ++it)
 	{
 		if ( it->first == eActionMapList::getInstance()->getCurrentStyle() )
-			current = new eListBoxEntryText( *rcStyle, it->first );
+			current = new eListBoxEntryText( *rcStyle, it->second, (void*) &it->first );
 		else
-			new eListBoxEntryText( *rcStyle, it->first );
+			new eListBoxEntryText( *rcStyle, it->second, (void*) &it->first );
 	}
 	if (current)
 		rcStyle->setCurrent( current );
@@ -120,13 +120,14 @@ eZapRCSetup::~eZapRCSetup()
 
 void eZapRCSetup::styleChanged( eListBoxEntryText* e)
 {
-	eActionMapList::getInstance()->setCurrentStyle( e->getText() );
+	if (e)
+		eActionMapList::getInstance()->setCurrentStyle( *(eString*)e->getKey() );
 }
 
 void eZapRCSetup::okPressed()
 {
 	// save current selected style
-	eConfig::getInstance()->setKey("/ezap/rc/style", rcStyle->getCurrent()->getText().c_str() );
+	eConfig::getInstance()->setKey("/ezap/rc/style", ((eString*)rcStyle->getCurrent()->getKey())->c_str() );
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->setKey("/ezap/rc/repeatDelay", rdelay);
 	eConfig::getInstance()->flush();
