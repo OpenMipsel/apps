@@ -65,6 +65,10 @@
 			<action name="escape" key="LAME" flags="m" />
 		</actionmap>
 
+		<actionmap name="mainmenu">
+			<action name="close" key="dream" flags="m" />
+		</actionmap>
+
 		<actionmap name="cursor">
 			<action name="up" key="up" flags="mr" />
 			<action name="down" key="down" flags="mr" />

@@ -14,6 +14,21 @@
 #include <lib/dvb/epgcache.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/guiactions.h>
+#include <lib/system/init_num.h>
+
+struct enigmaMainmenuActions
+{
+	eActionMap map;
+	eAction close;
+	enigmaMainmenuActions():
+		map("mainmenu", _("enigma mainmenu")),
+		close(map, "close", _("close the mainmenu"), eAction::prioDialog)
+	{
+	}
+};
+
+eAutoInitP0<enigmaMainmenuActions> i_mainmenuActions(eAutoInitNumbers::actions, "enigma mainmenu actions");
+
 
 void eMainMenu::setActive(int i)
 {
@@ -66,6 +81,7 @@ void eMainMenu::setActive(int i)
 eMainMenu::eMainMenu()
 	: eWidget(0, 1)
 {
+	addActionMap(&i_mainmenuActions->map);
 	addActionMap(&i_cursorActions->map);
 	addActionMap(&i_shortcutActions->map);
 	eLabel *background=new eLabel(this);
@@ -204,7 +220,9 @@ int eMainMenu::eventHandler(const eWidgetEvent &event)
 			LCDElement->setText( description->getText() );
 		break;
 	case eWidgetEvent::evtAction:
-		if (event.action == &i_cursorActions->left)
+		if (event.action == &i_mainmenuActions->close)
+			close(0);
+		else if (event.action == &i_cursorActions->left)
 		{
 			active+=MENU_ENTRIES-1;
 			active%=MENU_ENTRIES;

@@ -107,7 +107,13 @@ void eFrontend::timeout()
 		{
 			eDebug("couldn't lock. (state: %x)", Status());
 			state=stateIdle;
-			/*emit*/ tunedIn(transponder, -ETIMEDOUT);
+			if ( transponder->satellite.inversion )
+				/*emit*/ tunedIn(transponder, -ETIMEDOUT);
+			else
+			{
+				transponder->satellite.inversion = 1;
+				transponder->tune();
+			}
 		}
 }
 

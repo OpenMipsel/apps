@@ -65,7 +65,7 @@ int eTransponder::satellite::tune(eTransponder *trans)
 		return -ENOENT;
 	}
 
-	return eFrontend::getInstance()->tune_qpsk(trans, frequency, polarisation, symbol_rate, fec, inv, *it->second );
+	return eFrontend::getInstance()->tune_qpsk(trans, frequency, polarisation, symbol_rate, fec, inversion, *it->second );
 }
 
 eService::eService(const eString &service_name)

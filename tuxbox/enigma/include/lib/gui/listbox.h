@@ -23,9 +23,8 @@ protected:
 	gColor colorActiveB, colorActiveF;
 	eRect crect, crect_selected;
 	enum  { arNothing, arCurrentOld, arAll};
-	int MaxEntries, item_height, flags, columns, in_atomic, atomic_redraw, atomic_old, atomic_new;
+	int movemode, MaxEntries, item_height, flags, columns, in_atomic, atomic_redraw, atomic_old, atomic_new;
 	bool atomic_selchanged;
-	int movemode;
 public:
 	enum	{		flagNoUpDownMovement=1,		flagNoPageMovement=2,		flagShowEntryHelp=4, flagShowPartial=8 };
 	enum	{		OK = 0,		ERROR=1,		E_ALLREADY_SELECTED = 2,		E_COULDNT_FIND = 4,		E_INVALID_ENTRY = 8,	 E_NOT_VISIBLE = 16		};
