@@ -220,7 +220,7 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		cname.setFlags(RS_FADE);
 		cname.resize( eSize( clientrect.width()/8*7-4, clientrect.height()/3) );
 		int opos=service.getDVBNamespace().get()>>16;
-		copos.setText(eString().sprintf("%d.%d\xAF%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
+		copos.setText(eString().sprintf("%d.%d\xB0%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
 		EITEvent *e = 0;
 		e = eEPGCache::getInstance()->lookupEvent(service);
 		if (e)  // data is in cache...
