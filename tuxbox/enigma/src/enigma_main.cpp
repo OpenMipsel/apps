@@ -2558,7 +2558,7 @@ void eZapMain::blinkRecord()
 					if (min<60)
 						DVRSpaceLeft->setText(eString().sprintf("~%d min free", min ));
 					else
-						DVRSpaceLeft->setText(eString().sprintf("~%d:%02d\nfree", min/60, min%60 ));
+						DVRSpaceLeft->setText(eString().sprintf("~%dh%02d\nfree", min/60, min%60 ));
 				}
 			}
 		}
