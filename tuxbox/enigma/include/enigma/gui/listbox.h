@@ -720,11 +720,6 @@ void eListBox<T>::endAtomic()
 {
 	if (!--in_atomic)
 	{
-		if (atomic_selchanged)
-			if (childs.empty())
-				selchanged(0);
-			else
-				selchanged(*current);
 		if (atomic_redraw == arAll)
 			invalidate();
 		else if (atomic_redraw == arCurrentOld)
@@ -734,6 +729,11 @@ void eListBox<T>::endAtomic()
 			if (atomic_old != -1)
 				invalidateEntry(atomic_old);
 		}
+		if (atomic_selchanged)
+			if (childs.empty())
+				selchanged(0);
+			else
+				selchanged(*current);
 	}
 }
 

@@ -136,7 +136,6 @@ private:
 	eventCache eventDB;
 	updateMap serviceLastUpdated;
 	tmpMap temp;
-
 	eSchedule scheduleReader;
 	eNowNext nownextReader;
 	eTimer CleanTimer;
@@ -151,8 +150,8 @@ public:
 	eEPGCache();
 	~eEPGCache();
 	static eEPGCache *getInstance() { return instance; }
-//	EITEvent *lookupEvent(const eServiceReferenceDVB &service, int event_id);
-	EITEvent *lookupCurrentEvent(const eServiceReferenceDVB &service);
+	EITEvent *lookupEvent(const eServiceReferenceDVB &service, int event_id);
+	EITEvent *lookupEvent(const eServiceReferenceDVB &service, time_t=0);
 	inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service);
 
 	Signal1<void, bool> EPGAvail;
