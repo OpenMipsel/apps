@@ -287,7 +287,7 @@ void enigmaCImmi::getmmi(const char *data)
 				rp+=3;
 				int LengthBytes;
 				int size=LengthField((unsigned char*)data+rp, MAX_LENGTH_BYTES, &LengthBytes);
-		
+
 				rp += LengthBytes + size;
 			}
 			if(rp>endpos)

@@ -480,7 +480,7 @@
 			</eWidget>
 
 			<eWidget name="fileInfoBar" position="210:68" size="433:57">
-				<eLabel position="0:0" size="e:e" font="Blue.Regular;29" name="fileinfos" backgroundColor="content" foregroundColor="white" />
+				<eLabel position="0:0" size="e:e" font="Blue.Regular;29" name="fileinfos" backgroundColor="content" foregroundColor="white" wrap="on" />
 			</eWidget>
   
 		</eZapMain>

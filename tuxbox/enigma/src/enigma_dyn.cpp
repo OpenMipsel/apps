@@ -884,18 +884,23 @@ static eString start_plugin(eString request, eString dirpath, eString opt, eHTTP
 {
 	std::map<eString,eString> opts=getRequestOptions(opt);
 
-	if (opts.find("path") == opts.end())
-		return "E: no path set";
+/*	if (opts.find("path") == opts.end())
+		return "E: no path set";*/
 
 	if (opts.find("name") == opts.end())
-		return "E: no name set";
+		return "E: no plugin name given";
 
 	eZapPlugins plugins;
-
-	eString path = opts["path"];
-	if ( path[path.length()-1] != '/' )
-		path+='/';
-
+	eString path;
+	if ( opts.find("path") != opts.end() )
+	{
+		path = opts["path"];
+		if ( path.length() )
+		{
+			if ( path[path.length()-1] != '/' )
+				path+='/';
+		}
+	}
 	return plugins.execPluginByName( (path+opts["name"]).c_str() );
 }
 

@@ -68,7 +68,7 @@ void MakeParam(char* id, int val)
 		first = p;
 
 	p->next=0;
-	tmp = p;		
+	tmp = p;
 }
 
 ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* descr)
@@ -122,6 +122,9 @@ ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* des
 eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400)
 {
+	PluginPath[0] = PLUGINDIR "/";
+	PluginPath[1] = "/var/tuxbox/plugins/";
+	PluginPath[2] = "";
 	setHelpText(_("select plugin and press ok"));
 	move(ePoint(150, 100));
 	setLCD(lcdTitle, lcdElement);
@@ -131,49 +134,39 @@ eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 
 int eZapPlugins::exec()
 {
-	const eString PluginPath = PLUGINDIR "/";
-	const eString PluginPath2 = "/var/tuxbox/plugins/";
 	struct dirent **namelist;
 
-	int n = scandir(PLUGINDIR "/", &namelist, 0, alphasort);
-
-	if (n < 0)
+	for ( int i = 0; i < 2; i++ )
 	{
-		eDebug("Read Plugin Directory");
-		eMessageBox msg(_("Couldn't read plugin directory"), _("Error"), eMessageBox::iconError|eMessageBox::btOK );
-		msg.show();
-		msg.exec();
-		msg.hide();
-		return -1;
-	}
+		int n = scandir(PluginPath[i].c_str(), &namelist, 0, alphasort);
 
-	for(int count=0;count<n;count++)
-	{
-		eString	FileName = namelist[count]->d_name;
+		if (n < 0)
+		{
+			eString err;
+			err.sprintf(_("Couldn't read plugin directory %s"), PluginPath[i].c_str() );
+			eDebug(err.c_str());
+			if ( i )
+			{
+				eMessageBox msg(err, _("Error"), eMessageBox::iconError|eMessageBox::btOK );
+				msg.show();
+				msg.exec();
+				msg.hide();
+				return -1;
+			}
+		}
 
-		if ( FileName.find(".cfg") != eString::npos )
-			new ePlugin(&list, (PluginPath+FileName).c_str());
-
-		free(namelist[count]);
-  }
-	free(namelist);
-
-// look in var/tuxbox/games
-	n = scandir(GAMESDIR "/", &namelist, 0, alphasort);
-	if (n > 0)
-	{
 		for(int count=0;count<n;count++)
 		{
 			eString	FileName = namelist[count]->d_name;
 			
 			if ( FileName.find(".cfg") != eString::npos )
-				new ePlugin(&list, (PluginPath2+FileName).c_str());
+				new ePlugin(&list, (PluginPath[i]+FileName).c_str());
 
 			free(namelist[count]);
 		}
 		free(namelist);
 	}
-
+	
 	show();
 	int res=eListBoxWindow<ePlugin>::exec();
 	hide();
@@ -184,23 +177,24 @@ eString eZapPlugins::execPluginByName(const char* name)
 {
 	if ( name )
 	{
-		eString PluginPath;
-		if ( name[0]!='/' ) // absolute path...
-			PluginPath = PLUGINDIR "/";
-		PluginPath+=name;
-		FILE *fp=fopen(PluginPath.c_str(), "rb");
-		if ( fp )
+		eString Path;
+		for ( int i = 0; i < 3; i++ )
 		{
-			fclose(fp);
-			ePlugin p(0, PluginPath.c_str());
-			execPlugin(&p);
-			return "OK";
+			Path=PluginPath[i];
+			Path+=name;
+			FILE *fp=fopen(Path.c_str(), "rb");
+			if ( fp )
+			{
+				fclose(fp);
+				ePlugin p(0, Path.c_str());
+				execPlugin(&p);
+				return "OK";
+			}
+			else if ( i == 2)
+				return eString().sprintf(_("plugin '%s' not found"), name );
 		}
-		else
-			return eString().sprintf(_("file '%s' not found"), name );
 	}
-	else
-		return _("no name given");
+	return _("no name given");
 }
 
 void eZapPlugins::execPlugin(ePlugin* plugin)
@@ -224,8 +218,23 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 			np=strchr(p,',');
 			if ( np )
 				*np=0;
-			argv[ argc++ ] = (*p == '/') ?
-				eString(p) : eString(PLUGINDIR "/" + eString(p));
+
+			for ( int i=0; i < 3; i++ )
+			{
+				eString str;
+				if (np)
+					str.assign( p, np-p );
+				else
+					str.assign( p );
+
+				FILE *fp=fopen((PluginPath[i]+str).c_str(), "rb");
+				if ( fp )
+				{
+					fclose(fp);
+					argv[argc++] = PluginPath[i]+str;
+					break;
+				}
+			}
 			p=np?np+1:0;
 		}
 	}
@@ -268,7 +277,7 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 	{
 		int left=20, top=20, right=699, bottom=555;
 		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/left", left);
-		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/pos/top", top);
+		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/top", top);
 		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/right", right);
 		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/bottom", bottom);
 		MakeParam(P_ID_OFF_X, left);

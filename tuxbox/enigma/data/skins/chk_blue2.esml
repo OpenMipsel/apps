@@ -258,7 +258,7 @@
 			</eWidget>
 
 			<eWidget name="fileInfoBar" position="87:39" size="493:70">
-				<eLabel position="0:0" size="e:e" font="Blue.Regular;29" name="fileinfos" backgroundColor="middle" foregroundColor="middle+15" />
+				<eLabel position="0:0" size="e:e" font="Blue.Regular;29" name="fileinfos" backgroundColor="middle" foregroundColor="middle+15" wrap="on" />
 			</eWidget>
                                                                             
 			<!--schatten

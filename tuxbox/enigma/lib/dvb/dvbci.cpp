@@ -86,7 +86,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 			ci->start();
 			ci_state=0;
 		}
-		::ioctl(fd,CI_RESET);
+//		::ioctl(fd,CI_RESET);
 		dataAvailable(0);
 		break;
 	case eDVBCIMessage::reset:

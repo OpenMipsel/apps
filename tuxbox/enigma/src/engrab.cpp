@@ -161,9 +161,9 @@ void ENgrab::sending()
 {
 	struct in_addr sinet_address;
 	eString hostname;
-	int port;
 	int de[4];
-
+	int port=4000;
+	sinet_address.s_addr = 0xC0A80028; // 192.168.0.40
 	eConfig::getInstance()->getKey("/elitedvb/network/nserver", sinet_address.s_addr);
 	eConfig::getInstance()->getKey("/elitedvb/network/nservport", port);
 	eNumber::unpack(sinet_address.s_addr, de);

@@ -51,12 +51,16 @@
 200303070225 4 * Fix Timer ugly timer bug.. timer is now okay
 200303080430 5 * Delayed go to standby after running timer event
 200303081912 6 * MP3 ID3 Tag improvements... parse on demand
-200303100238 3 * add many funktions to reload settings on run time... ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010829.html )
-200303101819 5 * add alternative bouquet switching style in service selector ( can be enabled in rc setup ) red -> TV Service, green -> Satellites, yellow DVB-Bouquets, blue -> User bouquets
-200303110429 6 * reenable bouquet + - keys with closed service selector ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010845.html )
-200303141538 7 * add second plugin directory (/var/tuxbox/plugins)
-200303141538 5 * now timers kann directly added with  - green button for DVR Timer,  - yellow button for NGRAB Timer,  - blue button for switch timer in EPG and eventview
-200303141538 7 * add plugin offset setup dialog ( in osd setup ) ( tuxtxt )
-200303150314 5 * on recorded movies "This service could not be descrambled" never more appear on screen
-200303150314 3 * remove bug which prevent pause and play on recorded ts which was recorded  on a scrambles service
-200303152100 7 * now plugins can be started with http://boxip/cgi-bin/startPlugin?path=/bla&name=pluginname.cfg
+200303100238 3 * Add many funktions to reload settings on run time... ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010829.html )
+200303101819 5 * Add alternative bouquet switching style in service selector ( can be enabled in rc setup ) red -> TV Service, green -> Satellites, yellow DVB-Bouquets, blue -> User bouquets
+200303110429 6 * Reenable bouquet + - keys with closed service selector ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010845.html )
+200303141538 7 * Add second plugin directory (/var/tuxbox/plugins)
+200303141538 5 * Now timers kann directly added with  - green button for DVR Timer,  - yellow button for NGRAB Timer,  - blue button for switch timer in EPG and eventview
+200303141538 7 * Add plugin offset setup dialog ( in osd setup ) ( tuxtxt )
+200303150314 5 * On recorded movies "This service could not be descrambled" never more appear on screen
+200303150314 3 * Remove bug which prevent pause and play on recorded ts which was recorded  on a scrambles service
+200303152100 7 * Now plugins can be started with http://boxip/cgi-bin/startPlugin?path=/bla&name=pluginname.cfg
+200303161435 3 * Important timer bugfix
+200303170100 5 * Fix PES streaming ( tuxvision and other )
+200303170100 7 * Bugfix Internet radio description showing
+200303170100 6 * Add missing mkreiserfs

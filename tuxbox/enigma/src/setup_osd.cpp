@@ -46,14 +46,14 @@ int PluginOffsetScreen::eventHandler( const eWidgetEvent &event )
 	{
 		case eWidgetEvent::execBegin:
 			eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/left", left);
-			eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/pos/top", top);
+			eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/top", top);
 			eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/right", right);
 			eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/bottom", bottom);
 			invalidate();
 			return 0;
 		case eWidgetEvent::execDone:
 			eConfig::getInstance()->setKey("/enigma/plugins/needoffsets/left", left);
-			eConfig::getInstance()->setKey("/enigma/plugins/needoffsets/pos/top", top);
+			eConfig::getInstance()->setKey("/enigma/plugins/needoffsets/top", top);
 			eConfig::getInstance()->setKey("/enigma/plugins/needoffsets/right", right);
 			eConfig::getInstance()->setKey("/enigma/plugins/needoffsets/bottom", bottom);
 			return 0;

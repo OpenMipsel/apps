@@ -1904,11 +1904,13 @@ void eZapMain::nextService(int add)
 		const eServiceReference *service=eZap::getInstance()->getServiceSelector()->next();
 
 		if (!service)
+		{
 			return;
+		}
 		else
 			getServiceSelectorPath( modeLast[mode][0] );
 
-		if (service->flags & eServiceReference::mustDescent)
+		if (service->flags & eServiceReference::isDirectory)
 			return;
 
 		playService(*service, 0 );
@@ -1930,7 +1932,7 @@ void eZapMain::prevService()
 		else
 			getServiceSelectorPath( modeLast[mode][0] );
 
-		if (service->flags & eServiceReference::mustDescent)
+		if (service->flags & eServiceReference::isDirectory)
 			return;
 
 		playService(*service, 0 );
@@ -2373,7 +2375,7 @@ void eZapMain::handleStandby()
 		if ( delayedStandbyTimer.isActive() )
 			delayedStandbyTimer.stop();
 		else
-			delayedStandbyTimer.start( 1000 * 60 * 10 );
+			delayedStandbyTimer.start( 1000 * 60 * 10, true );
 			// delayed Standby after 10min
 	}
 	else if (wasSleeping==2)
@@ -3036,42 +3038,8 @@ void eZapMain::runVTXT()
 	if (isVT)
 	{
 		eZapPlugins plugins;
-
-		struct dirent **namelist;
-
-		int n = scandir(PLUGINDIR "/", &namelist, 0, alphasort);
-
-		if (n < 0)
-		{
-			eDebug("Read Plugin Directory");
-			eMessageBox msg(_("Couldn't read plugin directory"), _("Error"), eMessageBox::iconError|eMessageBox::btOK );
-			msg.show();
-			msg.exec();
-			msg.hide();
-			return;
-		}
-
-		int executed=0;
-		for(int count=0;count<n;count++)
-		{
-			eString	FileName(PLUGINDIR "/");
-			FileName+=namelist[count]->d_name;
-			if ( !executed && FileName.find(".cfg") != eString::npos )
-			{
-				eString aneedvtxtpid=getInfo(FileName.c_str(), "needvtxtpid");
-				eString aneedlcd=getInfo(FileName.c_str(), "needlcd");
-				// we search tuxtxt... this use lcd and vtxtpid... not perfect... but i havo no other idea
-				if ((aneedvtxtpid.isNull() ? false : atoi(aneedvtxtpid.c_str())) &&
-            (aneedlcd.isNull() ? false : atoi(aneedlcd.c_str())) )
-				{
-					eDebug("pluginname = %s", namelist[count]->d_name);
-					plugins.execPluginByName(namelist[count]->d_name);
-					executed=1;
-				}
-			}
-			free(namelist[count]);
-		}
-		free(namelist);
+		if ( plugins.execPluginByName("tuxtxt.cfg") != "OK" )
+			plugins.execPluginByName("_tuxtxt.cfg");
 	}
 }
 
@@ -3706,10 +3674,9 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		eServiceHandler *sapi=eServiceInterface::getInstance()->getService();
 		if (!sapi)
 			return;
-		eDebug("evtInfoUpdated");
 		showServiceInfobar(0);
-		EINow->setText(sapi->getInfo(1));
-		EINext->setText(sapi->getInfo(2));
+		eString str = sapi->getInfo(2);
+		fileinfos->setText(sapi->getInfo(1)+(str.length()>2?"\n"+str:""));
 		break;
 	}}
 }
