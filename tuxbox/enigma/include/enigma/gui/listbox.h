@@ -32,6 +32,7 @@ public:
 	void removeFlags(int);
 	void invalidateEntry(int n){	invalidate(getEntryRect(n));}
 	void setColumns(int col);
+	int getColumns() { return columns; }
 protected:
 	eListBoxBase(eWidget* parent, const eWidget* descr=0, const char *deco="eListBox" );
 	eRect getEntryRect(int n);
@@ -439,32 +440,30 @@ inline int eListBox<T>::moveSelection(int dir)
 					for (int i = 0; i < MaxEntries * columns; ++i)
 					{
 						if (bottom != childs.end())
+						{
 							++bottom;
-						if (top != childs.end())
 							++top;
+						}
 					}
 				}
 			}
 		break;
 
 		case dirPageUp:
-			if (current == childs.begin())		// schon ganz am anfang? nichts tun.
-				break;
 			for (int i = 0; i < MaxEntries; ++i)
 			{
-				if (current-- == top)	// oben (links) angekommen? page up
+				if (current == childs.begin())
+					break;
+
+				if (--current == top && current != childs.begin() )	// oben (links) angekommen? page up
 				{
 					for (int i = 0; i < MaxEntries * columns; ++i)
 					{
-						if (top == childs.begin()) 		// einzige ausnahme: oben (links) angekommen
+						if (--top == childs.begin()) 		// einzige ausnahme: oben (links) angekommen
 							break;
-						--top;
 					}
-					
-					if (top == childs.begin())
-						break;
-					
-						// uund einmal bottom neuberechnen :)
+
+					// und einmal bottom neuberechnen :)
 					bottom=top;
 					for (int i = 0; i < MaxEntries*columns; ++i)
 						if (bottom != childs.end())
