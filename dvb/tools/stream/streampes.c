@@ -72,8 +72,8 @@ void* start_writer( void* param)
 		int p = 0;
 		while (p < BSIZE)
 		{
-			int b = write(1, buffers[currentBuffer], BSIZE - p);
-        	p += b;
+			int b = write(1, buffers[currentBuffer] + p, BSIZE - p);
+        		p += b;
 			if (b <= 0)
         	{
         		perror("output");
