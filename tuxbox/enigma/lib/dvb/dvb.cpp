@@ -46,7 +46,7 @@ void eTransponder::satellite::set(const SatelliteDeliverySystemDescriptor *descr
 	if (!descriptor->west_east_flag)
 		orbital_position=-orbital_position;
 //	eDebug("%d %d", descriptor->orbital_position, descriptor->west_east_flag);
-	inversion=0;
+	inversion=INVERSION_AUTO;
 	valid=1;
 }
 
@@ -439,7 +439,7 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 			if (!afec_inner)
 				continue;
 			if (!ainversion)
-				ainversion="0";
+				ainversion="2";
 			int frequency=atoi(afrequency), symbol_rate=atoi(asymbol_rate),
 					polarisation=atoi(apolarisation), fec_inner=atoi(afec_inner), inversion=atoi(ainversion);
 			t.setSatellite(frequency, symbol_rate, polarisation, fec_inner, orbital_position, inversion);

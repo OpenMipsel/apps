@@ -588,7 +588,7 @@ public:
 
 struct eDiSEqC
 {
-	enum { AA=0, AB=1, BA=2, BB=3 /* and 0xF0 .. 0xFF*/  }; // DiSEqC Parameter
+	enum { AA=0, AB=1, BA=2, BB=3, SENDNO=4 /* and 0xF0 .. 0xFF*/  }; // DiSEqC Parameter
 	int DiSEqCParam;
   
 	enum tDiSEqCMode	{	NONE=0, V1_0=1, V1_1=2, V1_2=3, SMATV=4 }; // DiSEqC Mode

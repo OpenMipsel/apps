@@ -113,7 +113,7 @@ void eFrontend::timeout()
 				}
 				transponder->satellite.fec = front.u.qpsk.FEC_inner;
 				transponder->satellite.symbol_rate = front.u.qpsk.SymbolRate;*/
-				transponder->satellite.inversion = front.Inversion;
+				transponder->satellite.inversion=front.Inversion;
 			}
 		}
 
@@ -129,13 +129,7 @@ void eFrontend::timeout()
 		{
 			eDebug("couldn't lock. (state: %x)", Status());
 			state=stateIdle;
-//			if ( transponder->satellite.inversion )
-				/*emit*/ tunedIn(transponder, -ETIMEDOUT);
-/*			else
-			{
-				transponder->satellite.inversion = 1;
-				transponder->tune();
-			}*/
+			/*emit*/ tunedIn(transponder, -ETIMEDOUT);
 		}
 }
 
@@ -307,8 +301,6 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	}
 /*  else
 		eDebug("cmd send");*/
-
-	lastcsw = -1;
 	return 0;
 }
 
@@ -346,6 +338,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, void *cmds, int newPosition,
 	// send DiSEqC Sequence (Rotor)
 	seq.commands=&commands[seq.numCommands];  // last command is rotor cmd... see above...
 	seq.numCommands=1;  // only rotor cmd
+	seq.miniCommand = SEC_MINI_NONE;
 
 	seq.continuousTone=secTone;
 	if ( ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
@@ -424,6 +417,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	// send DiSEqC Sequence (Rotor)
 	seq.commands=&commands[seq.numCommands];  // last command is rotor cmd... see above...
 	seq.numCommands=1;  // only rotor cmd
+	seq.miniCommand = SEC_MINI_NONE;
 
 //	eDebug("0x%02x,0x%02x,0x%02x,0x%02x,0x%02x", seq.commands[0].u.diseqc.cmdtype, seq.commands[0].u.diseqc.addr, seq.commands[0].u.diseqc.cmd, seq.commands[0].u.diseqc.params[0], seq.commands[0].u.diseqc.params[1]);
 	seq.continuousTone=secTone;
@@ -642,6 +636,7 @@ int eFrontend::tune(eTransponder *trans,
 		eSatellite* sat,
 		Modulation QAM)					// Modulation, QAM_xx
 {
+	eDebug("op = %d", trans->satellite.orbital_position );
 	FrontendParameters front;
 	Decoder::Flush();
 	eSection::abortAll();
@@ -665,10 +660,12 @@ int eFrontend::tune(eTransponder *trans,
 		eLNB *lnb = sat->getLNB();
 		// Variables to detect if DiSEqC must sent .. or not
 		int csw = lnb->getDiSEqC().DiSEqCParam,
-				ucsw = lnb->getDiSEqC().uncommitted_cmd,
-				ToneBurst = lnb->getDiSEqC().MiniDiSEqCParam,
-				RotorCmd = -1,
-				SmatvFreq = -1;
+				ucsw = (lnb->getDiSEqC().uncommitted_cmd ?
+					lnb->getDiSEqC().uncommitted_cmd : lastucsw),
+				ToneBurst = (lnb->getDiSEqC().MiniDiSEqCParam ?
+					lnb->getDiSEqC().MiniDiSEqCParam : lastToneBurst),
+				RotorCmd = lastRotorCmd;
+//				SmatvFreq = -1;
 
 		secCmdSequence seq;
 		secCommand *commands=0; // pointer to all sec commands
@@ -679,10 +676,11 @@ int eFrontend::tune(eTransponder *trans,
 		// num command counter
 		int cmdCount=0;
 
-		if (csw <= eDiSEqC::BB)  // use AA/AB/BA/BB ?
+		if (csw <= eDiSEqC::SENDNO)  // use AA/AB/BA/BB/SENDNO
 		{
 			eDebug("csw=%d, csw<<2=%d", csw, csw << 2);
-			csw = 0xF0 | ( csw << 2 );
+			if ( csw != eDiSEqC::SENDNO )
+				csw = 0xF0 | ( csw << 2 );
 			if ( polarisation==polHor)
 			{
 				csw |= 2;  // Horizontal
@@ -690,19 +688,22 @@ int eFrontend::tune(eTransponder *trans,
 			}
 			else
 				eDebug("Vertikal");
-        
+
 			if ( Frequency > lnb->getLOFThreshold() )
 			{
 				csw |= 1;   // 22 Khz enabled
 				eDebug("Hi Band");
 			}
 			else
-				eDebug("Low Band");			
+				eDebug("Low Band");
 		}
 		//else we sent directly the cmd 0xF0..0xFF
 
-		eDebug("DiSEqC Switch cmd = %04x", csw);
-
+		if ( csw != eDiSEqC::SENDNO )
+			eDebug("DiSEqC Switch cmd = %04x", csw);
+		else
+			eDebug("send no committed diseqc cmd !");
+			
 		// Rotor Support
 		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && !noRotorCmd )
 		{           
@@ -751,10 +752,11 @@ int eFrontend::tune(eTransponder *trans,
 
 			if ( RotorCmd != lastRotorCmd )  // rotorCmd must sent?
 			{
-				if ( lnb->getDiSEqC().uncommitted_cmd )
-					cmdCount=3;
-				else
-					cmdCount=2;
+				cmdCount=1; // this is the RotorCmd
+				if ( ucsw != lastucsw )
+					cmdCount++;
+				if ( csw != lastcsw && csw & 0xF0) // NOT SENDNO
+					cmdCount++;
 				cmdCount += (cmdCount-1)*lnb->getDiSEqC().DiSEqCRepeats;
 
 			// allocate memory for all DiSEqC commands
@@ -780,12 +782,13 @@ int eFrontend::tune(eTransponder *trans,
 				}
 			}
 		}
-		else if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::SMATV )
+			
+/*		else if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::SMATV )
 		{
 			SmatvFreq=Frequency;
 			if ( lastSmatvFreq != SmatvFreq )
 			{
-				if ( lnb->getDiSEqC().uncommitted_cmd )
+				if ( lnb->getDiSEqC().uncommitted_cmd && lastucsw != ucsw)
 					cmdCount=3;
 				else
 					cmdCount=2;
@@ -803,10 +806,10 @@ int eFrontend::tune(eTransponder *trans,
 				commands[cmdCount-1].u.diseqc.params[1] = (((Frequency / 100000) << 4) & 0xF0) | ((Frequency / 10000) & 0x0F);
 				commands[cmdCount-1].u.diseqc.params[2] = (((Frequency / 1000) << 4) & 0xF0) | ((Frequency / 100) & 0x0F);
 			}
-		}
+		}*/
 		if ( lnb->getDiSEqC().DiSEqCMode >= eDiSEqC::V1_0 )
 		{
-//			eDebug("ucsw=%d lastucsw=%d csw=%d lastcsw=%d", ucsw, lastucsw, csw, lastcsw);
+			eDebug("ucsw=%d lastucsw=%d csw=%d lastcsw=%d", ucsw, lastucsw, csw, lastcsw);
 			if ( ucsw != lastucsw || csw != lastcsw || (ToneBurst && ToneBurst != lastToneBurst) )
 			{
 				eDebug("cmdCount=%d", cmdCount);
@@ -816,53 +819,64 @@ int eFrontend::tune(eTransponder *trans,
 				else // no rotor or smatv
 				{
 					// DiSEqC Repeats and uncommitted switches only when DiSEqC >= V1_1
-					if ( lnb->getDiSEqC().DiSEqCMode >= eDiSEqC::V1_1 )
-					{
-						if ( lnb->getDiSEqC().uncommitted_cmd )
-							cmdCount=2;
-						else
-							cmdCount=1;
-						cmdCount += cmdCount*lnb->getDiSEqC().DiSEqCRepeats;
-						loops = cmdCount;
-					}
-					else // send only one DiSEqC Command
-						loops = cmdCount = 1;
-					// allocate memory for all DiSEqC commands
-					commands = new secCommand[cmdCount];
+					if ( lnb->getDiSEqC().DiSEqCMode >= eDiSEqC::V1_1	&& ucsw != lastucsw )
+						cmdCount++;
+					if ( csw != lastcsw && csw & 0xF0 )
+						cmdCount++;
+					cmdCount += cmdCount*lnb->getDiSEqC().DiSEqCRepeats;
+					loops = cmdCount;
+
+					if ( cmdCount )
+						commands = new secCommand[cmdCount];
 				}
-				
+
 				for ( int i = 0; i < loops;)  // fill commands...
 				{
+					enum { UNCOMMITTED, COMMITTED } cmdbefore = COMMITTED;
 					commands[i].type = SEC_CMDTYPE_DISEQC_RAW;
 					commands[i].u.diseqc.cmdtype= i ? 0xE1 : 0xE0; // repeated or not repeated transm.
 					commands[i].u.diseqc.numParams=1;
-					commands[i].u.diseqc.params[0]=csw;
-
 					commands[i].u.diseqc.addr=0x10;
-					commands[i].u.diseqc.cmd=
-						(lnb->getDiSEqC().SwapCmds
-						&&lnb->getDiSEqC().uncommitted_cmd
-						&&lnb->getDiSEqC().DiSEqCMode > eDiSEqC::V1_0) ?
-							0x39 : 0x38;
 
-//					eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
+					if ( ( lnb->getDiSEqC().SwapCmds
+						&& lnb->getDiSEqC().DiSEqCMode > eDiSEqC::V1_0
+						&& ucsw != lastucsw )
+						|| !(csw & 0xF0) )
+					{
+						cmdbefore = UNCOMMITTED;
+						commands[i].u.diseqc.params[0] = ucsw;
+						commands[i].u.diseqc.cmd=0x39;
+					}
+					else
+					{
+						commands[i].u.diseqc.params[0] = csw;
+						commands[i].u.diseqc.cmd=0x38;
+					}
+
+					eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
 					i++;
-					if ( i < loops && lnb->getDiSEqC().uncommitted_cmd )
+					if ( i < loops
+						&& ( ( (cmdbefore == COMMITTED) && ucsw )
+							|| ( (cmdbefore == UNCOMMITTED) && csw & 0xF0 ) ) )
 					{
 						memcpy( &commands[i], &commands[i-1], sizeof(commands[i]) );
-						commands[i].u.diseqc.cmd=
-							(lnb->getDiSEqC().SwapCmds&&lnb->getDiSEqC().uncommitted_cmd)?
-								0x38 : 0x39;
-
-						commands[i].u.diseqc.cmd=lnb->getDiSEqC().SwapCmds?0x38:0x39;
-						commands[i].u.diseqc.params[0]=lnb->getDiSEqC().uncommitted_cmd;
-//						eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
+						if ( cmdbefore == COMMITTED )
+						{
+							commands[i].u.diseqc.cmd=0x39;
+							commands[i].u.diseqc.params[0]=ucsw;
+						}
+						else
+						{
+							commands[i].u.diseqc.cmd=0x38;
+							commands[i].u.diseqc.params[0]=csw;
+						}
+						eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[i].u.diseqc.cmdtype, commands[i].u.diseqc.addr, commands[i].u.diseqc.cmd, commands[i].u.diseqc.params[0]);
 						i++;
 					}
 				}
 			}
 		}
-		else // no DiSEqC
+		if ( !cmdCount)
 		{
 			eDebug("no DiSEqC");
 			seq.commands=0;
@@ -916,8 +930,7 @@ int eFrontend::tune(eTransponder *trans,
 		seq.commands=commands;
     
 		// handle DiSEqC Rotor
-		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && lastRotorCmd != RotorCmd
-			&& !noRotorCmd )
+		if ( lastRotorCmd != RotorCmd && !noRotorCmd )
 		{
 //			eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[cmdCount].u.diseqc.cmdtype, commands[cmdCount].u.diseqc.addr, commands[cmdCount].u.diseqc.cmd, commands[cmdCount].u.diseqc.params[cmdCount]);
 			lastRotorCmd=RotorCmd;
@@ -966,6 +979,7 @@ int eFrontend::tune(eTransponder *trans,
 	}
 
 	front.Inversion=Inversion;
+	eDebug("Inversion = %d", Inversion);
 	switch (type)
 	{
 		case feCable:
@@ -1009,7 +1023,7 @@ int eFrontend::tune_qpsk(eTransponder *transponder,
 		int Inversion,					// spectral inversion, INVERSION_OFF / _ON / _AUTO (but please...)
     eSatellite &sat)        // Satellite Data.. LNB, DiSEqC, switch..
 {
-	return tune(transponder, Frequency, polarisation, SymbolRate, getFEC(FEC_inner), Inversion?INVERSION_ON:INVERSION_OFF, &sat, QPSK);
+	return tune(transponder, Frequency, polarisation, SymbolRate, getFEC(FEC_inner), Inversion==2?INVERSION_AUTO:Inversion?INVERSION_ON:INVERSION_OFF, &sat, QPSK);
 }
 
 int eFrontend::tune_qam(eTransponder *transponder, 
@@ -1019,5 +1033,5 @@ int eFrontend::tune_qam(eTransponder *transponder,
 		int Inversion,	// spectral inversion, INVERSION_OFF / _ON / _AUTO (but please...)
 		int QAM)					// Modulation, QAM_xx
 {
-	return tune(transponder, Frequency, 0, SymbolRate, getFEC(FEC_inner), Inversion?INVERSION_ON:INVERSION_OFF, 0, getModulation(QAM));
+	return tune(transponder, Frequency, 0, SymbolRate, getFEC(FEC_inner), Inversion==2?INVERSION_AUTO:Inversion?INVERSION_ON:INVERSION_OFF, 0, getModulation(QAM));
 }

@@ -301,13 +301,13 @@ void eDVBSettings::loadServices()
 				break;
 			if (line[1]=='s')
 			{
-				int frequency, symbol_rate, polarisation, fec, sat, inversion=0;
+				int frequency, symbol_rate, polarisation, fec, sat, inversion=INVERSION_OFF;
 				sscanf(line+2, "%d:%d:%d:%d:%d:%d", &frequency, &symbol_rate, &polarisation, &fec, &sat, &inversion);
 				t.setSatellite(frequency, symbol_rate, polarisation, fec, sat, inversion);
 			}
 			if (line[1]=='c')
 			{
-				int frequency, symbol_rate, inversion=0, modulation=3;
+				int frequency, symbol_rate, inversion=INVERSION_OFF, modulation=3;
 				sscanf(line+2, "%d:%d:%d:%d", &frequency, &symbol_rate, &inversion, &modulation);
 				t.setCable(frequency, symbol_rate, inversion, modulation);
 			}

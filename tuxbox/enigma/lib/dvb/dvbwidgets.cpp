@@ -37,7 +37,7 @@ eTransponderWidget::eTransponderWidget(eWidget *parent, int edit, int type)
 	int init[5]={0,0,0,0,0};
 	frequency=new eNumber(this, 5, 0, 9, 1, init, 0, l, edit);
 	frequency->setName("frequency");
-	
+
 	inversion=new eCheckbox(this);
 	inversion->setName("inversion");
 
