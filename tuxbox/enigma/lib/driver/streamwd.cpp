@@ -17,7 +17,7 @@
 
 #define EVENT_DEVICE "/dev/dbox/event0"
 #define WDE_VIDEOMODE 		(uint)1
-#define WDE_VCRONOFF 			(uint)2
+#define WDE_VCRONOFF 		(uint)2
 
 eStreamWatchdog *eStreamWatchdog::instance;
 
@@ -33,7 +33,7 @@ eStreamWatchdog::eStreamWatchdog()
 	}
 	else
 	{
-		if ( ioctl(handle, EVENT_SET_FILTER, EVENT_ARATIO_CHANGE) < 0 )
+		if ( ioctl(handle, EVENT_SET_FILTER, EVENT_ARATIO_CHANGE | EVENT_VCR_CHANGED ) < 0 )
 		{
 			perror("ioctl");
 			close(handle);
@@ -60,9 +60,19 @@ void eStreamWatchdog::check(int)
 	struct event_t event;
 	int eventSize = sizeof (event);
 	int status;
-	while ((status = read(handle, &event, eventSize)) == eventSize)
-		if (event.event == EVENT_ARATIO_CHANGE)
-			reloadSettings();
+	while ( (status = read(handle, &event, eventSize)) == eventSize )
+	{
+		switch(event.event)
+		{
+        		case EVENT_ARATIO_CHANGE:
+    				reloadSettings();
+				break;
+			case EVENT_VCR_CHANGED:
+				break;
+			default: 
+				eDebug("unspecified event %d from Event Device", event.event);
+		}
+	}
 }
 
 void eStreamWatchdog::reloadSettings()
