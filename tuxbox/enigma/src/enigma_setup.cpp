@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.26 2003/05/31 18:35:08 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.27 2003/06/10 13:14:32 alexvrs Exp $
  */
 
 #include <enigma_setup.h>
@@ -50,9 +50,9 @@
 Signal1<void,eZapSetup*> eZapSetup::setupHook;
 
 eZapSetup::eZapSetup()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 9, 450, true)
+	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 9, 500, true)
 {
-	move(ePoint(135, 120));
+	move(ePoint(115, 120));
 	int havenetwork, haveci, haveharddisk, havelcd, haverfmod;
 	switch (eDVB::getInstance()->getmID())
 	{

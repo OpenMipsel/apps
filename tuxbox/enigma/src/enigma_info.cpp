@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.20 2003/06/02 20:37:04 tmbinc Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.21 2003/06/10 13:10:16 alexvrs Exp $
  */
 
 #include <enigma_info.h>
@@ -38,7 +38,7 @@
 #include <lib/base/i18n.h>
 
 eZapInfo::eZapInfo()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Infos"), 8, 220)
+	:eListBoxWindow<eListBoxEntryMenu>(_("Infos"), 8, 320)
 {
 	move(ePoint(150, 136));
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to mainmenu")))->selected, eZapInfo::sel_close);
