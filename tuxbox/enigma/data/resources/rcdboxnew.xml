@@ -86,6 +86,11 @@
 			<action name="stopSkipF" key="blue" flags="b" />
 		</actionmap>
 
+		<actionmap name="epgSelector">
+			<action name="addTimerEvent" key="green" flags="m" />
+			<action name="removeTimerEvent" key="red" flags="m" />
+		</actionmap>
+
 		<actionmap name="serviceSelector">
 			<action name="nextBouquet" key="+" flags="mr" />
 			<action name="prevBouquet" key="-" flags="mr" />
