@@ -7,3771 +7,4821 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-05-06 14:51+0200\n"
-"PO-Revision-Date: Tue May 6 14:48:55 CEST 2003\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-18 02:01+0200\n"
+"PO-Revision-Date: Fri Jul 18 1:48:13 CEST 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: Greek / George Zotos <zotos@zotos.biz>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-7\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: chk_blue2.esml:316
 msgid "FF "
-msgstr "ΓΜ"
+msgstr "Ξ“Ξ"
 
-#: default.esml:652
+#: default.esml:695
 msgid "search event name for this beg-/end time in epg"
 msgstr ""
 
-#: default.esml:721
-msgid "cancel partition check"
-msgstr "Ακύρωση ελέγχου κάτατμησης δίσκου "
-
-#: default.esml:382 src/enigma_info.cpp:48
+#: default.esml:397 src/enigma_info.cpp:49
 msgid "Satfind"
-msgstr "Σήμα"
+msgstr "Ξ£Ξ®ΞΌΞ±"
 
 #: chk_blue2.esml:315
 msgid "Pause "
-msgstr "Παύση"
+msgstr "Ξ Ξ±ΟΟƒΞ·"
 
-#: default.esml:346 default.esml:376 default.esml:432 default.esml:515
-#: default.esml:744 src/setup_language.cpp:82 src/setup_lcd.cpp:106
-#: src/setup_osd.cpp:257 src/setup_rc.cpp:108 src/setupnetwork.cpp:97
-#: src/setupvideo.cpp:71 src/setup_rfmod.cpp:121 src/setup_audio.cpp:36
+#: default.esml:362 default.esml:392 default.esml:447 default.esml:527
+#: default.esml:796 src/setup_lcd.cpp:107 src/setup_osd.cpp:271
+#: src/setup_rc.cpp:123 src/setupnetwork.cpp:458 src/setupvideo.cpp:88
+#: src/setup_rfmod.cpp:124 src/setup_audio.cpp:36 src/tpeditwindow.cpp:112
+#: src/tpeditwindow.cpp:161 src/parentallock.cpp:83 src/setupengrab.cpp:97
+#: src/setup_timezone.cpp:48
 msgid "save"
-msgstr "Αποθήκευση"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
-#: default.esml:406
+#: default.esml:421
 msgid "motor power input difference between running and not running"
-msgstr "Διαφορά κατανάλωσης μοτέρ κατά την κίνηση και σταματημένο"
+msgstr "Ξ”ΞΉΞ±Ο†ΞΏΟΞ¬ ΞΊΞ±Ο„Ξ±Ξ½Ξ¬Ξ»Ο‰ΟƒΞ·Ο‚ ΞΌΞΏΟ„Ξ­Ο ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ ΞΊΞ―Ξ½Ξ·ΟƒΞ· ΞΊΞ±ΞΉ ΟƒΟ„Ξ±ΞΌΞ±Ο„Ξ·ΞΌΞ­Ξ½ΞΏ"
 
-#: default.esml:635 src/timer.cpp:23
+#: default.esml:678 src/epgwindow.cpp:115 src/timer.cpp:143
 msgid "Tue"
-msgstr "Τρι"
+msgstr "Ξ¤ΟΞΉ"
 
-#: default.esml:443 default.esml:523 src/rotorconfig.cpp:594
+#: default.esml:457 default.esml:534 src/rotorconfig.cpp:594
 msgid "Satellite:"
-msgstr "Δορυφόρος:"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚:"
 
 #: chk_blue2.esml:314
 msgid "Play "
-msgstr "Αναπαραγωγή"
+msgstr "Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®"
 
-#: default.esml:444
+#: default.esml:458
 msgid "choose the Satellite you wish to find"
-msgstr "Διαλέξτε τον δορυφόρο που θέλετε βρήτε"
+msgstr "Ξ”ΞΉΞ±Ξ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ Ο€ΞΏΟ… ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ²ΟΞ®Ο„Ξµ"
 
-#: default.esml:347 default.esml:377 default.esml:433 default.esml:516
-#: default.esml:745 src/setup_language.cpp:95 src/setup_lcd.cpp:119
-#: src/setup_osd.cpp:271 src/setup_rc.cpp:121 src/setupnetwork.cpp:112
-#: src/setupvideo.cpp:85 src/setup_audio.cpp:51
-msgid "ignore changes and return"
-msgstr "Ακύρωση των αλλαγών και επιστροφή."
-
-#: default.esml:661
+#: default.esml:704
 msgid "processor: "
-msgstr "Επεξεργαστής:"
+msgstr "Ξ•Ο€ΞµΞΎΞµΟΞ³Ξ±ΟƒΟ„Ξ®Ο‚:"
 
-#: default.esml:418
+#: default.esml:433
 msgid "choose entry to edit or remove"
-msgstr "Επιλέξτε καταχώρηση για να αλλάξετε ή διαγράψετε"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΊΞ±Ο„Ξ±Ο‡ΟΟΞ·ΟƒΞ· Ξ³ΞΉΞ± Ξ½Ξ± Ξ±Ξ»Ξ»Ξ¬ΞΎΞµΟ„Ξµ Ξ® Ξ΄ΞΉΞ±Ξ³ΟΞ¬ΟΞµΟ„Ξµ"
 
-#: default.esml:632
+#: default.esml:675
 msgid "Endtime"
 msgstr ""
 
-#: default.esml:662
-msgid "frontend: "
-msgstr "Δέκτης:"
-
-#: default.esml:421
-msgid "enter where this orbital position is (to) stored in motor"
-msgstr "Επιλέξτε ποιά τροχιακή θέση να αποθηκευτεί στον ρότορα"
-
-#: default.esml:570
-msgid "SNR"
-msgstr "SNR"
-
-#: default.esml:490
-msgid "erase bouquets and services before scan"
-msgstr "Διαγραφή υπάρχουσας λίστας πρίν τη σάρωση"
-
-#: default.esml:387
-msgid "AGC:"
-msgstr "AGC"
-
-#: default.esml:363
-msgid "Uncommitted Switch:"
-msgstr "Διακόπτης Uncommitted:"
-
-#: default.esml:530
-msgid "enable/disable inversion here (ok)"
-msgstr "Αντιστροφής ή όχι φάσματος (OK)"
-
-#: default.esml:375
-msgid "prev. page"
-msgstr "Προηγούμενο"
-
-#: default.esml:374
-msgid "Motor Setup"
-msgstr "Ρύθμιση ρότορα"
-
-#: default.esml:340
-msgid "LOF/L:"
-msgstr "LOF/L:"
-
-#: default.esml:679 default.esml:692
-msgid "standby  "
-msgstr "Αναμονή:"
-
-#: default.esml:636 src/timer.cpp:21
-msgid "Wednesday"
-msgstr "Τετάρτη"
-
-#: default.esml:718
-msgid "Partition Check"
-msgstr "Έλενχος κατάτμησης"
-
-#: default.esml:676 default.esml:689
-msgid "enter recording end time (0..9, left, right, ok)"
-msgstr "Επιλογή τέλους χρόνου (0..9, <, >)"
-
-#: default.esml:641 default.esml:645
-msgid "select year (ok)"
-msgstr "Επιλογή χρονιάς (ok)"
-
-#: default.esml:345
-msgid "increased voltage"
-msgstr "Αυξημένη τάση"
-
-#: default.esml:535
-msgid "FEC:"
-msgstr "FEC:"
-
-#: default.esml:396 default.esml:573
-msgid "LOCK"
-msgstr "LOCK"
-
-#: default.esml:414
-msgid "Latitude:"
-msgstr "Γεωγραφικό πλάτος:"
-
-#: default.esml:397 default.esml:574
-msgid "SYNC"
-msgstr "SYNC"
-
-#: default.esml:513
-msgid "Skins:"
-msgstr "Τύπος:"
-
-#: default.esml:395 default.esml:668 src/enigma_ci.cpp:469
-#: src/enigma_ci.cpp:478
-msgid "ok"
-msgstr "OK"
-
-#: default.esml:533
-msgid "choose polarity (left, right)"
-msgstr "Επιλέξτε πολικότητα (<, >)"
-
-#: default.esml:476
-msgid "enable/disable use BAT for scan (if exists)"
-msgstr "Χρήση του BAT κατά την ανίχνευση (αν υπάρχει)"
-
-#: default.esml:530
-msgid "Inv:"
-msgstr "Inv:"
-
-#: default.esml:644
-msgid "edit the start time (0..9, left, right)"
-msgstr "Επιλογή χρόνου έναρξης (0..9, <, >)"
-
-#: default.esml:339
-msgid "enter LNB lowband offset frequency (0..9, ok)"
-msgstr "Συχνότητα LNB, χαμηλή μπάντα (0..9, OK)"
-
-#: chk_blue2.esml:318
-msgid "Record "
-msgstr "Εγγραφή"
-
-#: default.esml:512
-msgid "Skin Selector"
-msgstr "Επιλογή επιφάνειας μενού"
-
-#: default.esml:500
-msgid "transponder scanned:"
-msgstr "Ανίχνευση αναμεταδότη:"
-
-#: default.esml:630
-#, fuzzy
-msgid "press ok to change event name manually"
-msgstr "Πατήστε OK για να δώσετε όνομα"
-
-#: default.esml:688
-msgid "recording end time:"
-msgstr "Ρύθμιση τέλους χρόνου εγγαφής:"
-
-#: default.esml:638 src/timer.cpp:22
-msgid "Friday"
-msgstr "Παρασκευή"
-
-#: default.esml:403
-msgid "Use motor input power for running detection.. else use timeout"
-msgstr "Χρήση ισχύος εισόδου ρότορα για έλεγχο κίνησης ή χρονοκαθυστέρηση"
-
-#: default.esml:426 default.esml:448
-msgid "Direction:"
-msgstr "Κατεύθυνση"
-
-#: default.esml:364
-msgid "send the complete DiSEqC sequence dupe"
-msgstr "Διπλή αποστολή ολόκληρης της εντολής DiSEqC"
-
-#: default.esml:528 default.esml:548
-msgid "MHz"
-msgstr "MHz"
-
-#: default.esml:499
-msgid "services scanned     :"
-msgstr "Ανιχνεύτηκαν υπηρεσίες :"
-
-#: default.esml:515 src/setup_language.cpp:87 src/setup_lcd.cpp:111
-#: src/setup_osd.cpp:262 src/setup_rc.cpp:113 src/setupnetwork.cpp:102
-#: src/setupvideo.cpp:76 src/setup_audio.cpp:41
-msgid "save changes and return"
-msgstr "Επιστροφή με αποθήκευση αλλαγών"
-
-#: default.esml:423
-msgid "Orbital Position:"
-msgstr "Τροχιακή θέση:"
-
-#: default.esml:430 default.esml:623 default.esml:774
-msgid "remove"
-msgstr "διαγραφή"
-
-#: default.esml:402 default.esml:440
-msgid "Motor Config"
-msgstr "Ρύθμιση ρότορα"
-
-#: default.esml:341
-msgid "enter LNB highband offset frequency (0..9, ok)"
-msgstr "Συχνότητα LNB υψηλής μπάντας (0..9, OK)"
-
-#: default.esml:361
-msgid "DiSEqC Repeats:"
-msgstr "Επαναλήψεις DiSEqC:"
-
-#: default.esml:744
-msgid "save changes and close window"
-msgstr "Επιστροφή με αποθήκευση αλλαγών"
-
-#: default.esml:547
-msgid "enter frequency (0..9, left, right)"
-msgstr "Δώστε συχνότητα (0..9, <, >)"
-
-#: default.esml:430
-msgid "remove selected entry"
-msgstr "Διαγραφή επιλεγμένου γεγονότος"
-
-#: default.esml:368
-msgid "select Uncommitted Switch 2 option"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 2'"
-
-#: default.esml:678 default.esml:691
-msgid "shutdown the box after recording (ok)"
-msgstr "Κλείσημο του δέκτη μετά το τέλος εγγραφής"
-
-#: default.esml:356
-msgid "select DiSEqC mode (ok)"
-msgstr "Επιλογή τύπου DiSEqC (ok)"
-
-#: default.esml:365
-msgid "Swap Commands"
-msgstr "Ανταλλαγή:"
-
-#: default.esml:374
-msgid "opens the motor setup"
-msgstr "Ρυθμίσεις ρότορα"
-
-#: default.esml:760
-msgid "Please choose your DiSEqC-Configuration:"
-msgstr "Παρακαλώ επιλέξτε τον τύπο DiSEqC που έχετε:"
-
-#: default.esml:674 default.esml:687
-msgid "Stop Record"
-msgstr "Σταμάτημα εγγραφής"
-
-#: default.esml:344
-msgid "enter LNB threshold frequency (0..9, ok)"
-msgstr "δώστε την συχνότητα αλλαγής μπάντας του LNB (0..9, OK)"
-
-#: default.esml:456
-msgid "close motor setup"
-msgstr "Επιστροφή στο προηγούμενο μενού"
-
-#: default.esml:540 default.esml:552
-msgid "KSymb/s"
-msgstr "KSymb/s"
-
-#: default.esml:441
-msgid "Mode:"
-msgstr "Τύπος:"
-
-#: default.esml:480 default.esml:492 default.esml:516 default.esml:681
-#: default.esml:694 default.esml:734 src/enigma_ci.cpp:77 src/scan.cpp:39
-#: src/setup_language.cpp:92 src/setup_lcd.cpp:116 src/setup_osd.cpp:268
-#: src/setup_rc.cpp:118 src/setupnetwork.cpp:109 src/setupvideo.cpp:82
-#: src/setup_rfmod.cpp:132 src/setup_audio.cpp:48
-msgid "abort"
-msgstr "Ακύρωση"
-
-#: default.esml:503
-msgid "Progress:"
-msgstr "Πρόοδος:"
-
-#: default.esml:712
-msgid "select filsystem to format"
-msgstr "Επιλέξτε τύπο φορμαρίσματος"
-
-#: default.esml:315
-msgid "Satellite Configuration"
-msgstr "Σύνθεση δορυφόρου"
-
-#: default.esml:383
-msgid "SNR:"
-msgstr "SNR"
-
-#: default.esml:722
-msgid "close window"
-msgstr "Επιστροφή στο προηγούμενο μενού."
-
-#: default.esml:651
-#, fuzzy
-msgid "save data and close window"
-msgstr "Επιστροφή με αποθήκευση αλλαγών"
-
-#: default.esml:391 default.esml:572
-msgid "BER"
-msgstr "BER"
-
-#: default.esml:343
-msgid "Threshold:"
-msgstr "Κατώφλι:"
-
-#: default.esml:450
-msgid "Recalc Params:"
-msgstr "Αναθεώρηση παραμέτρων"
-
-#: default.esml:527
-msgid "enter transponder frequeny (0..9, left, right)"
-msgstr "Συχνότητα αναμεταδότη (0..9, <, >)"
-
-# 
-#: default.esml:376
-msgid "save changes"
-msgstr "Επιστροφή με αποθήκευση αλλαγών"
-
-#: default.esml:773
-#, fuzzy
-msgid "edit selected transponder (ok)"
-msgstr "Επιστροφή στο προηγούμενο μενού"
-
-#: default.esml:457
-msgid "save in motor"
-msgstr "Αποθήκευση στον ρότορα"
-
-#: default.esml:710
-msgid "do a filesystem check"
-msgstr "Έλεγχος του δίσκου"
-
-#: default.esml:532
-msgid "Polarity:"
-msgstr "Πολικότητα:"
-
-#: default.esml:429 default.esml:622 default.esml:772
-msgid "add"
-msgstr "προσθήκη"
-
-#: default.esml:709
-msgid "initialize the disk for use with the dreambox"
-msgstr "Φορμάρισμα του δίσκου για να δουλέψει με το dreambox."
-
-#: default.esml:634
-#, fuzzy
-msgid "Mo"
-msgstr "Δευ"
-
-#: default.esml:479
-msgid "start the transponder scan"
-msgstr "Εκίνηση ανίχνευσης"
-
-#: default.esml:318
-msgid "LNB"
-msgstr "LNB"
-
-#: default.esml:479 default.esml:491
-msgid "start scan"
-msgstr "Έναρξη"
-
-#: default.esml:477
-msgid "remove all services before scan"
-msgstr "Διαγραφή υπάρχουσας λίστας πριν την ανίχνευση"
-
-#: default.esml:358
-msgid "select DiSEqC parameter (ok)"
-msgstr "Επιλέξτε παράμετρο DiSEqC (ok)"
-
-# 
-#: stone.esml:465 silver.esml:472
-msgid "videotext"
-msgstr "Videotext"
-
-#: default.esml:480 default.esml:492
-msgid "close window and do not scan"
-msgstr "Ακύρωση χωρίς ανίχνευση."
-
-#: default.esml:722
-msgid "close"
-msgstr "κλείσιμο"
-
-#: default.esml:490
-msgid "erase all"
-msgstr "Διαγραφή"
-
-#: default.esml:710
-msgid "check"
-msgstr "Έλεγχος"
-
-#: default.esml:526 default.esml:546
-msgid "Frequency:"
-msgstr "Συχνότητα:"
-
-#: default.esml:586 default.esml:593 default.esml:600
-msgid "Services"
-msgstr "υπηρεσίες"
-
-#: default.esml:455
-msgid "0"
-msgstr "0"
-
-#: default.esml:366
-msgid "select Uncommitted Switch 1 option"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 1'"
-
-#: default.esml:774
-#, fuzzy
-msgid "remove selected satellite"
-msgstr "Διαγραφή επιλεγμένου δορυφόρου"
-
-#: default.esml:373
-msgid "U-Switch 4:"
-msgstr "U-Switch 4:"
-
-#: default.esml:539 default.esml:551
-msgid "enter symbol rate (0..9, left, right)"
-msgstr "Symbolrate (0..9, <, >)"
-
-#: default.esml:742
-msgid "press ok to enter the name"
-msgstr "Πατήστε OK για να δώσετε όνομα"
-
-#: default.esml:558
-msgid "enable/disable inversion (ok)"
-msgstr "Ενεργοποίηση ή όχι αντιστροφής (OK)"
-
-# 
-#: stone.esml:463 silver.esml:470
-msgid "subservices"
-msgstr "Υπο-υπηρεσίες"
-
-#: default.esml:405
-msgid "/sec"
-msgstr "/δευ"
-
-#: default.esml:623
-msgid "delete the current selected timer (ok)"
-msgstr "Διαγραφή του επιλεγμένου χρονοδιακόπτη (ok)"
-
-#: default.esml:354
-msgid "select MiniDiSEqC parameter (ok)"
-msgstr "Επιλογή παραμέτρου MiniDiSEqC (ok)"
-
-#: default.esml:429
-msgid "add to table/existing is overwritten"
-msgstr "προσθήκη στον πίνακα -το υπάρχον διαγράφεται"
-
-#: default.esml:486
-msgid "Network:"
-msgstr "Δορυφόρος:"
-
-#: default.esml:666
-msgid "Software Version:"
-msgstr "Έκδοση λογισμικού:"
-
-#: default.esml:369
-msgid "U-Switch 2:"
-msgstr "U-Switch 2:"
-
-#: default.esml:412
-msgid "enter your longitude (0..9, +, -, ok)"
-msgstr "Γεωγραφικό μήκος (0..9, +, -, ΟΚ)"
-
-#: default.esml:324
-msgid "remove the selected Satellite"
-msgstr "Διαγραφή επιλεγμένου δορυφόρου"
-
-#: default.esml:524
-msgid "choose wished satellite (ok)"
-msgstr "Επιλέξτε επιθυμητό δορυφόρο (ΟΚ, <,>)"
-
-#: default.esml:751
-msgid "Your language"
-msgstr "Γλώσσα:"
-
-#: default.esml:642 default.esml:646
-msgid "select month (ok)"
-msgstr "Επιλογή μήνα (ok)"
-
-#: default.esml:711
-msgid "show extended configuration"
-msgstr "Εμφάνιση περισσοτέρων παραμέτρων"
-
-#: default.esml:681 default.esml:694
-msgid "close window and use no record timer (ok)"
-msgstr "Κλείσιμο παρθύρου χωρίς τη χρήση χρονοδιακόπτη (ok)."
-
-#: default.esml:415
-msgid "enter your latitude (0..9, +, -, ok)"
-msgstr "Γεωγραφικό πλάτος (0..9, +, -, ΟΚ)"
-
-#: default.esml:357
-msgid "DiSEqC Mode:"
-msgstr "Τύπος DiSEqC:"
-
-#: default.esml:442
-msgid "choose what you want to do"
-msgstr "Επιλέξτε τι θέλετε να κάνετε"
-
-#: default.esml:771
-#, fuzzy
-msgid "select sat ( up/down )"
-msgstr "Επιλογή ημέρας (ok)"
-
-#: default.esml:640 src/timer.cpp:21
-msgid "Sunday"
-msgstr "Κυριακή"
-
-#: default.esml:498
-msgid "scanning..."
-msgstr "Ανίχνευση"
-
-#: default.esml:331
-msgid "LNB Configuration"
-msgstr "Ρύθμιση LNB"
-
-#: default.esml:420
-msgid "Number in motor:"
-msgstr "Αριθμός στον ρότορα"
-
-#: default.esml:701
-msgid "model:"
-msgstr "Μοντέλο:"
-
-#: default.esml:365
-msgid "swaps normal and opt.Switch DiSEqC Cmds"
-msgstr "Ανταλλαγή κανονικών και opt.Switch DiSEqC εντολών."
-
-#: default.esml:324
-msgid "erase"
-msgstr "Διαγραφή"
-
-#: default.esml:317
-msgid "Sat/Position"
-msgstr "Δορυφόρος"
-
-#: default.esml:453
-msgid "calc param 3 (see your motor manual or let it 00)"
-msgstr "παράμετρος 3 (δήτε τις οδηγίες του ρότορα ή αφήστετο 00)"
-
-#: default.esml:346
-msgid "save changes and use current selected LNB for the chosen satellite"
-msgstr "Αποθήκευση αλλαγών και χρήση του επιλεγμένου LNB."
-
-#: default.esml:571
-msgid "AGC"
-msgstr "AGC"
-
-#: default.esml:359
-msgid "DiSEqC Parameter:"
-msgstr "Παράμετρος DiSEqC:"
-
-#: default.esml:432
-msgid ""
-"save changes and use the selected LNB (in first page) for the choosen "
-"satellite"
-msgstr "Αποθήκευση και χρήση του LNB για τον επιλεγμένο δορυφόρο."
-
-#: default.esml:554
-msgid "Modulation:"
-msgstr "Διαμόρφωση"
-
-#: default.esml:345
-msgid "0,5V higher LNB Voltage (for long cables) (ok)"
-msgstr "0,5V υψηλότερη τάση (για μακριά καλώδια)"
-
-#: default.esml:362
-msgid "select uncommitted input"
-msgstr "Επιλογή LNB στην 'Uncommitted' είσοδο."
-
-#: default.esml:475
-msgid "enable/disable check ONIT on any transponder"
-msgstr "Έλεγχος ή όχι ONIT για κάθε αναμεταδότη"
-
-#: default.esml:664
-msgid "harddisk: "
-msgstr "Σκληρός δίσκος:"
-
-#: default.esml:403
-msgid "Use Motor Input Power"
-msgstr "Χρήση ισχύος ρότορα:"
-
-#: default.esml:409
-msgid "when the motor support this, then use"
-msgstr "Χρήση αυτού αν ο ρότορας το υποστηρίζει"
-
-#: default.esml:707
-msgid "status:"
-msgstr "Είδος:"
-
-#: default.esml:372
-msgid "select Uncommitted Switch 4 option"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 4'"
-
-#: default.esml:476
-msgid "use BAT"
-msgstr "Χρήση BAT"
-
-#: default.esml:631
-msgid "Starttime"
-msgstr ""
-
-#: default.esml:550
-msgid "Symbolrate:"
-msgstr "Symbolrate:"
-
-#: default.esml:309
-msgid "HTTP Download"
-msgstr "HTTP Download"
-
-#: default.esml:375
-msgid "goto prev page (LNB)"
-msgstr "Πρός την προηγούμενη σελίδα (LNB)."
-
-#: default.esml:555
-msgid "choose wished modulation (ok)"
-msgstr "Επιλέξτε επιθυμητή διαμόρφωση (ΟΚ, <,>)"
-
-#: default.esml:768
-#, fuzzy
-msgid "Transponders"
-msgstr "Αναμεταδότης:"
-
-#: chk_blue2.esml:313
-msgid "FR "
-msgstr "ΓΠ"
-
-#: default.esml:424
-msgid "enter orbital position without dot (19.2 = 192)"
-msgstr "Δώστε την τροχιακή θέση χωρίς '.'(π.χ. 19.2=192)"
-
-#: default.esml:680 default.esml:693
-msgid "set recording end time and close window (ok)"
-msgstr "Θέσε την ώρα τέλους εγραφής και κλείσε το παράθυρο"
-
-#: default.esml:409
-msgid "Use gotoXX Function"
-msgstr "Χρήση λειτουργείας gotoXX"
-
-#: default.esml:325
-msgid "close Satellite Configuration"
-msgstr "Κλείσημο ρυθμίσεων δορυφόρων"
-
-#: default.esml:466
-msgid "transponder scan"
-msgstr "Ανίχνευση καναλιών"
-
-#: default.esml:338
-msgid "choose the LNB you wish to apply or edit"
-msgstr "διαλέξτε το LNB που θέλετε να μεταβάλλετε ή επιλέξετε"
-
-#: default.esml:477
-msgid "clear list before"
-msgstr "Διαγραφή λίστας"
-
-#: default.esml:614 default.esml:620 stone.esml:462 silver.esml:469
-msgid "EPG"
-msgstr "EPG"
-
-#: default.esml:773
-#, fuzzy
-msgid "edit"
-msgstr "κάντο"
-
-#: default.esml:639
-#, fuzzy
-msgid "Sa"
-msgstr "Σαβ"
-
-#: default.esml:633
-msgid "for a multiple event enable this"
+#: default.esml:381
+msgid "send no DiSEqC when only Hi/Lo or H/V changes"
 msgstr ""
 
 #: default.esml:705
-msgid "connected:"
-msgstr "Σύνδεση:"
+msgid "frontend: "
+msgstr "Ξ”Ξ­ΞΊΟ„Ξ·Ο‚:"
 
-#: default.esml:621
+#: default.esml:436
+msgid "enter where this orbital position is (to) stored in motor"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο€ΞΏΞΉΞ¬ Ο„ΟΞΏΟ‡ΞΉΞ±ΞΊΞ® ΞΈΞ­ΟƒΞ· Ξ½Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…Ο„ΞµΞ― ΟƒΟ„ΞΏΞ½ ΟΟΟ„ΞΏΟΞ±"
+
+#: default.esml:579
+msgid "SNR"
+msgstr "SNR"
+
+#: default.esml:502
+msgid "erase bouquets and services before scan"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…ΟƒΞ±Ο‚ Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ Ο€ΟΞ―Ξ½ Ο„Ξ· ΟƒΞ¬ΟΟ‰ΟƒΞ·"
+
+#: default.esml:402
+msgid "AGC:"
+msgstr "AGC"
+
+#: default.esml:378
+msgid "Uncommitted Switch:"
+msgstr "Ξ”ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚ Uncommitted:"
+
+#: default.esml:540
+msgid "enable/disable inversion here (ok)"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΟΞΏΟ†Ξ®Ο‚ Ξ® ΟΟ‡ΞΉ Ο†Ξ¬ΟƒΞΌΞ±Ο„ΞΏΟ‚ (OK)"
+
+#: default.esml:391
+msgid "prev. page"
+msgstr "Ξ ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ"
+
+#: default.esml:390
+msgid "Motor Setup"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
+
+#: default.esml:356
+msgid "LOF/L:"
+msgstr "LOF/L:"
+
+#: default.esml:722 default.esml:734 default.esml:746
+msgid "standby  "
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞΏΞ½Ξ®:"
+
+#: default.esml:679 src/timer.cpp:1945
+msgid "Wednesday"
+msgstr "Ξ¤ΞµΟ„Ξ¬ΟΟ„Ξ·"
+
+#: default.esml:771
+msgid "Partition Check"
+msgstr "ΞΞ»ΞµΞ½Ο‡ΞΏΟ‚ ΞΊΞ±Ο„Ξ¬Ο„ΞΌΞ·ΟƒΞ·Ο‚"
+
+#: default.esml:719 default.esml:743
+msgid "enter recording end time (0..9, left, right, ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„Ξ­Ξ»ΞΏΟ…Ο‚ Ο‡ΟΟΞ½ΞΏΟ… (0..9, <, >)"
+
+#: default.esml:684 default.esml:688
+msgid "select year (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο‡ΟΞΏΞ½ΞΉΞ¬Ο‚ (ok)"
+
+#: default.esml:361
+msgid "increased voltage"
+msgstr "Ξ‘Ο…ΞΎΞ·ΞΌΞ­Ξ½Ξ· Ο„Ξ¬ΟƒΞ·"
+
+#: default.esml:544
+msgid "FEC:"
+msgstr "FEC:"
+
+#: default.esml:411 default.esml:582
+msgid "LOCK"
+msgstr "LOCK"
+
+#: default.esml:429
+msgid "Latitude:"
+msgstr "Ξ“ΞµΟ‰Ξ³ΟΞ±Ο†ΞΉΞΊΟ Ο€Ξ»Ξ¬Ο„ΞΏΟ‚:"
+
+#: default.esml:412 default.esml:583
+msgid "SYNC"
+msgstr "SYNC"
+
+#: default.esml:525
+msgid "Skins:"
+msgstr "Ξ¤ΟΟ€ΞΏΟ‚:"
+
+#: default.esml:410 default.esml:711 src/enigma_ci.cpp:455
+#: src/enigma_ci.cpp:464
+msgid "ok"
+msgstr "OK"
+
+#: default.esml:543
+msgid "choose polarity (left, right)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο€ΞΏΞ»ΞΉΞΊΟΟ„Ξ·Ο„Ξ± (<, >)"
+
+#: default.esml:489
+msgid "enable/disable use BAT for scan (if exists)"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ο„ΞΏΟ… BAT ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· (Ξ±Ξ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ)"
+
+#: default.esml:540
+msgid "Inv:"
+msgstr "Inv:"
+
+#: default.esml:420
+msgid "&#175;/sec"
+msgstr ""
+
+#: default.esml:687
+msgid "edit the start time (0..9, left, right)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο‡ΟΟΞ½ΞΏΟ… Ξ­Ξ½Ξ±ΟΞΎΞ·Ο‚ (0..9, <, >)"
+
+#: default.esml:355
+msgid "enter LNB lowband offset frequency (0..9, ok)"
+msgstr "Ξ£Ο…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± LNB, Ο‡Ξ±ΞΌΞ·Ξ»Ξ® ΞΌΟ€Ξ¬Ξ½Ο„Ξ± (0..9, OK)"
+
+#: chk_blue2.esml:318
+msgid "Record "
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ®"
+
+#: default.esml:524
+msgid "Skin Selector"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ±Ο‚ ΞΌΞµΞ½ΞΏΟ"
+
+#: default.esml:512
+msgid "transponder scanned:"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·:"
+
+#: default.esml:673
 #, fuzzy
-msgid "press ok to select another event"
-msgstr "Πατήστε OK για να επιλέξετε διαφορετική λειτουργία των 22kHz"
+msgid "press ok to change event name manually"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΟΟƒΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ±"
 
-#: default.esml:348 default.esml:434
-msgid "next page"
-msgstr "Επόμενο"
+#: default.esml:742
+msgid "recording end time:"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ο„Ξ­Ξ»ΞΏΟ…Ο‚ Ο‡ΟΟΞ½ΞΏΟ… ΞµΞ³Ξ³Ξ±Ο†Ξ®Ο‚:"
 
-#: default.esml:678 default.esml:691
-msgid "shutdown  "
-msgstr "Τέλος λειτουργίας"
+#: default.esml:681 src/timer.cpp:1946
+msgid "Friday"
+msgstr "Ξ Ξ±ΟΞ±ΟƒΞΊΞµΟ…Ξ®"
+
+#: default.esml:418
+msgid "Use motor input power for running detection.. else use timeout"
+msgstr "Ξ§ΟΞ®ΟƒΞ· ΞΉΟƒΟ‡ΟΞΏΟ‚ ΞµΞΉΟƒΟΞ΄ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ³ΞΉΞ± Ξ­Ξ»ΞµΞ³Ο‡ΞΏ ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚ Ξ® Ο‡ΟΞΏΞ½ΞΏΞΊΞ±ΞΈΟ…ΟƒΟ„Ξ­ΟΞ·ΟƒΞ·"
+
+#: default.esml:503
+msgid "no circ polariz."
+msgstr ""
+
+#: default.esml:441 default.esml:462
+msgid "Direction:"
+msgstr "ΞΞ±Ο„ΞµΟΞΈΟ…Ξ½ΟƒΞ·"
+
+#: default.esml:379
+msgid "send the complete DiSEqC sequence dupe"
+msgstr "Ξ”ΞΉΟ€Ξ»Ξ® Ξ±Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® ΞΏΞ»ΟΞΊΞ»Ξ·ΟΞ·Ο‚ Ο„Ξ·Ο‚ ΞµΞ½Ο„ΞΏΞ»Ξ®Ο‚ DiSEqC"
+
+#: default.esml:539 default.esml:557
+msgid "MHz"
+msgstr "MHz"
+
+#: default.esml:511
+msgid "services scanned     :"
+msgstr "Ξ‘Ξ½ΞΉΟ‡Ξ½ΞµΟΟ„Ξ·ΞΊΞ±Ξ½ Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚ :"
+
+#: default.esml:527 src/setup_lcd.cpp:112 src/setup_osd.cpp:276
+#: src/setup_rc.cpp:128 src/setupnetwork.cpp:463 src/setupvideo.cpp:93
+#: src/setup_audio.cpp:41 src/tpeditwindow.cpp:118 src/tpeditwindow.cpp:164
+#: src/parentallock.cpp:88 src/setupengrab.cpp:102 src/setup_timezone.cpp:53
+msgid "save changes and return"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½"
+
+#: default.esml:438 src/tpeditwindow.cpp:71
+msgid "Orbital Position:"
+msgstr "Ξ¤ΟΞΏΟ‡ΞΉΞ±ΞΊΞ® ΞΈΞ­ΟƒΞ·:"
+
+#: default.esml:445 default.esml:666 default.esml:825
+msgid "remove"
+msgstr "Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®"
+
+#: default.esml:417 default.esml:454
+msgid "Motor Config"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
+
+#: default.esml:357
+msgid "enter LNB highband offset frequency (0..9, ok)"
+msgstr "Ξ£Ο…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± LNB Ο…ΟΞ·Ξ»Ξ®Ο‚ ΞΌΟ€Ξ¬Ξ½Ο„Ξ±Ο‚ (0..9, OK)"
+
+#: default.esml:376
+msgid "DiSEqC Repeats:"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ±Ξ»Ξ®ΟΞµΞΉΟ‚ DiSEqC:"
+
+#: default.esml:796
+msgid "save changes and close window"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½"
+
+#: default.esml:556
+msgid "enter frequency (0..9, left, right)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ ΟƒΟ…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± (0..9, <, >)"
+
+#: default.esml:445
+msgid "remove selected entry"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
+
+#: default.esml:384
+msgid "select Uncommitted Switch 2 option"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 2'"
+
+#: default.esml:721 default.esml:745
+msgid "shutdown the box after recording (ok)"
+msgstr "ΞΞ»ΞµΞ―ΟƒΞ·ΞΌΞΏ Ο„ΞΏΟ… Ξ΄Ξ­ΞΊΟ„Ξ· ΞΌΞµΟ„Ξ¬ Ο„ΞΏ Ο„Ξ­Ξ»ΞΏΟ‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
+
+#: default.esml:371
+msgid "select DiSEqC mode (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΟΟ€ΞΏΟ… DiSEqC (ok)"
+
+#: default.esml:380
+msgid "Swap Commands"
+msgstr "Ξ‘Ξ½Ο„Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®:"
+
+#: default.esml:390
+msgid "opens the motor setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ ΟΟΟ„ΞΏΟΞ±"
+
+#: default.esml:811
+msgid "Please choose your DiSEqC-Configuration:"
+msgstr "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ Ο„ΟΟ€ΞΏ DiSEqC Ο€ΞΏΟ… Ξ­Ο‡ΞµΟ„Ξµ:"
+
+#: default.esml:717 default.esml:741
+msgid "Stop Record"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
+
+#: default.esml:360
+msgid "enter LNB threshold frequency (0..9, ok)"
+msgstr "Ξ΄ΟΟƒΟ„Ξµ Ο„Ξ·Ξ½ ΟƒΟ…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®Ο‚ ΞΌΟ€Ξ¬Ξ½Ο„Ξ±Ο‚ Ο„ΞΏΟ… LNB (0..9, OK)"
+
+#: default.esml:470
+msgid "close motor setup"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
+
+#: default.esml:549 default.esml:561
+msgid "KSymb/s"
+msgstr "KSymb/s"
+
+#: default.esml:455
+msgid "Mode:"
+msgstr "Ξ¤ΟΟ€ΞΏΟ‚:"
+
+#: default.esml:786 src/scan.cpp:40
+msgid "abort"
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ·"
+
+#: default.esml:515
+msgid "Progress:"
+msgstr "Ξ ΟΟΞΏΞ΄ΞΏΟ‚:"
+
+#: default.esml:765
+msgid "select filsystem to format"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΟΟ€ΞΏ Ο†ΞΏΟΞΌΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚"
+
+#: default.esml:331
+msgid "Satellite Configuration"
+msgstr "Ξ£ΟΞ½ΞΈΞµΟƒΞ· Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
+
+#: default.esml:398
+msgid "SNR:"
+msgstr "SNR"
+
+#: default.esml:774
+msgid "close window"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ."
+
+#: default.esml:694
+#, fuzzy
+msgid "save data and close window"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½"
+
+#: default.esml:406 default.esml:581
+msgid "BER"
+msgstr "BER"
+
+#: default.esml:359
+msgid "Threshold:"
+msgstr "ΞΞ±Ο„ΟΟ†Ξ»ΞΉ:"
+
+#: default.esml:464
+msgid "Recalc Params:"
+msgstr "Ξ‘Ξ½Ξ±ΞΈΞµΟΟΞ·ΟƒΞ· Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΟ‰Ξ½"
 
 #: default.esml:538
+msgid "enter transponder frequeny (0..9, left, right)"
+msgstr "Ξ£Ο…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ· (0..9, <, >)"
+
+#: default.esml:392
+msgid "save changes"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½"
+
+#: stone.esml:465 silver.esml:472
+#, fuzzy
+msgid "plugins"
+msgstr "Ξ ΟΟΟƒΞΈΞµΟ„Ξ± (Plugins)"
+
+#: default.esml:824
+#, fuzzy
+msgid "edit selected transponder (ok)"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
+
+#: default.esml:471
+msgid "save in motor"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΟƒΟ„ΞΏΞ½ ΟΟΟ„ΞΏΟΞ±"
+
+#: default.esml:763
+msgid "do a filesystem check"
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚ Ο„ΞΏΟ… Ξ΄Ξ―ΟƒΞΊΞΏΟ…"
+
+#: default.esml:542
+msgid "Polarity:"
+msgstr "Ξ ΞΏΞ»ΞΉΞΊΟΟ„Ξ·Ο„Ξ±:"
+
+#: default.esml:444 default.esml:665 default.esml:823
+msgid "add"
+msgstr "Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ·"
+
+#: default.esml:762
+msgid "initialize the disk for use with the dreambox"
+msgstr "Ξ¦ΞΏΟΞΌΞ¬ΟΞΉΟƒΞΌΞ± Ο„ΞΏΟ… Ξ΄Ξ―ΟƒΞΊΞΏΟ… Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΞΏΟ…Ξ»Ξ­ΟΞµΞΉ ΞΌΞµ Ο„ΞΏ dreambox."
+
+#: default.esml:677
+#, fuzzy
+msgid "Mo"
+msgstr "Ξ”ΞµΟ…"
+
+#: default.esml:492
+msgid "start the transponder scan"
+msgstr "Ξ•ΞΊΞ―Ξ½Ξ·ΟƒΞ· Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·Ο‚"
+
+#: default.esml:334
+msgid "LNB"
+msgstr "LNB"
+
+#: default.esml:492 default.esml:504
+msgid "start scan"
+msgstr "ΞΞ½Ξ±ΟΞΎΞ·"
+
+#: default.esml:490
+msgid "remove all services before scan"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…ΟƒΞ±Ο‚ Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ Ο€ΟΞΉΞ½ Ο„Ξ·Ξ½ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·"
+
+#: default.esml:373
+msgid "select DiSEqC parameter (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο€Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏ DiSEqC (ok)"
+
+#: default.esml:774
+msgid "close"
+msgstr "ΞΊΞ»ΞµΞ―ΟƒΞΉΞΌΞΏ"
+
+#: default.esml:502
+msgid "erase all"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®"
+
+#: default.esml:763
+msgid "check"
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚"
+
+#: default.esml:537 default.esml:555
+msgid "Frequency:"
+msgstr "Ξ£Ο…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ±:"
+
+#: default.esml:595 default.esml:602 default.esml:609 default.esml:617
+#: default.esml:628 default.esml:639
+msgid "Services"
+msgstr "Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: default.esml:469
+msgid "0"
+msgstr "0"
+
+#: default.esml:382
+msgid "select Uncommitted Switch 1 option"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 1'"
+
+#: default.esml:825
+#, fuzzy
+msgid "remove selected satellite"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
+
+#: default.esml:389
+msgid "U-Switch 4:"
+msgstr "U-Switch 4:"
+
+#: default.esml:548 default.esml:560
+msgid "enter symbol rate (0..9, left, right)"
+msgstr "Symbolrate (0..9, <, >)"
+
+#: default.esml:794
+msgid "press ok to enter the name"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΟΟƒΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ±"
+
+#: default.esml:567
+msgid "enable/disable inversion (ok)"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ® ΟΟ‡ΞΉ Ξ±Ξ½Ο„ΞΉΟƒΟ„ΟΞΏΟ†Ξ®Ο‚ (OK)"
+
+#: stone.esml:463 silver.esml:470
+msgid "subservices"
+msgstr "Ξ¥Ο€ΞΏ-Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: default.esml:666
+msgid "delete the current selected timer (ok)"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο„ΞΏΟ… ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ok)"
+
+#: default.esml:369
+msgid "select MiniDiSEqC parameter (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΞΏΟ… MiniDiSEqC (ok)"
+
+#: default.esml:444
+msgid "add to table/existing is overwritten"
+msgstr "Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ· ΟƒΟ„ΞΏΞ½ Ο€Ξ―Ξ½Ξ±ΞΊΞ± -Ο„ΞΏ Ο…Ο€Ξ¬ΟΟ‡ΞΏΞ½ Ξ΄ΞΉΞ±Ξ³ΟΞ¬Ο†ΞµΟ„Ξ±ΞΉ"
+
+#: default.esml:498
+msgid "Network:"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚:"
+
+#: default.esml:709
+msgid "Software Version:"
+msgstr "ΞΞΊΞ΄ΞΏΟƒΞ· Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ:"
+
+#: default.esml:385
+msgid "U-Switch 2:"
+msgstr "U-Switch 2:"
+
+#: default.esml:427
+msgid "enter your longitude (0..9, +, -, ok)"
+msgstr "Ξ“ΞµΟ‰Ξ³ΟΞ±Ο†ΞΉΞΊΟ ΞΌΞ®ΞΊΞΏΟ‚ (0..9, +, -, ΞΞ)"
+
+#: default.esml:734
+#, fuzzy
+msgid "goto standby (ok)"
+msgstr "ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ (press)"
+
+#: default.esml:340
+msgid "remove the selected Satellite"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
+
+#: default.esml:535
+msgid "choose wished satellite (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞµΟ€ΞΉΞΈΟ…ΞΌΞ·Ο„Ο Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ (ΞΞ, <,>)"
+
+#: default.esml:802
+msgid "Your language"
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ±:"
+
+#: default.esml:685 default.esml:689
+msgid "select month (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞΌΞ®Ξ½Ξ± (ok)"
+
+#: default.esml:764
+msgid "show extended configuration"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€ΞµΟΞΉΟƒΟƒΞΏΟ„Ξ­ΟΟ‰Ξ½ Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΟ‰Ξ½"
+
+#: default.esml:430
+msgid "enter your latitude (0..9, +, -, ok)"
+msgstr "Ξ“ΞµΟ‰Ξ³ΟΞ±Ο†ΞΉΞΊΟ Ο€Ξ»Ξ¬Ο„ΞΏΟ‚ (0..9, +, -, ΞΞ)"
+
+#: default.esml:372
+msgid "DiSEqC Mode:"
+msgstr "Ξ¤ΟΟ€ΞΏΟ‚ DiSEqC:"
+
+#: default.esml:456
+msgid "choose what you want to do"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΞΉ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΟ„Ξµ"
+
+#: default.esml:683 src/timer.cpp:1945
+msgid "Sunday"
+msgstr "ΞΟ…ΟΞΉΞ±ΞΊΞ®"
+
+#: default.esml:510
+msgid "scanning..."
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·"
+
+#: default.esml:347
+msgid "LNB Configuration"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· LNB"
+
+#: default.esml:435
+msgid "Number in motor:"
+msgstr "Ξ‘ΟΞΉΞΈΞΌΟΟ‚ ΟƒΟ„ΞΏΞ½ ΟΟΟ„ΞΏΟΞ±"
+
+#: default.esml:754
+msgid "model:"
+msgstr "ΞΞΏΞ½Ο„Ξ­Ξ»ΞΏ:"
+
+#: default.esml:380
+msgid "swaps normal and opt.Switch DiSEqC Cmds"
+msgstr "Ξ‘Ξ½Ο„Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞΊΞ±Ξ½ΞΏΞ½ΞΉΞΊΟΞ½ ΞΊΞ±ΞΉ opt.Switch DiSEqC ΞµΞ½Ο„ΞΏΞ»ΟΞ½."
+
+#: default.esml:340
+msgid "erase"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®"
+
+#: default.esml:333
+msgid "Sat/Position"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚"
+
+#: default.esml:467
+msgid "calc param 3 (see your motor manual or let it 00)"
+msgstr "Ο€Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏΟ‚ 3 (Ξ΄Ξ®Ο„Ξµ Ο„ΞΉΟ‚ ΞΏΞ΄Ξ·Ξ³Ξ―ΞµΟ‚ Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ® Ξ±Ο†Ξ®ΟƒΟ„ΞµΟ„ΞΏ 00)"
+
+#: default.esml:362
+msgid "save changes and use current selected LNB for the chosen satellite"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½ ΞΊΞ±ΞΉ Ο‡ΟΞ®ΟƒΞ· Ο„ΞΏΟ… ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… LNB."
+
+#: default.esml:580
+msgid "AGC"
+msgstr "AGC"
+
+#: default.esml:374
+msgid "DiSEqC Parameter:"
+msgstr "Ξ Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏΟ‚ DiSEqC:"
+
+#: default.esml:447
+msgid ""
+"save changes and use the selected LNB (in first page) for the choosen "
+"satellite"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΞΊΞ±ΞΉ Ο‡ΟΞ®ΟƒΞ· Ο„ΞΏΟ… LNB Ξ³ΞΉΞ± Ο„ΞΏΞ½ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ."
+
+#: default.esml:563
+msgid "Modulation:"
+msgstr "Ξ”ΞΉΞ±ΞΌΟΟΟ†Ο‰ΟƒΞ·"
+
+#: default.esml:361
+msgid "0,5V higher LNB Voltage (for long cables) (ok)"
+msgstr "0,5V Ο…ΟΞ·Ξ»ΟΟ„ΞµΟΞ· Ο„Ξ¬ΟƒΞ· (Ξ³ΞΉΞ± ΞΌΞ±ΞΊΟΞΉΞ¬ ΞΊΞ±Ξ»ΟΞ΄ΞΉΞ±)"
+
+#: default.esml:377
+msgid "select uncommitted input"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® LNB ΟƒΟ„Ξ·Ξ½ 'Uncommitted' ΞµΞ―ΟƒΞΏΞ΄ΞΏ."
+
+#: default.esml:488
+msgid "enable/disable check ONIT on any transponder"
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚ Ξ® ΟΟ‡ΞΉ ONIT Ξ³ΞΉΞ± ΞΊΞ¬ΞΈΞµ Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·"
+
+#: default.esml:707
+msgid "harddisk: "
+msgstr "Ξ£ΞΊΞ»Ξ·ΟΟΟ‚ Ξ΄Ξ―ΟƒΞΊΞΏΟ‚:"
+
+#: default.esml:418
+msgid "Use Motor Input Power"
+msgstr "Ξ§ΟΞ®ΟƒΞ· ΞΉΟƒΟ‡ΟΞΏΟ‚ ΟΟΟ„ΞΏΟΞ±:"
+
+#: default.esml:424
+msgid "when the motor support this, then use"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ±Ο…Ο„ΞΏΟ Ξ±Ξ½ ΞΏ ΟΟΟ„ΞΏΟΞ±Ο‚ Ο„ΞΏ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ"
+
+#: default.esml:760
+msgid "status:"
+msgstr "Ξ•Ξ―Ξ΄ΞΏΟ‚:"
+
+#: default.esml:388
+msgid "select Uncommitted Switch 4 option"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 4'"
+
+#: default.esml:489
+msgid "use BAT"
+msgstr "Ξ§ΟΞ®ΟƒΞ· BAT"
+
+#: default.esml:674
+msgid "Starttime"
+msgstr ""
+
+#: default.esml:559
+msgid "Symbolrate:"
+msgstr "Symbolrate:"
+
+#: default.esml:729
+#, fuzzy
+msgid "Set Sleeptimer"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ο‡ΟΟΞ½ΞΏΟ… Ξ»Ξ®ΞΎΞ·Ο‚"
+
+#: default.esml:325
+msgid "HTTP Download"
+msgstr "HTTP Download"
+
+#: default.esml:391
+msgid "goto prev page (LNB)"
+msgstr "Ξ ΟΟΟ‚ Ο„Ξ·Ξ½ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½Ξ· ΟƒΞµΞ»Ξ―Ξ΄Ξ± (LNB)."
+
+#: default.esml:564
+msgid "choose wished modulation (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞµΟ€ΞΉΞΈΟ…ΞΌΞ·Ο„Ξ® Ξ΄ΞΉΞ±ΞΌΟΟΟ†Ο‰ΟƒΞ· (ΞΞ, <,>)"
+
+#: default.esml:819
+#, fuzzy
+msgid "Transponders"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
+
+#: chk_blue2.esml:313
+msgid "FR "
+msgstr "Ξ“Ξ "
+
+#: default.esml:723 default.esml:747
+msgid "set recording end time and close window (ok)"
+msgstr "ΞΞ­ΟƒΞµ Ο„Ξ·Ξ½ ΟΟΞ± Ο„Ξ­Ξ»ΞΏΟ…Ο‚ ΞµΞ³ΟΞ±Ο†Ξ®Ο‚ ΞΊΞ±ΞΉ ΞΊΞ»ΞµΞ―ΟƒΞµ Ο„ΞΏ Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ"
+
+#: default.esml:424
+msgid "Use gotoXX Function"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞµΞ―Ξ±Ο‚ gotoXX"
+
+#: default.esml:341
+msgid "close Satellite Configuration"
+msgstr "ΞΞ»ΞµΞ―ΟƒΞ·ΞΌΞΏ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½"
+
+#: default.esml:354
+msgid "choose the LNB you wish to apply or edit"
+msgstr "Ξ΄ΞΉΞ±Ξ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏ LNB Ο€ΞΏΟ… ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± ΞΌΞµΟ„Ξ±Ξ²Ξ¬Ξ»Ξ»ΞµΟ„Ξµ Ξ® ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ"
+
+#: default.esml:490
+msgid "clear list before"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚"
+
+#: default.esml:657 default.esml:663 stone.esml:462 silver.esml:469
+msgid "EPG"
+msgstr "EPG"
+
+#: default.esml:824
+#, fuzzy
+msgid "edit"
+msgstr "ΞΊΞ¬Ξ½Ο„ΞΏ"
+
+#: default.esml:682
+#, fuzzy
+msgid "Sa"
+msgstr "Ξ£Ξ±Ξ²"
+
+#: default.esml:676
+msgid "for a multiple event enable this"
+msgstr ""
+
+#: default.esml:758
+msgid "connected:"
+msgstr "Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·:"
+
+#: default.esml:664
+#, fuzzy
+msgid "press ok to select another event"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ Ξ΄ΞΉΞ±Ο†ΞΏΟΞµΟ„ΞΉΞΊΞ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο„Ο‰Ξ½ 22kHz"
+
+#: default.esml:363 default.esml:448
+msgid "next page"
+msgstr "Ξ•Ο€ΟΞΌΞµΞ½ΞΏ"
+
+#: default.esml:721 default.esml:733 default.esml:745
+msgid "shutdown  "
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚"
+
+#: default.esml:547
 msgid "Symbol Rate:"
 msgstr "Symbolrate:"
 
-#: default.esml:446
+#: default.esml:460
 msgid "Transponder:"
-msgstr "Αναμεταδότης:"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
 
-#: default.esml:680 default.esml:693
+#: default.esml:723 default.esml:735 default.esml:747 src/enigma_main.cpp:5591
 msgid "set"
-msgstr "Ρύθμιση"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ·"
 
-#: default.esml:449
+#: default.esml:439
+#, fuzzy
+msgid "enter orbital position without dot (19.2&#175; = 192)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ο„Ξ·Ξ½ Ο„ΟΞΏΟ‡ΞΉΞ±ΞΊΞ® ΞΈΞ­ΟƒΞ· Ο‡Ο‰ΟΞ―Ο‚ '.'(Ο€.Ο‡. 19.2=192)"
+
+#: default.esml:463
 msgid "press left or right to move motor"
-msgstr "Πατήστε το < ή το > για να κινήσετε το ρότορα"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ο„ΞΏ < Ξ® Ο„ΞΏ > Ξ³ΞΉΞ± Ξ½Ξ± ΞΊΞΉΞ½Ξ®ΟƒΞµΟ„Ξµ Ο„ΞΏ ΟΟΟ„ΞΏΟΞ±"
 
-#: default.esml:452
+#: default.esml:466
 msgid "calc param 2 (see your motor manual or let it 00)"
-msgstr "παράμετρος 2 (δείτε τις οδηγίες του ρότορα ή αφήστετο 00)"
+msgstr "Ο€Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏΟ‚ 2 (Ξ΄ΞµΞ―Ο„Ξµ Ο„ΞΉΟ‚ ΞΏΞ΄Ξ·Ξ³Ξ―ΞµΟ‚ Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ® Ξ±Ο†Ξ®ΟƒΟ„ΞµΟ„ΞΏ 00)"
 
-#: default.esml:649
+#: default.esml:692
 msgid "select the timer type (ok)"
-msgstr "Επιλογή τύπου χρονοδιακόπτη (οk)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΟΟ€ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ΞΏk)"
 
-#: default.esml:319
+#: default.esml:335
 msgid "22Khz"
 msgstr "22Khz"
 
-#: default.esml:355
+#: default.esml:370
 msgid "MiniDiSEqC Parameter:"
-msgstr "Παράμετρος MiniDiSEqC:"
+msgstr "Ξ Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏΟ‚ MiniDiSEqC:"
 
-#: default.esml:487
+#: default.esml:499
 msgid "choose satellite/cable provider (ok)"
-msgstr "Επιλέξτε δορυφόρο που θα γίνει η ανίχνευση (<, >, OK)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ Ο€ΞΏΟ… ΞΈΞ± Ξ³Ξ―Ξ½ΞµΞΉ Ξ· Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· (<, >, OK)"
 
-#: default.esml:690
+#: default.esml:744
 msgid "o'clock"
-msgstr "η ώρα"
+msgstr "Ξ· ΟΟΞ±"
 
-#: default.esml:342
+#: default.esml:358
 msgid "LOF/H:"
 msgstr "LOF/H"
 
-#: default.esml:370
+#: default.esml:386
 msgid "select Uncommitted Switch 3 option"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 3'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 3'"
 
-#: default.esml:404
+#: default.esml:419
 msgid "motor drive speed, in degrees per second"
-msgstr "Ταχύτητα ρότορα, σε μοίρες ανά δευτερόλεπτο"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± ΟΟΟ„ΞΏΟΞ±, ΟƒΞµ ΞΌΞΏΞ―ΟΞµΟ‚ Ξ±Ξ½Ξ¬ Ξ΄ΞµΟ…Ο„ΞµΟΟΞ»ΞµΟ€Ο„ΞΏ"
 
-#: default.esml:658 src/enigma_info.cpp:47
+#: default.esml:701 src/enigma_info.cpp:50
 msgid "About..."
-msgstr "Περί..."
+msgstr "Ξ ΞµΟΞ―..."
 
-#: default.esml:622
+#: default.esml:665
 msgid "add new Timer (ok)"
-msgstr "Προσθήκη στον χρονοδιακόπτη (ok)"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ok)"
 
-#: default.esml:650
+#: default.esml:693
 msgid "to change service press ok"
-msgstr "Για να αλλαχτή η υπηρεσία πατήστε ΟΚ"
+msgstr "Ξ“ΞΉΞ± Ξ½Ξ± Ξ±Ξ»Ξ»Ξ±Ο‡Ο„Ξ® Ξ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ± Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ ΞΞ"
 
-#: default.esml:454
+#: default.esml:468
 msgid "Counter(Movement)"
-msgstr "Μετρητής (Κίνηση)"
+msgstr "ΞΞµΟ„ΟΞ·Ο„Ξ®Ο‚ (ΞΞ―Ξ½Ξ·ΟƒΞ·)"
 
-#: default.esml:458
+#: default.esml:472
 msgid "search"
-msgstr "Ανίχνευση"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·"
 
-#: default.esml:475
+#: default.esml:488
 msgid "use ONIT"
-msgstr "Χρήση ONIT"
+msgstr "Ξ§ΟΞ®ΟƒΞ· ONIT"
 
-#: default.esml:478
+#: default.esml:491
 msgid "enable/disable initiate network search"
-msgstr "Ενεργοποίηση ή όχι ανίχνευσης δικτύου"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ® ΟΟ‡ΞΉ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·Ο‚ Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
 
-#: default.esml:652
+#: default.esml:695
 msgid "scan EPG"
 msgstr ""
 
-#: default.esml:325 lib/gui/emessage.cpp:99 src/enigma_ci.cpp:220
+#: default.esml:341 lib/gui/emessage.cpp:99 src/enigma_ci.cpp:206
 msgid "OK"
 msgstr "OK"
 
-# 
 #: stone.esml:464 silver.esml:471
 msgid "audio track"
-msgstr "Επιλογή ήχου"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ®Ο‡ΞΏΟ…"
 
-#: default.esml:640
+#: default.esml:683
 #, fuzzy
 msgid "Su"
-msgstr "Κυρ"
+msgstr "ΞΟ…Ο"
 
-#: default.esml:323
+#: default.esml:339
 msgid "new"
-msgstr "Νέος"
+msgstr "ΞΞ­ΞΏΟ‚"
+
+#: default.esml:730
+#, fuzzy
+msgid "duration:"
+msgstr "Ξ”ΞΉΞ±ΞΌΟΟΟ†Ο‰ΟƒΞ·"
 
 #: chk_blue2.esml:317
 msgid "Stop "
-msgstr "Σταμάτημα"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ±"
 
-#: default.esml:636 src/timer.cpp:23
+#: default.esml:381
+#, fuzzy
+msgid "Fast DiSEqC"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ DiSEqC"
+
+#: default.esml:679 src/epgwindow.cpp:115 src/timer.cpp:143
 msgid "Wed"
-msgstr "Τετ"
+msgstr "Ξ¤ΞµΟ„"
 
-#: default.esml:536
+#: default.esml:545
 msgid "choose the FEC (left, right)"
-msgstr "Επιλογή του FEC (<, >)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΞΏΟ… FEC (<, >)"
 
-#: default.esml:360
+#: default.esml:375
 msgid "select DiSEqC repeats (ok)"
-msgstr "Επαναλήψεις εντολών DiSEqC (ok)"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ±Ξ»Ξ®ΟΞµΞΉΟ‚ ΞµΞ½Ο„ΞΏΞ»ΟΞ½ DiSEqC (ok)"
 
-#: default.esml:728
+#: default.esml:780
 msgid "Software upgrade..."
-msgstr "Αναβάθμιση λογισμικού.."
+msgstr "Ξ‘Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ· Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ.."
 
-#: default.esml:411
+#: default.esml:426
 msgid "Longitude:"
-msgstr "Γεωγραφικό μήκος:"
+msgstr "Ξ“ΞµΟ‰Ξ³ΟΞ±Ο†ΞΉΞΊΟ ΞΌΞ®ΞΊΞΏΟ‚:"
 
-#: default.esml:413 default.esml:416 default.esml:427
+#: default.esml:428 default.esml:431 default.esml:442
 msgid "choose direction"
-msgstr "Επιλογή κατεύθυνσης"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞΊΞ±Ο„ΞµΟΞΈΟ…Ξ½ΟƒΞ·Ο‚"
 
-#: default.esml:703
+#: default.esml:756
 msgid "capacity:"
-msgstr "Μέγεθος:"
+msgstr "ΞΞ­Ξ³ΞµΞΈΞΏΟ‚:"
 
-#: default.esml:759
+#: default.esml:810
 msgid "DiSEqC..."
-msgstr "Αλλαγή τύπου DiSEqC"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® Ο„ΟΟ€ΞΏΟ… DiSEqC"
 
-#: default.esml:514
+#: default.esml:526
 msgid "select skin and press ok or choose save"
-msgstr "Επιλέξτε επιφάνεια και πατήστε ΟΚ"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ± ΞΊΞ±ΞΉ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ ΞΞ"
 
-#: default.esml:451
+#: default.esml:465
 msgid "calc param 1 (see your motor manual or let it 00)"
-msgstr "παράμετρος 1 (δείτε τις οδηγίες του ρότορα ή αφήστετο 00)"
+msgstr "Ο€Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏΟ‚ 1 (Ξ΄ΞµΞ―Ο„Ξµ Ο„ΞΉΟ‚ ΞΏΞ΄Ξ·Ξ³Ξ―ΞµΟ‚ Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ® Ξ±Ο†Ξ®ΟƒΟ„ΞµΟ„ΞΏ 00)"
 
-#: default.esml:456
+#: default.esml:470
 msgid "prev page"
-msgstr "Προηγούμενο"
+msgstr "Ξ ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ"
 
-#: default.esml:643 default.esml:647
+#: default.esml:686 default.esml:690
 msgid "select day (ok)"
-msgstr "Επιλογή ημέρας (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ·ΞΌΞ­ΟΞ±Ο‚ (ok)"
 
-#: default.esml:347 default.esml:377 default.esml:433 default.esml:721
-#: default.esml:745
-msgid "cancel"
-msgstr "Ακύρωση"
-
-#: default.esml:637 src/timer.cpp:24
+#: default.esml:680 src/epgwindow.cpp:115 src/timer.cpp:143
 msgid "Thu"
-msgstr "Πεμ"
+msgstr "Ξ ΞµΞΌ"
 
-#: default.esml:348
+#: default.esml:363
 msgid "goto next page (DiSEqC)"
-msgstr "Προς επόμενη σελίδα (DiSEqC)"
+msgstr "Ξ ΟΞΏΟ‚ ΞµΟ€ΟΞΌΞµΞ½Ξ· ΟƒΞµΞ»Ξ―Ξ΄Ξ± (DiSEqC)"
 
-#: default.esml:648
+#: default.esml:503
+msgid "change circular to linear polarization"
+msgstr ""
+
+#: default.esml:733
+#, fuzzy
+msgid "shutdown the box to deepstandby (ok)"
+msgstr "ΞΞ»ΞµΞ―ΟƒΞ·ΞΌΞΏ Ο„ΞΏΟ… Ξ΄Ξ­ΞΊΟ„Ξ· ΞΌΞµΟ„Ξ¬ Ο„ΞΏ Ο„Ξ­Ξ»ΞΏΟ‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
+
+#: default.esml:691
 msgid "edit the end time (0..9, left, right)"
-msgstr "Επιλογή τέλους χρόνου (0..9, <, >)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„Ξ­Ξ»ΞΏΟ…Ο‚ Ο‡ΟΟΞ½ΞΏΟ… (0..9, <, >)"
 
-#: default.esml:635 src/timer.cpp:21
+#: default.esml:678 src/timer.cpp:1945
 msgid "Tuesday"
-msgstr "Τρίτη"
+msgstr "Ξ¤ΟΞ―Ο„Ξ·"
 
-#: default.esml:675
+#: default.esml:822
+msgid "select sat(up/down), ok(edit), green(add new), red(delete)"
+msgstr ""
+
+#: default.esml:718
 msgid "recording duration:"
-msgstr "ρύθμιση διάρκειας εγγραφής:"
+msgstr "ΟΟΞΈΞΌΞΉΟƒΞ· Ξ΄ΞΉΞ¬ΟΞΊΞµΞΉΞ±Ο‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚:"
 
-#: default.esml:651
+#: default.esml:694
 msgid "apply"
 msgstr ""
 
-#: default.esml:629
+#: default.esml:672
 #, fuzzy
 msgid "Timer Edit"
-msgstr "Χρονοδιακόπτης"
+msgstr "Ξ§ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚"
 
-#: default.esml:371
+#: default.esml:387
 msgid "U-Switch 3:"
 msgstr "U-Switch 3:"
 
-#: default.esml:638
+#: default.esml:681
 #, fuzzy
 msgid "Fr"
-msgstr "Παρ"
+msgstr "Ξ Ξ±Ο"
 
-#: default.esml:447
+#: default.esml:461
 msgid "choose the Transponder you wish to find"
-msgstr "Διαλέξτε τον αναμεταδότη που θέλετε να ανιχνεύσετε"
+msgstr "Ξ”ΞΉΞ±Ξ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ· Ο€ΞΏΟ… ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ±Ξ½ΞΉΟ‡Ξ½ΞµΟΟƒΞµΟ„Ξµ"
 
-#: default.esml:772
+#: default.esml:823
 msgid "add new Transponder to selected sat (ok)"
 msgstr ""
 
-#: default.esml:637 src/timer.cpp:22
+#: default.esml:680 src/timer.cpp:1946
 msgid "Thursday"
-msgstr "Πέμπτη"
+msgstr "Ξ Ξ­ΞΌΟ€Ο„Ξ·"
 
-#: default.esml:633
+#: default.esml:676
 #, fuzzy
 msgid "Repeated timer"
-msgstr "Ρυθμός:"
+msgstr "Ξ΅Ο…ΞΈΞΌΟΟ‚:"
 
-#: default.esml:719
+#: default.esml:735
+#, fuzzy
+msgid "set sleeptimer and close window (ok)"
+msgstr "ΞΞ­ΟƒΞµ Ο„Ξ·Ξ½ ΟΟΞ± Ο„Ξ­Ξ»ΞΏΟ…Ο‚ ΞµΞ³ΟΞ±Ο†Ξ®Ο‚ ΞΊΞ±ΞΉ ΞΊΞ»ΞµΞ―ΟƒΞµ Ο„ΞΏ Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ"
+
+#: default.esml:772
 msgid "status output:"
-msgstr "Κατάσταση:"
+msgstr "ΞΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·:"
 
-#: default.esml:364
+#: default.esml:379
 msgid "Sequence repeat"
-msgstr "Επανάληψη:"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ·:"
 
-#: default.esml:323
+#: default.esml:339
 msgid "add a new Satellite"
-msgstr "Προσθήκη νέου δορυφόρου"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ½Ξ­ΞΏΟ… Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
 
-#: default.esml:445
+#: default.esml:459
 msgid "enter stored satellite pos"
-msgstr "Δόστε θέση αποθηκευμένου δορυφόρου"
+msgstr "Ξ”ΟΟƒΟ„Ξµ ΞΈΞ­ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
 
-#: default.esml:458
+#: default.esml:472
 msgid "open transponder scan"
-msgstr "Ανίχνευση αναμεταδότη"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·"
 
-#: default.esml:700
+#: default.esml:753
 msgid "Harddisk"
-msgstr "Σκληρός Δίσκος..."
+msgstr "Ξ£ΞΊΞ»Ξ·ΟΟΟ‚ Ξ”Ξ―ΟƒΞΊΞΏΟ‚..."
 
-#: default.esml:677
+#: default.esml:720 default.esml:732
 msgid "min"
-msgstr "λεπ"
+msgstr "Ξ»ΞµΟ€"
 
-#: default.esml:407
+#: default.esml:422
 msgid "mA"
 msgstr "mA"
 
-#: default.esml:679 default.esml:692
+#: default.esml:722 default.esml:746
 msgid "goto standby after recording (ok)"
-msgstr "Σε αναμονή μετά την εγγραφή"
+msgstr "Ξ£Ξµ Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ® ΞΌΞµΟ„Ξ¬ Ο„Ξ·Ξ½ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®"
 
-#: default.esml:557
+#: default.esml:566
 msgid "Inversion:"
-msgstr "Αντιστροφή:"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΟΞΏΟ†Ξ®:"
 
-#: default.esml:434
+#: default.esml:448
 msgid "goto advanced motor setup"
-msgstr "Προχορημένες επιλογές για ρότορα"
+msgstr "Ξ ΟΞΏΟ‡ΞΏΟΞ·ΞΌΞ­Ξ½ΞµΟ‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ Ξ³ΞΉΞ± ΟΟΟ„ΞΏΟΞ±"
 
-#: default.esml:634 src/timer.cpp:21
+#: default.esml:677 src/timer.cpp:1945
 msgid "Monday"
-msgstr "Δευτέρα"
+msgstr "Ξ”ΞµΟ…Ο„Ξ­ΟΞ±"
 
-#: default.esml:639 src/timer.cpp:22
+#: default.esml:682 src/timer.cpp:1946
 msgid "Saturday"
-msgstr "Σάββατο"
+msgstr "Ξ£Ξ¬Ξ²Ξ²Ξ±Ο„ΞΏ"
 
-#: default.esml:709
+#: default.esml:762
 msgid "format"
-msgstr "φορμάρισμα"
+msgstr "Ο†ΞΏΟΞΌΞ¬ΟΞΉΟƒΞΌΞ±"
 
-#: default.esml:491
+#: default.esml:731
+#, fuzzy
+msgid "(0..9, left, right, ok)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ ΟƒΟ…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± (0..9, <, >)"
+
+#: default.esml:504
 msgid "starts the transponder scan"
-msgstr "Εκίνηση ανίνχευσης."
+msgstr "Ξ•ΞΊΞ―Ξ½Ξ·ΟƒΞ· Ξ±Ξ½Ξ―Ξ½Ο‡ΞµΟ…ΟƒΞ·Ο‚."
 
-#: default.esml:771
+#: default.esml:822
 #, fuzzy
 msgid "sat"
-msgstr "Ρύθμιση"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ·"
 
-#: default.esml:367
+#: default.esml:383
 msgid "U-Switch 1:"
 msgstr "U-Switch 1:"
 
-#: default.esml:320
+#: default.esml:336
 msgid "Voltage"
-msgstr "Τάση"
+msgstr "Ξ¤Ξ¬ΟƒΞ·"
 
-#: default.esml:478
+#: default.esml:491
 msgid "network search"
-msgstr "Έρευνα δικτύου"
+msgstr "ΞΟΞµΟ…Ξ½Ξ± Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
 
-#: default.esml:579
+#: default.esml:588
 msgid "Help"
-msgstr "Βοήθεια"
+msgstr "Ξ’ΞΏΞ®ΞΈΞµΞΉΞ±"
 
-#: lib/dvb/dvbwidgets.cpp:51
+#: lib/dvb/dvbwidgets.cpp:53
 msgid "vertical"
-msgstr "κάθετα"
+msgstr "ΞΊΞ¬ΞΈΞµΟ„Ξ±"
 
-#: lib/dvb/dvbwidgets.cpp:52
+#: lib/dvb/dvbwidgets.cpp:54
 msgid "horizontal"
-msgstr "οριζόντια"
+msgstr "ΞΏΟΞΉΞ¶ΟΞ½Ο„ΞΉΞ±"
 
-#: lib/dvb/serviceplaylist.cpp:126
+#: lib/dvb/servicedvb.cpp:540 src/sselect.cpp:357
+#, fuzzy
+msgid "Providers"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€Ξ±ΟΞΏΟ‡Ξ­Ο‰Ξ½"
+
+#: lib/dvb/servicedvb.cpp:544
+#, fuzzy
+msgid "Providers (TV)"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€Ξ±ΟΞΏΟ‡Ξ­Ο‰Ξ½"
+
+#: lib/dvb/servicedvb.cpp:548
+#, fuzzy
+msgid "Providers (Radio)"
+msgstr "Ξ‘Ξ³Ξ±Ο€Ξ·ΞΌΞ­Ξ½Ξ± (Radio)"
+
+#: lib/dvb/servicedvb.cpp:552
+#, fuzzy
+msgid "All services"
+msgstr "Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: lib/dvb/servicedvb.cpp:556
+#, fuzzy
+msgid "All services (TV)"
+msgstr "Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: lib/dvb/servicedvb.cpp:560
+#, fuzzy
+msgid "All services (Radio)"
+msgstr "Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: lib/dvb/servicedvb.cpp:566 lib/dvb/servicedvb.cpp:570 src/sselect.cpp:356
+#, fuzzy
+msgid "Satellites"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚:"
+
+#: lib/dvb/servicedvb.cpp:924
+#, fuzzy
+msgid " - bouquets"
+msgstr "Ξ§ΟΞ®ΟƒΟ„Ξ· - ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± (TV)"
+
+#: lib/dvb/servicedvb.cpp:932
+#, fuzzy
+msgid " - services"
+msgstr "Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: lib/dvb/serviceplaylist.cpp:127
 #, c-format
 msgid " (%d entries)"
-msgstr " (%d θέσεις)"
+msgstr " (%d ΞΈΞ­ΟƒΞµΞΉΟ‚)"
 
 #: lib/dvb/servicestructure.cpp:10
 msgid "root node"
-msgstr "Βάση (root)"
+msgstr "Ξ’Ξ¬ΟƒΞ· (root)"
 
 #: lib/dvb/servicestructure.cpp:11 src/enigma_mainmenu.cpp:47
 msgid "TV mode"
-msgstr "Κανάλια TV"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉΞ± TV"
 
 #: lib/dvb/servicestructure.cpp:12
 msgid "Radio Mode"
-msgstr "Κανάλια Radio"
-
-#: lib/dvb/servicestructure.cpp:13
-msgid "File Mode"
-msgstr "Αρχεία"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉΞ± Radio"
 
 #: lib/dvb/servicestructure.cpp:14
+msgid "File Mode"
+msgstr "Ξ‘ΟΟ‡ΞµΞ―Ξ±"
+
+#: lib/dvb/servicestructure.cpp:16
 msgid "TV/Radio"
 msgstr "TV/Radio"
 
-#: lib/dvb/servicemp3.cpp:145
-msgid "Connecting..."
-msgstr "Σύνδεση..."
+#: lib/dvb/servicestructure.cpp:17 src/enigma_main.cpp:5488
+#: src/sselect.cpp:358
+#, fuzzy
+msgid "Bouquets"
+msgstr "ΞΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± Ο‡ΟΞ®ΟƒΟ„Ξ·"
 
-#: lib/dvb/servicemp3.cpp:330
+#: lib/dvb/servicemp3.cpp:151
+msgid "Connecting..."
+msgstr "Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·..."
+
+#: lib/dvb/servicemp3.cpp:353
 msgid "playing..."
-msgstr "Αναπαραγωγή..."
+msgstr "Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®..."
 
 #: lib/gui/emessage.cpp:100
 msgid "Cancel"
-msgstr "Ακύρωση"
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ·"
 
 #: lib/gui/emessage.cpp:101
 msgid "Yes"
-msgstr "Ναι"
+msgstr "ΞΞ±ΞΉ"
 
 #: lib/gui/emessage.cpp:102
 msgid "No"
-msgstr "'Οχι"
+msgstr "'ΞΟ‡ΞΉ"
 
-#: lib/gui/listbox.cpp:434 lib/gui/listbox.cpp:667 src/enigma_main.cpp:2310
+#: lib/gui/listbox.cpp:678 src/enigma_main.cpp:2537
 msgid "no description available"
-msgstr "Δεν υπάρχει περιγραφή"
+msgstr "Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ο€ΞµΟΞΉΞ³ΟΞ±Ο†Ξ®"
 
-#: src/channelinfo.cpp:76
+#: lib/gui/textinput.cpp:13
+#, fuzzy
+msgid "press ok to leave edit mode, yellow=capslock"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΟ„Ξµ ΞµΟ€ΞµΞΌΞ²Ξ¬ΟƒΞµΞΉΟ‚"
+
+#: src/channelinfo.cpp:71
 msgid "Movie"
-msgstr "Ταινία"
+msgstr "Ξ¤Ξ±ΞΉΞ½Ξ―Ξ±"
 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:71
 msgid "Adventure"
-msgstr "Περιπέτεια"
+msgstr "Ξ ΞµΟΞΉΟ€Ξ­Ο„ΞµΞΉΞ±"
 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:71
 msgid "SciFi"
-msgstr "Επισ. Φαντασία"
+msgstr "Ξ•Ο€ΞΉΟƒ. Ξ¦Ξ±Ξ½Ο„Ξ±ΟƒΞ―Ξ±"
 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:71
 msgid "Comedy"
-msgstr "Κωμωδία"
+msgstr "ΞΟ‰ΞΌΟ‰Ξ΄Ξ―Ξ±"
 
-#: src/channelinfo.cpp:77
+#: src/channelinfo.cpp:72
 msgid "Soap"
-msgstr "Σαπουνόπερα"
+msgstr "Ξ£Ξ±Ο€ΞΏΟ…Ξ½ΟΟ€ΞµΟΞ±"
 
-#: src/channelinfo.cpp:77
+#: src/channelinfo.cpp:72
 msgid "Romance"
-msgstr "Ρομαντικό"
+msgstr "Ξ΅ΞΏΞΌΞ±Ξ½Ο„ΞΉΞΊΟ"
 
-#: src/channelinfo.cpp:77
+#: src/channelinfo.cpp:72
 msgid "Serious"
-msgstr "Σοβαρό"
+msgstr "Ξ£ΞΏΞ²Ξ±ΟΟ"
 
-#: src/channelinfo.cpp:77
+#: src/channelinfo.cpp:72
 msgid "Adult"
-msgstr "Για μεγάλους"
+msgstr "Ξ“ΞΉΞ± ΞΌΞµΞ³Ξ¬Ξ»ΞΏΟ…Ο‚"
 
-#: src/channelinfo.cpp:80
+#: src/channelinfo.cpp:75
 msgid "News"
-msgstr "Ειδησεογραφικό"
+msgstr "Ξ•ΞΉΞ΄Ξ·ΟƒΞµΞΏΞ³ΟΞ±Ο†ΞΉΞΊΟ"
 
-#: src/channelinfo.cpp:80
+#: src/channelinfo.cpp:75
 msgid "Weather"
-msgstr "Καιρός"
+msgstr "ΞΞ±ΞΉΟΟΟ‚"
 
-#: src/channelinfo.cpp:80
+#: src/channelinfo.cpp:75
 msgid "Magazine"
-msgstr "Μαγκαζίνο"
+msgstr "ΞΞ±Ξ³ΞΊΞ±Ξ¶Ξ―Ξ½ΞΏ"
 
-#: src/channelinfo.cpp:80
+#: src/channelinfo.cpp:75
 msgid "Documentary"
-msgstr "Ντοκιμαντέρ"
+msgstr "ΞΟ„ΞΏΞΊΞΉΞΌΞ±Ξ½Ο„Ξ­Ο"
 
-#: src/channelinfo.cpp:80
+#: src/channelinfo.cpp:75
 msgid "Discussion"
-msgstr "Συζήτηση"
+msgstr "Ξ£Ο…Ξ¶Ξ®Ο„Ξ·ΟƒΞ·"
 
-#: src/channelinfo.cpp:84
+#: src/channelinfo.cpp:79
 msgid "Show"
-msgstr "Διάφορα show"
+msgstr "Ξ”ΞΉΞ¬Ο†ΞΏΟΞ± show"
 
-#: src/channelinfo.cpp:84
+#: src/channelinfo.cpp:79
 msgid "Game Show"
-msgstr "Παιχνίδια"
+msgstr "Ξ Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±"
 
-#: src/channelinfo.cpp:84
+#: src/channelinfo.cpp:79
 msgid "Variety"
-msgstr "Ποικιλία"
+msgstr "Ξ ΞΏΞΉΞΊΞΉΞ»Ξ―Ξ±"
+
+#: src/channelinfo.cpp:79
+msgid "Talk"
+msgstr "ΞΟ€Ξ»Ξ±-ΞΟ€Ξ»Ξ±"
+
+#: src/channelinfo.cpp:83
+msgid "Sports"
+msgstr "Ξ£Ο€ΞΏΟ"
+
+#: src/channelinfo.cpp:83
+#, fuzzy
+msgid "Special Event"
+msgstr "Ξ•ΞΉΞ΄ΞΉΞΊΞ¬"
+
+#: src/channelinfo.cpp:83
+#, fuzzy
+msgid "Sports Mag."
+msgstr "Ξ£Ο€ΞΏΟ"
+
+#: src/channelinfo.cpp:83
+msgid "Football"
+msgstr ""
+
+#: src/channelinfo.cpp:83
+msgid "Tennis"
+msgstr ""
+
+#: src/channelinfo.cpp:83
+#, fuzzy
+msgid "Team Sports"
+msgstr "Ξ£Ο€ΞΏΟ"
 
 #: src/channelinfo.cpp:84
-msgid "Talk"
-msgstr "Μπλα-Μπλα"
+msgid "Athletics"
+msgstr "Ξ‘ΞΈΞ»Ξ·Ο„ΞΉΞΊΞ¬"
+
+#: src/channelinfo.cpp:84
+#, fuzzy
+msgid "Motor Sports"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
+
+#: src/channelinfo.cpp:84
+#, fuzzy
+msgid "Water Sports"
+msgstr "Ξ‘ΞΈΞ»Ξ·Ο„ΞΉΞΊΞ¬"
+
+#: src/channelinfo.cpp:84
+#, fuzzy
+msgid "Winter Sports"
+msgstr "Ξ£Ο€ΞΏΟ"
+
+#: src/channelinfo.cpp:84
+msgid "Equestrian"
+msgstr ""
+
+#: src/channelinfo.cpp:85
+msgid "Martial Sports"
+msgstr "Ξ‘ΞΈΞ»Ξ·Ο„ΞΉΞΊΞ¬"
 
 #: src/channelinfo.cpp:88
-msgid "Sports"
-msgstr "Σπορ"
+msgid "Children"
+msgstr "Ξ Ξ±ΞΉΞ΄ΞΉΞΊΞ¬"
+
+#: src/channelinfo.cpp:88
+msgid "Pre-School"
+msgstr ""
+
+#: src/channelinfo.cpp:88
+msgid "Age 6-14"
+msgstr ""
+
+#: src/channelinfo.cpp:88
+msgid "Age 10-16"
+msgstr ""
+
+#: src/channelinfo.cpp:88
+#, fuzzy
+msgid "School"
+msgstr "Ξ”ΞΉΞ¬Ο†ΞΏΟΞ± show"
 
 #: src/channelinfo.cpp:89
-msgid "Athletics"
-msgstr "Αθλητικά"
-
-#: src/channelinfo.cpp:90
-msgid "Martial Sports"
-msgstr "Αθλητικά"
+msgid "Cartoons"
+msgstr "ΞΞΉΞ½. Ξ£Ο‡Ξ­Ξ΄ΞΉΞ±"
 
 #: src/channelinfo.cpp:93
-msgid "Children"
-msgstr "Παιδικά"
+msgid "Music"
+msgstr ""
 
-#: src/channelinfo.cpp:94
-msgid "Cartoons"
-msgstr "Κιν. Σχέδια"
+#: src/channelinfo.cpp:93
+msgid "Rock/Pop"
+msgstr ""
 
-#: src/channelinfo.cpp:102
+#: src/channelinfo.cpp:93
+msgid "Classical"
+msgstr ""
+
+#: src/channelinfo.cpp:93
+#, fuzzy
+msgid "Folk"
+msgstr "OK"
+
+#: src/channelinfo.cpp:93
+msgid "Jazz"
+msgstr ""
+
+#: src/channelinfo.cpp:93
+msgid "Musical"
+msgstr ""
+
+#: src/channelinfo.cpp:93
+msgid "Ballet"
+msgstr ""
+
+#: src/channelinfo.cpp:97
 msgid "Culture"
-msgstr "Κουλτούρα"
+msgstr "ΞΞΏΟ…Ξ»Ο„ΞΏΟΟΞ±"
 
-#: src/channelinfo.cpp:103
+#: src/channelinfo.cpp:97
+msgid "Perf. Arts"
+msgstr ""
+
+#: src/channelinfo.cpp:97
+msgid "Fine Arts"
+msgstr ""
+
+#: src/channelinfo.cpp:97
+msgid "Religion"
+msgstr ""
+
+#: src/channelinfo.cpp:97
+msgid "Pop. Arts"
+msgstr ""
+
+#: src/channelinfo.cpp:97
+msgid "Literature"
+msgstr ""
+
+#: src/channelinfo.cpp:98
 msgid "Film"
-msgstr "Ταινία"
+msgstr "Ξ¤Ξ±ΞΉΞ½Ξ―Ξ±"
+
+#: src/channelinfo.cpp:98
+msgid "Experimental"
+msgstr ""
+
+#: src/channelinfo.cpp:98
+#, fuzzy
+msgid "Press"
+msgstr "Ξ ΟΟΞΏΞ΄ΞΏΟ‚:"
+
+#: src/channelinfo.cpp:98
+msgid "New Media"
+msgstr ""
+
+#: src/channelinfo.cpp:98
+msgid "Art Mag."
+msgstr ""
+
+#: src/channelinfo.cpp:98
+msgid "Fashion"
+msgstr ""
+
+#: src/channelinfo.cpp:101
+msgid "Social"
+msgstr "ΞΞΏΞΉΞ½Ο‰Ξ½ΞΉΞΊΞ¬"
+
+#: src/channelinfo.cpp:101
+msgid "Soc. Mag."
+msgstr ""
+
+#: src/channelinfo.cpp:101
+msgid "Economics"
+msgstr ""
+
+#: src/channelinfo.cpp:101
+msgid "Remark. People"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Education"
+msgstr "Ξ•ΞΊΟ€Ξ±ΞΉΞ΄ΞµΟ…Ο„ΞΉΞΊΟ"
+
+#: src/channelinfo.cpp:105
+#, fuzzy
+msgid "Nature"
+msgstr "ΞΞΏΟ…Ξ»Ο„ΞΏΟΟΞ±"
+
+#: src/channelinfo.cpp:105
+msgid "Technology"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+msgid "Medicine"
+msgstr ""
+
+#: src/channelinfo.cpp:105
+#, fuzzy
+msgid "Expeditions"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚ (ΞΈΞ­ΟƒΞ·)"
+
+#: src/channelinfo.cpp:105
+msgid "Spiritual"
+msgstr ""
 
 #: src/channelinfo.cpp:106
-msgid "Social"
-msgstr "Κοινωνικά"
+msgid "Further Ed."
+msgstr "Ξ•ΞΊΟ€Ξ±ΞΉΞ΄ΞµΟ…Ο„ΞΉΞΊΟ"
+
+#: src/channelinfo.cpp:106
+#, fuzzy
+msgid "Languages"
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ±:"
+
+#: src/channelinfo.cpp:109
+msgid "Hobbies"
+msgstr "Ξ§ΟΞΌΟ€ΞΉ"
+
+#: src/channelinfo.cpp:109
+#, fuzzy
+msgid "Travel"
+msgstr "ΞΟ€Ξ»Ξ±-ΞΟ€Ξ»Ξ±"
+
+#: src/channelinfo.cpp:109
+msgid "Handicraft"
+msgstr ""
+
+#: src/channelinfo.cpp:109
+#, fuzzy
+msgid "Motoring"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
+
+#: src/channelinfo.cpp:109
+#, fuzzy
+msgid "Fitness"
+msgstr "Ξ¦Ο‰Ο„Ξ·Ξ½ΟΟ„Ξ·Ο„Ξ±"
+
+#: src/channelinfo.cpp:109
+msgid "Cooking"
+msgstr ""
 
 #: src/channelinfo.cpp:110
-msgid "Education"
-msgstr "Εκπαιδευτικό"
-
-#: src/channelinfo.cpp:111
-msgid "Further Ed."
-msgstr "Εκπαιδευτικό"
-
-#: src/channelinfo.cpp:114
-msgid "Hobbies"
-msgstr "Χόμπι"
-
-#: src/channelinfo.cpp:115
 msgid "Shopping"
-msgstr "Τηλεαγορές"
+msgstr "Ξ¤Ξ·Ξ»ΞµΞ±Ξ³ΞΏΟΞ­Ο‚"
 
-#: src/channelinfo.cpp:118
+#: src/channelinfo.cpp:110
+#, fuzzy
+msgid "Gardening"
+msgstr "Ξ ΟΞΏΟƒΞΏΟ‡Ξ®"
+
+#: src/channelinfo.cpp:113
 msgid "Orig. Lang."
-msgstr "Αρχική Γλώσσα"
+msgstr "Ξ‘ΟΟ‡ΞΉΞΊΞ® Ξ“Ξ»ΟΟƒΟƒΞ±"
 
-#: src/channelinfo.cpp:233
+#: src/channelinfo.cpp:113
+msgid "B&W"
+msgstr ""
+
+#: src/channelinfo.cpp:113
+msgid "Unpublished"
+msgstr ""
+
+#: src/channelinfo.cpp:113
+msgid "Live"
+msgstr ""
+
+#: src/channelinfo.cpp:235
 msgid "no data for this service avail"
-msgstr "Δεν υπάρχουν πληροφορίες"
+msgstr "Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚"
 
-#: src/channelinfo.cpp:261
-msgid "Filesize: "
-msgstr "Μέγεθος αρχείου:"
+#: src/channelinfo.cpp:267
+#, fuzzy, c-format
+msgid ""
+"\n"
+"Filesize: %d MB"
+msgstr "ΞΞ­Ξ³ΞµΞΈΞΏΟ‚ Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…:"
 
-#: src/channelinfo.cpp:264
+#: src/channelinfo.cpp:268
 msgid "Filename: "
-msgstr "Όνομα αρχείου: "
+msgstr "ΞΞ½ΞΏΞΌΞ± Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…: "
 
-#: src/enigma.cpp:201
+#: src/enigma.cpp:246
 msgid ""
 "Welcome to enigma.\n"
 "\n"
 "Please do a transponder scan first.\n"
 "(mainmenu > setup > channels > transponder scan)"
 msgstr ""
-"Καλως ήρθατε στο Άινιγμα.\n"
+"ΞΞ±Ξ»Ο‰Ο‚ Ξ®ΟΞΈΞ±Ο„Ξµ ΟƒΟ„ΞΏ β€™ΞΉΞ½ΞΉΞ³ΞΌΞ±.\n"
 "\n"
-"Παρακαλώ κάντε πρώτα μία ανίχνευση για κανάλια.\n"
-"(Κυρίως Μενού > Εγκατάσταση > Κανάλια > Έρευνα αναμεταδοτων"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞΊΞ¬Ξ½Ο„Ξµ Ο€ΟΟΟ„Ξ± ΞΌΞ―Ξ± Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· Ξ³ΞΉΞ± ΞΊΞ±Ξ½Ξ¬Ξ»ΞΉΞ±.\n"
+"(ΞΟ…ΟΞ―Ο‰Ο‚ ΞΞµΞ½ΞΏΟ > Ξ•Ξ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· > ΞΞ±Ξ½Ξ¬Ξ»ΞΉΞ± > ΞΟΞµΟ…Ξ½Ξ± Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΞΏΟ„Ο‰Ξ½"
 
-#: src/enigma.cpp:203
+#: src/enigma.cpp:248
 msgid "First start of enigma"
-msgstr "Πρώτη εκκίνηση του Enigma"
+msgstr "Ξ ΟΟΟ„Ξ· ΞµΞΊΞΊΞ―Ξ½Ξ·ΟƒΞ· Ο„ΞΏΟ… Enigma"
 
-#: src/enigma_ci.cpp:48
+#: src/enigma_ci.cpp:50
 msgid "Common Interface Module - mmi"
-msgstr "Κοινή διεπαφή (CI) - mmi"
+msgstr "ΞΞΏΞΉΞ½Ξ® Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ® (CI) - mmi"
 
-#: src/enigma_ci.cpp:82
-msgid "leave CI mmi"
-msgstr "Έξοδος από το CI mmi"
-
-#: src/enigma_ci.cpp:198
+#: src/enigma_ci.cpp:184
 msgid "mmi input field"
-msgstr "Παράμετρος mmi"
+msgstr "Ξ Ξ±ΟΞ¬ΞΌΞµΟ„ΟΞΏΟ‚ mmi"
 
-#: src/enigma_ci.cpp:223
+#: src/enigma_ci.cpp:209
 msgid "send data to CI"
-msgstr "Αποστολή data στο CI"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® data ΟƒΟ„ΞΏ CI"
 
-#: src/enigma_ci.cpp:400
+#: src/enigma_ci.cpp:386
 msgid "Common Interface Modules"
-msgstr "Κοινή διεπαφή (CI)..."
+msgstr "ΞΞΏΞΉΞ½Ξ® Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ® (CI)..."
 
-#: src/enigma_ci.cpp:407
+#: src/enigma_ci.cpp:393
 msgid "Common Interface Module"
-msgstr "Κοινή διεπαφή (CI)..."
+msgstr "ΞΞΏΞΉΞ½Ξ® Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ® (CI)..."
 
-#: src/enigma_ci.cpp:413 src/enigma_ci.cpp:442
+#: src/enigma_ci.cpp:399 src/enigma_ci.cpp:428
 msgid "Reset"
-msgstr "Επανεκίνηση - Reset"
+msgstr "Ξ•Ο€Ξ±Ξ½ΞµΞΊΞ―Ξ½Ξ·ΟƒΞ· - Reset"
 
-#: src/enigma_ci.cpp:416 src/enigma_ci.cpp:445
+#: src/enigma_ci.cpp:402 src/enigma_ci.cpp:431
 msgid "reset the Common Interface module"
-msgstr "Επανεκίνηση - Reset - CI module"
+msgstr "Ξ•Ο€Ξ±Ξ½ΞµΞΊΞ―Ξ½Ξ·ΟƒΞ· - Reset - CI module"
 
-#: src/enigma_ci.cpp:422 src/enigma_ci.cpp:451
+#: src/enigma_ci.cpp:408 src/enigma_ci.cpp:437
 msgid "Init"
-msgstr "Εκίνηση - Init"
+msgstr "Ξ•ΞΊΞ―Ξ½Ξ·ΟƒΞ· - Init"
 
-#: src/enigma_ci.cpp:425 src/enigma_ci.cpp:454
+#: src/enigma_ci.cpp:411 src/enigma_ci.cpp:440
 msgid "send the ca-pmt to CI"
-msgstr "Αποστολή ca-pmt στο CI"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® ca-pmt ΟƒΟ„ΞΏ CI"
 
-#: src/enigma_ci.cpp:431 src/enigma_ci.cpp:460
+#: src/enigma_ci.cpp:417 src/enigma_ci.cpp:446
 msgid "waiting for module"
-msgstr "Αναμονή για το μόντουλ"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞΏΞ½Ξ® Ξ³ΞΉΞ± Ο„ΞΏ ΞΌΟΞ½Ο„ΞΏΟ…Ξ»"
 
-#: src/enigma_ci.cpp:434 src/enigma_ci.cpp:463
+#: src/enigma_ci.cpp:420 src/enigma_ci.cpp:449
 msgid "enter Common Interface menu (mmi)"
-msgstr "Μενού κοινής διεπαφής CI (mmi)"
+msgstr "ΞΞµΞ½ΞΏΟ ΞΊΞΏΞΉΞ½Ξ®Ο‚ Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ®Ο‚ CI (mmi)"
 
-#: src/enigma_ci.cpp:472 src/enigma_ci.cpp:481
+#: src/enigma_ci.cpp:458 src/enigma_ci.cpp:467
 msgid "leave Common Interface menu"
-msgstr "Έξοδος από το μενού CI"
+msgstr "ΞΞΎΞΏΞ΄ΞΏΟ‚ Ξ±Ο€Ο Ο„ΞΏ ΞΌΞµΞ½ΞΏΟ CI"
 
-#: src/enigma_ci.cpp:528 src/enigma_ci.cpp:534
+#: src/enigma_ci.cpp:514 src/enigma_ci.cpp:520
 msgid "resetting....please wait"
-msgstr "Επανεκίνηση... περιμένετε!"
+msgstr "Ξ•Ο€Ξ±Ξ½ΞµΞΊΞ―Ξ½Ξ·ΟƒΞ·... Ο€ΞµΟΞΉΞΌΞ­Ξ½ΞµΟ„Ξµ!"
 
-#: src/enigma_info.cpp:40
+#: src/enigma_info.cpp:41
 msgid "Infos"
-msgstr "Πληροφορίες"
+msgstr "Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚"
 
-#: src/enigma_info.cpp:43 src/enigma_main.cpp:4877 src/enigma_scan.cpp:41
-#: src/enigma_scan.cpp:175 src/enigma_setup.cpp:92
-msgid "[back]"
-msgstr "[Επιστροφή]"
+#: src/enigma_info.cpp:44 src/enigma_main.cpp:5150 src/enigma_main.cpp:5267
+#: src/enigma_main.cpp:5386 src/enigma_main.cpp:5493 src/enigma_scan.cpp:42
+#: src/enigma_scan.cpp:193 src/setup_harddisk.cpp:181 src/setup_av.cpp:40
+msgid "back"
+msgstr "[Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ®]"
 
-#: src/enigma_info.cpp:43
+#: src/enigma_info.cpp:44
 msgid "back to mainmenu"
-msgstr "Επιστροφή στο προηγούμενο μενού"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
 
-#: src/enigma_info.cpp:44
+#: src/enigma_info.cpp:46 src/streaminfo.cpp:535
 msgid "Streaminfo"
-msgstr "Λεπτομέρειες"
+msgstr "Ξ›ΞµΟ€Ο„ΞΏΞΌΞ­ΟΞµΞΉΞµΟ‚"
 
-#: src/enigma_info.cpp:44
+#: src/enigma_info.cpp:46
 msgid "open the Streaminfo"
-msgstr "Λεπτομέρειες μετάδοσης"
-
-#: src/enigma_info.cpp:46
-msgid "Show BN version"
-msgstr "Έκδοση BN..."
-
-#: src/enigma_info.cpp:46
-msgid "show the Current Version of the Betanova FW"
-msgstr "Δείχνει την έκδοση του λογισμικού BN"
-
-#: src/enigma_info.cpp:47
-msgid "open the about dialog"
-msgstr "Ανοιγμα διαλόγου Περί..."
+msgstr "Ξ›ΞµΟ€Ο„ΞΏΞΌΞ­ΟΞµΞΉΞµΟ‚ ΞΌΞµΟ„Ξ¬Ξ΄ΞΏΟƒΞ·Ο‚"
 
 #: src/enigma_info.cpp:48
+msgid "Show BN version"
+msgstr "ΞΞΊΞ΄ΞΏΟƒΞ· BN..."
+
+#: src/enigma_info.cpp:48
+msgid "show the Current Version of the Betanova FW"
+msgstr "Ξ”ΞµΞ―Ο‡Ξ½ΞµΞΉ Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ BN"
+
+#: src/enigma_info.cpp:49
 msgid "shows the satfinder"
-msgstr "Δείχνει το σήμα"
+msgstr "Ξ”ΞµΞ―Ο‡Ξ½ΞµΞΉ Ο„ΞΏ ΟƒΞ®ΞΌΞ±"
 
-#: src/enigma_info.cpp:194
+#: src/enigma_info.cpp:50
+msgid "open the about dialog"
+msgstr "Ξ‘Ξ½ΞΏΞΉΞ³ΞΌΞ± Ξ΄ΞΉΞ±Ξ»ΟΞ³ΞΏΟ… Ξ ΞµΟΞ―..."
+
+#: src/enigma_info.cpp:207
 msgid "Unknown"
-msgstr "Αγνωστο"
+msgstr "Ξ‘Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ"
 
-#: src/enigma_info.cpp:202
+#: src/enigma_info.cpp:215
 msgid "my"
-msgstr "δικό μου"
+msgstr "Ξ΄ΞΉΞΊΟ ΞΌΞΏΟ…"
 
-#: src/enigma_info.cpp:211
+#: src/enigma_info.cpp:224
 msgid "Processor: XPC823, 66MHz"
-msgstr "ΣιΠιΓιου: XPC823, 66MHz"
+msgstr "Ξ£ΞΉΞ ΞΉΞ“ΞΉΞΏΟ…: XPC823, 66MHz"
 
-#: src/enigma_info.cpp:214
+#: src/enigma_info.cpp:227
 msgid "Processor: XPC823, 80MHz"
-msgstr "ΣιΠιΓιου: XPC823, 80MHz"
+msgstr "Ξ£ΞΉΞ ΞΉΞ“ΞΉΞΏΟ…: XPC823, 80MHz"
 
-#: src/enigma_info.cpp:217
+#: src/enigma_info.cpp:230
 msgid "Processor: STB04500, 252MHz"
-msgstr "ΣιΠιΓιου: STB04500, 252MHz"
+msgstr "Ξ£ΞΉΞ ΞΉΞ“ΞΉΞΏΟ…: STB04500, 252MHz"
 
-#: src/enigma_info.cpp:220
-msgid "Processor: STB25xxx, 252MHz"
-msgstr "ΣιΠιΓιου: STB25xxx, 252MHz"
+#: src/enigma_info.cpp:233
+#, fuzzy
+msgid "Processor: STBx25xx, 252MHz"
+msgstr "Ξ£ΞΉΞ ΞΉΞ“ΞΉΞΏΟ…: STB25xxx, 252MHz"
 
-#: src/enigma_info.cpp:246
+#: src/enigma_info.cpp:259
 msgid "Frontend: Satellite"
-msgstr "Tuner: Δορυφορικό"
+msgstr "Tuner: Ξ”ΞΏΟΟ…Ο†ΞΏΟΞΉΞΊΟ"
 
-#: src/enigma_info.cpp:249
+#: src/enigma_info.cpp:262
 msgid "Frontend: Cable"
-msgstr "Tuner: Καλώδιακό"
+msgstr "Tuner: ΞΞ±Ξ»ΟΞ΄ΞΉΞ±ΞΊΟ"
 
-#: src/enigma_info.cpp:252
+#: src/enigma_info.cpp:265
 msgid "Frontend: Terrestrial"
-msgstr "Tuner: Επίγειο"
+msgstr "Tuner: Ξ•Ο€Ξ―Ξ³ΞµΞΉΞΏ"
 
-#: src/enigma_info.cpp:255
+#: src/enigma_info.cpp:268
 msgid "Frontend: Simulator"
-msgstr "Tuner: Προσομοίωση"
+msgstr "Tuner: Ξ ΟΞΏΟƒΞΏΞΌΞΏΞ―Ο‰ΟƒΞ·"
 
-#: src/enigma_info.cpp:301 src/streaminfo.cpp:268 src/streaminfo.cpp:279
-#: src/streaminfo.cpp:291 src/streaminfo.cpp:303 src/streaminfo.cpp:315
-#: src/streaminfo.cpp:439 src/streaminfo.cpp:475
+#: src/enigma_info.cpp:314 src/streaminfo.cpp:270 src/streaminfo.cpp:281
+#: src/streaminfo.cpp:293 src/streaminfo.cpp:305 src/streaminfo.cpp:317
+#: src/streaminfo.cpp:469 src/streaminfo.cpp:505
 msgid "none"
-msgstr "κανένα"
+msgstr "ΞΊΞ±Ξ½Ξ­Ξ½Ξ±"
 
-#: src/enigma_info.cpp:307 src/timer.cpp:1593 src/upgrade.cpp:239
+#: src/enigma_info.cpp:320 src/timer.cpp:2006 src/upgrade.cpp:262
 msgid "unknown"
-msgstr "Αγνωστο"
+msgstr "Ξ‘Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ"
 
-#: src/enigma_info.cpp:312
+#: src/enigma_info.cpp:325
 msgid "release"
-msgstr "Έκδοση"
+msgstr "ΞΞΊΞ΄ΞΏΟƒΞ·"
 
-#: src/enigma_info.cpp:313
+#: src/enigma_info.cpp:326
 msgid "beta"
-msgstr "βήτα"
+msgstr "Ξ²Ξ®Ο„Ξ±"
 
-#: src/enigma_info.cpp:314
+#: src/enigma_info.cpp:327
 msgid "internal"
-msgstr "εσωτερική"
+msgstr "ΞµΟƒΟ‰Ο„ΞµΟΞΉΞΊΞ®"
 
-#: src/enigma_main.cpp:73
+#: src/enigma_main.cpp:75
 msgid "enigma Zapp"
 msgstr "enigma Zapp"
 
-#: src/enigma_main.cpp:74
-msgid "show main menu"
-msgstr "Κυρίως μενού"
-
-#: src/enigma_main.cpp:75
-msgid "go to standby (press)"
-msgstr "κατάσταση αναμονής λειτουργίας (press)"
-
 #: src/enigma_main.cpp:76
-msgid "go to standby (repeat)"
-msgstr "κατάσταση αναμονής λειτουργίας (repeat)"
+msgid "show main menu"
+msgstr "ΞΟ…ΟΞ―Ο‰Ο‚ ΞΌΞµΞ½ΞΏΟ"
 
 #: src/enigma_main.cpp:77
-msgid "go to standby (release)"
-msgstr "κατάσταση αναμονής λειτουργίας (release)"
+msgid "go to standby (press)"
+msgstr "ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ (press)"
+
+#: src/enigma_main.cpp:78
+#, fuzzy
+msgid "go to standby without menu (press)"
+msgstr "ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ (press)"
 
 #: src/enigma_main.cpp:79
-msgid "show infobar"
-msgstr "Εμφάνιση μπάρας πληροφοριών"
+msgid "go to standby (repeat)"
+msgstr "ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ (repeat)"
 
 #: src/enigma_main.cpp:80
-msgid "hide infobar"
-msgstr "Απόκρυψη μπάρας πληροφοριών"
-
-#: src/enigma_main.cpp:81
-msgid "show infobar or EPG"
-msgstr "Εμφάνιση μπάρας πληροφοριών ή το EPG"
+msgid "go to standby (release)"
+msgstr "ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ (release)"
 
 #: src/enigma_main.cpp:82
-msgid "show service selector"
-msgstr "Εμφάνιση επιλογέα υπηρεσιών"
+msgid "show infobar"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞΌΟ€Ξ¬ΟΞ±Ο‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞΉΟΞ½"
 
 #: src/enigma_main.cpp:83
-msgid "show subservices/NVOD"
-msgstr "Εμφάνιση υπουπηρεσιών NVOD"
+msgid "hide infobar"
+msgstr "Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· ΞΌΟ€Ξ¬ΟΞ±Ο‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞΉΟΞ½"
 
 #: src/enigma_main.cpp:84
-msgid "show audio selector"
-msgstr "Εμφάνιση επιλογέα ήχου"
+msgid "show infobar or EPG"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞΌΟ€Ξ¬ΟΞ±Ο‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞΉΟΞ½ Ξ® Ο„ΞΏ EPG"
 
 #: src/enigma_main.cpp:85
-msgid "show Videotext"
-msgstr "Εμφάνιση Videotext"
+msgid "show service selector"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ξ± Ο…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½"
 
 #: src/enigma_main.cpp:86
-msgid "show epg schedule list"
-msgstr "Εμφάνιση χρονοδιαγράμματος EPG"
+msgid "show subservices/NVOD"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο…Ο€ΞΏΟ…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½ NVOD"
 
 #: src/enigma_main.cpp:87
-msgid "show extended info"
-msgstr "Εμφάνιση προχωρημένου (extended) EPG"
+msgid "show audio selector"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ξ± Ξ®Ο‡ΞΏΟ…"
 
 #: src/enigma_main.cpp:88
-msgid "zap to next subService"
-msgstr "Επιλογή επόμενης υπό-υπηρεσίας"
+msgid "show Videotext"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Videotext"
 
 #: src/enigma_main.cpp:89
-msgid "zap to prev subService"
-msgstr "Επιλογή πρηγούμενης υπό-υπηρεσίας"
+#, fuzzy
+msgid "show extension Plugins"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€ΟΞΏΟ‡Ο‰ΟΞ·ΞΌΞ­Ξ½ΞΏΟ… (extended) EPG"
 
 #: src/enigma_main.cpp:90
-msgid "quickzap next"
-msgstr "quickzap: επόμενο"
+msgid "show epg schedule list"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±Ξ³ΟΞ¬ΞΌΞΌΞ±Ο„ΞΏΟ‚ EPG"
 
 #: src/enigma_main.cpp:91
-msgid "quickzap prev"
-msgstr "quickzap: προηγούμενο"
+msgid "show extended info"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€ΟΞΏΟ‡Ο‰ΟΞ·ΞΌΞ­Ξ½ΞΏΟ… (extended) EPG"
+
+#: src/enigma_main.cpp:92
+msgid "zap to next subService"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞµΟ€ΟΞΌΞµΞ½Ξ·Ο‚ Ο…Ο€Ο-Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
 
 #: src/enigma_main.cpp:93
-msgid "playlist/history next"
-msgstr "Επιλογή επόμενου στη λίστα"
+msgid "zap to prev subService"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο€ΟΞ·Ξ³ΞΏΟΞΌΞµΞ½Ξ·Ο‚ Ο…Ο€Ο-Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
 
 #: src/enigma_main.cpp:94
-msgid "playlist/history prev"
-msgstr "Επιλογή προηγούμενου στη λίστα"
+msgid "quickzap next"
+msgstr "quickzap: ΞµΟ€ΟΞΌΞµΞ½ΞΏ"
 
-#: src/enigma_main.cpp:96
-msgid "service list and down"
-msgstr "Λίστα υπηρεσιών και κάτω"
+#: src/enigma_main.cpp:95
+msgid "quickzap prev"
+msgstr "quickzap: Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ"
 
 #: src/enigma_main.cpp:97
+msgid "playlist/history next"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞµΟ€ΟΞΌΞµΞ½ΞΏΟ… ΟƒΟ„Ξ· Ξ»Ξ―ΟƒΟ„Ξ±"
+
+#: src/enigma_main.cpp:98
+msgid "playlist/history prev"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏΟ… ΟƒΟ„Ξ· Ξ»Ξ―ΟƒΟ„Ξ±"
+
+#: src/enigma_main.cpp:100
+msgid "service list and down"
+msgstr "Ξ›Ξ―ΟƒΟ„Ξ± Ο…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½ ΞΊΞ±ΞΉ ΞΊΞ¬Ο„Ο‰"
+
+#: src/enigma_main.cpp:101
 msgid "service list and up"
-msgstr "Λίστα υπηρεσιών και πάνω"
+msgstr "Ξ›Ξ―ΟƒΟ„Ξ± Ο…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½ ΞΊΞ±ΞΉ Ο€Ξ¬Ξ½Ο‰"
 
-#: src/enigma_main.cpp:99 src/enigma_main.cpp:140
+#: src/enigma_main.cpp:103 src/enigma_main.cpp:147
 msgid "volume up"
-msgstr "Ένταση ήχου δυνατότερη"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· Ξ®Ο‡ΞΏΟ… Ξ΄Ο…Ξ½Ξ±Ο„ΟΟ„ΞµΟΞ·"
 
-#: src/enigma_main.cpp:100 src/enigma_main.cpp:141
+#: src/enigma_main.cpp:104 src/enigma_main.cpp:148
 msgid "volume down"
-msgstr "Ένταση ήχου σιγανότερη"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· Ξ®Ο‡ΞΏΟ… ΟƒΞΉΞ³Ξ±Ξ½ΟΟ„ΞµΟΞ·"
 
-#: src/enigma_main.cpp:101 src/enigma_main.cpp:142
+#: src/enigma_main.cpp:105 src/enigma_main.cpp:149
 msgid "toggle mute flag"
-msgstr "Φήμωση ήχου ναί/όχι"
+msgstr "Ξ¦Ξ®ΞΌΟ‰ΟƒΞ· Ξ®Ο‡ΞΏΟ… Ξ½Ξ±Ξ―/ΟΟ‡ΞΉ"
 
-#: src/enigma_main.cpp:103
+#: src/enigma_main.cpp:107
 msgid "stop playback"
-msgstr "Σταμάτημα αναπαραγωγής"
-
-#: src/enigma_main.cpp:104
-msgid "pause playback"
-msgstr "Παύση αναπαραγωγής"
-
-#: src/enigma_main.cpp:105
-msgid "resume playback"
-msgstr "Συνέχιση αναπαραγωγής"
-
-#: src/enigma_main.cpp:106 src/enigma_main.cpp:2300
-msgid "record"
-msgstr "Εγγραφή"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®Ο‚"
 
 #: src/enigma_main.cpp:108
-msgid "start skipping forward"
-msgstr "Γρήγορα βήματα μπροστά"
+msgid "pause playback"
+msgstr "Ξ Ξ±ΟΟƒΞ· Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®Ο‚"
 
 #: src/enigma_main.cpp:109
-msgid "repeat skipping forward"
-msgstr "Επανάληψη βήματων μπροστά"
+msgid "resume playback"
+msgstr "Ξ£Ο…Ξ½Ξ­Ο‡ΞΉΟƒΞ· Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®Ο‚"
 
-#: src/enigma_main.cpp:110
-msgid "stop skipping forward"
-msgstr "Σταμάτημα βηματισμού μπροστά"
+#: src/enigma_main.cpp:110 src/enigma_main.cpp:2527
+msgid "record"
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ®"
 
 #: src/enigma_main.cpp:112
-msgid "start skipping reverse"
-msgstr "Γρήγορα βήματα πίσω"
+msgid "start skipping forward"
+msgstr "Ξ“ΟΞ®Ξ³ΞΏΟΞ± Ξ²Ξ®ΞΌΞ±Ο„Ξ± ΞΌΟ€ΟΞΏΟƒΟ„Ξ¬"
 
 #: src/enigma_main.cpp:113
-msgid "repeat skipping reverse"
-msgstr "Επανάληψη βημάτων προς τα πίσω"
+msgid "repeat skipping forward"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ· Ξ²Ξ®ΞΌΞ±Ο„Ο‰Ξ½ ΞΌΟ€ΟΞΏΟƒΟ„Ξ¬"
 
 #: src/enigma_main.cpp:114
-msgid "stop skipping reverse"
-msgstr "Σταμάτημα βηματισμού πίσω"
+msgid "stop skipping forward"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± Ξ²Ξ·ΞΌΞ±Ο„ΞΉΟƒΞΌΞΏΟ ΞΌΟ€ΟΞΏΟƒΟ„Ξ¬"
 
 #: src/enigma_main.cpp:116
-msgid "open the serviceselector and show user bouquets"
-msgstr "Προβολή λίστας μπουκέτων χρήστη"
+msgid "start skipping reverse"
+msgstr "Ξ“ΟΞ®Ξ³ΞΏΟΞ± Ξ²Ξ®ΞΌΞ±Ο„Ξ± Ο€Ξ―ΟƒΟ‰"
 
 #: src/enigma_main.cpp:117
-msgid "open the serviceselector and show DVB bouquets"
-msgstr "Προβολή λίστας DVB μπουκέτων"
+msgid "repeat skipping reverse"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ· Ξ²Ξ·ΞΌΞ¬Ο„Ο‰Ξ½ Ο€ΟΞΏΟ‚ Ο„Ξ± Ο€Ξ―ΟƒΟ‰"
 
 #: src/enigma_main.cpp:118
+msgid "stop skipping reverse"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± Ξ²Ξ·ΞΌΞ±Ο„ΞΉΟƒΞΌΞΏΟ Ο€Ξ―ΟƒΟ‰"
+
+#: src/enigma_main.cpp:120
+#, fuzzy
+msgid "open the serviceselector and show bouquets"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ DVB ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½"
+
+#: src/enigma_main.cpp:121
+#, fuzzy
+msgid "open the serviceselector and show provider"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ ΞµΞ³Ξ³ΞµΞ³ΟΞ±ΞΌΞ­Ξ½Ο‰Ξ½ Ο„Ξ±ΞΉΞ½ΞΉΟΞ½"
+
+#: src/enigma_main.cpp:122
 msgid "open the serviceselector and show recorded movies"
-msgstr "Προβολή λίστας εγγεγραμένων ταινιών"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ ΞµΞ³Ξ³ΞµΞ³ΟΞ±ΞΌΞ­Ξ½Ο‰Ξ½ Ο„Ξ±ΞΉΞ½ΞΉΟΞ½"
 
-#: src/enigma_main.cpp:119
+#: src/enigma_main.cpp:123
 msgid "open the serviceselector and shows the playlist"
-msgstr "Προβολή λίστας παιξήματος (playlist)"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ Ο€Ξ±ΞΉΞΎΞ®ΞΌΞ±Ο„ΞΏΟ‚ (playlist)"
 
-#: src/enigma_main.cpp:121 src/sselect.cpp:50
+#: src/enigma_main.cpp:125 src/sselect.cpp:109
 msgid "switch to TV mode"
-msgstr "Λειτουργία TV"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± TV"
 
-#: src/enigma_main.cpp:122 src/sselect.cpp:51
+#: src/enigma_main.cpp:126 src/sselect.cpp:110
 msgid "switch to Radio mode"
-msgstr "Λειτουργία Radio"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Radio"
 
-#: src/enigma_main.cpp:123 src/sselect.cpp:52
+#: src/enigma_main.cpp:127 src/sselect.cpp:111
 msgid "switch to File mode"
-msgstr "Λειτουργία με αρχεία"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± ΞΌΞµ Ξ±ΟΟ‡ΞµΞ―Ξ±"
 
-#: src/enigma_main.cpp:125
+#: src/enigma_main.cpp:129
 msgid "toggle DVR panel"
-msgstr "Πάνελ ψηφιακού βίντεο DVR"
+msgstr "Ξ Ξ¬Ξ½ΞµΞ» ΟΞ·Ο†ΞΉΞ±ΞΊΞΏΟ Ξ²Ξ―Ξ½Ο„ΞµΞΏ DVR"
 
-#: src/enigma_main.cpp:126
+#: src/enigma_main.cpp:130
 msgid "toggle index mark"
-msgstr "Δείκτης επιλογής ναί/όχι"
+msgstr "Ξ”ΞµΞ―ΞΊΟ„Ξ·Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚ Ξ½Ξ±Ξ―/ΟΟ‡ΞΉ"
 
-#: src/enigma_main.cpp:159
+#: src/enigma_main.cpp:132
+#, fuzzy
+msgid "seek to next index mark"
+msgstr "Ξ”ΞµΞ―ΞΊΟ„Ξ·Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚ Ξ½Ξ±Ξ―/ΟΟ‡ΞΉ"
+
+#: src/enigma_main.cpp:133
+#, fuzzy
+msgid "seek to previous index mark"
+msgstr "Ξ”ΞµΞ―ΞΊΟ„Ξ·Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚ Ξ½Ξ±Ξ―/ΟΟ‡ΞΉ"
+
+#: src/enigma_main.cpp:166
 msgid "enigma standby"
-msgstr "Αναμονή λειτουργίας"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞΏΞ½Ξ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚"
 
-#: src/enigma_main.cpp:160
+#: src/enigma_main.cpp:167
 msgid "wake up enigma"
-msgstr "Επαναφορά απο αναμονή"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ±Ο†ΞΏΟΞ¬ Ξ±Ο€ΞΏ Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®"
 
-#: src/enigma_main.cpp:339
+#: src/enigma_main.cpp:440
 msgid " to "
-msgstr " προς "
+msgstr " Ο€ΟΞΏΟ‚ "
 
-#: src/enigma_main.cpp:349
+#: src/enigma_main.cpp:450
 msgid " Euro lost)"
-msgstr " Euro χάθηκε)"
+msgstr " Euro Ο‡Ξ¬ΞΈΞ·ΞΊΞµ)"
 
-#: src/enigma_main.cpp:389
+#: src/enigma_main.cpp:491
 msgid "not valid!"
-msgstr "μη επιτρεπτό!"
+msgstr "ΞΌΞ· ΞµΟ€ΞΉΟ„ΟΞµΟ€Ο„Ο!"
 
-#: src/enigma_main.cpp:408
+#: src/enigma_main.cpp:509
 msgid "NVOD"
 msgstr "NVOD"
 
-#: src/enigma_main.cpp:544
+#: src/enigma_main.cpp:645
 msgid "Video"
-msgstr "Εικόνα"
+msgstr "Ξ•ΞΉΞΊΟΞ½Ξ±"
 
-#: src/enigma_main.cpp:653
+#: src/enigma_main.cpp:754
 msgid "Audio"
-msgstr "Ήχος"
+msgstr "Ξ‰Ο‡ΞΏΟ‚"
 
-#: src/enigma_main.cpp:702
+#: src/enigma_main.cpp:803
 msgid "multiple Services"
-msgstr "πολλαπλές υπηρεσίες"
+msgstr "Ο€ΞΏΞ»Ξ»Ξ±Ο€Ξ»Ξ­Ο‚ Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
 
-#: src/enigma_main.cpp:713 src/enigma_main.cpp:764 src/enigma_main.cpp:780
+#: src/enigma_main.cpp:814 src/enigma_main.cpp:865 src/enigma_main.cpp:881
 msgid "enable quickzap"
-msgstr "Ενεργοποίηση γρήγορου ζάπινγκ (quickzap)"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ³ΟΞ®Ξ³ΞΏΟΞΏΟ… Ξ¶Ξ¬Ο€ΞΉΞ½Ξ³ΞΊ (quickzap)"
 
-#: src/enigma_main.cpp:721 src/enigma_main.cpp:4647
-msgid "add to user bouquet"
-msgstr "Προσθήκη στα μπουκέτα χρήστη"
+#: src/enigma_main.cpp:822
+#, fuzzy
+msgid "add to bouquet"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· ΟƒΟ„Ξ± ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± Ο‡ΟΞ®ΟƒΟ„Ξ·"
 
-#: src/enigma_main.cpp:760
+#: src/enigma_main.cpp:861
 msgid "disable quickzap"
-msgstr "Απενεργοποίηση γρήγορου ζάπινγκ (quickzap)"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ³ΟΞ®Ξ³ΞΏΟΞΏΟ… Ξ¶Ξ¬Ο€ΞΉΞ½Ξ³ΞΊ (quickzap)"
 
-#: src/enigma_main.cpp:848
+#: src/enigma_main.cpp:949
 msgid "Channel"
-msgstr "Κανάλι"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉ"
 
-#: src/enigma_main.cpp:853
+#: src/enigma_main.cpp:954
 msgid "Channel:"
-msgstr "Κανάλι:"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉ:"
 
-#: src/enigma_main.cpp:928
-#, c-format
-msgid "Please wait while the motor is turning to %d.%d%c ...."
-msgstr "Παρακαλώ περιμένετε, ο ρότορας μετακινήτε στο %d.%d%c ...."
+#: src/enigma_main.cpp:1029
+#, fuzzy, c-format
+msgid "Please wait while the motor is turning to %d.%dΒ°%c ...."
+msgstr "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο Ο€ΞµΟΞΉΞΌΞ­Ξ½ΞµΟ„Ξµ, ΞΏ ΟΟΟ„ΞΏΟΞ±Ο‚ ΞΌΞµΟ„Ξ±ΞΊΞΉΞ½Ξ®Ο„Ξµ ΟƒΟ„ΞΏ %d.%d%c ...."
 
-#: src/enigma_main.cpp:928
+#: src/enigma_main.cpp:1029
 msgid "Message"
-msgstr "Μήνυμα"
+msgstr "ΞΞ®Ξ½Ο…ΞΌΞ±"
 
-#: src/enigma_main.cpp:1015
+#: src/enigma_main.cpp:1121
 msgid "recorded movies"
-msgstr "Αποθηκευμένες ταινίες"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞµΟ‚ Ο„Ξ±ΞΉΞ½Ξ―ΞµΟ‚"
 
-#: src/enigma_main.cpp:1092
-msgid "User - bouquets (TV)"
-msgstr "Χρήστη - μπουκέτα (TV)"
+#: src/enigma_main.cpp:1200
+#, fuzzy
+msgid "Bouquets (TV)"
+msgstr "Ξ§ΟΞ®ΟƒΟ„Ξ· - ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± (TV)"
 
-#: src/enigma_main.cpp:1102
-msgid "User - bouquets (Radio)"
-msgstr "Χρήστη - μπουκέτα (Radio)"
+#: src/enigma_main.cpp:1211
+#, fuzzy
+msgid "Bouquets (Radio)"
+msgstr "Ξ§ΟΞ®ΟƒΟ„Ξ· - ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± (Radio)"
 
-#: src/enigma_main.cpp:1141
+#: src/enigma_main.cpp:1250
 msgid "Favourites (TV)"
-msgstr "Αγαπημένα (TV)"
+msgstr "Ξ‘Ξ³Ξ±Ο€Ξ·ΞΌΞ­Ξ½Ξ± (TV)"
 
-#: src/enigma_main.cpp:1146
+#: src/enigma_main.cpp:1255
 msgid "Favourites (Radio)"
-msgstr "Αγαπημένα (Radio)"
+msgstr "Ξ‘Ξ³Ξ±Ο€Ξ·ΞΌΞ­Ξ½Ξ± (Radio)"
 
-#: src/enigma_main.cpp:1715
+#: src/enigma_main.cpp:1863
 msgid "no EPG available"
-msgstr "Δεν υπάρχει EPG"
+msgstr "Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ EPG"
 
-#: src/enigma_main.cpp:2300
+#: src/enigma_main.cpp:2368
+#, fuzzy
+msgid "ShutdownTimer"
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚"
+
+#: src/enigma_main.cpp:2368
+#, fuzzy
+msgid "SleepTimer"
+msgstr "Ξ§ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚"
+
+#: src/enigma_main.cpp:2527
 msgid "Sorry, you cannot record this service."
-msgstr "Αυτή η υπηρεσία δεν μπορεί να εγραφεί."
+msgstr "Ξ‘Ο…Ο„Ξ® Ξ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ± Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞµΞ³ΟΞ±Ο†ΞµΞ―."
 
-#: src/enigma_main.cpp:2458
+#: src/enigma_main.cpp:2683
 msgid "Show recorded movies?"
-msgstr "Αποθηκευμένες ταινίες"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞµΟ‚ Ο„Ξ±ΞΉΞ½Ξ―ΞµΟ‚"
 
-#: src/enigma_main.cpp:2458
+#: src/enigma_main.cpp:2683
 msgid "recording finished"
-msgstr "Τέλος εγγραφής"
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
-#: src/enigma_main.cpp:2618
+#: src/enigma_main.cpp:2850
+msgid "Enter new name:"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ξ½Ξ­ΞΏ ΟΞ½ΞΏΞΌΞ±:"
+
+#: src/enigma_main.cpp:2851
+msgid "Rename entry"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΞΏΞ½ΟΞΌΞ±Ο„ΞΏΟ‚"
+
+#: src/enigma_main.cpp:2907
 msgid "Sorry, you cannot delete this service."
-msgstr "Αυτή η υπηρεσία δεν μπορεί να διαγραφεί."
+msgstr "Ξ‘Ο…Ο„Ξ® Ξ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ± Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†ΞµΞ―."
 
-#: src/enigma_main.cpp:2618
+#: src/enigma_main.cpp:2907
 msgid "delete service"
-msgstr "Διαγραφή υπηρεσίας"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
 
-#: src/enigma_main.cpp:2642
+#: src/enigma_main.cpp:2932
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
-msgstr "Σίγουρα θέλετε να διαγραφεί;"
+msgstr "Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†ΞµΞ―;"
 
-#: src/enigma_main.cpp:2642
+#: src/enigma_main.cpp:2932
 msgid "Delete recorded stream"
-msgstr "Διαγραφή γραμμένου σήματος"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ξ³ΟΞ±ΞΌΞΌΞ­Ξ½ΞΏΟ… ΟƒΞ®ΞΌΞ±Ο„ΞΏΟ‚"
 
-#: src/enigma_main.cpp:2702
+#: src/enigma_main.cpp:2951
+#, fuzzy
+msgid ""
+"This is a complete Bouquet!\n"
+"Really delete?"
+msgstr "Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†ΞµΞ―;"
+
+#: src/enigma_main.cpp:2952
+#, fuzzy
+msgid "Delete bouquet"
+msgstr "ΞΞµΟ„ΞΏΞ½ΞΏΞΌΞ±ΟƒΞ―Ξ± ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏΟ… Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#: src/enigma_main.cpp:2994
+#, fuzzy
+msgid "Enter new name for the bouquet:"
+msgstr "ΞΞ­ΞΏ ΟΞ½ΞΏΞΌΞ± Ξ³ΞΉΞ± Ο„ΞΏ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏ Ο‡ΟΞ®ΟƒΟ„Ξ·:"
+
+#: src/enigma_main.cpp:2995
+#, fuzzy
+msgid "Rename bouquet"
+msgstr "ΞΞµΟ„ΞΏΞ½ΞΏΞΌΞ±ΟƒΞ―Ξ± ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏΟ… Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#: src/enigma_main.cpp:3021
 msgid "Enter name for the new bouquet:"
-msgstr "Δώστε όνομα του νέου μπουκέτου"
+msgstr "Ξ”ΟΟƒΟ„Ξµ ΟΞ½ΞΏΞΌΞ± Ο„ΞΏΟ… Ξ½Ξ­ΞΏΟ… ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏΟ…"
 
-#: src/enigma_main.cpp:2703
-msgid "Add new user bouquet"
-msgstr "Προσθήκη νέου μπουκέτου χρήστη"
+#: src/enigma_main.cpp:3022
+#, fuzzy
+msgid "Add new bouquet"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ½Ξ­ΞΏΟ… ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏΟ… Ο‡ΟΞ®ΟƒΟ„Ξ·"
 
-#: src/enigma_main.cpp:2739
-msgid "Enter new name for the user bouquet:"
-msgstr "Νέο όνομα για το μπουκέτο χρήστη:"
-
-#: src/enigma_main.cpp:2740
-msgid "Rename user bouquet"
-msgstr "Μετονομασία μπουκέτου χρήστη"
-
-#: src/enigma_main.cpp:2773
+#: src/enigma_main.cpp:3061
 msgid "unnamed bouquet"
-msgstr "Μπουκέτο χωρίς όνομα"
+msgstr "ΞΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏ Ο‡Ο‰ΟΞ―Ο‚ ΟΞ½ΞΏΞΌΞ±"
 
-#: src/enigma_main.cpp:2817
-msgid "Enter new name:"
-msgstr "Δώστε νέο όνομα:"
+#: src/enigma_main.cpp:3164 src/timer.cpp:1725 src/parentallock.cpp:107
+#: src/parentallock.cpp:135
+msgid "parental"
+msgstr ""
 
-#: src/enigma_main.cpp:2818
-msgid "Rename entry"
-msgstr "Αλλαγή ονόματος"
-
-#: src/enigma_main.cpp:3025 src/enigma_main.cpp:3026
+#: src/enigma_main.cpp:3314 src/enigma_main.cpp:3315
 msgid "This directory doesn't contain anything playable!"
-msgstr "Αυτός ο κατάλογος δεν περιέχει κάτι που μπορεί να αναπαραχθεί!"
+msgstr "Ξ‘Ο…Ο„ΟΟ‚ ΞΏ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏΟ‚ Ξ΄ΞµΞ½ Ο€ΞµΟΞΉΞ­Ο‡ΞµΞΉ ΞΊΞ¬Ο„ΞΉ Ο€ΞΏΟ… ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ο‡ΞΈΞµΞ―!"
 
-#: src/enigma_main.cpp:3026
+#: src/enigma_main.cpp:3315
 msgid "Play"
-msgstr "Αναπαραγωγή"
+msgstr "Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®"
 
-#: src/enigma_main.cpp:3323
+#: src/enigma_main.cpp:3662
 msgid ""
 "A timer based digital recording is currently in progress!\n"
 "This stops the timer, and digital recording!"
 msgstr ""
-"Ο χρονοδιακόπτης έχει ενεργοποιήσει ψηφιακή εγγραφή.<nΑυτή η επιλογή θα "
-"σταματίσει τον χρονοδιακόπτη και την εγγραφή"
+"Ξ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚ Ξ­Ο‡ΞµΞΉ ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΞΉ ΟΞ·Ο†ΞΉΞ±ΞΊΞ® ΞµΞ³Ξ³ΟΞ±Ο†Ξ®.<nΞ‘Ο…Ο„Ξ® Ξ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® ΞΈΞ± "
+"ΟƒΟ„Ξ±ΞΌΞ±Ο„Ξ―ΟƒΞµΞΉ Ο„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· ΞΊΞ±ΞΉ Ο„Ξ·Ξ½ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®"
 
-#: src/enigma_main.cpp:3333
+#: src/enigma_main.cpp:3672
 msgid ""
 "A digital recording is currently in progress!\n"
 "This stops the digital recording!"
 msgstr ""
-"Γίνετε ψηφιακή εγγραφή αυτή τη στιγμή!\n"
-"Αυτή η επιλογή θα σταματίσει την ψηφιακή εγγραφή!"
+"Ξ“Ξ―Ξ½ΞµΟ„Ξµ ΟΞ·Ο†ΞΉΞ±ΞΊΞ® ΞµΞ³Ξ³ΟΞ±Ο†Ξ® Ξ±Ο…Ο„Ξ® Ο„Ξ· ΟƒΟ„ΞΉΞ³ΞΌΞ®!\n"
+"Ξ‘Ο…Ο„Ξ® Ξ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® ΞΈΞ± ΟƒΟ„Ξ±ΞΌΞ±Ο„Ξ―ΟƒΞµΞΉ Ο„Ξ·Ξ½ ΟΞ·Ο†ΞΉΞ±ΞΊΞ® ΞµΞ³Ξ³ΟΞ±Ο†Ξ®!"
 
-#: src/enigma_main.cpp:3343
+#: src/enigma_main.cpp:3684
 msgid ""
 "A timer event is currently in progress!\n"
 "This stops the timer event!"
 msgstr ""
-"Ο χρονοδιακόπτης είναι ενεργός!\n"
-"Αυτή η επιλογή θα σταματίσει τον χρονοδιακόπτη!"
+"Ξ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚ ΞµΞ―Ξ½Ξ±ΞΉ ΞµΞ½ΞµΟΞ³ΟΟ‚!\n"
+"Ξ‘Ο…Ο„Ξ® Ξ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® ΞΈΞ± ΟƒΟ„Ξ±ΞΌΞ±Ο„Ξ―ΟƒΞµΞΉ Ο„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·!"
 
-#: src/enigma_main.cpp:3351
+#: src/enigma_main.cpp:3692
 msgid "Really do this?"
-msgstr "Σίγουρα να γίνει αυτό;"
+msgstr "Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± Ξ½Ξ± Ξ³Ξ―Ξ½ΞµΞΉ Ξ±Ο…Ο„Ο;"
 
-#: src/enigma_main.cpp:3964 src/enigma_main.cpp:3965
+#: src/enigma_main.cpp:4350 src/enigma_main.cpp:4351
 msgid "One moment please..."
-msgstr "Παρακαλώ περιμένετε..."
+msgstr "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο Ο€ΞµΟΞΉΞΌΞ­Ξ½ΞµΟ„Ξµ..."
 
-#: src/enigma_main.cpp:3965 src/enigma_main.cpp:3970 src/enigma_main.cpp:3980
-#: src/enigma_main.cpp:3988 src/enigma_main.cpp:3995 src/enigma_main.cpp:4000
-#: src/enigma_main.cpp:4006 src/timer.cpp:1241
+#: src/enigma_main.cpp:4351 src/enigma_main.cpp:4356 src/enigma_main.cpp:4366
+#: src/enigma_main.cpp:4374 src/enigma_main.cpp:4381 src/enigma_main.cpp:4386
+#: src/enigma_main.cpp:4392 src/timer.cpp:1605
 msgid "switch"
-msgstr "Μήνυμα"
+msgstr "ΞΞ®Ξ½Ο…ΞΌΞ±"
 
-#: src/enigma_main.cpp:3969 src/enigma_main.cpp:3970
+#: src/enigma_main.cpp:4355 src/enigma_main.cpp:4356
 msgid "Service could not be found !"
-msgstr "Η υπήρεσία δεν βρέθηκε."
+msgstr "Ξ— Ο…Ο€Ξ®ΟΞµΟƒΞ―Ξ± Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ."
 
-#: src/enigma_main.cpp:3979 src/enigma_main.cpp:3980
+#: src/enigma_main.cpp:4365 src/enigma_main.cpp:4366
 msgid "This service could not be descrambled"
-msgstr "Αυτή η υπηρεσία δεν μπορεί να αποκωδικοποιηθεί"
+msgstr "Ξ‘Ο…Ο„Ξ® Ξ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ± Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ξ±Ο€ΞΏΞΊΟ‰Ξ΄ΞΉΞΊΞΏΟ€ΞΏΞΉΞ·ΞΈΞµΞ―"
 
-#: src/enigma_main.cpp:3987 src/enigma_main.cpp:3988
+#: src/enigma_main.cpp:4373 src/enigma_main.cpp:4374
 msgid "This service doesn't currently send a signal"
-msgstr "Αυτή η υπηρεσία δεν στέλνει (τώρα) σήμα."
+msgstr "Ξ‘Ο…Ο„Ξ® Ξ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ± Ξ΄ΞµΞ½ ΟƒΟ„Ξ­Ξ»Ξ½ΞµΞΉ (Ο„ΟΟΞ±) ΟƒΞ®ΞΌΞ±."
 
-#: src/enigma_main.cpp:3993 src/enigma_main.cpp:3995
+#: src/enigma_main.cpp:4379 src/enigma_main.cpp:4381
 msgid "This content could not be displayed"
-msgstr "Τα περιεχόμενα αυτά δεν μπορούν να αποδωθούν"
+msgstr "Ξ¤Ξ± Ο€ΞµΟΞΉΞµΟ‡ΟΞΌΞµΞ½Ξ± Ξ±Ο…Ο„Ξ¬ Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞΏΟΞ½ Ξ½Ξ± Ξ±Ο€ΞΏΞ΄Ο‰ΞΈΞΏΟΞ½"
 
-#: src/enigma_main.cpp:3998 src/enigma_main.cpp:4000
+#: src/enigma_main.cpp:4384 src/enigma_main.cpp:4386
 msgid "NVOD Service - please select a starttime"
-msgstr "Υπηρεσία NVOD - Παρακαλώ επιλέξτε ώρα έναρξης!"
+msgstr "Ξ¥Ο€Ξ·ΟΞµΟƒΞ―Ξ± NVOD - Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΟΟΞ± Ξ­Ξ½Ξ±ΟΞΎΞ·Ο‚!"
 
-#: src/enigma_main.cpp:4004 src/enigma_main.cpp:4006
+#: src/enigma_main.cpp:4390 src/enigma_main.cpp:4392
 msgid "Unknown error!!"
-msgstr "Μεγάλε την κάτσαμε την βάρκα!!"
+msgstr "ΞΞµΞ³Ξ¬Ξ»Ξµ Ο„Ξ·Ξ½ ΞΊΞ¬Ο„ΟƒΞ±ΞΌΞµ Ο„Ξ·Ξ½ Ξ²Ξ¬ΟΞΊΞ±!!"
 
-#: src/enigma_main.cpp:4419
+#: src/enigma_main.cpp:4852 src/sselect.cpp:364
 msgid "Playlist"
-msgstr "Λίστα αναπαραγωγής"
+msgstr "Ξ›Ξ―ΟƒΟ„Ξ± Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®Ο‚"
 
-#: src/enigma_main.cpp:4421
+#: src/enigma_main.cpp:4854
 msgid "History"
-msgstr "Ιστορία"
+msgstr "Ξ™ΟƒΟ„ΞΏΟΞ―Ξ±"
 
-#: src/enigma_main.cpp:4615
+#: src/enigma_main.cpp:5141
 msgid "Service Menu"
-msgstr "Μενού Ρυθμίσεων"
+msgstr "ΞΞµΞ½ΞΏΟ Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½"
 
-#: src/enigma_main.cpp:4618 src/enigma_main.cpp:4712
-#: src/setup_harddisk.cpp:180
-msgid "back"
-msgstr "[Επιστροφή]"
-
-#: src/enigma_main.cpp:4624
+#: src/enigma_main.cpp:5158 src/sselect.cpp:107
 msgid "add service to playlist"
-msgstr "Προσθήκη υπηρεσίας στην Playlist"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚ ΟƒΟ„Ξ·Ξ½ Playlist"
 
-#: src/enigma_main.cpp:4628
-msgid "delete"
-msgstr "*διαγραφή*"
+#: src/enigma_main.cpp:5167
+#, fuzzy
+msgid "create new bouquet"
+msgstr "Ξ”Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ± Ξ½Ξ­ΞΏΟ… ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏΟ… Ο‡ΟΞ®ΟƒΟ„Ξ·"
 
-#: src/enigma_main.cpp:4630 src/enigma_main.cpp:4632
+#: src/enigma_main.cpp:5176
+#, fuzzy
+msgid "duplicate bouquet"
+msgstr "ΞΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏ Ο‡Ο‰ΟΞ―Ο‚ ΟΞ½ΞΏΞΌΞ±"
+
+#: src/enigma_main.cpp:5178 src/enigma_main.cpp:5209
+#, fuzzy
+msgid "add to specific bouquet"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· ΟƒΟ„Ξ± ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#: src/enigma_main.cpp:5184 src/enigma_main.cpp:5188 src/sselect.cpp:334
 msgid "rename"
-msgstr "Μετονομασία"
+msgstr "ΞΞµΟ„ΞΏΞ½ΞΏΞΌΞ±ΟƒΞ―Ξ±"
 
-#: src/enigma_main.cpp:4636
+#: src/enigma_main.cpp:5191 src/sselect.cpp:332
+msgid "delete"
+msgstr "*Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®*"
+
+#: src/enigma_main.cpp:5197
 msgid "disable move mode"
-msgstr "απενεργοποίηση μετακίνησης"
+msgstr "Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΌΞµΟ„Ξ±ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚"
 
-#: src/enigma_main.cpp:4638
+#: src/enigma_main.cpp:5199
 msgid "enable move mode"
-msgstr "ενεργοποίηση μετακίνησης"
+msgstr "ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΌΞµΟ„Ξ±ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚"
 
-#: src/enigma_main.cpp:4649
-msgid "copy to user bouquets"
-msgstr "Αντιγραφή στα μπουκέτα χρήστη"
+#: src/enigma_main.cpp:5215
+#, fuzzy
+msgid "copy to bouquet list"
+msgstr "Ξ‘Ξ½Ο„ΞΉΞ³ΟΞ±Ο†Ξ® ΟƒΟ„Ξ± ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± Ο‡ΟΞ®ΟƒΟ„Ξ·"
 
-#: src/enigma_main.cpp:4657
+#: src/enigma_main.cpp:5226
 msgid "disable edit mode"
-msgstr "απενεργοποίηση επεμβάσεων"
+msgstr "Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞµΟ€ΞµΞΌΞ²Ξ¬ΟƒΞµΟ‰Ξ½"
 
-#: src/enigma_main.cpp:4659
+#: src/enigma_main.cpp:5228
 msgid "enable edit mode"
-msgstr "ενεργοποίηση επεμβάσεων"
+msgstr "ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞµΟ€ΞµΞΌΞ²Ξ¬ΟƒΞµΟ‰Ξ½"
 
-#: src/enigma_main.cpp:4664
-msgid "create new user bouquet"
-msgstr "Δημιουργία νέου μπουκέτου χρήστη"
+#: src/enigma_main.cpp:5236
+#, fuzzy
+msgid "unlock"
+msgstr "Ξ· ΟΟΞ±"
 
-#: src/enigma_main.cpp:4709
+#: src/enigma_main.cpp:5238
+#, fuzzy
+msgid "lock"
+msgstr "Ξ· ΟΟΞ±"
+
+#: src/enigma_main.cpp:5241
+#, fuzzy
+msgid "disable parental lock"
+msgstr "Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞµΟ€ΞµΞΌΞ²Ξ¬ΟƒΞµΟ‰Ξ½"
+
+#: src/enigma_main.cpp:5243
+#, fuzzy
+msgid "enable parental lock"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ LNB, Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½ ΞΊΞ±ΞΉ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
+
+#: src/enigma_main.cpp:5261
+msgid "Shutdown/Standby Menu"
+msgstr ""
+
+#: src/enigma_main.cpp:5271
+#, fuzzy
+msgid "shutdown now"
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚"
+
+#: src/enigma_main.cpp:5272
+#, fuzzy
+msgid "restart"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ·"
+
+#: src/enigma_main.cpp:5275
+#, fuzzy
+msgid "reboot now"
+msgstr "Ξ’Ξ¬ΟƒΞ· (root)"
+
+#: src/enigma_main.cpp:5277
+#, fuzzy
+msgid "goto standby"
+msgstr "ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ®Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ (press)"
+
+#: src/enigma_main.cpp:5278
+msgid "set sleeptimer"
+msgstr ""
+
+#: src/enigma_main.cpp:5380
 msgid "Record Menu"
-msgstr "Μενού εγραφών"
+msgstr "ΞΞµΞ½ΞΏΟ ΞµΞ³ΟΞ±Ο†ΟΞ½"
 
-#: src/enigma_main.cpp:4713
+#: src/enigma_main.cpp:5388
 msgid "stop record now"
-msgstr "Σταμάτημα εγγραφής"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
-#: src/enigma_main.cpp:4714
+#: src/enigma_main.cpp:5390
 msgid "set record duration"
-msgstr "ρύθμιση διάρκειας εγγραφής"
+msgstr "ΟΟΞΈΞΌΞΉΟƒΞ· Ξ΄ΞΉΞ¬ΟΞΊΞµΞΉΞ±Ο‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
-#: src/enigma_main.cpp:4715
+#: src/enigma_main.cpp:5391
 msgid "set record stop time"
-msgstr "ρύθμιση ώρα τέλους εγγραφής"
+msgstr "ΟΟΞΈΞΌΞΉΟƒΞ· ΟΟΞ± Ο„Ξ­Ξ»ΞΏΟ…Ο‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
-#: src/enigma_main.cpp:4845
+#: src/enigma_main.cpp:5465
 msgid "press ok to start edit mode"
-msgstr "Πατήστε OK για να κάνετε επεμβάσεις"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΟ„Ξµ ΞµΟ€ΞµΞΌΞ²Ξ¬ΟƒΞµΞΉΟ‚"
 
-#: src/enigma_main.cpp:4872
-msgid "User Bouquets"
-msgstr "Μπουκέτα χρήστη"
+#: src/enigma_main.cpp:5515
+#, fuzzy
+msgid "Time Correction"
+msgstr "ΞΞ±Ο„ΞµΟΞΈΟ…Ξ½ΟƒΞ·"
+
+#: src/enigma_main.cpp:5522
+#, fuzzy
+msgid "Transponder Time:"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
+
+#: src/enigma_main.cpp:5531
+#, fuzzy
+msgid "Transponder Date:"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
+
+#: src/enigma_main.cpp:5538
+msgid "New Time:"
+msgstr ""
+
+#: src/enigma_main.cpp:5551
+msgid "enter correct time here"
+msgstr ""
+
+#: src/enigma_main.cpp:5557
+msgid "New Date:"
+msgstr ""
+
+#: src/enigma_main.cpp:5566
+#, fuzzy
+msgid "press ok to select another day"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ Ξ΄ΞΉΞ±Ο†ΞΏΟΞµΟ„ΞΉΞΊΞ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο„Ο‰Ξ½ 22kHz"
+
+#: src/enigma_main.cpp:5572
+#, fuzzy
+msgid "press ok to select another month"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ Ξ΄ΞΉΞ±Ο†ΞΏΟΞµΟ„ΞΉΞΊΞ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο„Ο‰Ξ½ 22kHz"
+
+#: src/enigma_main.cpp:5581
+#, fuzzy
+msgid "press ok to select another year"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ Ξ΄ΞΉΞ±Ο†ΞΏΟΞµΟ„ΞΉΞΊΞ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο„Ο‰Ξ½ 22kHz"
+
+#: src/enigma_main.cpp:5597
+#, fuzzy
+msgid "set new time and close window"
+msgstr "ΞΞ­ΟƒΞµ Ο„Ξ·Ξ½ ΟΟΞ± Ο„Ξ­Ξ»ΞΏΟ…Ο‚ ΞµΞ³ΟΞ±Ο†Ξ®Ο‚ ΞΊΞ±ΞΉ ΞΊΞ»ΞµΞ―ΟƒΞµ Ο„ΞΏ Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ"
 
 #: src/enigma_mainmenu.cpp:24
 msgid "enigma mainmenu"
-msgstr "Επιστροφή στο προηγούμενο μενού"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
 
 #: src/enigma_mainmenu.cpp:25
 msgid "close the mainmenu"
-msgstr "Επιστροφή στο προηγούμενο μενού"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
 
 #: src/enigma_mainmenu.cpp:50
 msgid "Radio mode"
-msgstr "Κανάλια Radio"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉΞ± Radio"
 
-#: src/enigma_mainmenu.cpp:53
+#: src/enigma_mainmenu.cpp:54
 msgid "File mode"
-msgstr "Αρχεία"
+msgstr "Ξ‘ΟΟ‡ΞµΞ―Ξ±"
 
-#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1572 src/rotorconfig.cpp:909
+#: src/enigma_mainmenu.cpp:57 src/enigma_mainmenu.cpp:75 src/timer.cpp:1985
+#: src/rotorconfig.cpp:912
 msgid "Information"
-msgstr "Πληροφορίες"
+msgstr "Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚"
 
-#: src/enigma_mainmenu.cpp:59
+#: src/enigma_mainmenu.cpp:60
 msgid "Shutdown"
-msgstr "Τέλος λειτουργίας"
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚"
 
-#: src/enigma_mainmenu.cpp:62 src/enigma_setup.cpp:50
+#: src/enigma_mainmenu.cpp:63 src/enigma_mainmenu.cpp:81
+#: src/enigma_setup.cpp:54
 msgid "Setup"
-msgstr "Εγκατάσταση"
+msgstr "Ξ•Ξ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·"
 
-#: src/enigma_mainmenu.cpp:65
+#: src/enigma_mainmenu.cpp:66
 msgid "Games"
-msgstr "Παιχνίδια"
+msgstr "Ξ Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±"
 
-#: src/enigma_mainmenu.cpp:68
+#: src/enigma_mainmenu.cpp:69 src/enigma_mainmenu.cpp:87
 msgid "VCR"
-msgstr "Εξωτερικό Βίντεο"
+msgstr "Ξ•ΞΎΟ‰Ο„ΞµΟΞΉΞΊΟ Ξ’Ξ―Ξ½Ο„ΞµΞΏ"
 
-#: src/enigma_mainmenu.cpp:71
+#: src/enigma_mainmenu.cpp:72 src/enigma_mainmenu.cpp:90
 msgid "Timer"
-msgstr "Χρονοδιακόπτης"
+msgstr "Ξ§ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚"
 
-#: src/enigma_mainmenu.cpp:75 src/enigma_mainmenu.cpp:226
+#: src/enigma_mainmenu.cpp:95 src/enigma_mainmenu.cpp:266
 msgid "Mainmenu"
-msgstr "Κυρίως Μενού"
+msgstr "ΞΟ…ΟΞ―Ο‰Ο‚ ΞΞµΞ½ΞΏΟ"
 
-#: src/enigma_mainmenu.cpp:180
+#: src/enigma_mainmenu.cpp:209 src/parentallock.cpp:123
+#: src/parentallock.cpp:135
 #, fuzzy
 msgid "setup"
-msgstr "Εγκατάσταση"
+msgstr "Ξ•Ξ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·"
 
 #: src/enigma_plugins.cpp:123
 msgid "Plugins"
-msgstr "Πρόσθετα (Plugins)"
+msgstr "Ξ ΟΟΟƒΞΈΞµΟ„Ξ± (Plugins)"
 
 #: src/enigma_plugins.cpp:128
 msgid "select plugin and press ok"
-msgstr "Επιλέξτε πρόσθετο και πατήστε OK"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο€ΟΟΟƒΞΈΞµΟ„ΞΏ ΞΊΞ±ΞΉ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK"
 
-#: src/enigma_plugins.cpp:146
+#: src/enigma_plugins.cpp:148
 #, c-format
 msgid "Couldn't read plugin directory %s"
-msgstr "Δεν ειναι δυνατή η ανάγνωση του καταλόγου με τα πρόσθετα %s"
+msgstr "Ξ”ΞµΞ½ ΞµΞΉΞ½Ξ±ΞΉ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ξ½Ξ¬Ξ³Ξ½Ο‰ΟƒΞ· Ο„ΞΏΟ… ΞΊΞ±Ο„Ξ±Ξ»ΟΞ³ΞΏΟ… ΞΌΞµ Ο„Ξ± Ο€ΟΟΟƒΞΈΞµΟ„Ξ± %s"
 
-#: src/enigma_plugins.cpp:150
+#: src/enigma_plugins.cpp:152
 msgid "Error"
-msgstr "Λάθος"
+msgstr "Ξ›Ξ¬ΞΈΞΏΟ‚"
 
-#: src/enigma_plugins.cpp:195
+#: src/enigma_plugins.cpp:208
 #, c-format
 msgid "plugin '%s' not found"
-msgstr "Το πρόσθετο αρχείο '%s' δεν βρέθηκε"
+msgstr "Ξ¤ΞΏ Ο€ΟΟΟƒΞΈΞµΟ„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ '%s' Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ"
 
-#: src/enigma_plugins.cpp:198
+#: src/enigma_plugins.cpp:211
 msgid "no name given"
-msgstr "Δεν δόθηκε όνομα"
+msgstr "Ξ”ΞµΞ½ Ξ΄ΟΞΈΞ·ΞΊΞµ ΟΞ½ΞΏΞΌΞ±"
 
-#: src/enigma_scan.cpp:38
+#: src/enigma_scan.cpp:39
 msgid "Channels"
-msgstr "Κανάλια"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉΞ±"
 
-#: src/enigma_scan.cpp:41 src/enigma_setup.cpp:92
+#: src/enigma_scan.cpp:42 src/enigma_setup.cpp:96
 msgid "back to main menu"
-msgstr "Επιστροφή στο προηγούμενο μενού"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
 
-#: src/enigma_scan.cpp:42
+#: src/enigma_scan.cpp:44
 msgid "Transponder scan"
-msgstr "Ανίχνευση καναλιών"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
-#: src/enigma_scan.cpp:42
+#: src/enigma_scan.cpp:44
 msgid "goto transponder scan"
-msgstr "Προς μενού ανίχνευσης καναλιών"
+msgstr "Ξ ΟΞΏΟ‚ ΞΌΞµΞ½ΞΏΟ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·Ο‚ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
-#: src/enigma_scan.cpp:45
+#: src/enigma_scan.cpp:47
 #, fuzzy
 msgid "Transponders..."
-msgstr "Αναμεταδότης:"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
 
-#: src/enigma_scan.cpp:45
+#: src/enigma_scan.cpp:47
 #, fuzzy
 msgid "goto transponder edit dialog"
-msgstr "Προς μενού ανίχνευσης καναλιών"
+msgstr "Ξ ΟΞΏΟ‚ ΞΌΞµΞ½ΞΏΟ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·Ο‚ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
-#: src/enigma_scan.cpp:46
+#: src/enigma_scan.cpp:48
 msgid "Satellites..."
-msgstr "Δορυφόροι..."
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΞΉ..."
 
-#: src/enigma_scan.cpp:46
+#: src/enigma_scan.cpp:48
 msgid "goto satellite config"
-msgstr "Προς μενού δορυφόρων"
-
-#: src/enigma_scan.cpp:47
-msgid "Motor Setup..."
-msgstr "Ρύθμιση ρότορα"
-
-#: src/enigma_scan.cpp:47
-msgid "goto Motor Setup"
-msgstr "Προς την ρύθμιση του ρότορα"
+msgstr "Ξ ΟΞΏΟ‚ ΞΌΞµΞ½ΞΏΟ Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½"
 
 #: src/enigma_scan.cpp:49
-msgid "SID..."
-msgstr "SID..."
+msgid "Motor Setup..."
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
 
-#: src/enigma_scan.cpp:131
+#: src/enigma_scan.cpp:49
+msgid "goto Motor Setup"
+msgstr "Ξ ΟΞΏΟ‚ Ο„Ξ·Ξ½ ΟΟΞΈΞΌΞΉΟƒΞ· Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ±"
+
+#: src/enigma_scan.cpp:52
+#, fuzzy
+msgid "Bouquets..."
+msgstr "ΞΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#: src/enigma_scan.cpp:52
+#, fuzzy
+msgid "open Bouquet Setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ΄Ξ―ΞΊΟ„Ο…ΞΏΟ… Ο…Ο€ΞΏΞ»ΞΏΞ³ΞΉΟƒΟ„ΟΞ½"
+
+#: src/enigma_scan.cpp:147
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "motor is connected"
 msgstr ""
-"Παραπάνω από ένα LNB έχει ενεργοποιημένο DiSEqC 1.2, παρακαλώ επιλέξτε το "
-"LNB που είναι συνδεμένος ο ρότορας"
+"Ξ Ξ±ΟΞ±Ο€Ξ¬Ξ½Ο‰ Ξ±Ο€Ο Ξ­Ξ½Ξ± LNB Ξ­Ο‡ΞµΞΉ ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞΏ DiSEqC 1.2, Ο€Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏ "
+"LNB Ο€ΞΏΟ… ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΟ…Ξ½Ξ΄ΞµΞΌΞ­Ξ½ΞΏΟ‚ ΞΏ ΟΟΟ„ΞΏΟΞ±Ο‚"
 
-#: src/enigma_scan.cpp:131
+#: src/enigma_scan.cpp:147
 msgid "Info"
-msgstr "Πληροφορίες"
+msgstr "Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚"
 
-#: src/enigma_scan.cpp:145
+#: src/enigma_scan.cpp:161
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
-"Δεν βέθηκε LNB με DiSEqC 1.2.\n"
-"Παρακαλώ πηγαίνετε στην επιλογή δορυφόρου και ενεργοποιήστε το DiSEqC 1.2."
+"Ξ”ΞµΞ½ Ξ²Ξ­ΞΈΞ·ΞΊΞµ LNB ΞΌΞµ DiSEqC 1.2.\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο Ο€Ξ·Ξ³Ξ±Ξ―Ξ½ΞµΟ„Ξµ ΟƒΟ„Ξ·Ξ½ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ… ΞΊΞ±ΞΉ ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ®ΟƒΟ„Ξµ Ο„ΞΏ DiSEqC 1.2."
 
-#: src/enigma_scan.cpp:145 src/rotorconfig.cpp:688 src/rotorconfig.cpp:885
+#: src/enigma_scan.cpp:161 src/rotorconfig.cpp:693 src/rotorconfig.cpp:888
 msgid "Warning"
-msgstr "Προσοχή"
+msgstr "Ξ ΟΞΏΟƒΞΏΟ‡Ξ®"
 
-#: src/enigma_scan.cpp:172
+#: src/enigma_scan.cpp:190
 msgid "Select LNB"
-msgstr "Επιλογή LNB"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® LNB"
 
-#: src/enigma_scan.cpp:175
+#: src/enigma_scan.cpp:193
 msgid "go to prev menu"
-msgstr "πρός την προηγούμενη σελίδα"
+msgstr "Ο€ΟΟΟ‚ Ο„Ξ·Ξ½ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½Ξ· ΟƒΞµΞ»Ξ―Ξ΄Ξ±"
 
-#: src/enigma_scan.cpp:180
+#: src/enigma_scan.cpp:199
 #, c-format
 msgid "use LNB %d for Motor"
-msgstr "Χρήση LNB %d για το μοτέρ"
+msgstr "Ξ§ΟΞ®ΟƒΞ· LNB %d Ξ³ΞΉΞ± Ο„ΞΏ ΞΌΞΏΟ„Ξ­Ο"
 
-#: src/enigma_setup.cpp:93
+#: src/enigma_setup.cpp:96
+msgid "[back]"
+msgstr "[Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ®]"
+
+#: src/enigma_setup.cpp:97
 msgid "Channels..."
-msgstr "Κανάλια..."
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉΞ±..."
 
-#: src/enigma_setup.cpp:93
+#: src/enigma_setup.cpp:97
 msgid "open channel setup"
-msgstr "Ρυθμίσεις LNB, δορυφόρων και καναλιών"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ LNB, Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½ ΞΊΞ±ΞΉ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
-#: src/enigma_setup.cpp:95
-msgid "Network..."
-msgstr "Δίκτυο..."
+#: src/enigma_setup.cpp:98
+#, fuzzy
+msgid "A/V Setup..."
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
 
-#: src/enigma_setup.cpp:95
-msgid "open network setup"
-msgstr "Ρυθμίσεις δίκτυου υπολογιστών"
+#: src/enigma_setup.cpp:98
+#, fuzzy
+msgid "open audio/video setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΉΞΊΟΞ½Ξ±"
 
-#: src/enigma_setup.cpp:96
+#: src/enigma_setup.cpp:101
+#, fuzzy
+msgid "Communication..."
+msgstr "Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·..."
+
+#: src/enigma_setup.cpp:101
+#, fuzzy
+msgid "open communication setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΉΞΊΟΞ½Ξ±"
+
+#: src/enigma_setup.cpp:103
 msgid "OSD..."
-msgstr "Μενού..."
+msgstr "ΞΞµΞ½ΞΏΟ..."
 
-#: src/enigma_setup.cpp:96
-msgid "open OSD setup"
-msgstr "Ρυθμίσεις μενού OSD"
+#: src/enigma_setup.cpp:103
+#, fuzzy
+msgid "open on screen display setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ ΟƒΞΊΞ»Ξ·ΟΞΏΟ Ξ΄Ξ―ΟƒΞΊΞΏΟ…"
 
-#: src/enigma_setup.cpp:98
+#: src/enigma_setup.cpp:106
 msgid "LCD..."
-msgstr "Οθόνη LCD..."
+msgstr "ΞΞΈΟΞ½Ξ· LCD..."
 
-#: src/enigma_setup.cpp:98
-msgid "open LCD setup"
-msgstr "Ρυθμίσεις για την οθόνη LCD"
+#: src/enigma_setup.cpp:106
+#, fuzzy
+msgid "open LC display setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞΏΞΈΟΞ½Ξ· LCD"
 
-#: src/enigma_setup.cpp:99
+#: src/enigma_setup.cpp:108
 msgid "Remote Control..."
-msgstr "Τηλεκοντρόλ..."
+msgstr "Ξ¤Ξ·Ξ»ΞµΞΊΞΏΞ½Ο„ΟΟΞ»..."
 
-#: src/enigma_setup.cpp:99
+#: src/enigma_setup.cpp:108
 msgid "open remote control setup"
-msgstr "Ρυθμίσεις Τηλεκοντόλ"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ¤Ξ·Ξ»ΞµΞΊΞΏΞ½Ο„ΟΞ»"
 
-#: src/enigma_setup.cpp:100
-msgid "Video..."
-msgstr "Εικόνα..."
-
-#: src/enigma_setup.cpp:100
-msgid "open video setup"
-msgstr "Ρυθμίσεις για την εικόνα"
-
-#: src/enigma_setup.cpp:101
-msgid "Audio..."
-msgstr "Ήχος.."
-
-#: src/enigma_setup.cpp:101
-msgid "open audio setup"
-msgstr "Ρυθμίσεις ήχου"
-
-#: src/enigma_setup.cpp:102
+#: src/enigma_setup.cpp:109
 msgid "Skin..."
-msgstr "Επιφάνεια..."
+msgstr "Ξ•Ο€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ±..."
 
-#: src/enigma_setup.cpp:102
+#: src/enigma_setup.cpp:109
 msgid "open skin selector"
-msgstr "Επιλογή επιφάνειας μενού"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ±Ο‚ ΞΌΞµΞ½ΞΏΟ"
 
-#: src/enigma_setup.cpp:103
+#: src/enigma_setup.cpp:110
 msgid "Language..."
-msgstr "Γλώσσα..."
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ±..."
 
-#: src/enigma_setup.cpp:103
+#: src/enigma_setup.cpp:110
 msgid "open language selector"
-msgstr "Ρυθμίσεις γλώσσας μενού"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³Ξ»ΟΟƒΟƒΞ±Ο‚ ΞΌΞµΞ½ΞΏΟ"
 
-#: src/enigma_setup.cpp:104
+#: src/enigma_setup.cpp:111
+#, fuzzy
+msgid "Time Zone..."
+msgstr "Ξ•ΞΉΞΊΟΞ½Ξ±..."
+
+#: src/enigma_setup.cpp:111
+#, fuzzy
+msgid "open time zone setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΉΞΊΟΞ½Ξ±"
+
+#: src/enigma_setup.cpp:112
+#, fuzzy
+msgid "Time Correction..."
+msgstr "Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·..."
+
+#: src/enigma_setup.cpp:112
+msgid "open time correction window"
+msgstr ""
+
+#: src/enigma_setup.cpp:114
 msgid "Ngrab..."
 msgstr "Ngrab..."
 
-#: src/enigma_setup.cpp:104
+#: src/enigma_setup.cpp:114
 msgid "open ngrab config"
-msgstr "Ρυθμίσεις Ngrab"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ngrab"
 
-#: src/enigma_setup.cpp:105
+#: src/enigma_setup.cpp:116
 msgid "Extra settings..."
-msgstr "Αλλες ρυθμίσεις..."
+msgstr "Ξ‘Ξ»Ξ»ΞµΟ‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚..."
 
-#: src/enigma_setup.cpp:105
+#: src/enigma_setup.cpp:116
 msgid "open extra config"
-msgstr "Διάφορες άλλες ρυθμίσεις"
+msgstr "Ξ”ΞΉΞ¬Ο†ΞΏΟΞµΟ‚ Ξ¬Ξ»Ξ»ΞµΟ‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚"
 
-#: src/enigma_setup.cpp:106
+#: src/enigma_setup.cpp:117
 #, fuzzy
 msgid "Parental settings..."
-msgstr "Αλλες ρυθμίσεις..."
+msgstr "Ξ‘Ξ»Ξ»ΞµΟ‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚..."
 
-#: src/enigma_setup.cpp:106
+#: src/enigma_setup.cpp:117
 #, fuzzy
 msgid "open parental setup"
-msgstr "Ρυθμίσεις LNB, δορυφόρων και καναλιών"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ LNB, Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½ ΞΊΞ±ΞΉ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
-#: src/enigma_setup.cpp:108
+#: src/enigma_setup.cpp:120
 msgid "Harddisk..."
-msgstr "Σκληρός δίσκος..."
+msgstr "Ξ£ΞΊΞ»Ξ·ΟΟΟ‚ Ξ΄Ξ―ΟƒΞΊΞΏΟ‚..."
 
-#: src/enigma_setup.cpp:108
+#: src/enigma_setup.cpp:120
 msgid "open harddisk setup"
-msgstr "Ρυθμίσεις σκληρού δίσκου"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ ΟƒΞΊΞ»Ξ·ΟΞΏΟ Ξ΄Ξ―ΟƒΞΊΞΏΟ…"
 
-#: src/enigma_setup.cpp:110
+#: src/enigma_setup.cpp:123
 msgid "Common Interface..."
-msgstr "Κοινή διεπαφή (CI)..."
+msgstr "ΞΞΏΞΉΞ½Ξ® Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ® (CI)..."
 
-#: src/enigma_setup.cpp:110
-msgid "show CI Menu"
-msgstr "Ρυθμίσεις CI"
+#: src/enigma_setup.cpp:123
+#, fuzzy
+msgid "open common interface menu"
+msgstr "ΞΞΎΞΏΞ΄ΞΏΟ‚ Ξ±Ο€Ο Ο„ΞΏ ΞΌΞµΞ½ΞΏΟ CI"
 
-#: src/enigma_setup.cpp:112
+#: src/enigma_setup.cpp:125
 msgid "Upgrade..."
-msgstr "Αναβάθμιση..."
+msgstr "Ξ‘Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·..."
 
-#: src/enigma_setup.cpp:112
+#: src/enigma_setup.cpp:125
 msgid "upgrade firmware"
-msgstr "Αναβάθμιση λογισμικού από το internet."
+msgstr "Ξ‘Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ· Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ Ξ±Ο€Ο Ο„ΞΏ internet."
 
-#: src/enigma_setup.cpp:114
-msgid "RF-Modulator..."
-msgstr "Διαμορφωτής RF"
+#: src/enigma_setup.cpp:213
+#, fuzzy
+msgid ""
+"You have to restart enigma to apply the new skin\n"
+"Restart now?"
+msgstr "Ξ ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΟ„Ξµ ΞµΟ€Ξ±Ξ½ΞµΞΊΞ―Ξ½Ξ·ΟƒΞ· Ξ³ΞΉΞ± Ξ½Ξ± Ξ±Ξ»Ξ»Ξ¬ΞΎΞµΞΉ Ξ· ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ±."
 
-#: src/enigma_setup.cpp:114
-msgid "setup modulator"
-msgstr "Ρύθμιση διαμορφωτή"
-
-#: src/enigma_setup.cpp:115
-msgid "Video calibration..."
-msgstr "Ρυθμίσεις εικόνας ..."
-
-#: src/enigma_setup.cpp:115
-msgid "show calibration picture"
-msgstr "Εικόνα ρυθμίσεων"
-
-#: src/enigma_setup.cpp:204
-msgid "You have to reboot to apply the new skin"
-msgstr "Πρέπει να κάνετε επανεκίνηση για να αλλάξει η επιφάνεια."
-
-#: src/enigma_setup.cpp:204
+#: src/enigma_setup.cpp:213
 msgid "Skin changed"
-msgstr "Η επιφάνεια άλλαξε"
+msgstr "Ξ— ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ± Ξ¬Ξ»Ξ»Ξ±ΞΎΞµ"
 
-#: src/enigma_setup.cpp:264
+#: src/enigma_setup.cpp:291
 msgid "sorry, no harddisks found!"
-msgstr "Δεν βρέθηκαν σκληροί δίσκοι!"
+msgstr "Ξ”ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞ±Ξ½ ΟƒΞΊΞ»Ξ·ΟΞΏΞ― Ξ΄Ξ―ΟƒΞΊΞΏΞΉ!"
 
-#: src/enigma_setup.cpp:264
+#: src/enigma_setup.cpp:291
 msgid "Harddisk setup..."
-msgstr "Ρυθμίσεις σκληρού δίσκου..."
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ ΟƒΞΊΞ»Ξ·ΟΞΏΟ Ξ΄Ξ―ΟƒΞΊΞΏΟ…..."
 
-#: src/epgwindow.cpp:27
-msgid "EPG selector"
-msgstr "Επιλογέας λίστας EPG"
+#: src/enigma_setup.cpp:378
+msgid "To change time correction you must tune first to any transponder"
+msgstr ""
 
-#: src/epgwindow.cpp:28 src/enigma_event.cpp:20
-msgid "add this event as DVR Event to timer list"
-msgstr "Προσθήκη αυτού του γεγονότος στον χρονοδιακόπτη DVR"
+#: src/enigma_setup.cpp:378
+msgid "time correction change error"
+msgstr ""
 
-#: src/epgwindow.cpp:29 src/enigma_event.cpp:21
-msgid "add this event as NGRAB Event to timer list"
-msgstr "Προσθήκη αυτού του γεγονότος στον χρονοδιακόπτη NGRAB"
+#: src/epgwindow.cpp:115 src/timer.cpp:143
+msgid "Sun"
+msgstr "ΞΟ…Ο"
 
-# 
-#: src/epgwindow.cpp:30 src/enigma_event.cpp:22
-msgid "add this event as simple Switch Event to timer list"
-msgstr "Προσθήκη αυτού του γεγονότος στον χρονοδιακόπτη απλής επιλογής"
+#: src/epgwindow.cpp:115 src/timer.cpp:143
+msgid "Mon"
+msgstr "Ξ”ΞµΟ…"
 
-#: src/epgwindow.cpp:31 src/enigma_event.cpp:23
-msgid "remove this event from timer list"
-msgstr "Διαγραφή του γεγονότος από τον χρονοδιακόπτη"
+#: src/epgwindow.cpp:115 src/timer.cpp:143
+msgid "Fri"
+msgstr "Ξ Ξ±Ο"
+
+#: src/epgwindow.cpp:115 src/timer.cpp:143
+msgid "Sat"
+msgstr "Ξ£Ξ±Ξ²"
+
+#: src/epgwindow.cpp:177
+#, fuzzy
+msgid "EPG - "
+msgstr "EPG"
 
 #: src/satconfig.cpp:59
 msgid "one single satellite"
-msgstr "Μόνο ένας δορυφόρος"
+msgstr "ΞΟΞ½ΞΏ Ξ­Ξ½Ξ±Ο‚ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ‚"
 
 #: src/satconfig.cpp:59
 msgid "one directly connected LNB"
-msgstr "Ένα LNB απευθείας συνδεμένο"
+msgstr "ΞΞ½Ξ± LNB Ξ±Ο€ΞµΟ…ΞΈΞµΞ―Ξ±Ο‚ ΟƒΟ…Ξ½Ξ΄ΞµΞΌΞ­Ξ½ΞΏ"
 
 #: src/satconfig.cpp:60
 msgid "2 satellites via DiSEqC A/B"
-msgstr "2 δορυφόροι με DiSEqC A/B"
+msgstr "2 Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΞΉ ΞΌΞµ DiSEqC A/B"
 
 #: src/satconfig.cpp:60
 msgid "2 LNBs via DiSEqC"
-msgstr "2 LNB με DiSEqC"
+msgstr "2 LNB ΞΌΞµ DiSEqC"
 
 #: src/satconfig.cpp:61
 msgid "4 satellites via DiSEqC OPT A/B"
-msgstr "4 δορυφόροι μέσω DiSEqC A/B"
+msgstr "4 Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΞΉ ΞΌΞ­ΟƒΟ‰ DiSEqC A/B"
 
 #: src/satconfig.cpp:61
 msgid "4 LNBs via DiSEqC"
-msgstr "4 LNBs μέσω DiSEqC"
+msgstr "4 LNBs ΞΌΞ­ΟƒΟ‰ DiSEqC"
 
 #: src/satconfig.cpp:62
 msgid "many satellites via DiSEqC Rotor"
-msgstr "Πολλοί δορυφόροι μέσω DiSEqC ρότορα"
+msgstr "Ξ ΞΏΞ»Ξ»ΞΏΞ― Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΞΉ ΞΌΞ­ΟƒΟ‰ DiSEqC ΟΟΟ„ΞΏΟΞ±"
 
 #: src/satconfig.cpp:62
 msgid "1 LNB with DiSEqC Rotor"
-msgstr "1 LNB με DiSEqC ρότορα"
+msgstr "1 LNB ΞΌΞµ DiSEqC ΟΟΟ„ΞΏΟΞ±"
 
 #: src/satconfig.cpp:63
 msgid "non-standard user defined configuration..."
-msgstr "Μή στάνταρ ρύθμιση χρήστη..."
+msgstr "ΞΞ® ΟƒΟ„Ξ¬Ξ½Ο„Ξ±Ο ΟΟΞΈΞΌΞΉΟƒΞ· Ο‡ΟΞ®ΟƒΟ„Ξ·..."
 
 #: src/satconfig.cpp:63
 msgid "special"
-msgstr "Ειδικά"
+msgstr "Ξ•ΞΉΞ΄ΞΉΞΊΞ¬"
 
-#: src/satconfig.cpp:127
+#: src/satconfig.cpp:129
 msgid ""
 "Configuration contains some elements\n"
 "which don't fit into new DiSEqC-Type. Drop these items?"
 msgstr ""
-"Οι επιλογές περιέχουν ρυθμίσεις \n"
-"που δεν αφορούν την νέα επιλογή DiSEqC.  Να διαγραφούν;"
+"ΞΞΉ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ Ο€ΞµΟΞΉΞ­Ο‡ΞΏΟ…Ξ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ \n"
+"Ο€ΞΏΟ… Ξ΄ΞµΞ½ Ξ±Ο†ΞΏΟΞΏΟΞ½ Ο„Ξ·Ξ½ Ξ½Ξ­Ξ± ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® DiSEqC.  ΞΞ± Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†ΞΏΟΞ½;"
 
-#: src/satconfig.cpp:127
+#: src/satconfig.cpp:129
 msgid "Change DiSEqC-Type..."
-msgstr "Αλλαγή τύπου DiSEqC"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® Ο„ΟΟ€ΞΏΟ… DiSEqC"
 
-#: src/satconfig.cpp:287
+#: src/satconfig.cpp:289
 msgid "direct connection"
-msgstr "άμεση σύνδεση"
+msgstr "Ξ¬ΞΌΞµΟƒΞ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ·"
 
-#: src/satconfig.cpp:624
+#: src/satconfig.cpp:630
 msgid "press ok to select another satellite, or delete this satellite"
-msgstr "Με OK επιλέγετε άλλον δορυφόρο ή διαγράφετε αυτόν"
+msgstr "ΞΞµ OK ΞµΟ€ΞΉΞ»Ξ­Ξ³ΞµΟ„Ξµ Ξ¬Ξ»Ξ»ΞΏΞ½ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ Ξ® Ξ΄ΞΉΞ±Ξ³ΟΞ¬Ο†ΞµΟ„Ξµ Ξ±Ο…Ο„ΟΞ½"
 
-#: src/satconfig.cpp:644
+#: src/satconfig.cpp:650
 msgid "press ok to goto LNB config"
-msgstr "Πατήστε OK, για να περάσετε στην ρύθμιση των LNB"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK, Ξ³ΞΉΞ± Ξ½Ξ± Ο€ΞµΟΞ¬ΟƒΞµΟ„Ξµ ΟƒΟ„Ξ·Ξ½ ΟΟΞΈΞΌΞΉΟƒΞ· Ο„Ο‰Ξ½ LNB"
 
-#: src/satconfig.cpp:662
+#: src/satconfig.cpp:668
 msgid "press ok to select another 22kHz mode"
-msgstr "Πατήστε OK για να επιλέξετε διαφορετική λειτουργία των 22kHz"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ Ξ΄ΞΉΞ±Ο†ΞΏΟΞµΟ„ΞΉΞΊΞ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο„Ο‰Ξ½ 22kHz"
 
-#: src/satconfig.cpp:663
+#: src/satconfig.cpp:669
 msgid "22kHz signal is automatically switched"
-msgstr "Αυτόματη χρήση σήματος 22kHz"
+msgstr "Ξ‘Ο…Ο„ΟΞΌΞ±Ο„Ξ· Ο‡ΟΞ®ΟƒΞ· ΟƒΞ®ΞΌΞ±Ο„ΞΏΟ‚ 22kHz"
 
-#: src/satconfig.cpp:664
+#: src/satconfig.cpp:670
 msgid "22kHz is always enabled (high band)"
-msgstr "Μόνιμα ενεργά 22kHz (πάνω μπάντα)"
+msgstr "ΞΟΞ½ΞΉΞΌΞ± ΞµΞ½ΞµΟΞ³Ξ¬ 22kHz (Ο€Ξ¬Ξ½Ο‰ ΞΌΟ€Ξ¬Ξ½Ο„Ξ±)"
 
-#: src/satconfig.cpp:665
+#: src/satconfig.cpp:671
 msgid "22kHz is always disabled (low band)"
-msgstr "Μόνιμα χωρίς 22kHz (κάτω μπάντα)"
+msgstr "ΞΟΞ½ΞΉΞΌΞ± Ο‡Ο‰ΟΞ―Ο‚ 22kHz (ΞΊΞ¬Ο„Ο‰ ΞΌΟ€Ξ¬Ξ½Ο„Ξ±)"
 
-#: src/satconfig.cpp:675
+#: src/satconfig.cpp:681
 msgid "press ok to select another LNB Voltage mode"
-msgstr "Πατήστε OK για να επιλέξετε την τάση του LNB"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΟ„Ξµ Ο„Ξ·Ξ½ Ο„Ξ¬ΟƒΞ· Ο„ΞΏΟ… LNB"
 
-#: src/satconfig.cpp:676
+#: src/satconfig.cpp:682
 msgid "Voltage is automatically changed"
-msgstr "Αυτόματη επιλογή τάσης"
+msgstr "Ξ‘Ο…Ο„ΟΞΌΞ±Ο„Ξ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® Ο„Ξ¬ΟƒΞ·Ο‚"
 
-#: src/satconfig.cpp:677
+#: src/satconfig.cpp:683
 msgid "Voltage is always 14V (vertical)"
-msgstr "Μόνιμα 14V (κάθετα)"
+msgstr "ΞΟΞ½ΞΉΞΌΞ± 14V (ΞΊΞ¬ΞΈΞµΟ„Ξ±)"
 
-#: src/satconfig.cpp:678
+#: src/satconfig.cpp:684
 msgid "Voltage is always 18V (horizontal)"
-msgstr "Μόνιμα 18V (οριζόντια)"
+msgstr "ΞΟΞ½ΞΉΞΌΞ± 18V (ΞΏΟΞΉΞ¶ΟΞ½Ο„ΞΉΞ±)"
 
-#: src/satconfig.cpp:679
+#: src/satconfig.cpp:685
 msgid "Voltage is always off"
-msgstr "Μόνιμα χωρίς τάση (0V)"
+msgstr "ΞΟΞ½ΞΉΞΌΞ± Ο‡Ο‰ΟΞ―Ο‚ Ο„Ξ¬ΟƒΞ· (0V)"
 
-#: src/satconfig.cpp:949
+#: src/satconfig.cpp:958
 msgid "New"
-msgstr "Νέο"
+msgstr "ΞΞ­ΞΏ"
 
-#: src/satconfig.cpp:999 src/satconfig.cpp:1045 src/satconfig.cpp:1055
+#: src/satconfig.cpp:1009 src/satconfig.cpp:1055 src/satconfig.cpp:1065
 msgid "None"
-msgstr "Χωρίς"
-
-#: src/satconfig.cpp:999
-msgid "sends no tone burst"
-msgstr "Δεν στέλνει ριπή τόνου (tone burst)"
-
-#: src/satconfig.cpp:1000
-msgid "sends modulated tone burst"
-msgstr "Στέλνει διαμορφωμένη ριπή τόνου (modulated tone burst)"
-
-#: src/satconfig.cpp:1001
-msgid "sends unmodulated tone burst"
-msgstr "Στέλνει μη διαμορφωμένη ριπή τόνου (Unmodulated tone burst)"
-
-#: src/satconfig.cpp:1008
-msgid "Disable DiSEqC"
-msgstr "Χωρίς DiSEqC"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚"
 
 #: src/satconfig.cpp:1009
-msgid "Use DiSEqC Version 1.0"
-msgstr "Χρήση DiSEqC Version 1.0"
+msgid "sends no tone burst"
+msgstr "Ξ”ΞµΞ½ ΟƒΟ„Ξ­Ξ»Ξ½ΞµΞΉ ΟΞΉΟ€Ξ® Ο„ΟΞ½ΞΏΟ… (tone burst)"
 
 #: src/satconfig.cpp:1010
-msgid "Use DiSEqC Version 1.1"
-msgstr "Χρήση DiSEqC Version 1.1"
+msgid "sends modulated tone burst"
+msgstr "Ξ£Ο„Ξ­Ξ»Ξ½ΞµΞΉ Ξ΄ΞΉΞ±ΞΌΞΏΟΟ†Ο‰ΞΌΞ­Ξ½Ξ· ΟΞΉΟ€Ξ® Ο„ΟΞ½ΞΏΟ… (modulated tone burst)"
 
 #: src/satconfig.cpp:1011
-msgid "Use DiSEqC Version 1.2"
-msgstr "Χρήση DiSEqC Version 1.2"
+msgid "sends unmodulated tone burst"
+msgstr "Ξ£Ο„Ξ­Ξ»Ξ½ΞµΞΉ ΞΌΞ· Ξ΄ΞΉΞ±ΞΌΞΏΟΟ†Ο‰ΞΌΞ­Ξ½Ξ· ΟΞΉΟ€Ξ® Ο„ΟΞ½ΞΏΟ… (Unmodulated tone burst)"
+
+#: src/satconfig.cpp:1018
+msgid "Disable DiSEqC"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ DiSEqC"
 
 #: src/satconfig.cpp:1019
-msgid "sends DiSEqC cmd A/A"
-msgstr "Αποστολή DiSEqC cmd A/A"
+msgid "Use DiSEqC Version 1.0"
+msgstr "Ξ§ΟΞ®ΟƒΞ· DiSEqC Version 1.0"
 
 #: src/satconfig.cpp:1020
-msgid "sends DiSEqC cmd A/B"
-msgstr "Αποστολή DiSEqC cmd A/B"
+msgid "Use DiSEqC Version 1.1"
+msgstr "Ξ§ΟΞ®ΟƒΞ· DiSEqC Version 1.1"
 
 #: src/satconfig.cpp:1021
-msgid "sends DiSEqC cmd B/A"
-msgstr "Αποστολή DiSEqC cmd B/A"
-
-#: src/satconfig.cpp:1022
-msgid "sends DiSEqC cmd B/B"
-msgstr "Αποστολή DiSEqC cmd B/B"
-
-#: src/satconfig.cpp:1023
-msgid "sends no committed DiSEqC cmd"
-msgstr "Μη αποστολή εντολής committed DiSEqC"
-
-#: src/satconfig.cpp:1024
-msgid "sends switch cmd 1"
-msgstr "Αποστολή switch cmd 1"
-
-#: src/satconfig.cpp:1025
-msgid "sends switch cmd 2"
-msgstr "Αποστολή switch cmd 2"
-
-#: src/satconfig.cpp:1026
-msgid "sends switch cmd 3"
-msgstr "Αποστολή switch cmd 3"
-
-#: src/satconfig.cpp:1027
-msgid "sends switch cmd 4"
-msgstr "Αποστολή switch cmd 4"
-
-#: src/satconfig.cpp:1028
-msgid "sends switch cmd 5"
-msgstr "Αποστολή switch cmd 5"
+msgid "Use DiSEqC Version 1.2"
+msgstr "Ξ§ΟΞ®ΟƒΞ· DiSEqC Version 1.2"
 
 #: src/satconfig.cpp:1029
-msgid "sends switch cmd 6"
-msgstr "Αποστολή switch cmd 6"
+msgid "sends DiSEqC cmd A/A"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® DiSEqC cmd A/A"
 
 #: src/satconfig.cpp:1030
-msgid "sends switch cmd 7"
-msgstr "Αποστολή switch cmd 7"
+msgid "sends DiSEqC cmd A/B"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® DiSEqC cmd A/B"
 
 #: src/satconfig.cpp:1031
-msgid "sends switch cmd 8"
-msgstr "Αποστολή switch cmd 8"
+msgid "sends DiSEqC cmd B/A"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® DiSEqC cmd B/A"
 
 #: src/satconfig.cpp:1032
-msgid "sends switch cmd 9"
-msgstr "Αποστολή switch cmd 9"
+msgid "sends DiSEqC cmd B/B"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® DiSEqC cmd B/B"
 
 #: src/satconfig.cpp:1033
-msgid "sends switch cmd 10"
-msgstr "Αποστολή switch cmd 10"
+msgid "sends no committed DiSEqC cmd"
+msgstr "ΞΞ· Ξ±Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® ΞµΞ½Ο„ΞΏΞ»Ξ®Ο‚ committed DiSEqC"
 
 #: src/satconfig.cpp:1034
-msgid "sends switch cmd 11"
-msgstr "Αποστολή switch cmd 11"
+msgid "sends switch cmd 1"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 1"
 
 #: src/satconfig.cpp:1035
-msgid "sends switch cmd 12"
-msgstr "Αποστολή switch cmd 12"
+msgid "sends switch cmd 2"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 2"
 
 #: src/satconfig.cpp:1036
-msgid "sends switch cmd 13"
-msgstr "Αποστολή switch cmd 13"
+msgid "sends switch cmd 3"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 3"
 
 #: src/satconfig.cpp:1037
-msgid "sends switch cmd 14"
-msgstr "Αποστολή switch cmd 14"
+msgid "sends switch cmd 4"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 4"
 
 #: src/satconfig.cpp:1038
-msgid "sends switch cmd 15"
-msgstr "Αποστολή switch cmd 15"
+msgid "sends switch cmd 5"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 5"
 
 #: src/satconfig.cpp:1039
-msgid "sends switch cmd 16"
-msgstr "Αποστολή switch cmd 16"
+msgid "sends switch cmd 6"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 6"
+
+#: src/satconfig.cpp:1040
+msgid "sends switch cmd 7"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 7"
+
+#: src/satconfig.cpp:1041
+msgid "sends switch cmd 8"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 8"
+
+#: src/satconfig.cpp:1042
+msgid "sends switch cmd 9"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 9"
+
+#: src/satconfig.cpp:1043
+msgid "sends switch cmd 10"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 10"
+
+#: src/satconfig.cpp:1044
+msgid "sends switch cmd 11"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 11"
 
 #: src/satconfig.cpp:1045
-msgid "sends no DiSEqC repeats"
-msgstr "Χωρίς επανάληψη εντολής DiSEqC"
+msgid "sends switch cmd 12"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 12"
 
 #: src/satconfig.cpp:1046
-msgid "One"
-msgstr "Μία"
-
-#: src/satconfig.cpp:1046
-msgid "sends one repeat"
-msgstr "Στέλνει μία επανάληψη"
+msgid "sends switch cmd 13"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 13"
 
 #: src/satconfig.cpp:1047
-msgid "Two"
-msgstr "Δύο"
-
-#: src/satconfig.cpp:1047
-msgid "sends two repeats"
-msgstr "Στέλνει δύο επαναλήψεις"
+msgid "sends switch cmd 14"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 14"
 
 #: src/satconfig.cpp:1048
-msgid "Three"
-msgstr "Τρείς"
+msgid "sends switch cmd 15"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 15"
 
-#: src/satconfig.cpp:1048
-msgid "sends three repeats"
-msgstr "Στέλνει τρείς επαναλήψεις"
+#: src/satconfig.cpp:1049
+msgid "sends switch cmd 16"
+msgstr "Ξ‘Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® switch cmd 16"
 
-# 
 #: src/satconfig.cpp:1055
+msgid "sends no DiSEqC repeats"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ ΞµΟ€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ· ΞµΞ½Ο„ΞΏΞ»Ξ®Ο‚ DiSEqC"
+
+#: src/satconfig.cpp:1056
+msgid "One"
+msgstr "ΞΞ―Ξ±"
+
+#: src/satconfig.cpp:1056
+msgid "sends one repeat"
+msgstr "Ξ£Ο„Ξ­Ξ»Ξ½ΞµΞΉ ΞΌΞ―Ξ± ΞµΟ€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ·"
+
+#: src/satconfig.cpp:1057
+msgid "Two"
+msgstr "Ξ”ΟΞΏ"
+
+#: src/satconfig.cpp:1057
+msgid "sends two repeats"
+msgstr "Ξ£Ο„Ξ­Ξ»Ξ½ΞµΞΉ Ξ΄ΟΞΏ ΞµΟ€Ξ±Ξ½Ξ±Ξ»Ξ®ΟΞµΞΉΟ‚"
+
+#: src/satconfig.cpp:1058
+msgid "Three"
+msgstr "Ξ¤ΟΞµΞ―Ο‚"
+
+#: src/satconfig.cpp:1058
+msgid "sends three repeats"
+msgstr "Ξ£Ο„Ξ­Ξ»Ξ½ΞµΞΉ Ο„ΟΞµΞ―Ο‚ ΞµΟ€Ξ±Ξ½Ξ±Ξ»Ξ®ΟΞµΞΉΟ‚"
+
+#: src/satconfig.cpp:1065
 msgid "sends no uncommitted switch command"
-msgstr "Μη αποστολή 'Uncommitted' εντολής"
+msgstr "ΞΞ· Ξ±Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® 'Uncommitted' ΞµΞ½Ο„ΞΏΞ»Ξ®Ο‚"
 
-#: src/satconfig.cpp:1056
+#: src/satconfig.cpp:1066
 msgid "Input 1"
-msgstr "Είσοδος 1"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 1"
 
-#: src/satconfig.cpp:1056
+#: src/satconfig.cpp:1066
 msgid "select uncommitted switch Input 1"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 1'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 1'"
 
-#: src/satconfig.cpp:1057
+#: src/satconfig.cpp:1067
 msgid "Input 2"
-msgstr "Είσοδος 2"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 2"
 
-#: src/satconfig.cpp:1057
+#: src/satconfig.cpp:1067
 msgid "select uncommitted switch Input 2"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 2'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 2'"
 
-#: src/satconfig.cpp:1058
+#: src/satconfig.cpp:1068
 msgid "Input 3"
-msgstr "Είσοδος 3"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 3"
 
-#: src/satconfig.cpp:1058
+#: src/satconfig.cpp:1068
 msgid "select uncommitted switch Input 3"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 3'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 3'"
 
-#: src/satconfig.cpp:1059
+#: src/satconfig.cpp:1069
 msgid "Input 4"
-msgstr "Είσοδος 4"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 4"
 
-#: src/satconfig.cpp:1059
+#: src/satconfig.cpp:1069
 msgid "select uncommitted switch Input 4"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 4'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 4'"
 
-#: src/satconfig.cpp:1060
+#: src/satconfig.cpp:1070
 msgid "Input 5"
-msgstr "Είσοδος 5"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 5"
 
-#: src/satconfig.cpp:1060
+#: src/satconfig.cpp:1070
 msgid "select uncommitted switch Input 5"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 5'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 5'"
 
-#: src/satconfig.cpp:1061
+#: src/satconfig.cpp:1071
 msgid "Input 6"
-msgstr "Είσοδος 6"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 6"
 
-#: src/satconfig.cpp:1061
+#: src/satconfig.cpp:1071
 msgid "select uncommitted switch Input 6"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 6'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 6'"
 
-#: src/satconfig.cpp:1062
+#: src/satconfig.cpp:1072
 msgid "Input 7"
-msgstr "Είσοδος 7"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 7"
 
-#: src/satconfig.cpp:1062
+#: src/satconfig.cpp:1072
 msgid "select uncommitted switch Input 7"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 7'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 7'"
 
-#: src/satconfig.cpp:1063
+#: src/satconfig.cpp:1073
 msgid "Input 8"
-msgstr "Είσοδος 8"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 8"
 
-#: src/satconfig.cpp:1063
+#: src/satconfig.cpp:1073
 msgid "select uncommitted switch Input 8"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 8'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 8'"
 
-#: src/satconfig.cpp:1064
+#: src/satconfig.cpp:1074
 msgid "Input 9"
-msgstr "Είσοδος 9"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 9"
 
-#: src/satconfig.cpp:1064
+#: src/satconfig.cpp:1074
 msgid "select uncommitted switch Input 9"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 9'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 9'"
 
-#: src/satconfig.cpp:1065
+#: src/satconfig.cpp:1075
 msgid "Input 10"
-msgstr "Είσοδος 10"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 10"
 
-#: src/satconfig.cpp:1065
+#: src/satconfig.cpp:1075
 msgid "select uncommitted switch Input 10"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 10'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 10'"
 
-#: src/satconfig.cpp:1066
+#: src/satconfig.cpp:1076
 msgid "Input 11"
-msgstr "Είσοδος 11"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 11"
 
-#: src/satconfig.cpp:1066
+#: src/satconfig.cpp:1076
 msgid "select uncommitted switch Input 11"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 11'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 11'"
 
-#: src/satconfig.cpp:1067
+#: src/satconfig.cpp:1077
 msgid "Input 12"
-msgstr "Είσοδος 12"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 12"
 
-#: src/satconfig.cpp:1067
+#: src/satconfig.cpp:1077
 msgid "select uncommitted switch Input 12"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 12'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 12'"
 
-#: src/satconfig.cpp:1068
+#: src/satconfig.cpp:1078
 msgid "Input 13"
-msgstr "Είσοδος 13"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 13"
 
-#: src/satconfig.cpp:1068
+#: src/satconfig.cpp:1078
 msgid "select uncommitted switch Input 13"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 13'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 13'"
 
-#: src/satconfig.cpp:1069
+#: src/satconfig.cpp:1079
 msgid "Input 14"
-msgstr "Είσοδος 14"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 14"
 
-#: src/satconfig.cpp:1069
+#: src/satconfig.cpp:1079
 msgid "select uncommitted switch Input 14"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 14'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 14'"
 
-#: src/satconfig.cpp:1070
+#: src/satconfig.cpp:1080
 msgid "Input 15"
-msgstr "Είσοδος 15"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 15"
 
-#: src/satconfig.cpp:1070
+#: src/satconfig.cpp:1080
 msgid "select uncommitted switch Input 15"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 15'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 15'"
 
-#: src/satconfig.cpp:1071
+#: src/satconfig.cpp:1081
 msgid "Input 16"
-msgstr "Είσοδος 16"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚ 16"
 
-#: src/satconfig.cpp:1071
+#: src/satconfig.cpp:1081
 msgid "select uncommitted switch Input 16"
-msgstr "Επιλογή διακόπτη 'Uncommitted Switch 16'"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· 'Uncommitted Switch 16'"
 
-#: src/scan.cpp:37
+#: src/scan.cpp:38
 msgid "auto scan"
-msgstr "Αυτόματη ανίχνευση"
+msgstr "Ξ‘Ο…Ο„ΟΞΌΞ±Ο„Ξ· Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·"
 
-#: src/scan.cpp:37
+#: src/scan.cpp:38
 msgid "open automatic transponder scan"
-msgstr "Προς μενού αυτόματης ανίχνευσης καναλιών"
-
-#: src/scan.cpp:38
-msgid "manual scan.."
-msgstr "Απλή ανίχνευση"
-
-#: src/scan.cpp:38
-msgid "open manual transponder scan"
-msgstr "Προς μενού σύνθετης ανίχνευσης καναλιών"
+msgstr "Ξ ΟΞΏΟ‚ ΞΌΞµΞ½ΞΏΟ Ξ±Ο…Ο„ΟΞΌΞ±Ο„Ξ·Ο‚ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·Ο‚ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
 #: src/scan.cpp:39
-msgid "leave transponder scan"
-msgstr "Επιστροφή στο προηγούμενο μενού"
+msgid "manual scan.."
+msgstr "Ξ‘Ο€Ξ»Ξ® Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·"
 
-#: src/scan.cpp:245
+#: src/scan.cpp:39
+msgid "open manual transponder scan"
+msgstr "Ξ ΟΞΏΟ‚ ΞΌΞµΞ½ΞΏΟ ΟƒΟΞ½ΞΈΞµΟ„Ξ·Ο‚ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·Ο‚ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
+
+#: src/scan.cpp:40
+msgid "leave transponder scan"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
+
+#: src/scan.cpp:219
 msgid ""
 "To begin searching for a valid satellite press OK, or choose your desired "
 "satellite manually and press OK"
 msgstr ""
-"Γιά να ξεκινήση η ανίχνευση επιλέξτε τον επιθυμητό δορυφόρο και πατήστε OK"
+"Ξ“ΞΉΞ¬ Ξ½Ξ± ΞΎΞµΞΊΞΉΞ½Ξ®ΟƒΞ· Ξ· Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ ΞµΟ€ΞΉΞΈΟ…ΞΌΞ·Ο„Ο Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ ΞΊΞ±ΞΉ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK"
 
-#: src/scan.cpp:248
+#: src/scan.cpp:222
 msgid ""
 "To begin searching for a valid cable provider press OK, or choose your "
 "desired cable provider manually and press OK"
 msgstr ""
-"Γιά να ξεκινήσει η ανίχνευση επιλέξτε τον επιθυμητό παροχέα και πατήστε OK"
+"Ξ“ΞΉΞ¬ Ξ½Ξ± ΞΎΞµΞΊΞΉΞ½Ξ®ΟƒΞµΞΉ Ξ· Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ ΞµΟ€ΞΉΞΈΟ…ΞΌΞ·Ο„Ο Ο€Ξ±ΟΞΏΟ‡Ξ­Ξ± ΞΊΞ±ΞΉ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK"
 
-#: src/scan.cpp:315
+#: src/scan.cpp:294
 msgid ""
 "A valid transponder has been found. Verify that the right network is selected"
-msgstr "Σήμα βρέθηκε. Επιβεβαιώστε ότι ο σωστός δορυφόρος είναι επιλεγμένος"
+msgstr "Ξ£Ξ®ΞΌΞ± Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ. Ξ•Ο€ΞΉΞ²ΞµΞ²Ξ±ΞΉΟΟƒΟ„Ξµ ΟΟ„ΞΉ ΞΏ ΟƒΟ‰ΟƒΟ„ΟΟ‚ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ‚ ΞµΞ―Ξ½Ξ±ΞΉ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ‚"
 
-#: src/scan.cpp:377
+#: src/scan.cpp:362
 msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try manual search if its some obscure satellite/"
 "network."
 msgstr ""
-"Όλοι οι γνωστοί αναμεταδότες δοκιμάστηκαν αλλα σήμα δεν βρέθηκε. Παρακαλώ "
-"ελένξτε τις παραμέτρους της κεραίας ή δοκιμάστε την χειροκίνητη ανίχνευση."
+"ΞΞ»ΞΏΞΉ ΞΏΞΉ Ξ³Ξ½Ο‰ΟƒΟ„ΞΏΞ― Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„ΞµΟ‚ Ξ΄ΞΏΞΊΞΉΞΌΞ¬ΟƒΟ„Ξ·ΞΊΞ±Ξ½ Ξ±Ξ»Ξ»Ξ± ΟƒΞ®ΞΌΞ± Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ. Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο "
+"ΞµΞ»Ξ­Ξ½ΞΎΟ„Ξµ Ο„ΞΉΟ‚ Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΞΏΟ…Ο‚ Ο„Ξ·Ο‚ ΞΊΞµΟΞ±Ξ―Ξ±Ο‚ Ξ® Ξ΄ΞΏΞΊΞΉΞΌΞ¬ΟƒΟ„Ξµ Ο„Ξ·Ξ½ Ο‡ΞµΞΉΟΞΏΞΊΞ―Ξ½Ξ·Ο„Ξ· Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·."
 
-#: src/scan.cpp:385
+#: src/scan.cpp:370
 msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try another satellite/network."
 msgstr ""
-"Όλοι οι γνωστοί αναμεταδότες δοκιμάστηκαν αλλα σήμα δεν βρέθηκε. Παρακαλώ "
-"ελένξτε τις παραμέτρους της κεραίας ή δοκιμάστε άλλο δορυφόρο."
+"ΞΞ»ΞΏΞΉ ΞΏΞΉ Ξ³Ξ½Ο‰ΟƒΟ„ΞΏΞ― Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„ΞµΟ‚ Ξ΄ΞΏΞΊΞΉΞΌΞ¬ΟƒΟ„Ξ·ΞΊΞ±Ξ½ Ξ±Ξ»Ξ»Ξ± ΟƒΞ®ΞΌΞ± Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ. Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο "
+"ΞµΞ»Ξ­Ξ½ΞΎΟ„Ξµ Ο„ΞΉΟ‚ Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΞΏΟ…Ο‚ Ο„Ξ·Ο‚ ΞΊΞµΟΞ±Ξ―Ξ±Ο‚ Ξ® Ξ΄ΞΏΞΊΞΉΞΌΞ¬ΟƒΟ„Ξµ Ξ¬Ξ»Ξ»ΞΏ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ."
 
-#: src/scan.cpp:394
+#: src/scan.cpp:379
 msgid "Search in progress "
-msgstr "Ανίχνευση σε εξέλιξη "
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΟƒΞµ ΞµΞΎΞ­Ξ»ΞΉΞΎΞ· "
 
-#: src/scan.cpp:506
+#: src/scan.cpp:492
 #, c-format
 msgid "%02i minutes and %02i seconds left"
-msgstr " %d λεπτά και %02d δευτερόλεπτα"
+msgstr " %d Ξ»ΞµΟ€Ο„Ξ¬ ΞΊΞ±ΞΉ %02d Ξ΄ΞµΟ…Ο„ΞµΟΟΞ»ΞµΟ€Ο„Ξ±"
 
-#: src/scan.cpp:508
+#: src/scan.cpp:494
 #, c-format
 msgid "%02i seconds left"
-msgstr "%02i δευτερόλεπτα απομένουν"
+msgstr "%02i Ξ΄ΞµΟ…Ο„ΞµΟΟΞ»ΞµΟ€Ο„Ξ± Ξ±Ο€ΞΏΞΌΞ­Ξ½ΞΏΟ…Ξ½"
 
-#: src/scan.cpp:597
+#: src/scan.cpp:585
 msgid "Transponder Scan"
-msgstr "Ανίχνευση καναλιών"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
 
-#: src/scan.cpp:736
+#: src/scan.cpp:755
 msgid "Scan is in progress... please wait"
-msgstr "Ανίχνευση σε εξέλιξη... παρακαλώ περιμένετε"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΟƒΞµ ΞµΞΎΞ­Ξ»ΞΉΞΎΞ·... Ο€Ξ±ΟΞ±ΞΊΞ±Ξ»Ο Ο€ΞµΟΞΉΞΌΞ­Ξ½ΞµΟ„Ξµ"
 
-#: src/scan.cpp:740
+#: src/scan.cpp:759
+#, fuzzy, c-format
+msgid ""
+"The transponder scan has finished and found \n"
+"   %i new Transponders,\n"
+"   %i new TV Services,\n"
+"   %i new Radio Services and\n"
+"   %i new Data Services.\n"
+"%i Transponders within %i Services scanned."
+msgstr ""
+"Ξ— Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· Ο„ΞµΞ»ΞµΞ―Ο‰ΟƒΞµ.  \n"
+"Ξ’ΟΞ­ΞΈΞ·ΞΊΞ±Ξ½ %i Ξ½Ξ­ΞΏΞΉ Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„ΞµΟ‚,\n"
+"%i Ξ½Ξ­Ξ± ΞΊΞ±Ξ½Ξ¬Ξ»ΞΉΞ± TV,\n"
+"%i Ξ½Ξ­Ξ± ΞΊΞ±Ξ½Ξ¬Ξ»ΞΉΞ± Radio ΞΊΞ±ΞΉ \n"
+"%i Ξ½Ξ­Ξ± ΞΊΞ±Ξ½Ξ¬Ξ»ΞΉΞ± Data. \n"
+"Ξ•ΟΞµΟ…Ξ½Ξ®ΞΈΞ·ΞΊΞ±Ξ½ %i Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„ΞµΟ‚ \n"
+"%i Ο…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½."
+
+#: src/scan.cpp:768
+msgid "Done."
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚."
+
+#: src/scan.cpp:775
+msgid "Scan is in finished, press ok to close window"
+msgstr "Ξ— Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· Ο„ΞµΞ»ΞµΞ―Ο‰ΟƒΞµ. Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK."
+
+#: src/scan.cpp:778
 #, c-format
 msgid ""
-"The transponder scan has finished and found %i new Transponders, %i new TV "
-"Services, %i new Radio Services and %i new Data Services. %i Transponders "
-"within %i Services scanned."
-msgstr ""
-"Η ανίχνευση τελείωσε.  \n"
-"Βρέθηκαν %i νέοι αναμεταδότες,\n"
-"%i νέα κανάλια TV,\n"
-"%i νέα κανάλια Radio και \n"
-"%i νέα κανάλια Data. \n"
-"Ερευνήθηκαν %i αναμεταδότες \n"
-"%i υπηρεσιών."
-
-#: src/scan.cpp:749
-msgid "Done."
-msgstr "Τέλος."
-
-#: src/scan.cpp:754
-msgid "Scan is in finished, press ok to close window"
-msgstr "Η ανίχνευση τελείωσε. Πατήστε OK."
-
-#: src/scan.cpp:757
-#, c-format
-msgid "Do you want to scan another %s?"
+"Do you want\n"
+"to scan another\n"
+"%s?"
 msgstr ""
 
-#: src/scan.cpp:757
+#: src/scan.cpp:778
 #, fuzzy
 msgid "Satellite"
-msgstr "Δορυφόρος:"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚:"
 
-#: src/scan.cpp:757
+#: src/scan.cpp:778
 #, fuzzy
 msgid "Transponder"
-msgstr "Αναμεταδότης:"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
 
-#: src/scan.cpp:758
+#: src/scan.cpp:779
 #, fuzzy
 msgid "Scan finished"
-msgstr "Τέλος εγγραφής"
+msgstr "Ξ¤Ξ­Ξ»ΞΏΟ‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
-#: src/setup_harddisk.cpp:174
+#: src/setup_harddisk.cpp:175
 msgid "harddisk setup..."
-msgstr "Ρυθμίσεις σκληρού δίσκου"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ ΟƒΞΊΞ»Ξ·ΟΞΏΟ Ξ΄Ξ―ΟƒΞΊΞΏΟ…"
 
-#: src/setup_harddisk.cpp:292
+#: src/setup_harddisk.cpp:293
 msgid "Are you SURE that you want to format this disk?\n"
-msgstr "Είστε σίγουροι ότι θέλετε να φορμαριστεί;\n"
+msgstr "Ξ•Ξ―ΟƒΟ„Ξµ ΟƒΞ―Ξ³ΞΏΟ…ΟΞΏΞΉ ΟΟ„ΞΉ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο†ΞΏΟΞΌΞ±ΟΞΉΟƒΟ„ΞµΞ―;\n"
 
-#: src/setup_harddisk.cpp:293 src/setup_harddisk.cpp:306
-#: src/setup_harddisk.cpp:327 src/setup_harddisk.cpp:337
-#: src/setup_harddisk.cpp:379 src/setup_harddisk.cpp:390
+#: src/setup_harddisk.cpp:294 src/setup_harddisk.cpp:307
+#: src/setup_harddisk.cpp:328 src/setup_harddisk.cpp:338
+#: src/setup_harddisk.cpp:384 src/setup_harddisk.cpp:395
 msgid "formatting harddisk..."
-msgstr "Φορμάρισμα δίσκου..."
+msgstr "Ξ¦ΞΏΟΞΌΞ¬ΟΞΉΟƒΞΌΞ± Ξ΄Ξ―ΟƒΞΊΞΏΟ…..."
 
-#: src/setup_harddisk.cpp:304
+#: src/setup_harddisk.cpp:305
 msgid ""
 "There's data on this harddisk.\n"
 "You will lose that data. Proceed?"
 msgstr ""
-"Υπάρχουν δεδομένα στον σκληρό δίσκο.\n"
-"Θα χαθούν όλα. Να φορμαριστεί;"
+"Ξ¥Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± ΟƒΟ„ΞΏΞ½ ΟƒΞΊΞ»Ξ·ΟΟ Ξ΄Ξ―ΟƒΞΊΞΏ.\n"
+"ΞΞ± Ο‡Ξ±ΞΈΞΏΟΞ½ ΟΞ»Ξ±. ΞΞ± Ο†ΞΏΟΞΌΞ±ΟΞΉΟƒΟ„ΞµΞ―;"
 
-#: src/setup_harddisk.cpp:326
+#: src/setup_harddisk.cpp:327
 msgid ""
 "please wait while initializing harddisk.\n"
 "This might take some minutes.\n"
 msgstr ""
-"Παρακαλώ περιμένετε να φορμαριστεί ο δίσκος.\n"
-"Μπορεί να κάνει κάποια ώρα.\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο Ο€ΞµΟΞΉΞΌΞ­Ξ½ΞµΟ„Ξµ Ξ½Ξ± Ο†ΞΏΟΞΌΞ±ΟΞΉΟƒΟ„ΞµΞ― ΞΏ Ξ΄Ξ―ΟƒΞΊΞΏΟ‚.\n"
+"ΞΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΞΉ ΞΊΞ¬Ο€ΞΏΞΉΞ± ΟΟΞ±.\n"
 
-#: src/setup_harddisk.cpp:336
+#: src/setup_harddisk.cpp:337
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
-msgstr "Δυστυχώς δεν βρέθηκε το sfdisk για να κάνει την κατάτμηση του δίσκου."
+msgstr "Ξ”Ο…ΟƒΟ„Ο…Ο‡ΟΟ‚ Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ο„ΞΏ sfdisk Ξ³ΞΉΞ± Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΞΉ Ο„Ξ·Ξ½ ΞΊΞ±Ο„Ξ¬Ο„ΞΌΞ·ΟƒΞ· Ο„ΞΏΟ… Ξ΄Ξ―ΟƒΞΊΞΏΟ…."
 
-#: src/setup_harddisk.cpp:378
+#: src/setup_harddisk.cpp:383
 msgid "creating filesystem failed."
-msgstr "Δεν έγινε το φορμάρισμα σωστά."
+msgstr "Ξ”ΞµΞ½ Ξ­Ξ³ΞΉΞ½Ξµ Ο„ΞΏ Ο†ΞΏΟΞΌΞ¬ΟΞΉΟƒΞΌΞ± ΟƒΟ‰ΟƒΟ„Ξ¬."
 
-#: src/setup_harddisk.cpp:389
+#: src/setup_harddisk.cpp:394
 msgid "successfully formatted your disk!"
-msgstr "Το φορμάρισμα έγινε με επιτυχία"
+msgstr "Ξ¤ΞΏ Ο†ΞΏΟΞΌΞ¬ΟΞΉΟƒΞΌΞ± Ξ­Ξ³ΞΉΞ½Ξµ ΞΌΞµ ΞµΟ€ΞΉΟ„Ο…Ο‡Ξ―Ξ±"
 
-#: src/setup_harddisk.cpp:422
+#: src/setup_harddisk.cpp:427
 msgid "(error reading information)"
-msgstr "(λάθος κατά την ανάγνωση πληροφοριών)"
+msgstr "(Ξ»Ξ¬ΞΈΞΏΟ‚ ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±Ξ½Ξ¬Ξ³Ξ½Ο‰ΟƒΞ· Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞΉΟΞ½)"
 
-#: src/setup_harddisk.cpp:424
+#: src/setup_harddisk.cpp:429
 msgid "uninitialized - format it to use!"
-msgstr "Αφορμάριστος!"
+msgstr "Ξ‘Ο†ΞΏΟΞΌΞ¬ΟΞΉΟƒΟ„ΞΏΟ‚!"
 
-#: src/setup_harddisk.cpp:426
+#: src/setup_harddisk.cpp:431
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
-msgstr "OK: %d.%03d GB (~%d λεπτά) ελεύθερα."
+msgstr "OK: %d.%03d GB (~%d Ξ»ΞµΟ€Ο„Ξ¬) ΞµΞ»ΞµΟΞΈΞµΟΞ±."
 
-#: src/setup_harddisk.cpp:428
+#: src/setup_harddisk.cpp:433
 msgid "initialized, but unknown filesystem"
-msgstr "Αγνωστο λειτουργικό"
+msgstr "Ξ‘Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞΉΞΊΟ"
 
-#: src/setup_harddisk.cpp:508
+#: src/setup_harddisk.cpp:510
 msgid "could not unmount the filesystem... "
-msgstr "δεν έγινε αποσύνδεση του δίσκου"
+msgstr "Ξ΄ΞµΞ½ Ξ­Ξ³ΞΉΞ½Ξµ Ξ±Ο€ΞΏΟƒΟΞ½Ξ΄ΞµΟƒΞ· Ο„ΞΏΟ… Ξ΄Ξ―ΟƒΞΊΞΏΟ…"
 
-#: src/setup_harddisk.cpp:509 src/setup_harddisk.cpp:521
-#: src/setup_harddisk.cpp:543 src/setup_harddisk.cpp:562
+#: src/setup_harddisk.cpp:511 src/setup_harddisk.cpp:523
+#: src/setup_harddisk.cpp:545 src/setup_harddisk.cpp:564
 msgid "check filesystem..."
-msgstr "Έλεγχος δίσκου..."
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚ Ξ΄Ξ―ΟƒΞΊΞΏΟ…..."
 
-#: src/setup_harddisk.cpp:520
+#: src/setup_harddisk.cpp:522
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
-msgstr "Δυστυχώς δεν βρέθηκε το fsck.ext3."
+msgstr "Ξ”Ο…ΟƒΟ„Ο…Ο‡ΟΟ‚ Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ο„ΞΏ fsck.ext3."
 
-#: src/setup_harddisk.cpp:542
+#: src/setup_harddisk.cpp:544
 msgid ""
 "sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
-msgstr "Δυστυχώς δεν βρέθηκε το reiserfsck."
+msgstr "Ξ”Ο…ΟƒΟ„Ο…Ο‡ΟΟ‚ Ξ΄ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ο„ΞΏ reiserfsck."
 
-#: src/setup_harddisk.cpp:561
+#: src/setup_harddisk.cpp:563
 msgid "not supported filesystem for check."
-msgstr "δεν υποστηρίζεται σε αυτό το σύστημα αρχείων"
+msgstr "Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ ΟƒΞµ Ξ±Ο…Ο„Ο Ο„ΞΏ ΟƒΟΟƒΟ„Ξ·ΞΌΞ± Ξ±ΟΟ‡ΞµΞ―Ο‰Ξ½"
 
-#: src/setup_language.cpp:31
-msgid "Language Selector"
-msgstr "Επιλογή γλώσσας"
-
-#: src/setup_language.cpp:36
-msgid "Language:"
-msgstr "Γλώσσα:"
-
-#: src/setup_language.cpp:46
-msgid "select your language (left, right)"
-msgstr "Επιλέξτε την γλώσσα των μενού (<, >)."
-
-#: src/setup_lcd.cpp:48
+#: src/setup_lcd.cpp:49
 msgid "LC-Display Setup"
-msgstr "Ρύθμιση LCD"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· LCD"
 
-#: src/setup_lcd.cpp:62 src/setup_osd.cpp:221
+#: src/setup_lcd.cpp:63 src/setup_osd.cpp:235
 msgid "Brightness:"
-msgstr "Φωτηνότητα"
+msgstr "Ξ¦Ο‰Ο„Ξ·Ξ½ΟΟ„Ξ·Ο„Ξ±"
 
-#: src/setup_lcd.cpp:67 src/setup_osd.cpp:234
+#: src/setup_lcd.cpp:68 src/setup_osd.cpp:248
 msgid "Contrast:"
-msgstr "Αντίθεση:"
+msgstr "Ξ‘Ξ½Ο„Ξ―ΞΈΞµΟƒΞ·:"
 
-#: src/setup_lcd.cpp:72
+#: src/setup_lcd.cpp:73
 msgid "Standby:"
-msgstr "Αναμονή:"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞΏΞ½Ξ®:"
 
-#: src/setup_lcd.cpp:80
+#: src/setup_lcd.cpp:81
 msgid "set LCD brightness ( left / right )"
-msgstr "Ρύθμιση φωτεινότητας LCD (<, >)"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ο†Ο‰Ο„ΞµΞΉΞ½ΟΟ„Ξ·Ο„Ξ±Ο‚ LCD (<, >)"
 
-#: src/setup_lcd.cpp:87
+#: src/setup_lcd.cpp:88
 msgid "set LCD contrast ( left / right )"
-msgstr "Ρύθμιση αντίθεσης LCD (<, >)"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ±Ξ½Ο„Ξ―ΞΈΞµΟƒΞ·Ο‚ LCD (<, >)"
 
-#: src/setup_lcd.cpp:94
+#: src/setup_lcd.cpp:95
 msgid "set LCD brightness for Standby Mode ( left / right )"
-msgstr "Ρύθμιση φωτεινότητας LCD κατά την αναμονή (<, >)"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ο†Ο‰Ο„ΞµΞΉΞ½ΟΟ„Ξ·Ο„Ξ±Ο‚ LCD ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±Ξ½Ξ±ΞΌΞΏΞ½Ξ® (<, >)"
 
-#: src/setup_lcd.cpp:100
+#: src/setup_lcd.cpp:101
 msgid "Inverted: "
-msgstr "Αναστροφή"
+msgstr "Ξ‘Ξ½Ξ±ΟƒΟ„ΟΞΏΟ†Ξ®"
 
-#: src/setup_lcd.cpp:102
+#: src/setup_lcd.cpp:103
 msgid "enable/disable inverted LCD (ok)"
-msgstr "Αναστροφή εικόνας LCD (οκ)"
+msgstr "Ξ‘Ξ½Ξ±ΟƒΟ„ΟΞΏΟ†Ξ® ΞµΞΉΞΊΟΞ½Ξ±Ο‚ LCD (ΞΏΞΊ)"
 
 #: src/setup_osd.cpp:33
 msgid "PluginOffsetActions"
-msgstr "Ρυθμίσεις για τα πρόσθετα (plugins)"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ± Ο€ΟΟΟƒΞΈΞµΟ„Ξ± (plugins)"
 
 #: src/setup_osd.cpp:34
 msgid "enable set the leftTop Point of the rectangle"
-msgstr "Επιλογή ρύθμισης επάνω αριστερού μέρους του τετραγώνου"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ ΞµΟ€Ξ¬Ξ½Ο‰ Ξ±ΟΞΉΟƒΟ„ΞµΟΞΏΟ ΞΌΞ­ΟΞΏΟ…Ο‚ Ο„ΞΏΟ… Ο„ΞµΟ„ΟΞ±Ξ³ΟΞ½ΞΏΟ…"
 
 #: src/setup_osd.cpp:35
 msgid "enable set the rightBottom Point of the rectangle"
-msgstr "Επιλογή ρύθμισης επάνω δεξιού μέρους του τετραγώνου"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ ΞµΟ€Ξ¬Ξ½Ο‰ Ξ΄ΞµΞΎΞΉΞΏΟ ΞΌΞ­ΟΞΏΟ…Ο‚ Ο„ΞΏΟ… Ο„ΞµΟ„ΟΞ±Ξ³ΟΞ½ΞΏΟ…"
 
 #: src/setup_osd.cpp:36
 msgid "saves the current positions"
-msgstr "Αποθήκευση τών θέσεων"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο„ΟΞ½ ΞΈΞ­ΟƒΞµΟ‰Ξ½"
 
 #: src/setup_osd.cpp:159
 msgid "here you can center the plugin rectangle...for more infos press help"
 msgstr ""
-"Εδώ μπορείτε να κεντράρετε το τετράγωνο που απεικονίζονται τα πρόσθετων "
-"(plugins).Για περισσότερες πληροφορίες πατήστε το πλήκτρο βοηθείας (HELP)"
+"Ξ•Ξ΄Ο ΞΌΟ€ΞΏΟΞµΞ―Ο„Ξµ Ξ½Ξ± ΞΊΞµΞ½Ο„ΟΞ¬ΟΞµΟ„Ξµ Ο„ΞΏ Ο„ΞµΟ„ΟΞ¬Ξ³Ο‰Ξ½ΞΏ Ο€ΞΏΟ… Ξ±Ο€ΞµΞΉΞΊΞΏΞ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ Ο„Ξ± Ο€ΟΟΟƒΞΈΞµΟ„Ο‰Ξ½ "
+"(plugins).Ξ“ΞΉΞ± Ο€ΞµΟΞΉΟƒΟƒΟΟ„ΞµΟΞµΟ‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ο„ΞΏ Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏ Ξ²ΞΏΞ·ΞΈΞµΞ―Ξ±Ο‚ (HELP)"
 
-#: src/setup_osd.cpp:182
+#: src/setup_osd.cpp:173
+#, fuzzy
+msgid "OSD Setup"
+msgstr "Ξ•Ξ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·"
+
+#: src/setup_osd.cpp:183
 msgid "Show OSD on EIT Update"
-msgstr "OSD κατά την αλλαγή EIT"
+msgstr "OSD ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® EIT"
 
-#: src/setup_osd.cpp:185
+#: src/setup_osd.cpp:186
 msgid "shows OSD when now/next info is changed"
-msgstr "Προβάλει OSD όταν το (τώρα/μετά) αλλάξει"
+msgstr "Ξ ΟΞΏΞ²Ξ¬Ξ»ΞµΞΉ OSD ΟΟ„Ξ±Ξ½ Ο„ΞΏ (Ο„ΟΟΞ±/ΞΌΞµΟ„Ξ¬) Ξ±Ξ»Ξ»Ξ¬ΞΎΞµΞΉ"
 
-#: src/setup_osd.cpp:190
+#: src/setup_osd.cpp:191
 msgid "Show event remaining time"
-msgstr "Ένδειξη εναπομείναντος χρόνου γεγονότος"
+msgstr "ΞΞ½Ξ΄ΞµΞΉΞΎΞ· ΞµΞ½Ξ±Ο€ΞΏΞΌΞµΞ―Ξ½Ξ±Ξ½Ο„ΞΏΟ‚ Ο‡ΟΟΞ½ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
 
-#: src/setup_osd.cpp:193
+#: src/setup_osd.cpp:194
 msgid "shows the remaining time for current event (total otherwise)"
-msgstr "Ένδειξη εναπομείναντος χρόνου για το τωρινό γεγονός (ή αλλιώς ολικού)"
+msgstr "ΞΞ½Ξ΄ΞµΞΉΞΎΞ· ΞµΞ½Ξ±Ο€ΞΏΞΌΞµΞ―Ξ½Ξ±Ξ½Ο„ΞΏΟ‚ Ο‡ΟΟΞ½ΞΏΟ… Ξ³ΞΉΞ± Ο„ΞΏ Ο„Ο‰ΟΞΉΞ½Ο Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚ (Ξ® Ξ±Ξ»Ξ»ΞΉΟΟ‚ ΞΏΞ»ΞΉΞΊΞΏΟ)"
 
-#: src/setup_osd.cpp:198
+#: src/setup_osd.cpp:199
+msgid "Enable auto-hide OSD"
+msgstr ""
+
+#: src/setup_osd.cpp:202
+msgid "enable auto-hide the OSD"
+msgstr ""
+
+#: src/setup_osd.cpp:207
 msgid "Show Console on Framebuffer"
-msgstr "Προβολή κοσνόλας στο Framebuffer"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® ΞΊΞΏΟƒΞ½ΟΞ»Ξ±Ο‚ ΟƒΟ„ΞΏ Framebuffer"
 
-#: src/setup_osd.cpp:201
+#: src/setup_osd.cpp:210
 msgid "shows the linux console on TV"
-msgstr "Κονσόλα Linux στην TV"
+msgstr "ΞΞΏΞ½ΟƒΟΞ»Ξ± Linux ΟƒΟ„Ξ·Ξ½ TV"
 
-#: src/setup_osd.cpp:208
+#: src/setup_osd.cpp:217
 msgid "Alpha:"
-msgstr "Διαφάνεια"
+msgstr "Ξ”ΞΉΞ±Ο†Ξ¬Ξ½ΞµΞΉΞ±"
 
-#: src/setup_osd.cpp:215
+#: src/setup_osd.cpp:229
 msgid "change the transparency correction"
-msgstr "Αλλαγή της διαφάνειας των μενού."
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ξ·Ο‚ Ξ΄ΞΉΞ±Ο†Ξ¬Ξ½ΞµΞΉΞ±Ο‚ Ο„Ο‰Ξ½ ΞΌΞµΞ½ΞΏΟ."
 
-#: src/setup_osd.cpp:228
+#: src/setup_osd.cpp:242
 msgid "change the brightness correction"
-msgstr "Αλλαγή φωτεινότητας των μενού."
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® Ο†Ο‰Ο„ΞµΞΉΞ½ΟΟ„Ξ·Ο„Ξ±Ο‚ Ο„Ο‰Ξ½ ΞΌΞµΞ½ΞΏΟ."
 
-#: src/setup_osd.cpp:241
+#: src/setup_osd.cpp:255
 msgid "change the contrast"
-msgstr "Αλλαγή της αντίθεσης των μενού"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ξ·Ο‚ Ξ±Ξ½Ο„Ξ―ΞΈΞµΟƒΞ·Ο‚ Ο„Ο‰Ξ½ ΞΌΞµΞ½ΞΏΟ"
 
-#: src/setup_osd.cpp:246
+#: src/setup_osd.cpp:260
 msgid "plugin offset"
-msgstr "Θέση πρόσθετων"
+msgstr "ΞΞ­ΟƒΞ· Ο€ΟΟΟƒΞΈΞµΟ„Ο‰Ξ½"
 
-#: src/setup_osd.cpp:247
+#: src/setup_osd.cpp:261
 msgid "set the pluging offset coordinates (tuxtxt, a.o. )"
-msgstr "Μετατόπιση απεικόνισης πρόσθετων (tuxtxt, κλπ)"
+msgstr "ΞΞµΟ„Ξ±Ο„ΟΟ€ΞΉΟƒΞ· Ξ±Ο€ΞµΞΉΞΊΟΞ½ΞΉΟƒΞ·Ο‚ Ο€ΟΟΟƒΞΈΞµΟ„Ο‰Ξ½ (tuxtxt, ΞΊΞ»Ο€)"
 
-#: src/setup_rc.cpp:38
+#: src/setup_rc.cpp:39
 msgid "Remotecontrol Setup"
-msgstr "Ρύθμιση τηλεκοντόρλ"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ο„Ξ·Ξ»ΞµΞΊΞΏΞ½Ο„ΟΟΞ»"
 
-#: src/setup_rc.cpp:51
+#: src/setup_rc.cpp:50
 msgid "Repeat Rate:"
-msgstr "Ρυθμός:"
+msgstr "Ξ΅Ο…ΞΈΞΌΟΟ‚:"
 
-#: src/setup_rc.cpp:56
+#: src/setup_rc.cpp:55
 msgid "Repeat Delay:"
-msgstr "Καθυστέρηση:"
+msgstr "ΞΞ±ΞΈΟ…ΟƒΟ„Ξ­ΟΞ·ΟƒΞ·:"
 
-#: src/setup_rc.cpp:64
+#: src/setup_rc.cpp:63
 msgid "set RC repeat rate ( left / right )"
-msgstr "Ρυθμός επανάληψης πλήκτρου (<, >)"
+msgstr "Ξ΅Ο…ΞΈΞΌΟΟ‚ ΞµΟ€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ·Ο‚ Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏΟ… (<, >)"
 
-#: src/setup_rc.cpp:71
+#: src/setup_rc.cpp:70
 msgid "set RC repeat delay ( left / right )"
-msgstr "Καθυστέρηση επανάληψης πλήκτρου (<, >)"
+msgstr "ΞΞ±ΞΈΟ…ΟƒΟ„Ξ­ΟΞ·ΟƒΞ· ΞµΟ€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ·Ο‚ Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏΟ… (<, >)"
 
-#: src/setup_rc.cpp:81
+#: src/setup_rc.cpp:80
 msgid "select your favourite RC style (ok)"
-msgstr "Επιλογή τύπου τηλεκοντρόλ"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΟΟ€ΞΏΟ… Ο„Ξ·Ξ»ΞµΞΊΞΏΞ½Ο„ΟΟΞ»"
+
+#: src/setup_rc.cpp:101
+msgid "other bouquet selection keys"
+msgstr "Ξ‘Ξ»Ξ»Ξ± Ο€Ξ»Ξ®ΞΊΟ„ΟΞ± ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½"
 
 #: src/setup_rc.cpp:102
-msgid "other bouquet selection keys"
-msgstr "Αλλα πλήκτρα επιλογής μπουκέτων"
-
-#: src/setup_rc.cpp:103
 msgid "use classic enigma bouquet selection keys"
-msgstr "Επιλογή κλασσικών πλήκτρων επιλογής μπουκέτων"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞΊΞ»Ξ±ΟƒΟƒΞΉΞΊΟΞ½ Ο€Ξ»Ξ®ΞΊΟ„ΟΟ‰Ξ½ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½"
 
-#: src/setupnetwork.cpp:19
-msgid "Network setup"
-msgstr "Ρυθμίσεις δικτύου"
+#: src/setup_rc.cpp:109
+msgid "Next Char Timeout:"
+msgstr ""
 
-#: src/setupnetwork.cpp:44
+#: src/setup_rc.cpp:118
+msgid "Cursor to next char timeout(msek) in textinputfields)"
+msgstr ""
+
+#: src/setupnetwork.cpp:274
+#, fuzzy
+msgid "Communication setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΉΞΊΟΞ½Ξ±"
+
+#: src/setupnetwork.cpp:301
 msgid "enter IP Address of the box (0..9, left, right)"
-msgstr "Δώστε διεύθυνση του DREAMBOX (0..9, <, >)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ξ΄ΞΉΞµΟΞΈΟ…Ξ½ΟƒΞ· Ο„ΞΏΟ… DREAMBOX (0..9, <, >)"
 
-#: src/setupnetwork.cpp:58
+#: src/setupnetwork.cpp:315
 msgid "enter netmask of your network (0..9, left, right)"
-msgstr "Δώστε τη μάσκα του δικτύου σας (0..9, <, >)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ο„Ξ· ΞΌΞ¬ΟƒΞΊΞ± Ο„ΞΏΟ… Ξ΄ΞΉΞΊΟ„ΟΞΏΟ… ΟƒΞ±Ο‚ (0..9, <, >)"
 
-#: src/setupnetwork.cpp:72
+#: src/setupnetwork.cpp:329
+#, fuzzy
+msgid "press ok to change connection type"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΟΟƒΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ±"
+
+#: src/setupnetwork.cpp:332 src/setupnetwork.cpp:340
+#, fuzzy
+msgid "LAN"
+msgstr "LNB"
+
+#: src/setupnetwork.cpp:332 src/setupnetwork.cpp:340
+msgid "Communicate to Local Area Network"
+msgstr ""
+
+#: src/setupnetwork.cpp:334 src/setupnetwork.cpp:341
+msgid "WAN(PPPoE)"
+msgstr ""
+
+#: src/setupnetwork.cpp:334 src/setupnetwork.cpp:341
+msgid "Communicate to the Internet via DSL"
+msgstr ""
+
+#: src/setupnetwork.cpp:350
+msgid "T-Online User press ok here"
+msgstr ""
+
+#: src/setupnetwork.cpp:364
 msgid "enter your domain name server (0..9, left, right)"
-msgstr "Δώστε τη διεύθυνση του DNS σας (0..9, <, >)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ο„Ξ· Ξ΄ΞΉΞµΟΞΈΟ…Ξ½ΟƒΞ· Ο„ΞΏΟ… DNS ΟƒΞ±Ο‚ (0..9, <, >)"
 
-#: src/setupnetwork.cpp:86
+#: src/setupnetwork.cpp:370
+#, fuzzy
+msgid "Login:"
+msgstr "Ξ“ΞµΟ‰Ξ³ΟΞ±Ο†ΞΉΞΊΟ ΞΌΞ®ΞΊΞΏΟ‚:"
+
+#: src/setupnetwork.cpp:382
+#, fuzzy
+msgid "press ok to edit your provider login name"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΟΟƒΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ±"
+
+#: src/setupnetwork.cpp:400
 msgid "enter your gateways IP Address (0..9, left, right)"
-msgstr "Δώστε τη διεύθυνση του Gateway (0..9, <, >)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ο„Ξ· Ξ΄ΞΉΞµΟΞΈΟ…Ξ½ΟƒΞ· Ο„ΞΏΟ… Gateway (0..9, <, >)"
 
-#: src/setupnetwork.cpp:91
+#: src/setupnetwork.cpp:406
+msgid "Password:"
+msgstr ""
+
+#: src/setupnetwork.cpp:415
+#, fuzzy
+msgid "press ok to edit your provider password"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± ΞΊΞ¬Ξ½ΞµΟ„Ξµ ΞµΟ€ΞµΞΌΞ²Ξ¬ΟƒΞµΞΉΟ‚"
+
+#: src/setupnetwork.cpp:421
 msgid "Configure Network"
-msgstr "Ενεργοποίηση δικτύου"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
 
-#: src/setupnetwork.cpp:94
+#: src/setupnetwork.cpp:424
 msgid "enable/disable network config (ok)"
-msgstr "Ενεργοποίηση ή όχι δικτύου (OK)"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ® ΟΟ‡ΞΉ Ξ΄ΞΉΞΊΟ„ΟΞΏΟ… (OK)"
 
-#: src/setupvideo.cpp:31
-msgid "Video Setup"
-msgstr "Ρύθμιση εικόνας"
+#: src/setupnetwork.cpp:432
+msgid "reject incomming connections on port 80"
+msgstr ""
 
-# 
+#: src/setupnetwork.cpp:439
+msgid "reject incomming connections on port 23"
+msgstr ""
+
+#: src/setupnetwork.cpp:446
+msgid "reject incomming connections on ports 137,138,139"
+msgstr ""
+
+#: src/setupnetwork.cpp:453
+msgid "reject incomming connections on ports 21"
+msgstr ""
+
 #: src/setupvideo.cpp:36
-msgid "Color Format:"
-msgstr "Σύστημα:"
+msgid "Video Setup"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΞµΞΉΞΊΟΞ½Ξ±Ο‚"
 
-#: src/setupvideo.cpp:46
+#: src/setupvideo.cpp:41
+msgid "Color Format:"
+msgstr "Ξ£ΟΟƒΟ„Ξ·ΞΌΞ±:"
+
+#: src/setupvideo.cpp:51
 msgid "CVBS"
 msgstr "CVBS"
 
-#: src/setupvideo.cpp:47
+#: src/setupvideo.cpp:52
 msgid "RGB"
 msgstr "RGB"
 
-#: src/setupvideo.cpp:48
+#: src/setupvideo.cpp:53
 msgid "SVideo"
 msgstr "SVideo"
 
-#: src/setupvideo.cpp:49
+#: src/setupvideo.cpp:56
 msgid "YPbPr"
 msgstr "YPbPr"
 
-#: src/setupvideo.cpp:51
+#: src/setupvideo.cpp:59
 msgid "choose colour format ( left, right )"
-msgstr "Επιλέξτε τύπο χρώματος (<, >)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΟΟ€ΞΏ Ο‡ΟΟΞΌΞ±Ο„ΞΏΟ‚ (<, >)"
 
-# 
-#: src/setupvideo.cpp:54
+#: src/setupvideo.cpp:63
 msgid "Aspect Ratio:"
-msgstr "Λόγος πλευρών:"
+msgstr "Ξ›ΟΞ³ΞΏΟ‚ Ο€Ξ»ΞµΟ…ΟΟΞ½:"
 
-#: src/setupvideo.cpp:64
+#: src/setupvideo.cpp:73
 msgid "choose aspect ratio ( left, right )"
-msgstr "Επιλέξτε τύπο οθόνης (<, >)"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΟΟ€ΞΏ ΞΏΞΈΟΞ½Ξ·Ο‚ (<, >)"
 
-#: src/setupvideo.cpp:65
+#: src/setupvideo.cpp:74
 msgid "4:3 letterbox"
 msgstr "4:3 Letterbox"
 
-#: src/setupvideo.cpp:66
+#: src/setupvideo.cpp:75
 msgid "4:3 panscan"
 msgstr "4:3 pan&scan"
 
-#: src/setupvideo.cpp:67
+#: src/setupvideo.cpp:76
 msgid "16:9"
 msgstr "16:9"
 
-#: src/sselect.cpp:41
-msgid "service selector"
-msgstr "Επιλογή υπηρεσίας"
+#: src/setupvideo.cpp:83
+msgid "Disable WSS on 4:3"
+msgstr ""
 
-#: src/sselect.cpp:42
-msgid "switch to next bouquet"
-msgstr "Επιλογή του επόμενου πακέτου"
+#: src/setupvideo.cpp:84
+msgid "don't send WSS signal when A-ratio is 4:3"
+msgstr ""
 
-#: src/sselect.cpp:43
-msgid "switch to previous bouquet"
-msgstr "Επιλογή του προηγούμενου πακέτου"
+#: src/sselect.cpp:37
+#, fuzzy
+msgid "EPG Style Selector"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ±Ο‚ ΞΌΞµΞ½ΞΏΟ"
 
-#: src/sselect.cpp:44
-msgid "go up a directory"
-msgstr "Προς τον προηγούμενο κατάλογο"
-
-#: src/sselect.cpp:45
-msgid "shows the EPG selector for the highlighted channel"
-msgstr "Δείχνει το EPG για το επιλεγμένο κανάλι"
-
-#: src/sselect.cpp:46
-msgid "show service selector menu"
-msgstr "Δείχνει το μενού επιλογής υπηρεσίας"
-
-#: src/sselect.cpp:47
-msgid "toggle between user bouquets, normal dvb bouquets"
-msgstr "Μεταπήδηση μεταξύ λίστας μπουκέτων χρήστη και λίστας μπουκέτων DVB"
+#: src/sselect.cpp:38
+#, fuzzy
+msgid "open the EPG with selected style"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
 
 #: src/sselect.cpp:48
-msgid "add Service"
-msgstr "προσθήκη υπηρεσίας"
-
-#: src/sselect.cpp:49
-msgid "add Service to a specific user bouquet"
-msgstr "προσθήκη υπηρεσίας σε μπουκέτο χρήστη"
-
-#: src/sselect.cpp:53
-msgid "toggle between classic and multi column style"
-msgstr "Αλλαγή στίλ, μεταξύ κλασσικού και πολλαπλών στειλών"
-
-#: src/sselect.cpp:54
-msgid "toggle focus between service and bouquet list"
-msgstr "Εναλλαγή επιλεγμένης λίστας"
+#, fuzzy
+msgid "EPG Style"
+msgstr "Ξ¤Ξ―Ο„Ξ»ΞΏΟ‚"
 
 #: src/sselect.cpp:55
-msgid "go to first service"
-msgstr "Επιλογή πρώτης υπηρεσίας"
+#, fuzzy
+msgid "Channel EPG"
+msgstr "ΞΞ±Ξ½Ξ¬Ξ»ΞΉ"
+
+#: src/sselect.cpp:55
+msgid "open EPG for selected Channel"
+msgstr ""
 
 #: src/sselect.cpp:56
+msgid "Multi EPG"
+msgstr ""
+
+#: src/sselect.cpp:56
+msgid "open EPG for next five channels"
+msgstr ""
+
+#: src/sselect.cpp:100
+msgid "service selector"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
+
+#: src/sselect.cpp:101
+msgid "switch to next bouquet"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΞΏΟ… ΞµΟ€ΟΞΌΞµΞ½ΞΏΟ… Ο€Ξ±ΞΊΞ­Ο„ΞΏΟ…"
+
+#: src/sselect.cpp:102
+msgid "switch to previous bouquet"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΞΏΟ… Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏΟ… Ο€Ξ±ΞΊΞ­Ο„ΞΏΟ…"
+
+#: src/sselect.cpp:103
+msgid "go up a directory"
+msgstr "Ξ ΟΞΏΟ‚ Ο„ΞΏΞ½ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏ"
+
+#: src/sselect.cpp:104
+msgid "shows the EPG selector for the highlighted channel"
+msgstr "Ξ”ΞµΞ―Ο‡Ξ½ΞµΞΉ Ο„ΞΏ EPG Ξ³ΞΉΞ± Ο„ΞΏ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ ΞΊΞ±Ξ½Ξ¬Ξ»ΞΉ"
+
+#: src/sselect.cpp:105
+msgid "show service selector menu"
+msgstr "Ξ”ΞµΞ―Ο‡Ξ½ΞµΞΉ Ο„ΞΏ ΞΌΞµΞ½ΞΏΟ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚ Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
+
+#: src/sselect.cpp:106
+#, fuzzy
+msgid "toggle between provider and bouquet list"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ·Ο‚ Ξ»Ξ―ΟƒΟ„Ξ±Ο‚"
+
+#: src/sselect.cpp:108
+#, fuzzy
+msgid "add service to a specific bouquet"
+msgstr "Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚ ΟƒΞµ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„ΞΏ Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#: src/sselect.cpp:112
+msgid "toggle between classic and multi column style"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΟƒΟ„Ξ―Ξ», ΞΌΞµΟ„Ξ±ΞΎΟ ΞΊΞ»Ξ±ΟƒΟƒΞΉΞΊΞΏΟ ΞΊΞ±ΞΉ Ο€ΞΏΞ»Ξ»Ξ±Ο€Ξ»ΟΞ½ ΟƒΟ„ΞµΞΉΞ»ΟΞ½"
+
+#: src/sselect.cpp:113
+#, fuzzy
+msgid "toggle focus between service and bouquet list (in combi column style)"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ·Ο‚ Ξ»Ξ―ΟƒΟ„Ξ±Ο‚"
+
+#: src/sselect.cpp:114
+msgid "go to first service"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο€ΟΟΟ„Ξ·Ο‚ Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
+
+#: src/sselect.cpp:115
 msgid "go to last service"
-msgstr "Επιλογή τελευταίας υπηρεσίας"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΞµΞ»ΞµΟ…Ο„Ξ±Ξ―Ξ±Ο‚ Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
 
-#: src/sselect.cpp:58
+#: src/sselect.cpp:117
 msgid "show all services"
-msgstr "Εμφάνιση όλων των υπηρεσιών"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΟΞ»Ο‰Ξ½ Ο„Ο‰Ξ½ Ο…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½"
 
-#: src/sselect.cpp:59
-msgid "show satellites"
-msgstr "Εμφάνιση δορυφόρων"
+#: src/sselect.cpp:118
+#, fuzzy
+msgid "show satellite list"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½"
 
-#: src/sselect.cpp:60
-msgid "show providers"
-msgstr "Εμφάνιση παροχέων"
+#: src/sselect.cpp:119
+#, fuzzy
+msgid "show provider list"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€Ξ±ΟΞΏΟ‡Ξ­Ο‰Ξ½"
 
-#: src/sselect.cpp:61
-msgid "show user bouquets"
-msgstr "Εμφάνιση μπουκέτων χρήστη"
+#: src/sselect.cpp:120
+#, fuzzy
+msgid "show bouquet list"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½ Ο‡ΟΞ®ΟƒΟ„Ξ·"
 
-#: src/sselect.cpp:195
+#: src/sselect.cpp:122
+#, fuzzy
+msgid "delete selected entry"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
+
+#: src/sselect.cpp:123
+#, fuzzy
+msgid "mark selected entry for move"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
+
+#: src/sselect.cpp:124
+#, fuzzy
+msgid "rename selected entry"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
+
+#: src/sselect.cpp:260
 msgid "[GO UP]"
-msgstr "[ΕΠΙΣΤΡΟΦΗ]"
+msgstr "[Ξ•Ξ Ξ™Ξ£Ξ¤Ξ΅ΞΞ¦Ξ—]"
 
-#: src/sselect.cpp:197
+#: src/sselect.cpp:262
 msgid "(removed service)"
-msgstr "(διαγεγραμμένη υπηρεσία)"
+msgstr "(Ξ΄ΞΉΞ±Ξ³ΞµΞ³ΟΞ±ΞΌΞΌΞ­Ξ½Ξ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±)"
 
-#: src/streaminfo.cpp:163
+#: src/sselect.cpp:333
+msgid "mark"
+msgstr ""
+
+#: src/sselect.cpp:355
+#, fuzzy
+msgid "All Services"
+msgstr "Ο…Ο€Ξ·ΟΞµΟƒΞ―ΞµΟ‚"
+
+#: src/sselect.cpp:362 src/sselect.cpp:365
+msgid "Root"
+msgstr ""
+
+#: src/sselect.cpp:363
+#, fuzzy
+msgid "Movies"
+msgstr "Ξ¤Ξ±ΞΉΞ½Ξ―Ξ±"
+
+#: src/sselect.cpp:372
+#, fuzzy
+msgid "Menu"
+msgstr "ΞΟ…ΟΞ―Ο‰Ο‚ ΞΞµΞ½ΞΏΟ"
+
+#: src/sselect.cpp:373
+#, fuzzy
+msgid "Style"
+msgstr "Ξ¤Ξ―Ο„Ξ»ΞΏΟ‚"
+
+#: src/sselect.cpp:375
+msgid "Column"
+msgstr ""
+
+#: src/sselect.cpp:379
+#, fuzzy
+msgid "Provider/Bouquets"
+msgstr "ΞΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#: src/sselect.cpp:381
+#, fuzzy
+msgid "Root/Playlist"
+msgstr "Ξ›Ξ―ΟƒΟ„Ξ± Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®Ο‚"
+
+#: src/streaminfo.cpp:164
 msgid "album"
-msgstr "Άλμπουμ"
+msgstr "β€™Ξ»ΞΌΟ€ΞΏΟ…ΞΌ"
 
-#: src/streaminfo.cpp:165
+#: src/streaminfo.cpp:166
 msgid "title"
-msgstr "Τίτλος"
+msgstr "Ξ¤Ξ―Ο„Ξ»ΞΏΟ‚"
 
-#: src/streaminfo.cpp:167
+#: src/streaminfo.cpp:168
 msgid "artist"
-msgstr "Καλλιτέχνης"
+msgstr "ΞΞ±Ξ»Ξ»ΞΉΟ„Ξ­Ο‡Ξ½Ξ·Ο‚"
 
-#: src/streaminfo.cpp:169
+#: src/streaminfo.cpp:170
 msgid "genre"
-msgstr "είδος"
+msgstr "ΞµΞ―Ξ΄ΞΏΟ‚"
 
-#: src/streaminfo.cpp:171
+#: src/streaminfo.cpp:172
 msgid "year"
-msgstr "χρονιά"
+msgstr "Ο‡ΟΞΏΞ½ΞΉΞ¬"
 
-#: src/streaminfo.cpp:173
+#: src/streaminfo.cpp:174
 msgid "composer"
-msgstr "Συνθέτης"
+msgstr "Ξ£Ο…Ξ½ΞΈΞ­Ο„Ξ·Ο‚"
 
-#: src/streaminfo.cpp:175
+#: src/streaminfo.cpp:176
 msgid "track"
-msgstr "Κομμάτι"
+msgstr "ΞΞΏΞΌΞΌΞ¬Ο„ΞΉ"
 
-#: src/streaminfo.cpp:177
+#: src/streaminfo.cpp:178
 msgid "length"
-msgstr "διάρκεια"
+msgstr "Ξ΄ΞΉΞ¬ΟΞΊΞµΞΉΞ±"
 
-#: src/streaminfo.cpp:355
+#: src/streaminfo.cpp:385
 msgid "Video format:"
-msgstr "Εικόνα:"
+msgstr "Ξ•ΞΉΞΊΟΞ½Ξ±:"
 
-#: src/streaminfo.cpp:434
+#: src/streaminfo.cpp:464
 msgid "supported coding systems:"
-msgstr "Σύστηματα κωδικοποίησης DREAMBOX:"
+msgstr "Ξ£ΟΟƒΟ„Ξ·ΞΌΞ±Ο„Ξ± ΞΊΟ‰Ξ΄ΞΉΞΊΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ·Ο‚ DREAMBOX:"
 
-#: src/streaminfo.cpp:471
+#: src/streaminfo.cpp:501
 msgid "Systems used in service:"
-msgstr "Σύστηματα κωδικοποίησης καναλιού:"
+msgstr "Ξ£ΟΟƒΟ„Ξ·ΞΌΞ±Ο„Ξ± ΞΊΟ‰Ξ΄ΞΉΞΊΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ·Ο‚ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΞΏΟ:"
 
-#: src/streaminfo.cpp:530 src/streaminfo.cpp:571 src/enigma_event.cpp:270
+#: src/streaminfo.cpp:535
+msgid "Record mode - read manual"
+msgstr ""
+
+#: src/streaminfo.cpp:566 src/streaminfo.cpp:607 src/enigma_event.cpp:270
 msgid "no information is available"
-msgstr "δεν υπάρχουν πληροφορίες"
+msgstr "Ξ΄ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚"
 
-#: src/streaminfo.cpp:592
+#: src/streaminfo.cpp:628
 msgid "Service information (right)"
-msgstr "Πληροφορίες υπηρεσίας (>)"
+msgstr "Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚ Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚ (>)"
 
-#: src/streaminfo.cpp:593
+#: src/streaminfo.cpp:629
 msgid "Scrambled system information (left, right)"
-msgstr "Πληροφορίες κωδικοποίησης (<, >)"
+msgstr "Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚ ΞΊΟ‰Ξ΄ΞΉΞΊΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ·Ο‚ (<, >)"
 
-#: src/streaminfo.cpp:594
+#: src/streaminfo.cpp:630
 msgid "Transponder information (left)"
-msgstr "Πληροφορίες αναμεταδότη (<)"
+msgstr "Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚ Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ· (<)"
 
-#: src/timer.cpp:17
-msgid "January"
-msgstr "Ιανουάριος"
-
-#: src/timer.cpp:17
-msgid "February"
-msgstr "Φεβρουάριος"
-
-#: src/timer.cpp:17
-msgid "March"
-msgstr "Μάρτιος"
-
-#: src/timer.cpp:18
-msgid "April"
-msgstr "Απρίλιος"
-
-#: src/timer.cpp:18
-msgid "May"
-msgstr "Μάιος"
-
-#: src/timer.cpp:18
-msgid "June"
-msgstr "Ιούνιος"
-
-#: src/timer.cpp:18
-msgid "July"
-msgstr "Ιούλιος"
-
-#: src/timer.cpp:19
-msgid "August"
-msgstr "Αυγουστος"
-
-#: src/timer.cpp:19
-msgid "September"
-msgstr "Σεπτέμβριος"
-
-#: src/timer.cpp:19
-msgid "October"
-msgstr "Οκτώβριος"
-
-#: src/timer.cpp:20
-msgid "November"
-msgstr "Νοέμβριος"
-
-#: src/timer.cpp:20
-msgid "December"
-msgstr "Δεκέμβριος"
-
-#: src/timer.cpp:23
-msgid "Sun"
-msgstr "Κυρ"
-
-#: src/timer.cpp:23
-msgid "Mon"
-msgstr "Δευ"
-
-#: src/timer.cpp:24
-msgid "Fri"
-msgstr "Παρ"
-
-#: src/timer.cpp:24
-msgid "Sat"
-msgstr "Σαβ"
-
-#: src/timer.cpp:146
+#: src/timer.cpp:189
 msgid "Timerlist"
-msgstr "Λίστα χρονοδιακόπτη"
+msgstr "Ξ›Ξ―ΟƒΟ„Ξ± Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·"
 
-#: src/timer.cpp:663
+#: src/timer.cpp:1018
 msgid ""
 "You would to delete the running event..\n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"Θέλετε να διαγράψετε το ενεργό γεγονός..\n"
-"Αυτό θα σταματήση την εγγραφή"
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ΄ΞΉΞ±Ξ³ΟΞ¬ΟΞµΟ„Ξµ Ο„ΞΏ ΞµΞ½ΞµΟΞ³Ο Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚..\n"
+"Ξ‘Ο…Ο„Ο ΞΈΞ± ΟƒΟ„Ξ±ΞΌΞ±Ο„Ξ®ΟƒΞ· Ο„Ξ·Ξ½ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®"
 
-#: src/timer.cpp:664
+#: src/timer.cpp:1019
 msgid "Delete the event from the timerlist"
-msgstr "Διαγραφή από τον χρονοδιακόπτη"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ξ±Ο€Ο Ο„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·"
 
-#: src/timer.cpp:665
+#: src/timer.cpp:1020
 msgid "Really delete this event?"
-msgstr "Σίγουρα θέλετε να διαγράψετε αυτό το γεγονός;"
+msgstr "Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ΄ΞΉΞ±Ξ³ΟΞ¬ΟΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚;"
 
-#: src/timer.cpp:669
+#: src/timer.cpp:1024
 msgid ""
 "You would to update the running event.. \n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"Θέλετε να ανανεώσετε το ενεργό γεγονός..\n"
-"Αυτό θα σταματήση την εγγραφή"
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ±Ξ½Ξ±Ξ½ΞµΟΟƒΞµΟ„Ξµ Ο„ΞΏ ΞµΞ½ΞµΟΞ³Ο Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚..\n"
+"Ξ‘Ο…Ο„Ο ΞΈΞ± ΟƒΟ„Ξ±ΞΌΞ±Ο„Ξ®ΟƒΞ· Ο„Ξ·Ξ½ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®"
 
-#: src/timer.cpp:670 src/timer.cpp:1425
+#: src/timer.cpp:1025 src/timer.cpp:1820
 msgid "Update event in timerlist"
-msgstr "Ενημέρωση γεγονότος στον χρονοδιακόπτη"
+msgstr "Ξ•Ξ½Ξ·ΞΌΞ­ΟΟ‰ΟƒΞ· Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚ ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·"
 
-#: src/timer.cpp:671
+#: src/timer.cpp:1026
 msgid "Really update this event?"
-msgstr "Σίγουρα θέλετε να ενημερώσετε το γεγονός αυτό;"
+msgstr "Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± ΞµΞ½Ξ·ΞΌΞµΟΟΟƒΞµΟ„Ξµ Ο„ΞΏ Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚ Ξ±Ο…Ο„Ο;"
 
-#: src/timer.cpp:717 src/timer.cpp:747
+#: src/timer.cpp:1080 src/timer.cpp:1102
 msgid "This event is already in the timerlist."
-msgstr "Αυτό το γεγονός είναι ήδη στην λίστα του χρονοδικόπτη."
+msgstr "Ξ‘Ο…Ο„Ο Ο„ΞΏ Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚ ΞµΞ―Ξ½Ξ±ΞΉ Ξ®Ξ΄Ξ· ΟƒΟ„Ξ·Ξ½ Ξ»Ξ―ΟƒΟ„Ξ± Ο„ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞΊΟΟ€Ο„Ξ·."
 
-#: src/timer.cpp:718 src/timer.cpp:747 src/timer.cpp:786
+#: src/timer.cpp:1081 src/timer.cpp:1102 src/timer.cpp:1138
 msgid "Add event to timerlist"
-msgstr "Προσθήκη γεγονότος"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
 
-#: src/timer.cpp:775
+#: src/timer.cpp:1127
 msgid "The Endtime overlaps with another event in the timerlist"
-msgstr "Αυτό το γεγονός υπερκαλύπτει κατί ήδη στην λίστα του χρονοδικόπτη."
+msgstr "Ξ‘Ο…Ο„Ο Ο„ΞΏ Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚ Ο…Ο€ΞµΟΞΊΞ±Ξ»ΟΟ€Ο„ΞµΞΉ ΞΊΞ±Ο„Ξ― Ξ®Ξ΄Ξ· ΟƒΟ„Ξ·Ξ½ Ξ»Ξ―ΟƒΟ„Ξ± Ο„ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞΊΟΟ€Ο„Ξ·."
 
-#: src/timer.cpp:775
+#: src/timer.cpp:1127
 msgid "Set Stop Time"
-msgstr "Ρύθμιση χρόνου λήξης"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ο‡ΟΟΞ½ΞΏΟ… Ξ»Ξ®ΞΎΞ·Ο‚"
 
-#: src/timer.cpp:784
+#: src/timer.cpp:1136
 msgid ""
 "This event cannot added to the timerlist.\n"
 "The event overlaps with another event in the timerlist\n"
 "Please check the timerlist manually."
 msgstr ""
-"Αυτό το γεγονός δεν μπορεί να προστεθεί στον χρονοδιακόπτη.\n"
-"Υπερκαλύπτει κάποιο άλλο γεγονός.\n"
-"Παρακαλώ ελένξτε την λίστα του χρονοδιακόπτη."
+"Ξ‘Ο…Ο„Ο Ο„ΞΏ Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚ Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ο€ΟΞΏΟƒΟ„ΞµΞΈΞµΞ― ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·.\n"
+"Ξ¥Ο€ΞµΟΞΊΞ±Ξ»ΟΟ€Ο„ΞµΞΉ ΞΊΞ¬Ο€ΞΏΞΉΞΏ Ξ¬Ξ»Ξ»ΞΏ Ξ³ΞµΞ³ΞΏΞ½ΟΟ‚.\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΞ»Ξ­Ξ½ΞΎΟ„Ξµ Ο„Ξ·Ξ½ Ξ»Ξ―ΟƒΟ„Ξ± Ο„ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·."
 
-#: src/timer.cpp:860
+#: src/timer.cpp:1215
 msgid "timerView"
-msgstr "Χρονοδιακόπτης"
+msgstr "Ξ§ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚"
 
-#: src/timer.cpp:861
+#: src/timer.cpp:1216
 #, fuzzy
 msgid "add new event to Timerlist"
-msgstr "Προσθήκη γεγονότος"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
 
-#: src/timer.cpp:862
+#: src/timer.cpp:1217
 msgid "remove this entry from timer list"
-msgstr "διαγραφή εγγραφής από την λίστα του χρονοδιακόπτη"
+msgstr "Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚ Ξ±Ο€Ο Ο„Ξ·Ξ½ Ξ»Ξ―ΟƒΟ„Ξ± Ο„ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·"
 
-#: src/timer.cpp:1074
+#: src/timer.cpp:1411
 msgid "Timer list"
-msgstr "Χρονοδιακόπτης"
+msgstr "Ξ§ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚"
 
-#: src/timer.cpp:1244
+#: src/timer.cpp:1483
+#, fuzzy
+msgid "Timer Edit View"
+msgstr "Ξ§ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·Ο‚"
+
+#: src/timer.cpp:1484
+msgid "increase the event begin time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:1485
+msgid "decrease the event begin time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:1486
+msgid "increase the event end time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:1487
+msgid "decrease the event end time in 1 minute steps"
+msgstr ""
+
+#: src/timer.cpp:1496
+msgid "January"
+msgstr "Ξ™Ξ±Ξ½ΞΏΟ…Ξ¬ΟΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1496
+msgid "February"
+msgstr "Ξ¦ΞµΞ²ΟΞΏΟ…Ξ¬ΟΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1496
+msgid "March"
+msgstr "ΞΞ¬ΟΟ„ΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1497
+msgid "April"
+msgstr "Ξ‘Ο€ΟΞ―Ξ»ΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1497
+msgid "May"
+msgstr "ΞΞ¬ΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1497
+msgid "June"
+msgstr "Ξ™ΞΏΟΞ½ΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1497
+msgid "July"
+msgstr "Ξ™ΞΏΟΞ»ΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1498
+msgid "August"
+msgstr "Ξ‘Ο…Ξ³ΞΏΟ…ΟƒΟ„ΞΏΟ‚"
+
+#: src/timer.cpp:1498
+msgid "September"
+msgstr "Ξ£ΞµΟ€Ο„Ξ­ΞΌΞ²ΟΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1498
+msgid "October"
+msgstr "ΞΞΊΟ„ΟΞ²ΟΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1499
+msgid "November"
+msgstr "ΞΞΏΞ­ΞΌΞ²ΟΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1499
+msgid "December"
+msgstr "Ξ”ΞµΞΊΞ­ΞΌΞ²ΟΞΉΞΏΟ‚"
+
+#: src/timer.cpp:1608
 msgid "record DVR"
-msgstr "Εγγραφή DVR"
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ® DVR"
 
-#: src/timer.cpp:1245
+#: src/timer.cpp:1612
 msgid "Ngrab"
 msgstr "Ngrab"
 
-#: src/timer.cpp:1289 src/enigma_event.cpp:278 src/enigma_event.cpp:289
-msgid "no description is available"
-msgstr "δεν υπάρχει περιγραφή"
+#: src/timer.cpp:1616
+#, fuzzy
+msgid "Record VCR"
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ®"
 
-#: src/timer.cpp:1309
+#: src/timer.cpp:1669 src/enigma_event.cpp:278 src/enigma_event.cpp:289
+#: src/engrab.cpp:36
+msgid "no description is available"
+msgstr "Ξ΄ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ο€ΞµΟΞΉΞ³ΟΞ±Ο†Ξ®"
+
+#: src/timer.cpp:1689
 #, fuzzy
 msgid "unknown service"
-msgstr "Αγνωστο"
+msgstr "Ξ‘Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ"
 
-#: src/timer.cpp:1425
+#: src/timer.cpp:1820
 msgid ""
 "Invalid begin or end time.!\n"
 "Please check time and date"
 msgstr ""
-"Λάθος χρόνος έναρξης ή λήξης!\n"
-"Παρακάλώ έλέξτε την ώρα και την ημερομηνία"
+"Ξ›Ξ¬ΞΈΞΏΟ‚ Ο‡ΟΟΞ½ΞΏΟ‚ Ξ­Ξ½Ξ±ΟΞΎΞ·Ο‚ Ξ® Ξ»Ξ®ΞΎΞ·Ο‚!\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ¬Ξ»Ο Ξ­Ξ»Ξ­ΞΎΟ„Ξµ Ο„Ξ·Ξ½ ΟΟΞ± ΞΊΞ±ΞΉ Ο„Ξ·Ξ½ Ξ·ΞΌΞµΟΞΏΞΌΞ·Ξ½Ξ―Ξ±"
 
-#: src/timer.cpp:1572
+#: src/timer.cpp:1985
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
 msgstr ""
-"Δεν μπορείτε να προσθέσετε αυτό στον χρονοδιακόπτη\n"
-"Κλέιστε τον χρονοδιακόπτη και χρησημοποιήστε το EPG για την υπηρεσία που "
-"θέλετε να προσθέσετε"
+"Ξ”ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ―Ο„Ξµ Ξ½Ξ± Ο€ΟΞΏΟƒΞΈΞ­ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ο ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·\n"
+"ΞΞ»Ξ­ΞΉΟƒΟ„Ξµ Ο„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· ΞΊΞ±ΞΉ Ο‡ΟΞ·ΟƒΞ·ΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΟ„Ξµ Ο„ΞΏ EPG Ξ³ΞΉΞ± Ο„Ξ·Ξ½ Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ± Ο€ΞΏΟ… "
+"ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο€ΟΞΏΟƒΞΈΞ­ΟƒΞµΟ„Ξµ"
 
-#: src/timer.cpp:1616
+#: src/timer.cpp:2029
 #, fuzzy
 msgid "no description found"
-msgstr "Δεν υπάρχει περιγραφή"
+msgstr "Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ο€ΞµΟΞΉΞ³ΟΞ±Ο†Ξ®"
 
-#: src/upgrade.cpp:116
+#: src/upgrade.cpp:137
 msgid "Please select the software version to upgrade to:"
-msgstr "Παρακαλώ επιλέξτε έκδοση αναβάθμισης:"
+msgstr "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·Ο‚:"
 
-#: src/upgrade.cpp:150
+#: src/upgrade.cpp:171
 msgid "manual upload"
-msgstr "Χειροκείνητο φόρτωμα"
+msgstr "Ξ§ΞµΞΉΟΞΏΞΊΞµΞ―Ξ½Ξ·Ο„ΞΏ Ο†ΟΟΟ„Ο‰ΞΌΞ±"
 
-#: src/upgrade.cpp:166
+#: src/upgrade.cpp:189
 msgid "downloading catalog..."
-msgstr "κατέβασμα καταλόγου..."
+msgstr "ΞΊΞ±Ο„Ξ­Ξ²Ξ±ΟƒΞΌΞ± ΞΊΞ±Ο„Ξ±Ξ»ΟΞ³ΞΏΟ…..."
 
-#: src/upgrade.cpp:186
+#: src/upgrade.cpp:209
 msgid "downloading changelog..."
-msgstr "κατέβασμα καταλόγου αλλαγών (changelog)..."
+msgstr "ΞΊΞ±Ο„Ξ­Ξ²Ξ±ΟƒΞΌΞ± ΞΊΞ±Ο„Ξ±Ξ»ΟΞ³ΞΏΟ… Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½ (changelog)..."
 
-#: src/upgrade.cpp:211
+#: src/upgrade.cpp:234
 msgid "downloading image..."
-msgstr "κατέβασμα λογισμικού..."
+msgstr "ΞΊΞ±Ο„Ξ­Ξ²Ξ±ΟƒΞΌΞ± Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ..."
 
-#: src/upgrade.cpp:270
+#: src/upgrade.cpp:293
 msgid "Please select version to upgrade or LAME! to abort"
-msgstr "Παρακαλώ επιλέξτε έκδοση ή LAME για ακύρωση:"
+msgstr "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ξ® LAME Ξ³ΞΉΞ± Ξ±ΞΊΟΟΟ‰ΟƒΞ·:"
 
-#: src/upgrade.cpp:389 src/upgrade.cpp:462 src/upgrade.cpp:476
+#: src/upgrade.cpp:412 src/upgrade.cpp:485 src/upgrade.cpp:499
 msgid "Error!"
-msgstr "Λάθος!"
+msgstr "Ξ›Ξ¬ΞΈΞΏΟ‚!"
 
-#: src/upgrade.cpp:445
+#: src/upgrade.cpp:468
 msgid "Download aborted."
-msgstr "Ακύρωση διαβάσματος αρχείου."
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· Ξ΄ΞΉΞ±Ξ²Ξ¬ΟƒΞΌΞ±Ο„ΞΏΟ‚ Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…."
 
-#: src/upgrade.cpp:455
+#: src/upgrade.cpp:478
 msgid "checking consistency of file..."
-msgstr "Έλενχος του αρχείου..."
+msgstr "ΞΞ»ΞµΞ½Ο‡ΞΏΟ‚ Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…..."
 
-#: src/upgrade.cpp:459 src/upgrade.cpp:461
+#: src/upgrade.cpp:482 src/upgrade.cpp:484
 msgid "write error while downloading..."
-msgstr "σφάλμα κατά το κατέβασμα..."
+msgstr "ΟƒΟ†Ξ¬Ξ»ΞΌΞ± ΞΊΞ±Ο„Ξ¬ Ο„ΞΏ ΞΊΞ±Ο„Ξ­Ξ²Ξ±ΟƒΞΌΞ±..."
 
-#: src/upgrade.cpp:473 src/upgrade.cpp:475
+#: src/upgrade.cpp:496 src/upgrade.cpp:498
 msgid "Data error. The checksum didn't match."
-msgstr "Σφάλμα δεδομένων. Η σούμα δεν ταιριάζει."
+msgstr "Ξ£Ο†Ξ¬Ξ»ΞΌΞ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½. Ξ— ΟƒΞΏΟΞΌΞ± Ξ΄ΞµΞ½ Ο„Ξ±ΞΉΟΞΉΞ¬Ξ¶ΞµΞΉ."
 
-#: src/upgrade.cpp:485
+#: src/upgrade.cpp:508
 msgid "Checksum OK. Ready to upgrade."
-msgstr "Η σούμα ταιριάζει. Έτοιμο για αναβάθμιση."
+msgstr "Ξ— ΟƒΞΏΟΞΌΞ± Ο„Ξ±ΞΉΟΞΉΞ¬Ξ¶ΞµΞΉ. ΞΟ„ΞΏΞΉΞΌΞΏ Ξ³ΞΉΞ± Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·."
 
-#: src/upgrade.cpp:487
+#: src/upgrade.cpp:510
 msgid "Are you sure you want to upgrade to this new version?"
-msgstr "Σίγουρα θέλετε να γίνει η αναβάθμιση στην νέα έκδοση;"
+msgstr "Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ³Ξ―Ξ½ΞµΞΉ Ξ· Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ· ΟƒΟ„Ξ·Ξ½ Ξ½Ξ­Ξ± Ξ­ΞΊΞ΄ΞΏΟƒΞ·;"
 
-#: src/upgrade.cpp:488
+#: src/upgrade.cpp:511
 msgid "Ready to upgrade"
-msgstr "Έτοιμο για αναβάθμιση"
+msgstr "ΞΟ„ΞΏΞΉΞΌΞΏ Ξ³ΞΉΞ± Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·"
 
-#: src/upgrade.cpp:498
-msgid ""
-"Erasing...\n"
-"Please wait... do NOT switch off the receiver!"
+#: src/upgrade.cpp:521
+#, fuzzy
+msgid "Please wait... do NOT switch off the receiver!"
 msgstr ""
-"Διαγραφή\n"
-"Παρακαλώ μην κλείσετε το μηχάνημα!"
+"Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞΌΞ·Ξ½ ΞΊΞ»ΞµΞ―ΟƒΞµΟ„Ξµ Ο„ΞΏ ΞΌΞ·Ο‡Ξ¬Ξ½Ξ·ΞΌΞ±!"
 
-#: src/upgrade.cpp:499 src/upgrade.cpp:546
+#: src/upgrade.cpp:522
 msgid "upgrade in progress"
-msgstr "Αναβάθμιση σε εξέλιξη"
+msgstr "Ξ‘Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ· ΟƒΞµ ΞµΞΎΞ­Ξ»ΞΉΞΎΞ·"
 
-#: src/upgrade.cpp:529
-msgid "upgrade failed with errorcode UD0"
-msgstr "Λάθος κατά την αναβάθμιση. Σφάλμα UD0"
-
-#: src/upgrade.cpp:530 src/upgrade.cpp:568
-msgid "upgrade failed"
-msgstr "Η αναβάθμιση απέτυχε"
-
-#: src/upgrade.cpp:545
-msgid ""
-"Writing software to flash...\n"
-"Please wait... do NOT switch off the receiver!"
+#: src/upgrade.cpp:549
+msgid "Can't read flashimage.img!"
 msgstr ""
-"Εγγραφή του λογισμικού στην Flash...\n"
-"Παρακαλώ μην κλείσετε το μηχάνημα!"
 
-#: src/upgrade.cpp:553
+#: src/upgrade.cpp:549 src/upgrade.cpp:563 src/upgrade.cpp:579
+#: src/upgrade.cpp:590
+msgid "Flash"
+msgstr ""
+
+#: src/upgrade.cpp:563
+msgid "flashimage.img has filesize of 0byte!"
+msgstr ""
+
+#: src/upgrade.cpp:579
+#, fuzzy
+msgid "Erase error!"
+msgstr "Ξ›Ξ¬ΞΈΞΏΟ‚!"
+
+#: src/upgrade.cpp:590
+msgid "Can't open mtd!"
+msgstr ""
+
+#: src/upgrade.cpp:605
+msgid "Writing Software to Flash..."
+msgstr ""
+
+#: src/upgrade.cpp:627
 msgid ""
 "upgrade successful!\n"
 "restarting..."
 msgstr ""
-"Επιτυχής αναβάθμιση!\n"
-"Επανεκίνηση..."
+"Ξ•Ο€ΞΉΟ„Ο…Ο‡Ξ®Ο‚ Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·!\n"
+"Ξ•Ο€Ξ±Ξ½ΞµΞΊΞ―Ξ½Ξ·ΟƒΞ·..."
 
-#: src/upgrade.cpp:554
+#: src/upgrade.cpp:628
 msgid "upgrade ok"
-msgstr "Σωστή αναβάθμιση"
+msgstr "Ξ£Ο‰ΟƒΟ„Ξ® Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·"
 
-#: src/upgrade.cpp:567
-msgid "upgrade failed with errorcode UA15"
-msgstr "Λάθος κατά την αναβάθμιση. Σφάλμα UA15"
+#: src/upgrade.cpp:654
+#, fuzzy
+msgid "Erasing Flash..."
+msgstr "Ξ‘Ξ»Ξ»ΞµΟ‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚..."
 
-#: src/upgrade.cpp:588
+#: src/upgrade.cpp:688
 msgid "This is the currently installed release."
-msgstr "Αυτή είναι η υπάρχουσα εκγατεστημένη έκδοση"
+msgstr "Ξ‘Ο…Ο„Ξ® ΞµΞ―Ξ½Ξ±ΞΉ Ξ· Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…ΟƒΞ± ΞµΞΊΞ³Ξ±Ο„ΞµΟƒΟ„Ξ·ΞΌΞ­Ξ½Ξ· Ξ­ΞΊΞ΄ΞΏΟƒΞ·"
 
-#: src/upgrade.cpp:591
+#: src/upgrade.cpp:691
 msgid "This is an older release."
-msgstr "Παλαιώτερη έκδοση."
+msgstr "Ξ Ξ±Ξ»Ξ±ΞΉΟΟ„ΞµΟΞ· Ξ­ΞΊΞ΄ΞΏΟƒΞ·."
 
-#: src/upgrade.cpp:594
+#: src/upgrade.cpp:694
 msgid "No changelog data available."
-msgstr "Δεν υπάρχει κατάλογος αλλαγών (changelog)"
+msgstr "Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏΟ‚ Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½ (changelog)"
 
-#: src/upgrade.cpp:608
+#: src/upgrade.cpp:708
 msgid "No new features were added in this release."
-msgstr "Δεν έχουν προστεθεί νεές λειτουργίες σε αυτή την έκδοση"
+msgstr "Ξ”ΞµΞ½ Ξ­Ο‡ΞΏΟ…Ξ½ Ο€ΟΞΏΟƒΟ„ΞµΞΈΞµΞ― Ξ½ΞµΞ­Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―ΞµΟ‚ ΟƒΞµ Ξ±Ο…Ο„Ξ® Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ·"
 
-#: src/upgrade.cpp:611
+#: src/upgrade.cpp:711
 msgid "The following new features were added in this release:\n"
-msgstr "οι παρακάτω προσθήκες έγιναν σε αυτή την έκδοση:\n"
+msgstr "ΞΏΞΉ Ο€Ξ±ΟΞ±ΞΊΞ¬Ο„Ο‰ Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞµΟ‚ Ξ­Ξ³ΞΉΞ½Ξ±Ξ½ ΟƒΞµ Ξ±Ο…Ο„Ξ® Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ·:\n"
 
-#: src/rotorconfig.cpp:56 src/rotorconfig.cpp:100
+#: src/rotorconfig.cpp:57 src/rotorconfig.cpp:101 src/tpeditwindow.cpp:83
 msgid "East"
-msgstr "Ανατολή"
+msgstr "Ξ‘Ξ½Ξ±Ο„ΞΏΞ»Ξ®"
 
-#: src/rotorconfig.cpp:57 src/rotorconfig.cpp:101
+#: src/rotorconfig.cpp:58 src/rotorconfig.cpp:102 src/tpeditwindow.cpp:84
 msgid "West"
-msgstr "Δύση"
-
-#: src/rotorconfig.cpp:71
-msgid "North"
-msgstr "Βοράς"
+msgstr "Ξ”ΟΟƒΞ·"
 
 #: src/rotorconfig.cpp:72
-msgid "South"
-msgstr "Νότος"
+msgid "North"
+msgstr "Ξ’ΞΏΟΞ¬Ο‚"
 
-#: src/rotorconfig.cpp:291 src/rotorconfig.cpp:347
+#: src/rotorconfig.cpp:73
+msgid "South"
+msgstr "ΞΟΟ„ΞΏΟ‚"
+
+#: src/rotorconfig.cpp:289 src/rotorconfig.cpp:345
 msgid "delete me"
-msgstr "*διαγραφή*"
+msgstr "*Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®*"
 
 #: src/rotorconfig.cpp:382 src/rotorconfig.cpp:385
 msgid "drive Motor East"
-msgstr "κίνηση του ρότορα Ανατολικά"
+msgstr "ΞΊΞ―Ξ½Ξ·ΟƒΞ· Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ‘Ξ½Ξ±Ο„ΞΏΞ»ΞΉΞΊΞ¬"
 
 #: src/rotorconfig.cpp:383
 msgid "drive Motor East.. one step"
-msgstr "Ένα βήμα του ρότορα Ανατολικά"
+msgstr "ΞΞ½Ξ± Ξ²Ξ®ΞΌΞ± Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ‘Ξ½Ξ±Ο„ΞΏΞ»ΞΉΞΊΞ¬"
 
 #: src/rotorconfig.cpp:384
 msgid "stop Motor drive East"
-msgstr "Σταμάτημα κίνησης προς την Ανατολή"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚ Ο€ΟΞΏΟ‚ Ο„Ξ·Ξ½ Ξ‘Ξ½Ξ±Ο„ΞΏΞ»Ξ®"
 
 #: src/rotorconfig.cpp:386
 msgid "drive Motor West.. one step"
-msgstr "Ένα βήμα του ρότορα Δυτικά"
+msgstr "ΞΞ½Ξ± Ξ²Ξ®ΞΌΞ± Ο„ΞΏΟ… ΟΟΟ„ΞΏΟΞ± Ξ”Ο…Ο„ΞΉΞΊΞ¬"
 
 #: src/rotorconfig.cpp:387
 msgid "stop Motor drive West"
-msgstr "Σταμάτημα κίνησης προς την Δύση"
+msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚ Ο€ΟΞΏΟ‚ Ο„Ξ·Ξ½ Ξ”ΟΟƒΞ·"
 
 #: src/rotorconfig.cpp:458
 msgid "position"
-msgstr "Δορυφόρος (θέση)"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚ (ΞΈΞ­ΟƒΞ·)"
 
 #: src/rotorconfig.cpp:458
 msgid "store new sat positions"
-msgstr "Αποθήκευση νέων θέσεων δορυφόρων"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ½Ξ­Ο‰Ξ½ ΞΈΞ­ΟƒΞµΟ‰Ξ½ Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½"
 
 #: src/rotorconfig.cpp:459
 msgid "drive to stored pos"
-msgstr "Κίνηση σε θέση μνήμης"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· ΟƒΞµ ΞΈΞ­ΟƒΞ· ΞΌΞ½Ξ®ΞΌΞ·Ο‚"
 
 #: src/rotorconfig.cpp:459
 msgid "drive to stored position"
-msgstr "Κίνηση σε θέση μνήμης"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· ΟƒΞµ ΞΈΞ­ΟƒΞ· ΞΌΞ½Ξ®ΞΌΞ·Ο‚"
 
 #: src/rotorconfig.cpp:460
 msgid "drive to satellite"
-msgstr "Κίνηση προς δορυφόρο"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· Ο€ΟΞΏΟ‚ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ"
 
 #: src/rotorconfig.cpp:460
 msgid "drive to stored satellite"
-msgstr "Κίνηση στον αποθηκευμένο δορυφόρο"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· ΟƒΟ„ΞΏΞ½ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ"
 
 #: src/rotorconfig.cpp:461
 msgid "drive to 0"
-msgstr "Κίνηση στο 0"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· ΟƒΟ„ΞΏ 0"
 
 #: src/rotorconfig.cpp:461
 msgid "drives to 0"
-msgstr "Κίνηση στο 0"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· ΟƒΟ„ΞΏ 0"
 
 #: src/rotorconfig.cpp:462
 msgid "recalculate"
-msgstr "Αναθεώρηση"
+msgstr "Ξ‘Ξ½Ξ±ΞΈΞµΟΟΞ·ΟƒΞ·"
 
 #: src/rotorconfig.cpp:462
 msgid "recalculate stored positions rel. to current pos"
-msgstr "Αναθεώρηση αποθηκευμένων θέσεων σε σχέση με την τωρινή"
+msgstr "Ξ‘Ξ½Ξ±ΞΈΞµΟΟΞ·ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ ΞΈΞ­ΟƒΞµΟ‰Ξ½ ΟƒΞµ ΟƒΟ‡Ξ­ΟƒΞ· ΞΌΞµ Ο„Ξ·Ξ½ Ο„Ο‰ΟΞΉΞ½Ξ®"
 
 #: src/rotorconfig.cpp:463
 msgid "set east limit"
-msgstr "Ρύθμιση ανατολικού ορίου"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ±Ξ½Ξ±Ο„ΞΏΞ»ΞΉΞΊΞΏΟ ΞΏΟΞ―ΞΏΟ…"
 
 #: src/rotorconfig.cpp:463
 msgid "set east soft limit"
-msgstr "Ρύθμιση ανατολικού τεχνητού ορίου"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ±Ξ½Ξ±Ο„ΞΏΞ»ΞΉΞΊΞΏΟ Ο„ΞµΟ‡Ξ½Ξ·Ο„ΞΏΟ ΞΏΟΞ―ΞΏΟ…"
 
 #: src/rotorconfig.cpp:464
 msgid "set west limit"
-msgstr "Ρύθμιση δυτικού ορίου"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ΄Ο…Ο„ΞΉΞΊΞΏΟ ΞΏΟΞ―ΞΏΟ…"
 
 #: src/rotorconfig.cpp:464
 msgid "set west soft limit"
-msgstr "Ρύθμιση δυτικού τεχνητού ορίου"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ΄Ο…Ο„ΞΉΞΊΞΏΟ Ο„ΞµΟ‡Ξ½Ξ·Ο„ΞΏΟ ΞΏΟΞ―ΞΏΟ…"
 
 #: src/rotorconfig.cpp:465
 msgid "disable limits"
-msgstr "χωρίς όρια"
+msgstr "Ο‡Ο‰ΟΞ―Ο‚ ΟΟΞΉΞ±"
 
 #: src/rotorconfig.cpp:465 src/rotorconfig.cpp:528
 msgid "disable soft limits"
-msgstr "Ακύρωση τενχητών ορίων"
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· Ο„ΞµΞ½Ο‡Ξ·Ο„ΟΞ½ ΞΏΟΞ―Ο‰Ξ½"
 
 #: src/rotorconfig.cpp:466
 msgid "enable limits"
-msgstr "Ενεργοποίηση ορίων"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΏΟΞ―Ο‰Ξ½"
 
 #: src/rotorconfig.cpp:466 src/rotorconfig.cpp:532
 msgid "enable soft limits"
-msgstr "ενεργοποίηση τεχνητών ορίων"
+msgstr "ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο„ΞµΟ‡Ξ½Ξ·Ο„ΟΞ½ ΞΏΟΞ―Ο‰Ξ½"
 
 #: src/rotorconfig.cpp:504
 msgid "store current pos in motor"
-msgstr "Αποθήκευση θέσης στο ρότορα"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΞΈΞ­ΟƒΞ·Ο‚ ΟƒΟ„ΞΏ ΟΟΟ„ΞΏΟΞ±"
 
 #: src/rotorconfig.cpp:505 src/rotorconfig.cpp:521 src/rotorconfig.cpp:525
-#: src/rotorconfig.cpp:845
+#: src/rotorconfig.cpp:854
 msgid "store"
-msgstr "Αποθήκευση"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
 #: src/rotorconfig.cpp:508
 msgid "drive motor to stored pos"
-msgstr "Κίνηση του μοτέρ στην θέση μνήμης"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· Ο„ΞΏΟ… ΞΌΞΏΟ„Ξ­Ο ΟƒΟ„Ξ·Ξ½ ΞΈΞ­ΟƒΞ· ΞΌΞ½Ξ®ΞΌΞ·Ο‚"
 
 #: src/rotorconfig.cpp:509 src/rotorconfig.cpp:513 src/rotorconfig.cpp:537
 msgid "go"
-msgstr "πήγαινε"
+msgstr "Ο€Ξ®Ξ³Ξ±ΞΉΞ½Ξµ"
 
 #: src/rotorconfig.cpp:512
 msgid "drive motor to reference position"
-msgstr "Κίνηση του μοτέρ στην αρχική θέση"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· Ο„ΞΏΟ… ΞΌΞΏΟ„Ξ­Ο ΟƒΟ„Ξ·Ξ½ Ξ±ΟΟ‡ΞΉΞΊΞ® ΞΈΞ­ΟƒΞ·"
 
 #: src/rotorconfig.cpp:516
 msgid "recalculate all stored positions"
-msgstr "Αναθεώρηση αποθηκευμένων θέσεων"
+msgstr "Ξ‘Ξ½Ξ±ΞΈΞµΟΟΞ·ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ ΞΈΞ­ΟƒΞµΟ‰Ξ½"
 
 #: src/rotorconfig.cpp:517
 msgid "recalc"
-msgstr "Αναθεώρηση"
+msgstr "Ξ‘Ξ½Ξ±ΞΈΞµΟΟΞ·ΟƒΞ·"
 
 #: src/rotorconfig.cpp:520
 msgid "store current pos as east soft limit"
-msgstr "Αποθήκεση σαν ανατολικό τεχνιτό όριο"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟƒΞ· ΟƒΞ±Ξ½ Ξ±Ξ½Ξ±Ο„ΞΏΞ»ΞΉΞΊΟ Ο„ΞµΟ‡Ξ½ΞΉΟ„Ο ΟΟΞΉΞΏ"
 
 #: src/rotorconfig.cpp:524
 msgid "store current pos as west soft limit"
-msgstr "Αποθήκευση σαν δυτικό τεχνιτό όριο"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΟƒΞ±Ξ½ Ξ΄Ο…Ο„ΞΉΞΊΟ Ο„ΞµΟ‡Ξ½ΞΉΟ„Ο ΟΟΞΉΞΏ"
 
 #: src/rotorconfig.cpp:529 src/rotorconfig.cpp:533
 msgid "do it"
-msgstr "κάντο"
+msgstr "ΞΊΞ¬Ξ½Ο„ΞΏ"
 
 #: src/rotorconfig.cpp:536
 msgid "drive motor to satellite"
-msgstr "Κίνηση του μοτέρ στον δορυφόρο"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· Ο„ΞΏΟ… ΞΌΞΏΟ„Ξ­Ο ΟƒΟ„ΞΏΞ½ Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏ"
 
-#: src/rotorconfig.cpp:687
+#: src/rotorconfig.cpp:692
 msgid ""
 "Wrong use of this function can corrupt all stored sat positions.\n"
 "Are you sure you want to use this function?"
 msgstr ""
-"Κακή χρήση αυτής της λειτουργίας μπορεί να χαλάσει τις αποθηκευμένες θέσεις "
-"δορυφόρων.\n"
-"Σίγουρα θέλετε να το κάνετε;"
-
-#: src/rotorconfig.cpp:749
-msgid "one step East..."
-msgstr "Ένα βήμα Ανατολικά..."
+"ΞΞ±ΞΊΞ® Ο‡ΟΞ®ΟƒΞ· Ξ±Ο…Ο„Ξ®Ο‚ Ο„Ξ·Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ο‡Ξ±Ξ»Ξ¬ΟƒΞµΞΉ Ο„ΞΉΟ‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞµΟ‚ ΞΈΞ­ΟƒΞµΞΉΟ‚ "
+"Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½.\n"
+"Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο„ΞΏ ΞΊΞ¬Ξ½ΞµΟ„Ξµ;"
 
 #: src/rotorconfig.cpp:758
+msgid "one step East..."
+msgstr "ΞΞ½Ξ± Ξ²Ξ®ΞΌΞ± Ξ‘Ξ½Ξ±Ο„ΞΏΞ»ΞΉΞΊΞ¬..."
+
+#: src/rotorconfig.cpp:767
 msgid "one step west..."
-msgstr "'Ενα βήμα Δυτικά..."
+msgstr "'Ξ•Ξ½Ξ± Ξ²Ξ®ΞΌΞ± Ξ”Ο…Ο„ΞΉΞΊΞ¬..."
 
-#: src/rotorconfig.cpp:772
+#: src/rotorconfig.cpp:781
 msgid "turning to east..."
-msgstr "Κίνηση προς την Ανατολή ..."
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· Ο€ΟΞΏΟ‚ Ο„Ξ·Ξ½ Ξ‘Ξ½Ξ±Ο„ΞΏΞ»Ξ® ..."
 
-#: src/rotorconfig.cpp:783
+#: src/rotorconfig.cpp:792
 msgid "turning to west..."
-msgstr "Κίνηση προς την Δύση"
+msgstr "ΞΞ―Ξ½Ξ·ΟƒΞ· Ο€ΟΞΏΟ‚ Ο„Ξ·Ξ½ Ξ”ΟΟƒΞ·"
 
-#: src/rotorconfig.cpp:796
+#: src/rotorconfig.cpp:805
 msgid "<    Stop    >"
-msgstr "< Σταμάτημα >"
+msgstr "< Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± >"
 
-#: src/rotorconfig.cpp:833
+#: src/rotorconfig.cpp:842
 msgid "Storage Location:"
-msgstr "Θέση αποθήκευσης:"
+msgstr "ΞΞ­ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚:"
 
-#: src/rotorconfig.cpp:835
+#: src/rotorconfig.cpp:844
 msgid "change storage Location or store"
-msgstr "Αλλαγή θέσης μνήμης ή αποθήκευση"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΞΈΞ­ΟƒΞ·Ο‚ ΞΌΞ½Ξ®ΞΌΞ·Ο‚ Ξ® Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
-#: src/rotorconfig.cpp:885
+#: src/rotorconfig.cpp:888
 #, c-format
 msgid ""
 "%d.%d%c is currently stored at location %d!\n"
 "When you store this now at Location %d, we must remove the old Location.\n"
 "Are you sure you want to do this?"
 msgstr ""
-"%d.%d%c είναι αποθηκευμένο στον κατάλογο %d!\n"
-"Αν το αποθηκέυσετε στον νέο κατάλογο %d, θα διαγραφεί από τον παλιό.\n"
-"Σίγουρα θέλετε να γίνει αυτό;"
+"%d.%d%c ΞµΞ―Ξ½Ξ±ΞΉ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ ΟƒΟ„ΞΏΞ½ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏ %d!\n"
+"Ξ‘Ξ½ Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞ­Ο…ΟƒΞµΟ„Ξµ ΟƒΟ„ΞΏΞ½ Ξ½Ξ­ΞΏ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏ %d, ΞΈΞ± Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†ΞµΞ― Ξ±Ο€Ο Ο„ΞΏΞ½ Ο€Ξ±Ξ»ΞΉΟ.\n"
+"Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ³Ξ―Ξ½ΞµΞΉ Ξ±Ο…Ο„Ο;"
 
-#: src/rotorconfig.cpp:907
+#: src/rotorconfig.cpp:910
 #, c-format
 msgid ""
 "Store %d.%d%c at location %d.\n"
 "If you want another location, then say no and change the location manually.\n"
 "Are you sure you want to store at this location?"
 msgstr ""
-"Αποθήκευση %d.%d%c στον κατάλογο %d.\n"
-"Αν θέλετε άλλο κατάλογο, πατήστε ΟΧΙ και επιλέξτε τον κατάλογο που θέλετε.\n"
-"Σίγουρα θέλετε να το αποθηκεύσετε σε αυτή την θέση;"
+"Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· %d.%d%c ΟƒΟ„ΞΏΞ½ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏ %d.\n"
+"Ξ‘Ξ½ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ¬Ξ»Ξ»ΞΏ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏ, Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ ΞΞ§Ξ™ ΞΊΞ±ΞΉ ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ ΞΊΞ±Ο„Ξ¬Ξ»ΞΏΞ³ΞΏ Ο€ΞΏΟ… ΞΈΞ­Ξ»ΞµΟ„Ξµ.\n"
+"Ξ£Ξ―Ξ³ΞΏΟ…ΟΞ± ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟΟƒΞµΟ„Ξµ ΟƒΞµ Ξ±Ο…Ο„Ξ® Ο„Ξ·Ξ½ ΞΈΞ­ΟƒΞ·;"
 
-#: src/setup_rfmod.cpp:19
+#: src/setup_rfmod.cpp:21
 msgid "RF-Modulator Setup"
-msgstr "Ρύθμιση διαμορφωτή RF"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ΄ΞΉΞ±ΞΌΞΏΟΟ†Ο‰Ο„Ξ® RF"
 
-#: src/setup_rfmod.cpp:24 src/setup_rfmod.cpp:165
+#: src/setup_rfmod.cpp:26 src/setup_rfmod.cpp:154
 msgid "Test Pattern"
-msgstr "Δοκιμαστική εικόνα"
+msgstr "Ξ”ΞΏΞΊΞΉΞΌΞ±ΟƒΟ„ΞΉΞΊΞ® ΞµΞΉΞΊΟΞ½Ξ±"
 
-#: src/setup_rfmod.cpp:27
+#: src/setup_rfmod.cpp:29
 msgid "enable test pattern"
-msgstr "Δοκιμαστική εικόνα"
+msgstr "Ξ”ΞΏΞΊΞΉΞΌΞ±ΟƒΟ„ΞΉΞΊΞ® ΞµΞΉΞΊΟΞ½Ξ±"
 
-#: src/setup_rfmod.cpp:34
+#: src/setup_rfmod.cpp:36
 msgid "Sound enable"
-msgstr "Ήχος ενεργός"
+msgstr "Ξ‰Ο‡ΞΏΟ‚ ΞµΞ½ΞµΟΞ³ΟΟ‚"
 
-#: src/setup_rfmod.cpp:37
+#: src/setup_rfmod.cpp:39
 msgid "enable Sound"
-msgstr "ενεργοποίηση ήχου"
+msgstr "ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ®Ο‡ΞΏΟ…"
 
-#: src/setup_rfmod.cpp:56
+#: src/setup_rfmod.cpp:58
 msgid "4.5 MHz"
 msgstr "4,5 MHz"
 
-#: src/setup_rfmod.cpp:57
+#: src/setup_rfmod.cpp:59
 msgid "5.5 MHz"
 msgstr "5,5 MHz"
 
-#: src/setup_rfmod.cpp:58
+#: src/setup_rfmod.cpp:60
 msgid "6.0 MHz"
 msgstr "6,0 MHz"
 
-#: src/setup_rfmod.cpp:59
+#: src/setup_rfmod.cpp:61
 msgid "6.5 MHz"
 msgstr "6,5 MHz"
 
-#: src/setup_rfmod.cpp:69
+#: src/setup_rfmod.cpp:71
 msgid "change sound subcarrier frequency"
-msgstr "Αλλαγή συχνότητας φέρουσας ήχου"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΟƒΟ…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ±Ο‚ Ο†Ξ­ΟΞΏΟ…ΟƒΞ±Ο‚ Ξ®Ο‡ΞΏΟ…"
 
-#: src/setup_rfmod.cpp:93
+#: src/setup_rfmod.cpp:94
 msgid "change channel"
-msgstr "Αλλαγή καναλιού"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΞΏΟ"
 
-#: src/setup_rfmod.cpp:117
+#: src/setup_rfmod.cpp:120
 msgid "250Khz steps"
-msgstr "βήματα 250khz"
+msgstr "Ξ²Ξ®ΞΌΞ±Ο„Ξ± 250khz"
 
-#: src/setup_rfmod.cpp:127
+#: src/setup_rfmod.cpp:130
 msgid "save settings and leave rf setup"
-msgstr "Επιστροφή με αποθήκευση παραμέτρων."
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΟ‰Ξ½."
 
-#: src/setup_rfmod.cpp:135
-msgid "leave rf setup (no changes are saved)"
-msgstr "Επιστροφή χωρίς αποθήκευση παραμέτρων"
-
-#: src/setup_rfmod.cpp:165
+#: src/setup_rfmod.cpp:154
 msgid "if you can read this your rfmod will not work."
-msgstr "Αν διαβάζεις αυτό ο διαμορφωτής RF δεν λειτουργεί"
+msgstr "Ξ‘Ξ½ Ξ΄ΞΉΞ±Ξ²Ξ¬Ξ¶ΞµΞΉΟ‚ Ξ±Ο…Ο„Ο ΞΏ Ξ΄ΞΉΞ±ΞΌΞΏΟΟ†Ο‰Ο„Ξ®Ο‚ RF Ξ΄ΞµΞ½ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞµΞ―"
 
 #: src/enigma_event.cpp:19
 msgid "enigma event view"
-msgstr "τραλαλα-lo"
+msgstr "Ο„ΟΞ±Ξ»Ξ±Ξ»Ξ±-lo"
+
+#: src/enigma_event.cpp:20
+msgid "add this event as DVR Event to timer list"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ±Ο…Ο„ΞΏΟ Ο„ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚ ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· DVR"
+
+#: src/enigma_event.cpp:21
+msgid "add this event as NGRAB Event to timer list"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ±Ο…Ο„ΞΏΟ Ο„ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚ ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· NGRAB"
+
+#: src/enigma_event.cpp:22
+msgid "add this event as simple Switch Event to timer list"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ±Ο…Ο„ΞΏΟ Ο„ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚ ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· Ξ±Ο€Ξ»Ξ®Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®Ο‚"
+
+#: src/enigma_event.cpp:23
+msgid "remove this event from timer list"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο„ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚ Ξ±Ο€Ο Ο„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ·"
 
 #: src/enigma_event.cpp:24
 msgid "closes the Event View"
-msgstr "τριλαλα"
+msgstr "Ο„ΟΞΉΞ»Ξ±Ξ»Ξ±"
 
-#: src/wizard_language.cpp:151
+#: src/wizard_language.cpp:154
 msgid "Choose your language..."
-msgstr "Επιλέξτε τη γλώσσα σας ..."
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο„Ξ· Ξ³Ξ»ΟΟƒΟƒΞ± ΟƒΞ±Ο‚ ..."
 
-#: src/wizard_language.cpp:152
+#: src/wizard_language.cpp:155
 msgid "press up/down/ok"
-msgstr "πατήστε πάνω ή κάτω και OK"
+msgstr "Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ο€Ξ¬Ξ½Ο‰ Ξ® ΞΊΞ¬Ο„Ο‰ ΞΊΞ±ΞΉ OK"
 
 #: src/setup_audio.cpp:19
 msgid "Audio setup"
-msgstr "Ρύθμιση ήχου"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ®Ο‡ΞΏΟ…"
 
 #: src/setup_audio.cpp:29
 msgid "AC3 default output"
-msgstr "Ενεργοποίηση ήχου AC3"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ®Ο‡ΞΏΟ… AC3"
 
 #: src/setup_audio.cpp:32
 msgid "enable/disable ac3 default output (ok)"
-msgstr "Ενεργοποίηση ή όχι εξόδου AC3 (OK)"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ® ΟΟ‡ΞΉ ΞµΞΎΟΞ΄ΞΏΟ… AC3 (OK)"
 
-#~ msgid "choose service"
-#~ msgstr "επιλογή υπηρεσίας"
+#: src/tpeditwindow.cpp:57
+#, fuzzy
+msgid "Satellite Edit"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚:"
 
-#~ msgid "close timer menu (ok)"
-#~ msgstr "Κλείσιμο μενού χρονοδιακόπτη (ok)"
+#: src/tpeditwindow.cpp:63
+#, fuzzy
+msgid "press ok to change satellite name"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΟΟƒΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ±"
+
+#: src/tpeditwindow.cpp:73
+#, fuzzy
+msgid "enter orbital position without dot (19.2 = 192)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ο„Ξ·Ξ½ Ο„ΟΞΏΟ‡ΞΉΞ±ΞΊΞ® ΞΈΞ­ΟƒΞ· Ο‡Ο‰ΟΞ―Ο‚ '.'(Ο€.Ο‡. 19.2=192)"
+
+#: src/tpeditwindow.cpp:81
+#, fuzzy
+msgid "press ok to change direction"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΟΟƒΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ±"
+
+#: src/tpeditwindow.cpp:90
+#, fuzzy
+msgid "Network search"
+msgstr "ΞΟΞµΟ…Ξ½Ξ± Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
+
+#: src/tpeditwindow.cpp:91
+msgid ""
+"scan Network Information Table(s)\n"
+"this is recommend"
+msgstr ""
+
+#: src/tpeditwindow.cpp:96
+#, fuzzy
+msgid "Extended networks search"
+msgstr "ΞΟΞµΟ…Ξ½Ξ± Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
+
+#: src/tpeditwindow.cpp:97
+msgid ""
+"scan NITs of other transponders\n"
+"this is slower, but sometimes needed)"
+msgstr ""
+
+#: src/tpeditwindow.cpp:102
+msgid "Skip known Networks"
+msgstr ""
+
+#: src/tpeditwindow.cpp:103
+msgid ""
+"dont scan NITs from known Networks\n"
+"faster scan"
+msgstr ""
+
+#: src/tpeditwindow.cpp:108
+#, fuzzy
+msgid "Use BAT"
+msgstr "Ξ§ΟΞ®ΟƒΞ· BAT"
+
+#: src/tpeditwindow.cpp:109
+msgid "use Provider DVB Bouquet Tables if exist"
+msgstr ""
+
+#: src/tpeditwindow.cpp:149
+#, fuzzy
+msgid "Transponder Edit"
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ·Ο‚:"
+
+#: src/tpeditwindow.cpp:188
+#, fuzzy
+msgid "add new Network"
+msgstr "Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ· ΟƒΟ„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ok)"
+
+#: src/tpeditwindow.cpp:189
+#, fuzzy
+msgid "remove selected Network"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ³ΞµΞ³ΞΏΞ½ΟΟ„ΞΏΟ‚"
+
+#: src/tpeditwindow.cpp:256
+#, fuzzy
+msgid "Save changed Transponders?"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½"
+
+#: src/tpeditwindow.cpp:257
+#, fuzzy
+msgid "Transponders changed"
+msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ· ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
+
+#: src/tpeditwindow.cpp:267
+#, fuzzy
+msgid "Transponders couldnt written to file!"
+msgstr "Ξ”ΞΉΞ±Ξ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏΞ½ Ξ±Ξ½Ξ±ΞΌΞµΟ„Ξ±Ξ΄ΟΟ„Ξ· Ο€ΞΏΟ… ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ±Ξ½ΞΉΟ‡Ξ½ΞµΟΟƒΞµΟ„Ξµ"
+
+#: src/tpeditwindow.cpp:268
+#, fuzzy
+msgid "Write Error"
+msgstr "Ξ›Ξ¬ΞΈΞΏΟ‚"
+
+#: src/tpeditwindow.cpp:445
+#, fuzzy
+msgid "new Satellite"
+msgstr "Ξ”ΞΏΟΟ…Ο†ΟΟΞΏΟ‚:"
+
+#: src/tpeditwindow.cpp:474
+#, fuzzy
+msgid "Really delete the selected satellite?"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ξ΄ΞΏΟΟ…Ο†ΟΟΞΏΟ…"
+
+#: src/tpeditwindow.cpp:475
+#, fuzzy, c-format
+msgid "Delete %s"
+msgstr "*Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®*"
+
+#: src/parentallock.cpp:22
+msgid "please enter pin:"
+msgstr ""
+
+#: src/parentallock.cpp:42
+#, fuzzy
+msgid "Parental setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ LNB, Ξ΄ΞΏΟΟ…Ο†ΟΟΟ‰Ξ½ ΞΊΞ±ΞΉ ΞΊΞ±Ξ½Ξ±Ξ»ΞΉΟΞ½"
+
+#: src/parentallock.cpp:49
+msgid "Parental lock"
+msgstr ""
+
+#: src/parentallock.cpp:52
+#, fuzzy
+msgid "enable/disable parental lock"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ® ΟΟ‡ΞΉ Ξ±Ξ½Ο„ΞΉΟƒΟ„ΟΞΏΟ†Ξ®Ο‚ (OK)"
+
+#: src/parentallock.cpp:56 src/parentallock.cpp:73
+msgid "change PIN"
+msgstr ""
+
+#: src/parentallock.cpp:59
+msgid "change Parental PIN (ok)"
+msgstr ""
+
+#: src/parentallock.cpp:66
+#, fuzzy
+msgid "Setup lock"
+msgstr "Ξ•Ξ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·"
+
+#: src/parentallock.cpp:69
+#, fuzzy
+msgid "enable/disable setup lock"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ® ΟΟ‡ΞΉ Ξ±Ξ½Ο„ΞΉΟƒΟ„ΟΞΏΟ†Ξ®Ο‚ (OK)"
+
+#: src/parentallock.cpp:76
+msgid "change Setup PIN (ok)"
+msgstr ""
+
+#: src/parentallock.cpp:151
+#, c-format
+msgid "New %s PIN"
+msgstr ""
+
+#: src/parentallock.cpp:158
+#, c-format
+msgid "Reenter %s PIN"
+msgstr ""
+
+#: src/parentallock.cpp:166
+msgid ""
+"The PINs are not equal!\n"
+"\n"
+"Do you want to retry?"
+msgstr ""
+
+#: src/parentallock.cpp:167 src/parentallock.cpp:239
+msgid "PIN validation failed"
+msgstr ""
+
+#: src/parentallock.cpp:184
+msgid "PIN change completed"
+msgstr ""
+
+#: src/parentallock.cpp:185
+#, fuzzy
+msgid "PIN changed"
+msgstr "Ξ— ΞµΟ€ΞΉΟ†Ξ¬Ξ½ΞµΞΉΞ± Ξ¬Ξ»Ξ»Ξ±ΞΎΞµ"
+
+#: src/parentallock.cpp:227
+#, c-format
+msgid "current %s PIN"
+msgstr ""
+
+#: src/parentallock.cpp:238
+msgid ""
+"The entered PIN is incorrect.\n"
+"Do you want to retry?"
+msgstr ""
+
+#: src/setupengrab.cpp:25
+#, fuzzy
+msgid "Ngrab Server"
+msgstr "Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
+
+#: src/setupengrab.cpp:49
+#, fuzzy
+msgid "enter IP Adress of the Ngrab Server (0..9, left, right)"
+msgstr "Ξ”ΟΟƒΟ„Ξµ Ξ΄ΞΉΞµΟΞΈΟ…Ξ½ΟƒΞ· Ο„ΞΏΟ… DREAMBOX (0..9, <, >)"
+
+#: src/setupengrab.cpp:61
+msgid "enter ngrab server port (standard is 4000)"
+msgstr ""
+
+#: src/setupengrab.cpp:72
+msgid "enter MAC adress of server (for wake on lan)"
+msgstr ""
+
+#: src/setupengrab.cpp:91
+msgid "detect MAC Adress"
+msgstr ""
+
+#: src/setupengrab.cpp:92
+msgid "try to autodetect server MAC adress"
+msgstr ""
+
+#: src/setupengrab.cpp:180
+msgid "Please check your NGrab Server or the IP"
+msgstr ""
+
+#: src/setupengrab.cpp:181
+msgid "HW Address(MAC) detection failed"
+msgstr ""
+
+#: src/setup_timezone.cpp:16
+#, fuzzy
+msgid "Time Zone Setup"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΞµΞΉΞΊΟΞ½Ξ±Ο‚"
+
+#: src/setup_timezone.cpp:25
+msgid "Time Zone:"
+msgstr ""
+
+#: src/setup_timezone.cpp:30
+#, fuzzy
+msgid "select your time zone (ok)"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ο„ΟΟ€ΞΏΟ… Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ΞΏk)"
+
+#: src/setup_timezone.cpp:41
+#, fuzzy
+msgid "use automatically daylight saving time"
+msgstr "Ξ‘Ο…Ο„ΟΞΌΞ±Ο„Ξ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® Ο„Ξ¬ΟƒΞ·Ο‚"
+
+#: src/setup_timezone.cpp:44
+msgid "Automatically adjust clock for daylight saving changes"
+msgstr ""
+
+#: src/setup_av.cpp:34
+#, fuzzy
+msgid "A/V Setup"
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· ΟΟΟ„ΞΏΟΞ±"
+
+#: src/setup_av.cpp:40
+#, fuzzy
+msgid "back to setup"
+msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ"
+
+#: src/setup_av.cpp:42
+#, fuzzy
+msgid "Video..."
+msgstr "Ξ•ΞΉΞΊΟΞ½Ξ±"
+
+#: src/setup_av.cpp:42
+#, fuzzy
+msgid "open video setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΉΞΊΟΞ½Ξ±"
+
+#: src/setup_av.cpp:43
+msgid "Video calibration..."
+msgstr ""
+
+#: src/setup_av.cpp:43
+msgid "show calibration picture"
+msgstr ""
+
+#: src/setup_av.cpp:46
+#, fuzzy
+msgid "RF-Modulator..."
+msgstr "Ξ΅ΟΞΈΞΌΞΉΟƒΞ· Ξ΄ΞΉΞ±ΞΌΞΏΟΟ†Ο‰Ο„Ξ® RF"
+
+#: src/setup_av.cpp:46
+msgid "setup modulator"
+msgstr ""
+
+#: src/setup_av.cpp:49
+#, fuzzy
+msgid "Audio..."
+msgstr "Ξ‰Ο‡ΞΏΟ‚"
+
+#: src/setup_av.cpp:49
+#, fuzzy
+msgid "open audio setup"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΉΞΊΟΞ½Ξ±"
+
+#~ msgid "add Service"
+#~ msgstr "Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ο…Ο€Ξ·ΟΞµΟƒΞ―Ξ±Ο‚"
+
+#~ msgid "cancel"
+#~ msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ·"
+
+#~ msgid "cancel partition check"
+#~ msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· ΞµΞ»Ξ­Ξ³Ο‡ΞΏΟ… ΞΊΞ¬Ο„Ξ±Ο„ΞΌΞ·ΟƒΞ·Ο‚ Ξ΄Ξ―ΟƒΞΊΞΏΟ… "
+
+#, fuzzy
+#~ msgid "close Window"
+#~ msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞΌΞµΞ½ΞΏΟ."
+
+#~ msgid "close window and do not scan"
+#~ msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· Ο‡Ο‰ΟΞ―Ο‚ Ξ±Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·."
+
+#, fuzzy
+#~ msgid "close window and set no sleep timer (ok)"
+#~ msgstr "ΞΞ»ΞµΞ―ΟƒΞΉΞΌΞΏ Ο€Ξ±ΟΞΈΟΟΞΏΟ… Ο‡Ο‰ΟΞ―Ο‚ Ο„Ξ· Ο‡ΟΞ®ΟƒΞ· Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ok)."
+
+#~ msgid "close window and use no record timer (ok)"
+#~ msgstr "ΞΞ»ΞµΞ―ΟƒΞΉΞΌΞΏ Ο€Ξ±ΟΞΈΟΟΞΏΟ… Ο‡Ο‰ΟΞ―Ο‚ Ο„Ξ· Ο‡ΟΞ®ΟƒΞ· Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· (ok)."
+
+#, fuzzy
+#~ msgid "DVB - all services"
+#~ msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΟΞ»Ο‰Ξ½ Ο„Ο‰Ξ½ Ο…Ο€Ξ·ΟΞµΟƒΞΉΟΞ½"
+
+#, fuzzy
+#~ msgid "DVB - bouquets"
+#~ msgstr "Ξ§ΟΞ®ΟƒΟ„Ξ· - ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± (TV)"
+
+#~ msgid "ignore changes and return"
+#~ msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· Ο„Ο‰Ξ½ Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½ ΞΊΞ±ΞΉ ΞµΟ€ΞΉΟƒΟ„ΟΞΏΟ†Ξ®."
+
+#~ msgid "leave CI mmi"
+#~ msgstr "ΞΞΎΞΏΞ΄ΞΏΟ‚ Ξ±Ο€Ο Ο„ΞΏ CI mmi"
+
+#~ msgid "leave rf setup (no changes are saved)"
+#~ msgstr "Ξ•Ο€ΞΉΟƒΟ„ΟΞΏΟ†Ξ® Ο‡Ο‰ΟΞ―Ο‚ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΟΞ±ΞΌΞ­Ο„ΟΟ‰Ξ½"
+
+#~ msgid "Network setup"
+#~ msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
+
+#~ msgid "Network..."
+#~ msgstr "Ξ”Ξ―ΞΊΟ„Ο…ΞΏ..."
+
+#, fuzzy
+#~ msgid "ngrab recording"
+#~ msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ngrab"
+
+#~ msgid "open the serviceselector and show user bouquets"
+#~ msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½ Ο‡ΟΞ®ΟƒΟ„Ξ·"
+
+#, fuzzy
+#~ msgid "select sat ( up/down )"
+#~ msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ·ΞΌΞ­ΟΞ±Ο‚ (ok)"
+
+#, fuzzy
+#~ msgid "start recording"
+#~ msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
+
+#, fuzzy
+#~ msgid "stop manual recording"
+#~ msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
+
+#, fuzzy
+#~ msgid "stop recording"
+#~ msgstr "Ξ£Ο„Ξ±ΞΌΞ¬Ο„Ξ·ΞΌΞ± ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
+
+#~ msgid "toggle between user bouquets, normal dvb bouquets"
+#~ msgstr "ΞΞµΟ„Ξ±Ο€Ξ®Ξ΄Ξ·ΟƒΞ· ΞΌΞµΟ„Ξ±ΞΎΟ Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½ Ο‡ΟΞ®ΟƒΟ„Ξ· ΞΊΞ±ΞΉ Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ο‰Ξ½ DVB"
+
+#~ msgid "upgrade failed"
+#~ msgstr "Ξ— Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ· Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ"
+
+#~ msgid "upgrade failed with errorcode UA15"
+#~ msgstr "Ξ›Ξ¬ΞΈΞΏΟ‚ ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·. Ξ£Ο†Ξ¬Ξ»ΞΌΞ± UA15"
+
+#~ msgid "upgrade failed with errorcode UD0"
+#~ msgstr "Ξ›Ξ¬ΞΈΞΏΟ‚ ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ·. Ξ£Ο†Ξ¬Ξ»ΞΌΞ± UD0"
+
+#, fuzzy
+#~ msgid "User"
+#~ msgstr "Ξ‘Ξ½Ξ―Ο‡Ξ½ΞµΟ…ΟƒΞ·"
+
+#~ msgid "User - bouquets (Radio)"
+#~ msgstr "Ξ§ΟΞ®ΟƒΟ„Ξ· - ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± (Radio)"
+
+#~ msgid "User - bouquets (TV)"
+#~ msgstr "Ξ§ΟΞ®ΟƒΟ„Ξ· - ΞΌΟ€ΞΏΟ…ΞΊΞ­Ο„Ξ± (TV)"
+
+#~ msgid "videotext"
+#~ msgstr "Videotext"
 
 #~ msgid ""
-#~ "Invalid begin or end time.!\n"
-#~ "You cannot add this to timerlist"
+#~ "Writing software to flash...\n"
+#~ "Please wait... do NOT switch off the receiver!"
 #~ msgstr ""
-#~ "Λάθος χρόνος έναρξης ή λήξης!\n"
-#~ "Δεν μπορεί προστεθεί αυτό στον χρονοδιακόπτη."
+#~ "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ® Ο„ΞΏΟ… Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ ΟƒΟ„Ξ·Ξ½ Flash...\n"
+#~ "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞΌΞ·Ξ½ ΞΊΞ»ΞµΞ―ΟƒΞµΟ„Ξµ Ο„ΞΏ ΞΌΞ·Ο‡Ξ¬Ξ½Ξ·ΞΌΞ±!"
 
-#~ msgid "press ok to edit the selected event"
-#~ msgstr "Πατήστε OK γιά να αλλάξετε το επιλεγμένο γεγονός"
-
-#~ msgid "update"
-#~ msgstr "ενημέρωση"
-
-#~ msgid "update the current selected timer (ok)"
-#~ msgstr "Ενημέρωση του επιλεγμένου χρονοδιακόπτη (ok)"
+#, fuzzy
+#~ msgid "[close]"
+#~ msgstr "ΞΊΞ»ΞµΞ―ΟƒΞΉΞΌΞΏ"
