@@ -439,11 +439,9 @@ void eDVBServiceController::scanPMT()
 
 	PMTEntry *audio=0, *ac3_audio=0, *video=0, *teletext=0;
 
-	int sac3default = 0;
+	int audiopid=-1, videopid=-1, ac3pid=-1, tpid=-1;
 
-	sac3default=eAudio::getInstance()->getAC3default();
-
-	int audiopid=-1, videopid=-1, ac3pid=-1;
+	int sac3default=eAudio::getInstance()->getAC3default();
 
 	if ( Decoder::parms.pcrpid == -1 && !service.path.size() )
 		Decoder::parms.pcrpid = pmt->PCR_PID;
@@ -495,22 +493,26 @@ void eDVBServiceController::scanPMT()
 			for (ePtrList<Descriptor>::iterator i(pe->ES_info); i != pe->ES_info.end(); ++i)
 			{
 				int isac3=0;
-				
+
 				if (i->Tag()==DESCR_AC3)
+				{
 					isac3=1;
+				}
 				else if (i->Tag() == DESCR_REGISTRATION)
 				{
 					RegistrationDescriptor *reg=(RegistrationDescriptor*)*i;
 					if (!memcmp(reg->format_identifier, "DTS", 3))
 						isac3=1;
 				}
-				
+				else if ( (i->Tag()==DESCR_TELETEXT) && ( (!teletext) || (pe->elementary_PID == tpid) ) )
+				{
+					teletext=pe;
+				}
+
 				if (isac3 && ( (!ac3_audio) || (pe->elementary_PID == ac3pid) ) )
 				{
 					ac3_audio=pe;
 				}
-				if (i->Tag()==DESCR_TELETEXT)
-					teletext=pe;
 			}
 			break;
 		}
@@ -556,7 +558,8 @@ void eDVBServiceController::scanPMT()
 	if ( audio && audiopid != audio->elementary_PID )
 		setPID(audio);
 
-	setPID(teletext);
+	if ( teletext && tpid != teletext->elementary_PID )
+		setPID(teletext);
 
 	/*emit*/ dvb.scrambled(isca);
 
@@ -640,13 +643,13 @@ void eDVBServiceController::setPID(const PMTEntry *entry)
 				}
 			}
 		}
-		if (isvideo)
+		else if (isvideo)
 		{
 			Decoder::parms.vpid=entry->elementary_PID;
 			if (sp && sp->dvb)
 				sp->dvb->set(eServiceDVB::cVPID, entry->elementary_PID);
 		}
-		if (isteletext)
+		else if (isteletext)
 		{
 			Decoder::parms.tpid=entry->elementary_PID;
 			if (sp && sp->dvb)
