@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.32 2003/05/14 18:53:29 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.33 2003/05/15 20:37:15 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -97,6 +97,7 @@ int currentMode;
 bool playbackStopForced = false;
 int debug = 0;
 int waitForMotor = 0;
+int motorRotationSpeed = 0; //in 0.1 degrees per second
 
 /* near video on demand */
 tallchans nvodchannels;         //  tallchans defined in "bouquets.h"
@@ -219,7 +220,7 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 		/* ... tune to it if not in record mode ... */
 		if (currentMode & RECORD_MODE)
 			return -1;
-			
+		
 		if ((config.getInt32("diseqcType", NO_DISEQC) == DISEQC_1_2) && (frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
 		{
 			printf("[zapit] ATTENTION: this function is not working yet!\n");
@@ -227,7 +228,7 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 			printf("[zapit] motorPosition = %d\n", motorPositions[channel->getSatelliteName()]);
 			frontend->positionMotor(motorPositions[channel->getSatelliteName()]);
 		
-			waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / 18; //assuming 1.8 degrees/second motor rotation speed for the time being...
+			waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / motorRotationSpeed; //assuming 1.8 degrees/second motor rotation speed for the time being...
 			printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
 			sleep(waitForMotor);
 		
@@ -1015,6 +1016,15 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		CBasicServer::receive_data(connfd, &msg, sizeof(msg));
 	}
 	
+	case CZapitMessages::CMD_SEND_MOTOR_COMMAND:
+	{
+		CZapitMessages::commandMotor msgMotor;
+		CBasicServer::receive_data(connfd, &msgMotor, sizeof(msgMotor));
+		printf("[zapit] received motor command: %x %x %x %x %x %x\n", msgMotor.cmdtype, msgMotor.cmd, msgMotor.address, msgMotor.num_parameters, msgMotor.param1, msgMotor.param2);
+		frontend->sendMotorCommand(msgMotor.cmdtype, msgMotor.cmd, msgMotor.address, msgMotor.num_parameters, msgMotor.param1, msgMotor.param2);
+		break;
+	}
+	
 	default:
 		WARN("unknown command %d (version %d)", rmsg.cmd, CZapitMessages::ACTVERSION);
 		break;
@@ -1389,6 +1399,7 @@ void leaveStandby(void)
 	frontend->setDiseqcType((diseqc_t) config.getInt32("diseqcType", NO_DISEQC));
 	frontend->setDiseqcRepeats(config.getInt32("diseqcRepeats", 0));
 	frontend->setCurrentSatellitePosition(config.getInt32("lastSatellitePosition", 192));
+	motorRotationSpeed = config.getInt32("motorRotationSpeed", 18); // default: 1.8 degrees per second
 
 	for (unsigned int i = 0; i < MAX_LNBS; i++) {
 		char tmp[16];
@@ -1486,7 +1497,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.32 2003/05/14 18:53:29 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.33 2003/05/15 20:37:15 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {

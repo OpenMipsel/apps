@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.cpp,v 1.67.2.7 2003/05/14 18:48:10 digi_casi Exp $
+ * $Id: getservices.cpp,v 1.67.2.8 2003/05/15 20:37:15 digi_casi Exp $
  *
  * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
  *

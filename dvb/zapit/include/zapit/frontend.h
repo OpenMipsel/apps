@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.4 2003/05/09 09:25:18 digi_casi Exp $
+ * $Id: frontend.h,v 1.24.2.5 2003/05/15 20:37:15 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -102,6 +102,7 @@ class CFrontend
 		//void secResetOverload ();
 		const secStatus *secGetStatus ();
 		void positionMotor(uint8_t diseqc);
+		void sendMotorCommand(uint8_t cmdtype, uint8_t cmd, uint8_t address, uint8_t num_parameters, uint8_t parameter1, uint8_t parameter2);
 
 		/* zapit tuner api */
 		const bool tuneChannel (CZapitChannel *channel);
