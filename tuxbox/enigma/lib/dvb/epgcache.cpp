@@ -209,24 +209,17 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 	eventCache::iterator It =	eventDB.find( key );
 	if ( It != eventDB.end() && !It->second.empty() ) // entry in cache found ?
 	{
-		if ( t )  // we search a event...
-		{
-			for ( eventMap::iterator i( It->second.begin() ); i != It->second.end(); i++)
-			{
-				const eit_event_struct* eit_event = i->second->get();
-				int duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
-				time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);					
-				if ( t >= begTime && t <= begTime+duration ) // the we have found
-					return new EITEvent( *i->second );
-			}
-			return 0;
-		}
-		const eit_event_struct* eit_event = It->second.begin()->second->get();
-		int duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
-		time_t TM = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
+		if (!t)
+			t = time(0)+eDVB::getInstance()->time_difference;
 
-		if ( (time(0)+eDVB::getInstance()->time_difference) <= (TM+duration) )
-			e = new EITEvent( *It->second.begin()->second );	
+		for ( eventMap::iterator i( It->second.begin() ); i != It->second.end(); i++)
+		{
+			const eit_event_struct* eit_event = i->second->get();
+			int duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
+			time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);					
+			if ( t >= begTime && t <= begTime+duration ) // the we have found
+				return new EITEvent( *i->second );
+		}
 	}
 	return e;
 }

@@ -54,7 +54,7 @@ struct tempPMT_t
 struct tempPMT_t tempPMT[PMT_ENTRYS];
 
 eDVBCI::eDVBCI()
-	:pollTimer(this), messages(this, 1), caidcount(0), ml_bufferlen(0)
+	:pollTimer(this), caidcount(0), ml_bufferlen(0), messages(this, 1)
 {
 	state=stateInit;
 
