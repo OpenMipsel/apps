@@ -105,9 +105,17 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 			yOffs = ( (area.height() - para->getBoundBox().height() ) / 2 + 0) - para->getBoundBox().top();
 		else
 			yOffs = 0;
-
-		eWidget *w=getNonTransparentBackground();
-		target->setBackgroundColor(w->getBackgroundColor());
+			
+		eWidget *w;
+		if ((blitFlags & BF_ALPHATEST) && (transparentBackgroundColor != -1))
+		{
+			w=this;
+			target->setBackgroundColor(transparentBackgroundColor);
+		} else
+		{
+			w=getNonTransparentBackground();
+			target->setBackgroundColor(w->getBackgroundColor());
+		}
 		target->setFont(font);
 		target->renderPara(*para, ePoint( area.left(), area.top()+yOffs) );
 	}
@@ -171,8 +179,11 @@ int eLabel::setProperty(const eString &prop, const eString &value)
 	if (prop=="wrap" && value == "on")
 		setFlags(RS_WRAP);
 	else if (prop=="alphatest" && value == "on")
+	{
+		transparentBackgroundColor=getBackgroundColor();
+		setBackgroundColor(-1);
 		blitFlags |= BF_ALPHATEST;
-	else if (prop=="align")
+	} else if (prop=="align")
 	{
 		if (value=="left")
 			setAlign(eTextPara::dirLeft);
