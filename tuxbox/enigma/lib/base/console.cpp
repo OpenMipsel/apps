@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: console.cpp,v 1.1.2.2 2003/02/12 22:08:26 ghostrider Exp $
+ * $Id: console.cpp,v 1.1.2.3 2003/04/18 14:23:37 ghostrider Exp $
  */
 
 #include <lib/base/console.h>
@@ -28,7 +28,7 @@
 #include <signal.h>
 #include <errno.h>
 
-inline int bidirpipe(int pfd[], char *cmd , char *argv[])
+int bidirpipe(int pfd[], char *cmd , char *argv[])
 {
 	int pfdin[2];  /* from child to parent */
 	int pfdout[2]; /* from parent to child */

@@ -615,7 +615,7 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 		if (recording)
 		{
 #ifdef TIMESHIFT
-			stopPlayback();
+//			stopPlayback();
 #endif
 			recording=0;
 			eDVB::getInstance()->recEnd();

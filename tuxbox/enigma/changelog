@@ -63,4 +63,13 @@
 200303161435 3 * Important timer bugfix
 200303170100 5 * Fix PES streaming ( tuxvision and other )
 200303170100 7 * Bugfix Internet radio description showing
-200303170100 6 * Add missing mkreiserfs
+200303170100 6 6 Add missing mkreiserfs
+200303211951 5 56 Add new Colorformat YPbPr ( for beamers )
+200304040020 7 * Add possibility to display remaining time in infobar
+200304050000 7 * Add many testscreens
+200304090124 2 * Add Timeshift
+200304131503 4 * Redesign Timer .. for repeated Events
+200304131503 5 * Add support to select subservices in Timer (when exist)
+200304131503 4 * Add support to edit satellites.xml ( transponders for scan )
+200304131503 5 * Add support to lock setup with a PIN ( parental locking follows... )
+200304172159 5 * Don't change voltage on PIN8 in Standby

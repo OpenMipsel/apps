@@ -346,7 +346,7 @@ void eTimerManager::actionHandler()
 				if ( i->type & ePlaylistEntry::typeMultiple )
 				{
 					time_t tmp = getNextEventStartTime( i->time_begin, i->type, getDate() == i->last_activation );
-					if ( tmp-nowTime < timeToNextEvent )
+					if ( tmp-nowTime < timeToNextEvent && nowTime < tmp+i->duration )
 					{
 						nextStartingEvent=i;
 						timeToNextEvent = tmp-nowTime;
