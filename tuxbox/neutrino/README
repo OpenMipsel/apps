@@ -30,7 +30,7 @@ Additional comments:
   automatically. Hence the old driver headers must be detected. This
   can be done in the following way:
 
-  patch -p0 < apps/tuxbox/neutrino/patch.cdk.Makefile.for.alexW
+  patch -p0 < apps/tuxbox/neutrino/patch.cdk.Makefile.am.for.alexW
 
 
 Enjoy
