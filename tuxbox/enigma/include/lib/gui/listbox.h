@@ -136,9 +136,12 @@ class eListBoxEntry: public Object
 protected:
 	eListBox<eListBoxEntry>* listbox;
 	eString helptext;
+	bool selectable;
 public:
-	eListBoxEntry(eListBox<eListBoxEntry>* parent, eString hlptxt=0)
-		:listbox(parent), helptext(hlptxt?hlptxt:eString(" "))
+	bool isSelectable() const { return selectable; }
+	eListBoxEntry(eListBox<eListBoxEntry>* parent, eString hlptxt=0, bool selectable=true)
+		:listbox(parent), helptext(hlptxt?hlptxt:eString(" ")),
+		selectable(selectable)
 	{
 		if (listbox)
 			listbox->append(this);
@@ -156,6 +159,19 @@ public:
 	void drawEntryRect(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state);
 	void drawEntryBorder(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF);
 	const eString &getHelpText() const { return helptext; }
+};
+
+class eListBoxEntrySeparator: public eListBoxEntry
+{
+	gPixmap *pm;
+	__u8 distance;
+	bool alphatest;
+public:
+	eListBoxEntrySeparator( eListBox<eListBoxEntry> *lb, gPixmap *pm, __u8 distance, bool alphatest=false )
+		:eListBoxEntry(lb, 0, false), pm(pm), distance(distance), alphatest(alphatest)
+	{
+	}
+	const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 };
 
 class eListBoxEntryText: public eListBoxEntry

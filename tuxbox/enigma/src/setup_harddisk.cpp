@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.20 2003/06/15 02:08:29 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.21 2003/06/26 21:33:17 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -179,7 +179,7 @@ eHarddiskSetup::eHarddiskSetup()
 	move(ePoint(150, 136));
 	
 	new eListBoxEntryText(&list, _("back"), (void*)-1);
-	
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	for (int host=0; host<1; host++)
 		for (int bus=0; bus<1; bus++)
 			for (int target=0; target<1; target++)

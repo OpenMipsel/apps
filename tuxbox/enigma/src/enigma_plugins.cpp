@@ -76,7 +76,7 @@ ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* des
 {
 	if (!cfgfile)
 	{
-		text="[back]";
+		text="back";
 		return;
 	}
 
@@ -131,6 +131,7 @@ eZapPlugins::eZapPlugins(int type, eWidget* lcdTitle, eWidget* lcdElement)
 	setLCD(lcdTitle, lcdElement);
 #endif
 	new ePlugin(&list, 0);
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT(list.selected, eZapPlugins::selected);
 }
 

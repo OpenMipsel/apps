@@ -77,6 +77,7 @@
 	</fontalias>
 
 	<images basepath="" target="fb">
+		<img name="listbox.separator" src="separator-fs8.png" />
 		<img name="arrow_up" src="arrow_up.png"/>
 		<img name="arrow_down" src="arrow_down.png"/>
 		<img name="eCheckbox.checked" src="checked.png" />

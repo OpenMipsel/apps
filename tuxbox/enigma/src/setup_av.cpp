@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_av.cpp,v 1.1.2.1 2003/05/30 22:36:54 ghostrider Exp $
+ * $Id: setup_av.cpp,v 1.1.2.2 2003/06/26 21:33:17 ghostrider Exp $
  */
 
 #include <setup_av.h>
@@ -31,19 +31,21 @@
 #include <lib/gui/testpicture.h>
 
 eZapAVSetup::eZapAVSetup()
-	:eListBoxWindow<eListBoxEntryMenu>(_("A/V Setup"), 6, 300, true)
+	:eListBoxWindow<eListBoxEntryMenu>(_("A/V Setup"), 7, 300, true)
 {
 	move(ePoint(135, 120));
 
 	int entry=0;
 
-	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), eString().sprintf("(%d) %s", ++entry, _("back to setup")) ))->selected, eWidget::accept);
+	CONNECT((new eListBoxEntryMenu(&list, _("back"), eString().sprintf("(%d) %s", ++entry, _("back to setup")) ))->selected, eWidget::accept);
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), eString().sprintf("(%d) %s", ++entry, _("open video setup")) ))->selected, eZapAVSetup::sel_video);
 	CONNECT((new eListBoxEntryMenu(&list, _("Video calibration..."), eString().sprintf("(%d) %s", ++entry, _("show calibration picture")) ))->selected, eZapAVSetup::sel_test);
 #ifdef ENABLE_RFMOD
 	if (eDVB::getInstance()->getmID() == 6)
 		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapAVSetup::sel_rfmod);
 #endif
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), eString().sprintf("(%d) %s", ++entry, _("open audio setup")) ))->selected, eZapAVSetup::sel_sound);
 
 	addActionMap(&i_shortcutActions->map);

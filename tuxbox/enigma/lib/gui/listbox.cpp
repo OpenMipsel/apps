@@ -514,6 +514,8 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 					}
 				}
 			}
+			if( !current->isSelectable() )
+				current++;
 		break;
 
 		case dirPageUp:
@@ -538,6 +540,8 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 							++bottom;
 				}
 			}
+			if( !current->isSelectable() )
+				current--;
 			break;
 
 		case dirUp:
@@ -564,6 +568,8 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 							break;
 				}
 			}
+			if( !current->isSelectable() )
+				current--;
 		break;
 
 		case dirDown:
@@ -589,6 +595,8 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 					}
 				}
 			}
+			if( !current->isSelectable() )
+				current++;
 			break;
 		case dirFirst:
 			direction=-1;
@@ -596,17 +604,20 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 			for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
 				if ( bottom == childs.end() )
 					break;
+			if( !current->isSelectable() )
+				current++;
 			break;
 		case dirLast:
 			direction=1;
 			top=bottom=current=childs.end();
 			if (current == childs.begin())
 				break;	// empty.
-
 			for (int i = 0; i < MaxEntries * columns; ++i)
 				if (top != childs.begin())
 					--top;
 			--current;
+			if( !current->isSelectable() )
+				current--;
 			break;
 		default:
 			return 0;
@@ -891,4 +902,26 @@ void eListBoxEntryText::SetText(const eString& txt)
 		para=0;
 	};
 	text=txt;
+}
+
+const eString& eListBoxEntrySeparator::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
+{
+	int x = 0;
+	if ( pm )
+	{
+		rc->clip(rect);
+		eSize psize = pm->getSize(),
+					esize = rect.size();
+		int yOffs = rect.top()+((esize.height() - psize.height()) / 2);
+		do
+		{
+			rc->blit(*pm, ePoint(x, yOffs), eRect(x, yOffs, psize.width(), psize.height()), alphatest?gPixmap::blitAlphaTest:0 );
+			x+=distance;
+			x+=psize.width();
+		}
+		while (x<esize.width());
+		rc->clippop();
+	}
+	static eString ret="separator";
+	return ret;
 }
