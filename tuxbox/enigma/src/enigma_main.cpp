@@ -1019,7 +1019,7 @@ static bool ModeTypeEqual( const eServiceReference& ref1, const eServiceReferenc
 				return true;  //  mosaic
 		}
 	}
-	return false; 
+	return false;
 }
 
 void eZapMain::onRotorStart( int newPos )
@@ -1495,9 +1495,9 @@ eZapMain::eZapMain()
 
 	CONNECT(delayedStandbyTimer.timeout, eZapMain::delayedStandby);
 
-	CONNECT( eFrontend::getInstance()->s_RotorRunning, eZapMain::onRotorStart );
-	CONNECT( eFrontend::getInstance()->s_RotorStopped, eZapMain::onRotorStop );
-	CONNECT( eFrontend::getInstance()->s_RotorTimeout, eZapMain::onRotorTimeout );
+//fixme	CONNECT( eFrontend::getInstance()->s_RotorRunning, eZapMain::onRotorStart );
+//	CONNECT( eFrontend::getInstance()->s_RotorStopped, eZapMain::onRotorStop );
+//	CONNECT( eFrontend::getInstance()->s_RotorTimeout, eZapMain::onRotorTimeout );
 
 	CONNECT( eWidget::showHelp, eZapMain::showHelp );
 
