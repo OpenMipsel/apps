@@ -12,7 +12,7 @@
 <eskin>
 	<fonts>
 		<font file="md_khmurabi_10.ttf" name="Replacement" scale="78" replacement="yes" />
-		<font file="unmrs.pfa" name="Nimbus" scale="78" />
+		<font file="unmrs.pfa" name="Nimbus" />
 	</fonts>
 
 	<values>

@@ -95,6 +95,31 @@ void eFrontend::timeout()
 	{
 		eDebug("+");
 		state=stateIdle;
+/*
+		if ( transponder->satellite.valid )
+		{
+			FrontendParameters front;
+			if (ioctl(fd, FE_GET_FRONTEND, &front)<0)
+				perror("FE_GET_FRONTEND");
+			else
+			{
+				eDebug("FE_GET_FRONTEND OK");
+				eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
+				if (sat)
+				{
+					eLNB *lnb = sat->getLNB();
+					if (lnb)
+					{
+						transponder->satellite.frequency = transponder->satellite.frequency > lnb->getLOFThreshold() ?
+								front.Frequency + lnb->getLOFHi() :
+								front.Frequency + lnb->getLOFLo();
+					}
+				}
+				transponder->satellite.fec = front.u.qpsk.FEC_inner;
+				transponder->satellite.symbol_rate = front.u.qpsk.SymbolRate;
+			}
+		}*/
+
 		/*emit*/ tunedIn(transponder, 0);
 	}
 	else
@@ -923,8 +948,11 @@ int eFrontend::tune(eTransponder *trans,
 		return -1;
  	}
 	eDebug("FE_SET_FRONTEND OK");
+	eDebug("Symbolrate = %d", SymbolRate );
 	state=stateTuning;
-	tries=40; // 1.0 second timeout
+	tries=30000000*2 / SymbolRate; // 1.0 second timeout
+	tries=tries<5?5:tries;
+	eDebug("tries=%d", tries);
 	timer->start(50, true);
 
 	return 0;

@@ -77,9 +77,11 @@ class eServiceSelector: public eWindow
 	eTimer BrowseTimer;
 	eTimer ciDelay;
 
+	eListBoxEntryService *goUpEntry;
 protected:
 	int eventHandler(const eWidgetEvent &event);
 private:
+	void pathUp();
 	void fillServiceList(const eServiceReference &ref);
 	void fillBouquetList(const eServiceReference &ref);
 	void serviceSelected(eListBoxEntryService *entry);

@@ -949,6 +949,13 @@ eZapMain::eZapMain()
 
 	setMode(curMode);  // do it..
 
+#if 1  // temporary reenable this...
+	if (playlist->current != playlist->getConstList().end())  // we was in playlist mode??
+		playService(*playlist->current, psDontAdd);  // then play the last service
+
+	startMessages();
+#endif
+
 	dvrFunctions->zOrderRaise();
 	nonDVRfunctions->zOrderRaise();
 }
@@ -1890,7 +1897,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 
 		break;
 	}
-	case 2: // move service
+	case 2: // enable/disable movemode
 	{
 		if ( sel->toggleMoveMode() )
 		{
@@ -2154,7 +2161,7 @@ void eZapMain::addServiceToUserBouquet(eServiceSelector *sel, int dontask)
 		s.exec();
 		s.hide();
 
-		if (s.curSel)
+		if (s.curSel != eServiceReference() )
 		{
 			currentSelectedUserBouquetRef = s.curSel;
 			currentSelectedUserBouquet = (ePlaylist*)eServiceInterface::getInstance()->addRef( currentSelectedUserBouquetRef );
@@ -2478,12 +2485,6 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
-	case eWidgetEvent::execBegin:
-		if (playlist->current != playlist->getConstList().end())  // we was in playlist mode??
-			playService(*playlist->current, psDontAdd);  // then play the last service
-
-		startMessages();
-		break;
 	case eWidgetEvent::evtAction:
 	{
 		int num=0;
@@ -3531,13 +3532,16 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 {
 	move(ePoint(150, 200));
 	new eListBoxEntryText(&list, _("back"), (void*)0);
-	if (!(ref.flags & eServiceReference::flagDirectory))
+	if (/*!(ref.flags & eListBoxEntryService::flagIsReturn) &&*/ !(ref.flags & eServiceReference::flagDirectory))
 		new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
 	if (path.type == eServicePlaylistHandler::ID)
 	{
-		new eListBoxEntryText(&list, _("delete"), (void*)1);
-		if (ref.type == eServicePlaylistHandler::ID)
-			new eListBoxEntryText(&list, _("rename"), (void*)7);
+//		if (!(ref.flags & eListBoxEntryService::flagIsReturn))
+		{
+			new eListBoxEntryText(&list, _("delete"), (void*)1);
+			if (ref.type == eServicePlaylistHandler::ID)
+				new eListBoxEntryText(&list, _("rename"), (void*)7);
+		}
 		// move Mode ( only in Favourite lists... )
 		if ( eZap::getInstance()->getServiceSelector()->movemode )
 			new eListBoxEntryText(&list, _("disable move mode"), (void*)2);
@@ -3548,7 +3552,7 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 	else
 	{
 		// add current service to favourite
-		if ( !(ref.flags & eServiceReference::flagDirectory) ) 
+		if ( !(ref.flags & eServiceReference::flagDirectory) )
 			new eListBoxEntryText(&list, _("add to user bouquet"), (void*)4);
 		else if (ref.data[0] == -2 || ref.data[0] == -3 )
 			new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
@@ -3557,8 +3561,6 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 			new eListBoxEntryText(&list, _("disable edit mode"), (void*)5);
 		else
 			new eListBoxEntryText(&list, _("enable edit mode"), (void*)5);
-		eServicePath p = path;
-		p.up();
 	}
 		// add current service to playlist
 	new eListBoxEntryText(&list, _("create new user bouquet"), (void*)6);
@@ -3738,7 +3740,7 @@ TextEditWindow::TextEditWindow( const char *InputFieldDescr, const char* useable
 
 UserBouquetSelector::UserBouquetSelector( std::list<ePlaylistEntry>&list )
 	:eListBoxWindow<eListBoxEntryText>(_("User Bouquets"), 8, 400),
-	SourceList(list), curSel(0)
+	SourceList(list)
 {
 	move(ePoint(100,80));
 
@@ -3754,8 +3756,7 @@ UserBouquetSelector::UserBouquetSelector( std::list<ePlaylistEntry>&list )
 void UserBouquetSelector::selected( eListBoxEntryText *sel )
 {
 	if (sel && sel->getKey())
-	{
 		curSel=*((eServiceReference*)sel->getKey());
-		close(0);
-	}
+
+	close(0);
 }

@@ -942,8 +942,8 @@ void eDVBCI::dataAvailable(int what)
 
 	if(size>0)
 	{
+#if 0
 		int i;
-#if 0		
 		for(i=0;i<size;i++)
 			printf("%02x ",buffer[i]);
 		printf("\n");	

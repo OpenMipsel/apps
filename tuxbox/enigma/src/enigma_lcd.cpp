@@ -72,8 +72,23 @@ void eZapLCDMain::volumeUpdate(int vol)
 	Volume->setPerc((63-vol)*100/63);
 }
 
-void eZapLCDMain::setServiceName(eString name) {
-	ServiceName->setText(name);
+void eZapLCDMain::setServiceName(eString name)
+{
+	static char stropen[3] = { 0xc2, 0x86, 0x00 };
+	static char strclose[3] = { 0xc2, 0x87, 0x00 };
+	unsigned int open=eString::npos-1;
+	eString shortname;
+
+  while ( (open = name.find(stropen, open+2)) != eString::npos )
+	{
+		unsigned int close = name.find(strclose, open);
+		if ( close != eString::npos )
+			shortname+=name.mid( open+2, close-(open+2) );
+	}
+	if (shortname)
+		ServiceName->setText( shortname );
+	else
+		ServiceName->setText(name);
 }
 
 void eZapLCDMain::leaveService(const eServiceReferenceDVB &service)

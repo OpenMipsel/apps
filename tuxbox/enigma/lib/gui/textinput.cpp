@@ -184,6 +184,11 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				key=11;
 			else
 				return eButton::eventHandler( event );
+			if ( key != lastKey && nextCharTimer.isActive() )
+			{
+				nextCharTimer.stop();
+				nextChar();
+			}
 			if ( editMode && key != -1 )
 			{
 				char newChar = 0;

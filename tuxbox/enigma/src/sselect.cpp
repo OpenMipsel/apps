@@ -61,6 +61,7 @@ eAutoInitP0<serviceSelectorActions> i_serviceSelectorActions(eAutoInitNumbers::a
 eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num)
 	:eListBoxEntry((eListBox<eListBoxEntry>*)lb),	numPara(0), namePara(0), descrPara(0), nameXOffs(0), flags(flags), num(num), service(service)
 {
+	static char strfilter[4] = { 0xC2, 0x87, 0x86, 0x00 };
 	if (!(flags & flagIsReturn))
 	{
 #if 0
@@ -69,6 +70,11 @@ eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, c
 		const eService *pservice=eServiceInterface::getInstance()->addRef(service);
 		sort=pservice?pservice->service_name:"";
 		sort.upper();
+
+		// filter short name brakets...
+		for (eString::iterator it(sort.begin()); it != sort.end();)
+			strchr( strfilter, *it ) ? it = sort.erase(it) : it++;
+
 		eServiceInterface::getInstance()->removeRef(service);
 #endif
 	} else
@@ -170,9 +176,9 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 		if (pservice)
 			sname=pservice->service_name;
 		else if (flags & flagIsReturn)
-			sname="[GO UP]";
+			sname=_("[GO UP]");
 		else
-			sname="(removed service)";
+			sname=_("(removed service)");
 
 		namePara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
 		namePara->setFont( serviceFont );
@@ -305,8 +311,14 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	services->beginAtomic();
 	services->clearList();
 
-	if (path.size() > 1)
-		new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
+	if (!movemode)
+	{
+		if (path.size() > 1)
+			goUpEntry = new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
+		else
+			goUpEntry = 0;
+	}
+	
 	eServiceInterface *iface=eServiceInterface::getInstance();
 	ASSERT(iface);
 	
@@ -443,62 +455,64 @@ int eServiceSelector::getServiceNum( const eServiceReference &ref )
 
 void eServiceSelector::gotoChar(char c)
 {
+	eDebug("gotoChar %d", c);
 	switch(c)
 	{
-		case 2:	// A,B,C
-			if (BrowseChar >= 'A' || BrowseChar < 'C')
+		case 2:// A,B,C
+			if (BrowseChar >= 'A' && BrowseChar < 'C')
 				BrowseChar++;
 			else
 				BrowseChar = 'A';
-		break;
+			break;
 
-		case 3:	// D,E,F
-			if (BrowseChar >= 'D' || BrowseChar < 'F')
+		case 3:// D,E,F
+			if (BrowseChar >= 'D' && BrowseChar < 'F')
 				BrowseChar++;
 			else
 				BrowseChar = 'D';
-		break;
+			break;
 
-		case 4:	// G,H,I
-			if (BrowseChar >= 'G' || BrowseChar < 'I')
+		case 4:// G,H,I
+			if (BrowseChar >= 'G' && BrowseChar < 'I')
 				BrowseChar++;
 			else
 				BrowseChar = 'G';
 		break;
-		case 5:	// J,K,L
-			if (BrowseChar >= 'J' || BrowseChar < 'L')
+
+		case 5:// J,K,L
+			if (BrowseChar >= 'J' && BrowseChar < 'L')
 				BrowseChar++;
 			else
 				BrowseChar = 'J';
-		break;
+			break;
 
-		case 6:	// M,N,O
-			if (BrowseChar >= 'M' || BrowseChar < 'O')
+		case 6:// M,N,O
+			if (BrowseChar >= 'M' && BrowseChar < 'O')
 				BrowseChar++;
 			else
 				BrowseChar = 'M';
-		break;
+			break;
 
-		case 7:	// P,Q,R,S
+		case 7:// P,Q,R,S
 			if (BrowseChar >= 'P' && BrowseChar < 'S')
 				BrowseChar++;
 			else
 				BrowseChar = 'P';
-		break;
+			break;
 
-		case 8:	// T,U,V
-			if (BrowseChar >= 'T' || BrowseChar < 'V')
+		case 8:// T,U,V
+			if (BrowseChar >= 'T' && BrowseChar < 'V')
 				BrowseChar++;
 			else
 				BrowseChar = 'T';
-		break;
+			break;
 
-		case 9:	// W,X,Y,Z
+		case 9:// W,X,Y,Z
 			if (BrowseChar >= 'W' && BrowseChar < 'Z')
 				BrowseChar++;
 			else
 				BrowseChar = 'W';
-		break;
+			break;
 	}
 	if (BrowseChar != 0)
 	{
@@ -542,22 +556,30 @@ void eServiceSelector::EPGUpdated( const tmpMap *m)
 	services->forEachEntry( updateEPGChangedService( m ) );
 }
 
+void eServiceSelector::pathUp()
+{
+	if (!movemode)
+	{
+		if (path.size() > ( (style == styleCombiColumn) ? 2 : 1) )
+		{
+			services->beginAtomic();
+			eServiceReference last=path.current();
+			path.up();
+			actualize();
+			selectService( last );
+			services->endAtomic();
+		} else if (style == styleCombiColumn)
+			setFocus(bouquets);
+	}
+}
+
 void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 {
 	if (entry)
 	{
 		if (entry->flags & eListBoxEntryService::flagIsReturn)
 		{
-			if (path.size() > ( (style == styleCombiColumn) ? 2 : 1) )
-			{
-				services->beginAtomic();
-				eServiceReference last=path.current();
-				path.up();
-				actualize();
-				selectService( last );
-				services->endAtomic();
-			} else if (style == styleCombiColumn)
-				setFocus(bouquets);
+			pathUp();
 			return;
 		}
 		eServiceReference ref=entry->service;
@@ -727,19 +749,8 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					show();
 				}
 			}
-			else if (event.action == &i_serviceSelectorActions->pathUp && !movemode)
-			{
-				if (path.size() > ( (style == styleCombiColumn) ? 2 : 1) )
-				{
-					services->beginAtomic();
-					eServiceReference last=path.current();
-					path.up();
-					actualize();
-					selectService( last );
-					services->endAtomic();
-				} else if (style == styleCombiColumn)
-					setFocus(bouquets);
-			}
+			else if (event.action == &i_serviceSelectorActions->pathUp)
+				pathUp();
 			else if (event.action == &i_serviceSelectorActions->toggleStyle && !movemode)
 			{
 				int newStyle = style;
@@ -1104,12 +1115,23 @@ void eServiceSelector::setPath(const eServicePath &newpath, const eServiceRefere
 
 int eServiceSelector::toggleMoveMode()
 {
+	services->beginAtomic();
+
 	movemode^=1;
 	if (!movemode)
 	{
 		eListBoxEntryService::selectedToMove=0;
 		services->setMoveMode(0);
+		if ( goUpEntry )
+		{
+			services->append( goUpEntry, true );
+			services->sort();
+		}
 	}
+	else if ( goUpEntry )
+		services->remove(goUpEntry, true);
+
+	services->endAtomic();
 	return movemode;
 }
 
