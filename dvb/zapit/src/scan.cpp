@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.12 2003/06/05 09:08:25 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.13 2003/06/06 21:18:14 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -66,21 +66,31 @@ extern std::map<string, t_satellite_position>::iterator spos_it;
 extern CZapitClient::bouquetMode bouquetMode;
 extern CEventServer *eventServer;
 
+extern int motorRotationSpeed;
+
 t_satellite_position driveMotorToSatellitePosition(char * providerName)
 {
 	t_satellite_position currentSatellitePosition = 0;
 	t_satellite_position satellitePosition = 0;
+	int waitForMotor = 0;
 	
 	/* position satellite dish if provider is on a different satellite */
 	currentSatellitePosition = frontend->getCurrentSatellitePosition();
 	satellitePosition = satellitePositions[providerName];
+	printf("[scan] scanning now: %s\n", providerName);
+	printf("[scan] currentSatellitePosition = %d, scanSatellitePosition = %d\n", currentSatellitePosition, satellitePosition);
+	printf("[scan] motorPosition = %d\n", motorPositions[satellitePosition]);
 	if ((currentSatellitePosition != satellitePosition) && (motorPositions[satellitePosition] != 0))
 	{
 		printf("[scan] start_scanthread: moving satellite dish from satellite position %d to %d\n", currentSatellitePosition, satellitePosition);
 		printf("[scan] motorPosition = %d\n", motorPositions[satellitePosition]);
 		frontend->positionMotor(motorPositions[satellitePosition]);
-		frontend->setCurrentSatellitePosition(currentSatellitePosition);
+		waitForMotor = abs(satellitePosition - currentSatellitePosition) / motorRotationSpeed;
+		printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
+		sleep(waitForMotor);
+		frontend->setCurrentSatellitePosition(satellitePosition);
 	}
+	
 	return satellitePosition;
 }
 
@@ -526,9 +536,10 @@ void *start_scanthread(void *)
 				if (diseqc_pos == 255 /* = -1 */)
 					diseqc_pos = 0; 
 				
-				if (strcmp(type, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
+				printf("[scan] type = %s, diseqcType = %d\n", type, frontend->getDiseqcType());
+				if (!strcmp(type, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
 					satellitePosition = driveMotorToSatellitePosition(providerName);
-						
+				
 				scan_provider(search, providerName, satfeed, diseqc_pos);
 					
 				/* write services */
