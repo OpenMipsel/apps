@@ -7,7 +7,7 @@
 #include <lib/system/init.h>
 
 eLabel::eLabel(eWidget *parent, int flags, int takefocus, const char *deco ):
-	eDecoWidget(parent, takefocus, deco), blitFlags(0), flags(flags), para(0), align( eTextPara::dirLeft )
+	eDecoWidget(parent, takefocus, deco), blitFlags(0), flags(flags), para(0), align( eTextPara::dirLeft ), shortcutPixmap(0)
 {
 	setForegroundColor(eSkin::getActive()->queryScheme("global.normal.foreground"));
 }
@@ -88,6 +88,9 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 		deco.drawDecoration(target, ePoint(width(), height()));
 		area=crect;
 	}
+	
+	if (shortcutPixmap)
+		area.setWidth(area.width()-area.height());
 
 	if (text.length())
 	{
@@ -114,6 +117,11 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 //		eDebug("pixmap_pos x = %d, y = %d, xsize=%d, ysize=%d", pixmap_position.x(), pixmap_position.y(), pixmap->x, pixmap->y );
 		target->blit(*pixmap, pixmap_position, area, (blitFlags & BF_ALPHATEST) ? gPixmap::blitAlphaTest : 0);
 	}
+	if (shortcutPixmap)
+		target->blit(*shortcutPixmap, 
+				ePoint(area.right()+(area.height()-shortcutPixmap->x)/2, area.top()+(area.height()-shortcutPixmap->y)/2),
+				eRect(),
+				gPixmap::blitAlphaTest);
 }
 
 int eLabel::eventHandler(const eWidgetEvent &event)
@@ -179,7 +187,11 @@ int eLabel::setProperty(const eString &prop, const eString &value)
 	}
 	else if (prop=="vcenter")
 		setFlags( flagVCenter );
-	else
+	else if (prop == "shortcut")
+	{
+		shortcutPixmap=eSkin::getActive()->queryImage("shortcut." + value);
+		return eWidget::setProperty(prop, value);
+	} else
 		return eDecoWidget::setProperty(prop, value);
 	return 0;
 }

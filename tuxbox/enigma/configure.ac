@@ -32,6 +32,7 @@ data/pictures/chk_stone/Makefile
 data/pictures/chk_v2/Makefile
 data/pictures/neutrino/Makefile
 data/pictures/mainmenu/Makefile
+data/pictures/shortcut/Makefile
 data/resources/Makefile
 data/skins/Makefile
 data/templates/Makefile
