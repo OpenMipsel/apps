@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/tuxbox/neutrino/daemons/sectionsd/dmx.cpp,v 1.2.2.1 2003/02/06 16:36:06 thegoodguy Exp $
+ * $Header: /cvs/tuxbox/apps/tuxbox/neutrino/daemons/sectionsd/dmx.cpp,v 1.2.2.2 2003/02/06 17:56:07 thegoodguy Exp $
  *
  * DMX class (sectionsd) - d-box2 linux project
  *
@@ -24,20 +24,14 @@
 
 
 #include <dmx.h>
+#include <dmxapi.h>
 #include <debug.h>
-
-#include <ost/dmx.h>
 
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 
 #include <string>
-
-
-#define dmx_sct_filter_params dmxSctFilterParams
-#define dmx_filter            dmxFilter
-const char DEMUX_DEVICE[] = "/dev/dvb/card0/demux0";
 
 
 extern int readNbytes(int fd, char *buf, const size_t n, unsigned timeoutInMSeconds);
@@ -239,20 +233,9 @@ int DMX::start(void)
 		return 3;
 	}
 
-	struct dmx_sct_filter_params flt;
-
-	memset(&flt.filter, 0, sizeof(struct dmx_filter));
-
-	flt.pid = pID;
-	flt.filter.filter[0] = filters[filter_index].filter; // current/next
-	flt.filter.mask  [0] = filters[filter_index].mask;
-	flt.timeout = 0;
-	flt.flags   = DMX_IMMEDIATE_START | DMX_CHECK_CRC;
-
-	if (ioctl(fd, DMX_SET_FILTER, &flt) == -1)
+	if (!setfilter(fd, pID, filters[filter_index].filter, filters[filter_index].mask, DMX_IMMEDIATE_START | DMX_CHECK_CRC))
 	{
 		closefd();
-		perror("[sectionsd] DMX: DMX_SET_FILTER");
 		pthread_mutex_unlock(&start_stop_mutex);
 		return 4;
 	}
@@ -424,26 +407,10 @@ int DMX::change(const int new_filter_index)
 			return 3;
 		}
 
-		struct dmx_sct_filter_params flt;
-
-		memset(&flt.filter, 0, sizeof(struct dmx_filter));
-
-		flt.pid = pID;
-		flt.filter.filter[0] = filters[new_filter_index].filter;
-		flt.filter.mask  [0] = filters[new_filter_index].mask;
-		flt.timeout = 0;
-		flt.flags   = DMX_IMMEDIATE_START;
-
-		if ((new_filter_index != 0) && (!noCRC))
-			flt.flags |= DMX_CHECK_CRC;
-
 		filter_index = new_filter_index;
-
-
-		if (ioctl(fd, DMX_SET_FILTER, &flt) == -1)
+		if (!setfilter(fd, pID, filters[filter_index].filter, filters[filter_index].mask, ((new_filter_index != 0) && (!noCRC)) ? DMX_IMMEDIATE_START | DMX_CHECK_CRC : DMX_IMMEDIATE_START))
 		{
 			closefd();
-			perror("[sectionsd] DMX: DMX_SET_FILTER");
 			pthread_mutex_unlock(&start_stop_mutex);
 			return 3;
 		}
