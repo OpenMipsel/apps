@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/misc/libs/libconnection/basicserver.cpp,v 1.3.2.1 2002/10/23 18:13:36 thegoodguy Exp $
+ * $Header: /cvs/tuxbox/apps/misc/libs/libconnection/basicserver.cpp,v 1.3.2.2 2003/02/06 19:55:59 thegoodguy Exp $
  *
  * Basic Server Class (Neutrino) - DBoxII-Project
  *
@@ -30,7 +30,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include <zapit/basicserver.h>
+#include "basicserver.h"
 
 bool CBasicServer::prepare(const char* socketname)
 {
