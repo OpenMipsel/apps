@@ -983,10 +983,9 @@ void eServiceSelector::setStyle(int newStyle)
 	if (style != newStyle)
 	{
 		ci->hide();
-		setFocus(0);
 		if ( services )
 		{
-			// safe currentSelected Service
+			// save currentSelected Service
 			if ( services->getCount() )
 				currentService = services->getCurrent()->service;
 
@@ -1144,9 +1143,9 @@ eServiceSelector::~eServiceSelector()
 
 void eServiceSelector::enterDirectory(const eServiceReference &ref)
 {
-	services->beginAtomic();
 	path.down(ref);
 	doSPFlags(ref);
+	services->beginAtomic();
 	actualize();
 	if (! selectService( eServiceInterface::getInstance()->service ))
 		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );

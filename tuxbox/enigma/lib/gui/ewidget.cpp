@@ -52,7 +52,11 @@ eWidget::~eWidget()
 {
 	hide();
 	if (takefocus)
+	{
 		getTLW()->focusList()->remove(this);
+		if (getTLW()->focus == this)
+			eFatal("focus still held.");
+	}
 		
 	if (shortcut)
 		getTLW()->actionListener.remove(this);
@@ -351,11 +355,10 @@ void eWidget::hide()
 	if (state&stateVisible)
 	{
 		willHideChildren();
-
 		clear();	// hide -> immer erasen. dieses Hide ist IMMER explizit.
-		checkFocus();
 	}
 	state&=~stateShow; 
+	checkFocus();
 }
 
 void eWidget::willHideChildren()
