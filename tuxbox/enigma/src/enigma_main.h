@@ -256,6 +256,7 @@ private:
 	void play();
 	void stop();
 	void pause();
+	void record();
 	enum { skipForward, skipReverse };
 	int skipcounter;
 	int skipping;

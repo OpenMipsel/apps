@@ -4,6 +4,7 @@
 #include <lib/system/init.h>
 #include <lib/driver/streamwd.h>
 #include <lib/dvb/servicestructure.h>
+#include <lib/dvb/servicefile.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/decoder.h>
 #include <fcntl.h>

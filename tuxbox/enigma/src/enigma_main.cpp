@@ -726,13 +726,15 @@ eZapMain::eZapMain()
 
 eZapMain::~eZapMain()
 {
-	if ( state & (stateRecording|recDVR) )
-		recordDVR(0, 0);
-/*	else if ( state & (stateRecording|recVCR) )
-		recordVCR(0);*/
-	
-/*	delete recstatus;
-	recstatus=0; */
+	if ( state & stateRecording )
+	{
+		if ( state & stateInTimerMode )
+		{
+			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
+		}
+		else
+			recordDVR(0,1);
+	}
 
 	getPlaylistPosition();
 	if (mode != -1)
@@ -1299,6 +1301,38 @@ void eZapMain::pause()
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
 }
 
+void eZapMain::record()
+{
+	if ( state & stateRecording )
+	{
+		if ( state & stateInTimerMode )
+		{
+			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
+		}
+		else
+			recordDVR(0,1);
+	}
+	else  // build servicename for recording
+	{
+		eString name;
+		eServiceReference ref=eServiceInterface::getInstance()->service;
+		eService *service=eServiceInterface::getInstance()->addRef(ref);
+
+		if (service)
+		{
+			name=service->service_name;
+			eServiceInterface::getInstance()->removeRef(ref);
+		}
+		else
+			name+="record";
+
+		if (cur_event_text != "")
+			name+=" - " + cur_event_text;
+
+		recordDVR(1, 1, name);
+	}
+}
+
 int eZapMain::recordDVR(int onoff, int user, eString name)
 {
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -1382,7 +1416,7 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 		}
 		return 0;
 	}
-	else   // not on/off
+	else   // stop recording
 	{
 		if ( !(state & stateRecording) )
 			return -1; // not recording
@@ -1883,32 +1917,37 @@ bool eZapMain::handleState(int justask)
 {
 	eString text, caption;
 	bool b=false;
-	if ( state & (stateRecording|recDVR) )
+	if ( state & stateRecording )
 	{
 		if ( state & stateInTimerMode )
-			text=_("Currently an timer based digital recording is in progress!");
+		{
+			if (state & recDVR )
+				text=_("Currently an timer based digital recording is in progress!\n"
+							"This stops the timer, and digital recording!");
+			else
+				return true; // we wouldn't destroy the VCR Recording *g*
+/*				text=_("Currently an timer based VCR recording is in progress!\n"
+							"This stops the timer, and the VCR recording!");*/
+		}
 		else
-			text=_("Currently an digital recording is in progress!");
+		{
+			if (state & recDVR )
+				text=_("Currently an digital recording is in progress!\n"
+							"This stops the digital recording!");
+			else
+				return true; // we wouldn't destroy the VCR Recording *g*
+/*				text=_("Currently an VCR recording is in progress!\n"
+							"This stops the VCR recording!");*/
+		}
 	}
-	else if ( state & (stateRecording|recVCR) )
-		return false;  // we cancel all actions...
 	else if ( state & stateInTimerMode )
-		text=_("Currently an timer based event is in progress!");
-	else		// not recording
-		return true; 
-	if ( state & (stateRecording|recDVR) )
 	{
-		text+="\n";
-		if ( state & stateInTimerMode )
-			text+=_("This stops the timer, and digital recording!");
-		else
-			text+=_("This stops the recording!");
+		text=_("Currently an timer event is in progress!\n"
+					"This stops the timer event!");
 	}
-	else
-	{
-		text+="\n";
-		text+=_("This stops the timer based event!");
-	}
+	else		// not timer event or recording in progress
+		return true;
+
 	eMessageBox box(text, _("Really do this?"), eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );		
 	box.show();
 	b = (box.exec() == eMessageBox::btYes);
@@ -1917,24 +1956,15 @@ bool eZapMain::handleState(int justask)
 	if (b && !justask)
 	{
 		if (state & stateInTimerMode)
-		{
-			state &= ~stateInTimerMode;
-		}
-		if (state & stateRecording)
+			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
+		else if (state & stateRecording)
 		{
 			if (state & recDVR)
-			{
 				recordDVR(0,0);
-				state &= ~recDVR;
-			}
-			else // here send LIRC VCR Stop
-			{
-				state &= ~recVCR;        
-			}
-			state &= ~stateRecording;
+			else 
+				; // here send LIRC VCR Stop
 		}
 	}
-  
 	return b;
 }
 
@@ -2040,32 +2070,21 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->play)
 			play();
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->stop)
-			stop();
+		{
+			if ( state & stateRecording )
+			{
+				if ( handleState(1) )
+				record();
+			}
+			else
+				stop();
+		}
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->pause)
 			pause();
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->record )
 		{
 			if ( handleState(1) )
-			{
-				if ( state & stateRecording)
-					eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
-				else
-				{
-					eString name;
-					eServiceReference ref=eServiceInterface::getInstance()->service;
-					eService *service=eServiceInterface::getInstance()->addRef(ref);
-					if (service)
-					{
-						name=service->service_name;
-						eServiceInterface::getInstance()->removeRef(ref);
-					}
-					else
-						name+="record";
-					if (cur_event_text != "")
-						name+=" - " + cur_event_text;
-					recordDVR(1, 1, name);
-  			}
-			}
+				record();
 		}
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->startSkipForward)
 			startSkip(skipForward);
@@ -2217,6 +2236,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		gotPMT();
 		break;
 	case eServiceEvent::evtRecordFailed:
+		eDebug("state = %d", state);
 		if ( state&stateInTimerMode )
 		{
 			eDebug("stateInTimerMode");

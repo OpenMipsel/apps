@@ -206,7 +206,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 		{
 			for ( eventMap::iterator i( It->second.begin() ); i != It->second.end(); i++)
 			{
-				const eit_event_struct* eit_event = It->second.begin()->second->get();
+				const eit_event_struct* eit_event = i->second->get();
 				int duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
 				time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);					
 				if ( t >= begTime && t <= begTime+duration ) // the we have found
