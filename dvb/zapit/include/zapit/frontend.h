@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.8 2003/06/10 11:25:32 digi_casi Exp $
+ * $Id: frontend.h,v 1.24.2.9 2003/06/10 12:36:26 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -125,7 +125,6 @@ class CFrontend
 		const diseqc_t getDiseqcType()		{ return diseqcType; }
 		const bool isInitialized()		{ return initialized; }
 		const uint32_t getTsidOnid()		{ return currentTsidOnid; }
-		const uint64_t getSposTsidOnid()	{ return currentSposTsidOnid; }
 
 		void setLnbOffset(bool high, uint8_t index, int32_t offset)
 		{
