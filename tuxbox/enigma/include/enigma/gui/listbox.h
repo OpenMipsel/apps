@@ -23,7 +23,7 @@ protected:
 	gColor colorActiveB, colorActiveF;
 	eRect crect, crect_selected;
 	enum  { arNothing, arCurrentOld, arAll};
-	int MaxEntries, item_height, flags, in_atomic, atomic_redraw, atomic_old, atomic_new;
+	int MaxEntries, item_height, flags, columns, in_atomic, atomic_redraw, atomic_old, atomic_new;
 	bool atomic_selchanged;
 public:
 	enum	{		flagNoUpDownMovement=1,		flagNoPageMovement=2,		flagShowEntryHelp=4	};
@@ -31,6 +31,7 @@ public:
 	void setFlags(int);
 	void removeFlags(int);
 	void invalidateEntry(int n){	invalidate(getEntryRect(n));}
+	void setColumns(int col);
 protected:
 	eListBoxBase(eWidget* parent, const eWidget* descr=0, const char *deco="eListBox" );
 	eRect getEntryRect(int n);
@@ -324,17 +325,27 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 	eListBoxBase::redrawBorder(target, rc);
 
 	// rc wird in eListBoxBase ggf auf den neuen Client Bereich ohne Rand verkleinert
+	if ( columns > 1 )
+	{
+		eDebug("where left = %i, top = %i, width = %i, height = %i", where.left(), where.top(), where.width(), where.height() );
+		eDebug("rc    left = %i, top = %i, width = %i, height = %i", rc.left(), rc.top(), rc.width(), rc.height() );
+	}
 	
 	int i=0;
 	for (ePtrList_T_iterator entry(top); (entry != bottom) && (entry != childs.end()); ++entry)
 	{
 		eRect rect = getEntryRect(i);
 
+		if ( columns > 1 )
+			eDebug("entry %i rect left = %i, top = %i, width = %i, height = %i", i, rect.left(), rect.top(), rect.width(), rect.height() );
+
 		eString s;
 
 		if ( rc.contains(rect) )
 			if ( entry == current )
 			{
+				if ( columns > 1 )
+					eDebug("redraw entry");
 				if ( LCDTmp ) // LCDTmp is only valid, when we have the focus
 					LCDTmp->setText( entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), 1 ) );				
 				else if ( parent->LCDElement && have_focus )
@@ -343,7 +354,11 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 					entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 1 : ( MaxEntries > 1 ? 2 : 0 ) )	);		
 			}
 			else
+			{
 				entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 0 : ( MaxEntries > 1 ? 2 : 0 ) )	);
+				if ( columns > 1 )
+					eDebug("redraw entry");
+			}
 
 		i++;
 	}
@@ -406,9 +421,10 @@ inline void eListBox<T>::init()
 {
 	current = top = bottom = childs.begin();
 
-	for (int i = 0; i < MaxEntries; i++, bottom++)
+	for (int i = 0; i < (MaxEntries*columns); i++, bottom++)
 		if (bottom == childs.end() )
 			break;	
+	eDebug("Init->MaxEntries = %i, columns = %i", MaxEntries, columns);
 	if (!in_atomic)
 		invalidate();
 	else
@@ -431,7 +447,7 @@ inline int eListBox<T>::moveSelection(int dir)
 				current = bottom;		// --bottom always valid because !childs.empty()
 				--current;
 			} else
-				for (int i = 0; i < MaxEntries; i++)
+				for (int i = 0; i < (MaxEntries/columns); i++)
 				{
 					if (bottom == childs.end())
 						break;
@@ -445,7 +461,7 @@ inline int eListBox<T>::moveSelection(int dir)
 			if (top == childs.begin())
 				current = top;
 			else
-				for (int i = 0; i < MaxEntries; ++i)
+				for (int i = 0; i < (MaxEntries / columns); ++i)
 				{	
 					if (top == childs.begin())
 						break;
@@ -453,7 +469,7 @@ inline int eListBox<T>::moveSelection(int dir)
 					current--;
 				}
 				bottom=top;
-				for (int i = 0; i < MaxEntries; ++i, ++bottom)
+				for (int i = 0; i < ( MaxEntries / columns); ++i, ++bottom)
 					if (bottom == childs.end())
 						break;
 		break;
