@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.13 2003/06/06 21:18:14 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.14 2003/06/07 20:06:41 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -56,6 +56,7 @@ extern uint32_t found_data_chans;
 extern CFrontend *frontend;
 extern xmlDocPtr scanInputParser;
 extern std::map <uint8_t, std::string> scanProviders;
+std::map <uint8_t, std::string>::iterator spI;
 
 extern std::map<t_satellite_position, uint8_t> motorPositions;
 extern std::map<t_satellite_position, uint8_t>::iterator mpos_it;
@@ -257,7 +258,7 @@ int get_sdts(void)
 	return 0;
 }
 
-void write_xml_header(FILE * fd, const char *filename)
+void write_xml_header(FILE * fd)
 {
 	fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<zapit>\n");
 }
@@ -415,6 +416,7 @@ void scan_provider(xmlNodePtr search, char * providerName, bool satfeed, uint8_t
 {
 	xmlNodePtr transponder = NULL;
 
+	printf("[scan] scanning provider: %s\n", providerName);
 	/* send sat name to client */
 	eventServer->sendEvent(CZapitClient::EVT_SCAN_SATELLITE, CEventServer::INITID_ZAPIT, providerName, strlen(providerName) + 1);
 	transponder = search->xmlChildrenNode;
@@ -479,6 +481,9 @@ void *start_scanthread(void *)
  	found_data_chans = 0;
  	t_satellite_position satellitePosition = 0;
 
+	printf("[scan] start...\n");
+	for (spI = scanProviders.begin(); spI != scanProviders.end(); spI++)
+		printf("[scan] scanProviders: %s\n", providerName);
 
 	curr_sat = 0;
 
@@ -492,8 +497,12 @@ void *start_scanthread(void *)
 	/* get first child */
 	xmlNodePtr search = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
 	xmlNodePtr transponder = NULL;
-
-	std::map <uint8_t, std::string>::iterator spI;
+	
+	if  (!strcmp(type, "cable"))
+	{
+		fd = fopen(SERVICES_XML, "w");
+		write_xml_header(fd);
+	}
 
 	/* read all sat or cable sections */
 	while ((search = xmlGetNextOccurence(search, type)) != NULL)
@@ -503,10 +512,8 @@ void *start_scanthread(void *)
 
 		/* look whether provider is wanted */
 		for (spI = scanProviders.begin(); spI != scanProviders.end(); spI++)
-		{
 			if (!strcmp(spI->second.c_str(), providerName))
 				break;
-		}
 
 		/* provider is not wanted - jump to the next one */
 		if (spI != scanProviders.end())
@@ -520,47 +527,48 @@ void *start_scanthread(void *)
 			/* increase sat counter */
 			curr_sat++;
 
-			/* copy services.xml to /tmp directory */
-			cp(SERVICES_XML, SERVICES_TMP);
-		
-			if ((fd = fopen(SERVICES_XML, "w")))
+			if  (!strcmp(type, "sat"))
 			{
+				/* copy services.xml to /tmp directory */
+				cp(SERVICES_XML, SERVICES_TMP);
+		
+				fd = fopen(SERVICES_XML, "w");
 				if ((fd1 = fopen(SERVICES_TMP, "r")))
 					copy_to_satellite(fd, fd1, providerName);
 				else
-					write_xml_header(fd, SERVICES_XML);
+					write_xml_header(fd);
+			}
 					
-				/* satellite receivers might need diseqc */
-				if (frontend->getInfo()->type == FE_QPSK)
-					diseqc_pos = spI->first;
-				if (diseqc_pos == 255 /* = -1 */)
-					diseqc_pos = 0; 
+			/* satellite receivers might need diseqc */
+			if (frontend->getInfo()->type == FE_QPSK)
+				diseqc_pos = spI->first;
+			if (diseqc_pos == 255 /* = -1 */)
+				diseqc_pos = 0; 
 				
-				printf("[scan] type = %s, diseqcType = %d\n", type, frontend->getDiseqcType());
-				if (!strcmp(type, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
-					satellitePosition = driveMotorToSatellitePosition(providerName);
+			printf("[scan] type = %s, diseqcType = %d\n", type, frontend->getDiseqcType());
+			if (!strcmp(type, "sat") && (frontend->getDiseqcType() == DISEQC_1_2))
+				satellitePosition = driveMotorToSatellitePosition(providerName);
 				
-				scan_provider(search, providerName, satfeed, diseqc_pos);
+			scan_provider(search, providerName, satfeed, diseqc_pos);
 					
-				/* write services */
-				scan_status = write_provider(fd, type, providerName, diseqc_pos, satellitePosition);
+			/* write services */
+			scan_status = write_provider(fd, type, providerName, diseqc_pos, satellitePosition);
 			
+			if (!strcmp(type, "sat"))
+			{
 				if (fd1)		
 					copy_to_end(fd, fd1, providerName);
 					
 				write_xml_footer(fd);
-			}
-			else
-			{
-				ERROR(SERVICES_XML);
-				stop_scan(false);
-				pthread_exit(0);
 			}
 		}
 
 		/* go to next satellite */
 		search = search->xmlNextNode;
 	}
+	
+	if  (!strcmp(type, "cable"))
+		write_xml_footer(fd);
 
 	/* clean up - should this be done before every xmlNextNode ? */
 	delete transponder;
