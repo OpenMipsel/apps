@@ -680,8 +680,6 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 	tc_id=buffer[x++];
 	m_l=buffer[x++];
 
-	if(len<7)
-		return;
 	//the cheapest defrag on earth *g*
 	if(m_l && ml_bufferlen==0)			//first fragment
 	{
@@ -698,15 +696,21 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 		tpdu_len--;
 		tpdu_tc_id=buffer[x++];
 		
-		memcpy(ml_buffer,buffer+x,len-7);
-		ml_bufferlen=len-7;
-		ml_buffersize=tpdu_len;	
+		if (len >= 7)
+		{
+			memcpy(ml_buffer,buffer+x,len-7);
+			ml_bufferlen=len-7;
+			ml_buffersize=tpdu_len;	
+		}
 	}
 	else if(!m_l && ml_bufferlen)		//last fragment
 	{
-		memcpy(ml_buffer+ml_bufferlen,buffer+2,len-2);
-		receiveTPDU(0xA0,ml_buffersize,1,ml_buffer);
-		ml_bufferlen=0;
+		if (len >= 2)
+		{
+			memcpy(ml_buffer+ml_bufferlen,buffer+2,len-2);
+			receiveTPDU(0xA0,ml_buffersize,1,ml_buffer);
+			ml_bufferlen=0;
+		}
 	}
 	else														//not fragmented
 	{
@@ -723,8 +727,11 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 				//eDebug("len:%d\n",tpdu_len);
 			}
 			tpdu_len--;
-			if(tpdu_len>(len-6))
-				tpdu_len=len-6;
+			if (len >= 6)
+			{
+				if(tpdu_len>(len-6))
+					tpdu_len=len-6;
+			}
 			tpdu_tc_id=buffer[x++];
 
 			//printf("tpdu:");
