@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.22 2003/07/04 11:09:49 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.23 2003/07/22 19:43:00 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -451,7 +451,7 @@ eHarddiskMenu::eHarddiskMenu(int dev): dev(dev)
 
 	new eListBoxEntryText( *fs, ("reiserfs"), (void*) 0 );
 	new eListBoxEntryText( *fs, ("ext3"), (void*) 1 );
-	fs->setCurrent((void*)0);
+	fs->setCurrent((void*)1);
   
 	if (eSkin::getActive()->build(this, "eHarddiskMenu"))
 		eFatal("skin load of \"eHarddiskMenu\" failed");

@@ -43,7 +43,7 @@ void enigmaCImmi::answokPressed()
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_answ,0));
 }
 
-enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0), DVBCI(DVBCI)
+enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(1), mmi(0), DVBCI(DVBCI)
 {
 	int fd=eSkin::getActive()->queryValue("fontsize", 8); //20
 

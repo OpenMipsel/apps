@@ -121,9 +121,13 @@ eHelpWindow::eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID):
 		label->setText(helptext);
 		labelheight = label->getExtend().height();
 		label->resize(eSize(visible->width(), labelheight));
-		ypos+=labelheight;
-		if ( ypos > pageend )
-			entryBeg.push_back(ypos-labelheight);
+		int tmp = ypos+labelheight;
+		while ( tmp > pageend )
+		{
+			entryBeg.push_back(ypos);
+			pageend=entryBeg.back()+visible->height();
+			ypos+=visible->height();
+		}
 	}
 
 	cur = entryBeg.begin();
