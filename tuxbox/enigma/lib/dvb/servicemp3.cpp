@@ -78,7 +78,7 @@ void eHTTPStream::haveData(void *vdata, int len)
 			} else if (metadatainterval && (metadatainterval < bytes))
 				eFatal("metadatainterval < bytes");
 
-				// otherwis there's really data.
+				// otherwise there's really data.
 			if (metadatainterval)
 			{
 					// is metadata in our buffer?
@@ -140,6 +140,7 @@ eMP3Decoder::eMP3Decoder(const char *filename, eServiceHandlerMP3 *handler): han
 				http->local_header["Icy-MetaData"]="1"; // enable ICY metadata
 				http->start();
 				http_status=_("Connecting...");
+				filelength=-1;
 				handler->messages.send(eServiceHandlerMP3::eMP3DecoderMessage(eServiceHandlerMP3::eMP3DecoderMessage::status));
 			}
 			filename=0;
@@ -303,6 +304,10 @@ void eMP3Decoder::outputReady(int what)
 void eMP3Decoder::checkFlow(int last)
 {
 //	eDebug("I: %d O: %d S: %d", input.size(), output.size(), state);
+
+	if (state == statePause)
+		return;
+
 	int i=input.size(), o=output.size();
 	
 	// states:
@@ -372,6 +377,27 @@ void eMP3Decoder::checkFlow(int last)
 	}
 }
 
+void eMP3Decoder::recalcPosition()
+{
+	eLocker l(poslock);
+	if (audiodecoder->getAverageBitrate() > 0)
+	{
+		if (filelength != -1)
+			length=filelength/(audiodecoder->getAverageBitrate()>>3);
+		else
+			length=-1;
+		if (sourcefd > 0)
+		{
+			position=::lseek(sourcefd, 0, SEEK_CUR);
+			position+=input.size();
+			position/=(audiodecoder->getAverageBitrate()>>3);
+			position+=output.size()/pcmsettings.samplerate/pcmsettings.channels/2;
+		} else
+			position=-1;
+	} else
+		length=position=-1;
+}
+
 void eMP3Decoder::dspSync()
 {
 	if (dspfd >= 0)
@@ -381,20 +407,6 @@ void eMP3Decoder::dspSync()
 void eMP3Decoder::decodeMoreHTTP()
 {
 	checkFlow(0);
-
-#if 0
-	if (audiodecoder->getAverageBitrate() > 0)
-	{
-		length=filelength/(audiodecoder->getAverageBitrate()>>3);
-		eLocker l(poslock);
-		position=::lseek(sourcefd, 0, SEEK_CUR);
-		if (position > 0 )
-			position/=(audiodecoder->getAverageBitrate()>>3);
-		else
-			position=-1;
-	} else
-#endif
-		length=position=-1;
 }
 
 void eMP3Decoder::decodeMore(int what)
@@ -408,18 +420,6 @@ void eMP3Decoder::decodeMore(int what)
 	}
 	
 	checkFlow(flushbuffer);
-
-	if (audiodecoder->getAverageBitrate() > 0)
-	{
-		length=filelength/(audiodecoder->getAverageBitrate()>>3);
-		eLocker l(poslock);
-		position=::lseek(sourcefd, 0, SEEK_CUR);
-		if (position > 0 )
-			position/=(audiodecoder->getAverageBitrate()>>3);
-		else
-			position=-1;
-	} else
-		length=position=-1;
 
 	if (flushbuffer)
 	{
@@ -526,17 +526,12 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			offset=message.parm;
 		}
 		
-		eDebug("seeking to %d", offset);
 		::lseek(sourcefd, offset, SEEK_SET);
 		dspSync();
 		output.clear();
 		audiodecoder->resync();
 		
-		if (state == statePlaying)
-		{
-			inputsn->start();
-			state=stateBuffering;
-		}
+		checkFlow(0);
 		
 		break;
 	}
@@ -562,6 +557,7 @@ int eMP3Decoder::getPosition(int real)
 {
 	if (sourcefd < 0)
 		return -1;
+	recalcPosition();
 	eLocker l(poslock);
 	if (real)
 		return ::lseek(sourcefd, 0, SEEK_CUR)-input.size();
@@ -647,7 +643,6 @@ int eServiceHandlerMP3::serviceCommand(const eServiceCommand &cmd)
 		decoder->messages.send(eMP3Decoder::eMP3DecoderMessage(eMP3Decoder::eMP3DecoderMessage::seek, cmd.parm));
 		break;
 	case eServiceCommand::cmdSeekReal:
-		eDebug("seekreal");
 		decoder->messages.send(eMP3Decoder::eMP3DecoderMessage(eMP3Decoder::eMP3DecoderMessage::seekreal, cmd.parm));
 		break;
 	default:

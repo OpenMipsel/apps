@@ -1517,9 +1517,14 @@ void eZapMain::repeatSkip(int dir)
 	if (!skipping)
 	{
 		skipcounter++;
+		int time=5000;
+		if (skipcounter > 10)
+			time=20000;
+		else if (skipcounter > 30)
+			time=120000;
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 		if (handler)
-			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip, (dir == skipForward)?5000:-5000));
+			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip, (dir == skipForward)?time:-time));
 		updateProgress();
 	}
 }
