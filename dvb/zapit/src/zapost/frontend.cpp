@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.5 2003/05/09 08:55:25 digi_casi Exp $
+ * $Id: frontend.cpp,v 1.41.2.6 2003/05/10 10:15:05 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -42,6 +42,7 @@
 #include <zapit/settings.h>
 
 extern std::map <uint32_t, transponder> transponders;
+extern std::map <int32_t, uint8_t> motorPositions;
 
 /* constructor */
 CFrontend::CFrontend ()
@@ -505,7 +506,7 @@ void CFrontend::secResetOverload ()
  * zapit frontend api
  */
  
-void CFrontend::positionMotor(uint8_t diseqc)
+void CFrontend::positionMotor(uint8_t motorPosition)
 {
 	const secStatus *state;
   
@@ -523,7 +524,7 @@ void CFrontend::positionMotor(uint8_t diseqc)
 	sequence->commands[0].u.diseqc.addr = 0x31;
 	sequence->commands[0].u.diseqc.cmd = 0x6B;	/* position motor */
 	sequence->commands[0].u.diseqc.numParams = 1;
-	sequence->commands[0].u.diseqc.params[0] = diseqc; /* goto satellite # */
+	sequence->commands[0].u.diseqc.params[0] = motorPosition; /* goto stored satellite position # */
 
 	secSendSequence(sequence);
 
@@ -563,7 +564,7 @@ const bool CFrontend::tuneChannel (CZapitChannel *channel)
 	{
 		printf("[frontend] ATTENTION: this function is not working yet!\n");
 		printf("[frontend] tuneChannel: currentSatellitePosition = %d <> satellitePosition = %d => we need to position rotor now.\n", currentSatellitePosition, channel->getSatellitePosition());
-		positionMotor(channel->getDiSEqC());
+		positionMotor(motorPositions[channel->getSatellitePosition()]);
 		
 		waitForMotor = abs(channel->getSatellitePosition() - currentSatellitePosition) / 18; //assuming 1.8 degrees/second motor rotation speed for the time being...
 		printf("[frontend] tuneChannel: waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
