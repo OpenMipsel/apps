@@ -1282,7 +1282,5 @@ int eServiceSelector::toggleMoveMode()
 int eServiceSelector::toggleEditMode()
 {
 	editMode^=1;
-	if (!editMode)
-		eListBoxEntryService::hilitedEntrys.clear();
 	return editMode;
 }

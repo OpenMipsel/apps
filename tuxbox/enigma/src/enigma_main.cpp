@@ -2486,6 +2486,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			}
 		}
 		else if ( it->service.type == eServicePlaylistHandler::ID )
+
 			eServicePlaylistHandler::getInstance()->removePlaylist( it->service );
 
 		if (removeEntry) // remove service.. and linked files..
@@ -2721,9 +2722,12 @@ void eZapMain::toggleEditMode( eServiceSelector *sel )
 			for (std::list<ePlaylistEntry>::const_iterator i(currentSelectedUserBouquet->getConstList().begin()); i != currentSelectedUserBouquet->getConstList().end(); ++i)
 				eListBoxEntryService::hilitedEntrys.insert(*i);
 		}
+		else  // no user bouquet is selected...
+			sel->toggleEditMode();  // disable edit mode
 	}
 	else
 	{
+		eListBoxEntryService::hilitedEntrys.clear();
 		currentSelectedUserBouquet->save();
 		currentSelectedUserBouquet=0;
 		eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
