@@ -1,4 +1,4 @@
-SUBDIRS = mainmenu chk_stone chk_v2 neutrino
+SUBDIRS = mainmenu chk_stone chk_v2 neutrino shortcut
 
 EXTRA_DIST = \
 	checked.png format_on_small.png dolby_on.png \
