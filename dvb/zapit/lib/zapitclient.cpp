@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/dvb/zapit/lib/zapitclient.cpp,v 1.76.2.1 2003/02/18 15:16:46 alexw Exp $ *
+ * $Header: /cvs/tuxbox/apps/dvb/zapit/lib/zapitclient.cpp,v 1.76.2.2 2003/02/18 16:03:19 thegoodguy Exp $ *
  *
  * Client-Interface für zapit - DBoxII-Project
  *
@@ -273,6 +273,17 @@ void CZapitClient::getPIDS( responseGetPIDs& pids )
 	close_connection();
 }
 
+void CZapitClient::zaptoNvodSubService(int num)
+{
+	CZapitMessages::commandInt msg;
+
+	msg.val = num;
+
+	send(CZapitMessages::CMD_NVOD_SUBSERVICE_NUM, (char*)&msg, sizeof(msg));
+
+	close_connection();
+}
+
 /* gets all bouquets */
 /* bouquets are numbered starting at 0 */
 void CZapitClient::getBouquets(BouquetList& bouquets, const bool emptyBouquetsToo, const bool utf_encoded)
@@ -407,6 +418,21 @@ void CZapitClient::setVolume(const unsigned int left, const unsigned int right)
 	send(CZapitMessages::CMD_SET_VOLUME, (char*)&msg, sizeof(msg));
 
 	close_connection();
+}
+
+
+delivery_system_t CZapitClient::getDeliverySystem(void)
+{
+	send(CZapitMessages::CMD_GET_DELIVERY_SYSTEM, 0, 0);
+
+	CZapitMessages::responseDeliverySystem response;
+
+	if (!CBasicClient::receive_data((char* )&response, sizeof(response)))
+		response.system = DVB_S;  // return DVB_S if communication fails
+
+	close_connection();
+
+	return response.system;
 }
 
 

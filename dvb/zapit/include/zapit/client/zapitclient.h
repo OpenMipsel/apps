@@ -53,6 +53,9 @@ class CZapitClient:public CBasicClient
 			EVT_RECORDMODE_ACTIVATED,
 			EVT_RECORDMODE_DEACTIVATED,
 			EVT_BOUQUETS_CHANGED,
+			EVT_ZAP_CA_CLEAR,
+			EVT_ZAP_CA_LOCK,
+			EVT_ZAP_CA_FTA,
 			LAST_EVENT_MARKER             // <- no actual event, needed by pzapit
 		};
 
@@ -266,6 +269,10 @@ class CZapitClient:public CBasicClient
 	/* set audio volume */
 	void setVolume(const unsigned int left, const unsigned int right);
 
+	/* get dvb transmission type */
+	delivery_system_t getDeliverySystem(void);
+
+	void zaptoNvodSubService(int num);
 
 	/****************************************/
 	/*					*/
