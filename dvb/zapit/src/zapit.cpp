@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.9 2003/03/02 11:41:11 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.10 2003/03/02 22:18:42 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -706,21 +706,24 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				break;
 		}
 
-               CZapitClient::responseGetSatelliteList msgResponseGetSatelliteList;
+		uint32_t   satnamelength;
+		char *     satname;
+		xmlNodePtr search       = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
+		char *     frontendname = getFrontendName();
 
-               xmlNodePtr search       = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
-               char *     frontendname = getFrontendName();
-
-               if (frontendname != NULL)
-	    while ((search = xmlGetNextOccurence(search, frontendname)) != NULL)
-                       {
-                               strncpy(msgResponseGetSatelliteList.satName, xmlGetAttribute(search, "name"), sizeof(msgResponseGetSatelliteList.satName));
-                               CBasicServer::send_data(connfd, &msgResponseGetSatelliteList, sizeof(msgResponseGetSatelliteList));
-                               search = search->xmlNextNode;
-                       }
-			break;
+		if (frontendname != NULL)
+			while ((search = xmlGetNextOccurence(search, frontendname)) != NULL)
+			{
+				satname = xmlGetAttribute(search, "name");
+				satnamelength = strlen(satname);
+				CBasicServer::send_data(connfd, &satnamelength, sizeof(satnamelength));
+				CBasicServer::send_data(connfd, satname, satnamelength);
+				search = search->xmlNextNode;
+			}
+		satnamelength = SATNAMES_END_MARKER;
+		CBasicServer::send_data(connfd, &satnamelength, sizeof(satnamelength));
+		break;
 	}
-
 	case CZapitMessages::CMD_SCANSETSCANSATLIST:
 	{
 		CZapitClient::commandSetScanSatelliteList sat;
@@ -1070,7 +1073,7 @@ void sendBouquets(int connfd, const bool emptyBouquetsToo)
 			}
 		}
 	}
-	msgBouquet.bouquet_nr = 0xFFFF; /* <- end marker */
+	msgBouquet.bouquet_nr = RESPONSE_GET_BOUQUETS_END_MARKER;
 	if (CBasicServer::send_data(connfd, &msgBouquet, sizeof(msgBouquet)) == false)
 	{
 		ERROR("could not send end marker");
@@ -1486,7 +1489,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.9 2003/03/02 11:41:11 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.10 2003/03/02 22:18:42 thegoodguy Exp $\n");
 
 	if (argc > 1)
 	{
