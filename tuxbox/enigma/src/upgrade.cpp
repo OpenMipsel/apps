@@ -5,7 +5,9 @@
 #include <lib/gui/statusbar.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/eprogress.h>
+#include <lib/gui/eskin.h>
 #include <lib/dvb/decoder.h>
+#include <lib/gdi/font.h>
 #include <libmd5sum.h>
 #include <lib/dvb/edvb.h>
 #include <sys/mman.h>
@@ -97,49 +99,47 @@ void eHTTPDownloadXML::haveData(void *data, int len)
 
 eUpgrade::eUpgrade()
 {
-	cmove(ePoint(100, 100));
-	cresize(eSize(500, 340));
-	setText(_("Software upgrade.."));
-	
 	status = new eStatusBar(this);
 	status->setFlags(eStatusBar::flagOwnerDraw);
-	status->move( ePoint(0, clientrect.height()-30) );
-	status->resize( eSize( clientrect.width(), 30) );
 	status->loadDeco();
+	status->setName("status");
 
 	images=new eListBox<eListBoxEntryImage>(this);
-	images->move(ePoint(10, 70));
-	images->resize(eSize(480, 190));
-	images->loadDeco();
+	images->setName("images");
 	CONNECT(images->selected, eUpgrade::imageSelected);
+	CONNECT(images->selchanged, eUpgrade::imageSelchanged);
 	
 	imagehelp=new eLabel(this);
-	imagehelp->move(ePoint(10, 0));
-	imagehelp->resize(eSize(460, 30));
+	imagehelp->setName("imagehelp");
 	imagehelp->setText(_("Please select software version to upgrade to:"));
 
 	progress=new eProgress(this);
-	progress->move(ePoint(10, 265));
-	progress->resize(eSize(250, 30));
+	progress->setName("progress");
 	progress->hide();
 	
 	progresstext=new eLabel(this);
-	progresstext->move(ePoint(270, 275));
-	progresstext->resize(eSize(210, 30));
+	progresstext->setName("progresstext");
 	progresstext->hide();
 	
+	changes=new eLabel(this, RS_WRAP);
+	changes->setName("changes");
+	
 	abort=new eButton(this);
-	abort->move(ePoint(40, 40));
-	abort->resize(eSize(150, 50));
-	abort->setText(_("abort"));
-	abort->loadDeco();
+	abort->setName("abort");
 	CONNECT(abort->selected, eUpgrade::abortDownload);
 	abort->hide();
 
+	if (eSkin::getActive()->build(this, "eUpgrade"))
+		eFatal("skin load of \"eUpgrade\" failed");
+
 	catalog=0;
+	changelog=0;
+	
 	eString caturl=getVersionInfo("catalog");
 	if (caturl.length())
 		loadCatalog(caturl.c_str());
+		
+	ourversion=getVersionInfo("version");
 	
 	struct stat s;
 	if (!stat(TMP_IMAGE, &s))
@@ -263,7 +263,9 @@ void eUpgrade::catalogTransferDone(int err)
 		}
 		setFocus(images);
 		images->endAtomic();
-		setStatus("Please select version to upgrade or LAME! to abort");
+		setStatus(_("Please select version to upgrade or LAME! to abort"));
+		if (images->getCurrent())
+			imageSelchanged(images->getCurrent());
 	} else
 	{
 		if (err || http->code !=200)
@@ -315,11 +317,18 @@ void eUpgrade::changelogTransferDone(int err)
 				entry.date=str.left(12);
 				entry.priority=str[13]-'0';
 				entry.text=str.mid(15);
-				
+				unsigned int in=entry.text.find(' ');
+				entry.machines="*";
+				if (in != eString::npos)
+				{
+					entry.machines=entry.text.left(in);
+					entry.text=entry.text.mid(in+1);
+				}
 				changelogentries.push_back(entry);
 			}
 			fclose(f);
 		}
+		displayChangelog(ourversion.mid(4), selectedversion.mid(4), eDVB::getInstance()->getInfo("mID").right(1));
 	}
 	changelog=0;
 }
@@ -337,6 +346,12 @@ void eUpgrade::imageSelected(eListBoxEntryImage *img)
 			flashImage(0);
 	} else
 		close(0); // aborted
+}
+
+void eUpgrade::imageSelchanged(eListBoxEntryImage *img)
+{
+	selectedversion=img->version;
+	displayChangelog(ourversion.mid(4), selectedversion.mid(4), eDVB::getInstance()->getInfo("mID").right(1));
 }
 
 void eUpgrade::setStatus(const eString &string)
@@ -423,6 +438,7 @@ void eUpgrade::abortDownload()
 		delete http;
 		http=0;
 	}
+	setStatus(_("Download aborted."));
 	progress->hide();
 	progresstext->hide();
 	abort->hide();
@@ -550,6 +566,46 @@ void eUpgrade::flashImage(int checkmd5)
 				close(0);
 		}
 	}
+}
+
+void eUpgrade::displayChangelog(eString oldversion, eString newversion, eString mid)
+{
+	eString changetext;
+	if (newversion.empty())
+	{
+		changetext="";
+	} else if (oldversion == newversion)
+	{
+		changetext=_("This is the currently installed release.");
+	} else if (oldversion > newversion)
+	{
+		changetext=_("This is an older release.");
+	} else if (changelogentries.empty())
+	{
+		changetext=_("No changelog data available.");
+	} else
+	{
+		// build list of changetext
+		
+		std::multimap<int,eString> pchanges;
+		for (std::list<changelogEntry>::const_iterator i(changelogentries.begin());
+				i != changelogentries.end(); ++i)
+		{
+					// check if change is new for this version
+			if ((i->date > oldversion) && (i->date <= newversion) && ((i->machines=="*") || (i->machines.find(mid) != eString::npos)))
+				pchanges.insert(std::pair<int,eString>(i->priority, i->text));
+		}
+		if (pchanges.empty())
+			changetext=_("No new features were added in this release.");
+		else
+		{
+			changetext=_("The following new features were added in this release:\n");
+			for (std::map<int,eString>::const_iterator i(pchanges.begin());
+					i != pchanges.end(); ++i)
+				changetext+=" * " + i->second + "\n";
+		}
+	}
+	changes->setText(changetext);
 }
 
 eUpgrade::~eUpgrade()
