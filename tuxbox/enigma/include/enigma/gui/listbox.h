@@ -427,6 +427,8 @@ inline void eListBox<T>::init()
 template <class T>
 inline int eListBox<T>::moveSelection(int dir)
 {
+	int direction=0, forceredraw=0;
+	
 	if (childs.empty())
 		return 0;
 
@@ -435,6 +437,7 @@ inline int eListBox<T>::moveSelection(int dir)
 	switch (dir)
 	{
 		case dirPageDown:
+			direction=+1;
 			for (int i = 0; i < MaxEntries; i++)
 			{
 				if (++current == bottom) // unten (rechts) angekommen? page down
@@ -457,6 +460,7 @@ inline int eListBox<T>::moveSelection(int dir)
 		break;
 
 		case dirPageUp:
+			direction=-1;
 			for (int i = 0; i < MaxEntries; ++i)
 			{
 				if (current == childs.begin())
@@ -482,12 +486,16 @@ inline int eListBox<T>::moveSelection(int dir)
 		case dirUp:
 			if ( current == childs.begin() )				// wrap around?
 			{
-				current = --childs.end();					// select last
+				direction=+1;
+				current = childs.end();					// select last
+				--current;
 				top = bottom = childs.end();
 				for (int i = 0; i < MaxEntries*columns; i++, top--)
 					if (top == childs.begin())
 						break;
 			} else
+			{
+				direction=-1;
 				if (current-- == top) // new top must set
 				{
 					for (int i = 0; i < MaxEntries*columns; i++, top--)
@@ -498,11 +506,13 @@ inline int eListBox<T>::moveSelection(int dir)
 						if (bottom == childs.end())
 							break;
 				}
+			}
 		break;
 
 		case dirDown:
-			if ( current == --childs.end() )				// wrap around?
+			if ( current == --ePtrList_T_iterator(childs.end()) )				// wrap around?
 			{
+				direction=-1;
 				top = current = bottom = childs.begin(); 	// goto first
 				for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
 					if ( bottom == childs.end() )
@@ -510,6 +520,7 @@ inline int eListBox<T>::moveSelection(int dir)
 			}
 			else
 			{
+				direction=+1;
 				if (++current == bottom)   // ++current ??
 				{
 					for (int i = 0; i<MaxEntries * columns; ++i)
@@ -523,6 +534,7 @@ inline int eListBox<T>::moveSelection(int dir)
 			}
 			break;
 		case dirFirst:
+			direction=-1;
 			top = current = bottom = childs.begin(); 	// goto first;
 			for (int i = 0; i < MaxEntries * columns; i++, bottom++)
 				if ( bottom == childs.end() )
@@ -535,7 +547,40 @@ inline int eListBox<T>::moveSelection(int dir)
 	if (current != oldptr)  // current has changed
 	{
 		if (movemode)
-			std::iter_swap(current, oldptr);
+		{
+				// feel free to rewrite using stl::copy[_backward], but i didn't succeed.
+			typename std::list<T*>::iterator o=oldptr;
+			typename std::list<T*>::iterator c=current;
+			typename std::list<T*>::iterator curi=current;
+			typename std::list<T*>::iterator oldi=oldptr;
+			int count=0;
+			
+			T* old=*o;
+
+			if (direction > 0)
+			{
+				++o;
+				++c;
+				while (o != c)
+				{
+					*oldi++=*o++;
+					count++;
+				}
+			} else
+			{
+				while (o != curi)
+				{
+					*oldi--=*--o;
+					count++;
+				}
+			}
+			
+			if (count > 1)
+				forceredraw=1;
+			
+			*curi=old;
+		}
+
 		if (!in_atomic)
 			selchanged(*current);
 		else
@@ -547,7 +592,7 @@ inline int eListBox<T>::moveSelection(int dir)
 
 	if (isVisible())
 	{
-		if (oldtop != top)
+		if ((oldtop != top) || forceredraw)
 		{
 			if (in_atomic)
 				atomic_redraw=arAll;

@@ -32,9 +32,11 @@ public:
 	static int Initialize();
 	static void Close();
 	static void Flush();
+	static void Pause();
+	static void Resume();
 	static void addCADescriptor(__u8 *descriptor);
 	static int Set();
-	static void flushBuffer() { parms.flushbuffer=1; }
+	static void flushBuffer();
 	static void setVideoFormat( int format );
 };
 
