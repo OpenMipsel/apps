@@ -1,0 +1,6 @@
+In order to compile zapit for rel_alexW you have to check out the HEAD
+versions of the following directories/files:
+
+apps/dvb/zapit/lib
+apps/dvb/zapit/include/zapit/client
+apps/dvb/zapit/src/pzapit.cpp
