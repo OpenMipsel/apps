@@ -256,7 +256,11 @@ eZap::eZap(int argc, char **argv)
 		bootcount++;
 
 	eConfig::getInstance()->setKey("/elitedvb/system/bootCount", bootcount);
-
+#if 0
+	eConfig::getInstance()->setKey("/ezap/rc/style", "classic");
+	eConfig::getInstance()->setKey("/ezap/rc/sselect_style", "sselect_classic" );
+	eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", 1 );
+#endif
 	init->setRunlevel(eAutoInitNumbers::main);
 }
 

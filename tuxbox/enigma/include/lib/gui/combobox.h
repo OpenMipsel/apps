@@ -29,7 +29,7 @@ public:
 	void removeEntry( int );
 	void removeEntry( void* );
 	void sort() { listbox.sort(); }
-	int setCurrent( eListBoxEntryText*, bool=false );
+	int setCurrent( const eListBoxEntryText*, bool=false );
 	int setCurrent( int, bool=false );
 	int setCurrent( void*, bool=false );
 	int getCount() { return listbox.getCount(); }

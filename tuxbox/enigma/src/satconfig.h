@@ -97,7 +97,9 @@ class eLNBPage : public eWidget
 	friend class eLNBSetup;
 	struct selectlnb;
 	eSatellite *sat;
-	eListBox<eListBoxEntryText> *lnb_list;
+	eLabel *lMapping;
+	eComboBox *lnb_list;
+//	eListBox<eListBoxEntryText> *lnb_list;
 	eNumber *lofH, *lofL, *threshold;
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
 	eButton *next; // shows the DiSEqC Configuration Dialog
@@ -106,7 +108,6 @@ class eLNBPage : public eWidget
     
 	void numSelected(int*);
 	void lnbChanged( eListBoxEntryText* );
-	void lnbSelected(eListBoxEntryText*);
 public:
 	eLNBPage( eWidget *parent, eSatellite *sat );
 };

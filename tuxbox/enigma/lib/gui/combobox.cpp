@@ -191,7 +191,7 @@ void eComboBox::removeEntry( void* key )
 	}
 }
 
-int eComboBox::setCurrent( eListBoxEntryText* le, bool sendSelChanged )
+int eComboBox::setCurrent( const eListBoxEntryText* le, bool sendSelChanged )
 {
 	if (!le)
 		return E_INVALID_ENTRY;

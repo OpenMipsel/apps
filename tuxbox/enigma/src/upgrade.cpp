@@ -631,9 +631,9 @@ void eUpgrade::flashImage(int checkmd5)
 				mbend.show();
 				mbend.exec();
 				mbend.hide();
-//				eZap::getInstance()->quit(1);
-				system("/sbin/reboot");
-				system("/bin/reboot");
+				eZap::getInstance()->quit(1);
+//				system("/sbin/reboot");
+//				system("/bin/reboot");
 //				exit(0);
 			} else
 				close(0);

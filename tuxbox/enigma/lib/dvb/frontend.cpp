@@ -543,6 +543,129 @@ void eFrontend::RotorFinish()
 	transponder->tune();
 }
 
+/*----------------------------------------------------------------------------*/
+double factorial_div( double value, int x)
+{
+	if(!x)
+		return 1;
+	else
+	{
+		while( x > 1)
+		{
+			value = value / x--;
+		}
+	}
+	return value;
+}
+
+/*----------------------------------------------------------------------------*/
+double powerd( double x, int y)
+{
+	int i=0;
+	double ans=1.0;
+
+	if(!y)
+		return 1.000;
+	else
+	{
+		while( i < y)
+		{
+			i++;
+			ans = ans * x;
+		}
+	}
+	return ans;
+}
+
+/*----------------------------------------------------------------------------*/
+double SIN( double x)
+{
+	int i=0;
+	int j=1;
+	int sign=1;
+	double y1 = 0.0;
+	double diff = 1000.0;
+
+	if (x < 0.0)
+	{
+		x = -1 * x;
+		sign = -1;
+	}
+
+	while ( x > 360.0*M_PI/180)
+	{
+		x = x - 360*M_PI/180;
+	}
+
+	if( x > (270.0 * M_PI / 180) )
+	{
+		sign = sign * -1;
+		x = 360.0*M_PI/180 - x;
+	}
+	else if ( x > (180.0 * M_PI / 180) )
+	{
+		sign = sign * -1;
+		x = x - 180.0 *M_PI / 180;
+	}
+	else if ( x > (90.0 * M_PI / 180) )
+	{
+		x = 180.0 *M_PI / 180 - x;
+	}
+
+	while( powerd( diff, 2) > 1.0E-16 )
+	{
+		i++;
+		diff = j * factorial_div( powerd( x, (2*i -1)) ,(2*i -1));
+		y1 = y1 + diff;
+		j = -1 * j;
+	}
+	return ( sign * y1 );
+}
+
+double COS(double x)
+{
+	return SIN(90 * M_PI / 180 - x);
+}
+
+/*----------------------------------------------------------------------------*/
+double ATAN( double x)
+{
+	int i=0; /* counter for terms in binomial series */
+	int j=1; /* sign of nth term in series */
+	int k=0;
+	int sign = 1; /* sign of the input x */
+	double y = 0.0; /* the output */
+	double deltay = 1.0; /* the value of the next term in the series */
+	double addangle = 0.0; /* used if arctan > 22.5 degrees */
+
+	if (x < 0.0)
+	{
+		x = -1 * x;
+		sign = -1;
+	}
+
+	while( x > 0.3249196962 )
+	{
+		k++;
+		x = (x - 0.3249196962) / (1 + x * 0.3249196962);
+	}
+	addangle = k * 18.0 *M_PI/180;
+
+	while( powerd( deltay, 2) > 1.0E-16 )
+	{
+		i++;
+		deltay = j * powerd( x, (2*i -1)) / (2*i -1);
+		y = y + deltay;
+		j = -1 * j;
+	}
+	return (sign * (y + addangle) );
+}
+
+double ASIN(double x)
+{
+	return 2 * ATAN( x / (1 + std::sqrt(1.0 - x*x)));
+}
+
 double Radians( double number )
 {
 	return number*M_PI/180;
@@ -572,28 +695,29 @@ double calcElevation( double SatLon, double SiteLat, double SiteLon, int Height_
 
 					r_eq=6378.14,  // Earth radius
 
-					Rstation = r_eq / ( std::sqrt( 1.00 - f*(2.00-f)*std::sin(Radians(SiteLat))*std::sin(Radians(SiteLat)) ) ),
+					sinRadSiteLat=SIN(Radians(SiteLat)),
+					cosRadSiteLat=COS(Radians(SiteLat)),
 
-					Ra = (Rstation+Height_over_ocean)*std::cos(Radians(SiteLat)),
-					Rz= Rstation*(1.00-f)*(1.00-f)*std::sin(Radians(SiteLat)),
-//			alfa_r = r_sat - Rstation,
+					Rstation = r_eq / ( std::sqrt( 1.00 - f*(2.00-f)*sinRadSiteLat*sinRadSiteLat ) ),
 
-					alfa_rx=r_sat*std::cos(Radians(SatLon-SiteLon)) - Ra,
-					alfa_ry=r_sat*std::sin(Radians(SatLon-SiteLon)),
+					Ra = (Rstation+Height_over_ocean)*cosRadSiteLat,
+					Rz= Rstation*(1.00-f)*(1.00-f)*sinRadSiteLat,
+
+					alfa_rx=r_sat*COS(Radians(SatLon-SiteLon)) - Ra,
+					alfa_ry=r_sat*SIN(Radians(SatLon-SiteLon)),
 					alfa_rz=-Rz,
 
-					alfa_r_north=-alfa_rx*std::sin(Radians(SiteLat)) + alfa_rz*std::cos(Radians(SiteLat)),
-					alfa_r_zenith=alfa_rx*std::cos(Radians(SiteLat)) + alfa_rz*std::sin(Radians(SiteLat)),
+					alfa_r_north=-alfa_rx*sinRadSiteLat + alfa_rz*cosRadSiteLat,
+					alfa_r_zenith=alfa_rx*cosRadSiteLat + alfa_rz*sinRadSiteLat,
 
-					El_geometric=Deg(std::atan2( alfa_r_zenith , std::sqrt(alfa_r_north*alfa_r_north+alfa_ry*alfa_ry))),
-
+					El_geometric=Deg(ATAN( alfa_r_zenith/std::sqrt(alfa_r_north*alfa_r_north+alfa_ry*alfa_ry))),
 
 					x = std::fabs(El_geometric+0.589),
 					refraction=std::fabs(a0+a1*x+a2*x*x+a3*x*x*x+a4*x*x*x*x),
           El_observed = 0.00;
-					
+
 	if (El_geometric > 10.2)
-		El_observed = El_geometric+0.01617*(std::cos(Radians(std::abs(El_geometric)))/std::sin(Radians(std::abs(El_geometric))) );
+		El_observed = El_geometric+0.01617*(COS(Radians(std::fabs(El_geometric)))/SIN(Radians(std::fabs(El_geometric))) );
 	else
 	{
 		El_observed = El_geometric+refraction ;
@@ -613,51 +737,53 @@ double calcAzimuth(double SatLon, double SiteLat, double SiteLon, int Height_ove
 
 					r_eq=6378.14,  // Earth radius
 
-					Rstation = r_eq / ( std::sqrt( 1 - f*(2-f)*std::sin(Radians(SiteLat))*std::sin(Radians(SiteLat)) ) ),
-					Ra = (Rstation+Height_over_ocean)*std::cos(Radians(SiteLat)),
-					Rz = Rstation*(1-f)*(1-f)*std::sin(Radians(SiteLat)),
-//					alfa_r = r_sat-Rstation,
+					sinRadSiteLat=SIN(Radians(SiteLat)),
+					cosRadSiteLat=COS(Radians(SiteLat)),
 
-					alfa_rx = r_sat*std::cos(Radians(SatLon-SiteLon)) - Ra,
-					alfa_ry = r_sat*std::sin(Radians(SatLon-SiteLon)),
+					Rstation = r_eq / ( std::sqrt( 1 - f*(2-f)*sinRadSiteLat*sinRadSiteLat ) ),
+					Ra = (Rstation+Height_over_ocean)*cosRadSiteLat,
+					Rz = Rstation*(1-f)*(1-f)*sinRadSiteLat,
+
+					alfa_rx = r_sat*COS(Radians(SatLon-SiteLon)) - Ra,
+					alfa_ry = r_sat*SIN(Radians(SatLon-SiteLon)),
 					alfa_rz = -Rz,
 
-					alfa_r_north = -alfa_rx*std::sin(Radians(SiteLat)) + alfa_rz*std::cos(Radians(SiteLat)),
-//					alfa_r_zenith = alfa_rx*std::cos(Radians(SiteLat)) + alfa_rz*std::sin(Radians(SiteLat)),
+					alfa_r_north = -alfa_rx*sinRadSiteLat + alfa_rz*cosRadSiteLat,
+
 					Azimuth = 0.00;
 
 	if (alfa_r_north < 0)
-		Azimuth = 180+Deg(std::atan(alfa_ry/alfa_r_north));
+		Azimuth = 180+Deg(ATAN(alfa_ry/alfa_r_north));
 	else
-		Azimuth = Rev(360+Deg(std::atan(alfa_ry/alfa_r_north)));
+		Azimuth = Rev(360+Deg(ATAN(alfa_ry/alfa_r_north)));
 
 	return Azimuth;
 }
 
 double calcDeclination( double SiteLat, double Azimuth, double Elevation)
 {
-	return Deg( std::asin(std::sin(Radians(Elevation)) *
-												std::sin(Radians(SiteLat)) +
-												std::cos(Radians(Elevation)) *
-												std::cos(Radians(SiteLat)) *
-												std::cos(Radians(Azimuth))
+	return Deg( ASIN(SIN(Radians(Elevation)) *
+												SIN(Radians(SiteLat)) +
+												COS(Radians(Elevation)) *
+												COS(Radians(SiteLat)) +
+												COS(Radians(Azimuth))
 												)
 						);
 }
 
 double calcSatHourangle( double Azimuth, double Elevation, double Declination, double Lat )
 {
-	double a = - std::cos(Radians(Elevation)) *
-							 std::sin(Radians(Azimuth)),
+	double a = - COS(Radians(Elevation)) *
+							 SIN(Radians(Azimuth)),
 
-				 b = std::sin(Radians(Elevation)) *
-						 std::cos(Radians(Lat)) -
-						 std::cos(Radians(Elevation)) *
-						 std::sin(Radians(Lat)) *
-						 std::cos(Radians(Azimuth)),
+				 b = SIN(Radians(Elevation)) *
+						 COS(Radians(Lat)) -
+						 COS(Radians(Elevation)) *
+						 SIN(Radians(Lat)) *
+						 COS(Radians(Azimuth)),
 
 // Works for all azimuths (northern & sourhern hemisphere)
-						 returnvalue = 180 + Deg(std::atan2(a,b));
+						 returnvalue = 180 + Deg(ATAN(a/b));
 
 	(void)Declination;
 
@@ -799,7 +925,7 @@ int eFrontend::tune(eTransponder *trans,
 				double elevation=calcElevation( SatLon, SiteLat, SiteLon );
 				double declination=calcDeclination( SiteLat, azimuth, elevation );
 				double satHourAngle=calcSatHourangle( azimuth, elevation, declination, SiteLat );
-//				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
+				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
 				
 				int tmp=(int)round( fabs( 180 - satHourAngle ) * 10.0 );
 				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
@@ -808,6 +934,8 @@ int eFrontend::tune(eTransponder *trans,
 					RotorCmd |= 0xE000;
 				else                     // west
 					RotorCmd |= 0xD000;
+
+				eDebug("RotorCmd = %04x", RotorCmd);
 			}
 			else  // we use builtin rotor sat table
 			{
