@@ -2901,8 +2901,9 @@ void eZapMain::deleteService( eServiceSelector *sel )
 			sel->actualize();
 			break;
 		}*/
-
-	ePlaylist *pl=(ePlaylist*)eServicePlaylistHandler::getInstance()->addRef(path);
+	ePlaylist *pl=0;
+	if ( path.type == eServicePlaylistHandler::ID )
+		pl =(ePlaylist*)eServicePlaylistHandler::getInstance()->addRef(path);
 	if (!pl)
 	{
 		eMessageBox box(_("Sorry, you cannot delete this service."), _("delete service"), eMessageBox::iconWarning|eMessageBox::btOK );
@@ -3046,7 +3047,9 @@ void eZapMain::createMarker(eServiceSelector *sel)
 {
 	eServiceReference ref=sel->getSelected();
 	eServiceReference path=sel->getPath().current();
-	ePlaylist *pl = (ePlaylist*)eServicePlaylistHandler::getInstance()->addRef( path );
+	ePlaylist *pl=0;
+	if ( path.type == eServicePlaylistHandler::ID )
+		pl = (ePlaylist*)eServicePlaylistHandler::getInstance()->addRef( path );
 	if ( pl )
 	{
 		std::set<int> markerNums;
@@ -3243,11 +3246,19 @@ void eZapMain::toggleMoveMode( eServiceSelector* sel )
 	}
 }
 
-int eZapMain::toggleEditMode( eServiceSelector *sel )
+int eZapMain::toggleEditMode( eServiceSelector *sel, int defmode )
 {
 	if ( sel->toggleEditMode() ) // toggleMode.. and get new state !!!
 	{
-		UserBouquetSelector s( mode == modeTV?userTVBouquets->getList():mode==modeRadio?userRadioBouquets->getList():userFileBouquets->getList() );
+		std::list<ePlaylistEntry> &lst =
+			defmode == modeTV ?
+					userTVBouquets->getList() :
+			defmode == modeRadio ?
+					userRadioBouquets->getList() :
+			mode == modeRadio ?
+				userRadioBouquets->getList() :
+			userTVBouquets->getList();
+		UserBouquetSelector s( lst );
 		s.show();
 		s.exec();
 		s.hide();
@@ -3430,11 +3441,13 @@ void eZapMain::doPlaylistAdd(const eServiceReference &service)
 
 void eZapMain::addServiceToUserBouquet(eServiceReference *service, int dontask)
 {
-	if (!service || (mode > modeRadio) || (mode < 0))
+	if (!service)
 		return;
 
 	if (!dontask)
 	{
+		if ( (mode > modeRadio) || (mode < 0) )
+			return;
 		UserBouquetSelector s( mode == modeTV?userTVBouquets->getList():mode==modeRadio?userRadioBouquets->getList():userFileBouquets->getList() );
 		s.show();
 		s.exec();

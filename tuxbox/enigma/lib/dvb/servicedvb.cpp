@@ -15,6 +15,7 @@
 #include <lib/dvb/decoder.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 
 #ifndef DISABLE_FILE
@@ -24,14 +25,29 @@ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *ha
 {
 	state=stateInit;
 
+	int count=0;
 	seekbusy=0;
 	seeking=0;
-	dvrfd=::open("/dev/pvr", O_WRONLY|O_NONBLOCK);		// TODO: change to /dev/dvb/dvr0 (but only when drivers support this!)
-	if (dvrfd<0)
+	do
 	{
-		eDebug("couldn't open /dev/pvr - buy the new $$$ box and load pvr.o! (%m)");
-		state=stateError;
+		dvrfd=::open("/dev/pvr", O_WRONLY|O_NONBLOCK); // TODO: change to /dev/dvb/dvr0 (but only when drivers support this!)
+		if (dvrfd < 0)
+		{
+			if ( errno == EBUSY )
+			{
+				eDebug("pvr device busy try %d", count++);
+				if ( count < 40 )
+				{
+					usleep(20000);
+					continue;
+				}
+			}
+			eDebug("couldn't open /dev/pvr - buy the new $$$ box and load pvr.o! (%m)");
+			state=stateError;
+		}
+		break;
 	}
+	while( dvrfd < 0 );
 	
 	outputsn=new eSocketNotifier(this, dvrfd, eSocketNotifier::Write, 0);
 	CONNECT(outputsn->activated, eDVRPlayerThread::outputReady);
@@ -450,9 +466,6 @@ void eServiceHandlerDVB::stopPlayback( int waslivemode )
 		decoder=0;
 		if ( waslivemode )
 			flags&=~flagIsSeekable;
-		// do not remove the following delay !
-		if ( state != statePlaying )
-			usleep(500000);
 	}
 }
 

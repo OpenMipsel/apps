@@ -60,7 +60,7 @@ void eZapBouquetSetup::editModeSelected()
 		// get service selector reference
 		eServiceSelector &sel = *eZap::getInstance()->getServiceSelector();
 
-		if ( eZapMain::getInstance()->toggleEditMode(&sel) )
+		if ( eZapMain::getInstance()->toggleEditMode(&sel,ret) )
 		{
 			show();
 			return;

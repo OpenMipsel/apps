@@ -526,7 +526,7 @@ public:
 
 	void rotateRoot();
 	void toggleTimerMode();
-	int toggleEditMode(eServiceSelector *);
+	int toggleEditMode(eServiceSelector *, int mode=-1);
 	void toggleMoveMode(eServiceSelector *);
 	void handleStandby(int i=0);
 
