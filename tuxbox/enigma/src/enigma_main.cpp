@@ -219,7 +219,7 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 		if (sapi)
 			sapi->transponder=0;
-		system("/bin/sync");
+		::sync();
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target1/lun0/disc");
 

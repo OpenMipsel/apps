@@ -90,6 +90,7 @@ class eUpgrade: public eWindow
 	
 	void downloadProgress(int received, int total);
 	void flashImage(int checkmd5);
+	bool erase(char mtd[30]);
 	
 	void displayChangelog(eString oldversion, eString newversion, eString mid);
 public:

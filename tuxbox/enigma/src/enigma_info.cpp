@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.23 2003/07/03 20:32:19 ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.24 2003/07/04 11:09:48 ghostrider Exp $
  */
 
 #include <enigma_info.h>
@@ -56,21 +56,22 @@ eZapInfo::~eZapInfo()
 
 void eZapInfo::sel_satfind()
 {
-    int pid;
-    eSatfind s(eFrontend::getInstance());
-    hide();
+	int pid;
+	eSatfind s(eFrontend::getInstance());
+	hide();
 
-    pid=fork();
-    if( pid==0 ){   // child process
-        system("satfind");
-	_exit(0);
-    }
-    s.show();
-    s.exec();
-    s.hide();
-    if(pid!=-1)
-	system("killall -9 satfind");
-    show();
+	pid=fork();
+	if( pid==0 )
+	{   // child process
+		system("satfind");
+		_exit(0);
+	}
+	s.show();
+	s.exec();
+	s.hide();
+	if(pid!=-1)
+		system("killall -9 satfind");
+	show();
 }
 
 void eZapInfo::sel_streaminfo()
