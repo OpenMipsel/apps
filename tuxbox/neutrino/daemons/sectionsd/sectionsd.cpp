@@ -1,5 +1,5 @@
 //
-//  $Id: sectionsd.cpp,v 1.139 2002/10/15 20:39:47 woglinde Exp $
+//  $Id: sectionsd.cpp,v 1.139.2.1 2003/02/06 16:53:29 thegoodguy Exp $
 //
 //	sectionsd.cpp (network daemon for SI-sections)
 //	(dbox-II-project)
@@ -22,394 +22,11 @@
 //    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-//  $Log: sectionsd.cpp,v $
-//  Revision 1.139  2002/10/15 20:39:47  woglinde
 //
 //
-//  mostly coding styles, adding license to some files,
-//  using dos2unix on one file
-//
-//  Revision 1.138  2002/10/13 21:21:49  thegoodguy
-//  Cleanup includes
-//
-//  Revision 1.137  2002/10/13 11:35:03  woglinde
-//
-//
-//  yeah, its done neutrino compiles now again,
-//  you can go on and find bugs
-//
-//  Revision 1.136  2002/10/08 22:09:10  thegoodguy
-//  Code cleanup (SDTThread & EITThread now use common read routine)
-//
-//  Revision 1.135  2002/10/04 16:31:25  thegoodguy
-//  Bugfix: In the event of a timeout with part of the section read, the eitthread should use the correct commands to restart the dmx, too
-//
-//  Revision 1.134  2002/10/02 21:00:15  thegoodguy
-//  Only read 3 bytes of eit table first, fixed memory leak & locking problem
-//
-//  Revision 1.133  2002/10/02 17:52:49  thegoodguy
-//  Make driver developers happy :)
-//
-//  Revision 1.132  2002/10/02 17:45:30  thegoodguy
-//  Bugfixes: Fix handling of "small" sections & implement own table_id filter (joint effort with the sedulous alexw)
-//
-//  Revision 1.131  2002/09/25 23:27:48  thegoodguy
-//  Tiny code cleanup
-//
-//  Revision 1.130  2002/09/24 22:29:06  thegoodguy
-//  Code cleanup (kick out onid_sid)
-//
-//  Revision 1.129  2002/09/20 00:05:55  thegoodguy
-//  Fixed potential deadlock
-//
-//  Revision 1.128  2002/08/27 19:00:45  obi
-//  use devfs device names
-//
-//  Revision 1.127  2002/08/17 06:27:25  obi
-//  - no more compiler warnings
-//  - formatted sourcecode, it's almost readable now...
-//
-//  Revision 1.126  2002/05/15 10:00:55  dirch
-//  timerd removed
-//
-//  Revision 1.125  2002/05/04 00:14:51  rasc
-//  -- default cache 21 days, processor load should be no problem
-//
-//  Revision 1.124  2002/04/27 10:48:07  field
-//  Geschindigkeit gefixt
-//
-//  Revision 1.123  2002/04/25 16:17:10  field
-//  Updates
-//
-//  Revision 1.122  2002/04/24 10:56:46  field
-//  Kleinigkeiten
-//
-//  Revision 1.121  2002/04/19 07:04:44  field
-//  Zeit-setzen verbessert
-//
-//  Revision 1.120  2002/04/18 13:09:53  field
-//  Sectionsd auf clientlib umgestellt :)
-//
-//  Revision 1.119  2002/04/18 10:43:56  field
-//  Clientlib
-//
-//  Revision 1.118  2002/04/17 15:58:24  field
-//  Anpassungen
-//
-//  Revision 1.117  2002/04/17 13:07:06  field
-//  Bugfix (current-event)
-//
-//  Revision 1.116  2002/04/16 13:03:26  field
-//  stime in neutrino verschoben
-//
-//  Revision 1.115  2002/04/16 11:23:50  field
-//  Timeout-Handling umgestellt
-//
-//  Revision 1.114  2002/04/15 12:33:44  field
-//  Wesentlich verbessertes Paket-Handling (CPU-Last sollte viel besser sein
-//  *g*)
-//
-//  Revision 1.113  2002/04/12 15:47:27  field
-//  laestigen Bug in der glibc2.2.5 umschifft
-//
-//  Revision 1.112  2002/04/10 16:40:46  field
-//  Timeset verändert, timerd (einstweilen) auskommentiert
-//
-//  Revision 1.111  2002/04/08 18:46:06  Simplex
-//  checks availability of timerd
-//
-//  Revision 1.110  2002/04/06 20:01:50  Simplex
-//  - made EVT_NEXTPROGRAM work
-//  - communication with timerd should be changed to eventserver
-//
-//  Revision 1.109  2002/03/29 15:47:18  obi
-//  use setsid()
-//  field, mcclean: i guess that is what you wanted instead of catching signals ;)
-//
-//  Revision 1.108  2002/03/28 08:49:14  obi
-//  sigkill cannot be caught
-//  exit on all signals except sighup
-//
-//  Revision 1.107  2002/03/22 17:12:06  field
-//  Weitere Updates, compiliert wieder
-//
-//  Revision 1.104  2002/03/18 16:55:16  field
-//  Bugfix
-//
-//  Revision 1.102  2002/03/12 16:12:55  field
-//  Bugfixes
-//
-//  Revision 1.101  2002/03/07 18:33:43  field
-//  ClientLib angegangen, Events angefangen
-//
-//  Revision 1.100  2002/02/28 01:52:21  field
-//  Verbessertes Umschalt-Handling
-//
-//  Revision 1.99  2002/02/23 21:08:43  field
-//  Bugfix des Bugfixes :)
-//
-//  Revision 1.97  2002/02/23 20:23:23  McClean
-//  fix up
-//
-//  Revision 1.96  2002/02/14 14:59:24  field
-//  CD-Fix
-//
-//  Revision 1.94  2002/02/08 17:50:05  field
-//  Updates - neues Format bei sendEPG
-//
-//  Revision 1.93  2002/02/04 14:43:42  field
-//  Start/Stop/Restart u. Threading veraendert ;)
-//
-//  Revision 1.92  2002/01/31 17:02:35  field
-//  Buffergroesse
-//
-//  Revision 1.91  2002/01/30 13:35:02  field
-//  Verbesserungen
-//
-//  Revision 1.90  2002/01/29 23:23:57  field
-//  Mehr Details in ListAll
-//
-//  Revision 1.89  2002/01/06 18:23:44  McClean
-//  better busybox-handling
-//
-//  Revision 1.88  2002/01/06 03:03:13  McClean
-//  busybox 0.60 workarround
-//
-//  Revision 1.87  2001/11/22 13:19:00  field
-//  Liefert nun auch nur NEXT Epg ab
-//
-//  Revision 1.85  2001/11/15 13:25:58  field
-//  Bugfix, zeigt endlich auch die Events im gleichen Bouquet
-//
-//  Revision 1.84  2001/11/08 13:50:32  field
-//  Debug-Out verbessert
-//
-//  Revision 1.83  2001/11/07 23:49:45  field
-//  Current/Next Umschaltung funktioniert wieder
-//
-//  Revision 1.82  2001/11/05 17:12:05  field
-//  Versuch zu Wiederholungen
-//
-//  Revision 1.81  2001/11/03 15:39:57  field
-//  Deadlock behoben, Perspektiven
-//
-//  Revision 1.80  2001/11/03 03:13:53  field
-//  Auf Perspektiven vorbereitet
-//
-//  Revision 1.79  2001/10/31 18:04:46  field
-//  dmxTOT wird bei scan nicht gestoppt
-//
-//  Revision 1.78  2001/10/31 12:38:30  field
-//  Timethread auch gepaust beim scanning
-//
-//  Revision 1.77  2001/10/30 21:13:11  field
-//  bugfix
-//
-//  Revision 1.76  2001/10/29 17:57:09  field
-//  Problem, dass Events mit hoeherer Nummer vorgehen, behoben
-//
-//  Revision 1.75  2001/10/25 12:24:29  field
-//  verbeserte Behandlung von unvollstaendigen EPGs
-//
-//  Revision 1.72  2001/10/24 17:03:42  field
-//  Deadlock behoben, Geschwindigkeit gesteigert
-//
-//  Revision 1.71  2001/10/22 14:27:24  field
-//  Kleinigkeiten
-//
-//  Revision 1.70  2001/10/22 11:41:09  field
-//  nvod-zeiten
-//
-//  Revision 1.69  2001/10/21 13:04:40  field
-//  nvod-zeiten funktionieren
-//
-//  Revision 1.68  2001/10/18 23:57:18  field
-//  Gesamtliste massiv beschleunigt
-//
-//  Revision 1.66  2001/10/10 14:56:30  fnbrd
-//  tsid wird bei nvod mitgeschickt
-//
-//  Revision 1.65  2001/10/10 02:53:47  fnbrd
-//  Neues kommando (noch nicht voll funktionsfaehig).
-//
-//  Revision 1.64  2001/10/05 02:37:00  fnbrd
-//  Removed forgotten comment.
-//
-//  Revision 1.63  2001/10/04 20:12:59  fnbrd
-//  Removed duplicate code.
-//
-//  Revision 1.62  2001/10/04 19:25:59  fnbrd
-//  Neues Kommando allEventsChannelID.
-//
-//  Revision 1.61  2001/10/02 16:18:53  fnbrd
-//  Fehler behoben.
-//
-//  Revision 1.59  2001/09/26 09:54:50  field
-//  Neues Kommando (fuer Tontraeger-Auswahl)
-//
-//  Revision 1.58  2001/09/20 19:22:10  fnbrd
-//  Changed format of eventlists with IDs
-//
-//  Revision 1.57  2001/09/20 12:53:22  fnbrd
-//  More speed with event list.More speed with event list.More speed with event list.More speed with event list.More speed with event list.More speed with event list.More speed with event list.
-//
-//  Revision 1.56  2001/09/20 11:24:47  fnbrd
-//  Fehler behoben.
-//
-//  Revision 1.55  2001/09/20 11:01:59  fnbrd
-//  Format bei currentNextinformationChannelID geaendert.
-//
-//  Revision 1.54  2001/09/18 18:15:27  fnbrd
-//  2 new commands.
-//
-//  Revision 1.53  2001/09/10 02:58:00  fnbrd
-//  Cinedom-Hack
-//
-//  Revision 1.52  2001/08/29 22:41:51  fnbrd
-//  Fix error with pause.
-//
-//  Revision 1.51  2001/08/17 16:37:28  fnbrd
-//  Some mor informational output with -d and cache decrease
-//
-//  Revision 1.50  2001/08/17 16:21:06  fnbrd
-//  Intelligent cache decrease to prevent dmx buffer overflows.
-//
-//  Revision 1.49  2001/08/17 14:33:15  fnbrd
-//  Added a reopen of DMX connections after 15 timeouts to fix possible buffer overflows.
-//
-//  Revision 1.48  2001/08/16 13:13:12  fnbrd
-//  New commands.
-//
-//  Revision 1.47  2001/08/16 10:55:41  fnbrd
-//  Actual event list only with channels with event.
-//
-//  Revision 1.46  2001/08/16 01:35:23  fnbrd
-//  internal changes.
-//
-//  Revision 1.45  2001/08/09 23:36:26  fnbrd
-//  Pause command for the grabbers, internal changes.
-//
-//  Revision 1.43  2001/07/26 01:38:35  fnbrd
-//  All events shows now all nvod-times.
-//
-//  Revision 1.42  2001/07/26 01:12:46  fnbrd
-//  Removed a warning.
-//
-//  Revision 1.41  2001/07/26 00:58:09  fnbrd
-//  Fixed one bug when time was not set.
-//
-//  Revision 1.40  2001/07/25 20:46:21  fnbrd
-//  Neue Kommandos, kleine interne Verbesserungen.
-//
-//  Revision 1.39  2001/07/25 16:46:46  fnbrd
-//  Added unique-keys to all commands.
-//
-//  Revision 1.37  2001/07/25 15:06:18  fnbrd
-//  Added exception-handlers for better bug hunting.
-//
-//  Revision 1.36  2001/07/25 11:42:15  fnbrd
-//  Added support for 'unique keys' in services and events.
-//
-//  Revision 1.35  2001/07/24 20:26:46  fnbrd
-//  Fixed some nasty bugs introduced with (too) quickly implemented writeNBytes().
-//
-//  Revision 1.34  2001/07/24 18:19:06  fnbrd
-//  Scheint stabil zu laufen, daher cache jetzt 5 Tage (und ein paar kleinere interne Aenderungen).
-//
-//  Revision 1.33  2001/07/24 15:05:31  fnbrd
-//  sectionsd benutzt voruebergehend smart pointers der Boost-Lib.
-//
-//  Revision 1.32  2001/07/23 20:59:48  fnbrd
-//  Fehler im Time-Thread behoben.
-//
-//  Revision 1.31  2001/07/23 09:00:10  fnbrd
-//  Fehler behoben.
-//
-//  Revision 1.30  2001/07/23 02:43:30  fnbrd
-//  internal changes.
-//
-//  Revision 1.29  2001/07/23 00:22:15  fnbrd
-//  Many internal changes, nvod-events now functional.
-//
-//  Revision 1.28  2001/07/20 00:02:47  fnbrd
-//  Kleiner Hack fuer besseres Zusammenspiel mit Neutrino.
-//
-//  Revision 1.26  2001/07/19 14:12:30  fnbrd
-//  Noch ein paar Kleinigkeiten verbessert.
-//
-//  Revision 1.25  2001/07/19 10:33:52  fnbrd
-//  Beschleunigt, interne Strukturen geaendert, Ausgaben sortiert.
-//
-//  Revision 1.24  2001/07/18 13:51:05  fnbrd
-//  Datumsfehler behoben.
-//
-//  Revision 1.23  2001/07/18 03:26:45  fnbrd
-//  Speicherloch gefixed.
-//
-//  Revision 1.22  2001/07/17 14:15:52  fnbrd
-//  Kleine Aenderung damit auch static geht.
-//
-//  Revision 1.21  2001/07/17 13:14:59  fnbrd
-//  Noch ne Verbesserung in Bezug auf alte Events.
-//
-//  Revision 1.19  2001/07/17 02:38:56  fnbrd
-//  Fehlertoleranter
-//
-//  Revision 1.18  2001/07/16 15:57:58  fnbrd
-//  Parameter -d fuer debugausgaben
-//
-//  Revision 1.17  2001/07/16 13:08:34  fnbrd
-//  Noch ein Fehler beseitigt.
-//
-//  Revision 1.16  2001/07/16 12:56:50  fnbrd
-//  Noch ein Fehler behoben.
-//
-//  Revision 1.15  2001/07/16 12:52:30  fnbrd
-//  Fehler behoben.
-//
-//  Revision 1.14  2001/07/16 11:49:31  fnbrd
-//  Neuer Befehl, Zeichen fuer codetable aus den Texten entfernt
-//
-//  Revision 1.13  2001/07/15 15:09:27  fnbrd
-//  Informative Ausgabe.
-//
-//  Revision 1.12  2001/07/15 15:05:09  fnbrd
-//  Speichert jetzt alle Events die bis zu 24h in der Zukunft liegen.
-//
-//  Revision 1.11  2001/07/15 11:58:20  fnbrd
-//  Vergangene Zeit in Prozent beim EPG
-//
-//  Revision 1.10  2001/07/15 04:32:46  fnbrd
-//  neuer sectionsd (mit event-liste)
-//
-//  Revision 1.9  2001/07/14 22:59:58  fnbrd
-//  removeOldEvents() in SIevents
-//
-//  Revision 1.8  2001/07/14 17:36:04  fnbrd
-//  Verbindungsthreads sind jetzt detached (kein Mem-leak mehr)
-//
-//  Revision 1.7  2001/07/14 16:41:44  fnbrd
-//  fork angemacht
-//
-//  Revision 1.6  2001/07/14 16:38:46  fnbrd
-//  Mit workaround fuer defektes mktime der glibc
-//
-//  Revision 1.5  2001/07/14 10:19:26  fnbrd
-//  Mit funktionierendem time-thread (mktime der glibc muss aber gefixt werden)
-//
-//  Revision 1.4  2001/07/12 22:51:25  fnbrd
-//  Time-Thread im sectionsd (noch disabled, da prob mit mktime)
-//
-//  Revision 1.3  2001/07/11 22:08:55  fnbrd
-//  wegen gcc 3.0
-//
-//  Revision 1.2  2001/07/06 10:25:04  fnbrd
-//  Debug-Zeug raus.
-//
-//  Revision 1.1  2001/06/27 11:59:44  fnbrd
-//  Angepasst an gcc 3.0
-//
-//
+
+#include <dmx.h>
+#include <debug.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -430,17 +47,17 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <stdio.h>
-#include <signal.h> 
+#include <signal.h>
 //#include <sys/resource.h> // getrusage
 #include <set>
 #include <map>
 #include <algorithm>
 #include <string>
 
-#include <ost/dmx.h>
-
 #include <sys/wait.h>
 #include <sys/time.h>
+
+#include <connection/basicserver.h>
 
 // Daher nehmen wir SmartPointers aus der Boost-Lib (www.boost.org)
 #include <boost/smart_ptr.hpp>
@@ -459,7 +76,7 @@
 //#include "../timermanager.h"
 
 // 60 Minuten Zyklus...
-#define TIME_EIT_SCHEDULED_PAUSE 60* 60 
+#define TIME_EIT_SCHEDULED_PAUSE 60* 60
 // Zeit die fuer die gewartet wird, bevor der Filter weitergeschaltet wird, falls es automatisch nicht klappt
 #define TIME_EIT_SKIPPING 30
 
@@ -482,7 +99,6 @@
 static long secondsToCache = 21*24*60L*60L; // 21 Tage - Prozessorlast <3% (rasc)
 // Ab wann ein Event als alt gilt (in Sekunden)
 static long oldEventsAre = 60*60L; // 1h
-static int debug = 0;
 static int scanning = 1;
 
 
@@ -491,9 +107,6 @@ static int scanning = 1;
 CEventServer *eventServer;
 //CTimerdClient   *timerdClient;
 //bool            timerd = false;
-
-#define dprintf(fmt, args...) { if (debug) { printf(fmt, ## args); fflush(stdout); } }
-#define dputs(str) { if (debug) { puts(str); fflush(stdout); } }
 
 static pthread_mutex_t eventsLock = PTHREAD_MUTEX_INITIALIZER; // Unsere (fast-)mutex, damit nicht gleichzeitig in die Menge events geschrieben und gelesen wird
 static pthread_mutex_t servicesLock = PTHREAD_MUTEX_INITIALIZER; // Unsere (fast-)mutex, damit nicht gleichzeitig in die Menge services geschrieben und gelesen wird
@@ -532,7 +145,7 @@ inline void unlockEvents(void)
 
 static long long last_profile_call;
 
-void showProfiling( string text )
+void showProfiling( std::string text )
 {
 
 	struct timeval tv;
@@ -545,7 +158,7 @@ void showProfiling( string text )
 	last_profile_call = now;
 }
 
-static int timeset = 0; // = 1 falls Uhrzeit gesetzt
+bool timeset = false;
 static const SIevent nullEvt; // Null-Event
 
 //------------------------------------------------------------
@@ -617,7 +230,7 @@ class NvodSubEvent {
     unsigned long long uniqueMetaEventID; // ID des Meta-Events
     unsigned long long uniqueMetaEventID; // ID des eigentlichen Events
 };
- 
+
 // Menge sortiert nach Meta-ServiceIDs (NVODs)
 typedef std::multimap<unsigned, class NvodSubEvent *, std::less<unsigned> > nvodSubEvents;
 */
@@ -707,37 +320,6 @@ static void addEvent(const SIevent &evt)
 		// diese beiden Mengen enthalten nur Events mit Zeiten
 		mySIeventsOrderServiceUniqueKeyFirstStartTimeEventUniqueKey.insert(std::make_pair(e, e));
 		mySIeventsOrderFirstEndTimeServiceIDEventUniqueKey.insert(std::make_pair(e, e));
-
-		/*      auskommentiert - das ist ein Performance-WAHNSINN
-				*g* da muss eine bessere Lösung her (und die ist schon unterwegs)
-		 
-		            if (timerd)
-		            {
-		            	CTimerEvent_NextProgram::EventInfo evInfo;
-		                evInfo.uniqueKey = e->uniqueKey();
-		                evInfo.onidSid = (e->originalNetworkID << 16) + e->serviceID;
-		                strncpy( evInfo.name, evt.name.c_str(), 50);
-		                evInfo.fsk = evt.getFSK();
-		 
-		                for (SItimes::iterator it = evt.times.begin(); it != evt.times.end(); it++)
-		                {
-		                	time_t actTime_t;
-		                	::time(&actTime_t);
-		                	if (it->startzeit + it->dauer > actTime_t)
-		                	{
-		                		time_t kurzvorStartzeit = it->startzeit; // - 60;
-		                		struct tm* startTime = localtime( &(kurzvorStartzeit));
-		                		timerdClient->addTimerEvent(
-		                			CTimerdClient::TIMER_NEXTPROGRAM,
-		                			&evInfo,
-		                			startTime->tm_min,
-		                			startTime->tm_hour,
-		                			startTime->tm_mday,
-		                			startTime->tm_mon);
-		                	}
-		                }
-		            }
-		*/
 
 	}
 }
@@ -986,465 +568,16 @@ int readNbytes(int fd, char *buf, const size_t n, unsigned timeoutInMSeconds)
 	return numberOfBytes;
 }
 
-//------------------------------------------------------------
-// class DMX
-//------------------------------------------------------------
 
-class DMX
-{
-
-public:
-	DMX(unsigned char p, unsigned short bufferSizeInKB, int nCRC = 0)
-	{
-		fd = 0;
-		lastChanged = 0;
-		filter_index = 0;
-		pID = p;
-		dmxBufferSizeInKB = bufferSizeInKB;
-		noCRC = nCRC;
-		pthread_mutex_init(&pauselock, NULL); // default = fast mutex
-		pthread_mutex_init(&start_stop_mutex, NULL); // default = fast mutex
-		pthread_cond_init( &change_cond, NULL );
-		pauseCounter = 0;
-		real_pauseCounter = 0;
-	}
-
-	~DMX()
-	{
-		closefd();
-		pthread_mutex_destroy(&pauselock); // ist bei Linux ein dummy
-		pthread_mutex_destroy(&start_stop_mutex); // ist bei Linux ein dummy
-		pthread_cond_destroy(&change_cond);
-	}
-
-	int start(void); // calls unlock at end
-	int read(char *buf, const size_t buflength, unsigned timeoutMInSeconds)
-	{
-		return readNbytes(fd, buf, buflength, timeoutMInSeconds);
-	}
-
-	void closefd(void)
-	{
-		if (fd)
-		{
-			close(fd);
-			fd = 0;
-		}
-	}
-
-	void addfilter(unsigned char filter, unsigned char mask)
-	{
-		s_filters	tmp;
-		tmp.filter = filter;
-		tmp.mask = mask;
-		filters.insert(filters.end(), tmp);
-	}
-
-	int stop(void)
-	{
-		if (!fd)
-			return 1;
-
-		pthread_mutex_lock( &start_stop_mutex );
-
-		if (real_pauseCounter == 0)
-			closefd();
-
-		pthread_mutex_unlock( &start_stop_mutex );
-
-		return 0;
-	}
-
-	int pause(void); // increments pause_counter
-	int unpause(void); // decrements pause_counter
-
-	int real_pause(void);
-	int real_unpause(void);
-
-	int request_pause(void);
-	int request_unpause(void);
-
-	int change(int new_filter_index); // locks while changing
-
-	void lock (void)
-	{
-		pthread_mutex_lock( &start_stop_mutex );
-	}
-
-	void unlock(void)
-	{
-		pthread_mutex_unlock( &start_stop_mutex );
-	}
-
-	struct s_filters
-	{
-		unsigned char filter;
-		unsigned char mask;
-	};
-
-	std::vector<s_filters> filters;
-	int	filter_index;
-	time_t	lastChanged;
-
-	bool isOpen(void)
-	{
-		return fd ? true : false;
-	}
-
-	int pauseCounter;
-	int real_pauseCounter;
-	pthread_cond_t	change_cond;
-	pthread_mutex_t	start_stop_mutex;
-
-	char * getSection(unsigned timeoutInMSeconds, int &timeouts) // section with size < 3 + 5 are skipped !
-		{
-			struct minimal_section_header {
-				unsigned char table_id : 8;
-				// 1 byte
-				unsigned char section_syntax_indicator : 1;
-				unsigned char reserved_future_use : 1;
-				unsigned char reserved1 : 2;
-				unsigned short section_length : 12;
-				// 3 bytes
-			} __attribute__ ((packed));
-
-			minimal_section_header initial_header;
-			char * buf;
-			int    rc;
-
-			lock();
-
-			rc = read((char *) &initial_header, 3, timeoutInMSeconds);
-
-			if (rc <= 0)
-			{
-				unlock();
-				if (rc == 0)
-				{
-					dprintf("dmx.read timeout - filter: %x", filters[filter_index].filter);
-					timeouts++;
-				}
-				else
-				{
-					dprintf("dmx.read rc: %d - filter: %x", rc, filters[filter_index].filter);
-					// restart DMX
-					real_pause();
-					real_unpause();
-				}
-				return NULL;
-			}
-
-			timeouts = 0;
-			buf = new char[3 + initial_header.section_length];
-			
-			if (!buf)
-			{
-				unlock();
-				closefd();
-				fprintf(stderr, "[sectionsd] FATAL: Not enough memory: filter: %x\n", filters[filter_index].filter);
-				throw std::bad_alloc();
-				return NULL;
-			}
-			    
-			if (initial_header.section_length > 0)
-				rc = read(buf + 3, initial_header.section_length, timeoutInMSeconds);
-
-			unlock();
-
-			if (rc <= 0)
-			{
-				delete[] buf;
-				if (rc == 0)
-				{
-					dprintf("dmx.read timeout after header - filter: %x", filters[filter_index].filter);
-				}
-				else
-				{
-					dprintf("dmx.read rc: %d after header - filter: %x", rc, filters[filter_index].filter);
-				}
-				// DMX restart required, since part of the header has been read
-				real_pause();
-				real_unpause();
-				return NULL;
-			}
-			
-			// check if the filter worked correctly
-			if (((initial_header.table_id ^ filters[filter_index].filter) & filters[filter_index].mask) != 0)
-			{
-				delete[] buf;
-				dprintf("[sectionsd] filter 0x%x mask 0x%x -> skip sections for table 0x%x\n", filters[filter_index].filter, filters[filter_index].mask, initial_header.table_id);
-				return NULL;
-			}
-
-			if (initial_header.section_length < 5)  // skip sections which are too short
-			{
-				delete[] buf;
-				return NULL;
-			}
-
-			memcpy(buf, &initial_header, 3);
-
-			return buf;
-		}
-
-private:
-	int fd;
-	pthread_mutex_t pauselock;
-	unsigned char pID;
-	unsigned short dmxBufferSizeInKB;
-	int noCRC; // = 1 -> der 2. Filter hat keine CRC
-
-};
-
-int DMX::start(void)
-{
-	if (fd)
-	{
-		return 1;
-	}
-
-	pthread_mutex_lock( &start_stop_mutex );
-
-	if (real_pauseCounter != 0)
-	{
-		pthread_mutex_unlock( &start_stop_mutex );
-		return 0;
-	}
-
-	if ((fd = open("/dev/dvb/card0/demux0", O_RDWR)) == -1)
-	{
-		perror ("[sectionsd] DMX: /dev/dvb/card0/demux0");
-		pthread_mutex_unlock( &start_stop_mutex );
-		return 2;
-	}
-
-	if (dmxBufferSizeInKB != 256)
-		if (ioctl (fd, DMX_SET_BUFFER_SIZE, (unsigned long)(dmxBufferSizeInKB*1024UL)) == -1)
-		{
-			closefd();
-			perror ("[sectionsd] DMX: DMX_SET_BUFFER_SIZE");
-			pthread_mutex_unlock( &start_stop_mutex );
-			return 3;
-		}
-
-	struct dmxSctFilterParams flt;
-
-	memset (&flt, 0, sizeof (struct dmxSctFilterParams));
-
-	//  memset (&flt.filter, 0, sizeof (struct dmxFilter));
-	flt.pid = pID;
-
-	flt.filter.filter[0] = filters[filter_index].filter; // current/next
-
-	flt.filter.mask[0] = filters[filter_index].mask; // -> 4e und 4f
-
-	flt.flags = DMX_IMMEDIATE_START | DMX_CHECK_CRC;
-
-	if (ioctl (fd, DMX_SET_FILTER, &flt) == -1)
-	{
-		closefd();
-		perror ("[sectionsd] DMX: DMX_SET_FILTER");
-		pthread_mutex_unlock( &start_stop_mutex );
-		return 4;
-	}
-
-	//  	if(timeset) // Nur wenn ne richtige Uhrzeit da ist
-	//    	lastChanged=time(NULL);
-	pthread_mutex_unlock( &start_stop_mutex );
-
-	return 0;
-}
-
-int DMX::real_pause(void)
-{
-	if (!fd)
-		return 1;
-
-	pthread_mutex_lock( &start_stop_mutex );
-
-	if (real_pauseCounter == 0)
-	{
-		if (ioctl (fd, DMX_STOP, 0) == -1)
-		{
-			closefd();
-			perror ("[sectionsd] DMX: DMX_STOP");
-			pthread_mutex_unlock( &start_stop_mutex );
-			return 2;
-		}
-	}
-
-	//dprintf("real_pause: %d\n", real_pauseCounter);
-	pthread_mutex_unlock( &start_stop_mutex );
-
-	return 0;
-}
-
-int DMX::real_unpause(void)
-{
-	if (!fd)
-		return 1;
-
-	pthread_mutex_lock( &start_stop_mutex );
-
-	if (real_pauseCounter == 0)
-	{
-		if (ioctl (fd, DMX_START, 0) == -1)
-		{
-			closefd();
-			perror ("[sectionsd] DMX: DMX_START");
-			pthread_mutex_unlock( &start_stop_mutex );
-			return 2;
-		}
-
-		//dprintf("real_unpause DONE: %d\n", real_pauseCounter);
-	}
-
-	//    else
-	//dprintf("real_unpause NOT DONE: %d\n", real_pauseCounter);
-
-
-	pthread_mutex_unlock( &start_stop_mutex );
-
-	return 0;
-}
-
-int DMX::request_pause(void)
-{
-	real_pause(); // unlocked
-
-	pthread_mutex_lock( &start_stop_mutex );
-	//dprintf("request_pause: %d\n", real_pauseCounter);
-
-	real_pauseCounter++;
-	pthread_mutex_unlock( &start_stop_mutex );
-
-	return 0;
-}
-
-
-int DMX::request_unpause(void)
-{
-	pthread_mutex_lock( &start_stop_mutex );
-	//dprintf("request_unpause: %d\n", real_pauseCounter);
-	--real_pauseCounter;
-	pthread_mutex_unlock( &start_stop_mutex );
-
-	real_unpause(); // unlocked
-
-	return 0;
-}
-
-
-int DMX::pause(void)
-{
-	if (!fd)
-		return 1;
-
-	pthread_mutex_lock(&pauselock);
-
-	//dprintf("lock from pc: %d\n", pauseCounter);
-	pauseCounter++;
-
-	pthread_mutex_unlock(&pauselock);
-
-	return 0;
-}
-
-int DMX::unpause(void)
-{
-	if (!fd)
-		return 1;
-
-	pthread_mutex_lock(&pauselock);
-
-	//dprintf("unlock from pc: %d\n", pauseCounter);
-	--pauseCounter;
-
-	pthread_mutex_unlock(&pauselock);
-
-	return 0;
-}
-
-int DMX::change(int new_filter_index)
-{
-	if (!fd)
-		return 1;
-
-	if (new_filter_index == filter_index)
-	{
-		// do wakeup only... - no change neccessary
-		pthread_cond_signal( &change_cond );
-		return 0;
-	}
-
-	showProfiling("before pthread_mutex_lock( &start_stop_mutex );");
-
-	pthread_mutex_lock( &start_stop_mutex );
-	showProfiling("after pthread_mutex_lock( &start_stop_mutex );");
-
-	if (real_pauseCounter > 0)
-	{
-		pthread_mutex_unlock( &start_stop_mutex );
-		return 0;	// läuft nicht (zB streaming)
-	}
-
-	//	if(pID==0x12) // Nur bei EIT
-	dprintf("changeDMX [%x]-> %s (%d)\n", pID, (new_filter_index == 0) ? "current/next" : "scheduled", new_filter_index );
-
-	if (ioctl (fd, DMX_STOP, 0) == -1)
-	{
-		closefd();
-		perror ("[sectionsd] DMX: DMX_STOP");
-		pthread_mutex_unlock( &start_stop_mutex );
-		return 2;
-	}
-
-	struct dmxSctFilterParams flt;
-
-	memset (&flt, 0, sizeof (struct dmxSctFilterParams));
-
-	flt.pid = pID;
-
-	flt.filter.filter[0] = filters[new_filter_index].filter;
-
-	flt.filter.mask[0] = filters[new_filter_index].mask;
-
-	//dprintf("changeDMX newfilter %x %x\n", flt.filter.filter[0], flt.filter.mask[0]);
-	flt.flags = DMX_IMMEDIATE_START;
-
-	if ( ( new_filter_index != 0 ) && (!noCRC) )
-		flt.flags |= DMX_CHECK_CRC;
-
-	filter_index = new_filter_index;
-
-	pthread_cond_signal( &change_cond );
-
-	if (ioctl (fd, DMX_SET_FILTER, &flt) == -1)
-	{
-		closefd();
-		perror ("[sectionsd] DMX: DMX_SET_FILTER");
-		pthread_mutex_unlock( &start_stop_mutex );
-		return 3;
-	}
-
-	showProfiling("after DMX_SET_FILTER, &");
-
-	if (timeset) // Nur wenn ne richtige Uhrzeit da ist
-		lastChanged = time(NULL);
-
-	pthread_mutex_unlock( &start_stop_mutex );
-
-	return 0;
-}
 
 // k.A. ob volatile im Kampf gegen Bugs trotz mutex's was bringt,
 // falsch ist es zumindest nicht
 /*
-static DMX dmxEIT(0x12, 0x4f, (0xff- 0x01), 0x50, (0xff- 0x0f), 384);
+static DMX dmxEIT(0x12, 0x4f, (0xff- 0x01), 0x50, (0xff- 0x0f), 256);
 static DMX dmxSDT(0x11, 0x42, 0xff, 0x42, 0xff, 256);
 static DMX dmxTOT(0x14, 0x73, 0xff, 0x70, (0xff- 0x03), 256, 1);
 */
-static DMX dmxEIT(0x12, 384);
+static DMX dmxEIT(0x12, 256);
 static DMX dmxSDT(0x11, 256);
 static DMX dmxTOT(0x14, 256, 1);
 
@@ -1489,7 +622,7 @@ static const SIevent& findSIeventForEventUniqueKey(const long long& eventUniqueK
 	return nullEvt;
 }
 
-static const SIevent& findActualSIeventForServiceUniqueKey(const unsigned serviceUniqueKey, SItime& zeit, long plusminus = 0, unsigned *flag = 0)
+static const SIevent& findActualSIeventForServiceUniqueKey(const t_channel_id serviceUniqueKey, SItime& zeit, long plusminus = 0, unsigned *flag = 0)
 {
 	time_t azeit = time(NULL);
 
@@ -1500,20 +633,20 @@ static const SIevent& findActualSIeventForServiceUniqueKey(const unsigned servic
 		if (SIservice::makeUniqueKey(e->first->originalNetworkID, e->first->serviceID) == serviceUniqueKey)
 		{
 			if (flag != 0)
-				*flag |= sectionsd::epgflags::has_anything; // überhaupt was da...
+				*flag |= CSectionsdClient::epgflags::has_anything; // überhaupt was da...
 
 			for (SItimes::reverse_iterator t = e->first->times.rend(); t != e->first->times.rbegin(); t--)
 				if ((long)(azeit + plusminus) < (long)(t->startzeit + t->dauer))
 				{
 					if (flag != 0)
-						*flag |= sectionsd::epgflags::has_later; // spätere events da...
+						*flag |= CSectionsdClient::epgflags::has_later; // spätere events da...
 
 					if (t->startzeit <= (long)(azeit + plusminus))
 					{
 						//printf("azeit %d, startzeit+t->dauer %d \n", azeit, (long)(t->startzeit+t->dauer) );
 
 						if (flag != 0)
-							*flag |= sectionsd::epgflags::has_current; // aktuelles event da...
+							*flag |= CSectionsdClient::epgflags::has_current; // aktuelles event da...
 
 						zeit = *t;
 
@@ -1525,7 +658,7 @@ static const SIevent& findActualSIeventForServiceUniqueKey(const unsigned servic
 	return nullEvt;
 }
 
-static const SIevent& findNextSIeventForServiceUniqueKey(const unsigned serviceUniqueKey, SItime& zeit)
+static const SIevent& findNextSIeventForServiceUniqueKey(const t_channel_id serviceUniqueKey, SItime& zeit)
 {
 	time_t azeit = time(NULL);
 
@@ -1688,7 +821,7 @@ struct connectionData
 	struct sockaddr_in clientAddr;
 };
 
-static void commandPauseScanning(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandPauseScanning(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 4)
 		return ;
@@ -1719,12 +852,12 @@ static void commandPauseScanning(struct connectionData *client, char *data, cons
 
 	msgResponse.dataLength = 0;
 
-	writeNbytes(client->connectionSocket, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS);
+	writeNbytes(connfd, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS);
 
 	return ;
 }
 
-static void commandPauseSorting(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandPauseSorting(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 4)
 		return ;
@@ -1745,12 +878,12 @@ static void commandPauseSorting(struct connectionData *client, char *data, const
 
 	msgResponse.dataLength = 0;
 
-	writeNbytes(client->connectionSocket, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS);
+	writeNbytes(connfd, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS);
 
 	return ;
 }
 
-static void commandDumpAllServices(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandDumpAllServices(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
@@ -1793,10 +926,10 @@ static void commandDumpAllServices(struct connectionData *client, char *data, co
 	if (msgResponse.dataLength == 1)
 		msgResponse.dataLength = 0;
 
-	if (writeNbytes(client->connectionSocket, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS) > 0)
 	{
 		if (msgResponse.dataLength)
-			writeNbytes(client->connectionSocket, serviceList, msgResponse.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, serviceList, msgResponse.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -1806,7 +939,7 @@ static void commandDumpAllServices(struct connectionData *client, char *data, co
 	return ;
 }
 
-static void commandSetEventsAreOldInMinutes(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandSetEventsAreOldInMinutes(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 2)
 		return ;
@@ -1819,12 +952,12 @@ static void commandSetEventsAreOldInMinutes(struct connectionData *client, char 
 
 	responseHeader.dataLength = 0;
 
-	writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+	writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 
 	return ;
 }
 
-static void commandSetHoursToCache(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandSetHoursToCache(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 2)
 		return ;
@@ -1837,12 +970,12 @@ static void commandSetHoursToCache(struct connectionData *client, char *data, co
 
 	responseHeader.dataLength = 0;
 
-	writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+	writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 
 	return ;
 }
 
-static void sendAllEvents(struct connectionData *client, unsigned serviceUniqueKey, bool oldFormat = true )
+static void sendAllEvents(int connfd, t_channel_id serviceUniqueKey, bool oldFormat = true )
 {
 	char *evtList = new char[65*1024]; // 65kb should be enough and dataLength is unsigned short
 
@@ -1852,7 +985,7 @@ static void sendAllEvents(struct connectionData *client, unsigned serviceUniqueK
 		return ;
 	}
 
-	dprintf("sendAllEvents for %x\n", serviceUniqueKey);
+	dprintf("sendAllEvents for " PRINTF_CHANNEL_ID_TYPE "\n", serviceUniqueKey);
 	*evtList = 0;
 	char *liste = evtList;
 
@@ -1940,10 +1073,10 @@ static void sendAllEvents(struct connectionData *client, unsigned serviceUniqueK
 	if ( responseHeader.dataLength == 1 )
 		responseHeader.dataLength = 0;
 
-	if (writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
 	{
 		if (responseHeader.dataLength)
-			writeNbytes(client->connectionSocket, evtList, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, evtList, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -1953,32 +1086,32 @@ static void sendAllEvents(struct connectionData *client, unsigned serviceUniqueK
 	return ;
 }
 
-static void commandAllEventsChannelName(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandAllEventsChannelName(int connfd, char *data, const unsigned dataLength)
 {
 	data[dataLength - 1] = 0; // to be sure it has an trailing 0
 	dprintf("Request of all events for '%s'\n", data);
 	lockServices();
-	unsigned uniqueServiceKey = findServiceUniqueKeyforServiceName(data);
+	t_channel_id uniqueServiceKey = findServiceUniqueKeyforServiceName(data);
 	unlockServices();
-	sendAllEvents(client, uniqueServiceKey);
+	sendAllEvents(connfd, uniqueServiceKey);
 	return ;
 }
 
-static void commandAllEventsChannelID(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandAllEventsChannelID(int connfd, char *data, const unsigned dataLength)
 {
-	if (dataLength != 4)
+	if (dataLength != sizeof(t_channel_id))
 		return ;
 
-	unsigned serviceUniqueKey = *(unsigned *)data;
+	t_channel_id serviceUniqueKey = *(t_channel_id *)data;
 
-	dprintf("Request of all events for 0x%x\n", serviceUniqueKey);
+	dprintf("Request of all events for " PRINTF_CHANNEL_ID_TYPE "\n", serviceUniqueKey);
 
-	sendAllEvents(client, serviceUniqueKey, false);
+	sendAllEvents(connfd, serviceUniqueKey, false);
 
 	return ;
 }
 
-static void commandDumpStatusInformation(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandDumpStatusInformation(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
@@ -2014,7 +1147,7 @@ static void commandDumpStatusInformation(struct connectionData *client, char *da
 	char stati[2024];
 
 	sprintf(stati,
-	        "$Id: sectionsd.cpp,v 1.139 2002/10/15 20:39:47 woglinde Exp $\n"
+	        "$Id: sectionsd.cpp,v 1.139.2.1 2003/02/06 16:53:29 thegoodguy Exp $\n"
 	        "Current time: %s"
 	        "Hours to cache: %ld\n"
 	        "Events are old %ldmin after their end time\n"
@@ -2037,10 +1170,10 @@ static void commandDumpStatusInformation(struct connectionData *client, char *da
 
 	responseHeader.dataLength = strlen(stati) + 1;
 
-	if (writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
 	{
 		if (responseHeader.dataLength)
-			writeNbytes(client->connectionSocket, stati, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, stati, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -2048,7 +1181,7 @@ static void commandDumpStatusInformation(struct connectionData *client, char *da
 	return ;
 }
 
-static void commandCurrentNextInfoChannelName(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandCurrentNextInfoChannelName(int connfd, char *data, const unsigned dataLength)
 {
 	int nResultDataSize = 0;
 	char* pResultData = 0;
@@ -2132,12 +1265,12 @@ static void commandCurrentNextInfoChannelName(struct connectionData *client, cha
 
 	struct sectionsd::msgResponseHeader pmResponse;
 	pmResponse.dataLength = nResultDataSize;
-	int rc = writeNbytes(client->connectionSocket, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS);
 
 	if ( nResultDataSize > 0 )
 	{
 		if (rc > 0)
-			writeNbytes(client->connectionSocket, pResultData, nResultDataSize, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, pResultData, nResultDataSize, TIMEOUT_CONNECTIONS);
 		else
 			dputs("[sectionsd] Fehler/Timeout bei write");
 
@@ -2151,7 +1284,7 @@ static void commandCurrentNextInfoChannelName(struct connectionData *client, cha
 	return ;
 }
 
-static void commandComponentTagsUniqueKey(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandComponentTagsUniqueKey(int connfd, char *data, const unsigned dataLength)
 {
 	int nResultDataSize = 0;
 	char* pResultData = 0;
@@ -2230,10 +1363,10 @@ static void commandComponentTagsUniqueKey(struct connectionData *client, char *d
 	struct sectionsd::msgResponseHeader responseHeader;
 	responseHeader.dataLength = nResultDataSize;
 
-	if (writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
 	{
 		if (responseHeader.dataLength)
-			writeNbytes(client->connectionSocket, pResultData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, pResultData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -2243,7 +1376,7 @@ static void commandComponentTagsUniqueKey(struct connectionData *client, char *d
 	return ;
 }
 
-static void commandLinkageDescriptorsUniqueKey(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandLinkageDescriptorsUniqueKey(int connfd, char *data, const unsigned dataLength)
 {
 	int nResultDataSize = 0;
 	char* pResultData = 0;
@@ -2326,10 +1459,10 @@ static void commandLinkageDescriptorsUniqueKey(struct connectionData *client, ch
 	struct sectionsd::msgResponseHeader responseHeader;
 	responseHeader.dataLength = nResultDataSize;
 
-	if (writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
 	{
 		if (responseHeader.dataLength)
-			writeNbytes(client->connectionSocket, pResultData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, pResultData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -2339,41 +1472,39 @@ static void commandLinkageDescriptorsUniqueKey(struct connectionData *client, ch
 	return ;
 }
 
-static unsigned	messaging_current_servicekey = 0;
-std::vector<long long> messaging_skipped_sections_ID [0x22];		// 0x4e .. 0x6f
-static long long messaging_sections_max_ID [0x22];			// 0x4e .. 0x6f
-static int messaging_sections_got_all [0x22];			// 0x4e .. 0x6f
-std::vector<long long>	messaging_sdt_skipped_sections_ID [2];		// 0x42, 0x46
-static long long messaging_sdt_sections_max_ID [2];			// 0x42, 0x46
-static int messaging_sdt_sections_got_all [2];			// 0x42, 0x46
+static t_channel_id	messaging_current_servicekey = 0;
+std::vector<long long>	messaging_skipped_sections_ID [0x22];			// 0x4e .. 0x6f
+static long long 	messaging_sections_max_ID [0x22];			// 0x4e .. 0x6f
+static int 		messaging_sections_got_all [0x22];			// 0x4e .. 0x6f
+
+std::vector<long long>	messaging_sdt_skipped_sections_ID [2];			// 0x42, 0x46
+static long long 	messaging_sdt_sections_max_ID [2];			// 0x42, 0x46
+static int 		messaging_sdt_sections_got_all [2];			// 0x42, 0x46
 
 static bool	messaging_wants_current_next_Event = false;
-static time_t messaging_last_requested = time(NULL);
+static time_t	messaging_last_requested = time(NULL);
 static bool	messaging_neutrino_sets_time = false;
+static bool 	messaging_WaitForServiceDesc = false;
 
-static void commandserviceChanged(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandserviceChanged(int connfd, char *data, const unsigned dataLength)
 {
-	//int nResultDataSize=0;
-	//char* pResultData=0;
 
-	if (dataLength != 8)
-		return ;
+	if (dataLength != sizeof(sectionsd::commandSetServiceChanged))
+		return;
 
-	unsigned* uniqueServiceKey = (unsigned *)data;
-
-	data += 4;
-
-	bool* requestCN_Event = (bool *)data;
+	t_channel_id * uniqueServiceKey = &(((sectionsd::commandSetServiceChanged *)data)->channel_id);
+	bool         * requestCN_Event  = &(((sectionsd::commandSetServiceChanged *)data)->requestEvent);
 
 	bool doWakeUp = false;
 
-	dprintf("[sectionsd] Service changed to 0x%x\n", *uniqueServiceKey);
+	dprintf("[sectionsd] commandserviceChanged: Service changed to " PRINTF_CHANNEL_ID_TYPE "\n", *uniqueServiceKey);
 
-	showProfiling("before messaging lock");
+	showProfiling("[sectionsd] commandserviceChanged: before messaging lock");
 
 	time_t zeit = time(NULL);
 
 	lockMessaging();
+
 
 	if ( ( messaging_current_servicekey != *uniqueServiceKey ) ||
 	        ( zeit > ( messaging_last_requested + 5 ) ) )
@@ -2395,24 +1526,45 @@ static void commandserviceChanged(struct connectionData *client, char *data, con
 		}
 
 		doWakeUp = true;
+
+
+		lockServices();
+
+		MySIservicesOrderUniqueKey::iterator si = mySIservicesOrderUniqueKey.end();
+		si = mySIservicesOrderUniqueKey.find(*uniqueServiceKey);
+
+		messaging_WaitForServiceDesc = (si == mySIservicesOrderUniqueKey.end() );
+		if ( messaging_WaitForServiceDesc )
+			dputs("[sectionsd] commandserviceChanged: current service-descriptor not loaded yet!" );
+
+		unlockServices();
 	}
 
 
 
-	if ( ( !doWakeUp ) && ( messaging_sections_got_all[0] ) && ( *requestCN_Event ) )
+	if ( ( !doWakeUp ) && ( messaging_sections_got_all[0] ) && ( *requestCN_Event ) && ( !messaging_WaitForServiceDesc ) )
 	{
 		messaging_wants_current_next_Event = false;
+		messaging_WaitForServiceDesc = false;
 		eventServer->sendEvent(CSectionsdClient::EVT_GOT_CN_EPG, CEventServer::INITID_SECTIONSD, &messaging_current_servicekey, sizeof(messaging_current_servicekey) );
 	}
 	else
 	{
-		messaging_wants_current_next_Event = *requestCN_Event;
+		if ( messaging_current_servicekey != *uniqueServiceKey )
+		{
+			messaging_wants_current_next_Event = *requestCN_Event;
+		}
+		else if ( *requestCN_Event )
+			messaging_wants_current_next_Event = true;
+
+		if ( messaging_WaitForServiceDesc )
+			messaging_wants_current_next_Event = false;
 
 		if (messaging_wants_current_next_Event)
-			dprintf("[sectionsd] requesting current_next event...\n");
+			dprintf("[sectionsd] commandserviceChanged: requesting current_next event...\n");
 	}
 
-	showProfiling("before wakeup");
+	showProfiling("[sectionsd] commandserviceChanged: before wakeup");
 	messaging_last_requested = zeit;
 
 	if ( doWakeUp )
@@ -2422,32 +1574,32 @@ static void commandserviceChanged(struct connectionData *client, char *data, con
 		dmxSDT.change( 0 );
 	}
 	else
-		dprintf("[sectionsd] ignoring wakeup request...\n");
+		dprintf("[sectionsd] commandserviceChanged: ignoring wakeup request...\n");
 
 	unlockMessaging();
 
-	showProfiling("after doWakeup");
+	showProfiling("[sectionsd] commandserviceChanged: after doWakeup");
 
 	struct sectionsd::msgResponseHeader msgResponse;
 
 	msgResponse.dataLength = 0;
 
-	writeNbytes(client->connectionSocket, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS);
+	writeNbytes(connfd, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS);
 
 	return ;
 }
 
-static void commandCurrentNextInfoChannelID(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandCurrentNextInfoChannelID(int connfd, char *data, const unsigned dataLength)
 {
 	int nResultDataSize = 0;
 	char* pResultData = 0;
 
-	if (dataLength != 4)
+	if (dataLength != sizeof(t_channel_id))
 		return ;
 
-	unsigned* uniqueServiceKey = (unsigned *)data;
+	t_channel_id * uniqueServiceKey = (t_channel_id *)data;
 
-	dprintf("[sectionsd] Request of current/next information for 0x%x\n", *uniqueServiceKey);
+	dprintf("[sectionsd] Request of current/next information for " PRINTF_CHANNEL_ID_TYPE "\n", *uniqueServiceKey);
 
 	if (dmxEIT.pause()) // -> lock
 		return ;
@@ -2474,7 +1626,7 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 			if ( /*( !si->second->eitScheduleFlag() ) || */
 			    ( !si->second->eitPresentFollowingFlag() ) )
 			{
-				flag |= sectionsd::epgflags::not_broadcast;
+				flag |= CSectionsdClient::epgflags::not_broadcast;
 			}
 		}
 	}
@@ -2494,7 +1646,7 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 		for (unsigned int i = 0; i < evt.linkage_descs.size(); i++)
 			if (evt.linkage_descs[i].linkageType == 0xB0)
 			{
-				flag |= sectionsd::epgflags::current_has_linkagedescriptors;
+				flag |= CSectionsdClient::epgflags::current_has_linkagedescriptors;
 				break;
 			}
 
@@ -2502,7 +1654,7 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 		nextEvt = findNextSIevent(evt.uniqueKey(), zeitEvt2);
 	}
 	else
-		if ( flag & sectionsd::epgflags::has_anything )
+		if ( flag & CSectionsdClient::epgflags::has_anything )
 		{
 
 			nextEvt = findNextSIeventForServiceUniqueKey(*uniqueServiceKey, zeitEvt2);
@@ -2521,7 +1673,7 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 
 						if ( ( eFirst->second->times.begin()->startzeit < azeit ) &&
 						        ( eFirst->second->uniqueKey() == (nextEvt.uniqueKey() - 1) ) )
-							flag |= sectionsd::epgflags::has_no_current;
+							flag |= CSectionsdClient::epgflags::has_no_current;
 					}
 				}
 			}
@@ -2530,18 +1682,18 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 	if (nextEvt.serviceID != 0)
 	{
 		dprintf("[sectionsd] next EPG found.\n");
-		flag |= sectionsd::epgflags::has_next;
+		flag |= CSectionsdClient::epgflags::has_next;
 	}
 
 	nResultDataSize =
 	    sizeof(unsigned long long) +        	// Unique-Key
-	    sizeof(sectionsd::sectionsdTime) +  	// zeit
-	    strlen(evt.name.c_str()) + 1 + 	  		// name + 0
+	    sizeof(CSectionsdClient::sectionsdTime) +  	// zeit
+	    strlen(evt.name.c_str()) + 1 + 		// name + 0
 	    sizeof(unsigned long long) +        	// Unique-Key
-	    sizeof(sectionsd::sectionsdTime) +  	// zeit
+	    sizeof(CSectionsdClient::sectionsdTime) +  	// zeit
 	    strlen(nextEvt.name.c_str()) + 1 +    	// name + 0
-	    sizeof(unsigned) + 					// flags
-	    1									// CurrentFSK
+	    sizeof(unsigned) + 				// flags
+	    1						// CurrentFSK
 	    ;
 
 	pResultData = new char[nResultDataSize];
@@ -2557,19 +1709,19 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 	char *p = pResultData;
 	*((unsigned long long *)p) = evt.uniqueKey();
 	p += sizeof(unsigned long long);
-	sectionsd::sectionsdTime zeit;
+	CSectionsdClient::sectionsdTime zeit;
 	zeit.startzeit = zeitEvt1.startzeit;
 	zeit.dauer = zeitEvt1.dauer;
-	*((sectionsd::sectionsdTime *)p) = zeit;
-	p += sizeof(sectionsd::sectionsdTime);
+	*((CSectionsdClient::sectionsdTime *)p) = zeit;
+	p += sizeof(CSectionsdClient::sectionsdTime);
 	strcpy(p, evt.name.c_str());
 	p += strlen(evt.name.c_str()) + 1;
 	*((unsigned long long *)p) = nextEvt.uniqueKey();
 	p += sizeof(unsigned long long);
 	zeit.startzeit = zeitEvt2.startzeit;
 	zeit.dauer = zeitEvt2.dauer;
-	*((sectionsd::sectionsdTime *)p) = zeit;
-	p += sizeof(sectionsd::sectionsdTime);
+	*((CSectionsdClient::sectionsdTime *)p) = zeit;
+	p += sizeof(CSectionsdClient::sectionsdTime);
 	strcpy(p, nextEvt.name.c_str());
 	p += strlen(nextEvt.name.c_str()) + 1;
 	*((unsigned*)p) = flag;
@@ -2585,12 +1737,12 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 
 	struct sectionsd::msgResponseHeader pmResponse;
 	pmResponse.dataLength = nResultDataSize;
-	int rc = writeNbytes(client->connectionSocket, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS);
 
 	if ( nResultDataSize > 0 )
 	{
 		if (rc > 0)
-			writeNbytes(client->connectionSocket, pResultData, nResultDataSize, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, pResultData, nResultDataSize, TIMEOUT_CONNECTIONS);
 		else
 			dputs("[sectionsd] Fehler/Timeout bei write");
 
@@ -2606,7 +1758,7 @@ static void commandCurrentNextInfoChannelID(struct connectionData *client, char 
 
 // Sendet ein EPG, unlocked die events, unpaused dmxEIT
 
-static void sendEPG(struct connectionData *client, const SIevent& e, const SItime& t, int shortepg = 0)
+static void sendEPG(int connfd, const SIevent& e, const SItime& t, int shortepg = 0)
 {
 
 	struct sectionsd::msgResponseHeader responseHeader;
@@ -2622,7 +1774,7 @@ static void sendEPG(struct connectionData *client, const SIevent& e, const SItim
 		    strlen(e.contentClassification.c_str()) + 1 + 		// Text + del
 		    strlen(e.userClassification.c_str()) + 1 + 	// ext + del
 		    1 +                                   // fsk
-		    sizeof(sectionsd::sectionsdTime); // zeit
+		    sizeof(CSectionsdClient::sectionsdTime); // zeit
 	}
 	else
 		responseHeader.dataLength =
@@ -2659,11 +1811,11 @@ static void sendEPG(struct connectionData *client, const SIevent& e, const SItim
 		*p = e.getFSK();
 		p++;
 
-		sectionsd::sectionsdTime zeit;
+		CSectionsdClient::sectionsdTime zeit;
 		zeit.startzeit = t.startzeit;
 		zeit.dauer = t.dauer;
-		*((sectionsd::sectionsdTime *)p) = zeit;
-		p += sizeof(sectionsd::sectionsdTime);
+		*((CSectionsdClient::sectionsdTime *)p) = zeit;
+		p += sizeof(CSectionsdClient::sectionsdTime);
 
 	}
 	else
@@ -2678,17 +1830,17 @@ static void sendEPG(struct connectionData *client, const SIevent& e, const SItim
 
 	dmxEIT.unpause(); // -> unlock
 
-	int rc = writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 
 	if (rc > 0)
-		writeNbytes(client->connectionSocket, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
 
 	delete[] msgData;
 }
 
-static void commandGetNextEPG(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandGetNextEPG(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 8 + 4)
 		return ;
@@ -2711,7 +1863,7 @@ static void commandGetNextEPG(struct connectionData *client, char *data, const u
 	if (nextEvt.serviceID != 0)
 	{
 		dprintf("next epg found.\n");
-		sendEPG(client, nextEvt, zeit);
+		sendEPG(connfd, nextEvt, zeit);
 	}
 	else
 	{
@@ -2721,20 +1873,20 @@ static void commandGetNextEPG(struct connectionData *client, char *data, const u
 
 		struct sectionsd::msgResponseHeader responseHeader;
 		responseHeader.dataLength = 0;
-		writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 	}
 
 	return ;
 }
 
-static void commandActualEPGchannelID(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandActualEPGchannelID(int connfd, char *data, const unsigned dataLength)
 {
-	if (dataLength != 4)
+	if (dataLength != sizeof(t_channel_id))
 		return ;
 
-	unsigned* uniqueServiceKey = (unsigned *)data;
+	t_channel_id * uniqueServiceKey = (t_channel_id *)data;
 
-	dprintf("Request of actual EPG for 0x%x\n", * uniqueServiceKey);
+	dprintf("Request of actual EPG for " PRINTF_CHANNEL_ID_TYPE "\n", * uniqueServiceKey);
 
 	if (dmxEIT.pause()) // -> lock
 		return ;
@@ -2748,7 +1900,7 @@ static void commandActualEPGchannelID(struct connectionData *client, char *data,
 	if (evt.serviceID != 0)
 	{
 		dprintf("EPG found.\n");
-		sendEPG(client, evt, zeit);
+		sendEPG(connfd, evt, zeit);
 	}
 	else
 	{
@@ -2758,13 +1910,13 @@ static void commandActualEPGchannelID(struct connectionData *client, char *data,
 
 		struct sectionsd::msgResponseHeader responseHeader;
 		responseHeader.dataLength = 0;
-		writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 	}
 
 	return ;
 }
 
-static void commandGetEPGPrevNext(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandGetEPGPrevNext(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 8 + 4)
 		return ;
@@ -2819,10 +1971,10 @@ static void commandGetEPGPrevNext(struct connectionData *client, char *data, con
 	unlockEvents();
 	dmxEIT.unpause(); // -> unlock
 
-	int rc = writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 
 	if (rc > 0)
-		writeNbytes(client->connectionSocket, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
 
@@ -2833,7 +1985,7 @@ static void commandGetEPGPrevNext(struct connectionData *client, char *data, con
 
 // Mostly copied from epgd (something bugfixed ;) )
 
-static void commandActualEPGchannelName(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandActualEPGchannelName(int connfd, char *data, const unsigned dataLength)
 {
 	int nResultDataSize = 0;
 	char* pResultData = 0;
@@ -2908,12 +2060,12 @@ static void commandActualEPGchannelName(struct connectionData *client, char *dat
 
 	pmResponse.dataLength = nResultDataSize;
 
-	int rc = writeNbytes(client->connectionSocket, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS);
 
 	if ( nResultDataSize > 0 )
 	{
 		if (rc > 0)
-			writeNbytes(client->connectionSocket, pResultData, nResultDataSize, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, pResultData, nResultDataSize, TIMEOUT_CONNECTIONS);
 		else
 			dputs("[sectionsd] Fehler/Timeout bei write");
 
@@ -2921,7 +2073,7 @@ static void commandActualEPGchannelName(struct connectionData *client, char *dat
 	}
 }
 
-static void sendEventList(struct connectionData *client, const unsigned char serviceTyp1, const unsigned char serviceTyp2 = 0, int sendServiceName = 1)
+static void sendEventList(int connfd, const unsigned char serviceTyp1, const unsigned char serviceTyp2 = 0, int sendServiceName = 1)
 {
 	char *evtList = new char[128* 1024]; // 256kb..? should be enough and dataLength is unsigned short
 
@@ -3055,10 +2207,10 @@ static void sendEventList(struct connectionData *client, const unsigned char ser
 	if ( msgResponse.dataLength == 1 )
 		msgResponse.dataLength = 0;
 
-	if (writeNbytes(client->connectionSocket, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&msgResponse, sizeof(msgResponse), TIMEOUT_CONNECTIONS) > 0)
 	{
 		if (msgResponse.dataLength)
-			writeNbytes(client->connectionSocket, evtList, msgResponse.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, evtList, msgResponse.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -3068,7 +2220,7 @@ static void sendEventList(struct connectionData *client, const unsigned char ser
 
 // Sendet ein short EPG, unlocked die events, unpaused dmxEIT
 
-static void sendShort(struct connectionData *client, const SIevent& e, const SItime& t)
+static void sendShort(int connfd, const SIevent& e, const SItime& t)
 {
 
 	struct sectionsd::msgResponseHeader responseHeader;
@@ -3098,17 +2250,17 @@ static void sendShort(struct connectionData *client, const SIevent& e, const SIt
 	unlockEvents();
 	dmxEIT.unpause(); // -> unlock
 
-	int rc = writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 
 	if (rc > 0)
-		writeNbytes(client->connectionSocket, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
 
 	delete[] msgData;
 }
 
-static void commandGetNextShort(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandGetNextShort(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 8 + 4)
 		return ;
@@ -3131,7 +2283,7 @@ static void commandGetNextShort(struct connectionData *client, char *data, const
 	if (nextEvt.serviceID != 0)
 	{
 		dprintf("next short found.\n");
-		sendShort(client, nextEvt, zeit);
+		sendShort(connfd, nextEvt, zeit);
 	}
 	else
 	{
@@ -3141,61 +2293,61 @@ static void commandGetNextShort(struct connectionData *client, char *data, const
 
 		struct sectionsd::msgResponseHeader responseHeader;
 		responseHeader.dataLength = 0;
-		writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 	}
 
 	return ;
 }
 
-static void commandEventListTV(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandEventListTV(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
 
 	dputs("Request of TV event list.\n");
 
-	sendEventList(client, 0x01, 0x04);
+	sendEventList(connfd, 0x01, 0x04);
 
 	return ;
 }
 
-static void commandEventListTVids(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandEventListTVids(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
 
 	dputs("Request of TV event list (IDs).\n");
 
-	sendEventList(client, 0x01, 0x04, 0);
+	sendEventList(connfd, 0x01, 0x04, 0);
 
 	return ;
 }
 
-static void commandEventListRadio(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandEventListRadio(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
 
 	dputs("Request of radio event list.\n");
 
-	sendEventList(client, 0x02);
+	sendEventList(connfd, 0x02);
 
 	return ;
 }
 
-static void commandEventListRadioIDs(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandEventListRadioIDs(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
 
 	dputs("Request of radio event list (IDs).\n");
 
-	sendEventList(client, 0x02, 0, 0);
+	sendEventList(connfd, 0x02, 0, 0);
 
 	return ;
 }
 
-static void commandEPGepgID(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandEPGepgID(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 8 + 4)
 		return ;
@@ -3231,7 +2383,7 @@ static void commandEPGepgID(struct connectionData *client, char *data, const uns
 		{
 			dputs("EPG found.");
 			// Sendet ein EPG, unlocked die events, unpaused dmxEIT
-			sendEPG(client, evt, *t);
+			sendEPG(connfd, evt, *t);
 		}
 	}
 	else
@@ -3244,12 +2396,12 @@ static void commandEPGepgID(struct connectionData *client, char *data, const uns
 		struct sectionsd::msgResponseHeader pmResponse;
 		pmResponse.dataLength = 0;
 
-		if (writeNbytes(client->connectionSocket, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS) <= 0)
+		if (writeNbytes(connfd, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS) <= 0)
 			dputs("[sectionsd] Fehler/Timeout bei write");
 	}
 }
 
-static void commandEPGepgIDshort(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandEPGepgIDshort(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength != 8)
 		return ;
@@ -3268,7 +2420,7 @@ static void commandEPGepgIDshort(struct connectionData *client, char *data, cons
 	if (evt.serviceID != 0)
 	{ // Event found
 		dputs("EPG found.");
-		sendEPG(client, evt, SItime(0, 0), 1);
+		sendEPG(connfd, evt, SItime(0, 0), 1);
 	}
 	else
 	{
@@ -3280,19 +2432,19 @@ static void commandEPGepgIDshort(struct connectionData *client, char *data, cons
 		struct sectionsd::msgResponseHeader pmResponse;
 		pmResponse.dataLength = 0;
 
-		if (writeNbytes(client->connectionSocket, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS) <= 0)
+		if (writeNbytes(connfd, (const char *)&pmResponse, sizeof(pmResponse), TIMEOUT_CONNECTIONS) <= 0)
 			dputs("[sectionsd] Fehler/Timeout bei write");
 	}
 }
 
-static void commandTimesNVODservice(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandTimesNVODservice(int connfd, char *data, const unsigned dataLength)
 {
-	if (dataLength != 4)
+	if (dataLength != sizeof(t_channel_id))
 		return ;
 
-	unsigned uniqueServiceKey = *(unsigned *)data;
+	t_channel_id uniqueServiceKey = *(t_channel_id *)data;
 
-	dprintf("Request of NVOD times for 0x%x\n", uniqueServiceKey);
+	dprintf("Request of NVOD times for " PRINTF_CHANNEL_ID_TYPE "\n", uniqueServiceKey);
 
 	if (dmxEIT.pause()) // -> lock
 		return ;
@@ -3333,9 +2485,7 @@ static void commandTimesNVODservice(struct connectionData *client, char *data, c
 			for (SInvodReferences::iterator ni = si->second->nvods.begin(); ni != si->second->nvods.end(); ni++)
 			{
 				// Zeiten sind erstmal dummy, d.h. pro Service eine Zeit
-				*(t_service_id          *)p = ni->serviceID;			p += sizeof(t_service_id);
-				*(t_original_network_id *)p = ni->originalNetworkID;		p += sizeof(t_original_network_id);
-				*(t_transport_stream_id *)p = ni->transportStreamID;		p += sizeof(t_transport_stream_id);
+				ni->toStream(p); // => p += sizeof(t_service_id) + sizeof(t_original_network_id) + sizeof(t_transport_stream_id);
 
 				SItime zeitEvt1(0, 0);
 				//        const SIevent &evt=
@@ -3368,13 +2518,13 @@ static void commandTimesNVODservice(struct connectionData *client, char *data, c
 	}
 
 	dprintf("data bytes: %u\n", responseHeader.dataLength);
-	int rc = writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
+	int rc = writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS);
 
 	if (rc > 0)
 	{
 		if (responseHeader.dataLength)
 		{
-			writeNbytes(client->connectionSocket, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+			writeNbytes(connfd, msgData, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 			delete[] msgData;
 		}
 	}
@@ -3389,14 +2539,14 @@ static void commandTimesNVODservice(struct connectionData *client, char *data, c
 }
 
 
-static void commandGetIsTimeSet(struct connectionData *client, char *data, const unsigned dataLength)
+static void commandGetIsTimeSet(int connfd, char *data, const unsigned dataLength)
 {
 	if (dataLength)
 		return ;
 
 	sectionsd::responseIsTimeSet rmsg;
 
-	rmsg.IsTimeSet = (timeset != 0);
+	rmsg.IsTimeSet = timeset;
 
 	dprintf("Request of Time-Is-Set %d\n", rmsg.IsTimeSet);
 
@@ -3404,9 +2554,9 @@ static void commandGetIsTimeSet(struct connectionData *client, char *data, const
 
 	responseHeader.dataLength = sizeof(rmsg);
 
-	if (writeNbytes(client->connectionSocket, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
+	if (writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), TIMEOUT_CONNECTIONS) > 0)
 	{
-		writeNbytes(client->connectionSocket, (const char *)&rmsg, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
+		writeNbytes(connfd, (const char *)&rmsg, responseHeader.dataLength, TIMEOUT_CONNECTIONS);
 	}
 	else
 		dputs("[sectionsd] Fehler/Timeout bei write");
@@ -3415,8 +2565,28 @@ static void commandGetIsTimeSet(struct connectionData *client, char *data, const
 }
 
 
+static void commandRegisterEventClient(int connfd, char *data, const unsigned dataLength)
+{
+	if (dataLength == sizeof(CEventServer::commandRegisterEvent))
+	{
+		eventServer->registerEvent2(((CEventServer::commandRegisterEvent*)data)->eventID, ((CEventServer::commandRegisterEvent*)data)->clientID, ((CEventServer::commandRegisterEvent*)data)->udsName);
 
-static void (*connectionCommands[sectionsd::numberOfCommands]) (struct connectionData *, char *, const unsigned) =
+		if (((CEventServer::commandRegisterEvent*)data)->eventID == CSectionsdClient::EVT_TIMESET)
+			messaging_neutrino_sets_time = true;
+	}
+}
+
+
+
+static void commandUnRegisterEventClient(int connfd, char *data, const unsigned dataLength)
+{
+	if (dataLength == sizeof(CEventServer::commandUnRegisterEvent))
+		eventServer->unRegisterEvent2(((CEventServer::commandUnRegisterEvent*)data)->eventID, ((CEventServer::commandUnRegisterEvent*)data)->clientID);
+}
+
+
+
+static void (*connectionCommands[sectionsd::numberOfCommands]) (int connfd, char *, const unsigned) =
     {
         commandActualEPGchannelName,
         commandEventListTV,
@@ -3443,19 +2613,30 @@ static void (*connectionCommands[sectionsd::numberOfCommands]) (struct connectio
         commandGetIsTimeSet,
         commandserviceChanged,
         commandLinkageDescriptorsUniqueKey,
-        commandPauseSorting
+        commandPauseSorting,
+	commandRegisterEventClient,
+	commandUnRegisterEventClient
     };
 
-static void *connectionThread(void *conn)
+//static void *connectionThread(void *conn)
+bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 {
-
-	struct connectionData *client = (struct connectionData *)conn;
-
+	/*
+	  pthread_t threadConnection;
+	  rc = pthread_create(&threadConnection, &conn_attrs, connectionThread, client);
+	  if(rc)
+	  {
+	  fprintf(stderr, "[sectionsd] failed to create connection-thread (rc=%d)\n", rc);
+	  return 4;
+	  }
+	*/
+	// VERSUCH OHNE CONNECTION-THREAD!
+	// spart die thread-creation-zeit, und die Locks lassen ohnehin nur ein cmd gleichzeitig zu
 	try
 	{
 		dprintf("Connection from UDS\n");
 
-		if (fcntl(client->connectionSocket, F_SETFL, O_NONBLOCK))
+		if (fcntl(connfd, F_SETFL, O_NONBLOCK))
 		{
 			perror ("[sectionsd] fcntl");
 			return 0;
@@ -3463,15 +2644,16 @@ static void *connectionThread(void *conn)
 
 		struct sectionsd::msgRequestHeader header;
 
-		memset(&header, 0, sizeof(header));
+		memcpy(&header, &rmsg, sizeof(CBasicMessage::Header));
+		memset(((char *)&header) + sizeof(CBasicMessage::Header), 0, sizeof(header) - sizeof(CBasicMessage::Header));
 
-		int readbytes = readNbytes(client->connectionSocket, (char *) & header, sizeof(header) , TIMEOUT_CONNECTIONS);
+		int readbytes = readNbytes(connfd, ((char *)&header) + sizeof(CBasicMessage::Header), sizeof(header) - sizeof(CBasicMessage::Header), TIMEOUT_CONNECTIONS);
 
 		if (readbytes > 0)
 		{
 			dprintf("version: %hhd, cmd: %hhd, numbytes: %d\n", header.version, header.command, readbytes);
 
-			if (header.version == 2 && header.command < sectionsd::numberOfCommands)
+			if (header.command < sectionsd::numberOfCommands)
 			{
 				dprintf("data length: %hd\n", header.dataLength);
 				char *data = new char[header.dataLength + 1];
@@ -3483,50 +2665,20 @@ static void *connectionThread(void *conn)
 					int rc = 1;
 
 					if (header.dataLength)
-						rc = readNbytes(client->connectionSocket, data, header.dataLength, TIMEOUT_CONNECTIONS);
+						rc = readNbytes(connfd, data, header.dataLength, TIMEOUT_CONNECTIONS);
 
 					if (rc > 0)
 					{
 						dprintf("Starting command %hhd\n", header.command);
-						connectionCommands[header.command](client, data, header.dataLength);
+						connectionCommands[header.command](connfd, data, header.dataLength);
 					}
 
 					delete[] data;
 				}
 			}
-			else if (header.version == 3 && header.command < sectionsd::numberOfCommands_v3)
-			{
-				int connfd = client->connectionSocket;
-
-				if ( header.command == sectionsd::CMD_registerEvents )
-				{
-
-					CEventServer::commandRegisterEvent msg;
-
-					//int readresult= readNbytes(client->connectionSocket, (char *)&msg, sizeof(msg) , TIMEOUT_CONNECTIONS);
-					readNbytes(client->connectionSocket, (char *)&msg, sizeof(msg) , TIMEOUT_CONNECTIONS);
-
-					//printf("[connectionThread]: read bytes  %d/%d\n", readresult,  sizeof(msg));
-					//printf("[connectionThread]: register event (%d) to: %d - %s\n", msg.eventID, msg.clientID, msg.udsName);
-					eventServer->registerEvent2(msg.eventID, msg.clientID, msg.udsName);
-
-					if ( msg.eventID == CSectionsdClient::EVT_TIMESET )
-						messaging_neutrino_sets_time = true;
-
-					//eventServer->registerEvent( connfd );
-				}
-				else if ( header.command == sectionsd::CMD_unregisterEvents )
-					eventServer->unRegisterEvent( connfd );
-
-			}
 			else
 				dputs("Unknow format or version of request!");
 		}
-
-		close(client->connectionSocket);
-		dprintf("Connection closed!\n");
-		delete client;
-
 	} // try
 	catch (std::exception& e)
 	{
@@ -3537,7 +2689,7 @@ static void *connectionThread(void *conn)
 		fprintf(stderr, "Caught exception in connection-thread!\n");
 	}
 
-	return 0;
+	return true;
 }
 
 //---------------------------------------------------------------------
@@ -3549,7 +2701,7 @@ static void *sdtThread(void *)
 
 	struct SI_section_header header;
 	char *buf;
-	const unsigned timeoutInMSeconds = 500;
+	const unsigned timeoutInMSeconds = 250;
 	bool sendToSleepNow = false;
 
 	dmxSDT.addfilter(0x42, 0xff );
@@ -3605,6 +2757,8 @@ static void *sdtThread(void *)
 						pthread_mutex_unlock( &dmxSDT.start_stop_mutex );
 						dmxSDT.real_unpause();
 					}
+
+					timeoutsDMX = 0;
 				}
 				else if (zeit > dmxSDT.lastChanged + TIME_SDT_SKIPPING )
 				{
@@ -3613,12 +2767,16 @@ static void *sdtThread(void *)
 					if ( dmxSDT.filter_index + 1 < (signed) dmxSDT.filters.size() )
 					{
 						dmxSDT.change(dmxSDT.filter_index + 1);
-						dprintf("[sdtThread] skipping to next filter (> TIME_SDT_SKIPPING)\n" );
+						dputs("[sdtThread] skipping to next filter (> TIME_SDT_SKIPPING)");
+						unlockMessaging();
 					}
 					else
+					{
 						sendToSleepNow = true;
-
-					unlockMessaging();
+						dputs("[sdtThread] sending to sleep (> TIME_SDT_SKIPPING)");
+						unlockMessaging();
+						continue;
+					}
 				};
 			}
 
@@ -3627,20 +2785,32 @@ static void *sdtThread(void *)
 				timeoutsDMX = 0;
 				dmxSDT.stop();
 				dmxSDT.start(); // leaves unlocked
-				dputs("dmxSDT restarted");
+				dputs("\n !!! dmxSDT restarted !!!\n");
 			}
 
+			struct timeval tv;
+
+			gettimeofday( &tv, NULL );
+			long long _now = (long long) tv.tv_usec + (long long)((long long) tv.tv_sec * (long long) 1000000);
+
 			buf = dmxSDT.getSection(timeoutInMSeconds, timeoutsDMX);
+
+			gettimeofday( &tv, NULL );
+			_now = (long long) tv.tv_usec + (long long)((long long) tv.tv_sec * (long long) 1000000)- _now;
+        		dprintf("[sdtThread] dmxSDT.getSection returned after %f\n", _now / 1000.);
+
 
 			if (buf == NULL)
 				continue;
 
 			// copy the header
-			memcpy(&header, buf, min((unsigned)((SI_section_header*)buf)->section_length + 3, sizeof(header)));
+			memcpy(&header, buf, std::min((unsigned)((SI_section_header*)buf)->section_length + 3, sizeof(header)));
 
 			if ((header.current_next_indicator) && (!dmxSDT.pauseCounter))
 			{
 				// Wir wollen nur aktuelle sections
+				dprintf("[sdtThread] adding services [table 0x%x] (begin)\n", header.table_id);
+
 				SIsectionSDT sdt(SIsection(sizeof(header) + header.section_length - 5, buf));
 				lockServices();
 
@@ -3649,8 +2819,11 @@ static void *sdtThread(void *)
 
 				unlockServices();
 
+				dprintf("[sdtThread] added %d services (end)\n",  sdt.services().size());
+
 
 				lockMessaging();
+
 
 				//SI_section_SDT_header* _header = (SI_section_SDT_header*) &header;
 				int msg_index = ( header.table_id == 0x42) ? 0 : 1;
@@ -3666,38 +2839,56 @@ static void *sdtThread(void *)
 					if ( messaging_sdt_sections_max_ID[msg_index] == -1 )
 					{
 						messaging_sdt_sections_max_ID[msg_index] = _id;
+						dprintf("[sdtThread] first msg_index 0x%llx\n", _id);
 					}
 					else
 					{
-						if ( !messaging_sdt_sections_got_all[msg_index] )
-						{
-							for ( std::vector<long long>::iterator i = messaging_sdt_skipped_sections_ID[msg_index].begin();
-							        i != messaging_sdt_skipped_sections_ID[msg_index].end(); ++i )
-								if ( *i == _id)
-								{
-									messaging_sdt_skipped_sections_ID[msg_index].erase(i);
-									break;
-								}
-
-							if ( ( messaging_sdt_sections_max_ID[msg_index] == _id ) &&
-							        ( messaging_sdt_skipped_sections_ID[msg_index].size() == 0 ) )
+						for ( std::vector<long long>::iterator i = messaging_sdt_skipped_sections_ID[msg_index].begin();
+						        i != messaging_sdt_skipped_sections_ID[msg_index].end(); ++i )
+							if ( *i == _id)
 							{
-								// alle pakete für den ServiceKey da!
-								dprintf("[sdtThread] got all packages for table_id 0x%x (%d)\n", header.table_id, msg_index);
-								messaging_sdt_sections_got_all[msg_index] = true;
+								messaging_sdt_skipped_sections_ID[msg_index].erase(i);
+								break;
 							}
+						dprintf("[sdtThread] now msg_index 0x%llx / skipsize %d\n", _id, messaging_sdt_skipped_sections_ID[msg_index].size());
+
+						if ( ( messaging_sdt_sections_max_ID[msg_index] == _id ) &&
+						        ( messaging_sdt_skipped_sections_ID[msg_index].size() == 0 ) )
+						{
+							// alle pakete für den ServiceKey da!
+							dprintf("[sdtThread] got all packages for table_id 0x%x (%d)\n", header.table_id, msg_index);
+							messaging_sdt_sections_got_all[msg_index] = true;
 						}
 					}
 
 					// überprüfen, ob nächster Filter gewünscht :)
 					if ( messaging_sdt_sections_got_all[dmxSDT.filter_index] )
 					{
+						if ( ( messaging_WaitForServiceDesc ) && ( dmxSDT.filter_index == 0 ) )
+						{
+					        	// restart EIT!
+					        	for ( int i = 0x4e; i <= 0x6f; i++)
+							{
+								messaging_skipped_sections_ID[i - 0x4e].clear();
+								messaging_sections_max_ID[i - 0x4e] = -1;
+								messaging_sections_got_all[i - 0x4e] = false;
+							}
+
+							messaging_wants_current_next_Event = true;
+							dmxEIT.change( 0 );
+
+							messaging_WaitForServiceDesc = false;
+						}
 						if ( dmxSDT.filter_index + 1 < (signed) dmxSDT.filters.size() )
 						{
 							dmxSDT.change(dmxSDT.filter_index + 1);
+							dputs("[sdtThread] change!")
 						}
 						else
+						{
 							sendToSleepNow = true;
+							dputs("[sdtThread] sendtosleep!")
+						}
 					}
 				}
 
@@ -3808,12 +2999,12 @@ __attribute__ ((packed)) ; // 8 bytes
 
 /*
 // BR schickt falschen Time-Offset, daher per TZ und Rest hier auskommentiert
- 
+
 struct descr_gen_struct {
   unsigned char descriptor_tag : 8;
   unsigned char descriptor_length : 8;
 } __attribute__ ((packed)) ;
- 
+
 struct local_time_offset {
   char country_code1 : 8;
   char country_code2 : 8;
@@ -3825,10 +3016,10 @@ struct local_time_offset {
   unsigned long long time_of_chng : 40;
   unsigned short next_time_offset : 8;
 } __attribute__ ((packed)) ;
- 
+
 static int timeOffsetMinutes=0; // minutes
 static int timeOffsetFound=0;
- 
+
 static void parseLocalTimeOffsetDescriptor(const char *buf, const char *countryCode)
 {
   struct descr_gen_struct *desc=(struct descr_gen_struct *)buf;
@@ -3848,7 +3039,7 @@ static void parseLocalTimeOffsetDescriptor(const char *buf, const char *countryC
     buf+=sizeof(struct local_time_offset);
   }
 }
- 
+
 static void parseDescriptors(const char *des, unsigned len, const char *countryCode)
 {
   struct descr_gen_struct *desc;
@@ -3864,7 +3055,7 @@ static void parseDescriptors(const char *des, unsigned len, const char *countryC
     des+=desc->descriptor_length+2;
   }
 }
- 
+
 */
 static void *timeThread(void *)
 {
@@ -3946,7 +3137,7 @@ static void *timeThread(void *)
 								continue;
 							}
 
-						timeset = 1;
+						timeset = true;
 					}
 
 					break;
@@ -3956,7 +3147,7 @@ static void *timeThread(void *)
 				dmxTOT.unlock();
 			}
 		}
-		while (timeset != 1);
+		while (!timeset);
 
 		eventServer->sendEvent(CSectionsdClient::EVT_TIMESET, CEventServer::INITID_SECTIONSD, &tim, sizeof(tim) );
 
@@ -4142,6 +3333,7 @@ static void *eitThread(void *)
 
 							if ( !dont_change )
 							{
+								dprintf("Change Filterindex: %d (ges. %d)\n", dmxEIT.filter_index, (signed) dmxEIT.filters.size() );
 								if ( dmxEIT.filter_index + 1 < (signed) dmxEIT.filters.size() )
 								{
 									dmxEIT.change(dmxEIT.filter_index + 1);
@@ -4150,7 +3342,10 @@ static void *eitThread(void *)
 									timeoutsDMX = 0;
 								}
 								else
+								{
 									sendToSleepNow = true;
+									dputs("sendToSleepNow = true")
+								}
 							}
 						}
 				}
@@ -4259,12 +3454,12 @@ static void *eitThread(void *)
 			}
 
 			buf = dmxEIT.getSection(timeoutInMSeconds, timeoutsDMX);
-			
+
 			if (buf == NULL)
 				continue;
 
 			// copy the header
-			memcpy(&header, buf, min((unsigned)((SI_section_header*)buf)->section_length + 3, sizeof(header)));
+			memcpy(&header, buf, std::min((unsigned)((SI_section_header*)buf)->section_length + 3, sizeof(header)));
 
 			if ((header.current_next_indicator) && (!dmxEIT.pauseCounter ))
 			{
@@ -4297,7 +3492,7 @@ static void *eitThread(void *)
 				{
 					// == 0 -> kein event
 
-					dputs("[eitThread] adding events (begin)");
+					dprintf("[eitThread] adding %d events [table 0x%x] (begin)\n", eit.events().size(), header.table_id);
 
 					zeit = time(NULL);
 					// Nicht alle Events speichern
@@ -4338,7 +3533,7 @@ static void *eitThread(void *)
 
 					} // for
 
-					dputs("[eitThread] adding events (end)");
+					//dprintf("[eitThread] added %d events (end)\n",  eit.events().size());
 
 				} // if
 
@@ -4391,7 +3586,7 @@ static void *eitThread(void *)
 						// überprüfen, ob nächster Filter gewünscht :)
 						int	change_filter = 0;
 
-						for ( int i = (dmxEIT.filters[dmxEIT.filter_index].filter & dmxEIT.filters[dmxEIT.filter_index].mask); i <= dmxEIT.filters[dmxEIT.filter_index].filter; i++)
+						for ( int i = (dmxEIT.filters[dmxEIT.filter_index].filter & dmxEIT.filters[dmxEIT.filter_index].mask); i <= ( dmxEIT.filters[dmxEIT.filter_index].filter | ( !dmxEIT.filters[dmxEIT.filter_index].mask ) ); i++)
 						{
 							if ( messaging_sections_got_all[i - 0x4e] )
 								change_filter++;
@@ -4547,8 +3742,6 @@ static void printHelp(void)
 	printf("\nUsage: sectionsd [-d]\n\n");
 }
 
-static int listenSocket = 0;
-
 // Just to get our listen socket closed cleanly
 static void signalHandler(int signum)
 {
@@ -4559,12 +3752,6 @@ static void signalHandler(int signum)
 		break;
 
 	default:
-
-		if (listenSocket)
-			close(listenSocket);
-
-		listenSocket = 0;
-
 		exit(0);
 	}
 }
@@ -4574,7 +3761,7 @@ int main(int argc, char **argv)
 	pthread_t threadTOT, threadEIT, threadSDT, threadHouseKeeping;
 	int rc;
 
-	printf("$Id: sectionsd.cpp,v 1.139 2002/10/15 20:39:47 woglinde Exp $\n");
+	printf("$Id: sectionsd.cpp,v 1.139.2.1 2003/02/06 16:53:29 thegoodguy Exp $\n");
 
 	try
 	{
@@ -4599,6 +3786,12 @@ int main(int argc, char **argv)
 		printf("caching %ld hours\n", secondsToCache / (60*60L));
 		printf("events are old %ldmin after their end time\n", oldEventsAre / 60);
 		tzset(); // TZ auswerten
+
+
+		CBasicServer sectionsd_server;
+
+		if (!sectionsd_server.prepare(SECTIONSD_UDS_NAME))
+			return -1;
 
 		switch (fork()) // switching to background
 		{
@@ -4634,51 +3827,17 @@ int main(int argc, char **argv)
 		for (int x = 0;x < 32;x++)
 			signal(x, signalHandler);
 
-		struct sockaddr_un servaddr;
-
-		int clilen;
-
-		memset(&servaddr, 0, sizeof(struct sockaddr_un));
-
-		servaddr.sun_family = AF_UNIX;
-
-		strcpy(servaddr.sun_path, SECTIONSD_UDS_NAME);
-
-		clilen = sizeof(servaddr.sun_family) + strlen(servaddr.sun_path);
-
-		unlink(SECTIONSD_UDS_NAME);
-
-		//network-setup
-		if ((listenSocket = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-		{
-			perror("socket");
-		}
-
-		if ( bind(listenSocket, (struct sockaddr*) &servaddr, clilen) < 0 )
-		{
-			perror("sectionsd] bind failed...\n");
-			exit( -1);
-		}
-
-
-		if (listen(listenSocket, 5) != 0)
-		{
-			perror("[sectionsd] listen failed...\n");
-			exit( -1 );
-		}
-
-
 		eventServer = new CEventServer;
 		/*
 				timerdClient = new CTimerdClient;
-		 
+
 				printf("[sectionsd ] checking timerd\n");
 				timerd = timerdClient->isTimerdAvailable();
 				if (timerd)
 					printf("[sectionsd ] timerd available\n");
 				else
 					printf("[sectionsd ] timerd NOT available\n");
-		*/ 
+		*/
 		// SDT-Thread starten
 		rc = pthread_create(&threadSDT, 0, sdtThread, 0);
 
@@ -4719,43 +3878,7 @@ int main(int argc, char **argv)
 		pthread_attr_init(&conn_attrs);
 		pthread_attr_setdetachstate(&conn_attrs, PTHREAD_CREATE_DETACHED);
 
-		// Unsere Endlosschliefe
-
-		socklen_t clientInputLen = sizeof(servaddr);
-
-		for (;listenSocket;)
-		{
-			// wir warten auf eine Verbindung
-
-			struct connectionData *client = new connectionData; // Wird vom Thread freigegeben
-
-			if (!client)
-			{
-				printf("[sectionsd::main] new connectionData failed.\n");
-				throw std::bad_alloc();
-			}
-
-			do
-			{
-
-				client->connectionSocket = accept(listenSocket, (struct sockaddr *) & (client->clientAddr), &clientInputLen);
-			}
-			while (client->connectionSocket == -1);
-
-			/*
-						pthread_t threadConnection;
-						rc = pthread_create(&threadConnection, &conn_attrs, connectionThread, client);
-						if(rc)
-						{
-							fprintf(stderr, "[sectionsd] failed to create connection-thread (rc=%d)\n", rc);
-							return 4;
-						}
-			*/ 
-			// VERSUCH OHNE CONNECTION-THREAD!
-			// spart die thread-creation-zeit, und die Locks lassen ohnehin nur ein cmd gleichzeitig zu
-			connectionThread(client);
-		}
-
+		sectionsd_server.run(parse_command, sectionsd::ACTVERSION);
 	} // try
 	catch (std::exception& e)
 	{
