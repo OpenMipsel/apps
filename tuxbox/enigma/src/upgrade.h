@@ -44,17 +44,26 @@ public:
 
 class eUpgrade: public eWindow
 {
-	eHTTPConnection *http;
+	struct changelogEntry
+	{
+		eString date;
+		int priority;		
+		eString text;
+	};
+	std::list<changelogEntry> changelogentries;
+	eHTTPConnection *http, *changelog;
 	int lasttime;
 	unsigned char expected_md5[16];
 	eString current_url;
 	void catalogTransferDone(int err);
+	void changelogTransferDone(int err);
 	void imageTransferDone(int err);
 	eHTTPDataSource *createCatalogDataSink(eHTTPConnection *conn);
 	eHTTPDataSource *createImageDataSink(eHTTPConnection *conn);
+	eHTTPDataSource *createChangelogDataSink(eHTTPConnection *conn);
 	XMLTreeParser *catalog;
 	eHTTPDownloadXML *datacatalog;
-	eHTTPDownload *image;
+	eHTTPDownload *image, *changelogdownload;
 	
 	void imageSelected(eListBoxEntryImage *image);
 
@@ -67,6 +76,7 @@ class eUpgrade: public eWindow
 	eButton *abort;
 	
 	void loadCatalog(const char *url);
+	void loadChangelog(const char *url);
 	void loadImage(const char *url);
 	
 	void setStatus(const eString &string);
@@ -78,6 +88,7 @@ class eUpgrade: public eWindow
 	void flashImage(int checkmd5);
 public:
 	eUpgrade();
+	~eUpgrade();
 };
 
 #endif

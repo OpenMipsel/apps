@@ -11,6 +11,7 @@
 #include <sys/mman.h>
 
 #define TMP_IMAGE "/var/tmp/root.cramfs"
+#define TMP_CHANGELOG "/var/tmp/changelog"
 
 static eString getVersionInfo(const char *info)
 {
@@ -166,6 +167,26 @@ void eUpgrade::loadCatalog(const char *url)
 	}
 }
 
+void eUpgrade::loadChangelog(const char *url)
+{
+	current_url=url;
+	int error;
+	if (changelog)
+		delete changelog;
+	changelog=eHTTPConnection::doRequest(url, eApp, &error);
+	if (!changelog)
+	{
+		changelogTransferDone(error);
+	} else
+	{
+		setStatus(_("downloading changelog..."));
+		CONNECT(changelog->transferDone, eUpgrade::changelogTransferDone);
+		CONNECT(changelog->createDataSource, eUpgrade::createChangelogDataSink);
+		changelog->local_header["User-Agent"]="enigma-upgrade/1.0.0";
+		changelog->start();
+	}
+}
+
 void eUpgrade::loadImage(const char *url)
 {
 	images->hide();
@@ -201,38 +222,44 @@ void eUpgrade::catalogTransferDone(int err)
 		images->beginAtomic();
 		for (XMLTreeNode *r=root->GetChild(); r; r=r->GetNext())
 		{
-			if (strcmp(r->GetType(), "image"))
-				continue;
-			const char *name=r->GetAttributeValue("name");
-			const char *url=r->GetAttributeValue("url");
-			const char *version=r->GetAttributeValue("version");
-			const char *target=r->GetAttributeValue("target");
-			const char *creator=r->GetAttributeValue("creator");
-			const char *amd5=r->GetAttributeValue("md5");
-			unsigned char md5[16];
-			if (!creator)
-				creator=_("unknown");
-			if (!amd5)
-				continue;
-			for (int i=0; i<32; i+=2)
+			if (!strcmp(r->GetType(), "image"))
 			{
-				char x[3];
-				x[0]=amd5[i];
-				if (!x[0])
-					break;
-				x[1]=amd5[i+1];
-				if (!x[1])
-					break;
-				int v=0;
-				if (sscanf(x, "%02x", &v) != 1)
-					break;
-				md5[i/2]=v;
+				const char *name=r->GetAttributeValue("name");
+				const char *url=r->GetAttributeValue("url");
+				const char *version=r->GetAttributeValue("version");
+				const char *target=r->GetAttributeValue("target");
+				const char *creator=r->GetAttributeValue("creator");
+				const char *amd5=r->GetAttributeValue("md5");
+				unsigned char md5[16];
+				if (!creator)
+					creator=_("unknown");
+				if (!amd5)
+					continue;
+				for (int i=0; i<32; i+=2)
+				{
+					char x[3];
+					x[0]=amd5[i];
+					if (!x[0])
+						break;
+					x[1]=amd5[i+1];
+					if (!x[1])
+						break;
+					int v=0;
+					if (sscanf(x, "%02x", &v) != 1)
+						break;
+					md5[i/2]=v;
+				}
+				if (!(name && url && version && target))
+					continue;
+				if (!strstr(target, mytarget.c_str()))
+					continue;
+				new eListBoxEntryImage(images, name, target, url, version, creator, md5);
+			} else if (!strcmp(r->GetType(), "changelog"))
+			{
+				const char *changelog=r->GetAttributeValue("url");
+				if (changelog)
+					loadChangelog(changelog);
 			}
-			if (!(name && url && version && target))
-				continue;
-			if (!strstr(target, mytarget.c_str()))
-				continue;
-			new eListBoxEntryImage(images, name, target, url, version, creator, md5);
 		}
 		setFocus(images);
 		images->endAtomic();
@@ -265,6 +292,36 @@ void eUpgrade::imageTransferDone(int err)
 	http=0;
 	images->show();
 	imagehelp->show();
+}
+
+void eUpgrade::changelogTransferDone(int err)
+{
+	if (err || !changelog || changelog->code != 200)
+	{
+		setError(err);
+	} else
+	{
+		FILE *f=fopen(TMP_CHANGELOG, "rt");
+		if (f)
+		{
+			char temp[1024];
+			while (fgets(temp, 1024, f))
+			{
+				if (*temp)	
+					temp[strlen(temp)-1]=0; // remove trailng \n
+				eString str(temp);
+				changelogEntry entry;
+				
+				entry.date=str.left(12);
+				entry.priority=str[13]-'0';
+				entry.text=str.mid(15);
+				
+				changelogentries.push_back(entry);
+			}
+			fclose(f);
+		}
+	}
+	changelog=0;
 }
 
 void eUpgrade::imageSelected(eListBoxEntryImage *img)
@@ -328,6 +385,14 @@ eHTTPDataSource *eUpgrade::createImageDataSink(eHTTPConnection *conn)
 	lasttime=0;
 	CONNECT(image->progress, eUpgrade::downloadProgress);
 	return image;
+}
+
+eHTTPDataSource *eUpgrade::createChangelogDataSink(eHTTPConnection *conn)
+{
+	changelogdownload=new eHTTPDownload(conn, TMP_CHANGELOG);
+	lasttime=0;
+	CONNECT(changelogdownload->progress, eUpgrade::downloadProgress);
+	return changelogdownload;
 }
 
 void eUpgrade::downloadProgress(int received, int total)
@@ -485,4 +550,12 @@ void eUpgrade::flashImage(int checkmd5)
 				close(0);
 		}
 	}
+}
+
+eUpgrade::~eUpgrade()
+{
+	if (http)
+		delete http;
+	if (changelog)
+		delete changelog;
 }
