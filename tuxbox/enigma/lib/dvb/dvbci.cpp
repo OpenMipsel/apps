@@ -1121,7 +1121,7 @@ void eDVBCI::dataAvailable(int what)
 void eDVBCI::poll()
 {
 	int present;
-#if 1
+#if 0
 	printf("TIMER\n");
 #endif
 	::ioctl(fd,CI_GET_STATUS,&present);	
