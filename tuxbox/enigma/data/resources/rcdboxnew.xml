@@ -120,10 +120,10 @@
 		<actionmap name="serviceSelector">
 			<action name="nextBouquet" key="+" flags="mr" />
 			<action name="prevBouquet" key="-" flags="mr" />
-			<action name="showEPGSelector" key="?" flags="m" />
 		</actionmap>
 
 		<actionmap name="serviceSelector" style="sselect_default">
+			<action name="showEPGSelector" key="?" flags="m" />
 			<action name="pathUp" key="d-box" flags="m" />
 			<action name="showMenu" key="red" flags="m" />
 			<action name="toggleStyle" key="green" flags="m" />
@@ -132,12 +132,19 @@
 		</actionmap>
 
 		<actionmap name="serviceSelector" style="sselect_classic">
+			<action name="showEPGSelector" key="?" flags="m" />
 			<action name="pathUp" key="0" flags="m" />
 			<action name="showMenu" key="d-box" flags="m" />
 			<action name="showAll" key="red" flags="m" />
 			<action name="showSatellites" key="green" flags="m" />
 			<action name="showProvider" key="yellow" flags="m" />
 			<action name="showBouquets" key="blue" flags="m" />
+		</actionmap>
+
+		<actionmap name="serviceSelector" style="sselect_edit">
+			<action name="delete" key="red" flags="m" />
+			<action name="mark" key="green" flags="m" />
+			<action name="rename" key="yellow" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">
