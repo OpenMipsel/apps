@@ -24,7 +24,6 @@ class eListBoxBase: public eDecoWidget
 	eLabel* tmpDescr; // used for description Label in LCD
 #endif
 	gColor colorActiveB, colorActiveF;
-	eRect crect, crect_selected;
 	enum  { arNothing, arCurrentOld, arAll};
 	int movemode, MaxEntries, flags, item_height, columns, in_atomic, atomic_redraw, atomic_old, atomic_new;
 	bool atomic_selchanged;

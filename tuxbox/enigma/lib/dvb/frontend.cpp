@@ -79,7 +79,10 @@ void eFrontend::InitDiSEqC()
 {
 	lastcsw = lastSmatvFreq = lastRotorCmd = lastucsw = lastToneBurst = -1;
 	lastLNB=0;
+	// DiSEqC Reset
 	sendDiSEqCCmd( 0, 0 );
+	// peripheral power supply on
+	sendDiSEqCCmd( 0, 3 );
 	usleep(150000);
 }
 
@@ -441,9 +444,9 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 		return -2;
 	}
 	::close(fp);
-	// set rotor start timeout  // 5 sek..
+	// set rotor start timeout  // 2 sek..
 	gettimeofday(&rotorTimeout,0);
-	rotorTimeout+=5000;
+	rotorTimeout+=2000;
 	RotorStartLoop();
 	return 0;
 }
@@ -1125,10 +1128,11 @@ int eFrontend::tune_qam(eTransponder *transponder,
 int eFrontend::savePower()
 {
 	ioctl(fd, FE_SET_POWER_STATE, FE_POWER_OFF);
-	
+
 	if (secfd != -1)
 	{
 		secCmdSequence seq;
+
 		seq.commands=0;
 		seq.numCommands=0;
 		seq.voltage=SEC_VOLTAGE_OFF;
@@ -1140,7 +1144,7 @@ int eFrontend::savePower()
 			return -1;
 		}
 	}
-	
+
 	needreset = 1;
 	return 0;
 }

@@ -85,7 +85,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 	eDebug("renderContext left = %d, top = %d, width = %d, height = %d", rc.left(), rc.top(), rc.width(), rc.height() );*/
 
 	target->clip( rc );
-	eRect area=eRect(ePoint(0, 0), ePoint(width(), height()));
+	eRect area=clientrect;
 /*	eDebug("area left = %d, top = %d, width = %d, height = %d",
 		area.left(), area.top(),
 		area.width(), area.height() );*/

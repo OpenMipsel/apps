@@ -153,12 +153,31 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 
 				if (sp->dvb->dxflags & eServiceDVB::dxNoPMT)
 					nopmt=1;
+
+				if ( !service.getServiceID().get() && sp->dvb->service_id.get() )
+				{
+					service.data[1] = sp->dvb->service_id.get();
+					dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetPAT));
+					dvb.tPAT.start(new PAT());
+					eServiceInterface::getInstance()->removeRef(service);
+					break;
+				}
 			}
 			eServiceInterface::getInstance()->removeRef(service);
 		}
 
-		if (!nopmt && service.getServiceID().get()) // if not a dvb service, don't even try to search a PAT, PMT etc.
+		if (!nopmt && service.getServiceID().get() ) // if not a dvb service, don't even try to search a PAT, PMT etc.
 			dvb.tPAT.start(new PAT());
+
+		if (nopmt || ( service.path.size() && !service.getServiceID().get() ) )
+		{
+			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
+			service_state=0;
+			/*emit*/ dvb.enterService(service);
+			/*emit*/ dvb.switchedService(service, -service_state);
+			dvb.setState(eDVBServiceState(eDVBServiceState::stateIdle));
+			break;
+		}
 
 		if (tMHWEIT)
 		{
@@ -171,16 +190,6 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		tdt=new TDT();
 		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
 		tdt->start();
-
-		if (nopmt || ( service.path.size() && !service.getServiceID().get() ) )
-		{
-			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
-			service_state=0;
-			/*emit*/ dvb.enterService(service);
-			/*emit*/ dvb.switchedService(service, -service_state);
-			dvb.setState(eDVBServiceState(eDVBServiceState::stateIdle));
-			break;
-		}
 
 		dvb.tSDT.start(new SDT());
 

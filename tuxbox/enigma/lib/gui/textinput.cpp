@@ -102,7 +102,8 @@ void eTextInputField::drawCursor()
 	if ( !cursorRect.isEmpty() )
 		eWidget::invalidate(cursorRect);
 
-	cursorRect.setTop((deco_selected?crect_selected.bottom():crect.bottom())-4);
+	cursorRect.setTop((deco_selected?crect_selected.bottom():deco?crect.bottom():clientrect.bottom())-4);
+
 	cursorRect.setHeight( 3 );
 	if ( isotext.length() )  // text exist?
 	{
@@ -142,7 +143,7 @@ void eTextInputField::drawCursor()
 		cursorRect.setLeft( 0 );
 		cursorRect.setWidth( 10 );
 	}
-	eRect tmp = deco_selected?crect_selected:crect;
+	eRect tmp = deco_selected?crect_selected:deco?crect:clientrect;
 	if ( cursorRect.right() > scroll.top().second )
 	{
 		int newpos = scroll.top().first + cursorRect.left();
@@ -154,7 +155,7 @@ void eTextInputField::drawCursor()
 		scroll.pop();
 		editLabel->move( ePoint( (-scroll.top().first)+tmp.left() , editLabel->getPosition().y() ) );
 	}
-	cursorRect.moveBy( (deco_selected?crect_selected.left():crect.left())-scroll.top().first+1, 0 );
+	cursorRect.moveBy( (deco_selected?crect_selected.left():deco?crect.left():clientrect.left())-scroll.top().first+1, 0 );
 	gPainter *painter = getPainter( eRect( ePoint(0,0), size ) );
 	painter->setForegroundColor( getForegroundColor() );
 	painter->setBackgroundColor( getBackgroundColor() );
@@ -164,7 +165,7 @@ void eTextInputField::drawCursor()
 		if ( !capsRect.isEmpty() )
 			eWidget::invalidate( capsRect );
 		capsRect=cursorRect;
-		capsRect.setTop(deco_selected?crect_selected.top():crect.top());
+		capsRect.setTop(deco_selected?crect_selected.top():deco?crect.top():clientrect.top());
 		capsRect.setHeight( 3 );
 		painter->fill( capsRect );
 	}
@@ -288,6 +289,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 					/* emit */ selected();
 
 					eWindow::globalCancel(eWindow::ON);
+					break;
 				}
 				else
 				{
@@ -297,7 +299,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 					capslock=0;
 					while(scroll.size())
 						scroll.pop();
-					eRect tmp = deco_selected?crect_selected:crect;
+					eRect tmp = deco_selected?crect_selected:deco?crect:clientrect;
 					editLabel=new eLabel(this,0,0);
 					editLabel->hide();
 					editLabel->move(tmp.topLeft());
@@ -324,6 +326,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				setText(oldText);
 				setHelpText(oldHelpText);
 				eWindow::globalCancel(eWindow::ON);
+				break;
 			}
 			else if (event.action == &i_numberActions->key0)
 				key=0;
@@ -351,9 +354,10 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				key=11;
 			else
 				return eButton::eventHandler( event );
-			if ( key != lastKey && nextCharTimer.isActive() )
+			if ( key != lastKey )
 			{
-				nextCharTimer.stop();
+				if ( nextCharTimer.isActive() )
+					nextCharTimer.stop();
 				nextChar();
 			}
 //			eDebug("editMode = %d, key = %d", editMode, key);
