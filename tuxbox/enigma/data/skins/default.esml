@@ -123,6 +123,7 @@
 		<img name="icon_error" src="icon-error-fs8.png" />
 		<img name="icon_warning" src="icon-warning-fs8.png" />
 		<img name="sselect_folder" src="folder-fs8.png" />
+		<img name="sselect_marker" src="marker-fs8.png" />
 		<img name="timer_symbol" src="clock-fs8.png" />
 		<img name="timer_rec_symbol" src="clock_rec-fs8.png" />
 		<img name="ok_symbol" src="event_ok-fs8.png" />

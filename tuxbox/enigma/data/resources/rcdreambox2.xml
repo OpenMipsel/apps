@@ -197,8 +197,8 @@
 			<action name="nextBouquet" key="bouqup" flags="mr" />
 			<action name="prevBouquet" key="bouqdown" flags="mr" />
 			<action name="pathUp" key="0" flags="m" />
-			<action name="gotoFirstService" key="prev" flags="m" />
-			<action name="gotoLastService" key="next" flags="m" />
+			<action name="gotoPrevMarker" key="prev" flags="mr" />
+			<action name="gotoNextMarker" key="next" flags="mr" />
 		</actionmap>
 
 		<actionmap name="serviceSelector" style="sselect_default">
@@ -230,6 +230,7 @@
 			<action name="delete" key="red" flags="m" />
 			<action name="mark" key="green" flags="m" />
 			<action name="rename" key="yellow" flags="m" />
+			<action name="marker" key="blue" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">
