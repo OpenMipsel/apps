@@ -5089,9 +5089,12 @@ void eTimerInput::setPressed()
 	close((int)evt);
 }
 
-eRecordContextMenu::eRecordContextMenu()
+eRecordContextMenu::eRecordContextMenu( eWidget *LCDTitle, eWidget *LCDElement )
 	: eListBoxWindow<eListBoxEntryText>(_("Record Menu"), 5)
 {
+#ifndef DISABLE_LCD
+	setLCD(LCDTitle, LCDElement);
+#endif
 	move(ePoint(150, 200));
 	new eListBoxEntryText(&list, _("back"), (void*)0);
 	new eListBoxEntryText(&list, _("stop record now"), (void*)1);
