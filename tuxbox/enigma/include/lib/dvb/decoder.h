@@ -6,6 +6,10 @@
 #define DECODE_AUDIO_AC3	1
 #define DECODE_AUDIO_DTS  2
 
+#define TYPE_ES 0
+#define TYPE_PES 1
+#define TYPE_MPEG1 2
+
 struct decoderParameters
 {
 	int vpid, apid, tpid, pcrpid, ecmpid, emmpid, pmtpid, casystemid;
@@ -39,6 +43,7 @@ public:
 	static void flushBuffer();
 	static void startTrickmode();
 	static void stopTrickmode();
+	static void SetStreamType(int type);
 	static void setVideoFormat( int format );
 	static int  displayIFrame(const char *frame, int len);
 	static int  displayIFrameFromFile(const char *filename);

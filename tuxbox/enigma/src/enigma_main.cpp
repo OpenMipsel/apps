@@ -3563,6 +3563,7 @@ void eZapMain::showEPGList(eServiceReferenceDVB service)
 
 void eZapMain::showEPG()
 {
+	actual_eventDisplay=0;
 	if ( doubleklickTimerConnection.connected() )
 		doubleklickTimerConnection.disconnect();
 
@@ -3604,9 +3605,11 @@ void eZapMain::showEPG()
 	else
 	{
 		EIT *eit=eDVB::getInstance()->getEIT();
-		actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), ref, eit?&eit->events:&events);
 		if (eit)
+		{
+			actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), ref, eit?&eit->events:&events);
 			eit->unlock(); // HIER liegt der hund begraben.
+		}
 	}
 #ifndef DISABLE_LCD
 	eZapLCD* pLCD = eZapLCD::getInstance();
@@ -4352,7 +4355,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		int hideerror=0;
 		if(err!=0)
-		    eConfig::getInstance()->getKey("/elitedvb/extra/hideerror", hideerror);
+			eConfig::getInstance()->getKey("/elitedvb/extra/hideerror", hideerror);
 
 		switch (err)
 		{

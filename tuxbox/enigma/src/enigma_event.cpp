@@ -45,9 +45,9 @@ void eEventDisplay::prevEvent()
 {
 	if (*events == eventlist->begin())
 		*events = --eventlist->end();
- 	else
+	else
 		--(*events);	
-  	
+
 	if (*events != eventlist->end())
 		setEvent(**events);
 	else
@@ -116,7 +116,7 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 			}
 			else
 				break;
-			if (addtype != -1 && (evt || events) && !eTimerManager::getInstance()->eventAlreadyInList(this, evt?*evt:*events, ref) )
+			if ( valid >= 7 && addtype != -1 && (evt || events) && !eTimerManager::getInstance()->eventAlreadyInList(this, evt?*evt:*events, ref) )
 			{
 				hide();
 				eTimerEditView v( evt?*evt:*events, addtype, ref );
@@ -219,6 +219,7 @@ void eEventDisplay::updateScrollbar()
 
 void eEventDisplay::setEvent(EITEvent *event)
 {
+	valid=0;
 	// update evt.. when setEvent is called from outside..
 	if ( evt )  
 		evt = event;
@@ -234,6 +235,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 		tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
 		if (begin)
 		{
+			valid |= 1;
 			_eventTime.sprintf("%02d:%02d", begin->tm_hour, begin->tm_min);
 			_eventDate=eString().sprintf("%02d.%02d.%4d", begin->tm_mday, begin->tm_mon+1, begin->tm_year+1900);
 		}
@@ -241,6 +243,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 		tm *end=event->start_time!=-1?localtime(&endtime):0;
 		if (end)
 		{
+			valid |= 2;
 			_eventTime+=eString().sprintf(" - %02d:%02d", end->tm_hour, end->tm_min);
 		}
 
@@ -249,6 +252,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 			if (d->Tag()==DESCR_SHORT_EVENT)
 			{
 				ShortEventDescriptor *s=(ShortEventDescriptor*)*d;
+				valid |= 4;
 				_title=s->event_name;
 #ifndef DISABLE_LCD	
 				if (LCDElement)
@@ -256,11 +260,13 @@ void eEventDisplay::setEvent(EITEvent *event)
 #endif
 				if ((s->text.length() > 0) && (s->text!=_title))
 				{
+					valid |= 8;
 					_long_description+=s->text;
 					_long_description+="\n\n";
 				}
 			} else if (d->Tag()==DESCR_EXTENDED_EVENT)
 			{
+				valid |= 16;
 				ExtendedEventDescriptor *ss=(ExtendedEventDescriptor*)*d;
 				_long_description+=ss->item_description;
 			}

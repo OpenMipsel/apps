@@ -1,6 +1,7 @@
 #ifndef DISABLE_FILE
 
 #include "lib/codecs/codecmpg.h"
+#include <lib/dvb/decoder.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -117,8 +118,21 @@ a:
 				goto finish;
 			case 0xba: // pack_start_code
 			{
-				int type = getBits(2);
-
+				int type=getBits(2);
+				if ( type != mpegtype )
+				{
+					switch (type)
+					{
+						case 1:
+							Decoder::SetStreamType(TYPE_PES);
+							break;
+						default:
+							Decoder::SetStreamType(TYPE_MPEG1);
+							break;
+					}
+					mpegtype=type;
+					eDebug("type = %d", type);
+				}
 				if (type != 1)
 				{
 					getBits(6);

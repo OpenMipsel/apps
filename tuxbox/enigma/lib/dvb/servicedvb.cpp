@@ -160,6 +160,11 @@ void eDVRPlayerThread::outputReady(int what)
 			state=stateBuffering;
 		} else
 		{
+			if (seeking)
+			{
+				Decoder::stopTrickmode();
+				seeking=0;
+			}
 			if (!livemode)
 			{
 				eDebug("ok, everything played..");
@@ -693,9 +698,27 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 		{
 #ifdef TIMESHIFT
 			if (recording)
+			{
 				startPlayback(current_filename, 1);
+				int fd = Decoder::getVideoDevice();
+				if (::ioctl(fd, VIDEO_SET_BLANK, 0) < 0 )
+					eDebug("VIDEO_SET_BLANK failed (%m)");
+			}
 			else
 #endif
+			if ( state == statePause )
+			{
+				Decoder::Resume();
+				state = statePlaying;
+				return 0;
+			}
+			else if ( !cmd.parm )
+			{
+				Decoder::Pause();
+				state = statePause;
+				return 0;
+			}
+			else
 				return -1;
 		}
 		if ((state == statePlaying) || (state == statePause) || (state == stateSkipping))
@@ -710,9 +733,9 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			else
 				state=stateSkipping;
 		} else
-			{
+		{
 			return -2;
-			}
+		}
 		break;
 	}
 	case eServiceCommand::cmdSkip:

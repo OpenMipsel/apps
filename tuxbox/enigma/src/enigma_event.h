@@ -24,6 +24,7 @@ class eEventDisplay: public eWindow
 	int total;
 	void updateScrollbar();
 	void checkTimerIcon(EITEvent *);
+	int valid;
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:

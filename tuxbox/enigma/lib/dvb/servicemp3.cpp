@@ -16,6 +16,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <ost/audio.h>
 
 #define VIDEO_FLUSH_BUFFER    0
 
@@ -584,6 +585,7 @@ eMP3Decoder::~eMP3Decoder()
 	if (http)
 		delete http;
 	delete audiodecoder;
+	Decoder::SetStreamType(TYPE_PES);
 	Decoder::parms.vpid=-1;
 	Decoder::parms.apid=-1;
 	Decoder::parms.pcrpid=-1;
@@ -817,6 +819,11 @@ int eServiceHandlerMP3::serviceCommand(const eServiceCommand &cmd)
 		} else
 			return -2;
 		break;
+	case eServiceCommand::cmdSeekBegin:
+	case eServiceCommand::cmdSeekEnd:
+		if (ioctl(Decoder::getAudioDevice(), AUDIO_SET_MUTE, cmd.type == eServiceCommand::cmdSeekBegin) < 0)
+			eDebug("AUDIO_SET_MUTE error (%m)");
+		break;
 	case eServiceCommand::cmdSkip:
 		decoder->messages.send(eMP3Decoder::eMP3DecoderMessage(eMP3Decoder::eMP3DecoderMessage::skip, cmd.parm));
 		break;
@@ -861,6 +868,7 @@ void eServiceHandlerMP3::addFile(void *node, const eString &filename)
 	} else if ((filename.right(5).upper()==".MPEG")
 		|| (filename.right(4).upper()==".MPG")
 		|| (filename.right(4).upper()==".VOB")
+		|| (filename.right(4).upper()==".BIN")
 		|| (filename.right(4).upper()==".VDR"))
 	{
 		struct stat s;

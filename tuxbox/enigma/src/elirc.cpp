@@ -60,7 +60,7 @@ void ELirc::sendcommandlist(std::string filename)
 	if(fd==-1)
 	{
 		perror("could not open lircd-socket\n");
-	return;
+		return;
 	};
 
 	if(connect(fd,(struct sockaddr *)&addr,sizeof(addr))==-1)

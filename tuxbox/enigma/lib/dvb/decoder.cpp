@@ -186,6 +186,25 @@ void Decoder::flushBuffer()
 //	Set();
 }
 
+void Decoder::SetStreamType(int type)
+{
+	uint val=0;
+	switch ( type )
+	{
+		case TYPE_ES:
+			val=0;
+			break;
+		case TYPE_PES:
+			val=1;
+			break;
+		case TYPE_MPEG1:
+			val=2;
+			break;
+	}
+	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_STREAMTYPE, val)<0 )
+		eDebug("AUDIO_SET_STREAMTYPE failed (%m)");
+}
+
 int Decoder::Set()
 {
 	int changed=0;
@@ -614,7 +633,7 @@ void Decoder::startTrickmode()
 		if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 0)<0)
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
 	}
-	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_PAUSE)<0)
+	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,1)<0)
 		eDebug("AUDIO_PAUSE failed (%m)");
 }
 
@@ -628,8 +647,8 @@ void Decoder::stopTrickmode()
 		if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 1)<0)
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
 	}
-	if (fd.audio != -1 &&::ioctl(fd.audio, AUDIO_CONTINUE)<0)
-		eDebug("AUDIO_CONTINUE failed (%m)");
+	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,0)<0)
+		eDebug("AUDIO_PAUSE failed (%m)");
 }
 
 void Decoder::addCADescriptor(__u8 *descriptor)
