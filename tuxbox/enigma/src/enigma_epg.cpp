@@ -37,7 +37,7 @@ static eString buildShortName( const eString &str )
 }
 
 eZapEPG::eZapEPG(): 
-	eWindow(1), offs(0), focusColumn(0), hours(3), numservices(5)
+	eWindow(1), offs(0), focusColumn(0), hours(3), numservices(5), eventWidget(0)
 {
 	setText(_("Programm Guide"));
 	timeFont = eSkin::getActive()->queryFont("epg.time");
@@ -64,10 +64,11 @@ void eZapEPG::addToList( const eServiceReference& ref )
 }
 
 eZapEPG::entry::entry(eWidget *parent, gFont &timeFont, gFont &titleFont, 
-	gFont &descrFont, gColor entryColor, gColor entryColorSelected)
+	gFont &descrFont, gColor entryColor, gColor entryColorSelected, eWidget *sbar)
 	: eWidget(parent), timeFont(timeFont),
 	titleFont(titleFont), descrFont(descrFont), entryColor(entryColor), 
-	entryColorSelected(entryColorSelected)
+	entryColorSelected(entryColorSelected),
+	sbar(sbar)
 {
 	setBackgroundColor(entryColor);
 };
@@ -105,8 +106,7 @@ void eZapEPG::entry::redrawWidget(gPainter *target, const eRect &area)
 
 void eZapEPG::entry::gotFocus()
 {
-	parent->setHelpText(helptext);
-	parent->event( eWidgetEvent::childChangedHelpText );
+	sbar->setText( helptext );
 	setBackgroundColor(entryColorSelected);
 }
 
@@ -131,10 +131,10 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 	case eWidgetEvent::evtAction:
 	{
 		int addtype=-1;
-		int servicevalid = current_service != serviceentries.end();
+		int servicevalid = serviceentries.size() && current_service != serviceentries.end();
 		int eventvalid = 0;
 		if (servicevalid)
-			if (current_service->current_entry != current_service->entries.end())
+			if ( current_service->current_entry != current_service->entries.end())
 				eventvalid = 1;
 		if (event.action == &i_epgSelectorActions->addDVRTimerEvent)
 			addtype = ePlaylistEntry::RecTimerEntry |
@@ -188,7 +188,6 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 			pLCD->lcdMenu->show();
 			ei.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 #endif
-
 			hide();
 			ei.show();
 			int ret;
@@ -255,7 +254,7 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 		EITEvent *ev = new EITEvent(*event->second);
 		if (((ev->start_time+ev->duration)>= start) && (ev->start_time <= end))
 		{
-			entry *e = new entry(this, timeFont, titleFont, descrFont, entryColor, entryColorSelected);
+			entry *e = new entry(eventWidget, timeFont, titleFont, descrFont, entryColor, entryColorSelected, sbar);
 			e->service = &service;
 			e->start = ev->start_time;
 			e->duration = ev->duration;
@@ -313,7 +312,6 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 				e->description.c_str() ) );
 
 			e->event = ev;
-			e->show();
 		} else
 			delete ev;
 	}
@@ -434,7 +432,19 @@ void eZapEPG::buildPage(int direction)
 			direction 1  ->  right
 			direction 2  ->  up
 			direction 3  ->  down  */
+	if ( eventWidget )
+		eventWidget->hide();
 	serviceentries.clear();
+	delete eventWidget;
+	eventWidget = new eWidget( this );
+	eventWidget->move(ePoint(0,0));
+	eSize tmp = clientrect.size();
+	tmp.setHeight( clientrect.height()-30 );
+	eventWidget->resize( tmp );
+
+#ifndef DISABLE_LCD
+	eventWidget->setLCD( LCDTitle, LCDElement );
+#endif
 
 	time_t now=time(0)+eDVB::getInstance()->time_difference+offs,
 				 end=now+hours*3600;
@@ -487,7 +497,7 @@ void eZapEPG::buildPage(int direction)
 			delete e;
 			serviceentries.push_back(serviceentry());
 			serviceentry &service = serviceentries.back();
-			service.header = new eLabel(this);
+			service.header = new eLabel(eventWidget);
 #ifdef DIR_V
 			service.header->move(ePoint(p * servicewidth, 0));
 			service.header->resize(eSize(servicewidth, 30));
@@ -514,7 +524,6 @@ void eZapEPG::buildPage(int direction)
 
 			// set column service name
 			service.header->setText(stext);
-			service.header->show();
 
 			buildService(service, now, end);
 
@@ -529,6 +538,8 @@ void eZapEPG::buildPage(int direction)
 			curE = services.begin();
 	}
 	while( serviceentries.size() < numservices && curE != curS );
+
+	eventWidget->show();
 
 	if (!p)
 	{

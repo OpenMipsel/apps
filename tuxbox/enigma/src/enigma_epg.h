@@ -15,12 +15,14 @@ class eZapEPG: public eWindow
 	gColor entryColor, entryColorSelected;
 	unsigned int offs, focusColumn, hours, numservices;
 	eStatusBar *sbar;
+	eWidget *eventWidget;
 	struct serviceentry;
 	struct entry: public eWidget
 	{
-		void redrawWidget(gPainter *target, const eRect &area);
 		gFont &timeFont, &titleFont, &descrFont;
 		gColor entryColor, entryColorSelected;
+		eWidget *sbar;
+		void redrawWidget(gPainter *target, const eRect &area);
 		void gotFocus();
 		void lostFocus();
 	public:
@@ -33,7 +35,7 @@ class eZapEPG: public eWindow
 		eString title, description;
 		void setActive(int active);
 		const EITEvent *event;
-		entry(eWidget *parent, gFont &timeFont, gFont &titleFont, gFont &descrFont, gColor entryColor, gColor entryColorSelected);
+		entry(eWidget *parent, gFont &timeFont, gFont &titleFont, gFont &descrFont, gColor entryColor, gColor entryColorSelected, eWidget *sbar );
 		~entry();
 	};
 	
