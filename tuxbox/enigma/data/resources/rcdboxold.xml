@@ -199,5 +199,9 @@
 			<action name="removeNetwork" key="red" flags="m" />
 		</actionmap>
 
+		<actionmap name="EPGStyleSelector">
+			<action name="infoPressed" key="?" flags="m" />
+		</actionmap>
+
 	</device>
 </rcdefaults>

@@ -127,6 +127,7 @@ public:
 		> moveEntry;
 
 	Signal0<void>showMultiEPG;
+	Signal1<void,eServiceReferenceDVB>showEPGList;
 
 	const eServicePath &getPath() { return path; }
 	void setPath(const eServicePath &path, const eServiceReference &select=eServiceReference());

@@ -746,6 +746,8 @@ class eTransponderList: public existNetworks
 	std::map<int,eServiceReferenceDVB> channel_number;
 	friend class eLNB;
 	friend class eSatellite;
+//	ePlaylist *newServices;
+//	eServiceReference newServicesRef;
 public:
 	std::map<tsref,int> TimeOffsetMap;
 	void readTimeOffsetData( const char* filename );
@@ -762,6 +764,8 @@ public:
 	~eTransponderList()
 	{
 		writeLNBData();  // write Data to registry
+/*		newServices->save();
+		eServiceInterface::getInstance()->removeRef(newServicesRef);*/
 
 		if (instance == this)
 			instance = 0;

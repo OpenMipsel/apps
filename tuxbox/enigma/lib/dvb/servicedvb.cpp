@@ -1023,7 +1023,7 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 		}
 		case -4:  // handle Satellites
 		{
-			int flags=eServiceReference::mustDescent|eServiceReference::canDescent|eServiceReference::isDirectory|eServiceReference::shouldSort;
+			static int flags=eServiceReference::mustDescent|eServiceReference::canDescent|eServiceReference::isDirectory|eServiceReference::shouldSort;
 			std::set<int> filledSats;
 			eTransponderList::getInstance()->forEachTransponder( eServiceHandlerDVB_SatExist( filledSats ));
 			for ( std::set<int>::iterator it( filledSats.begin()) ; it != filledSats.end(); it++ )

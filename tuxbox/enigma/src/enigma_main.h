@@ -405,7 +405,7 @@ private:
 	void showAudioMenu();
 	void runVTXT();
 	void runPluginExt();
-	void showEPGList();
+	void showEPGList(eServiceReferenceDVB ref);
 	void showEPG();
 	void showEPG_Streaminfo();	
 	void showInfobar();

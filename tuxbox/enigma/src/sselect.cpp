@@ -1,11 +1,9 @@
-#define USE_MULTI_EPG
 #include <algorithm>
 #include <list>
 
 #include <enigma.h>
 #include <enigma_main.h>
 #include <sselect.h>
-#include <epgwindow.h>
 
 #include <lib/base/i18n.h>
 #include <lib/gdi/font.h>
@@ -30,6 +28,54 @@ gPixmap *eListBoxEntryService::folder=0;
 int eListBoxEntryService::maxNumSize=0;
 std::set<eServiceReference> eListBoxEntryService::hilitedEntrys;
 eListBoxEntryService *eListBoxEntryService::selectedToMove=0;
+
+struct EPGStyleSelectorActions
+{
+	eActionMap map;
+	eAction infoPressed;
+	EPGStyleSelectorActions():
+		map("EPGStyleSelector", _("EPG Style Selector")),
+		infoPressed(map, "infoPressed", _("open the EPG with selected style"), eAction::prioDialog)
+	{
+	}
+};
+eAutoInitP0<EPGStyleSelectorActions> i_EPGStyleSelectorActions(eAutoInitNumbers::actions, "EPG Style Selector actions");
+
+class eEPGStyleSelector: public eListBoxWindow<eListBoxEntryText>
+{
+public:
+	eEPGStyleSelector()
+		:eListBoxWindow<eListBoxEntryText>(_("EPG Style"), 5, 350, true)
+	{
+		addActionMap( &i_EPGStyleSelectorActions->map );
+		move(ePoint(100,100));
+		new eListBoxEntryText(&list,_("Channel EPG"), (void*)1, 0, _("open EPG for selected Channel") );
+		new eListBoxEntryText(&list,_("Multi EPG"), (void*)2, 0, _("open EPG for next five channels") );
+		CONNECT( list.selected, eEPGStyleSelector::entrySelected );
+	}
+	int eventHandler( const eWidgetEvent &event )
+	{
+		switch (event.type)
+		{
+			case eWidgetEvent::evtAction:
+				if ( event.action == &i_EPGStyleSelectorActions->infoPressed )
+					entrySelected( list.getCurrent() );
+				else
+					break;
+				return 1;
+			default:
+				break;
+		}
+		return eWindow::eventHandler( event );
+	}
+	void entrySelected( eListBoxEntryText* e )
+	{
+		if (e)
+			close( (int)e->getKey() );
+		else
+			close(-1);
+	}
+};
 
 struct serviceSelectorActions
 {
@@ -882,28 +928,26 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->showEPGSelector && !movemode && !editMode)
 			{
-#ifndef USE_MULTI_EPG
-				const timeMap* e=0;
-				if (selected.type == eServiceReference::idDVB)
-				 	e = eEPGCache::getInstance()->getTimeMap((eServiceReferenceDVB&)selected);
-				if (e && !e->empty())
-				{
-					eEPGSelector wnd((eServiceReferenceDVB&)selected);
-#ifndef DISABLE_LCD
-					if (LCDElement && LCDTitle)
-						wnd.setLCD(LCDTitle, LCDElement);
-#endif
-					hide();
-					wnd.show();
-					wnd.exec();
-					wnd.hide();
-					show();
-				}
-#else
 				hide();
-				showMultiEPG();
-				show();
+				eEPGStyleSelector e;
+#ifndef DISABLE_LCD
+				e.setLCD( LCDTitle, LCDElement );
 #endif
+				e.show();
+				int ret = e.exec();
+				e.hide();
+				switch ( ret )
+				{
+					case 1:
+						/*emit*/ showEPGList((eServiceReferenceDVB&)selected);
+						break;
+					case 2:
+						/*emit*/ showMultiEPG();
+						break;
+					default:
+						break;
+				}
+				show();
 			}
 			else if (event.action == &i_serviceSelectorActions->pathUp)
 				pathUp();
@@ -1458,3 +1502,4 @@ void eServiceSelector::toggleButtons()
 	eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", showButtons );
 	setStyle(style,true);
 }
+

@@ -1539,6 +1539,7 @@ eZapMain::eZapMain()
 	CONNECT(eZap::getInstance()->getServiceSelector()->rotateRoot, eZapMain::rotateRoot);
 	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
 	CONNECT(eZap::getInstance()->getServiceSelector()->showMultiEPG, eZapMain::showMultiEPG);
+	CONNECT(eZap::getInstance()->getServiceSelector()->showEPGList, eZapMain::showEPGList);
 	CONNECT(eZap::getInstance()->getServiceSelector()->getRoot, eZapMain::getRoot);
 
 	reloadPaths();
@@ -3129,8 +3130,6 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 				eServiceInterface::getInstance()->stop();
 		}
 	}
-	case 13:
-		sel->toggleButtons();
 	}
 	sel->show();
 }
@@ -3477,16 +3476,18 @@ void eZapMain::runPluginExt()
 	plugins.exec();
 }
 
-void eZapMain::showEPGList()
+void eZapMain::showEPGList(eServiceReferenceDVB service)
 {
-	eServiceReferenceDVB &service=(eServiceReferenceDVB&)eServiceInterface::getInstance()->service;
 	if (service.type != eServiceReference::idDVB)
 		return;
-	if (isEPG)
+	const timeMap* e = eEPGCache::getInstance()->getTimeMap((eServiceReferenceDVB&)service);
+	if (e && !e->empty())
 	{
 		eEPGSelector wnd(service);
 #ifndef DISABLE_LCD
 		eZapLCD* pLCD = eZapLCD::getInstance();
+		bool bMain = pLCD->lcdMain->isVisible();
+		bool bMenu = pLCD->lcdMenu->isVisible();
 		pLCD->lcdMain->hide();
 		pLCD->lcdMenu->show();
 		wnd.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
@@ -3500,8 +3501,10 @@ void eZapMain::showEPGList()
 		wnd.exec();
 		wnd.hide();
 #ifndef DISABLE_LCD
-		pLCD->lcdMenu->hide();
-		pLCD->lcdMain->show();
+		if (!bMenu)
+			pLCD->lcdMenu->hide();
+		if ( bMain )
+			pLCD->lcdMain->show();
 #endif
 	}
 }
@@ -3768,8 +3771,11 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			runVTXT();
 		else if (event.action == &i_enigmaMainActions->pluginExt)
 			runPluginExt();
-		else if (event.action == &i_enigmaMainActions->showEPGList)
-			showEPGList();
+		else if (event.action == &i_enigmaMainActions->showEPGList && isEPG)
+		{
+			
+			showEPGList((eServiceReferenceDVB&)eServiceInterface::getInstance()->service);
+		}
 		else if ( subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->nextSubService )
 		{
 			if ( flags&ENIGMA_SUBSERVICES && handleState() )
@@ -5097,7 +5103,9 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		// delete Service ( only in Favourite lists... )
 		if ( ref.flags & eServiceReference::flagDirectory &&
 				eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-				new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
+			new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
+		else if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+			new eListBoxEntryText(&list, _("add to user bouquet"), (void*)4);
 	}
 	else
 	{
@@ -5138,12 +5146,6 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		else
 			new eListBoxEntryText(&list, _("enable parental lock"), (void*)12 );
 	}
-	int showButtons=0;
-	eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", showButtons );
-	if ( showButtons )
-		new eListBoxEntryText(&list, _("hide help buttons"), (void*)13 );
-	else
-		new eListBoxEntryText(&list, _("show help buttons"), (void*)13 );
 	CONNECT(list.selected, eServiceContextMenu::entrySelected);
 }
 

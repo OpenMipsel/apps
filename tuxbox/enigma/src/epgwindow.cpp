@@ -280,14 +280,9 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 		hide();
 		eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current);
 		eEventDisplay ei(service ? service->service_name.c_str() : "", current, 0, &entry->event);
-
 #ifndef DISABLE_LCD
-		eZapLCD* pLCD = eZapLCD::getInstance();
-		pLCD->lcdMain->hide();
-		pLCD->lcdMenu->show();
-		ei.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+		ei.setLCD(LCDTitle, LCDElement);
 #endif
-
 		ei.show();
 		while((ret = ei.exec()))
 		{
@@ -304,10 +299,6 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 				ei.setEvent(&tmp->event);
 		}
 		ei.hide();
-#ifndef DISABLE_LCD
-		pLCD->lcdMenu->hide();
-		pLCD->lcdMain->show();
-#endif
 		show();
 	}
 }

@@ -571,7 +571,16 @@ eTransponderList::eTransponderList()
 {
 	if (!instance)
 		instance = this;
-	
+
+/*
+	eServicePlaylistHandler::getInstance()->addNum( 6 );
+	newServicesRef=eServiceReference( eServicePlaylistHandler::ID, eServiceReference::flagDirectory, 0, 6);
+	newServices=(ePlaylist*)eServiceInterface::getInstance()->addRef(newServicesRef);
+	ASSERT(newServices);
+	newServices->service_name=_("new services");
+	newServices->load(CONFIGDIR "/enigma/newservices.epl");
+*/
+
 	readLNBData();
 }
 

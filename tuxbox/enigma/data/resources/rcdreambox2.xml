@@ -272,6 +272,9 @@
 			<action name="addNetwork" key="green" flags="m" />
 			<action name="removeNetwork" key="red" flags="m" />
 		</actionmap>
+		<actionmap name="EPGStyleSelector">
+			<action name="infoPressed" key="info" flags="m" />
+		</actionmap>
 	</device>
 
 	<device identifier="DreamboxButton" >
