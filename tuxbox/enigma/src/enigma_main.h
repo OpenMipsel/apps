@@ -99,6 +99,7 @@ class NVODStream: public eListBoxEntryTextStream
 private:
 	eString redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 	void EITready(int error);
+	void buildText();
 public:
 	NVODStream(eListBox<NVODStream> *listbox, const NVODReferenceEntry *ref, int type);
 	eServiceReferenceDVB service;

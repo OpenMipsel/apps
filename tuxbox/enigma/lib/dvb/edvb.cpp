@@ -56,7 +56,7 @@ void eDVB::tunedIn(eTransponder *trans, int err)
 }
 
 eDVB::eDVB()
-	: state(eDVBState::stateIdle), nvodEIT(0)
+	: state(eDVBState::stateIdle), parentEIT(0)
 {
 	settings=0;
 	time_difference=0;
@@ -212,10 +212,10 @@ EIT *eDVB::getEIT()
 {
 	if ( tEIT.ready() )
 		return tEIT.getCurrent();
-	else if ( nvodEIT )
+	else if ( parentEIT )
 	{
-		nvodEIT->lock();
-		return nvodEIT;
+		parentEIT->lock();
+		return parentEIT;
 	}
 	else
 		return 0;

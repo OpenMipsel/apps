@@ -103,7 +103,7 @@ public:
 	eAUTable<NIT> tNIT, tONIT;
 	eAUTable<EIT> tEIT;
 	eAUTable<BAT> tBAT;
-	EIT *nvodEIT;
+	EIT *parentEIT;
 
 	eDVBRecorder *recorder;
 	eDVBCI *DVBCI;

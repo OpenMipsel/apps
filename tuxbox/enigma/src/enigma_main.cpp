@@ -292,12 +292,11 @@ std::map<int,int> &eZapSeekIndices::getIndices()
 	return index;
 }
 
-void NVODStream::EITready(int error)
+void NVODStream::buildText()
 {
-	eDebug("NVOD eit ready: %d", error);
-	
 	if (eit.ready && !eit.error)
 	{
+		text.str(eString());
 		for (ePtrList<EITEvent>::const_iterator event(eit.events); event != eit.events.end(); ++event)		// always take the first one
 		{
 			tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
@@ -322,12 +321,16 @@ void NVODStream::EITready(int error)
 	}
 	else
 		text << "Service " << std::setw(4) << std::hex << service.getServiceID().get();
+}
+
+void NVODStream::EITready(int error)
+{
+	eDebug("NVOD eit ready: %d", error);
 
 	((eListBox<NVODStream>*)listbox)->sort(); // <<< without explicit cast the compiler nervs ;)
 
 	if (listbox && listbox->isVisible())
 		listbox->invalidate();
-
 }
 
 NVODStream::NVODStream(eListBox<NVODStream> *listbox, const NVODReferenceEntry *ref, int type)
@@ -341,7 +344,7 @@ NVODStream::NVODStream(eListBox<NVODStream> *listbox, const NVODReferenceEntry *
 
 eString NVODStream::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
 {
-//	EITready(0);
+	buildText();
 	return eListBoxEntryTextStream::redraw(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state);
 }
 
@@ -406,9 +409,13 @@ AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
 		{
 			EIT *eit=service->getEIT();
 			if (eit)
+			{
 				parseEIT(eit);
+			}
 			else
+			{
 				CONNECT( eDVB::getInstance()->tEIT.tableReady, AudioStream::EITready );
+			}
 		}
 	}
 }
@@ -1109,22 +1116,25 @@ void eZapMain::setEIT(EIT *eit)
 		for (ePtrList<EITEvent>::iterator i(eit->events); i != eit->events.end(); ++i)
 		{
 			EITEvent *event=*i;
-			if ((event->running_status>=2) || ((!p) && (!event->running_status)))
+			if ( ((eServiceReferenceDVB&)eServiceInterface::getInstance()->service).getServiceType() != 6 )
 			{
-				cur_event_id=event->event_id;
-				cur_start=event->start_time;
-				cur_duration=event->duration;
-				clockUpdate();
+				if ((event->running_status>=2) || ((!p) && (!event->running_status)))
+				{
+					cur_event_id=event->event_id;
+					cur_start=event->start_time;
+					cur_duration=event->duration;
+					clockUpdate();
 
-				for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
-					if (d->Tag()==DESCR_LINKAGE)
-					{
-						LinkageDescriptor *ld=(LinkageDescriptor*)*d;
-						if (ld->linkage_type!=0xB0)
-							continue;
-						subservicesel.add(ld);
-						flags|=ENIGMA_SUBSERVICES;
-					}
+					for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
+						if (d->Tag()==DESCR_LINKAGE)
+						{
+							LinkageDescriptor *ld=(LinkageDescriptor*)*d;
+							if (ld->linkage_type!=0xB0)
+								continue;
+								subservicesel.add(ld);
+							flags|=ENIGMA_SUBSERVICES;
+						}
+				}
 			}
 			for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
 			{
@@ -2395,9 +2405,17 @@ void eZapMain::showEPGList()
 
 void eZapMain::showEPG()
 {
-	const eService *service=eServiceInterface::getInstance()->addRef( eServiceInterface::getInstance()->service );
+	if ( eServiceInterface::getInstance()->service.type != eServiceReference::idDVB)
+		return;
 
-	if (!service && eServiceInterface::getInstance()->service.type == eServiceReference::idDVB && !(eServiceInterface::getInstance()->service.flags & eServiceReference::isDirectory) )
+	int stype = ((eServiceReferenceDVB&)eServiceInterface::getInstance()->service).getServiceType();
+
+	eServiceReferenceDVB& ref = ( stype > 4 ) ? refservice : (eServiceReferenceDVB&)eServiceInterface::getInstance()->service;
+	const eService *service=0;
+
+	service = eServiceInterface::getInstance()->addRef( ref );
+
+	if (!service && !(ref.flags & eServiceReference::isDirectory) )
 		return;
 
 	if (isVisible())
@@ -2408,53 +2426,43 @@ void eZapMain::showEPG()
 
 	if (isEPG)
 	{
-		const eventMap* pMap = eEPGCache::getInstance()->getEventMap( (eServiceReferenceDVB&)eServiceInterface::getInstance()->service );
+		const eventMap* pMap = eEPGCache::getInstance()->getEventMap( ref );
 		if (pMap)  // EPG vorhanden
 		{
 			eventMap::const_iterator It = pMap->begin();
 
 			ePtrList<EITEvent> events;
-			events.setAutoDelete(true);
+			events.setAutoDelete(false);
 
 			while (It != pMap->end())
 			{
 				events.push_back( new EITEvent(*It->second) );
 				It++;
 			}
-			eEventDisplay ei( service->service_name.c_str(), &events );
-			actual_eventDisplay=&ei;
-			eZapLCD* pLCD = eZapLCD::getInstance();
-			pLCD->lcdMain->hide();
-			pLCD->lcdMenu->show();
-			ei.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
-			ei.show();
-			ei.exec();
-			ei.hide();
-			pLCD->lcdMenu->hide();
-			pLCD->lcdMain->show();
-			actual_eventDisplay=0;
+			actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), &events );
 		}
 	}
 	else
 	{
 		EIT *eit=eDVB::getInstance()->getEIT();
 		ePtrList<EITEvent> dummy;
-		eEventDisplay ei(service->service_name.c_str(), eit?&eit->events:&dummy);
+		actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), eit?&eit->events:&dummy);
 		if (eit)
 			eit->unlock();		// HIER liegt der hund begraben.
-		actual_eventDisplay=&ei;
-		eZapLCD* pLCD = eZapLCD::getInstance();
-		pLCD->lcdMain->hide();
-		pLCD->lcdMenu->show();
-		ei.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
-		ei.show();
-		ei.exec();
-		ei.hide();
-		pLCD->lcdMenu->hide();
-		pLCD->lcdMain->show();
-		actual_eventDisplay=0;
 	}
-	eServiceInterface::getInstance()->removeRef( eServiceInterface::getInstance()->service );
+	eZapLCD* pLCD = eZapLCD::getInstance();
+	pLCD->lcdMain->hide();
+	pLCD->lcdMenu->show();
+	actual_eventDisplay->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+	actual_eventDisplay->show();
+	actual_eventDisplay->exec();
+	actual_eventDisplay->hide();
+	pLCD->lcdMenu->hide();
+	pLCD->lcdMain->show();
+	delete actual_eventDisplay;
+	actual_eventDisplay=0;
+
+	eServiceInterface::getInstance()->removeRef( ref );
 }
 
 bool eZapMain::handleState(int justask)
@@ -2976,12 +2984,12 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		if (refservice != serviceref)
 			rservice=eDVB::getInstance()->settings->getTransponders()->searchService(refservice);
 
-		if (refservice.getServiceType()==4)
+		if (refservice.getServiceType()==4) // nvod ref service
 			flags|=ENIGMA_NVOD;
 		else
 			flags&=~ENIGMA_NVOD;
 
-		if (serviceref.getServiceType()==6)
+		if (serviceref.getServiceType()==6)  // linkage service
 			flags|=ENIGMA_SUBSERVICES;
 		else
 		{
@@ -2996,7 +3004,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		if (service)
 			name+=service->service_name;
-		else if (serviceref.getServiceType() == 6)
+		else if (serviceref.getServiceType() == 6)  // linkage service..
 			name+=" - " + serviceref.descr;
 
 		if (!name.length())
@@ -3236,7 +3244,6 @@ void eZapMain::gotPMT()
 					isaudio++;
 					isAc3=true;
 				}
-
 		}
 		if (isaudio)
 		{

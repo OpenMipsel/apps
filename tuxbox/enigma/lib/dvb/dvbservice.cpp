@@ -309,7 +309,7 @@ void eDVBServiceController::EITready(int error)
 	if (!error)
 	{
 		EIT *eit=dvb.getEIT();
-/*
+
 		for (ePtrList<EITEvent>::iterator i(eit->events); i != eit->events.end(); ++i)
 		{
 			EITEvent *event=*i;
@@ -325,13 +325,13 @@ void eDVBServiceController::EITready(int error)
 						goto bla;
 					}
 			}
-		}*/
+		}
 		if ( service.getServiceType() == 4 ) // NVOD Service
 		{
-//bla:
-			delete dvb.nvodEIT;
-			dvb.nvodEIT = new EIT( eit );
-			dvb.nvodEIT->events.setAutoDelete(true);
+bla:
+			delete dvb.parentEIT;
+			dvb.parentEIT = new EIT( eit );
+			dvb.parentEIT->events.setAutoDelete(true);
 			eit->events.setAutoDelete(false);
 		}
 		/*emit*/ dvb.gotEIT(eit, 0);
@@ -374,14 +374,16 @@ int eDVBServiceController::switchService(const eServiceReferenceDVB &newservice)
 
 	switch(newservice.getServiceType())
 	{
-		case 1:
-		case 2:
-			delete dvb.nvodEIT;
-			dvb.nvodEIT = 0;
+		case 1:  // tv service
+		case 2:  // radio service
+		case 4:  // nvod parent service
+			delete dvb.parentEIT;
+			dvb.parentEIT = 0;
 		break;
-		case 5:
-			eDebug("NVOD EIT Fake");
-			dvb.gotEIT(0,0);   // eit for nvod reference services
+		case 5:  // nvod ref service
+		case 6:  // linkage ref service
+			// send Parent EIT .. for osd text..
+			dvb.gotEIT(0,0); 
 		break;
 	}
 	return 1;
