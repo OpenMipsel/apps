@@ -170,16 +170,24 @@ void eMainMenu::sel_info()
 	show();
 }
 
+extern bool checkPin( int pin, const char * text );
+
 void eMainMenu::sel_setup()
 {
-	eZapLCD *pLCD=eZapLCD::getInstance();
-	eZapSetup setup;
-	setup.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
-	hide();
-	setup.show();
-	setup.exec();
-	setup.hide();
-	show();
+	int setuppin=0;
+	eConfig::getInstance()->getKey("/elitedvb/pins/setuplock", setuppin);
+
+	if ( checkPin( setuppin, _("setup") ) )
+	{
+		eZapLCD *pLCD=eZapLCD::getInstance();
+		eZapSetup setup;
+		setup.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+		hide();
+		setup.show();
+		setup.exec();
+		setup.hide();
+		show();
+	}
 }
 
 void eMainMenu::sel_plugins()
@@ -195,7 +203,7 @@ void eMainMenu::sel_timer()
 {
 	eZapLCD *pLCD=eZapLCD::getInstance();
 	hide();
-	eTimerView setup;
+	eTimerListView setup;
 	setup.setLCD(pLCD->LCDTitle, pLCD->LCDElement);
 	setup.show();
 	setup.exec();

@@ -31,22 +31,26 @@ static eString getEPGTitle()
 {
 	eServiceReference &ref = eServiceInterface::getInstance()->service;
 
-	eString evtName("not available");
+	eString descr(_("no description is available"));
 
-	EITEvent *event=eEPGCache::getInstance()->lookupEvent((eServiceReferenceDVB&)ref);
+	EITEvent *tmp=eEPGCache::getInstance()->lookupEvent((eServiceReferenceDVB&)ref);
 
-	if(!event)
-		return evtName;
-
-	for(ePtrList<Descriptor>::iterator d(event->descriptor); d!= event->descriptor.end(); ++d)
-		if(d->Tag()==DESCR_SHORT_EVENT)
+	if(tmp)
+	{
+		for (ePtrList<Descriptor>::const_iterator d(tmp->descriptor); d != tmp->descriptor.end(); ++d)
 		{
-			evtName=((ShortEventDescriptor*)*d)->event_name;
-			delete event;
-			break;
+			if ( d->Tag() == DESCR_SHORT_EVENT)
+			{
+				ShortEventDescriptor *s=(ShortEventDescriptor*)*d;
+				descr=s->event_name;
+				if ((s->text.length() > 0) && (s->text!=descr))
+					descr+=" - "+s->text;
+				break;
+			}
 		}
-
-	return evtName;
+		delete tmp;
+	}
+	return descr;
 }
 
 

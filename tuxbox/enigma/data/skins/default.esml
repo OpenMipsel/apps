@@ -505,7 +505,7 @@
 	</object>
 	
 	<object name="setup.skins">
-		<eSkinSetup cposition="150:150" csize="400:300" text="Skin Selector">
+		<eSkinSetup cposition="160:150" csize="400:300" text="Skin Selector">
 			<eLabel text="Skins:" position="20:10" size="100:30"/> <!-- shortcut="1" shortcutFocus="skins" -->
 			<eListbox name="skins" position="120:10" size="e-20:e-90" helptext="select skin and press ok or choose save" loadDeco="" />
 			<eButton text="save" name="accept" position="20:e-80" size="170:40" helptext="save changes and return" loadDeco="" shortcut="green" />
@@ -612,25 +612,42 @@
 		</eBouquetSelector>
 	</object>
 
-	<object name="eTimerView">
-		<eTimerView cposition="70:100" csize="590:420" text="EPG">
-			<eListbox name="events" position="10:10" size="e-10:e-220" loadDeco="" helptext="press ok to edit the selected event" />
-			<eComboBox name="b_year" openEntries="5" position="10:e-210" size="90:35" helptext="select year (ok)" loadDeco="" />
-			<eComboBox name="b_month" openEntries="6" position="110:e-210" size="150:35" helptext="select month (ok)" loadDeco="" />
-			<eComboBox name="b_day" openEntries="10" position="270:e-210" size="e-92:35" helptext="select day (ok)" loadDeco="" />
-			<eNumber name="b_time" position="e-82:e-210" size="72:35" helptext="edit the start time (0..9, left, right)" loadDeco="" />
-			<eComboBox name="e_year" openEntries="5" position="10:e-165" size="90:35" helptext="select year (ok)" loadDeco="" />
-			<eComboBox name="e_month" openEntries="6" position="110:e-165" size="150:35" helptext="select month (ok)" loadDeco="" />
-			<eComboBox name="e_day" openEntries="10" position="270:e-165" size="e-92:35" helptext="select day (ok)" loadDeco="" />
-			<eNumber name="e_time" position="e-82:e-165" size="72:35" helptext="edit the end time (0..9, left, right)" loadDeco="" />
-			<eComboBox name="type" openEntries="3" position="10:e-120" size="250:35" helptext="select the timer type (ok)" loadDeco="" />
-			<eButton name="select_service" position="270:e-120" size="e-10:35" helptext="to change service press ok" loadDeco="" />
-			<eButton name="close" text="close" position="10:e-75" size="150:35" helptext="close timer menu (ok)" loadDeco="" shortcut="escape" />
-			<eButton name="update" text="update" position="170:e-75" size="150:35" helptext="update the current selected timer (ok)" loadDeco="" shortcut="green" />
-			<eButton name="add" text="add" position="e-260:e-75" size="115:35" helptext="add new Timer (ok)" loadDeco="" shortcut="yellow" />
-			<eButton name="remove" text="remove" position="e-135:e-75" size="125:35" helptext="delete the current selected timer (ok)" loadDeco="" shortcut="red" />
+	<object name="eTimerListView">
+		<eTimerListView cposition="70:100" csize="580:395" text="EPG">
+			<eListbox name="events" position="10:10" size="e-10:e-90" loadDeco="" helptext="press ok to select another event" />
+			<eButton name="add" text="add" position="10:e-80" size="200:40" helptext="add new Timer (ok)" loadDeco="" shortcut="green" />
+			<eButton name="remove" text="remove" position="220:e-80" size="200:40" helptext="delete the current selected timer (ok)" loadDeco="" shortcut="red" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
-		</eTimerView>
+		</eTimerListView>
+	</object>
+
+	<object name="eTimerEditView">
+		<eTimerEditView cposition="70:100" csize="590:310" text="Timer Edit">
+			<eTextInputField name="event_name" position="10:10" size="e-10:40" loadDeco="eNumber" helptext="press ok to change event name manually" />
+			<eLabel name="lBegin" text="Starttime" position="405:102" size="103:30" />
+			<eLabel name="lEnd" text="Endtime" position="405:148" size="103:30" />
+			<eCheckBox name="multiple" position="10:60" size="280:30" text="Repeated timer" helptext="for a multiple event enable this" loadDeco="" />
+			<eCheckBox name="Mo" position="300:60" size="280:30" text="Mo" helptext="Monday" loadDeco="" />
+			<eCheckBox name="Tue" position="10:100" size="125:30" text="Tue" helptext="Tuesday" loadDeco="" />
+			<eCheckBox name="Wed" position="145:100" size="145:30" text="Wed" helptext="Wednesday" loadDeco="" />
+			<eCheckBox name="Thu" position="300:100" size="90:30" text="Thu" helptext="Thursday" loadDeco="" />
+			<eCheckBox name="Fr" position="10:145" size="125:30" text="Fr" helptext="Friday" loadDeco="" />
+			<eCheckBox name="Sa" position="145:145" size="145:30" text="Sa" helptext="Saturday" loadDeco="" />
+			<eCheckBox name="Su" position="300:145" size="90:30" text="Su" helptext="Sunday" loadDeco="" />
+			<eComboBox name="b_year" openEntries="5" position="10:100" size="90:35" helptext="select year (ok)" loadDeco="" />
+			<eComboBox name="b_month" openEntries="6" position="110:100" size="150:35" helptext="select month (ok)" loadDeco="" />
+			<eComboBox name="b_day" openEntries="8" position="270:100" size="e-92:35" helptext="select day (ok)" loadDeco="" />
+			<eNumber name="b_time" position="e-82:100" size="72:35" helptext="edit the start time (0..9, left, right)" loadDeco="" />
+			<eComboBox name="e_year" openEntries="5" position="10:145" size="90:35" helptext="select year (ok)" loadDeco="" />
+			<eComboBox name="e_month" openEntries="6" position="110:145" size="150:35" helptext="select month (ok)" loadDeco="" />
+			<eComboBox name="e_day" openEntries="8" position="270:145" size="e-92:35" helptext="select day (ok)" loadDeco="" />
+			<eNumber name="e_time" position="e-82:145" size="72:35" helptext="edit the end time (0..9, left, right)" loadDeco="" />
+			<eComboBox name="type" openEntries="3" position="10:190" size="250:35" helptext="select the timer type (ok)" loadDeco="" />
+			<eButton name="select_service" position="270:190" size="e-10:35" helptext="to change service press ok" loadDeco="" />
+			<eButton name="apply" text="apply" position="10:235" size="250:35" shortcut="green" helptext="save data and close window" loadDeco="" />
+			<eButton name="scanEPG" text="scan EPG" position="270:235" size="e-10:35" shortcut="blue" helptext="search event name for this beg-/end time in epg" loadDeco="" />
+			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
+		</eTimerEditView>
 	</object>
 
 	<object name="eAboutScreen">
@@ -742,4 +759,17 @@
 			<eLabel name="description" position="10:320" size="e-10:30" />
 		</eWizardDiseqc>
 	</object>
+
+	<object name="TransponderWindow">
+		<TransponderWindow cposition="80:100" csize="550:390" text="Transponders">
+			<eListbox name="satlist" position="10:10" size="305:e-90" loadDeco="" />
+			<eListbox name="transponderlist" position="335:10" size="205:e-90" loadDeco="" />
+			<eButton name="sat" text="sat" position="10:e-80" size="125:40" loadDeco="" helptext="select sat ( up/down )" />
+			<eButton name="add" text="add" position="145:e-80" size="125:40" loadDeco="" helptext="add new Transponder to selected sat (ok)" />
+			<eButton name="edit" text="edit" position="280:e-80" size="125:40" loadDeco="" helptext="edit selected transponder (ok)" />
+			<eButton name="remove" text="remove" position="415:e-80" size="125:40" loadDeco="" helptext="remove selected satellite" />
+			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
+		</TransponderWindow>
+	</object>
+	
 </eskin>

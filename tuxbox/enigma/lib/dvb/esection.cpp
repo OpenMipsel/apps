@@ -118,8 +118,7 @@ eSection::eSection()
 
 eSection::~eSection()
 {
-	if (timer)
-		delete timer;
+	delete timer;
 	timer=0;
 	closeFilter();
 	if (lockcount)

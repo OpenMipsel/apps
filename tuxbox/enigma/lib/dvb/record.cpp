@@ -19,7 +19,7 @@ void eDVBRecorder::dataAvailable(int what)
 	if (res <= 0)
 	{
 		eDebug("recording write error, maybe disk full");
-		s_close();
+//		s_close();
 		rmessagepump.send(eDVBRecorderMessage(eDVBRecorderMessage::rWriteError));
 		return;
 	}

@@ -38,7 +38,6 @@ public:
 	{
 		return choice;
 	}
-	
 protected:
 	static int getEntryHeight()
 	{

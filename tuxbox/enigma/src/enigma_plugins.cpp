@@ -145,7 +145,7 @@ int eZapPlugins::exec()
 			eString err;
 			err.sprintf(_("Couldn't read plugin directory %s"), PluginPath[i].c_str() );
 			eDebug(err.c_str());
-			if ( i )
+			if ( !i )
 			{
 				eMessageBox msg(err, _("Error"), eMessageBox::iconError|eMessageBox::btOK );
 				msg.show();

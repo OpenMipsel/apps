@@ -93,13 +93,14 @@ void eListBoxEntryEPG::build()
 			{
 				for (ePtrList<Descriptor>::iterator d(evt->descriptor); d != evt->descriptor.end(); ++d)
 				{
-					Descriptor *descriptor=*d;
-					if (descriptor->Tag()==DESCR_SHORT_EVENT)
+					if (d->Tag()==DESCR_SHORT_EVENT)
 					{
 						descr = ((ShortEventDescriptor*)descriptor)->event_name;
-						return;
+						break;
 					}
 				}
+				delete evt;
+				return;
 			}
 		}
 	}
@@ -120,7 +121,7 @@ eListBoxEntryEPG::eListBoxEntryEPG(EITEvent& evt, eListBox<eListBoxEntryEPG> *li
 
 extern const char *dayStrShort[];
 
-eString eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
+const eString &eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
 	drawEntryRect(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, hilited);
 	
@@ -153,7 +154,7 @@ eString eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiv
 	rc->renderPara(*paraTime, ePoint( xpos, rect.top() + TimeYOffs ) );
 	xpos+=timeXSize+paraTime->getBoundBox().height();
 
-	ePlaylistEntry* p;
+	ePlaylistEntry* p=0;
 	if ( (p = eTimerManager::getInstance()->findEvent( &service, &event )) )
 		if ( p->type & ePlaylistEntry::SwitchTimerEntry )
 		{
@@ -177,7 +178,8 @@ eString eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiv
 	}
 	rc->renderPara(*paraDescr, ePoint( xpos, rect.top() + DescrYOffs ) );
 
-	return hlp+" "+descr;
+	static eString ret = hlp+" "+descr;
+	return ret;
 }
 
 void eEPGSelector::fillEPGList()
@@ -278,7 +280,7 @@ void eEPGSelector::fillEPGList()
 		new eListBoxEntryEPG(*It->second, events, current);
 
 // sort Events..
-	((eListBox<eListBoxEntryEPG>*)events)->sort();		
+	((eListBox<eListBoxEntryEPG>*)events)->sort();
 }
 
 void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
@@ -310,7 +312,7 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 				break; // close EventDisplay
 
 			if (tmp)
-				ei.setEvent(&tmp->event);					
+				ei.setEvent(&tmp->event);
 		}
 		ei.hide();
 		pLCD->lcdMenu->hide();
@@ -358,18 +360,16 @@ int eEPGSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_epgSelectorActions->removeTimerEvent)
 			{
 				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &current, &events->getCurrent()->event ) )
-					invalidateEntry( events->getCurrent() );
+					events->invalidateCurrent();
 			}
 			else
 				break;
 			if (addtype != -1)
 			{
-				if ( eTimerManager::getInstance()->addEventToTimerList(
-					this, &events->getCurrent()->service,
-					&events->getCurrent()->event, addtype ))
+				if ( !eTimerManager::getInstance()->eventAlreadyInList( this, events->getCurrent()->event, events->getCurrent()->service) )
 				{
 					hide();
-					eTimerView v( eTimerManager::getInstance()->findEvent( &events->getCurrent()->service, &events->getCurrent()->event ) );
+					eTimerEditView v( events->getCurrent()->event, addtype, events->getCurrent()->service);
 					v.show();
 					v.exec();
 					v.hide();
@@ -382,30 +382,4 @@ int eEPGSelector::eventHandler(const eWidgetEvent &event)
 			break;
 	}
 	return eWindow::eventHandler(event);
-}
-
-struct findEvent: public std::unary_function<const eListBoxEntry&, void>
-{
-	const eListBoxEntry& entry;
-	int& cnt;
-
-	findEvent(const eListBoxEntry& e, int& cnt): entry(e), cnt(cnt)
-	{
-		cnt=0;	
-	}
-
-	bool operator()(const eListBoxEntry& s)
-	{
-		if (&entry == &s)
-			return 1;
-		cnt++;
-		return 0;
-	}
-};
-
-void eEPGSelector::invalidateEntry( eListBoxEntryEPG *e)
-{
-	int i;
-	if( events->forEachVisibleEntry( findEvent( *e, i ) ) == eListBoxBase::OK )
-		events->invalidateEntry( i );
 }

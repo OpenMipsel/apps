@@ -49,7 +49,7 @@ protected:
 	{
 		return 50;
 	}
-	
+
 	const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
 	{
 		drawEntryRect( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state );

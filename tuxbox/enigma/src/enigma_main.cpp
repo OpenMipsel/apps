@@ -12,6 +12,7 @@
 #include <sys/ioctl.h>
 
 #include <streaminfo.h>
+#include <parentallock.h>
 #include <enigma_mainmenu.h>
 #include <enigma_event.h>
 #include <enigma.h>
@@ -34,6 +35,7 @@
 #include <lib/dvb/servicestructure.h>
 #include <lib/dvb/serviceplaylist.h>
 #include <lib/dvb/frontend.h>
+#include <lib/dvb/dvbwidgets.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/eprogress.h>
@@ -377,14 +379,16 @@ NVODStream::NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespac
 	eit.start();
 }
 
-eString NVODStream::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
+const eString &NVODStream::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
 {
 	if (begTime && (begTime = validate()) )
 		return eListBoxEntryTextStream::redraw(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state);
 
 	listbox->remove( this );
 	eit.start();
-	return _("not valid!");
+
+	static eString ret = _("not valid!");
+	return ret;
 }
 
 void NVODStream::selfDestroy()
@@ -675,31 +679,54 @@ SubService::SubService(eListBox<SubService> *listbox, eDVBNamespace dvb_namespac
 	service.descr = text;
 }
 
-eSubServiceSelector::eSubServiceSelector()
+struct selectCurSubService: public std::unary_function<SubService&, void>
+{
+	eServiceReferenceDVB& cur;
+	eListBox<SubService> &lb;
+	selectCurSubService( eServiceReferenceDVB& cur, eListBox<SubService> &lb )
+		:cur(cur), lb(lb)
+	{
+	}
+
+	bool operator()(SubService& service)
+	{
+		if ( service.service == cur )
+		{
+			lb.setCurrent( &service );
+			return true;
+		}
+		return false;
+	}
+};
+
+eSubServiceSelector::eSubServiceSelector( bool showbuttons )
 	:eListBoxWindow<SubService>(_("multiple Services"), 10, 530),
 	quickzap(0)
 {
-	move(ePoint(70, 70));
+	move(ePoint(80, 70));
 	cresize( eSize( getClientSize().width(), getClientSize().height()+80 ) );
 
-	bToggleQuickZap = new eButton( this );
-	bToggleQuickZap->resize( eSize( getClientSize().width()-20, 30 ) );
-	bToggleQuickZap->move( ePoint( 10, getClientSize().height()-70 ) );
-	bToggleQuickZap->setText(_("enable quickzap"));
-	bToggleQuickZap->setShortcut("green");
-	bToggleQuickZap->setShortcutPixmap("green");
-	bToggleQuickZap->show();
+	if ( showbuttons )
+	{
+		bToggleQuickZap = new eButton( this );
+		bToggleQuickZap->resize( eSize( getClientSize().width()-20, 30 ) );
+		bToggleQuickZap->move( ePoint( 10, getClientSize().height()-70 ) );
+		bToggleQuickZap->setText(_("enable quickzap"));
+		bToggleQuickZap->setShortcut("green");
+		bToggleQuickZap->setShortcutPixmap("green");
+		bToggleQuickZap->show();
 
-	bAddToUserBouquet = new eButton( this );
-	bAddToUserBouquet->resize( eSize( getClientSize().width()-20, 30 ) );
-	bAddToUserBouquet->move( ePoint( 10, getClientSize().height()-40 ) );
-	bAddToUserBouquet->setText(_("add to user bouquet"));
-	bAddToUserBouquet->setShortcut("yellow");
-	bAddToUserBouquet->setShortcutPixmap("yellow");
-	bAddToUserBouquet->show();
+		bAddToUserBouquet = new eButton( this );
+		bAddToUserBouquet->resize( eSize( getClientSize().width()-20, 30 ) );
+		bAddToUserBouquet->move( ePoint( 10, getClientSize().height()-40 ) );
+		bAddToUserBouquet->setText(_("add to user bouquet"));
+		bAddToUserBouquet->setShortcut("yellow");
+		bAddToUserBouquet->setShortcutPixmap("yellow");
+		bAddToUserBouquet->show();
 
-	CONNECT(bAddToUserBouquet->selected, eSubServiceSelector::addPressed );
-	CONNECT(bToggleQuickZap->selected, eSubServiceSelector::quickZapPressed );
+		CONNECT(bAddToUserBouquet->selected, eSubServiceSelector::addPressed );
+		CONNECT(bToggleQuickZap->selected, eSubServiceSelector::quickZapPressed );
+	}
 	CONNECT(list.selected, eSubServiceSelector::selected);
 }
 
@@ -737,31 +764,49 @@ void eSubServiceSelector::quickZapPressed()
 	{
 		bToggleQuickZap->setText(_("enable quickzap"));
 	}
-	close(0);
+	close(-1);
 }
 
 void eSubServiceSelector::selected(SubService *ss)
 {
-	if (ss)
-		eServiceInterface::getInstance()->play(ss->service);
+	if (ss) // bitte nicht schlagen für das was jetzt kommt *duck*
+		close(0);
+	else
+		close(-1);
+}
 
-	close(0);
+void eSubServiceSelector::disableQuickZap()
+{
+	quickzap=0;
+	bToggleQuickZap->setText(_("enable quickzap"));
 }
 
 void eSubServiceSelector::clear()
 {
-	quickzap=0;
-	bToggleQuickZap->setText(_("enable quickzap"));	
 	list.clearList();
+}
+
+void eSubServiceSelector::selectCurrent()
+{
+	list.forEachEntry( selectCurSubService( (eServiceReferenceDVB&)eServiceInterface::getInstance()->service, list ) );
 }
 
 void eSubServiceSelector::add(eDVBNamespace dvb_namespace, const LinkageDescriptor *ref)
 {
+	list.beginAtomic();
 	new SubService(&list, dvb_namespace, ref);
+	list.endAtomic();
+}
+
+void eSubServiceSelector::willShow()
+{
+	selectCurrent();
+	eWindow::willShow();
 }
 
 void eSubServiceSelector::next()
 {
+	selectCurrent();
 	if ( !list.goNext() )
 		list.moveSelection( eListBox<SubService>::dirFirst );
 
@@ -773,6 +818,7 @@ void eSubServiceSelector::next()
 
 void eSubServiceSelector::prev()
 {
+	selectCurrent();
 	if ( !list.goPrev() )
 		list.moveSelection( eListBox<SubService>::dirLast );
 
@@ -836,15 +882,17 @@ eZapMain *eZapMain::instance;
 
 bool eZapMain::CheckService( const eServiceReference& ref )
 {
-	switch(mode)
+	if ( mode == modeFile )
+		return ref.path.length();
+	else if ( ref.type == eServiceReference::idDVB )
 	{
-		case modeTV:
-			return ( ref.type == 1 || ref.type == 4 || ref.type == 6);
-		case modeRadio:
-			return ref.type == 2;
-		case modeFile:
-			return ref.path.length();
-		break;
+		switch( mode )
+		{
+			case modeTV:
+				return ref.data[0] == 1 || ref.data[0] == 4 || ref.data[0] == 6;
+			case modeRadio:
+				return ref.data[0] == 2;
+		}
 	}
 	return false;
 }
@@ -858,7 +906,7 @@ static bool ModeTypeEqual( const eServiceReference& ref1, const eServiceReferenc
 		else if ( ref1.type == eServiceReference::idDVB && ref2.type == eServiceReference::idDVB )
 		{
 			if ( ref1.data[0] == ref2.data[0] )
-				return true;  // self have self types..
+				return true;  // have self types..
 			else if ( ref1.data[0] & 1 && ref2.data[0] & 1 )
 				return true;  // nvod, linkage, tv, nvodref
 			else if ( ref1.data[0] == 4 && ref2.data[0] & 1 )
@@ -1401,9 +1449,7 @@ eZapMain::~eZapMain()
 	if ( state & stateRecording )
 	{
 		if ( state & stateInTimerMode )
-		{
 			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
-		}
 		else
 			recordDVR(0,1);
 	}
@@ -1412,7 +1458,7 @@ eZapMain::~eZapMain()
 
 	saveRecordings(true);
 	savePlaylist(true);
-	destroyUserBouquets();
+	destroyUserBouquets(true);
 
 	// get current selected serviceselector path
 	if ( mode != -1 ) // valid mode?
@@ -1572,26 +1618,36 @@ void eZapMain::setEIT(EIT *eit)
 		{
 			EITEvent *event=*i;
 			eServiceReferenceDVB &ref=(eServiceReferenceDVB&)eServiceInterface::getInstance()->service;
-			if ( ref.getServiceType() != 7 )
-			{
-				eDebug("event->running_status=%d, p=%d", event->running_status, p );
-				if ((event->running_status>=2) || ((!p) && (!event->running_status)))
-				{
-					eDebug("set cur_event_id to %d", event->event_id);
-					cur_event_id=event->event_id;
-					cur_start=event->start_time;
-					cur_duration=event->duration;
-					clockUpdate();
 
-					for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
-						if (d->Tag()==DESCR_LINKAGE)
+			eDebug("event->running_status=%d, p=%d", event->running_status, p );
+			if ((event->running_status>=2) || ((!p) && (!event->running_status)))
+			{
+				eDebug("set cur_event_id to %d", event->event_id);
+				cur_event_id=event->event_id;
+				cur_start=event->start_time;
+				cur_duration=event->duration;
+				clockUpdate();
+
+				for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
+					if ( d->Tag()==DESCR_LINKAGE && ((LinkageDescriptor*)*d)->linkage_type==0xB0 )
+						subservicesel.clear();
+
+				int cnt=0;
+				for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
+					if (d->Tag()==DESCR_LINKAGE)
+					{
+						LinkageDescriptor *ld=(LinkageDescriptor*)*d;
+						if (ld->linkage_type==0xB0)
 						{
-							LinkageDescriptor *ld=(LinkageDescriptor*)*d;
-							if (ld->linkage_type!=0xB0)
-								continue;
 							subservicesel.add(ref.getDVBNamespace(), ld);
-							flags|=ENIGMA_SUBSERVICES;
+							cnt++;
 						}
+					}
+
+				if ( cnt )  // subservices added ?
+				{
+					flags|=ENIGMA_SUBSERVICES;
+					subservicesel.selectCurrent();
 				}
 			}
 			for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
@@ -1669,6 +1725,40 @@ void eZapMain::setEIT(EIT *eit)
 		actual_eventDisplay->setList(eit?eit->events:dummy);
 }
 
+void eZapMain::updateServiceNum( const eServiceReference &_serviceref )
+{
+		eService *rservice = eServiceInterface::getInstance()->addRef( refservice );
+		eService *service = eServiceInterface::getInstance()->addRef( _serviceref );
+		int num=-1;
+
+		if (rservice)
+			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
+		if ((num == -1) && service)
+			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
+		if ((num == -1) && service && service->dvb)
+			num=service->dvb->service_number;
+
+		if ( num != -1)
+		{
+			ChannelNumber->setText(eString().sprintf("%d", num));
+			if(eDVB::getInstance()->getmID() == 6)
+			{
+				eDebug("write number to led-display");
+				int fd=::open("/dev/dbox/fp0",O_RDWR);
+				::ioctl(fd,4,&num);
+				::close(fd);
+			}
+			ChannelNumber->setText(eString().sprintf("%d", num));
+		}
+		else
+			ChannelNumber->setText(eString().sprintf(""));
+
+		if ( service )
+			eServiceInterface::getInstance()->removeRef( _serviceref );
+		if ( rservice )
+			eServiceInterface::getInstance()->removeRef( refservice );
+}
+
 void eZapMain::updateProgress()
 {
   eZapLCD *pLCD=eZapLCD::getInstance();
@@ -1699,6 +1789,8 @@ void eZapMain::updateProgress()
 	}
 	else
 	{
+		updateServiceNum( eServiceInterface::getInstance()->service );
+
 		time_t c=time(0)+eDVB::getInstance()->time_difference;
 		tm *t=localtime(&c);
 		if (t && eDVB::getInstance()->time_difference)
@@ -2184,6 +2276,11 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 
 	if (onoff) //  start recording
 	{
+		if ( freeRecordSpace() == -1 )
+		{
+			handleServiceEvent(eServiceEvent(eServiceEvent::evtRecordFailed));
+			return -3;
+		}
 		if (state & stateRecording)
 			recordDVR(0, 0); // try to stop recording.. should not happen
 		if (state & stateRecording)
@@ -2223,7 +2320,7 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 			for (eString::iterator it(servicename.begin()); it != servicename.end();)
 				strchr( strfilter, *it ) ? it = servicename.erase(it) : it++;
 
-			if ( ref.getServiceType() > 4 )  // nvod or linkage
+			if ( ref.getServiceType() > 4 && !timer_descr )  // nvod or linkage
 				eServiceInterface::getInstance()->removeRef(refservice);
 			else
 				eServiceInterface::getInstance()->removeRef(ref);
@@ -2307,7 +2404,7 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStart));
 			state |= (stateRecording|recDVR);
 			recstatus->show();
-
+/*
 // DETECT HARDDISC or NFS mount
 			FILE *f=fopen("/proc/mounts", "r");
 			char line[1024];
@@ -2323,13 +2420,14 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 					break;
 				}
 			}
-			if ( ok )
+			fclose(f);
+			if ( ok )*/
 			{
 				DVRSpaceLeft->show();
 				recStatusBlink.start(500, 1);
 			}
-			else
-				return -3;
+/*			else
+				return -3;*/
 		}
 		return 0;
 	}
@@ -2748,6 +2846,57 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		eServiceInterface::getInstance()->removeRef(path);
 	}
 	break;
+
+	case 10:
+	{
+/*		switch ( ref.type )
+		{
+			case eServiceReference::idDVB:
+				if ( ref.flags & eServiceReference::isDirectory )
+				{
+					if ( eDVB::getInstance()->settings->BouquetLocked( ref.data[2] ) )
+						eDVB::getInstance()->settings->UnlockBouquet( ref.data[2] );
+					else
+						eDVB::getInstance()->settings->LockBouquet( ref.data[2] );
+				}
+				break;
+			case eServicePlaylistHandler::ID:
+			{
+				ePlaylist *pl = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef( ref );
+				if ( pl )
+				{
+					if ( pl->parentalLocked() )
+						pl->Unlock();
+					else
+						pl->Lock();
+					eServicePlaylistHandler::getInstance()->removeRef( ref );
+				}
+			}
+		}
+		sel->actualize();
+		break;*/
+	}
+	break;
+
+	case 11:
+	{
+/*		int parentalpin=0;
+		eConfig::getInstance()->getKey("/elitedvb/pins/parentallock", parentalpin);
+		eDebug("parentalpin=%d, ParentalLockActive = %d", parentalpin, eDVB::getInstance()->settings->ParentalLockActive );
+		if ( eDVB::getInstance()->settings->ParentalLockActive &&
+				 checkPin( parentalpin, _("parental") ) )
+		{
+			eDVB::getInstance()->settings->ParentalLockActive=false;
+			sel->actualize();
+		}
+		else
+		{
+			eDVB::getInstance()->settings->ParentalLockActive=true;
+			sel->actualize();
+		}*/
+	}
+	break;
+
 	}
 	sel->show();
 }
@@ -3003,8 +3152,11 @@ void eZapMain::showSubserviceMenu()
 	{
 		subservicesel.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 		subservicesel.show();
-		subservicesel.exec();
+		int ret = subservicesel.exec();
 		subservicesel.hide();
+		eServiceReferenceDVB *ref=0;
+		if ( !ret && ( ref = subservicesel.getSelected() ) )
+			eServiceInterface::getInstance()->play(*ref);
 	}
 	else if (flags&ENIGMA_VIDEO)
 	{
@@ -3100,15 +3252,13 @@ void eZapMain::showEPG()
 		hide();
 	}
 
+	ePtrList<EITEvent> events;
 	if (isEPG)
 	{
 		const eventMap* pMap = eEPGCache::getInstance()->getEventMap( ref );
 		if (pMap)  // EPG vorhanden
 		{
 			eventMap::const_iterator It = pMap->begin();
-
-			ePtrList<EITEvent> events;
-			events.setAutoDelete(false);
 
 			while (It != pMap->end())
 			{
@@ -3121,10 +3271,9 @@ void eZapMain::showEPG()
 	else
 	{
 		EIT *eit=eDVB::getInstance()->getEIT();
-		ePtrList<EITEvent> dummy;
-		actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), ref, eit?&eit->events:&dummy);
+		actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), ref, eit?&eit->events:&events);
 		if (eit)
-			eit->unlock();		// HIER liegt der hund begraben.
+			eit->unlock(); // HIER liegt der hund begraben.
 	}
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
@@ -3133,6 +3282,7 @@ void eZapMain::showEPG()
 	actual_eventDisplay->show();
 	actual_eventDisplay->exec();
 	actual_eventDisplay->hide();
+	events.setAutoDelete(true);
 	pLCD->lcdMenu->hide();
 	pLCD->lcdMain->show();
 	delete actual_eventDisplay;
@@ -3308,9 +3458,9 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			runVTXT();
 		else if (event.action == &i_enigmaMainActions->showEPGList)
 			showEPGList();
-		else if ( flags&ENIGMA_SUBSERVICES && subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->nextSubService )
+		else if ( subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->nextSubService )
 		{
-			if ( handleState() )
+			if ( flags&ENIGMA_SUBSERVICES && handleState() )
 				subservicesel.next();
 		}
 		else if (event.action == &i_enigmaMainActions->nextService)
@@ -3318,9 +3468,9 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			if ( handleState() )
 				nextService();
 		}
-		else if ( flags&ENIGMA_SUBSERVICES && subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->prevSubService )
+		else if ( subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->prevSubService )
 		{
-			if ( handleState() )
+			if ( flags&ENIGMA_SUBSERVICES && handleState() )
 				subservicesel.prev();
 		}
 		else if (event.action == &i_enigmaMainActions->prevService)
@@ -3602,11 +3752,11 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		if (serviceFlags & eServiceHandler::flagSupportPosition)
 		{
 			progresstimer.start(1000);
-			updateProgress();
 		} else
 		{
 			progresstimer.stop();
 		}
+		updateProgress();
 		showServiceInfobar(serviceFlags & eServiceHandler::flagIsSeekable);
 
 		break;
@@ -3641,14 +3791,14 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		break;
 	case eServiceEvent::evtRecordFailed:
 		if ( state&stateInTimerMode )
-			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorNoSpaceLeft );
+			message_notifier.send(eZapMain::messageNoRecordSpaceLeft);
 		else
 			recordDVR(0,1);  // stop Recording
 		break;
 	case eServiceEvent::evtEnd:
 	{
 		int serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
-		if(! (serviceFlags & eServiceHandler::flagIsTrack) )
+		if(! (serviceFlags & eServiceHandler::flagIsTrack)  )
 			break;
 
 		if (playlist->current != playlist->getConstList().end())
@@ -3674,7 +3824,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 			return;
 		eDebug("evtStatus");
 		showServiceInfobar(0);
-		EINow->setText(sapi->getInfo(0));
+		fileinfos->setText(sapi->getInfo(0));
 		break;
 	}
 	case eServiceEvent::evtInfoUpdated:
@@ -3756,12 +3906,10 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		{
 			case 4:
 				flags|=ENIGMA_NVOD;
-				break;
-			case 7:
-				flags|=ENIGMA_SUBSERVICES;
-				break;
 			default:
-				subservicesel.clear();
+				subservicesel.disableQuickZap();
+			case 7:
+				break;
 		}
 
 		eString name="";
@@ -3855,31 +4003,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			postMessage(eZapMessage(0, _("switch"), _("Unknown error!!")), 1);
 			break;
 		}
-
-		int num=-1;
-
-		if (rservice)
-			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-		if ((num == -1) && service)
-			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-		if ((num == -1) && service && service->dvb)
-			num=service->dvb->service_number;
-
-		if (num != -1)
-		{
-#if 1
-			if(eDVB::getInstance()->getmID() == 6)
-			{
-				eDebug("write number to led-display");
-				int fd=::open("/dev/dbox/fp0",O_RDWR);
-				::ioctl(fd,4,&num);
-				::close(fd);
-			}
-#endif
-			ChannelNumber->setText(eString().sprintf("%d", num));
-		}
-		else
-			ChannelNumber->setText("");
+		updateServiceNum( _serviceref );
 
 		if (flags&(ENIGMA_NVOD|ENIGMA_SUBSERVICES|ENIGMA_VIDEO))
 		{
@@ -4196,7 +4320,11 @@ void eZapMain::gotMessage(const int &c)
 		eZap::getInstance()->quit();
 		return;
 	}
-
+	else if ( c == eZapMain::messageNoRecordSpaceLeft )
+	{
+		eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorNoSpaceLeft );
+		return;
+	}
 	if ((!c) && pMsg) // noch eine gueltige message vorhanden
 	{
 		return;
@@ -4535,6 +4663,37 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		// add current service to playlist
 	if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
 		new eListBoxEntryText(&list, _("create new user bouquet"), (void*)6);
+
+	switch ( ref.type )
+	{
+		case eServiceReference::idDVB:
+			if ( ref.flags & eServiceReference::isDirectory )
+			{
+/*				if ( eDVB::getInstance()->settings->BouquetLocked( ref.data[2] ) )
+					new eListBoxEntryText(&list, _("unlock bouquet"), (void*)10);
+				else
+					new eListBoxEntryText(&list, _("lock bouquet"), (void*)10);*/
+			}
+			break;
+		case eServicePlaylistHandler::ID:
+		{
+			ePlaylist *pl = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef( ref );
+			if ( pl )
+			{
+/*				if ( pl->parentalLocked() )
+					new eListBoxEntryText(&list, _("unlock bouquet"), (void*)10);
+				else
+					new eListBoxEntryText(&list, _("lock bouquet"), (void*)10);*/
+				eServicePlaylistHandler::getInstance()->removeRef( ref );
+			}
+		}
+		break;
+	}
+
+/*	if ( eDVB::getInstance()->settings->ParentalLockActive )
+		new eListBoxEntryText(&list, _("disable parental lock"), (void*)11 );
+	else
+		new eListBoxEntryText(&list, _("enable parental lock"), (void*)11 );*/
 
 	CONNECT(list.selected, eServiceContextMenu::entrySelected);
 }

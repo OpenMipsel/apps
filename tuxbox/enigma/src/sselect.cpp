@@ -73,15 +73,23 @@ eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, c
 #if 0
 		sort=eString().sprintf("%06d", service->service_number);
 #else
-		const eService *pservice=eServiceInterface::getInstance()->addRef(service);
-		sort=pservice?pservice->service_name:"";
+		if( service.descr )
+			sort = service.descr;
+		else
+		{
+			const eService *pservice=eServiceInterface::getInstance()->addRef(service);
+			if ( pservice )
+			{
+				sort=pservice?pservice->service_name:"";
+				eServiceInterface::getInstance()->removeRef(service);
+			}
+		}
 		sort.upper();
 
 		// filter short name brakets...
 		for (eString::iterator it(sort.begin()); it != sort.end();)
 			strchr( strfilter, *it ) ? it = sort.erase(it) : it++;
 
-		eServiceInterface::getInstance()->removeRef(service);
 #endif
 	} else
 		sort="";
@@ -128,7 +136,7 @@ void eListBoxEntryService::invalidateDescr()
 	}
 }
 
-eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
+const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
 	bool b;
 
@@ -213,11 +221,9 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 				{
 					for (ePtrList<Descriptor>::iterator d(e->descriptor); d != e->descriptor.end(); ++d)
 					{
-						Descriptor *descriptor=*d;
-						
-						if (descriptor->Tag()==DESCR_SHORT_EVENT)
+						if (d->Tag()==DESCR_SHORT_EVENT)
 						{
-							ShortEventDescriptor *ss=(ShortEventDescriptor*)descriptor;
+							ShortEventDescriptor *ss=(ShortEventDescriptor*)*d;
 							if ( ss->event_name )
 								sdescr='('+ss->event_name+')';
 							break;
@@ -258,7 +264,8 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 		rc->line( ePoint(rect.right()-3, rect.top()+3), ePoint(rect.right()-3, rect.bottom()-4) );
 	}
 
-	eServiceInterface::getInstance()->removeRef(service);
+	if ( pservice )
+		eServiceInterface::getInstance()->removeRef(service);
 
 	return sort;
 }

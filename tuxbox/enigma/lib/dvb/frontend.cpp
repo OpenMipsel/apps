@@ -23,9 +23,8 @@
 eFrontend* eFrontend::frontend;
 
 eFrontend::eFrontend(int type, const char *demod, const char *sec)
-:type(type), curRotorPos( 1000 ), timer2(eApp), noRotorCmd(0)//, checkTunerStateInterval(0)
+:type(type), curRotorPos( 1000 ), state(stateIdle), transponder(0), timer2(eApp), noRotorCmd(0)
 {
-	state=stateIdle;
 	timer=new eTimer(eApp);
 
 	CONNECT(timer->timeout, eFrontend::timeout);
@@ -286,12 +285,30 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	eString parms;
 	for (int i=0; i < cnt; i++)
 		parms+=eString().sprintf("0x%02x ",cmd.u.diseqc.params[i]);
-  
-//  eDebug("cmdtype = %02x, addr = %02x, cmd = %02x, numParams = %02x, params=%s", frame, addr, Cmd, cnt, parms.c_str() );
 
+	if ( transponder && lastLNB )
+	{
+//		eDebug("hold current voltage and continuous tone");
+		// set Continuous Tone ( 22 Khz... low - high band )
+		if ( transponder->satellite.frequency > lastLNB->getLOFThreshold() )
+			seq.continuousTone = SEC_TONE_ON;
+		else 
+			seq.continuousTone = SEC_TONE_OFF;
+		// set voltage
+		if ( transponder->satellite.polarisation == polVert )
+			seq.voltage = SEC_VOLTAGE_13;
+		else
+			seq.voltage = SEC_VOLTAGE_18;
+	}
+	else
+	{
+		eDebug("set continuous tone OFF and voltage to 13V");
+		seq.continuousTone = SEC_TONE_OFF;
+		seq.voltage = SEC_VOLTAGE_13;
+	}
+    
+//  eDebug("cmdtype = %02x, addr = %02x, cmd = %02x, numParams = %02x, params=%s", frame, addr, Cmd, cnt, parms.c_str() );
 	seq.miniCommand = SEC_MINI_NONE;
-	seq.continuousTone = SEC_TONE_OFF;
-	seq.voltage = SEC_VOLTAGE_13;
 	seq.commands=&cmd;
 	seq.numCommands=1;
 
@@ -582,10 +599,10 @@ double calcAzimuth(double SatLon, double SiteLat, double SiteLon, int Height_ove
 //					alfa_r_zenith = alfa_rx*std::cos(Radians(SiteLat)) + alfa_rz*std::sin(Radians(SiteLat)),
 					Azimuth = 0.00;
 
-					if (alfa_r_north < 0)
-						Azimuth = 180+Deg(std::atan(alfa_ry/alfa_r_north));
-					else
-						Azimuth = Rev(360+Deg(std::atan(alfa_ry/alfa_r_north)));
+	if (alfa_r_north < 0)
+		Azimuth = 180+Deg(std::atan(alfa_ry/alfa_r_north));
+	else
+		Azimuth = Rev(360+Deg(std::atan(alfa_ry/alfa_r_north)));
 
 	return Azimuth;
 }
@@ -1006,7 +1023,7 @@ int eFrontend::tune(eTransponder *trans,
 	state=stateTuning;
 //	tries=30000000*2 / SymbolRate; // 1.0 second timeout
 //	tries=tries<5?5:tries;
-	tries=30;
+	tries=35;
 //	eDebug("tries=%d", tries);
 	timer->start(50, true);
 

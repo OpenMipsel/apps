@@ -43,7 +43,8 @@ class eDVBServiceController: public eDVBController, public Object
 {
 public:
 		/* current service */
-	eServiceReferenceDVB service;	// meta-service
+	eServiceReferenceDVB service,  // meta-service
+			     parentservice,prevservice;	// for linkage handling
 	eTransponder *transponder;
 	int pmtpid;
 	int service_state;

@@ -10,7 +10,7 @@
 eLabel::eLabel(eWidget *parent, int flags, int takefocus, const char *deco ):
 	eDecoWidget(parent, takefocus, deco), blitFlags(0), flags(flags), para(0), align( eTextPara::dirLeft ), shortcutPixmap(0)
 {
-	setForegroundColor(eSkin::getActive()->queryScheme("global.normal.foreground"));
+//	setForegroundColor(eSkin::getActive()->queryScheme("global.normal.foreground"));
 }
 
 eLabel::~eLabel()

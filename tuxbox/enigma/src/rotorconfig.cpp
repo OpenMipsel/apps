@@ -247,27 +247,6 @@ void RotorConfig::gotoXXChanged( int state )
 	}
 }
 
-int RotorConfig::eventHandler( const eWidgetEvent& e)
-{
-	switch(e.type)
-	{
-	case eWidgetEvent::execBegin:
-		// send no more DiSEqC Commands on transponder::tune to Rotor
-		eFrontend::getInstance()->disableRotor();
-	break;
-
-	case eWidgetEvent::execDone:
-		// enable send DiSEqC Commands to Rotor on eTransponder::tune
-		eFrontend::getInstance()->enableRotor();
-	break;
-	
-	default:
-		return eWindow::eventHandler(e);
-	break;
-	}
-	return 1;
-}
-
 void RotorConfig::setLNBData( eLNB *lnb )
 {
 	positions->beginAtomic();
@@ -431,52 +410,25 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	lCounter->setName("lCounter");
 
 	running=false;
-/*	lRecalcParams = new eLabel(this);
-	lRecalcParams->setName("lRecalcParams");*/
 
 	Mode = new eComboBox(this, 4, lMode );
 	Mode->setName("Mode");
 	CONNECT(Mode->selchanged, eRotorManual::modeChanged);
 
-	eFrontend::getInstance()->disableRotor();
-
 	num = new eNumber( this, 1, 1, 80, 2, 0, 0, lSat );
 	num->setName("num");
 	num->setNumber(1);
 
-	CONNECT(num->selected, eRotorManual::nextfield);
+	// send no more DiSEqC Commands on transponder::tune to Rotor
+	eFrontend::getInstance()->disableRotor();
 
 	Sat = new eComboBox( this, 7, lSat );
 	Sat->setName("Sat");
-	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
-		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
-			for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
-				new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
 	CONNECT(Sat->selchanged, eRotorManual::satChanged );
-	eTransponderList::getInstance()->reloadNetworks();
-	Sat->setCurrent(0);
 
 	Transponder = new eComboBox(this, 5 );
 	Transponder->setName("Transponder");
 	CONNECT(Transponder->selchanged, eRotorManual::tpChanged);
-
-	if (Sat->getCount())
-		satChanged(Sat->getCurrent());
-
-/*	num1 = new eNumber( this, 1, 0, 255, 2, 0, 0, lRecalcParams );
-	num1->setName("num1");
-	num1->setNumber(0);
-	num1->setFlags(eNumber::flagPosNeg);
-
-	num2 = new eNumber( this, 1, 0, 255, 2, 0, 0, lRecalcParams );
-	num2->setName("num2");                          
-	num2->setNumber(0);
-	num2->setFlags(eNumber::flagPosNeg);
-
-	num3 = new eNumber( this, 1, 0, 255, 2, 0, 0, lRecalcParams );
-	num3->setName("num3");
-	num3->setNumber(0);
-	num3->setFlags(eNumber::flagPosNeg);*/
 
 	Direction = new eButton(this);
 	Direction->setName("Direction");
@@ -484,7 +436,7 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	Exit = new eButton(this);
 	Exit->setName("Exit");
 	CONNECT( Exit->selected, eRotorManual::reject );
-	
+
 	Save = new eButton(this);
 	Save->setName("Save");
 	CONNECT(Save->selected, eRotorManual::onButtonPressed );
@@ -496,29 +448,54 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	status = new eFEStatusWidget( this, eFrontend::getInstance() );
 	status->setName("Status");
 
+	if ( eSkin::getActive()->build(this, "RotorManual"))
+		eFatal("skin load of \"RotorManual\" failed");
+
+	Direction->setText("<    Stop    >");
+
+	eTransponderList::getInstance()->reloadNetworks();
+
 	new eListBoxEntryText(*Mode, _("position"), (void*) 0, 0, _("store new sat positions"));
 	new eListBoxEntryText(*Mode, _("drive to stored pos"), (void*) 1, 0, _("drive to stored position"));
-	new eListBoxEntryText(*Mode, _("drive to satellite"), (void*) 8, 0, _("drive to stored satellite"));	
+	new eListBoxEntryText(*Mode, _("drive to satellite"), (void*) 8, 0, _("drive to stored satellite"));
 	new eListBoxEntryText(*Mode, _("drive to 0°"), (void*) 2, 0, _("drives to 0°"));
 	new eListBoxEntryText(*Mode, _("recalculate"), (void*) 3, 0, _("recalculate stored positions rel. to current pos"));
 	new eListBoxEntryText(*Mode, _("set east limit"), (void*) 4, 0, _("set east soft limit"));
 	new eListBoxEntryText(*Mode, _("set west limit"), (void*) 5, 0, _("set west soft limit"));
 	new eListBoxEntryText(*Mode, _("disable limits"), (void*) 6, 0, _("disable soft limits"));
 	new eListBoxEntryText(*Mode, _("enable limits"), (void*) 7, 0, _("enable soft limits"));
-	Mode->setCurrent(0);
-	modeChanged(Mode->getCurrent());
+	Mode->setCurrent(0,true);
 
-	if ( eSkin::getActive()->build(this, "RotorManual"))
-		eFatal("skin load of \"RotorManual\" failed");
+	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+	eTransponder *tp=0;
+  
+	if (sapi && sapi->transponder)
+		tp = sapi->transponder;
+
+	eListBoxEntryText *sel=0;
+
+	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
+		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
+			for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
+				if ( tp && s->getOrbitalPosition() == tp->satellite.orbital_position )
+					sel = new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
+				else
+					new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
+
+	if ( sel )
+		Sat->setCurrent(sel,true);
+	else
+		Sat->setCurrent(0,true);
 
 	CONNECT( retuneTimer->timeout, eRotorManual::retune );
-	addActionMap(&i_rotorMenuActions->map);	
-	Direction->setText("<    Stop    >");
+	addActionMap(&i_rotorMenuActions->map);
+
+	CONNECT(num->selected, eRotorManual::nextfield);
 }
 
 void eRotorManual::modeChanged( eListBoxEntryText *e)
 {
-	eString buttonText, helpText;
+ eString buttonText, helpText;
 
 	switch((int)e->getKey())
 	{
@@ -628,12 +605,11 @@ void eRotorManual::modeChanged( eListBoxEntryText *e)
 		case 2: // goto ref pos
 		break;
 	}
-
 }
 
 void eRotorManual::retune()
 {
-	if(transponder)
+	if( transponder && !eFrontend::getInstance()->Locked() )
 		transponder->tune();
 }
 
@@ -642,23 +618,36 @@ void eRotorManual::satChanged( eListBoxEntryText *sat)
 	Transponder->clear();
 	if (sat && sat->getKey())
 	{
+		eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+		eTransponder *tp=0;
+
+		if (sapi && sapi->transponder)
+			tp = sapi->transponder;
+
+		eListBoxEntryText *sel=0;
+
 		eSatellite *Sat = (eSatellite*) (sat->getKey());
 		for ( std::list<tpPacket>::const_iterator i( eTransponderList::getInstance()->getNetworks().begin() ); i != eTransponderList::getInstance()->getNetworks().end(); i++ )
 			if ( i->orbital_position == Sat->getOrbitalPosition() )
 				for (std::list<eTransponder>::const_iterator it( i->possibleTransponders.begin() ); it != i->possibleTransponders.end(); it++)
-					new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
+					if ( tp && *tp == *it )
+						sel = new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
+					else
+						new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
 
 		if (Transponder->getCount())
 		{
-			Transponder->setCurrent(0);
-			tpChanged(Transponder->getCurrent());
+			if ( sel )
+				Transponder->setCurrent(sel,true);
+			else
+				Transponder->setCurrent(0,true);
 		}
 	}
 }
 
 void eRotorManual::tpChanged( eListBoxEntryText *tp )
 {
-	if (tp && tp->getKey() )
+ if (tp && tp->getKey() )
 	{
 		transponder = (eTransponder*)(tp->getKey());
 		transponder->tune();
@@ -799,6 +788,7 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 					{
 							eDebug("send stop");
 							eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x60 );
+							eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x60 );
 							running=false;
 							retuneTimer->stop();
 					}
@@ -826,6 +816,7 @@ eRotorManual::~eRotorManual()
 
 void eRotorManual::nextfield(int*)
 {
+	eDebug("focusDirNext");
 	focusNext(eWidget::focusDirNext);
 }
 

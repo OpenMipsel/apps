@@ -17,7 +17,7 @@ eZapAudioSetup::eZapAudioSetup():
 	eWindow(0)
 {
 	setText(_("Audio setup"));
-	cmove(ePoint(160, 166));
+	cmove(ePoint(170, 176));
 	cresize(eSize(390, 200));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);

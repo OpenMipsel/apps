@@ -42,19 +42,19 @@ public:
 	eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num=-1);
 	~eListBoxEntryService();
 
-	bool operator<(const eListBoxEntryService &r) const
+	bool operator<(const eListBoxEntry &r) const
 	{
 		if (flags & flagIsReturn)
 			return 1;
-		else if (r.flags & flagIsReturn)
+		else if (((eListBoxEntryService&)r).flags & flagIsReturn)
 			return 0;
-		else if (service.getSortKey() == r.service.getSortKey())
-			return sort < r.sort;
-		else
-			return service.getSortKey() > r.service.getSortKey();		// sort andersrum
+		else if (service.getSortKey() == ((eListBoxEntryService&)r).service.getSortKey())
+			return sort < ((eListBoxEntryService&)r).sort;
+		else // sort andersrum
+			return service.getSortKey() > ((eListBoxEntryService&)r).service.getSortKey();
 	}
 protected:
-	eString redraw(gPainter *rc, const eRect &rect, gColor, gColor, gColor, gColor, int hilited);
+	const eString &redraw(gPainter *rc, const eRect &rect, gColor, gColor, gColor, gColor, int hilited);
 };
 
 class eServiceSelector: public eWindow

@@ -145,11 +145,23 @@ public:
 				return 0;
 			return 1;
 		}
+		bool operator<(const cable &c) const
+		{
+			if ( frequency == c.frequency )
+			{
+				if ( symbol_rate == c.symbol_rate )
+					return fec_inner < c.fec_inner;
+				else
+					return symbol_rate < c.symbol_rate;
+			}
+			return frequency < c.frequency;
+		}
 	} cable;
 	struct satellite
 	{
 		int valid;
-		int frequency, symbol_rate, polarisation, fec, inversion, orbital_position;
+		unsigned int frequency, symbol_rate;
+		int polarisation, fec, inversion, orbital_position;
 		void set(const SatelliteDeliverySystemDescriptor *descriptor);
 		int tune(eTransponder *);
 		int isValid() const { return valid; }
@@ -177,6 +189,17 @@ public:
 				return 0;
 //			eDebug("Satellite Data is equal");
 			return 1;
+		}
+		bool operator<(const satellite &s) const
+		{
+			if ( frequency == s.frequency )
+			{
+				if ( symbol_rate == s.symbol_rate )
+					return orbital_position < s.orbital_position;
+				else
+					return symbol_rate < s.symbol_rate;
+			}
+			return frequency < s.frequency;
 		}
 	} satellite;
 	eTransponder(eTransponderList &tplist, eDVBNamespace dvbnamespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
@@ -235,7 +258,7 @@ public:
 		if ((original_network_id == -1) && (transport_stream_id == -1))
 		{
 			if ((c.original_network_id == -1) && (c.transport_stream_id == -1))
-				return this < &c;
+				return cable.valid?cable<c.cable:satellite<c.satellite;
 			else
 				return 1;
 		}
@@ -267,8 +290,6 @@ public:
 		spfColMask=6
 	};
 	int spflags;
-	
-	eLock access;
 
 	class eServiceDVB *dvb;
 	class eServiceID3 *id3;
@@ -434,7 +455,7 @@ struct eServiceReference
 	{
 		if (type != c.type)
 			return 0;
-		return /* (flags == c.flags) && */ (memcmp(data, c.data, sizeof(int)*4)==0) && (path == c.path);
+		return /* (flags == c.flags) && */ (memcmp(data, c.data, sizeof(int)*8)==0) && (path == c.path);
 	}
 	bool operator!=(const eServiceReference &c) const
 	{
@@ -522,7 +543,12 @@ public:
 		: bouquet_id(bouquet_id), bouquet_name(bouquet_name)
 	{
 	}
-
+	template <class T>
+	void forEachServiceReference(T ob)
+	{
+		for (std::list<eServiceReferenceDVB>::iterator i(list.begin()); i!=list.end(); ++i)
+			ob(*i);
+	}
 	void add(const eServiceReferenceDVB &);
 	int remove(const eServiceReferenceDVB &);
 	bool operator == (const eBouquet &c) const
@@ -672,6 +698,7 @@ public:
 	const std::list<tpPacket>& getNetworks();
 	const std::map<int,tpPacket>& getNetworkNameMap();
 	int reloadNetworks();
+	int saveNetworks();
 	void invalidateNetworks() { networksLoaded=false; }
 protected:
 	int fetype;

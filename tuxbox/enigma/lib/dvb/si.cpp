@@ -859,6 +859,7 @@ int PAT::data(__u8* data)
 
 SDTEntry::SDTEntry(sdt_descr_t *descr)
 {
+	descriptors.setAutoDelete(true);
 	service_id=HILO(descr->service_id);
 	EIT_schedule_flag=descr->EIT_schedule_flag;
 	EIT_present_following_flag=descr->EIT_present_following_flag;
@@ -1045,6 +1046,8 @@ EIT::EIT()
 
 EIT::EIT(const EIT* eit)
 {
+	// Vorsicht !! Hier wird autoDelete nicht auf true gesetzt...
+	// Lebenszeit der Source EIT beachten !
 	if (eit)
 	{
 		current_next_indicator = eit->current_next_indicator;

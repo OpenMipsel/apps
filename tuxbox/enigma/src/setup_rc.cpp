@@ -36,8 +36,8 @@ void eZapRCSetup::update()
 eZapRCSetup::eZapRCSetup(): eWindow(0)
 {
 	setText(_("Remotecontrol Setup"));
-	move(ePoint(150, 136));
-	resize(eSize(470, 380));
+	cmove(ePoint(140, 146));
+	cresize(eSize(470, 320));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 

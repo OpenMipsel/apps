@@ -1,21 +1,18 @@
 #include <setup_extra.h>
 
 #include <lib/base/i18n.h>
-
-#include <lib/dvb/edvb.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/enumber.h>
 #include <lib/gui/echeckbox.h>
 #include <lib/gui/eskin.h>
-#include <lib/driver/rc.h>
 #include <lib/system/econfig.h>
 
 eZapExtraSetup::eZapExtraSetup():
 	eWindow(0)
 {
 	setText(_("Extra setup"));
-	cmove(ePoint(140, 186));
+	cmove(ePoint(170, 186));
 	cresize(eSize(390, 230));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);

@@ -37,15 +37,15 @@ void eSlider::setMax( int i )
 void eSlider::setValue( int i )
 {
 	if ( i >= min && i <= max )
-		setPerc( (int) (i * (double)100/((max-min)+1)) );
+		setPerc( (int) round( i * (double)100/((max-min)+1) ) );
 	else
 		setPerc( 0 );
 }
 
 int eSlider::getValue()
 {	
-	int ret = (int) ( (double) perc / 100 * ( (max-min)+1 ) );
-	return ret > max ? max : ret;
+	int ret = (int) ( (double) perc / 100 * ( (max-min)+1));
+	return (ret > max ? max : ret);
 }
 
 void eSlider::setIncrement( int i )

@@ -66,14 +66,14 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 	{
 		if (!service.path.size()) // a normal service, not a replay
 		{
-			if (!dvb.settings->transponderlist)
+			if (!dvb.settings->getTransponders())
 			{
 				eDebug("no tranponderlist");
 				service_state=ENOENT;
 				dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceFailed));
 				return;
 			}
-			eTransponder *n=dvb.settings->transponderlist->searchTS(service.getDVBNamespace(), service.getTransportStreamID(), service.getOriginalNetworkID());
+			eTransponder *n=dvb.settings->getTransponders()->searchTS(service.getDVBNamespace(), service.getTransportStreamID(), service.getOriginalNetworkID());
 			if (!n)
 			{
 				eDebug("no transponder %x %x", service.getOriginalNetworkID().get(), service.getTransportStreamID().get());
@@ -161,14 +161,13 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		if (!nopmt && service.getServiceID().get()) // if not a dvb service, don't even try to search a PAT, PMT etc.
 			dvb.tPAT.start(new PAT());
 
-		if (tdt)
-			delete tdt;
-
 		if (tMHWEIT)
 		{
 			delete tMHWEIT;
 			tMHWEIT=0;
 		}
+
+		delete tdt;
 
 		tdt=new TDT();
 		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
@@ -194,7 +193,6 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
 		case 5:	// NVOD time shifted service ( faked )
 		case 6:	// mosaic service
-		case 7: // linkage ( faked )
 			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetPAT));
 			dvb.tPAT.get();
 			break;
@@ -202,6 +200,11 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetSDT));
 			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
 			break;
+		case 7: // linkage ( faked )
+			// start parentEIT
+			dvb.tEIT.start(new EIT(EIT::typeNowNext, parentservice.getServiceID().get(),
+				( (service.getTransportStreamID()==parentservice.getTransportStreamID())
+				&&(service.getOriginalNetworkID()==parentservice.getOriginalNetworkID())) ? EIT::tsActual:EIT::tsOther ));
 		case -1: // data
 			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetPAT));
 			dvb.tPAT.get();
@@ -301,12 +304,12 @@ void eDVBServiceController::PATready(int error)
 void eDVBServiceController::SDTready(int error)
 {
 	dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceGotSDT));
-	if (dvb.settings->transponderlist)
+	if (dvb.settings->getTransponders())
 	{
 		SDT *sdt=dvb.tSDT.ready()?dvb.tSDT.getCurrent():0;
 		if (sdt)
 		{
-			if (dvb.settings->transponderlist->handleSDT(sdt, service.getDVBNamespace()))
+			if (dvb.settings->getTransponders()->handleSDT(sdt, service.getDVBNamespace()))
 				dvb.serviceListChanged();
 
 			sdt->unlock();
@@ -327,26 +330,8 @@ void eDVBServiceController::EITready(int error)
 		EIT *eit=dvb.getEIT();
 		eDebug("eit = %p", eit);
 
-		for (ePtrList<EITEvent>::iterator i(eit->events); i != eit->events.end(); ++i)
-		{
-			EITEvent *event=*i;
-			if ( event->running_status >= 2 )
-			{
-				for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
-					if (d->Tag()==DESCR_LINKAGE)
-					{
-						LinkageDescriptor *ld=(LinkageDescriptor*)*d;
-						//eDebug("linkage descriptor avail.. type = %d", ld->linkage_type );
-						if (ld->linkage_type!=0xB0)
-							continue;
-						//eDebug("Linkage found");
-						goto bla;
-					}
-			}
-		}
 		if ( service.getServiceType() == 4 ) // NVOD Service
 		{
-bla:
 			delete dvb.parentEIT;
 			dvb.parentEIT = new EIT( eit );
 			dvb.parentEIT->events.setAutoDelete(true);
@@ -384,8 +369,19 @@ int eDVBServiceController::switchService(const eServiceReferenceDVB &newservice)
 	Decoder::Flush();
 	/*emit*/ dvb.leaveService(service);
 
+// Linkage service handling.. 
+	if ( newservice.getServiceType()==7 && prevservice )
+	{
+		parentservice = prevservice;
+		prevservice = eServiceReferenceDVB();
+	}
+
+	if ( !newservice && service.getServiceType() == 1 )
+		prevservice=service;  // save currentservice
+/////////////////////////////////
+
 	service=newservice;
-	
+
 	dvb.tEIT.start(0);  // clear eit	
 	dvb.tPAT.start(0);  // clear tables.
 	dvb.tPMT.start(0);
@@ -399,13 +395,13 @@ int eDVBServiceController::switchService(const eServiceReferenceDVB &newservice)
 		case 1:  // tv service
 		case 2:  // radio service
 		case 4:  // nvod parent service
+		case 7:  // linkage service
 			delete dvb.parentEIT;
 			dvb.parentEIT = 0;
 		break;
 		case 5:  // nvod ref service
-		case 7:  // linkage ref service
 			// send Parent EIT .. for osd text..
-			dvb.gotEIT(0,0); 
+			dvb.gotEIT(0,0);
 		break;
 	}
 	return 1;
@@ -714,16 +710,16 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
 
 			unsigned  char *buf=new unsigned char[ca->data[1]+2];
 			memcpy(buf, ca->data, ca->data[1]+2);
-      DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf));
+			DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf));
 
 			unsigned  char *buf2=new unsigned char[ca->data[1]+2];
 			memcpy(buf2, ca->data, ca->data[1]+2);
-      DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf2));
+			DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf2));
 
 			int avail=0;
 			if (availableCASystems.find(ca->CA_system_ID) != availableCASystems.end())
-					avail++;
-			
+				avail++;
+
 			usedCASystems.insert(ca->CA_system_ID);
 
 			if (avail)

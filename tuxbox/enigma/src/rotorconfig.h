@@ -33,7 +33,6 @@ class RotorConfig: public eWindow
 	void gotoXXChanged( int );
 	void useRotorInPowerChanged( int );
 	void setLNBData( eLNB *lnb );
-	int eventHandler( const eWidgetEvent& e);
 public:
 	RotorConfig( eLNB *lnb );
 };

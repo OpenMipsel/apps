@@ -79,6 +79,8 @@ int ePlaylist::load(const char *filename)
 				current=list.end();
 				current--;
 			}
+			if (!strncmp(line, "#LAST_ACTIVATION ", 17))
+				list.back().last_activation=atoi(line+17);
 			if (!strncmp(line, "#CURRENT_POSITION ", 18))
 				list.back().current_position=atoi(line+18);
 			if (!strncmp(line, "#TYPE ", 6))
@@ -138,7 +140,7 @@ int ePlaylist::save(const char *filename)
 		FILE *f=fopen(filename, "wt");
 		if (!f)
 			return -1;
-		fprintf(f, "#NAME %s\r\n", service_name.c_str());
+		fprintf(f, "#NAME %s\r\n", service_name.c_str());		
 		for (std::list<ePlaylistEntry>::iterator i(list.begin()); i != list.end(); ++i)
 		{
 			fprintf(f, "#SERVICE: %s\r\n", i->service.toString().c_str());
@@ -146,7 +148,9 @@ int ePlaylist::save(const char *filename)
 				fprintf(f, "#DESCRIPTION: %s\r\n", i->service.descr.c_str());
 			if (i->type & ePlaylistEntry::PlaylistEntry && i->current_position != -1)
 				fprintf(f, "#CURRENT_POSITION %d\r\n", i->current_position);
-			else if (i->event_id != -1)
+			else if ( i->type & ePlaylistEntry::typeMultiple && i->last_activation != -1 )
+				fprintf(f, "#LAST_ACTIVATION %d\r\n", i->last_activation);
+			else if ( i->event_id != -1)
 				fprintf(f, "#EVENT_ID %d\r\n", i->event_id);
 			if ((int)i->type != ePlaylistEntry::PlaylistEntry)
 				fprintf(f, "#TYPE %d\r\n", i->type);

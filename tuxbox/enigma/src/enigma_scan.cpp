@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.12 2003/03/02 02:20:23 ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.13 2003/04/13 13:03:07 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -25,6 +25,7 @@
 #include <satconfig.h>
 #include <rotorconfig.h>
 #include <scan.h>
+#include <tpeditwindow.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gui/ewindow.h>
@@ -34,13 +35,14 @@
 #include <lib/base/i18n.h>
 
 eZapScan::eZapScan()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Channels"), 5, 300, true)
+	:eListBoxWindow<eListBoxEntryMenu>(_("Channels"), 6, 300, true)
 {
 	move(ePoint(150, 136));
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to main menu")))->selected, eZapScan::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Transponder scan"), _("goto transponder scan")))->selected, eZapScan::sel_scan);	
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )  // only when a sat box is avail we shows a satellite config
 	{
+		CONNECT((new eListBoxEntryMenu(&list, _("Transponders..."), _("goto transponder edit dialog")))->selected, eZapScan::sel_tpeditdlg);
 		CONNECT((new eListBoxEntryMenu(&list, _("Satellites..."), _("goto satellite config")))->selected, eZapScan::sel_satconfig);
 		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup..."), _("goto Motor Setup")))->selected, eZapScan::sel_rotorConfig);
 	}
@@ -98,6 +100,18 @@ void eZapScan::sel_satconfig()
 	satconfig.hide();
 	show();
 }
+
+void eZapScan::sel_tpeditdlg()
+{
+	hide();
+	eTransponderEditWindow wnd;
+	wnd.setLCD(LCDTitle, LCDElement);
+	wnd.show();
+	wnd.exec();
+	wnd.hide();
+	show();
+}
+
 
 eLNB* eZapScan::getRotorLNB(int silent)
 {

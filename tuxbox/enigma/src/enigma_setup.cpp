@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.16 2003/04/08 22:00:04 tmbinc Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.17 2003/04/13 13:03:07 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -37,6 +37,7 @@
 #include <enigma_scan.h>
 #include <setupskin.h>
 #include <setupengrab.h>
+#include <parentallock.h>
 #include <lib/gui/emessage.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
@@ -102,6 +103,7 @@ eZapSetup::eZapSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
 	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab..."), eString().sprintf("(%d) %s", ++entry, _("open ngrab config")) ))->selected, eZapSetup::sel_engrab);
 	CONNECT((new eListBoxEntryMenu(&list, _("Extra settings..."), eString().sprintf("(%d) %s", ++entry, _("open extra config")) ))->selected, eZapSetup::sel_extra);
+	CONNECT((new eListBoxEntryMenu(&list, _("Parental settings..."), eString().sprintf("(%d) %s", ++entry, _("open parental setup")) ))->selected, eZapSetup::sel_parental);
 	if (haveharddisk)
 		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), eString().sprintf("(%d) %s", ++entry, _("open harddisk setup")) ))->selected, eZapSetup::sel_harddisk);
 	if (haveci)
@@ -299,6 +301,17 @@ void eZapSetup::sel_rfmod()
 {
 	hide();
 	eZapRFmodSetup setup;
+	setup.setLCD(LCDTitle, LCDElement);
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+
+void eZapSetup::sel_parental()
+{
+	hide();
+	eParentalSetup setup;
 	setup.setLCD(LCDTitle, LCDElement);
 	setup.show();
 	setup.exec();

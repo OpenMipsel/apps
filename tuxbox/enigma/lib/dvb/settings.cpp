@@ -20,6 +20,7 @@ void eDVBSettings::removeDVBBouquets()
 		{
 			eDebug("removing bouquet '%s'", i->bouquet_name.c_str());
 			i = bouquets.erase(i);
+			bouquetsChanged=1;
 		}
 		else
 		{
@@ -105,7 +106,10 @@ eBouquet* eDVBSettings::createBouquet(int bouquet_id, eString bouquet_name)
 {
 	eBouquet *n=getBouquet(bouquet_id);
 	if (!n)
+	{
 		bouquets.push_back(n=new eBouquet(bouquet_id, bouquet_name));
+		bouquetsChanged=1;
+	}
 	return n;
 }
 
@@ -116,6 +120,7 @@ eBouquet *eDVBSettings::createBouquet(eString bouquet_name)
 	{
 		int bouquet_id=getUnusedBouquetID(0);
 		bouquets.push_back(n=new eBouquet(bouquet_id, bouquet_name));
+		bouquetsChanged=1;
 	}
 	return n;
 }
@@ -148,16 +153,6 @@ void eDVBSettings::revalidateBouquets()
 				service->service=transponderlist->searchService(service);
 #endif
 	/*emit*/ dvb.bouquetListChanged();
-}
-
-eTransponderList *eDVBSettings::getTransponders()
-{
-	return transponderlist;
-}
-
-ePtrList<eBouquet>* eDVBSettings::getBouquets()
-{
-	return &bouquets;
 }
 
 void eDVBSettings::setTransponders(eTransponderList *tlist)
@@ -396,7 +391,11 @@ void eDVBSettings::loadServices()
 
 void eDVBSettings::saveBouquets()
 {
+	if ( !bouquetsChanged )
+		return;
+
 	eDebug("saving bouquets...");
+	bouquetsChanged=0;
 	
 	FILE *f=fopen(CONFIGDIR "/enigma/bouquets", "wt");
 	if (!f)
@@ -423,6 +422,7 @@ void eDVBSettings::loadBouquets()
 	FILE *f=fopen(CONFIGDIR "/enigma/bouquets", "rt");
 	if (!f)
 		return;
+	bouquetsChanged=0;
 	char line[256];
 	if ((!fgets(line, 256, f)) || strncmp(line, "eDVB bouquets", 13))
 	{
@@ -659,6 +659,7 @@ int eDVBSettings::importSatcoDX(eString line)
 eDVBSettings::~eDVBSettings()
 {
 	saveServices();
+	saveBouquets();
 	if (transponderlist)
 		delete transponderlist;
 }

@@ -16,10 +16,10 @@ eTransponderWidget::eTransponderWidget(eWidget *parent, int edit, int type)
 	
 	eLabel *l = 0;
 
-	if ( type == deliverySatellite )
-	{
-		l = new eLabel(this);
-		l->setName( "lSat" );
+	if ( type & deliverySatellite )
+	{          
+		lsat = new eLabel(this);
+		lsat->setName( "lSat" );
 
 		sat=new eComboBox(this, 4, l, edit);
 		sat->setName("sat");
@@ -41,7 +41,7 @@ eTransponderWidget::eTransponderWidget(eWidget *parent, int edit, int type)
 	inversion=new eCheckbox(this);
 	inversion->setName("inversion");
 
-	if ( type == deliverySatellite )
+	if ( type & deliverySatellite )
 	{
 		l = new eLabel(this);
 		l->setName( "lPol" );
@@ -98,7 +98,7 @@ void eTransponderWidget::updated2(int)
 int eTransponderWidget::load()
 {
 	eString name="transpondersettings.";
-	switch (type)
+	switch (type&3)
 	{
 	case deliveryCable:
 		name+="cable";
@@ -111,6 +111,13 @@ int eTransponderWidget::load()
 	}
 	if (eSkin::getActive()->build(this, name.c_str()))
 		return -1;
+	if ( type & flagNoSat )
+	{
+		lsat->hide();
+		sat->hide();
+	}
+	if ( type & flagNoInv )
+		inversion->hide();
 	return 0;
 }
 
@@ -139,7 +146,7 @@ int eTransponderWidget::setTransponder(const eTransponder *transponder)
 {
 	if (!transponder)
 		return -1;
-	switch (type)
+	switch (type&3)
 	{
 	case deliveryCable:
 		if (!transponder->cable.valid)
@@ -179,17 +186,31 @@ int eTransponderWidget::setTransponder(const eTransponder *transponder)
 
 int eTransponderWidget::getTransponder(eTransponder *transponder)
 {
-	switch (type)
+	switch (type&3)
 	{
 	case deliveryCable:
+		eDebug("deliveryCable");
 		transponder->setCable(frequency->getNumber()*1000, symbolrate->getNumber()*1000, inversion->isChecked(), 3 );
 		return 0;
 	case deliverySatellite:
-		eDebug("setting to: %d %d %d %d %d %d"
-		, frequency->getNumber(), symbolrate->getNumber(), (int)polarity->getCurrent()->getKey(), (int)fec->getCurrent()->getKey(), ((eSatellite*)sat->getCurrent()->getKey())->getOrbitalPosition(), inversion->isChecked());
-		transponder->setSatellite(frequency->getNumber()*1000, 
-			symbolrate->getNumber()*1000, !((int)polarity->getCurrent()->getKey()), 
-			((int)fec->getCurrent()->getKey()), ((eSatellite*)sat->getCurrent()->getKey())->getOrbitalPosition(), inversion->isChecked());
+		eDebug("deliverySatellite");
+		eDebug("setting to: %d %d %d %d %d %d",
+			frequency->getNumber(),
+			symbolrate->getNumber(),
+			(int)polarity->getCurrent()->getKey(),
+			(int)fec->getCurrent()->getKey(),
+			sat->getCurrent() && sat->getCurrent()->getKey()?
+				((eSatellite*)sat->getCurrent()->getKey())->getOrbitalPosition() : 0,
+			inversion->isChecked());
+		transponder->setSatellite(
+			frequency->getNumber()*1000, 
+			symbolrate->getNumber()*1000,
+			!((int)polarity->getCurrent()->getKey()), 
+			((int)fec->getCurrent()->getKey()),
+			sat->getCurrent() && sat->getCurrent()->getKey() ?
+				((eSatellite*)sat->getCurrent()->getKey())->getOrbitalPosition()
+				: 0,
+			inversion->isChecked());
 		return 0;
 	default:
 		return -1;

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <set>
+#include <sstream>
 
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/edvb.h>
@@ -308,6 +309,66 @@ const std::map<int,tpPacket>& existNetworks::getNetworkNameMap()
 	return names;
 }
 
+int existNetworks::saveNetworks()
+{
+	const char *filename=0;
+
+	switch (fetype)
+	{
+	case eFrontend::feSatellite:
+		filename="/etc/satellites.xml";
+		break;
+	case eFrontend::feCable:
+		filename="/etc/cables.xml";
+		break;
+	default:
+		break;
+	}
+
+	if (!filename)
+		return -1;
+
+	FILE *out=fopen(filename, "w+");
+	if (!out)
+	{
+		eWarning("unable to open %s", filename);
+		return -1;
+	}
+
+	std::stringstream FileText;
+	FileText << "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"
+		"<!-- useable flags are\n"
+		"1\t->\tNetwork Scan\n"
+		"2\t->\tuse BAT\n"
+		"4\t->\tuse ONIT\n"
+		"8\t->\tskip NITs of known networks\n"
+		"and combinations of this.-->\n\n"
+		"<satellites>\n";
+	for (std::list<tpPacket>::iterator p( networks.begin() ); p != networks.end(); p++ )
+	{
+		FileText << '\t' << "<sat name=\"" << p->name
+						 << "\" flags=\"" << p->scanflags
+						 << "\" position=\"" << p->orbital_position << "\">\n";
+		for (std::list<eTransponder>::iterator t( p->possibleTransponders.begin() ); t != p->possibleTransponders.end() ; t++ )
+			FileText << "\t\t<transponder frequency=\"" << t->satellite.frequency
+							 << "\" symbol_rate=\"" << t->satellite.symbol_rate
+							 << "\" polarization=\"" << t->satellite.polarisation
+							 << "\" fec_inner=\"" << t->satellite.fec
+							 << "\"/>\n";
+		 FileText << "\t</sat>\n";
+	}
+	FileText << "</satellites>\n";
+
+	const std::string &str = FileText.str();
+
+	unsigned int bwritten = fwrite(str.c_str(),
+											sizeof(str[0]),
+											str.length(),
+											out );
+	fclose(out);
+	return bwritten != str.length()*sizeof(str[0]);
+}
+
 int existNetworks::reloadNetworks()
 {
 	names.clear();
@@ -463,6 +524,7 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 		}
 		packet.possibleTransponders.push_back(t);
 	}
+	packet.possibleTransponders.sort();
 	return 0;
 }
 
@@ -579,7 +641,7 @@ eServiceDVB &eTransponderList::createService(const eServiceReferenceDVB &service
 							).first->second;
 
 		channel_number.insert(std::pair<int,eServiceReferenceDVB>(chnum,service));
-		
+
 		return *n;
 	}
 	return (*i).second;

@@ -9,6 +9,7 @@
 #include <lib/gui/ewindow.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/eprogress.h>
+#include <lib/gui/emessage.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/decoder.h>
 #include <lib/driver/rc.h>
@@ -83,7 +84,6 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	}
 
 	transponder_widget=new eTransponderWidget(this, 1, ft);
-	transponder_widget->load();
 	transponder_widget->setName("transponder");
 
 	festatus_widget=new eFEStatusWidget(this, eFrontend::getInstance());
@@ -111,6 +111,7 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	if (skin->build(this, "tsManual"))
 		eFatal("skin load of \"tsManual\" failed");
 
+	transponder_widget->load();
 	transponder_widget->setTransponder(&transponder);
 
 	CONNECT(b_start->selected, tsManual::start);
@@ -461,8 +462,8 @@ tsScan::tsScan(eWidget *parent): eWidget(parent, 1), timer(eApp)
 	CONNECT(eDVB::getInstance()->eventOccured, tsScan::dvbEvent);
 	CONNECT(eDVB::getInstance()->stateChanged, tsScan::dvbState);
 	CONNECT(timer.timeout, tsScan::updateTime);
-	CONNECT(eDVB::getInstance()->settings->transponderlist->service_found, tsScan::serviceFound);
-	CONNECT(eDVB::getInstance()->settings->transponderlist->transponder_added, tsScan::addedTransponder);
+	CONNECT(eDVB::getInstance()->settings->getTransponders()->service_found, tsScan::serviceFound);
+	CONNECT(eDVB::getInstance()->settings->getTransponders()->transponder_added, tsScan::addedTransponder);
 }
 
 int tsScan::eventHandler(const eWidgetEvent &event)
@@ -623,7 +624,7 @@ int TransponderScan::exec(int initial)
 		stateScan,
 		stateDone,
 		stateEnd
-	} state = stateMenu;
+	} state = stateMenu, oldstate = stateEnd;
 	
 	if (initial == initialMenu)
 		state=stateMenu;
@@ -632,6 +633,8 @@ int TransponderScan::exec(int initial)
 
 	window->show();
 	Decoder::displayIFrameFromFile(DATADIR "/pictures/scan.mvi");
+
+	eTransponder oldTp(*eDVB::getInstance()->settings->getTransponders());
 
 	while (state != stateEnd)
 	{
@@ -669,7 +672,9 @@ int TransponderScan::exec(int initial)
 
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 
-			if (sapi && sapi->transponder)
+			if ( oldstate==stateManual )
+				transponder=oldTp;
+			else if (sapi && sapi->transponder)
 				transponder=*sapi->transponder;
 			else
 				switch (eFrontend::getInstance()->Type())
@@ -686,6 +691,7 @@ int TransponderScan::exec(int initial)
 
 			eDVB::getInstance()->setMode(eDVB::controllerScan);        
 			tsManual manual_scan(window, transponder, LCDTitle, LCDElement);
+			oldstate=stateManual;
 			manual_scan.show();
 			switch (manual_scan.exec())
 			{
@@ -697,6 +703,7 @@ int TransponderScan::exec(int initial)
 				break;
 			}
 			manual_scan.hide();
+			oldTp=manual_scan.getTransponder();
 			break;
 		}
 		case stateAutomatic:
@@ -705,6 +712,7 @@ int TransponderScan::exec(int initial)
 			tsAutomatic automatic_scan(window);
 			automatic_scan.setLCD( LCDTitle, LCDElement);
 			automatic_scan.show();
+			oldstate=stateAutomatic;
 			switch (automatic_scan.exec())
 			{
 			case 0:
@@ -746,7 +754,21 @@ int TransponderScan::exec(int initial)
 			statusbar->setText(_("Scan is in finished, press ok to close window"));
 			finish.exec();
 			finish.hide();
-			state=stateEnd;
+			eMessageBox mb(eString().sprintf(_("Do you want to scan another %s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
+				_("Scan finished"),
+				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
+				eMessageBox::btYes );
+			mb.show();
+			switch ( mb.exec() )
+			{
+				case -1:
+				case eMessageBox::btNo:
+					state=stateEnd;
+					break;
+				default:
+					state=oldstate;
+			}
+			mb.hide();
 			break;
 		}
 		default:
@@ -757,7 +779,7 @@ int TransponderScan::exec(int initial)
 
 	eDVB::getInstance()->setMode(eDVB::controllerService);  
 	window->hide();
-	
+
 	Decoder::Flush();
 
 	return scanok;

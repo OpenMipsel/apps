@@ -100,11 +100,15 @@ class NVODStream: public eListBoxEntryTextStream
 	friend class eListBox<NVODStream>;
 	friend class eNVODSelector;
 	int begTime;
-	eString redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
+	const eString &redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 	void EITready(int error);
 	int validate();
 	void selfDestroy();
 	Signal0<void> ready;
+	bool operator<( const eListBoxEntry& e ) const
+	{
+		return begTime < ((NVODStream&)e).begTime;
+	}
 public:
 	int getBegTime() const { return begTime; }
 	NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type);
@@ -184,15 +188,19 @@ class eSubServiceSelector
 	int quickzap;
 	void selected(SubService *);
 	eButton *bAddToUserBouquet, *bToggleQuickZap;
+	virtual void willShow();
+	void addPressed();
+	void quickZapPressed();
 public:
 	Signal2<void, eServiceReference*, int> addToUserBouquet;
 	bool quickzapmode();
 	void prev();
 	void next();
-	void addPressed();
-	void quickZapPressed();
-	eSubServiceSelector();
+	eSubServiceSelector(bool showbuttons=true);
+	eServiceReferenceDVB *getSelected() { return list.getCount()?&list.getCurrent()->service:0; }
 	void clear();
+	void selectCurrent();
+	void disableQuickZap();
 	void add(eDVBNamespace dvb_namespace, const LinkageDescriptor *ref);
 };
 
@@ -247,7 +255,7 @@ class eZapMain: public eWidget
 public:
 	enum { modeTV, modeRadio, modeFile, modeEnd };
 	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32, recNgrab=64 };
-	enum { messageGoSleep=2, messageShutdown=3 };
+	enum { messageGoSleep=2, messageShutdown=3, messageNoRecordSpaceLeft=4 };
 
 private:
 	eLabel 	*ChannelNumber, *ChannelName, *Clock,
@@ -410,6 +418,7 @@ private:
 	void setVTButton(bool b);
 	void setEPGButton(bool b);
 	void updateProgress();
+	void updateServiceNum( const eServiceReference& );
 	void getPlaylistPosition();
 	void setPlaylistPosition();
 	bool handleState(int justask=0);

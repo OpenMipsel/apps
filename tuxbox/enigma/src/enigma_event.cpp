@@ -112,10 +112,10 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 			}
 			else
 				break;
-			if (addtype != -1 && (evt || events) && eTimerManager::getInstance()->addEventToTimerList( this, &ref, evt?evt:*events, addtype ) )
+			if (addtype != -1 && (evt || events) && !eTimerManager::getInstance()->eventAlreadyInList(this, evt?*evt:*events, ref) )
 			{
 				hide();
-				eTimerView v( eTimerManager::getInstance()->findEvent( &ref, *events ) );
+				eTimerEditView v( evt?*evt:*events, addtype, ref );
 				v.show();
 				v.exec();
 				v.hide();
@@ -322,10 +322,8 @@ void eEventDisplay::checkTimerIcon( EITEvent *event )
 
 void eEventDisplay::setList(const ePtrList<EITEvent> &e)
 {
-	if (eventlist)
-		delete eventlist;
-	if (events)
-		delete events;
+	delete eventlist;
+	delete events;
 	eventlist=new ePtrList<EITEvent>(e);
 	events=new ePtrList<EITEvent>::iterator(*eventlist);
 	if (*events != eventlist->end())

@@ -1,4 +1,4 @@
-// #define TIMESHIFT
+ #define TIMESHIFT
 		// intial time to lag behind live
 #define TIMESHIFT_GUARD (1024*1024)
 #include <lib/dvb/servicedvb.h>
@@ -15,8 +15,8 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler): 
-		handler(handler), buffer(64*1024), liveupdatetimer(this), lock(), messages(this, 1)
+eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler, int livemode )
+	:handler(handler), buffer(64*1024), livemode(livemode), liveupdatetimer(this), lock(), messages(this, 1)
 {
 	state=stateInit;
 
@@ -423,7 +423,7 @@ void eServiceHandlerDVB::handleDVBEvent( const eDVBEvent & e )
 void eServiceHandlerDVB::startPlayback(const eString &filename, int livemode)
 {
 	stopPlayback();
-	decoder=new eDVRPlayerThread(filename.c_str(), this);
+	decoder=new eDVRPlayerThread(filename.c_str(), this, livemode);
 	decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start, livemode));
 	flags=flagIsSeekable|flagSupportPosition;
 	state=statePlaying;
@@ -789,24 +789,7 @@ void eServiceHandlerDVB::enterDirectory(const eServiceReference &ref, Signal1<vo
 			eBouquet *b=eDVB::getInstance()->settings->getBouquet(ref.data[2]);
 			if (!b)
 				break;
-			for (std::list<eServiceReferenceDVB>::iterator i(b->list.begin());  i != b->list.end(); ++i)
-			{
-				eService *s = eTransponderList::getInstance()->searchService( *i );
-				if ( s && s->spflags & eServiceDVB::dxDontshow )
-					continue;
-				int t = i->getServiceType();
-				int nspace = ((eServiceReferenceDVB&)*i).getDVBNamespace().get()&0xFFFF0000;
-				if (t < 0)
-					t=0;
-				if (t >= 31)
-					t=31;
-				if ( ref.data[1] & (1<<t) && // right dvb service type
-						 ( ( ref.data[3] == (int)0xFFFFFFFF) || // ignore namespace
-							 ( (ref.data[3]&(int)0xFFFF0000) == nspace ) // right satellite
-						 )
-					 )
-					 callback(*i);
-			}
+			b->forEachServiceReference(eServiceHandlerDVB_addService(callback, ref.data[1], ref.data[3] ));
 			break;
 		}
 		default:

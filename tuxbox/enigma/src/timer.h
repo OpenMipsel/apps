@@ -2,11 +2,15 @@
 #define __apps__enigma__timer_h
 
 #include <lib/dvb/serviceplaylist.h>
-#include <lib/gui/combobox.h>
-#include <lib/gui/enumber.h>
+#include <lib/gui/listbox.h>
 #include <sselect.h>
 #include <epgwindow.h>
 
+class eTextInputField;
+class eNumber;
+class eButton;
+class eComboBox;
+class eCheckbox;
 
 class eTimerManager: public Object
 {
@@ -53,10 +57,11 @@ public:
 	eTimerManager();
 	~eTimerManager();
 	static eTimerManager *getInstance() { return instance; }
-	bool removeEventFromTimerList( eWidget *sel, const ePlaylistEntry& entry, int type=erase );
-	bool removeEventFromTimerList( eWidget *sel, const eServiceReference *ref, const EITEvent *evt);
-	bool addEventToTimerList( eWidget *sel, const eServiceReference *ref, const EITEvent *evt, int type = ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::stateWaiting );
-	bool addEventToTimerList( eWidget *sel, const ePlaylistEntry& entry );
+	bool removeEventFromTimerList( eWidget *w, const ePlaylistEntry& entry, int type=erase );
+	bool removeEventFromTimerList( eWidget *w, const eServiceReference *ref, const EITEvent *evt);
+	bool addEventToTimerList( eWidget *w, const eServiceReference *ref, const EITEvent *evt, int type = ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::stateWaiting );
+	bool addEventToTimerList( eWidget *w, const ePlaylistEntry& entry );
+	bool eventAlreadyInList( eWidget *w, EITEvent &e, eServiceReference &ref );
 	void abortEvent(int err);
 	void loadTimerList();
 	void saveTimerList();
@@ -73,57 +78,67 @@ public:
 class eListBoxEntryTimer: public eListBoxEntry
 {
 	friend class eListBox<eListBoxEntryTimer>;
-	friend class eTimerView;
+	friend class eTimerListView;
 	friend struct _selectEvent;
 	static gFont TimeFont, DescrFont;
 	static gPixmap *ok, *failed;
 	static int timeXSize, dateXSize;
 	int TimeYOffs, DescrYOffs;
-	eTextPara *paraDate, *paraTime, *paraDescr;
+	eTextPara *paraDate, *paraTime, *paraDescr, *paraService;
 	ePlaylistEntry *entry;
-	eString redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited);
+	const eString &redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited);
 	static int getEntryHeight();
 public:
-	bool operator < ( const eListBoxEntryTimer& ref ) const
+	bool operator < ( const eListBoxEntry& ref ) const
 	{
-		return entry->time_begin < ref.entry->time_begin;
+		return entry->time_begin < ((eListBoxEntryTimer&)ref).entry->time_begin;
 	}
 	eListBoxEntryTimer(eListBox<eListBoxEntryTimer> *listbox, ePlaylistEntry *entry);
 	~eListBoxEntryTimer();
 };
 
-class eTimerView: public eWindow
+class eTimerListView:public eWindow
 {
 	eListBox<eListBoxEntryTimer>* events;
-	eComboBox *bday, *bmonth, *byear, *eday, *emonth, *eyear, *type;
-	eNumber *btime, *etime;
-	eButton *add, *update, *erase, *bclose, *bSelectService;
-	tm beginTime, endTime;
-	friend struct _selectEvent;
-	eServiceReference tmpService;
-private:
-	eServicePath buildServicePath( eServiceReference &ref );
-	void showServiceSelector();
-	void selChanged( eListBoxEntryTimer* );
+	eButton *add, *erase;
+public:
+	eTimerListView();
 	void fillTimerList();
 	void entrySelected(eListBoxEntryTimer *entry);
-	int eventHandler(const eWidgetEvent &event);
-	void comboBoxClosed( eComboBox *combo,  eListBoxEntryText* );
-	void invalidateEntry( eListBoxEntryTimer* );
-	void updateDateTime( const tm& beginTime, const tm& endTime );
-	void updateDay( eComboBox* dayCombo, int year, int month, int day );
-	void updatePressed();
-	void selectEvent( ePlaylistEntry* e );
 	void addPressed();
 	void erasePressed();
-	void focusChanged( const eWidget* );
+};
+
+class eTimerEditView: public eWindow
+{
+	eCheckbox *multiple, *cMo, *cTue, *cWed, *cThu, *cFr, *cSa, *cSu;
+	eComboBox *bday, *bmonth, *byear, *eday, *emonth, *eyear, *type;
+	eTextInputField *event_name;
+	eLabel *lBegin, *lEnd;
+	eNumber *btime, *etime;
+	eButton *bSelectService, *bApply, *bScanEPG;
+	tm beginTime, endTime;
+	eServiceReference tmpService;
+	ePlaylistEntry *curEntry;
+private:
+	void scanEPGPressed();
+	void multipleChanged( int );
+	void setMultipleCheckboxes( int type );
+	void createWidgets();
+	void fillInData( time_t begTime, int duration, int type, eServiceReference& ref );
+	void applyPressed();
+	void showServiceSelector();
+	void comboBoxClosed( eComboBox *combo,  eListBoxEntryText* );
+	void updateDateTime( const tm& beginTime, const tm& endTime );
+	void updateDay( eComboBox* dayCombo, int year, int month, int day );
 	void focusNext(int*)
 	{
 		eWidget::focusNext(eWidget::focusDirNext);
 	}
 	bool getData( time_t& beginTime, int& duration );
 public:
-	eTimerView(ePlaylistEntry* e=0);
+	eTimerEditView(ePlaylistEntry* e=0);
+	eTimerEditView( const EITEvent &e, int type, eServiceReference ref );
 };
 
 #endif

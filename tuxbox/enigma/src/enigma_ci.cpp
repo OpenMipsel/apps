@@ -398,14 +398,14 @@ enigmaCI::enigmaCI(): eWindow(0)
 	if(eDVB::getInstance()->getmID() == 6)
 	{
 		setText(_("Common Interface Modules"));
-		move(ePoint(150, 80));
+		move(ePoint(160, 80));
 		cresize(eSize(350, 340));
 		DVBCI2=eDVB::getInstance()->DVBCI2;
 	}
 	else
 	{	
 		setText(_("Common Interface Module"));
-		move(ePoint(150, 136));
+		move(ePoint(160, 136));
 		cresize(eSize(350, 220));
 	}
 	

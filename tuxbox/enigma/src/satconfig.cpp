@@ -78,8 +78,7 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 
 	complexity=checkComplexity();
 	eConfig::getInstance()->getKey("/elitedvb/DVB/config/lnbs/type", complexity);
-	combo_type->setCurrent( (void*)complexity );
-	typeChanged( combo_type->getCurrent() );
+	combo_type->setCurrent( (void*)complexity, true );
 
 	for ( int i = 0; i < 13; i++ )
 		pageEnds.push_back( i * 240 );
@@ -819,6 +818,7 @@ void eLNBSetup::onSave()
 	{
 		eTransponderList::getInstance()->getLNBs().push_back( eLNB( *eTransponderList::getInstance() ) );  // add new LNB
 		p = &eTransponderList::getInstance()->getLNBs().back();   // get adresse from the new lnb
+		p->getDiSEqC().setRotorDefaultOptions();
 //		eDebug("now we have a new LNB Created = %p", p );
 	}
 /*	else
@@ -836,7 +836,6 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().SeqRepeat = DiSEqCPage->SeqRepeat->isChecked();
 	p->getDiSEqC().SwapCmds = DiSEqCPage->SwapCmds->isChecked();	
 	p->getDiSEqC().uncommitted_cmd = (int)DiSEqCPage->ucInput->getCurrent()->getKey();
-	p->getDiSEqC().setRotorDefaultOptions();
 
 	if ( p != sat->getLNB() )  // the satellite must removed from the old lnb and inserts in the new
 	{
@@ -892,7 +891,7 @@ struct eLNBPage::selectlnb: public std::unary_function<const eListBoxEntryText&,
 	{
 		if ( lnb == (eLNB*)s.getKey() )
 		{
-			lb->setCurrent(&s);
+			lb->setCurrent(&s,true);
 			return 1;
 		}
 		return 0;

@@ -170,7 +170,7 @@ PluginOffsetScreen::PluginOffsetScreen()
 eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 {
 	setText("OSD Setup");
-	move(ePoint(120, 45));
+	cmove(ePoint(150, 125));
 	cresize(eSize(440, 435));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);

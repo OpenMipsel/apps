@@ -39,8 +39,7 @@ class eFrontend: public Object
 
 	eLNB *lastLNB;
          
-	enum { stateIdle, stateTuning };
-	int state;
+	enum { stateIdle, stateTuning } state;
 	eTransponder *transponder;
 	eFrontend(int type, const char *demod="/dev/dvb/card0/frontend0", const char *sec="/dev/dvb/card0/sec0");
 	static eFrontend *frontend;

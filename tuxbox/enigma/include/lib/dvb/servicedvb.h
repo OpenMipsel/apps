@@ -66,7 +66,7 @@ public:
 	
 	void gotMessage(const eDVRPlayerThreadMessage &message);
 	
-	eDVRPlayerThread(const char *filename, eServiceHandlerDVB *handler);
+	eDVRPlayerThread(const char *filename, eServiceHandlerDVB *handler, int livemode);
 	~eDVRPlayerThread();
 
 	int getPosition(int);

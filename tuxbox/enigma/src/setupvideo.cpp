@@ -29,7 +29,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	setText(_("Video Setup"));
-	move(ePoint(150, 136));
+	move(ePoint(160, 146));
 	cresize(eSize(390, 200));
 
 	eLabel *l=new eLabel(this);

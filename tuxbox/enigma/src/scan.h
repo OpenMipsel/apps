@@ -41,6 +41,7 @@ class tsManual: public eWidget
 	int eventHandler(const eWidgetEvent &event);
 public:
 	tsManual(eWidget *parent, const eTransponder &transponder, eWidget* LCDTitle, eWidget* LCDElement);
+	eTransponder &getTransponder() { return transponder; }
 };
 
 class tsAutomatic: public eWidget

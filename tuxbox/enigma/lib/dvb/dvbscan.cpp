@@ -203,10 +203,10 @@ void eDVBScanController::handleEvent(const eDVBEvent &event)
 					// eTransponder &transponder=dvb.settings->transponderlist->createTransponder(tsid, onid);
 
 					// schon bekannte transponder nicht nochmal scannen
-					if (dvb.settings->transponderlist->searchTS(dvb_namespace, tsid, onid))
+					if (dvb.settings->getTransponders()->searchTS(dvb_namespace, tsid, onid))
 						continue;
 
-					eTransponder tp(*dvb.settings->transponderlist, -1, tsid, onid);
+					eTransponder tp(*dvb.settings->getTransponders(), -1, tsid, onid);
 					
 					for (ePtrList<Descriptor>::iterator d(i->transport_descriptor); d != i->transport_descriptor.end(); ++d)
 					{
@@ -351,7 +351,7 @@ int eDVBScanController::handleSDT(eTransponder *&transponder, const SDT *sdt)
 	transponder->dvb_namespace=dvb_namespace;
 
 		// ok we found the transponder, it seems to be valid
-	eTransponder &real=dvb.settings->transponderlist->createTransponder(dvb_namespace, tsid, onid);
+	eTransponder &real=dvb.settings->getTransponders()->createTransponder(dvb_namespace, tsid, onid);
 	real=*transponder;
 
 		// and we continue working on that
@@ -374,7 +374,7 @@ int eDVBScanController::handleSDT(eTransponder *&transponder, const SDT *sdt)
 		known=1;
 
 		// insert the services
-	dvb.settings->transponderlist->handleSDT(sdt, dvb_namespace, onid, tsid);
+	dvb.settings->getTransponders()->handleSDT(sdt, dvb_namespace, onid, tsid);
 	
 	return known;
 }

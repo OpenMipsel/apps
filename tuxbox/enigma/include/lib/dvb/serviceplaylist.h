@@ -8,16 +8,19 @@ struct ePlaylistEntry
 {
 	enum
 	{
-		PlaylistEntry=1, SwitchTimerEntry=2, RecTimerEntry=4,	recDVR=8, recVCR=16,
-		stateWaiting=32, stateRunning=64,	statePaused=128, stateFinished=256, stateError=512,
-		errorNoSpaceLeft=1024, errorUserAborted=2048, errorZapFailed=4096, errorOutdated=8192,
-		boundFile=16384, typeSmartTimer=32768, typeShutOffTimer=65536, recNgrab=131072
+		PlaylistEntry=1, SwitchTimerEntry=2, RecTimerEntry=4, recDVR=8,
+		recVCR=16, stateWaiting=32, stateRunning=64, statePaused=128,
+		stateFinished=256, stateError=512, errorNoSpaceLeft=1024, errorUserAborted=2048,
+		errorZapFailed=4096, errorOutdated=8192, boundFile=16384, typeSmartTimer=32768,
+		typeShutOffTimer=65536, recNgrab=131072, typeMultiple=262144, Su=524288,
+		Mo=1048576, Tue=2097152, Wed=4194304, Thu=8388608, Fr=16777216, Sa=33554432
 	};
 	eServiceReference service;
 	union
 	{
 		int current_position;
 		int event_id;
+		int last_activation;
 	};
 	time_t time_begin;
 	int duration,
