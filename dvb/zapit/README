@@ -20,6 +20,7 @@ apps/dvb/zapit/include/zapit/sdt.h          \
 apps/dvb/zapit/include/zapit/transponder.h  \
 apps/dvb/zapit/include/zapit/types.h        \
 apps/dvb/zapit/include/zapit/xmlinterface.h \
+apps/dvb/zapit/include/zapit/zapit.h        \
 apps/dvb/zapit/lib                          \
 apps/dvb/zapit/src/bouquets.cpp             \
 apps/dvb/zapit/src/channel.cpp              \
