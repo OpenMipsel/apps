@@ -1,7 +1,7 @@
 /*
   Client-Interface für zapit  -   DBoxII-Project
 
-  $Id: sectionsdclient.cpp,v 1.26 2002/10/15 20:39:48 woglinde Exp $
+  $Id: sectionsdclient.cpp,v 1.26.2.1 2003/02/06 20:32:07 thegoodguy Exp $
 
   License: GPL
 
@@ -19,102 +19,25 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-  $Log: sectionsdclient.cpp,v $
-  Revision 1.26  2002/10/15 20:39:48  woglinde
-
-
-  mostly coding styles, adding license to some files,
-  using dos2unix on one file
-
-  Revision 1.25  2002/10/14 20:03:56  thegoodguy
-  Use CBasicClient in sectionsdclient, too ; always close_connection (even when the sectionsd did not respond)
-
-  Revision 1.24  2002/10/13 21:21:49  thegoodguy
-  Cleanup includes
-
-  Revision 1.23  2002/10/13 11:35:03  woglinde
-
-
-  yeah, its done neutrino compiles now again,
-  you can go on and find bugs
-
-  Revision 1.22  2002/10/13 05:42:51  woglinde
-
-
-  2nd round of moving headers in lib/include
-
-  Revision 1.21  2002/10/07 10:46:09  thegoodguy
-  Enhancement in Clientlib (setEventsAreOldInMinutes) & code cleanup
-
-  Revision 1.20  2002/09/25 22:15:09  thegoodguy
-  Small bugfix (thx to gcc: "comparison is always false due to limited range of data type")
-
-  Revision 1.19  2002/09/24 22:29:06  thegoodguy
-  Code cleanup (kick out onid_sid)
-
-  Revision 1.18  2002/07/27 17:14:51  obi
-  no more warnings
-
-  Revision 1.17  2002/04/18 13:09:53  field
-  Sectionsd auf clientlib umgestellt :)
-
-  Revision 1.14  2002/04/17 15:58:24  field
-  Anpassungen
-
-  Revision 1.13  2002/04/15 12:33:44  field
-  Wesentlich verbessertes Paket-Handling (CPU-Last sollte viel besser sein
-  *g*)
-
-  Revision 1.12  2002/04/12 15:47:28  field
-  laestigen Bug in der glibc2.2.5 umschifft
-
-  Revision 1.11  2002/03/30 03:54:31  dirch
-  sectionsd_close vergessen ;)
-
-  Revision 1.10  2002/03/30 03:45:37  dirch
-  getChannelEvents() gefixt, getEPGid() and getEPGidShort() added
-
-  Revision 1.9  2002/03/28 14:58:30  dirch
-  getChannelEvents() gefixt
-
-  Revision 1.8  2002/03/22 17:12:06  field
-  Weitere Updates, compiliert wieder
-
-  Revision 1.6  2002/03/20 21:42:30  McClean
-  add channel-event functionality
-
-  Revision 1.5  2002/03/18 15:08:50  field
-  Updates...
-
-  Revision 1.4  2002/03/18 09:32:51  field
-  nix bestimmtes...
-
-  Revision 1.2  2002/03/07 18:33:43  field
-  ClientLib angegangen, Events angefangen
-
-  Revision 1.1  2002/01/07 21:28:22  McClean
-  initial
-
-  Revision 1.1  2002/01/06 19:10:06  Simplex
-  made clientlib for zapit
-  implemented bouquet-editor functions in lib
-
-
 */
 
 #include <stdio.h>
 
-//#include <netinet/in.h>
-//#include <netinet/in_systm.h>
-//#include <netinet/ip.h>
-//#include <netdb.h>
-//#include <arpa/inet.h>
-
-
 #include <eventserver.h>
-#include <sectionsdclient/sectionsdMsg.h>
-#include <sectionsdclient/sectionsdclient.h>
 
+#include <sectionsdclient/sectionsdclient.h>
+#include <sectionsdclient/sectionsdMsg.h>
+
+
+const unsigned char   CSectionsdClient::getVersion   () const
+{
+	return sectionsd::ACTVERSION;
+}
+
+const          char * CSectionsdClient::getSocketName() const
+{
+	return SECTIONSD_UDS_NAME;
+}
 
 int CSectionsdClient::readResponse(char* data, int size)
 {
@@ -133,15 +56,15 @@ int CSectionsdClient::readResponse(char* data, int size)
 }
 
 
-bool CSectionsdClient::send(const unsigned char command, char* data = NULL, const unsigned int size = 0, const unsigned char version = 2)
+bool CSectionsdClient::send(const unsigned char command, const char* data, const unsigned int size)
 {
 	sectionsd::msgRequestHeader msgHead;
 
-	msgHead.version    = version;
+	msgHead.version    = getVersion();
 	msgHead.command    = command;
 	msgHead.dataLength = size;
 
-	open_connection(SECTIONSD_UDS_NAME); // if the return value is false, the next send_data call will return false, too
+	open_connection(); // if the return value is false, the next send_data call will return false, too
 
         if (!send_data((char*)&msgHead, sizeof(msgHead)))
             return false;
@@ -152,7 +75,7 @@ bool CSectionsdClient::send(const unsigned char command, char* data = NULL, cons
         return true;
 }
 
-void CSectionsdClient::registerEvent(unsigned int eventID, unsigned int clientID, string udsName)
+void CSectionsdClient::registerEvent(const unsigned int eventID, const unsigned int clientID, const std::string udsName)
 {
 	CEventServer::commandRegisterEvent msg2;
 
@@ -161,19 +84,19 @@ void CSectionsdClient::registerEvent(unsigned int eventID, unsigned int clientID
 
 	strcpy(msg2.udsName, udsName.c_str());
 	
-	send(sectionsd::CMD_registerEvents, (char*)&msg2, sizeof(msg2), 3);
+	send(sectionsd::CMD_registerEvents, (char*)&msg2, sizeof(msg2));
 
 	close_connection();
 }
 
-void CSectionsdClient::unRegisterEvent(unsigned int eventID, unsigned int clientID)
+void CSectionsdClient::unRegisterEvent(const unsigned int eventID, const unsigned int clientID)
 {
 	CEventServer::commandUnRegisterEvent msg2;
 
 	msg2.eventID = eventID;
 	msg2.clientID = clientID;
 
-	send(sectionsd::CMD_unregisterEvents, (char*)&msg2, sizeof(msg2), 3);
+	send(sectionsd::CMD_unregisterEvents, (char*)&msg2, sizeof(msg2));
 
 	close_connection();
 }
@@ -225,21 +148,21 @@ void CSectionsdClient::setPauseScanning(const bool doPause)
 	close_connection();
 }
 
-void CSectionsdClient::setServiceChanged(const unsigned ServiceKey, const bool requestEvent)
+void CSectionsdClient::setServiceChanged(const t_channel_id channel_id, const bool requestEvent)
 {
-	char pData[8];
+	sectionsd::commandSetServiceChanged msg;
 
-	*((unsigned *)pData) = ServiceKey;
-	*((bool *)(pData + 4)) = requestEvent;
+	msg.channel_id   = channel_id;
+	msg.requestEvent = requestEvent; 
 
-	send(sectionsd::serviceChanged, pData, 8);
+	send(sectionsd::serviceChanged, (char *)&msg, sizeof(msg));
 
 	readResponse();
 	close_connection();
 }
 
 
-bool CSectionsdClient::getComponentTagsUniqueKey( unsigned long long uniqueKey, sectionsd::ComponentTagList& tags )
+bool CSectionsdClient::getComponentTagsUniqueKey(const unsigned long long uniqueKey, CSectionsdClient::ComponentTagList& tags)
 {
 	if (send(sectionsd::ComponentTagsUniqueKey, (char*)&uniqueKey, sizeof(uniqueKey)))
 	{
@@ -254,7 +177,7 @@ bool CSectionsdClient::getComponentTagsUniqueKey( unsigned long long uniqueKey, 
 		int	count= *(int *) pData;
 		dp+= sizeof(int);
 
-		sectionsd::responseGetComponentTags response;
+		CSectionsdClient::responseGetComponentTags response;
 		for (int i= 0; i<count; i++)
 		{
 			response.component = dp;
@@ -279,7 +202,7 @@ bool CSectionsdClient::getComponentTagsUniqueKey( unsigned long long uniqueKey, 
 	}
 }
 
-bool CSectionsdClient::getLinkageDescriptorsUniqueKey( unsigned long long uniqueKey, sectionsd::LinkageDescriptorList& descriptors )
+bool CSectionsdClient::getLinkageDescriptorsUniqueKey(const unsigned long long uniqueKey, CSectionsdClient::LinkageDescriptorList& descriptors)
 {
 	if (send(sectionsd::LinkageDescriptorsUniqueKey, (char*)&uniqueKey, sizeof(uniqueKey)))
 	{
@@ -294,7 +217,7 @@ bool CSectionsdClient::getLinkageDescriptorsUniqueKey( unsigned long long unique
 		int	count= *(int *) pData;
 		dp+= sizeof(int);
 
-		sectionsd::responseGetLinkageDescriptors response;
+		CSectionsdClient::responseGetLinkageDescriptors response;
 		for (int i= 0; i<count; i++)
 		{
 			response.name = dp;
@@ -318,9 +241,9 @@ bool CSectionsdClient::getLinkageDescriptorsUniqueKey( unsigned long long unique
 	}
 }
 
-bool CSectionsdClient::getNVODTimesServiceKey( unsigned serviceKey, sectionsd::NVODTimesList& nvod_list )
+bool CSectionsdClient::getNVODTimesServiceKey(const t_channel_id channel_id, CSectionsdClient::NVODTimesList& nvod_list)
 {
-	if (send(sectionsd::timesNVODservice, (char*)&serviceKey, sizeof(serviceKey)))
+	if (send(sectionsd::timesNVODservice, (char*)&channel_id, sizeof(channel_id)))
 	{
 		nvod_list.clear();
 
@@ -330,14 +253,14 @@ bool CSectionsdClient::getNVODTimesServiceKey( unsigned serviceKey, sectionsd::N
 		receive_data(pData, nBufSize);
 		char* dp = pData;
 
-		sectionsd::responseGetNVODTimes response;
+		CSectionsdClient::responseGetNVODTimes response;
 
 		while( dp< pData+ nBufSize )
 		{
 			response.service_id = *(t_service_id *) dp;			dp += sizeof(t_service_id);
 			response.original_network_id = *(t_original_network_id *) dp;	dp += sizeof(t_original_network_id);
 			response.transport_stream_id = *(t_transport_stream_id *) dp;	dp += sizeof(t_transport_stream_id);
-			response.zeit = *(sectionsd::sectionsdTime*) dp;		dp += sizeof(sectionsd::sectionsdTime);
+			response.zeit = *(CSectionsdClient::sectionsdTime*) dp;		dp += sizeof(CSectionsdClient::sectionsdTime);
 
 			nvod_list.insert( nvod_list.end(), response);
 		}
@@ -352,9 +275,9 @@ bool CSectionsdClient::getNVODTimesServiceKey( unsigned serviceKey, sectionsd::N
 }
 
 
-bool CSectionsdClient::getCurrentNextServiceKey( unsigned serviceKey, sectionsd::responseGetCurrentNextInfoChannelID& current_next )
+bool CSectionsdClient::getCurrentNextServiceKey(const t_channel_id channel_id, CSectionsdClient::responseGetCurrentNextInfoChannelID& current_next)
 {
-	if (send(sectionsd::currentNextInformationID, (char*)&serviceKey, sizeof(serviceKey)))
+	if (send(sectionsd::currentNextInformationID, (char*)&channel_id, sizeof(channel_id)))
 	{
 		int nBufSize = readResponse();
 
@@ -365,16 +288,16 @@ bool CSectionsdClient::getCurrentNextServiceKey( unsigned serviceKey, sectionsd:
 		// current
 		current_next.current_uniqueKey = *((unsigned long long *)dp);
 		dp+= sizeof(unsigned long long);
-		current_next.current_zeit = *(sectionsd::sectionsdTime*) dp;
-		dp+= sizeof(sectionsd::sectionsdTime);
+		current_next.current_zeit = *(CSectionsdClient::sectionsdTime*) dp;
+		dp+= sizeof(CSectionsdClient::sectionsdTime);
 		current_next.current_name = dp;
 		dp+=strlen(dp)+1;
 
 		// next
 		current_next.next_uniqueKey = *((unsigned long long *)dp);
 		dp+= sizeof(unsigned long long);
-		current_next.next_zeit = *(sectionsd::sectionsdTime*) dp;
-		dp+= sizeof(sectionsd::sectionsdTime);
+		current_next.next_zeit = *(CSectionsdClient::sectionsdTime*) dp;
+		dp+= sizeof(CSectionsdClient::sectionsdTime);
 		current_next.next_name = dp;
 		dp+=strlen(dp)+1;
 
@@ -438,11 +361,11 @@ CChannelEventList CSectionsdClient::getChannelEvents()
 	return eList;
 }
 
-CChannelEventList CSectionsdClient::getEventsServiceKey( unsigned serviceKey )
+CChannelEventList CSectionsdClient::getEventsServiceKey(const t_channel_id channel_id)
 {
 	CChannelEventList eList;
 
-	if (send(sectionsd::allEventsChannelID_, (char*)&serviceKey, sizeof(serviceKey)))
+	if (send(sectionsd::allEventsChannelID_, (char*)&channel_id, sizeof(channel_id)))
 	{
 		int nBufSize = readResponse();
 
@@ -482,11 +405,11 @@ CChannelEventList CSectionsdClient::getEventsServiceKey( unsigned serviceKey )
 	return eList;
 }
 
-bool CSectionsdClient::getActualEPGServiceKey( unsigned serviceKey, CEPGData * epgdata)
+bool CSectionsdClient::getActualEPGServiceKey(const t_channel_id channel_id, CEPGData * epgdata)
 {
 	epgdata->title = "";
 
-	if (send(sectionsd::actualEPGchannelID, (char*)&serviceKey, sizeof(serviceKey)))
+	if (send(sectionsd::actualEPGchannelID, (char*)&channel_id, sizeof(channel_id)))
 	{
 		int nBufSize = readResponse();
 		if( nBufSize > 0)
@@ -514,9 +437,9 @@ bool CSectionsdClient::getActualEPGServiceKey( unsigned serviceKey, CEPGData * e
 			dp+=strlen(dp)+1;
 			epgdata->fsk = *dp++;
 
-			epgdata->epg_times.startzeit = ((sectionsd::sectionsdTime *) dp)->startzeit;
-			epgdata->epg_times.dauer = ((sectionsd::sectionsdTime *) dp)->dauer;
-			dp+= sizeof(sectionsd::sectionsdTime);
+			epgdata->epg_times.startzeit = ((CSectionsdClient::sectionsdTime *) dp)->startzeit;
+			epgdata->epg_times.dauer = ((CSectionsdClient::sectionsdTime *) dp)->dauer;
+			dp+= sizeof(CSectionsdClient::sectionsdTime);
 
 			delete[] pData;
 			return true;
@@ -531,21 +454,17 @@ bool CSectionsdClient::getActualEPGServiceKey( unsigned serviceKey, CEPGData * e
 }
 
 
-bool CSectionsdClient::getEPGid( unsigned long long eventid,time_t starttime,CEPGData * epgdata)
+bool CSectionsdClient::getEPGid(const unsigned long long eventid, const time_t starttime, CEPGData * epgdata)
 {
-	sectionsd::msgRequestHeader req;
-	req.version = 2;
+	sectionsd::commandGetEPGid msg;
 
-	req.command = sectionsd::epgEPGid;
-	req.dataLength = sizeof(eventid)+ sizeof(starttime);
-	if (open_connection(SECTIONSD_UDS_NAME))
+	msg.eventid   = eventid;
+	msg.starttime = starttime; 
+
+	if (send(sectionsd::epgEPGid, (char *)&msg, sizeof(msg)))
 	{
-		send_data((char*)&req, sizeof(req));
-		send_data((char*)&eventid, sizeof(eventid));
-		send_data((char*)&starttime, sizeof(starttime));
-
 		int nBufSize = readResponse();
-		if( nBufSize > 0)
+		if (nBufSize > 0)
 		{
 			char* pData = new char[nBufSize];
 			receive_data(pData, nBufSize);
@@ -569,9 +488,9 @@ bool CSectionsdClient::getEPGid( unsigned long long eventid,time_t starttime,CEP
 			dp+=strlen(dp)+1;
 			epgdata->fsk = *dp++;
 
-			epgdata->epg_times.startzeit = ((sectionsd::sectionsdTime *) dp)->startzeit;
-			epgdata->epg_times.dauer = ((sectionsd::sectionsdTime *) dp)->dauer;
-			dp+= sizeof(sectionsd::sectionsdTime);
+			epgdata->epg_times.startzeit = ((CSectionsdClient::sectionsdTime *) dp)->startzeit;
+			epgdata->epg_times.dauer = ((CSectionsdClient::sectionsdTime *) dp)->dauer;
+			dp+= sizeof(CSectionsdClient::sectionsdTime);
 
 			delete[] pData;
 			return true;
@@ -586,7 +505,7 @@ bool CSectionsdClient::getEPGid( unsigned long long eventid,time_t starttime,CEP
 }
 
 
-bool CSectionsdClient::getEPGidShort( unsigned long long eventid,CShortEPGData * epgdata)
+bool CSectionsdClient::getEPGidShort(const unsigned long long eventid, CShortEPGData * epgdata)
 {
 	if (send(sectionsd::epgEPGidShort, (char*)&eventid, sizeof(eventid)))
 	{
