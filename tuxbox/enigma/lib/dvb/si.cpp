@@ -574,6 +574,13 @@ ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr)
 		table=1;
 
 	event_name=convertDVBUTF8((unsigned char*)data+ptr, len, table);
+	// filter newlines in ARD ShortEventDescriptor event_name
+	size_t pos = event_name.find("\xc2\x8a");
+	if ( pos != eString::npos )
+	{
+		event_name[pos]=':';
+		event_name[pos+1]=' ';
+	}
 	ptr+=len;
 
 	len=data[ptr++];
