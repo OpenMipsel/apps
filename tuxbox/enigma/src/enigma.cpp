@@ -8,6 +8,7 @@
 #include <termios.h>
 #include <signal.h>
 #include <sys/klog.h>
+#include <dlfcn.h>
 
 #include <lib/base/i18n.h>
 #include <lib/driver/rc.h>
@@ -68,6 +69,7 @@ void eZap::status()
 #include <lib/base/ringbuffer.h>
 
 extern void ezapInitializeWeb(eHTTPD *httpd, eHTTPDynPathResolver *dyn_resolver);
+// extern void ezapInitializeNetCMD(eHTTPD *httpd, eHTTPDynPathResolver *dyn_resolver);
 
 eZap::eZap(int argc, char **argv)
 	: eApplication(/*argc, argv, 0*/)
@@ -81,8 +83,31 @@ eZap::eZap(int argc, char **argv)
 	eHTTPFilePathResolver *fileresolver;
 
 	instance = this;
-
+	
 	init = new eInit();
+	
+	FILE *pluginlist = fopen(CONFIGDIR "/enigma/plugins", "rb");
+	if (pluginlist)
+	{
+		char filename[128];
+		while (1)
+		{
+			if (!fgets(filename, 127, pluginlist))
+				break;
+			if (*filename)
+				filename[strlen(filename)-1]=0;
+			else
+				break;
+			eDebug("%s", filename);
+			void *handle=dlopen(filename, RTLD_NOW);
+			if (!handle)
+				eWarning("[PLUGIN] load(%s) failed: %s", filename, dlerror());
+			else
+				plugins.push_back(handle);
+		}
+		fclose(pluginlist);
+	}
+	
 	init->setRunlevel(eAutoInitNumbers::osd);
 
 	focus = 0;
@@ -130,18 +155,15 @@ eZap::eZap(int argc, char **argv)
 	free(language);
 
 	eDVB::getInstance()->configureNetwork();
-	eDebug("<-- network");
 
 	// build Service Selector
 	serviceSelector = new eServiceSelector();
-	eDebug("<-- service selector");	
 
 	main = new eZapMain();
-	eDebug("<-- eZapMain");
 
 #ifndef DISABLE_LCD
 	pLCD = eZapLCD::getInstance();
-	eDebug("<-- pLCD");
+
 	serviceSelector->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 #endif
 
@@ -157,6 +179,7 @@ eZap::eZap(int argc, char **argv)
 	eDebug("[ENIGMA] starting httpd");
 	httpd = new eHTTPD(80, eApp);
 	ezapInitializeWeb(httpd, dyn_resolver);	
+//	ezapInitializeNetCMD(httpd, dyn_resolver);	
 
 	serialhttpd=0;
 
@@ -203,6 +226,7 @@ eZap::eZap(int argc, char **argv)
 					"you may start a HTTP session now if you send a \"break\".\r\n";
 			write(fd, banner, strlen(banner));
 			serialhttpd = new eHTTPConnection(fd, 0, httpd, 1);
+//			char *i="GET /menu.cr HTTP/1.0\n\n";
 			char *i="GET /log/debug HTTP/1.0\n\n";
 			serialhttpd->inject(i, strlen(i));
 		}
@@ -249,6 +273,9 @@ eZap::~eZap()
 	delete serviceSelector;
 	eDebug("[ENIGMA] fertig");
 	init->setRunlevel(-1);
+	
+	for (std::list<void*>::iterator i(plugins.begin()); i != plugins.end(); ++i)
+		dlclose(*i);
 
   if (serialhttpd)
     delete serialhttpd;
