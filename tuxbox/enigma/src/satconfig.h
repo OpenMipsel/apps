@@ -17,6 +17,7 @@ class eTransponderWidget;
 struct SatelliteEntry
 {
 	eComboBox *sat, *voltage, *hilo;
+	eLabel *fixed, *description;
 	eButton *lnb;
 };
 
@@ -26,8 +27,11 @@ class eSatelliteConfigurationManager: public eWindow, public existNetworks
 	eWidget *buttonWidget;
 	eWidget *w_buttons;
 	eButton *button_close, *button_new;
+	eComboBox *combo_type;
 	eMultipage satPages;
 	SatelliteEntry* deleteThisEntry;
+	int complexity;
+	
 	int eventHandler(const eWidgetEvent &event);
 	std::map< eSatellite*, SatelliteEntry > entryMap;
 	eSatellite *getSat4SatCombo( const eComboBox* );
@@ -44,6 +48,17 @@ class eSatelliteConfigurationManager: public eWindow, public existNetworks
 	void hiloChanged(eComboBox *who, eListBoxEntryText *le);
 	void voltageChanged(eComboBox *who, eListBoxEntryText *le);
 	void focusChanged( const eWidget* focus );
+	
+	void deleteSatellite(eSatellite *s);
+	
+	void typeChanged(eListBoxEntryText* newtype);
+	void setComplexity(int complexity);
+	int checkComplexity(); // check overall complexity
+	int checkDiseqcComplexity(eSatellite *s);
+	void deleteSatellitesAbove(int nr);
+	
+		// according to "complexity" (works only for complexity <= 2, of course)
+	void setSimpleDiseqc(eSatellite *s, int diseqcnr);
 public:
 	eSatelliteConfigurationManager();
 	~eSatelliteConfigurationManager();

@@ -61,6 +61,9 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 				return eButton::eventHandler( event );
 		break;
 
+		case eWidgetEvent::evtShortcut:
+			onOkPressed();
+			break;
 		case eWidgetEvent::changedPosition:
 		case eWidgetEvent::changedSize:
 		{
