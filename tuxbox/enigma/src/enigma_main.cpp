@@ -4224,7 +4224,21 @@ void eZapMain::showList(int list)
 		}
 		break;
 	case modeFile:
-		b.down(recordingsref);
+		switch (list)
+		{
+		case listAll:
+			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
+			break;
+		case listSatellites:
+			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
+			break;
+		case listProvider:
+			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
+			break;
+		case listBouquets:
+			b.down(recordingsref);
+			break;
+		}
 		break;
 	default:
 		return;
