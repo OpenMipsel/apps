@@ -831,6 +831,8 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *
 		subservicesel.hide();
 		sel->show();
 	}
+	if ( subref )
+		subref->descr+=ref->descr;
 
 	ePlaylistEntry e( subref?*subref:*ref, evt->start_time, evt->duration, evt->event_id, type );
 	eDebug("e.service.descr = %s", e.service.descr.c_str() );
