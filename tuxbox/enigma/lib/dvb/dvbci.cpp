@@ -75,6 +75,8 @@ eDVBCI::eDVBCI(): pollTimer(this), messages(this, 1)
 	CONNECT(messages.recv_msg, eDVBCI::gotMessage);
 	
 	memset(appName,0,sizeof(appName));
+	
+	caidcount=0;
 
   run();
 }
@@ -337,10 +339,12 @@ void eDVBCI::pushCAIDs()
 		
 	std::list<int>& availCA = sapi->availableCASystems;
 	
+	eDebug("pushing caids... %d ..", caidcount);
 	lock.lock();	
 	for(unsigned int i=0;i<caidcount;i++)
 		availCA.push_back(caids[i]);
 	lock.unlock();
+	eDebug("ok");
 }
 
 void eDVBCI::sendTPDU(unsigned char tpdu_tag,unsigned int len,unsigned char tc_id,unsigned char *data)
