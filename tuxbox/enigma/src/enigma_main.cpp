@@ -2757,6 +2757,13 @@ void eZapMain::stopSkip(int dir)
 	}
 #endif
 	{
+		if ( state & stateInTimerMode && state & stateRecording && wasSleeping )
+		{
+			eDebug("before recording enigma was in standby..\n"
+						"but the user wants timeshifting..\n"
+						"dont go to standby after recordings");
+			wasSleeping=0;
+		}
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekEnd));

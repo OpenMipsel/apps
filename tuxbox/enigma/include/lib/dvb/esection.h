@@ -35,8 +35,9 @@ class eSection: public Object
 	eSocketNotifier *notifier;
 	virtual int sectionRead(__u8 *data);
 	virtual void sectionFinish(int error);
-	
+protected:
 	int pid, tableid, tableidext, tableidmask;
+private:
 	int maxsec, section, flags;
 	void closeFilter();
 	eTimer *timer;

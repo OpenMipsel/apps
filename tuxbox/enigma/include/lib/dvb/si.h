@@ -385,21 +385,23 @@ public:
 class PMT: public eTable
 {
 protected:
-  int data(__u8 *data);
+	int data(__u8 *data);
 public:
-  PMT(int pid, int service_id);
+	PMT(int pid, int service_id, int version=-1);
 
-  int program_number;
-  int PCR_PID;
-  int pid;
-  ePtrList< Descriptor > program_info;
-  ePtrList<PMTEntry> streams;
+	int program_number;
+	int PCR_PID;
+	int pid;
+
+	eTable *createNext();
+	ePtrList< Descriptor > program_info;
+	ePtrList<PMTEntry> streams;
 };
 
 class NITEntry
 {
 public:
-  NITEntry(nit_ts_t* ts);
+	NITEntry(nit_ts_t* ts);
 
 	__u16 transport_stream_id, original_network_id;
 	ePtrList< Descriptor > transport_descriptor;

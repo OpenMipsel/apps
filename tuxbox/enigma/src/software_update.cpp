@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: software_update.cpp,v 1.1.2.2 2003/08/05 00:31:59 ghostrider Exp $
+ * $Id: software_update.cpp,v 1.1.2.3 2003/08/11 20:09:47 ghostrider Exp $
  */
 
 #include <software_update.h>
@@ -53,7 +53,7 @@ void eSoftwareUpdate::manual_update()
 {
 	hide();
 	eMessageBox box(_("Upload your Image via FTP or Samba to the '/tmp' folder."
-										"Then rename it to 'cramfs.img' and press ok."
+										"Then rename it to 'root.cramfs' and press ok."
 										"In the upcomming list select 'manual update' and follow the instructions."), _("Manual update"), eMessageBox::iconInfo|eMessageBox::btOK );
 	box.show();
 	int ret = box.exec();

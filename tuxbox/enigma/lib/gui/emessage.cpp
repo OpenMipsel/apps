@@ -49,7 +49,7 @@ eMessageBox::eMessageBox(eString message, eString caption, int flags, int def)
 	text->resize( eSize( clientrect.width(), clientrect.height() ));
 	text->setFlags( RS_WRAP|eLabel::flagVCenter );
 	eSize txtSize=text->getExtend();
-	txtSize+=eSize(8,4);  // the given Size of the Text is okay... but the renderer sucks...
+	txtSize+=eSize(15,10);  // the given Size of the Text is okay... but the renderer sucks...
 	text->resize(txtSize);
 
 	// here the two labels ( icon, text) has the correct size..  now we calc the border

@@ -54,8 +54,8 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 		lastpid=-1;
 	}
 
-/*	if (!descriptor_length)
-		return;*/
+	if (!descriptor_length)
+		return;
 
 	char buffer[6][5];
 	sprintf(buffer[0], "%x", vpid);

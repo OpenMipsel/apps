@@ -353,6 +353,20 @@ void eTimerManager::actionHandler()
 
 		case startCountdown:
 			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d startCountdown", ++calldepth));
+			if ( nextStartingEvent->type & ePlaylistEntry::isRepeating )
+			{
+				writeToLogfile("reset state flags for repeating event");
+				nextStartingEvent->type &= ~(
+					ePlaylistEntry::stateError |
+					ePlaylistEntry::stateFinished |
+					ePlaylistEntry::statePaused |
+					ePlaylistEntry::errorNoSpaceLeft |
+					ePlaylistEntry::errorUserAborted |
+					ePlaylistEntry::errorZapFailed|
+					ePlaylistEntry::errorOutdated );
+
+				nextStartingEvent->type |= ePlaylistEntry::stateWaiting;
+			}
 			if ( conn.connected() )
 				conn.disconnect();
 			if ( nextStartingEvent->type & ePlaylistEntry::doFinishOnly &&
@@ -392,15 +406,7 @@ void eTimerManager::actionHandler()
 			eDebug("[eTimerManager] startEvent");
 			if ( nextStartingEvent->type & ePlaylistEntry::isRepeating )
 			{
-				writeToLogfile("reset all state Flags for repeated event");
-				nextStartingEvent->type &= ~(
-					ePlaylistEntry::stateError |
-					ePlaylistEntry::stateFinished |
-					ePlaylistEntry::statePaused |
-					ePlaylistEntry::errorNoSpaceLeft |
-					ePlaylistEntry::errorUserAborted |
-					ePlaylistEntry::errorZapFailed|
-					ePlaylistEntry::errorOutdated );
+				writeToLogfile("set last_activation for repeated event");
 				nextStartingEvent->last_activation = getDate();
 			}
 			nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
@@ -458,12 +464,13 @@ void eTimerManager::actionHandler()
 			break;
 
 		case stopEvent:
-			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d stopEvent", ++calldepth));
-			eDebug("[eTimerManager] stopEvent");
 			if( nextStartingEvent->type & ePlaylistEntry::stateRunning )
 			{
+				writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d stopEvent", ++calldepth));
+				eDebug("[eTimerManager] stopEvent");
+
 				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
-				// when no ErrorCode is set the we set the state to finished
+	   // when no ErrorCode is set the we set the state to finished
 				if ( !(nextStartingEvent->type & ePlaylistEntry::stateError) )
 				{
 					writeToLogfile("set to stateFinished");
@@ -502,13 +509,13 @@ void eTimerManager::actionHandler()
 					writeToLogfile("call eZapMain::getInstance()->toggleTimerMode()");
 					eZapMain::getInstance()->toggleTimerMode();
 				}
+				if ( eConfig::getInstance()->pLockActive() && eServiceInterface::getInstance()->service.isLocked() )
+				{
+					writeToLogfile("this service is parentallocked... stop service now");
+					eServiceInterface::getInstance()->stop();
+				}
+				writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d stopEvent", calldepth--));
 			}
-			if ( eConfig::getInstance()->pLockActive() && eServiceInterface::getInstance()->service.isLocked() )
-			{
-				writeToLogfile("this service is parentallocked... stop service now");
-				eServiceInterface::getInstance()->stop();
-			}
-			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d stopEvent", calldepth--));
 			nextAction=setNextEvent;	// we set the Next Event... a new beginning *g*
 			actionTimer.start(0, true);
 			break;
@@ -836,6 +843,11 @@ void eTimerManager::switchedService( const eServiceReferenceDVB &ref, int err)
 
 void eTimerManager::abortEvent( int err )
 {
+	if ( nextStartingEvent->type & ePlaylistEntry::stateWaiting )
+	{
+		nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
+		nextStartingEvent->type |= ePlaylistEntry::stateRunning;
+	}
 	writeToLogfile(eString().sprintf("--> abortEvent(err %d)",err));
 	eDebug("[eTimerManager] abortEvent");
 	nextAction=stopEvent;
