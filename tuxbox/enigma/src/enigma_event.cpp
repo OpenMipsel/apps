@@ -135,20 +135,6 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 
 eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const ePtrList<EITEvent>* e, EITEvent* evt )
 : eWindow(1), service(service), ref(ref), evt(evt)
-	/*
-			kleine anmerkung:
-			
-			(liste mit) pointer übergeben ist scheisse, weil dazu THEORETISCH die eit gelockt werden MÜSSTE (wird sie aber nicht,
-			weil "wenn lock dann kein exec"), wenn sich die eit ändert während wir hier im exec sind gibts nen CRASH.
-			
-			have fun.
-			
-			korrekterweise müsste man hier ne au-eit übergeben kriegen, sich auf dessen update connecten. das wiederrum suckt für
-			senderübergreifendes EI.
-			
-			durch das "setList" wurde das Problem zwar nicht gefixt, aber wenigstens crasht es jetzt nicht mehr, was aber nur funktioniert
-			weil wir single-threading benutzen.
-	*/
 {
 	eventlist=0;
 	events=0;
@@ -202,6 +188,8 @@ eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const e
 	else if (evt)
 		setEvent(evt);
 	addActionMap( &i_enigmaEventViewActions->map );
+	
+	setHelpID(11);
 }
 
 eEventDisplay::~eEventDisplay()

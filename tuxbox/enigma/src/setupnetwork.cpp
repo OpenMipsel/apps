@@ -119,6 +119,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
 	statusbar->resize( eSize( clientrect.width(), 30) );
 	statusbar->loadDeco();
+	setHelpID(82);
 }
 
 eZapNetworkSetup::~eZapNetworkSetup()

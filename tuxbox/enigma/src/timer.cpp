@@ -1222,7 +1222,7 @@ eTimerListView::eTimerListView()
 	fillTimerList();
 
 	addActionMap( &i_TimerViewActions->map );
-
+	setHelpID(97);
 }
 
 void eTimerListView::erasePressed()
@@ -1446,6 +1446,7 @@ eTimerEditView::eTimerEditView( ePlaylistEntry* e)
 #endif
 		fillInData( now, 0, type, eServiceInterface::getInstance()->service );
 	}
+	setHelpID(98);
 }
 
 eTimerEditView::eTimerEditView( const EITEvent &e, int type, eServiceReference ref )

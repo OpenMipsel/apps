@@ -120,6 +120,7 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	CONNECT(b_abort->selected, tsManual::abort);
 	CONNECT(transponder_widget->updated, tsManual::retune);
 //	CONNECT(updateTimer.timeout, tsManual::update );
+	setHelpID(62);
 }
 
 void tsManual::update()
@@ -259,6 +260,7 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 	}
 	
 	setFocus(l_network);
+	setHelpID(61);
 }
 
 void tsAutomatic::start()

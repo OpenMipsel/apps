@@ -182,11 +182,12 @@ int eIOBuffer::searchchr(char ch) const
 		if (i == buffer.end())
 			break;
 		while (p < i->len)
+		{
 			if (i->data[p] == ch)
 				return c;
 			else
 				c++, p++;
-
+		}
 		++i;
 		p=0;
 	}

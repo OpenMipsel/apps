@@ -88,6 +88,8 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	repositionWidgets();
 
 	CONNECT( eWidget::focusChanged, eSatelliteConfigurationManager::focusChanged );
+	
+	setHelpID(66);
 }
 
 void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
@@ -816,6 +818,7 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	CONNECT( LNBPage->cancel->selected, eLNBSetup::reject);
 	CONNECT( DiSEqCPage->save->selected, eLNBSetup::onSave);
 	CONNECT( DiSEqCPage->cancel->selected, eLNBSetup::reject);
+	setHelpID(67);
 } 
 
 void eLNBSetup::onSave()

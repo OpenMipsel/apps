@@ -117,6 +117,8 @@ ENgrabSetup::ENgrabSetup():
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
 	statusbar->resize( eSize( clientrect.width(), 30) );
 	statusbar->loadDeco();
+	
+	setHelpID(91);
 }
 
 ENgrabSetup::~ENgrabSetup()
@@ -164,7 +166,7 @@ void ENgrabSetup::detectMAC()
 			char line[1024];
 			fgets(line, 1024, f);
 			int HWAddrPos = strstr(line, "HW address") - line;
-			if ( !HWAddrPos )
+			if ( HWAddrPos  <  0)
 			{
 				fclose(f);
 				return;

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.19 2003/05/09 16:53:08 ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.20 2003/06/02 20:37:04 tmbinc Exp $
  */
 
 #include <enigma_info.h>
@@ -137,6 +137,8 @@ public:
 		int mID=eDVB::getInstance()->getmID();
 		
 		const char *magic="";
+		
+		setHelpID(43);
 		
 		eString translation_info=gettext(magic);
 		unsigned int i;

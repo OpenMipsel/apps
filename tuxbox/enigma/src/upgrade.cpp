@@ -148,6 +148,8 @@ eUpgrade::eUpgrade()
 		rename(TMP_IMAGE_ALT, TMP_IMAGE);
 	if (!stat(TMP_IMAGE, &s))
 		new eListBoxEntryImage(images, _("manual upload"), "", "", "", "", 0);
+
+	setHelpID(94);
 }
 
 void eUpgrade::loadCatalog(const char *url)

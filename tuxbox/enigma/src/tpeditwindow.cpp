@@ -69,6 +69,7 @@ eTPEditDialog::eTPEditDialog( eTransponder *tp )
 	sbar->move( ePoint( 0, getClientSize().height()-30) );
 	sbar->resize( eSize( getClientSize().width(), 30 ) );
 	sbar->loadDeco();
+	setHelpID(63);
 }
 
 void eTPEditDialog::savePressed()
@@ -125,6 +126,7 @@ eTransponderEditWindow::eTransponderEditWindow()
 
 	CONNECT( eWidget::focusChanged, eTransponderEditWindow::focusChanged );
 	satSelChanged( satellites->getCurrent() );
+	setHelpID(64);
 }
 
 int eTransponderEditWindow::eventHandler( const eWidgetEvent & event )

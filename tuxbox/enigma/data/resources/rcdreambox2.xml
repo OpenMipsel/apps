@@ -31,6 +31,10 @@
 			<key name="audio" code="26" picture="key.10" />
 			<key name="video" code="27" picture="key.11" />
 			<key name="info" code="28" picture="key.12" />
+			<key name="shift_red" code="30" />
+			<key name="shift_green" code="31" />
+			<key name="shift_yellow" code="32" />
+			<key name="shift_blue" code="33" />
 			<key name="record" code="35" />
 			<key name="red" code="40" picture="key.17" />
 			<key name="green" code="41" picture="key.18" />
@@ -148,6 +152,10 @@
 			<action name="modeRadio" key="radio" flags="m" />
 			<action name="modeFile" key="text" flags="m" />
 			<action name="toggleDVRFunctions" key="video" flags="m" />
+			
+			<action name="toggleIndexmark" key="shift_green" />
+			<action name="indexSeekNext" key="shift_blue" />
+			<action name="indexSeekPrev" key="shift_red" />
 		</actionmap>
 
 		<actionmap name="enigmaMain" style="default" descr="Default (Enigma)" >

@@ -329,6 +329,7 @@ eEPGSelector::eEPGSelector(const eServiceReferenceDVB &service)
 #endif
 	addActionToHelpList( &i_epgSelectorActions->addSwitchTimerEvent );
 	addActionToHelpList( &i_epgSelectorActions->removeTimerEvent );
+	setHelpID(12);
 }
 
 int eEPGSelector::eventHandler(const eWidgetEvent &event)

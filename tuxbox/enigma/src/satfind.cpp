@@ -43,6 +43,8 @@ eSatfind::eSatfind(eFrontend *fe)
 
 	if (eSkin::getActive()->build(this, "eSatfind"))
 		return;
+		
+	setHelpID(44);
 }
 
 int eSatfind::eventHandler( const eWidgetEvent& e)

@@ -96,6 +96,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	status->move( ePoint(0, clientrect.height()-30) );
 	status->resize( eSize( clientrect.width(), 30) );
 	status->loadDeco();
+	setHelpID(86);
 }
 
 eZapVideoSetup::~eZapVideoSetup()

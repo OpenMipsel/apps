@@ -1229,7 +1229,7 @@ eServiceSelector::eServiceSelector()
 	addActionMap(&i_serviceSelectorActions->map);
 	addActionMap(&i_numberActions->map);
 
-	setHelpID(1);
+	setHelpID(33);
 	addActionToHelpList(&i_serviceSelectorActions->showAll);
 	addActionToHelpList(&i_serviceSelectorActions->showSatellites);
 	addActionToHelpList(&i_serviceSelectorActions->showProvider);

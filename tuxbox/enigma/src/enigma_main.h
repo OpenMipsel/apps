@@ -15,9 +15,9 @@
 #include <lib/gui/textinput.h>
 #include <lib/base/message.h>
 #include <lib/dvb/service.h>
+#include <lib/gui/eprogress.h>
 
 class eLabel;
-class eProgress;
 class EIT;
 class SDT;
 class SDTEntry;
@@ -99,11 +99,14 @@ private:
 	eString filename;
 	std::map<int,int> index;
 	int changed;
+	int length;
 public:
+	eZapSeekIndices();
 	void load(const eString &filename);
 	void save();
 	void add(int real, int time);
 	void remove(int real);
+	void clear();
 	/**
 	 * \brief retrieves next index.
 	 * \param dir 0 for nearest, <0 for prev or >0 for next. returns -1 if nothing found.
@@ -112,6 +115,19 @@ public:
 	int getTime(int real);
 		// you don't need that.
 	std::map<int,int> &getIndices();
+	
+	void setTotalLength(int length);
+	int  getTotalLength();
+};
+
+class eProgressWithIndices: public eProgress
+{
+	eZapSeekIndices *indices;
+	gColor indexmarkcolor;
+public:
+	eProgressWithIndices(eWidget *parent);
+	void redrawWidget(gPainter *target, const eRect &area);
+	void setIndices(eZapSeekIndices *indices);
 };
 
 class NVODStream: public eListBoxEntryTextStream
@@ -293,7 +309,8 @@ private:
 
 	// eRecordingStatus *recstatus;
 
-	eProgress *Progress, *VolumeBar;
+	eProgressWithIndices *Progress;
+	eProgress *VolumeBar;
 	eMessageBox *pMsg, *pRotorMsg;
 
 	eLock messagelock;
@@ -452,8 +469,8 @@ private:
 #ifndef DISABLE_FILE
 	void blinkRecord();
 	void toggleIndexmark();
+	void indexSeek(int dir);
 	eZapSeekIndices indices;
-	ePtrList<eLabel> indexmarks;
 	void redrawIndexmarks();
 #endif // DISABLE_FILE
 public:

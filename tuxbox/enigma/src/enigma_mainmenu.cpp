@@ -156,6 +156,7 @@ eMainMenu::eMainMenu()
 	}
 
 	setActive(active=eZapMain::getInstance()->getMode());		
+	setHelpID(10);
 }
 
 void eMainMenu::sel_tv()

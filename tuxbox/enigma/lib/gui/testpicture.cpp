@@ -212,6 +212,8 @@ eTestPicture::eTestPicture(int testmode): eWidget(0, 1), testmode(testmode), des
 	case testBlack:    description->setText("BLACK (0%)"); break;
 	}
 	description->show();
+	
+	setHelpID(95);
 }
 
 int eTestPicture::display(int mode)

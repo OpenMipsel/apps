@@ -140,6 +140,8 @@ eWizardLanguage::eWizardLanguage()
 	if (current)
 		free(current);
 	fclose(f);
+	
+	setHelpID(89);
 
 //	selchanged(cur);
 }

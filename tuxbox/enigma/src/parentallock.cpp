@@ -104,7 +104,7 @@ eParentalSetup::eParentalSetup():
 	statusbar->resize( eSize( clientrect.width(), 30) );
 	statusbar->loadDeco();
 
-	setHelpID(2);
+	setHelpID(93);
 }
 
 void eParentalSetup::plockChecked(int i)

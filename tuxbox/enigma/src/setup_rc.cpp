@@ -143,6 +143,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 
 	srdelay->setValue(rdelay);
 	srrate->setValue(rrate);
+	setHelpID(85);
 }
 
 eZapRCSetup::~eZapRCSetup()

@@ -56,6 +56,7 @@ eZapEPG::eZapEPG():
 	curS = curE = services.begin();
 	sbar = new eStatusBar(this);
 	sbar->setFlags( eStatusBar::flagOwnerDraw );
+	setHelpID(13);
 }
 
 void eZapEPG::addToList( const eServiceReference& ref )

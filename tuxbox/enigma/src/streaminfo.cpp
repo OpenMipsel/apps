@@ -509,6 +509,8 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 	cresize(eSize(470, 420));
 	eSize s(clientrect.size());
 	s.setHeight( s.height() - 40 );
+	
+	setHelpID(41);
 
 	eService *service=eServiceInterface::getInstance()->addRef(ref);
 	

@@ -165,6 +165,7 @@ PluginOffsetScreen::PluginOffsetScreen()
 	addActionMap(&i_cursorActions->map);
 	addActionToHelpList( &i_PluginOffsetActions->leftTop );
 	addActionToHelpList( &i_PluginOffsetActions->rightBottom );
+	setHelpID(96);
 }
 
 eZapOsdSetup::eZapOsdSetup(): eWindow(0)
@@ -282,6 +283,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
 	statusbar->resize( eSize( clientrect.width(), 30) );
 	statusbar->loadDeco();
+	setHelpID(83);
 }
 
 eZapOsdSetup::~eZapOsdSetup()

@@ -245,6 +245,7 @@
 		<map name="std_white" color="std_gray+7" />
 		<map name="epg.entry.background.selected" color="std_gray+4" />
 		<map name="epg.entry.background" color="volume3" />
+		<map name="indexmark" color="std_red" />
 	</colorscheme>
 
 	<object name="eZapMainMenu">

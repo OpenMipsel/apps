@@ -62,7 +62,7 @@ eZapExtraSetup::eZapExtraSetup():
 	statusbar->resize( eSize( clientrect.width(), 30) );
 	statusbar->loadDeco();
 
-	setHelpID(2);
+	setHelpID(92);
 }
 
 void eZapExtraSetup::loadSettings()

@@ -67,6 +67,7 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 	statusbar->resize( eSize( clientrect.width(), 30) );
 	statusbar->loadDeco();
 
+	setHelpID(90);
 }
 
 eZapTimeZoneSetup::~eZapTimeZoneSetup()

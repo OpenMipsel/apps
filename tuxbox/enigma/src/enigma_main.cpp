@@ -70,7 +70,7 @@ struct enigmaMainActions
 		startSkipReverse, repeatSkipReverse, stopSkipReverse,
 		showUserBouquets, showDVBBouquets, showRecMovies, showPlaylist,
 		modeTV, modeRadio, modeFile,
-		toggleDVRFunctions, toggleIndexmark;
+		toggleDVRFunctions, toggleIndexmark, indexSeekNext, indexSeekPrev;
 	enigmaMainActions(): 
 		map("enigmaMain", _("enigma Zapp")),
 		showMainMenu(map, "showMainMenu", _("show main menu"), eAction::prioDialog),
@@ -127,7 +127,10 @@ struct enigmaMainActions
 		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog),
 
 		toggleDVRFunctions(map, "toggleDVRFunctions", _("toggle DVR panel"), eAction::prioDialog),
-		toggleIndexmark(map, "toggleIndexmark", _("toggle index mark"), eAction::prioDialog)
+		toggleIndexmark(map, "toggleIndexmark", _("toggle index mark"), eAction::prioDialog),
+
+		indexSeekNext(map, "indexSeekNext", _("seek to next index mark"), eAction::prioDialog),
+		indexSeekPrev(map, "indexSeekPrev", _("seek to previous index mark"), eAction::prioDialog)
 	{
 	}
 };
@@ -294,6 +297,11 @@ eString getISO639Description(char *iso)
 	return eString()+iso[0]+iso[1]+iso[2];
 }
 
+eZapSeekIndices::eZapSeekIndices()
+{
+	length = -1;
+}
+
 void eZapSeekIndices::load(const eString &filename)
 {
 	this->filename=filename;
@@ -334,6 +342,11 @@ void eZapSeekIndices::remove(int real)
 	index.erase(real);
 }
 
+void eZapSeekIndices::clear()
+{
+	index.clear();
+}
+
 int eZapSeekIndices::getNext(int real, int dir)
 {
 	int diff=-1, r=-1;
@@ -344,7 +357,7 @@ int eZapSeekIndices::getNext(int real, int dir)
 		if ((dir < 0) && (i->first >= real))
 			break;
 		int d=abs(i->first-real);
-		if (d < diff)
+		if ((d < diff) || (diff == -1))
 		{
 			diff=d;
 			r=i->first;
@@ -365,6 +378,45 @@ int eZapSeekIndices::getTime(int real)
 std::map<int,int> &eZapSeekIndices::getIndices()
 {
 	return index;
+}
+
+void eZapSeekIndices::setTotalLength(int l)
+{
+	length = l;
+}
+
+int  eZapSeekIndices::getTotalLength()
+{
+	return length;
+}
+    
+eProgressWithIndices::eProgressWithIndices(eWidget *parent): eProgress(parent)
+{
+	indexmarkcolor = eSkin::getActive()->queryColor("indexmark");
+}
+
+void eProgressWithIndices::redrawWidget(gPainter *target, const eRect &area)
+{
+	eProgress::redrawWidget(target, area);
+	if (!indices)
+		return;
+	int  len = indices->getTotalLength();
+	if (len <= 0)
+		return;
+	int xlen = size.width();
+	target->setForegroundColor(indexmarkcolor);
+	for (int i=indices->getNext(-1, 1); i != -1; i=indices->getNext(i, 1))
+	{
+		int time = indices->getTime(i);
+		int pos  = time * xlen / len;
+		target->fill(eRect(pos - 2, 0, 4, size.height()));
+	}
+}
+
+void eProgressWithIndices::setIndices(eZapSeekIndices *i)
+{
+	indices = i;
+	invalidate();
 }
 
 int NVODStream::validate()
@@ -1340,6 +1392,10 @@ eZapMain::eZapMain()
 	recstatus=new eLabel(this);
 	recstatus->setName("recStatus");
 	recstatus->hide();
+	
+	Progress=new eProgressWithIndices(this);
+	Progress->setName("progress_bar");
+	Progress->setIndices(&indices);
 
 	isVT=0;
 	eSkin *skin=eSkin::getActive();
@@ -1364,7 +1420,7 @@ eZapMain::eZapMain()
 
 	ASSIGN(Description, eLabel, "description");
 //	ASSIGN(VolumeBar, eProgress, "volume_bar");
-	ASSIGN(Progress, eProgress, "progress_bar");
+//	ASSIGN(Progress, eProgress, "progress_bar");
 
 	ASSIGN(ButtonRedEn, eLabel, "button_red_enabled");
 	ASSIGN(ButtonGreenEn, eLabel, "button_green_enabled");
@@ -1845,6 +1901,8 @@ void eZapMain::updateProgress()
 			return;
 		int total=handler->getPosition(eServiceHandler::posQueryLength);
 		int current=handler->getPosition(eServiceHandler::posQueryCurrent);
+		if (total != indices.getTotalLength())
+			indices.setTotalLength(total);
 		if ((total > 0) && (current != -1))
 		{
 			Progress->setPerc(current*100/total);
@@ -3915,9 +3973,11 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showInfobar();
 		}
 		else if (event.action == &i_enigmaMainActions->toggleIndexmark)
-		{
 			toggleIndexmark();
-		}
+		else if (event.action == &i_enigmaMainActions->indexSeekNext)
+			indexSeek(1);
+		else if (event.action == &i_enigmaMainActions->indexSeekPrev)
+			indexSeek(-1);
 #endif //DISABLE_FILE
 		else
 		{
@@ -4492,6 +4552,7 @@ void eZapMain::leaveService()
 	EINextTime->setText("");
 
 	Progress->hide();
+	indices.clear();
 }
 
 void eZapMain::clockUpdate()
@@ -4893,30 +4954,47 @@ void eZapMain::toggleIndexmark()
 	if (!handler)
 		return;
 
-	int real=handler->getPosition(eServiceHandler::posQueryRealCurrent), time=handler->getPosition(eServiceHandler::posQueryCurrent);
+	int real=handler->getPosition(eServiceHandler::posQueryRealCurrent), 
+			time=handler->getPosition(eServiceHandler::posQueryCurrent);
 
 	int nearest=indices.getNext(real, 0);
-	if ((nearest == -1) || abs(indices.getTime(nearest)-real) > 5000)
-	{
-		eDebug("added indexmark");
+	if ((nearest == -1) || abs(indices.getTime(nearest)-time) > 5)
 		indices.add(real, time);
-	} else
-	{
-		eDebug("removed indexmark.");
+	else
 		indices.remove(nearest);
-	}
-	redrawIndexmarks();
+	
+	Progress->invalidate();
 }
 
-void eZapMain::redrawIndexmarks()
+void eZapMain::indexSeek(int dir)
 {
-	indexmarks.clear();
-	for (int i=indices.getNext(-1, 1); i != -1; i=indices.getNext(i, 1))
+	if (!(serviceFlags & eServiceHandler::flagIsSeekable))
+		return;
+
+	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
+	if (!handler)
+		return;
+
+	int real=handler->getPosition(eServiceHandler::posQueryRealCurrent),
+			time=handler->getPosition(eServiceHandler::posQueryCurrent);
+
+	int nearest=indices.getNext(real, dir);
+	if ((nearest != -1) && (dir == -1)) // when seeking backward, check if 
 	{
-		int time=indices.getTime(i);
-		eDebug("adding indexmark at %d (%d)", time, i);
+		int nearestt=indices.getTime(nearest);
+		if ((time - nearestt) < 5)  // when less than 5 seconds, seek to prev
+			nearest = indices.getNext(nearest, -1);
 	}
+	if (nearest == -1)
+	{
+		if (dir == -1)
+			nearest = 0; // seek to start of file
+		else
+			return;     // TODO: seek to end of file, without playing next
+	}
+	handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekReal, nearest));
 }
+
 #endif // DISABLE_FILE
 
 void eZapMain::toggleScart( int state )
@@ -5063,6 +5141,7 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
 	CONNECT(list.selected, eSleepTimerContextMenu::entrySelected);
 	list.moveSelection( eListBoxBase::dirDown );
+	setHelpID(50);
 }
 
 void eSleepTimerContextMenu::entrySelected( eListBoxEntryText *sel )
@@ -5124,6 +5203,7 @@ eSleepTimer::eSleepTimer()
 		Standby->hide();
 		Standby->setCheck(1);
 	}
+	setHelpID(51);
 }
 
 void eSleepTimer::setPressed()

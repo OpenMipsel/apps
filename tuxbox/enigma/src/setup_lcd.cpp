@@ -129,6 +129,8 @@ eZapLCDSetup::eZapLCDSetup(): eWindow(0)
 	p_brightness->setValue(lcdbrightness);
 	p_contrast->setValue(lcdcontrast);
 	p_standby->setValue(lcdstandby);
+	
+	setHelpID(84);
 }
 
 eZapLCDSetup::~eZapLCDSetup()
