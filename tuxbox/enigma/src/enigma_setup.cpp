@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.4 2002/12/16 23:00:21 TripleDES Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.5 2002/12/17 04:10:23 TripleDES Exp $
  */
 
 #include <enigma_setup.h>
@@ -46,9 +46,15 @@ eZapSetup::eZapSetup()
 	move(ePoint(150, 90)); 
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to Mainmenu") ))->selected, eZapSetup::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), _("open channel setup") ))->selected, eZapSetup::sel_channels);
-	CONNECT((new eListBoxEntryMenu(&list, _("Network..."), _("open network setup") ))->selected, eZapSetup::sel_network);
+	if (eDVB::getInstance()->getInfo("mID") != "06")
+	{
+		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), _("open network setup") ))->selected, eZapSetup::sel_network);
+	}	
 	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), _("open osd setup") ))->selected, eZapSetup::sel_osd);
-	CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open lcd setup") ))->selected, eZapSetup::sel_lcd);
+	if (eDVB::getInstance()->getInfo("mID") != "06")
+	{
+		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open lcd setup") ))->selected, eZapSetup::sel_lcd);
+	}	
 	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), _("open remotecontrol setup") ))->selected, eZapSetup::sel_rc);
 	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), _("open video setup") ))->selected, eZapSetup::sel_video);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), _("open skin selector") ))->selected, eZapSetup::sel_skin);
