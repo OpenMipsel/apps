@@ -5,6 +5,8 @@ apps/dvb/zapit/.cvsignore                   \
 apps/dvb/zapit/AUTHORS                      \
 apps/dvb/zapit/autogen.sh                   \
 apps/dvb/zapit/ChangeLog                    \
+apps/dvb/zapit/include/.cvsignore           \
+apps/dvb/zapit/include/Makefile.am          \
 apps/dvb/zapit/include/zapit/.cvsignore     \
 apps/dvb/zapit/include/zapit/bat.h          \
 apps/dvb/zapit/include/zapit/bouquets.h     \
@@ -28,6 +30,7 @@ apps/dvb/zapit/include/zapit/zapit.h        \
 apps/dvb/zapit/lib                          \
 apps/dvb/zapit/Makefile.am                  \
 apps/dvb/zapit/NEWS                         \
+apps/dvb/zapit/src/.cvsignore               \
 apps/dvb/zapit/src/bouquets.cpp             \
 apps/dvb/zapit/src/channel.cpp              \
 apps/dvb/zapit/src/dvbstring.cpp            \
@@ -36,7 +39,9 @@ apps/dvb/zapit/src/pzapit.cpp               \
 apps/dvb/zapit/src/transponder.cpp          \
 apps/dvb/zapit/src/xmlinterface.cpp         \
 apps/dvb/zapit/src/zapci                    \
+apps/dvb/zapit/src/zapost/.cvsignore        \
 apps/dvb/zapit/src/zapost/dmx.cpp           \
+apps/dvb/zapit/src/zapsi/.cvsignore         \
 apps/dvb/zapit/src/zapsi/bat.cpp            \
 apps/dvb/zapit/src/zapsi/Makefile.am        \
 apps/dvb/zapit/src/zapsi/nit.cpp            \
