@@ -153,6 +153,7 @@ int eZapPlugins::exec()
 				msg.hide();
 				return -1;
 			}
+			continue;
 		}
 
 		for(int count=0;count<n;count++)
