@@ -3,6 +3,7 @@
 
 #include <lib/base/ebase.h>
 #include <src/sselect.h>
+#include <src/hotplug.h>
 
 class eServiceSelector;
 class eServicePath;
@@ -16,6 +17,7 @@ class eHTTPConnection;
 
 class eZap: public eApplication, public Object
 {
+	eHotplug hotplug;
 	static eZap *instance;
 
 	eWidget *desktop_fb;

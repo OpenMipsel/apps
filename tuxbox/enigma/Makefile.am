@@ -1,3 +1,3 @@
 AUTOMAKE_OPTIONS = gnu
 
-SUBDIRS = include lib src data doc po
+SUBDIRS = include lib src data doc po hotplug

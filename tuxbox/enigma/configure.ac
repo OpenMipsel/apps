@@ -28,6 +28,7 @@ TUXBOX_APPS_GETTEXT
 
 AC_OUTPUT([
 Makefile
+hotplug/Makefile
 data/Makefile
 data/fonts/Makefile
 data/htdocs/Makefile

@@ -12,7 +12,7 @@ enigma_SOURCES = \
 	setup_rc.cpp channelinfo.cpp setup_harddisk.cpp enigma_ci.cpp upgrade.cpp satfind.cpp setup_extra.cpp \
 	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp wizard_scan.cpp engrab.cpp setupengrab.cpp \
 	helpwindow.cpp tpeditwindow.cpp enigma_web.cpp enigma_epg.cpp wizard_timezone.cpp setup_av.cpp \
-	elirc.cpp
+	elirc.cpp hotplug.cpp
 
 enigma_LDADD_WHOLE = \
 	$(top_builddir)/lib/driver/libenigma_driver.a \
