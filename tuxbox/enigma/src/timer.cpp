@@ -1676,8 +1676,8 @@ bool eTimerEditView::getData( time_t &bTime, int &duration )
 	endTime.tm_sec = 0;
 
 	if ( multiple->isChecked() &&   // endTime after 0:00
-			( endTime.tm_hour < beginTime.tm_hour ||
-				endTime.tm_min < beginTime.tm_min ) )
+			endTime.tm_hour*60+endTime.tm_min <
+			beginTime.tm_hour*60+beginTime.tm_min )
 	{
 		endTime.tm_mday++;
 	}
@@ -1685,7 +1685,6 @@ bool eTimerEditView::getData( time_t &bTime, int &duration )
 	bTime = mktime( &beginTime );
 	time_t tmp = mktime( &endTime );
 	duration = tmp - bTime;
-
 	return duration > 0;
 }
 
