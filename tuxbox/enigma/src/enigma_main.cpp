@@ -2237,6 +2237,11 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 			handleStandby();
 
 			eServiceReference ref2=ref;
+
+  // no faked service types in recordings.epl
+			if ( ref2.data[0] & 1 )  // tv or faked service type(nvod,linkage)
+				ref2.data[0] = 1;  // this saved as tv service...
+
 			ref2.path=filename;
 			ref2.descr=descr;
 			ePlaylistEntry en(ref2);

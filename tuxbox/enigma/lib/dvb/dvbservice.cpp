@@ -551,7 +551,7 @@ void eDVBServiceController::scanPMT()
 
 	/*emit*/ dvb.scrambled(isca);
 
-	if (isca && !calist)
+	if ( isca && !calist && !service.path.length() )
 	{
 		eDebug("NO CASYS");
 		service_state=ENOCASYS;

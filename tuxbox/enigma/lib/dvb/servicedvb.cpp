@@ -532,13 +532,10 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			return -1;
 		break;
 	case eServiceCommand::cmdSetSpeed:
-		eDebug("eServiceCommand::cmdSetSpeed");
 		if (!decoder)
 			return -1;
-		eDebug("decoder exist");
 		if ((state == statePlaying) || (state == statePause) || (state == stateSkipping))
 		{
-			eDebug("state...");
 			if (cmd.parm < 0)
 				return -1;
 			decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::setSpeed, cmd.parm));
@@ -550,7 +547,6 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 				state=stateSkipping;
 		} else
 			{
-			eDebug("return -2");
 			return -2;
 			}
 		break;
@@ -567,7 +563,6 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 	case eServiceCommand::cmdSeekReal:
 		if (!decoder)
 			return -1;
-		eDebug("seekreal");
 		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::seekreal, cmd.parm));
 		break;
 	case eServiceCommand::cmdSeekBegin:
