@@ -890,7 +890,7 @@ static eString start_plugin(eString request, eString dirpath, eString opt, eHTTP
 	if (opts.find("name") == opts.end())
 		return "E: no plugin name given";
 
-	eZapPlugins plugins;
+	eZapPlugins plugins(-1);
 	eString path;
 	if ( opts.find("path") != opts.end() )
 	{

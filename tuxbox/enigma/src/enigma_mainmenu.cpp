@@ -240,9 +240,9 @@ void eMainMenu::sel_plugins()
 {
 #ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
-	eZapPlugins plugins(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+	eZapPlugins plugins(1, pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 #else
-	eZapPlugins plugins;
+	eZapPlugins plugins(1);
 #endif
 	hide();
 	plugins.exec();

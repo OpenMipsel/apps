@@ -119,8 +119,8 @@ ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* des
 	pluginname=pluginname.left(pluginname.length()-4);
 }
 
-eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
-	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400)
+eZapPlugins::eZapPlugins(int type, eWidget* lcdTitle, eWidget* lcdElement)
+	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400), type(type)
 {
 	PluginPath[0] = PLUGINDIR "/";
 	PluginPath[1] = "/var/tuxbox/plugins/";
@@ -136,6 +136,8 @@ eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 
 int eZapPlugins::exec()
 {
+	int cnt=0;
+	ePlugin *plg=0;
 	for ( int i = 0; i < 2; i++ )
 	{
 		DIR *d=opendir(PluginPath[i].c_str());
@@ -159,13 +161,28 @@ int eZapPlugins::exec()
 			eString FileName = e->d_name;
 			
 			if ( FileName.find(".cfg") != eString::npos )
-				new ePlugin(&list, (PluginPath[i]+FileName).c_str());
+			{
+				eString cfgname=(PluginPath[i]+FileName).c_str();
+				int ttype=atoi(getInfo(cfgname.c_str(), "type").c_str());
+				if ((type == -1) || (type == ttype))
+				{
+					plg = new ePlugin(&list, cfgname.c_str());
+					++cnt;
+				}
+			}
 		}
 		closedir(d);
 	}
-	show();
-	int res=eListBoxWindow<ePlugin>::exec();
-	hide();
+	int res=0;
+	if ((type == 2) && (cnt == 1))
+	{
+		selected(plg);
+	} else
+	{
+		show();
+		res=eListBoxWindow<ePlugin>::exec();
+		hide();
+	}
 	return res;
 }
 

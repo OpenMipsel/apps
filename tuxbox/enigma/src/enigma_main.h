@@ -358,6 +358,7 @@ private:
 	void showSubserviceMenu();
 	void showAudioMenu();
 	void runVTXT();
+	void runPluginExt();
 	void showEPGList();
 	void showEPG();
 	void showEPG_Streaminfo();	

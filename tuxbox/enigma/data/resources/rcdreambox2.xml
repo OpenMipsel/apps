@@ -111,7 +111,7 @@
 			<action name="showSubservices" key="green" flags="m" />
 			<action name="showAudio" key="yellow" flags="m" />
 			<action name="showAudio" key="audio" flags="m" />
-			<action name="pluginVTXT" key="blue" flags="m" />
+			<action name="pluginExt" key="blue" flags="m" />
 			<action name="pluginVTXT" key="text" flags="m" />
 			<action name="showEPGList" key="red" flags="m" />
 			<action name="playlistNextService" key="next" flags="mr" />

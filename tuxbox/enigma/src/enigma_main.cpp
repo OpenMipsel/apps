@@ -60,7 +60,7 @@ struct enigmaMainActions
 	eActionMap map;
 	eAction showMainMenu, standby_press, standby_repeat, standby_release, 
 		showInfobar, hideInfobar, showInfobarEPG, showServiceSelector,
-		showSubservices, showAudio, pluginVTXT, showEPGList, showEPG, 
+		showSubservices, showAudio, pluginVTXT, pluginExt, showEPGList, showEPG, 
 		nextSubService, prevSubService, nextService, prevService,
 		playlistNextService, playlistPrevService, serviceListDown,
 		serviceListUp, volumeUp, volumeDown, toggleMute,
@@ -84,6 +84,7 @@ struct enigmaMainActions
 		showSubservices(map, "showSubservices", _("show subservices/NVOD"), eAction::prioDialog),
 		showAudio(map, "showAudio", _("show audio selector"), eAction::prioDialog),
 		pluginVTXT(map, "pluginVTXT", _("show Videotext"), eAction::prioDialog),
+		pluginExt(map, "pluginExt", _("show extension Plugins"), eAction::prioDialog),
 		showEPGList(map, "showEPGList", _("show epg schedule list"), eAction::prioDialog),
 		showEPG(map, "showEPG", _("show extended info"), eAction::prioDialog),
 		nextSubService(map, "nextSubService", _("zap to next subService"), eAction::prioDialog),
@@ -1596,6 +1597,7 @@ void eZapMain::prepareNonDVRHelp()
 	addActionToHelpList(&i_enigmaMainActions->showMainMenu);
 	addActionToHelpList(&i_enigmaMainActions->showEPG);
 	addActionToHelpList(&i_enigmaMainActions->pluginVTXT);
+	addActionToHelpList(&i_enigmaMainActions->pluginExt);
 	addActionToHelpList(&i_enigmaMainActions->toggleDVRFunctions);
 	addActionToHelpList(&i_enigmaMainActions->modeTV);
 	addActionToHelpList(&i_enigmaMainActions->modeRadio);
@@ -3368,10 +3370,16 @@ void eZapMain::runVTXT()
 	eDebug("runVTXT");
 	if (isVT)
 	{
-		eZapPlugins plugins;
+		eZapPlugins plugins(2);
 		if ( plugins.execPluginByName("tuxtxt.cfg") != "OK" )
 			plugins.execPluginByName("_tuxtxt.cfg");
 	}
+}
+
+void eZapMain::runPluginExt()
+{
+	eZapPlugins plugins(2);
+	plugins.exec();
 }
 
 void eZapMain::showEPGList()
@@ -3650,6 +3658,8 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showAudioMenu();
 		else if (event.action == &i_enigmaMainActions->pluginVTXT)
 			runVTXT();
+		else if (event.action == &i_enigmaMainActions->pluginExt)
+			runPluginExt();
 		else if (event.action == &i_enigmaMainActions->showEPGList)
 			showEPGList();
 		else if ( subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->nextSubService )

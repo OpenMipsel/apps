@@ -20,8 +20,9 @@ class eZapPlugins: public eListBoxWindow<ePlugin>
 private:
 	eString PluginPath[3];
 	void selected(ePlugin *);
+	int type;
 public:
-	eZapPlugins(eWidget* lcdTitle=0, eWidget* lcdElement=0);
+	eZapPlugins(int type, eWidget* lcdTitle=0, eWidget* lcdElement=0);
 	eString execPluginByName(const char* name);
 	void execPlugin(ePlugin* plugin);
 	int exec();
