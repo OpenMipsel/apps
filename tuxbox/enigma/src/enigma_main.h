@@ -392,6 +392,7 @@ private:
 protected:
 	int eventHandler(const eWidgetEvent &event);
 private:
+	bool CheckService(const eServiceReference &ref );
 	void handleServiceEvent(const eServiceEvent &event);
 	void startService(const eServiceReference &, int);
 	void gotEIT();

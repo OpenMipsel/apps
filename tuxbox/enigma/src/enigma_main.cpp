@@ -834,6 +834,21 @@ void eServiceNumberWidget::numberChanged()
 
 eZapMain *eZapMain::instance;
 
+bool eZapMain::CheckService( const eServiceReference& ref )
+{
+	switch(mode)
+	{
+		case modeTV:
+			return ( ref.type == 1 || ref.type == 4 || ref.type == 6);
+		case modeRadio:
+			return ref.type == 2;
+		case modeFile:
+			return ref.path.length();
+		break;
+	}
+	return false;
+}
+
 static bool ModeTypeEqual( const eServiceReference& ref1, const eServiceReference& ref2 )
 {
 	if ( (ref1.path.length()>0) == (ref2.path.length()>0) )
@@ -1835,7 +1850,7 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 	if ( !service ||    // cancel pressed
 			( !extZap && ref &&
 				!(service->path.length() && mode == modeFile) &&
-				!ModeTypeEqual(*service, ref) ) )
+				!CheckService(*service) ) )
 	{
 		if ( !entered_playlistmode )
 		{
@@ -3753,7 +3768,8 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		eService *rservice=0;
 
 		if ( refservice != serviceref  // linkage or nvod
-			&& !( refservice.flags & eServiceReference::flagDirectory ) )
+			&& !( refservice.flags & eServiceReference::flagDirectory )
+			&& !serviceref.path.length() )
 		{
 			rservice=eServiceInterface::getInstance()->addRef(refservice);
 
@@ -3807,7 +3823,6 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			name+=eString().sprintf(" (%d.%d°%c)", abs(opos / 10), abs(opos % 10), opos>0?'E':'W');
 //			name+=eString().sprintf("(%04x)",((eServiceReferenceDVB&)_serviceref).getServiceID().get() );
 		}
-
 		ChannelName->setText(name);
 
 		int hideerror=0;
