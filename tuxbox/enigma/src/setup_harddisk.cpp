@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.8 2003/01/02 19:24:05 Ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.9 2003/01/02 19:37:19 Ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -247,6 +247,7 @@ void eHarddiskMenu::check()
 	check.show();
 	check.exec();
 	check.hide();
+	show();
 }
 
 void eHarddiskMenu::s_format()
