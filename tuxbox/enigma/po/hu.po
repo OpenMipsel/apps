@@ -7,15 +7,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-03-07 17:35+0100\n"
-"PO-Revision-Date: Fri Mar 7 17:24:37 CET 2003\n"
+"POT-Creation-Date: 2003-03-11 14:20+0100\n"
+"PO-Revision-Date: Mon Mar 10 20:27:30 CET 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: Hungarian / lbalogh@mediavox.hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: chk_blue2.esml:308 stone.esml:489
+#: chk_blue2.esml:312
 msgid "FF "
 msgstr "FF"
 
@@ -31,13 +31,13 @@ msgstr "OK-val javíthatod amit kijelöltél"
 msgid "Satfind"
 msgstr "Mühód keresö"
 
-#: chk_blue2.esml:307 stone.esml:488
+#: chk_blue2.esml:311
 msgid "Pause "
 msgstr "Szünet"
 
 #: default.esml:328 default.esml:358 default.esml:414 default.esml:497
 #: default.esml:709 src/setup_language.cpp:82 src/setup_lcd.cpp:106
-#: src/setup_osd.cpp:78 src/setup_rc.cpp:106 src/setupnetwork.cpp:97
+#: src/setup_osd.cpp:78 src/setup_rc.cpp:108 src/setupnetwork.cpp:97
 #: src/setupvideo.cpp:70 src/setup_rfmod.cpp:121 src/setup_audio.cpp:36
 msgid "save"
 msgstr "Mentés"
@@ -46,11 +46,11 @@ msgstr "Mentés"
 msgid "motor power input difference between running and not running"
 msgstr "Motor teljesítmény eltérése mozgó és álló állapot között"
 
-#: default.esml:425 default.esml:505 src/rotorconfig.cpp:616
+#: default.esml:425 default.esml:505 src/rotorconfig.cpp:617
 msgid "Satellite:"
 msgstr "Mühold"
 
-#: chk_blue2.esml:306 stone.esml:487
+#: chk_blue2.esml:310
 msgid "Play "
 msgstr "Lejátszás"
 
@@ -60,7 +60,7 @@ msgstr "Válassz mûholdat amit meg szeretnél keresni"
 
 #: default.esml:329 default.esml:359 default.esml:415 default.esml:498
 #: default.esml:710 src/setup_language.cpp:95 src/setup_lcd.cpp:119
-#: src/setup_osd.cpp:92 src/setup_rc.cpp:119 src/setupnetwork.cpp:112
+#: src/setup_osd.cpp:92 src/setup_rc.cpp:121 src/setupnetwork.cpp:112
 #: src/setupvideo.cpp:84 src/setup_audio.cpp:51
 msgid "ignore changes and return"
 msgstr "változások elvetése és visszatérés"
@@ -186,7 +186,7 @@ msgstr "add meg a kezdési idöpontot (0..9, </>)"
 msgid "enter LNB lowband offset frequency (0..9, ok)"
 msgstr "Add meg az LNB alsósávi offszet frekijét (0..9, OK)"
 
-#: chk_blue2.esml:310 stone.esml:491
+#: chk_blue2.esml:314
 msgid "Record "
 msgstr "Felvétel"
 
@@ -227,7 +227,7 @@ msgid "update"
 msgstr "Frissítés"
 
 #: default.esml:497 src/setup_language.cpp:87 src/setup_lcd.cpp:111
-#: src/setup_osd.cpp:83 src/setup_rc.cpp:111 src/setupnetwork.cpp:102
+#: src/setup_osd.cpp:83 src/setup_rc.cpp:113 src/setupnetwork.cpp:102
 #: src/setupvideo.cpp:75 src/setup_audio.cpp:41
 msgid "save changes and return"
 msgstr "mentés és bezárás"
@@ -311,7 +311,7 @@ msgstr "Mód:"
 #: default.esml:462 default.esml:474 default.esml:498 default.esml:646
 #: default.esml:659 default.esml:699 src/enigma_ci.cpp:77 src/scan.cpp:38
 #: src/setup_language.cpp:92 src/setup_lcd.cpp:116 src/setup_osd.cpp:89
-#: src/setup_rc.cpp:116 src/setupnetwork.cpp:109 src/setupvideo.cpp:81
+#: src/setup_rc.cpp:118 src/setupnetwork.cpp:109 src/setupvideo.cpp:81
 #: src/setup_rfmod.cpp:132 src/setup_audio.cpp:48
 msgid "abort"
 msgstr "Megszakít"
@@ -620,7 +620,7 @@ msgstr "Pattanjunk az elözö oldalra (LNB-hez)"
 msgid "choose wished modulation (ok)"
 msgstr "Válaszd ki a kívánt modulációt (OK)"
 
-#: chk_blue2.esml:305 stone.esml:486
+#: chk_blue2.esml:309
 msgid "FR "
 msgstr "FR"
 
@@ -764,7 +764,7 @@ msgstr "OK"
 msgid "new"
 msgstr "új"
 
-#: chk_blue2.esml:309 stone.esml:490
+#: chk_blue2.esml:313
 msgid "Stop "
 msgstr "Állj"
 
@@ -913,7 +913,7 @@ msgstr "vertikális"
 msgid "horizontal"
 msgstr "horizontális"
 
-#: lib/dvb/serviceplaylist.cpp:116
+#: lib/dvb/serviceplaylist.cpp:117
 #, c-format
 msgid " (%d entries)"
 msgstr "(%d adat)"
@@ -1166,7 +1166,7 @@ msgstr "Újraindítom, várj egy picit"
 msgid "Infos"
 msgstr "Infók"
 
-#: src/enigma_info.cpp:43 src/enigma_main.cpp:4385 src/enigma_scan.cpp:40
+#: src/enigma_info.cpp:43 src/enigma_main.cpp:4558 src/enigma_scan.cpp:40
 #: src/enigma_scan.cpp:161 src/enigma_setup.cpp:90
 msgid "[back]"
 msgstr "[vissza]"
@@ -1243,7 +1243,7 @@ msgstr "Tuner: Szimulátor"
 msgid "keine"
 msgstr "nincs"
 
-#: src/enigma_info.cpp:308 src/timer.cpp:1123 src/timer.cpp:1292
+#: src/enigma_info.cpp:308 src/timer.cpp:1138 src/timer.cpp:1307
 #: src/upgrade.cpp:239
 msgid "unknown"
 msgstr "ismeretlen"
@@ -1316,15 +1316,15 @@ msgstr "EPG program lista megmutatása"
 msgid "show extended info"
 msgstr "Bövebb infó feldobása"
 
+# 
 #: src/enigma_main.cpp:86
-#, fuzzy
 msgid "zap to next subService"
-msgstr "ugorj az uccsó csatira"
+msgstr "Következö alcsomagra ugrás"
 
+# 
 #: src/enigma_main.cpp:87
-#, fuzzy
 msgid "zap to prev subService"
-msgstr "menj az elsö csatornára"
+msgstr "Elözö alcsomagra ugrás"
 
 #: src/enigma_main.cpp:88
 msgid "quickzap next"
@@ -1374,7 +1374,7 @@ msgstr "lejátszás szüneteltetése"
 msgid "resume playback"
 msgstr "lejátszás folytatása"
 
-#: src/enigma_main.cpp:104 src/enigma_main.cpp:1921
+#: src/enigma_main.cpp:104 src/enigma_main.cpp:2036
 msgid "record"
 msgstr "felvétel"
 
@@ -1450,98 +1450,98 @@ msgstr "érvénytelen!"
 msgid "NVOD"
 msgstr "NVOD"
 
+# 
 #: src/enigma_main.cpp:538
-#, fuzzy
 msgid "Video"
-msgstr "Svideo"
+msgstr "Video"
 
-#: src/enigma_main.cpp:638
+#: src/enigma_main.cpp:647
 msgid "Audio"
 msgstr "Hangsáv"
 
-#: src/enigma_main.cpp:667
+#: src/enigma_main.cpp:676
 msgid "multiple Services"
 msgstr "többszintü szolgáltatások"
 
-#: src/enigma_main.cpp:676 src/enigma_main.cpp:726 src/enigma_main.cpp:742
+#: src/enigma_main.cpp:685 src/enigma_main.cpp:735 src/enigma_main.cpp:751
 msgid "enable quickzap"
-msgstr ""
+msgstr "Gyors-ZAP engedélyezése"
 
-#: src/enigma_main.cpp:684 src/enigma_main.cpp:4186
+#: src/enigma_main.cpp:693 src/enigma_main.cpp:4359
 msgid "add to user bouquet"
 msgstr "Felh. csomaghoz való hozzáadás"
 
-#: src/enigma_main.cpp:722
-#, fuzzy
+# 
+#: src/enigma_main.cpp:731
 msgid "disable quickzap"
-msgstr "limitek kikapcsolása"
+msgstr "Gyors-ZAP tiltása"
 
-#: src/enigma_main.cpp:791
+#: src/enigma_main.cpp:800
 msgid "Channel"
 msgstr "Csatorna"
 
-#: src/enigma_main.cpp:796
+#: src/enigma_main.cpp:805
 msgid "Channel:"
 msgstr "Csatorna:"
 
-#: src/enigma_main.cpp:829
+#: src/enigma_main.cpp:838
 #, c-format
 msgid "Please wait while the motor is turning to %d.%d%c ...."
 msgstr "Kérlek várj, míg forgatom az antennádat a(z) %d.%d%c -re...."
 
-#: src/enigma_main.cpp:829
+#: src/enigma_main.cpp:838
 msgid "Message"
 msgstr "Üzenet"
 
-#: src/enigma_main.cpp:1059
+#: src/enigma_main.cpp:924
 msgid "recorded movies"
 msgstr "Felvett müsorok"
 
-#: src/enigma_main.cpp:1069
+#: src/enigma_main.cpp:1001
 msgid "User - bouquets (TV)"
 msgstr "Felh. - csomagok (TV)"
 
-#: src/enigma_main.cpp:1079
+#: src/enigma_main.cpp:1011
 msgid "User - bouquets (Radio)"
 msgstr "Felh. - csomagok (Rádió)"
 
-#: src/enigma_main.cpp:1130
+#: src/enigma_main.cpp:1050
 msgid "Favourites (TV)"
 msgstr "Zsánerek (TV)"
 
-#: src/enigma_main.cpp:1135
+#: src/enigma_main.cpp:1055
 msgid "Favourites (Radio)"
 msgstr "Zsánerek (Rádió)"
 
-#: src/enigma_main.cpp:1502
+#: src/enigma_main.cpp:1604
 msgid "no EPG available"
 msgstr "sajna, de nincs elérhetö EPG"
 
-#: src/enigma_main.cpp:1921
+#: src/enigma_main.cpp:2036
 msgid "Sorry, you cannot record this service."
 msgstr "Diéta van, ezt a csatit nem veheted fel"
 
-#: src/enigma_main.cpp:1931
+#: src/enigma_main.cpp:2046
 msgid "no description available"
 msgstr "nincs adatom"
 
-#: src/enigma_main.cpp:2073
+#: src/enigma_main.cpp:2188
 msgid "Show recorded movies?"
 msgstr "Mutassan a felvett anyagokat?"
 
-#: src/enigma_main.cpp:2073
+#: src/enigma_main.cpp:2188
 msgid "recording finished"
 msgstr "felvétel befejezve"
 
-#: src/enigma_main.cpp:2246
+#: src/enigma_main.cpp:2376
 msgid "Sorry, you cannot delete this service."
 msgstr "Sajnos nem engedhetem meg hogy ezt a csatit töröld"
 
-#: src/enigma_main.cpp:2246
+#: src/enigma_main.cpp:2376
 msgid "delete service"
 msgstr "csatorna törlése"
 
-#: src/enigma_main.cpp:2270
+#: src/enigma_main.cpp:2400
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
@@ -1549,55 +1549,55 @@ msgstr ""
 "Ez egy felvett anyag!\n"
 "Biztos törölni akarod? (nekem mind1)"
 
-#: src/enigma_main.cpp:2270
+#: src/enigma_main.cpp:2400
 msgid "Delete recorded stream"
 msgstr "Felvett anyag törlése :("
 
-#: src/enigma_main.cpp:2359
+#: src/enigma_main.cpp:2489
 msgid "Enter name for the new bouquet:"
 msgstr "Adj meg egy nevet az új csomagnak:"
 
-#: src/enigma_main.cpp:2360
+#: src/enigma_main.cpp:2490
 msgid "Add new user bouquet"
 msgstr "Új felh. csomag hozzádása"
 
-#: src/enigma_main.cpp:2402
+#: src/enigma_main.cpp:2532
 msgid "Enter new name for the user bouquet:"
 msgstr "Adj meg egy nevet a felh. csomagnak:"
 
-#: src/enigma_main.cpp:2403
+#: src/enigma_main.cpp:2533
 msgid "Rename user bouquet"
 msgstr "Felh. csomag átnevezése"
 
-#: src/enigma_main.cpp:2436
+#: src/enigma_main.cpp:2566
 msgid "unnamed bouquet"
 msgstr "Névtelen csomag"
 
-#: src/enigma_main.cpp:2480
+#: src/enigma_main.cpp:2610
 msgid "Enter new name:"
 msgstr "Új név megadása:"
 
-#: src/enigma_main.cpp:2481
+#: src/enigma_main.cpp:2611
 msgid "Rename entry"
 msgstr "Bejegyzés átnevezése"
 
-#: src/enigma_main.cpp:2569 src/enigma_main.cpp:2570
+#: src/enigma_main.cpp:2699 src/enigma_main.cpp:2700
 msgid "This directory doesn't contain anything playable!"
 msgstr "Ebben a könyvtárban semmi nincs amivel tudnék valamit is kezdeni!"
 
-#: src/enigma_main.cpp:2570
+#: src/enigma_main.cpp:2700
 msgid "Play"
 msgstr "Lejátszás"
 
-#: src/enigma_main.cpp:2745 src/enigma_plugins.cpp:143
+#: src/enigma_main.cpp:2874 src/enigma_plugins.cpp:143
 msgid "Couldn't read plugin directory"
 msgstr "Sajna, de nem látom a plugin könyvtárat!"
 
-#: src/enigma_main.cpp:2745 src/enigma_plugins.cpp:143
+#: src/enigma_main.cpp:2874 src/enigma_plugins.cpp:143
 msgid "Error"
 msgstr "HIBA"
 
-#: src/enigma_main.cpp:2890
+#: src/enigma_main.cpp:3019
 msgid ""
 "A timer based digital recording is currently in progress!\n"
 "This stops the timer, and digital recording!"
@@ -1605,7 +1605,7 @@ msgstr ""
 "Éppen fut egy az idözítö által indított felvétel!\n"
 "Megállítsam az idözítöt és a felvételt?"
 
-#: src/enigma_main.cpp:2900
+#: src/enigma_main.cpp:3029
 msgid ""
 "A digital recording is currently in progress!\n"
 "This stops the digital recording!"
@@ -1613,7 +1613,7 @@ msgstr ""
 "Éppen fut egy digitális felvétel!\n"
 "Megállítsam a felvételt?"
 
-#: src/enigma_main.cpp:2910
+#: src/enigma_main.cpp:3039
 msgid ""
 "A timer event is currently in progress!\n"
 "This stops the timer event!"
@@ -1621,118 +1621,118 @@ msgstr ""
 "Éppen fut egy idözítés!\n"
 "Leállítsam?"
 
-#: src/enigma_main.cpp:2918
+#: src/enigma_main.cpp:3047
 msgid "Really do this?"
 msgstr "Tutira ezt akarod?"
 
-#: src/enigma_main.cpp:3515 src/enigma_main.cpp:3516
+#: src/enigma_main.cpp:3651 src/enigma_main.cpp:3652
 msgid "One moment please..."
 msgstr "Picike türelmet kérek, dolgom van..."
 
-#: src/enigma_main.cpp:3516 src/enigma_main.cpp:3521 src/enigma_main.cpp:3531
-#: src/enigma_main.cpp:3539 src/enigma_main.cpp:3546 src/enigma_main.cpp:3551
-#: src/enigma_main.cpp:3557 src/timer.cpp:953
+#: src/enigma_main.cpp:3652 src/enigma_main.cpp:3657 src/enigma_main.cpp:3667
+#: src/enigma_main.cpp:3675 src/enigma_main.cpp:3682 src/enigma_main.cpp:3687
+#: src/enigma_main.cpp:3693 src/timer.cpp:968
 msgid "switch"
 msgstr "kapcsolás"
 
-#: src/enigma_main.cpp:3520 src/enigma_main.cpp:3521
+#: src/enigma_main.cpp:3656 src/enigma_main.cpp:3657
 msgid "Service could not be found !"
 msgstr "Ajjaj! Nem találom a csatornát!"
 
-#: src/enigma_main.cpp:3530 src/enigma_main.cpp:3531
+#: src/enigma_main.cpp:3666 src/enigma_main.cpp:3667
 msgid "This service could not be descrambled"
 msgstr "Ezt a csatit nem tudom dekódolni"
 
-#: src/enigma_main.cpp:3538 src/enigma_main.cpp:3539
+#: src/enigma_main.cpp:3674 src/enigma_main.cpp:3675
 msgid "This service doesn't currently send a signal"
 msgstr "A csati pillanatnyilag ki van kapcsolva. Nincs jel."
 
-#: src/enigma_main.cpp:3544 src/enigma_main.cpp:3546
+#: src/enigma_main.cpp:3680 src/enigma_main.cpp:3682
 msgid "This content could not be displayed"
 msgstr "A tartalmat nem tudom megmutatni"
 
-#: src/enigma_main.cpp:3549 src/enigma_main.cpp:3551
+#: src/enigma_main.cpp:3685 src/enigma_main.cpp:3687
 msgid "NVOD Service - please select a starttime"
 msgstr "NVOD csati - kérlek válassz egy idöpontot"
 
-#: src/enigma_main.cpp:3555 src/enigma_main.cpp:3557
+#: src/enigma_main.cpp:3691 src/enigma_main.cpp:3693
 msgid "Unknown error!!"
 msgstr "Waffankúló! Ismeretlen hiba!!"
 
-#: src/enigma_main.cpp:3987
+#: src/enigma_main.cpp:4132
 msgid "Playlist"
 msgstr "Playlista"
 
-#: src/enigma_main.cpp:3989
+#: src/enigma_main.cpp:4134
 msgid "History"
 msgstr "Történelem"
 
-#: src/enigma_main.cpp:4159
+#: src/enigma_main.cpp:4332
 msgid "Service Menu"
 msgstr "Csatorna menü"
 
-#: src/enigma_main.cpp:4162 src/enigma_main.cpp:4220
+#: src/enigma_main.cpp:4335 src/enigma_main.cpp:4393
 #: src/setup_harddisk.cpp:180
 msgid "back"
 msgstr "vissza"
 
-#: src/enigma_main.cpp:4164
+#: src/enigma_main.cpp:4337
 msgid "add service to playlist"
 msgstr "szolgáltatás hozzáadása a playlistához"
 
-#: src/enigma_main.cpp:4167
+#: src/enigma_main.cpp:4340
 msgid "delete"
 msgstr "törlés"
 
-#: src/enigma_main.cpp:4169 src/enigma_main.cpp:4171
+#: src/enigma_main.cpp:4342 src/enigma_main.cpp:4344
 msgid "rename"
 msgstr "átnevez"
 
-#: src/enigma_main.cpp:4175
+#: src/enigma_main.cpp:4348
 msgid "disable move mode"
 msgstr "mozgatás mód kikapcsolása"
 
-#: src/enigma_main.cpp:4177
+#: src/enigma_main.cpp:4350
 msgid "enable move mode"
 msgstr "mozgatás mód bekapcsolása"
 
-#: src/enigma_main.cpp:4188
+#: src/enigma_main.cpp:4361
 msgid "copy to user bouquets"
 msgstr "Felh. csomagokba való másolás"
 
-#: src/enigma_main.cpp:4196
+#: src/enigma_main.cpp:4369
 msgid "disable edit mode"
 msgstr "javítási mód kikapcsolása"
 
-#: src/enigma_main.cpp:4198
+#: src/enigma_main.cpp:4371
 msgid "enable edit mode"
 msgstr "javítási mód bekapcsolása"
 
-#: src/enigma_main.cpp:4203
+#: src/enigma_main.cpp:4376
 msgid "create new user bouquet"
 msgstr "új felh. csomag készítése"
 
-#: src/enigma_main.cpp:4217
+#: src/enigma_main.cpp:4390
 msgid "Record Menu"
 msgstr "Felvételi menü"
 
-#: src/enigma_main.cpp:4221
+#: src/enigma_main.cpp:4394
 msgid "stop record now"
 msgstr "Felvétel azonnali megállítása"
 
-#: src/enigma_main.cpp:4222
+#: src/enigma_main.cpp:4395
 msgid "set record duration"
 msgstr "add meg a felvétel hosszát"
 
-#: src/enigma_main.cpp:4223
+#: src/enigma_main.cpp:4396
 msgid "set record stop time"
 msgstr "add meg a felvétel végének az idöpontját"
 
-#: src/enigma_main.cpp:4353
+#: src/enigma_main.cpp:4526
 msgid "press ok to start edit mode"
 msgstr "Nyomd meg az OK-t a javítási módhoz"
 
-#: src/enigma_main.cpp:4380
+#: src/enigma_main.cpp:4553
 msgid "User Bouquets"
 msgstr "felhasználói csomagok"
 
@@ -1752,7 +1752,7 @@ msgstr "RÁDIÓ MÓD"
 msgid "File mode"
 msgstr "FÁJL MÓD"
 
-#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1271 src/rotorconfig.cpp:921
+#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1286 src/rotorconfig.cpp:918
 msgid "Information"
 msgstr "Információ"
 
@@ -1844,7 +1844,7 @@ msgstr ""
 "Nem állítottál be egy LNB-t sem aminél be lenne kapcsolva a DiSEqC 1.2 mód.\n"
 "Menj be a mühold beállítások menübe, és kapcsold be a DiSEqC 1.2 módot"
 
-#: src/enigma_scan.cpp:131 src/rotorconfig.cpp:698 src/rotorconfig.cpp:897
+#: src/enigma_scan.cpp:131 src/rotorconfig.cpp:699 src/rotorconfig.cpp:894
 msgid "Warning"
 msgstr "Figyelmeztetés"
 
@@ -2659,37 +2659,37 @@ msgstr "fényerö megváltoztatása"
 msgid "change the contrast"
 msgstr "Kontraszt megváltoztatása"
 
-#: src/setup_rc.cpp:37
+#: src/setup_rc.cpp:38
 msgid "Remotecontrol Setup"
 msgstr "Távirányító beállítások"
 
-#: src/setup_rc.cpp:50
+#: src/setup_rc.cpp:51
 msgid "Repeat Rate:"
 msgstr "Sebesség:"
 
-#: src/setup_rc.cpp:55
+#: src/setup_rc.cpp:56
 msgid "Repeat Delay:"
 msgstr "Késleltetés:"
 
-#: src/setup_rc.cpp:63
+#: src/setup_rc.cpp:64
 msgid "set RC repeat rate ( left / right )"
 msgstr "állítsd be a TK ismétlési sebességét (</>)"
 
-#: src/setup_rc.cpp:70
+#: src/setup_rc.cpp:71
 msgid "set RC repeat delay ( left / right )"
 msgstr "állítsd be a TK ismétlési késleltetését (</>)"
 
-#: src/setup_rc.cpp:80
+#: src/setup_rc.cpp:81
 msgid "select your favourite RC style (ok)"
 msgstr "válaszd ki a kedvenc TK stílust (ok)"
 
-#: src/setup_rc.cpp:101
-msgid "other bouquet selection keys"
-msgstr ""
-
 #: src/setup_rc.cpp:102
+msgid "other bouquet selection keys"
+msgstr "Egyéb csomag választó kulcs"
+
+#: src/setup_rc.cpp:103
 msgid "use classic enigma bouquet selection keys"
-msgstr ""
+msgstr "Klasszikus enigma kiválasztó kulcs használata"
 
 #: src/setupnetwork.cpp:19
 msgid "Network setup"
@@ -2827,57 +2827,71 @@ msgstr "[ FEL ]"
 msgid "(removed service)"
 msgstr "(törölt csatornák)"
 
-#: src/streaminfo.cpp:151
+#: src/streaminfo.cpp:155
 msgid "album"
 msgstr "album"
 
-#: src/streaminfo.cpp:153
+#: src/streaminfo.cpp:157
 msgid "title"
 msgstr "cím"
 
-#: src/streaminfo.cpp:155
+#: src/streaminfo.cpp:159
 msgid "artist"
 msgstr "elöadó"
 
-#: src/streaminfo.cpp:157
+#: src/streaminfo.cpp:161
 msgid "genre"
 msgstr "korosztály"
 
-#: src/streaminfo.cpp:159
+#: src/streaminfo.cpp:163
 msgid "year"
 msgstr "év"
 
-#: src/streaminfo.cpp:225 src/streaminfo.cpp:236 src/streaminfo.cpp:248
-#: src/streaminfo.cpp:260 src/streaminfo.cpp:272 src/streaminfo.cpp:396
-#: src/streaminfo.cpp:432
+#: src/streaminfo.cpp:165
+#, fuzzy
+msgid "composer"
+msgstr "Bezár"
+
+#: src/streaminfo.cpp:167
+#, fuzzy
+msgid "track"
+msgstr "vissza"
+
+#: src/streaminfo.cpp:169
+msgid "length"
+msgstr ""
+
+#: src/streaminfo.cpp:260 src/streaminfo.cpp:271 src/streaminfo.cpp:283
+#: src/streaminfo.cpp:295 src/streaminfo.cpp:307 src/streaminfo.cpp:431
+#: src/streaminfo.cpp:467
 msgid "none"
 msgstr "nincs"
 
-#: src/streaminfo.cpp:312
+#: src/streaminfo.cpp:347
 msgid "Video format:"
 msgstr "Kép formátum:"
 
-#: src/streaminfo.cpp:391
+#: src/streaminfo.cpp:426
 msgid "supported coding systems:"
 msgstr "támogatott kódolási rendszerek:"
 
-#: src/streaminfo.cpp:428
+#: src/streaminfo.cpp:463
 msgid "Systems used in service:"
 msgstr "A szolgáltatásban használt rendszerek:"
 
-#: src/streaminfo.cpp:487 src/streaminfo.cpp:528 src/enigma_event.cpp:258
+#: src/streaminfo.cpp:522 src/streaminfo.cpp:563 src/enigma_event.cpp:258
 msgid "no information is available"
 msgstr "nincs elérhetõ információm"
 
-#: src/streaminfo.cpp:549
+#: src/streaminfo.cpp:584
 msgid "Service information (right)"
 msgstr "Csatorna infó (>)"
 
-#: src/streaminfo.cpp:550
+#: src/streaminfo.cpp:585
 msgid "Scrambled system information (left, right)"
 msgstr "Kódolási rendszer infók (</>)"
 
-#: src/streaminfo.cpp:551
+#: src/streaminfo.cpp:586
 msgid "Transponder information (left)"
 msgstr "Transzponder infók (<)"
 
@@ -2885,21 +2899,21 @@ msgstr "Transzponder infók (<)"
 msgid "Timerlist"
 msgstr "Idözítések listája"
 
-#: src/timer.cpp:492
+#: src/timer.cpp:507
 msgid ""
 "You would to delete the running event..\n"
 "this stops the timer mode (recording)!"
 msgstr "Törölni akarod a futó felvételt? (akkor minek dolgoztam eddig?)"
 
-#: src/timer.cpp:493
+#: src/timer.cpp:508
 msgid "Delete the event from the timerlist"
 msgstr "Program törlése a Timer listából"
 
-#: src/timer.cpp:494
+#: src/timer.cpp:509
 msgid "Really delete this event?"
 msgstr "Biztos hogy ezt törölni akarod??"
 
-#: src/timer.cpp:498
+#: src/timer.cpp:513
 msgid ""
 "You would to update the running event.. \n"
 "this stops the timer mode (recording)!"
@@ -2907,31 +2921,31 @@ msgstr ""
 "Biztos hogy módosítani akarod a futó programot?\n"
 "(Ha igen, akkor meg kell állítsam a felvételt!)"
 
-#: src/timer.cpp:499 src/timer.cpp:1015
+#: src/timer.cpp:514 src/timer.cpp:1030
 msgid "Update event in timerlist"
 msgstr "Program módosítása a listában"
 
-#: src/timer.cpp:500
+#: src/timer.cpp:515
 msgid "Really update this event?"
 msgstr "Biztosan módosítani szeretnéd a programot?"
 
-#: src/timer.cpp:556
+#: src/timer.cpp:571
 msgid "This event is already in the timerlist."
 msgstr "Hékás! Ez a müsor már benne van a Timer listában!"
 
-#: src/timer.cpp:556 src/timer.cpp:579 src/timer.cpp:1089
+#: src/timer.cpp:571 src/timer.cpp:594 src/timer.cpp:1104
 msgid "Add event to timerlist"
 msgstr "Müsor felvétele a Timer listába"
 
-#: src/timer.cpp:568
+#: src/timer.cpp:583
 msgid "The Endtime overlaps with another event in the timerlist"
 msgstr "A müsor vége belelóg egy másik programozott felvételbe. Javítsd ki"
 
-#: src/timer.cpp:568
+#: src/timer.cpp:583
 msgid "Set Stop Time"
 msgstr "Add meg a müsor végének az idejét"
 
-#: src/timer.cpp:577
+#: src/timer.cpp:592
 msgid ""
 "This event cannot added to the timerlist.\n"
 "The event overlaps with another event in the timerlist\n"
@@ -2941,135 +2955,135 @@ msgstr ""
 "A program belecsúszik egy másik programba.\n"
 "Nézd meg a listát és Te is fogod látni."
 
-#: src/timer.cpp:603 src/enigma_event.cpp:266 src/enigma_event.cpp:277
+#: src/timer.cpp:618 src/enigma_event.cpp:266 src/enigma_event.cpp:277
 msgid "no description is available"
 msgstr "nincs adatom"
 
-#: src/timer.cpp:636
+#: src/timer.cpp:651
 msgid "timerView"
 msgstr "Timer nézet"
 
-#: src/timer.cpp:637
+#: src/timer.cpp:652
 msgid "remove this entry from timer list"
 msgstr "Program törlése a timer listából"
 
-#: src/timer.cpp:815
+#: src/timer.cpp:830
 msgid "January"
 msgstr "Január"
 
-#: src/timer.cpp:815
+#: src/timer.cpp:830
 msgid "February"
 msgstr "Február"
 
-#: src/timer.cpp:815
+#: src/timer.cpp:830
 msgid "March"
 msgstr "Március"
 
-#: src/timer.cpp:816
+#: src/timer.cpp:831
 msgid "April"
 msgstr "Április"
 
-#: src/timer.cpp:816
+#: src/timer.cpp:831
 msgid "May"
 msgstr "Május"
 
-#: src/timer.cpp:816
+#: src/timer.cpp:831
 msgid "June"
 msgstr "Június"
 
-#: src/timer.cpp:816
+#: src/timer.cpp:831
 msgid "July"
 msgstr "Július"
 
-#: src/timer.cpp:817
+#: src/timer.cpp:832
 msgid "August"
 msgstr "Augusztus"
 
-#: src/timer.cpp:817
+#: src/timer.cpp:832
 msgid "September"
 msgstr "Szeptember"
 
-#: src/timer.cpp:817
+#: src/timer.cpp:832
 msgid "October"
 msgstr "Október"
 
-#: src/timer.cpp:818
+#: src/timer.cpp:833
 msgid "November"
 msgstr "November"
 
-#: src/timer.cpp:818
+#: src/timer.cpp:833
 msgid "December"
 msgstr "December"
 
-#: src/timer.cpp:819
+#: src/timer.cpp:834
 msgid "Sunday"
 msgstr "Vasárnap"
 
-#: src/timer.cpp:819
+#: src/timer.cpp:834
 msgid "Monday"
 msgstr "Hétfö"
 
-#: src/timer.cpp:819
+#: src/timer.cpp:834
 msgid "Tuesday"
 msgstr "Kedd"
 
-#: src/timer.cpp:819
+#: src/timer.cpp:834
 msgid "Wednesday"
 msgstr "Szerda"
 
-#: src/timer.cpp:820
+#: src/timer.cpp:835
 msgid "Thursday"
 msgstr "Csütörtök"
 
-#: src/timer.cpp:820
+#: src/timer.cpp:835
 msgid "Friday"
 msgstr "Péntek"
 
-#: src/timer.cpp:820
+#: src/timer.cpp:835
 msgid "Saturday"
 msgstr "Szombat"
 
-#: src/timer.cpp:821
+#: src/timer.cpp:836
 msgid "Sun"
 msgstr "Vas"
 
-#: src/timer.cpp:821
+#: src/timer.cpp:836
 msgid "Mon"
 msgstr "Hét"
 
-#: src/timer.cpp:821
+#: src/timer.cpp:836
 msgid "Tue"
 msgstr "Ke"
 
-#: src/timer.cpp:821
+#: src/timer.cpp:836
 msgid "Wed"
 msgstr "Sze"
 
-#: src/timer.cpp:822
+#: src/timer.cpp:837
 msgid "Thu"
 msgstr "Csüt"
 
-#: src/timer.cpp:822
+#: src/timer.cpp:837
 msgid "Fri"
 msgstr "Pént"
 
-#: src/timer.cpp:822
+#: src/timer.cpp:837
 msgid "Sat"
 msgstr "Szo"
 
-#: src/timer.cpp:922
+#: src/timer.cpp:937
 msgid "Timer list"
 msgstr "Timer lista"
 
-#: src/timer.cpp:956
+#: src/timer.cpp:971
 msgid "record DVR"
 msgstr "DVR felvétel"
 
-#: src/timer.cpp:957
+#: src/timer.cpp:972
 msgid "Ngrab"
 msgstr "Ngrab"
 
-#: src/timer.cpp:1015
+#: src/timer.cpp:1030
 msgid ""
 "Invalid begin or end time.!\n"
 "Please check time and date"
@@ -3077,7 +3091,7 @@ msgstr ""
 "Valami nem stimmel a kezdési vagy a vége idöpontokkal!\n"
 "Nézd át az adatokat!"
 
-#: src/timer.cpp:1088
+#: src/timer.cpp:1103
 msgid ""
 "Invalid begin or end time.!\n"
 "You cannot add this to timerlist"
@@ -3085,11 +3099,11 @@ msgstr ""
 "A kezdési vagy vége idöpontok hibásak!\n"
 "Nem tudom a listához adni a programot!"
 
-#: src/timer.cpp:1152
+#: src/timer.cpp:1167
 msgid "choose service"
 msgstr "válassz csatornát"
 
-#: src/timer.cpp:1271
+#: src/timer.cpp:1286
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
@@ -3258,124 +3272,124 @@ msgstr "Motor forgatása Nyugat felé.. lépésenként"
 msgid "stop Motor drive West"
 msgstr "Motor Nyugat felé való forgatásának megállítása"
 
-#: src/rotorconfig.cpp:498
+#: src/rotorconfig.cpp:499
 msgid "position"
 msgstr "pozíció"
 
-#: src/rotorconfig.cpp:498
+#: src/rotorconfig.cpp:499
 msgid "store new sat positions"
 msgstr "Új müholdpozíciók tárolása"
 
-#: src/rotorconfig.cpp:499
+#: src/rotorconfig.cpp:500
 msgid "drive to stored pos"
 msgstr "Forgatás a tárolt pozícióra"
 
-#: src/rotorconfig.cpp:499
+#: src/rotorconfig.cpp:500
 msgid "drive to stored position"
 msgstr "Antenna forgatása a tárolt pozícióra"
 
-#: src/rotorconfig.cpp:500
+#: src/rotorconfig.cpp:501
 msgid "drive to satellite"
 msgstr "Müholdra fordítás"
 
-#: src/rotorconfig.cpp:500
+#: src/rotorconfig.cpp:501
 msgid "drive to stored satellite"
 msgstr "Ant. fordítása a tárolt müholdpozícióra"
 
-#: src/rotorconfig.cpp:501
+#: src/rotorconfig.cpp:502
 msgid "drive to 0"
 msgstr "forgatás 0-ra"
 
-#: src/rotorconfig.cpp:501
+#: src/rotorconfig.cpp:502
 msgid "drives to 0"
 msgstr "0 pozícióra való forgatás"
 
-#: src/rotorconfig.cpp:502
+#: src/rotorconfig.cpp:503
 msgid "recalculate"
 msgstr "újraszámítás"
 
-#: src/rotorconfig.cpp:502
+#: src/rotorconfig.cpp:503
 msgid "recalculate stored positions rel. to current pos"
 msgstr "pozíciók újraszámolása a jelenlegi pozícióhoz képest"
 
-#: src/rotorconfig.cpp:503
+#: src/rotorconfig.cpp:504
 msgid "set east limit"
 msgstr "keleti limit beállítása"
 
-#: src/rotorconfig.cpp:503
+#: src/rotorconfig.cpp:504
 msgid "set east soft limit"
 msgstr "keleti szoftveres határérték megadása"
 
-#: src/rotorconfig.cpp:504
+#: src/rotorconfig.cpp:505
 msgid "set west limit"
 msgstr "nyugati limit megadása"
 
-#: src/rotorconfig.cpp:504
+#: src/rotorconfig.cpp:505
 msgid "set west soft limit"
 msgstr "nyugati szoftveres határérték megadása"
 
-#: src/rotorconfig.cpp:505
+#: src/rotorconfig.cpp:506
 msgid "disable limits"
 msgstr "limitek kikapcsolása"
 
-#: src/rotorconfig.cpp:505 src/rotorconfig.cpp:550
+#: src/rotorconfig.cpp:506 src/rotorconfig.cpp:551
 msgid "disable soft limits"
 msgstr "szoftveres határértékek kikapcsolása"
 
-#: src/rotorconfig.cpp:506
+#: src/rotorconfig.cpp:507
 msgid "enable limits"
 msgstr "limitek engedélyezése"
 
-#: src/rotorconfig.cpp:506 src/rotorconfig.cpp:554
+#: src/rotorconfig.cpp:507 src/rotorconfig.cpp:555
 msgid "enable soft limits"
 msgstr "szoftveres határértékek bekapcsolása"
 
-#: src/rotorconfig.cpp:526
+#: src/rotorconfig.cpp:527
 msgid "store current pos in motor"
 msgstr "jelenlegi poz. tárolása a rotorban"
 
-#: src/rotorconfig.cpp:527 src/rotorconfig.cpp:543 src/rotorconfig.cpp:547
-#: src/rotorconfig.cpp:857
+#: src/rotorconfig.cpp:528 src/rotorconfig.cpp:544 src/rotorconfig.cpp:548
+#: src/rotorconfig.cpp:854
 msgid "store"
 msgstr "Tárolás"
 
-#: src/rotorconfig.cpp:530
+#: src/rotorconfig.cpp:531
 msgid "drive motor to stored pos"
 msgstr "Rotor forgatása a tárolt pozícióra"
 
-#: src/rotorconfig.cpp:531 src/rotorconfig.cpp:535 src/rotorconfig.cpp:559
+#: src/rotorconfig.cpp:532 src/rotorconfig.cpp:536 src/rotorconfig.cpp:560
 msgid "go"
 msgstr "mehet"
 
-#: src/rotorconfig.cpp:534
+#: src/rotorconfig.cpp:535
 msgid "drive motor to reference position"
 msgstr "Rotor forgatása a referencia pozícióra"
 
-#: src/rotorconfig.cpp:538
+#: src/rotorconfig.cpp:539
 msgid "recalculate all stored positions"
 msgstr "az összes tárolt pozíció újraszámolása"
 
-#: src/rotorconfig.cpp:539
+#: src/rotorconfig.cpp:540
 msgid "recalc"
 msgstr "újraszámol"
 
-#: src/rotorconfig.cpp:542
+#: src/rotorconfig.cpp:543
 msgid "store current pos as east soft limit"
 msgstr "jelenlegi pozíciót tárolom mint keleti szoft limitet"
 
-#: src/rotorconfig.cpp:546
+#: src/rotorconfig.cpp:547
 msgid "store current pos as west soft limit"
 msgstr "jelenlegi pozíciót tárolom mint nyugati szoft limitet"
 
-#: src/rotorconfig.cpp:551 src/rotorconfig.cpp:555
+#: src/rotorconfig.cpp:552 src/rotorconfig.cpp:556
 msgid "do it"
 msgstr "csináld meg"
 
-#: src/rotorconfig.cpp:558
+#: src/rotorconfig.cpp:559
 msgid "drive motor to satellite"
 msgstr "Rotor forgatása a müholdra"
 
-#: src/rotorconfig.cpp:697
+#: src/rotorconfig.cpp:698
 msgid ""
 "Wrong use of this function can corrupt all stored sat positions.\n"
 "Are you sure you want to use this function?"
@@ -3384,35 +3398,35 @@ msgstr ""
 "pozíciót.\n"
 "Biztos hogy ezt akarod tenni?"
 
-#: src/rotorconfig.cpp:759
+#: src/rotorconfig.cpp:760
 msgid "one step East..."
 msgstr "egy lépés Kelet felé.."
 
-#: src/rotorconfig.cpp:768
+#: src/rotorconfig.cpp:769
 msgid "one step west..."
 msgstr "egy lépés Nyugat felé.."
 
-#: src/rotorconfig.cpp:784
+#: src/rotorconfig.cpp:783
 msgid "turning to east..."
 msgstr "Keleti irányba forgatok..."
 
-#: src/rotorconfig.cpp:797
+#: src/rotorconfig.cpp:794
 msgid "turning to west..."
 msgstr "Nyugati irányba forgatok..."
 
-#: src/rotorconfig.cpp:809
+#: src/rotorconfig.cpp:806
 msgid "<    Stop    >"
 msgstr "< Állj >"
 
-#: src/rotorconfig.cpp:845
+#: src/rotorconfig.cpp:842
 msgid "Storage Location:"
 msgstr "Tárolási hely:"
 
-#: src/rotorconfig.cpp:847
+#: src/rotorconfig.cpp:844
 msgid "change storage Location or store"
 msgstr "Tárolási hely megváltoztatása vagy tárolás"
 
-#: src/rotorconfig.cpp:897
+#: src/rotorconfig.cpp:894
 #, c-format
 msgid ""
 "%d.%d%c is currently stored at location %d!\n"
@@ -3423,7 +3437,7 @@ msgstr ""
 "Ha most ezt eltárolni a %d alá, akkor elöbb töröld le a régi pozíciót.\n"
 "Biztos hogy ezt akarod tenni?"
 
-#: src/rotorconfig.cpp:919
+#: src/rotorconfig.cpp:916
 #, c-format
 msgid ""
 "Store %d.%d%c at location %d.\n"
