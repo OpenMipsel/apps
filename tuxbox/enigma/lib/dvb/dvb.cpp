@@ -354,12 +354,17 @@ eService &eTransponderList::createService(const eServiceReferenceDVB &service, i
 	return (*i).second;
 }
 
-int eTransponderList::handleSDT(const SDT *sdt)
+int eTransponderList::handleSDT(const SDT *sdt, eOriginalNetworkID onid, eTransportStreamID tsid)
 {
 	eDebug("TransponderList handleSDT");
 	std::set<eServiceID> s;
 	int changed=0;
 	bool newAdded;
+
+	if (onid.get() == -1)
+		onid=sdt->original_network_id;
+	if (tsid.get() == -1)
+		tsid=sdt->transport_stream_id;
 
 	for (ePtrList<SDTEntry>::const_iterator i(sdt->entries); i != sdt->entries.end(); ++i)
 	{
@@ -377,8 +382,8 @@ int eTransponderList::handleSDT(const SDT *sdt)
 		
 		eServiceReferenceDVB sref=
 				eServiceReferenceDVB(
-					eTransportStreamID(sdt->transport_stream_id), 
-					eOriginalNetworkID(sdt->original_network_id), 
+					eTransportStreamID(tsid), 
+					eOriginalNetworkID(onid), 
 					eServiceID(i->service_id),
 					service_type);
 
@@ -391,8 +396,8 @@ int eTransponderList::handleSDT(const SDT *sdt)
 	}
 
 	for (std::map<eServiceReferenceDVB,eService>::iterator i(services.begin()); i != services.end(); ++i)
-		if ((i->first.getOriginalNetworkID() == sdt->original_network_id)	&& // if service on this on
-				(i->first.getTransportStreamID() == sdt->transport_stream_id) && 	// and on this transponder (war das "first" hier wichtig?)
+		if ((i->first.getOriginalNetworkID() == onid)	&& // if service on this on
+				(i->first.getTransportStreamID() == tsid) && 	// and on this transponder (war das "first" hier wichtig?)
 				(!s.count(i->first.getServiceID()))) // but does not exist
 			{
 				for (std::map<int,eServiceReferenceDVB>::iterator m(channel_number.begin()); m != channel_number.end(); ++m)

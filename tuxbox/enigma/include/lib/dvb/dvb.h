@@ -603,7 +603,7 @@ public:
 
 	eTransponder &createTransponder(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
 	eService &createService(const eServiceReferenceDVB &service, int service_number=-1, bool *newService=0);
-	int handleSDT(const SDT *sdt);
+	int handleSDT(const SDT *sdt, eOriginalNetworkID onid=-1, eTransportStreamID tsid=-1);
 	Signal1<void, eTransponder*> transponder_added;
 	Signal2<void, const eServiceReferenceDVB &, bool> service_found;
 
