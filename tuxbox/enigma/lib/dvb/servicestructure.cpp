@@ -33,6 +33,8 @@ void eServiceStructureHandler::leaveDirectory(const eServiceReference &dir)
 
 void eServiceStructureHandler::loadNode(eServiceCache<eServiceStructureHandler>::eNode &n, const eServiceReference &r)
 {
+	(void)n;
+	(void)r;
 }
  
 eService *eServiceStructureHandler::createService(const eServiceReference &node)
