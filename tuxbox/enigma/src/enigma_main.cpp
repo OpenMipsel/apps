@@ -2646,14 +2646,14 @@ void eZapMain::showEPG()
 				events.push_back( new EITEvent(*It->second) );
 				It++;
 			}
-			actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), &events );
+			actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), ref, &events );
 		}
 	}
 	else
 	{
 		EIT *eit=eDVB::getInstance()->getEIT();
 		ePtrList<EITEvent> dummy;
-		actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), eit?&eit->events:&dummy);
+		actual_eventDisplay=new eEventDisplay( service->service_name.c_str(), ref, eit?&eit->events:&dummy);
 		if (eit)
 			eit->unlock();		// HIER liegt der hund begraben.
 	}

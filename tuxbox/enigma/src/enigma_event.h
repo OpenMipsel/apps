@@ -6,23 +6,27 @@
 
 class eLabel;
 class eProgress;
+class eServiceReferenceDVB;
 
 class eEventDisplay: public eWindow
 {
 	eString service;
+	eServiceReferenceDVB &ref;
 	ePtrList<EITEvent>::iterator *events;
 	ePtrList<EITEvent> *eventlist;
 	eWidget *descr;
-	eLabel *long_description, *eventDate, *eventTime, *channel;
+	eLabel *long_description, *eventDate, *eventTime, *channel,
+					*timer_icon;
 	eProgress *scrollbar;
 	void nextEvent();
 	void prevEvent();
 	int total;
 	void updateScrollbar();
+	void checkTimerIcon();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:
-	eEventDisplay(eString service, const ePtrList<EITEvent>* e=0, EITEvent* evt=0);
+	eEventDisplay(eString service, eServiceReferenceDVB &ref, const ePtrList<EITEvent>* e=0, EITEvent* evt=0 );
 	~eEventDisplay();
 	void setList(const ePtrList<EITEvent> &events);
 	void setEvent(EITEvent *event);

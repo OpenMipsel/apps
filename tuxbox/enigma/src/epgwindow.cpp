@@ -292,8 +292,8 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 		eZapLCD* pLCD = eZapLCD::getInstance();
 		pLCD->lcdMain->hide();
 		pLCD->lcdMenu->show();
-	  eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current);
-		eEventDisplay ei(service ? service->service_name.c_str() : "", 0, &entry->event);
+		eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current);
+		eEventDisplay ei(service ? service->service_name.c_str() : "", current, 0, &entry->event);
 		ei.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 		ei.show();
 		while((ret = ei.exec()))
@@ -330,6 +330,8 @@ eEPGSelector::eEPGSelector(const eServiceReferenceDVB &service)
 	CONNECT(events->selected, eEPGSelector::entrySelected);
 	fillEPGList();
 	addActionMap( &i_epgSelectorActions->map );
+	addActionToHelpList( &i_epgSelectorActions->addTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->removeTimerEvent );
 }
 
 int eEPGSelector::eventHandler(const eWidgetEvent &event)

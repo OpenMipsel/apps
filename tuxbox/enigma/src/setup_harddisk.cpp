@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.17 2003/02/26 05:23:04 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.18 2003/03/03 23:53:01 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -362,7 +362,7 @@ void eHarddiskMenu::s_format()
 		{
 			if ((system("sync") >> 8)
 				||(system( eString().sprintf(
-					"/sbin/mkfs.ext3 /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str())>>8 )
+					"/sbin/mkfs.ext3 -T largefile4 /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str())>>8 )
 				||(system("sync") >> 8)
 				||(system(eString().sprintf(
 				"/bin/mount -t ext3 /dev/ide/host%d/bus%d/target%d/lun0/part1 /hdd", host, bus, target).c_str())>>8 )

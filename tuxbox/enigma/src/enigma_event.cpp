@@ -1,6 +1,7 @@
 #include <enigma_event.h>
 
 #include <time.h>
+#include <timer.h>
 #include <lib/base/eerror.h>
 #include <lib/driver/rc.h>
 #include <lib/gdi/font.h>
@@ -13,9 +14,11 @@
 struct enigmaEventViewActions
 {
 	eActionMap map;
-	eAction close;
+	eAction addTimerEvent, removeTimerEvent, close;
 	enigmaEventViewActions():
 		map("enigmaEventView", _("enigma event view")),
+		addTimerEvent(map, "addTimerEvent", _("add this event to timer list"), eAction::prioDialog ),
+		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog ),
 		close(map, "close", _("closes the Event View"), eAction::prioDialog)
 	{
 	}
@@ -88,6 +91,25 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_enigmaEventViewActions->close)
 				close(0);
+			else if (event.action == &i_enigmaEventViewActions->addTimerEvent)
+			{
+				if ( events && eTimerManager::getInstance()->addEventToTimerList( this, &ref, *events ) )
+				{
+					hide();
+					eTimerView v( eTimerManager::getInstance()->findEvent( &ref, *events ) );
+					v.show();
+					v.exec();
+					v.hide();
+//					invalidate();
+					checkTimerIcon();
+					show();
+				}
+			}
+			else if ( events && event.action == &i_enigmaEventViewActions->removeTimerEvent)
+			{
+				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &ref, *events ) )
+					timer_icon->hide();
+			}
 			else
 				break;
 		return 1;
@@ -97,8 +119,8 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 	return eWindow::eventHandler(event);
 }
 
-eEventDisplay::eEventDisplay(eString service, const ePtrList<EITEvent>* e, EITEvent* evt)
-: eWindow(1), service(service)
+eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const ePtrList<EITEvent>* e, EITEvent* evt )
+: eWindow(1), service(service), ref(ref)
 	/*
 			kleine anmerkung:
 			
@@ -134,6 +156,9 @@ eEventDisplay::eEventDisplay(eString service, const ePtrList<EITEvent>* e, EITEv
 	channel = new eLabel(this);
 	channel->setName("channel");
 
+	timer_icon = new eLabel(this);
+	timer_icon->setName("timer_icon");
+
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eventview"))
 		eFatal("skin load of \"eventview\" failed");
@@ -147,6 +172,10 @@ eEventDisplay::eEventDisplay(eString service, const ePtrList<EITEvent>* e, EITEv
 	int newheight = lines * (int)lineheight + (int)(round(lineheight) - (int)lineheight);
 	descr->resize( eSize( descr->getSize().width(), newheight + (int)lineheight/6 ) );
 	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
+
+	addActionToHelpList( &i_enigmaEventViewActions->addTimerEvent );
+	addActionToHelpList( &i_enigmaEventViewActions->removeTimerEvent );
+	addActionToHelpList( &i_enigmaEventViewActions->close );
 
 	if (e)
 		setList(*e);
@@ -239,6 +268,8 @@ void eEventDisplay::setEvent(EITEvent *event)
 			long_description->setText(_long_description);
 
 		channel->setText(service);
+
+		checkTimerIcon();
 	} 
 	else
 	{
@@ -247,6 +278,34 @@ void eEventDisplay::setEvent(EITEvent *event)
 	}
 	updateScrollbar();
 	long_description->show();
+}
+
+void eEventDisplay::checkTimerIcon()
+{
+	ePlaylistEntry* p;
+	if ( events && (p = eTimerManager::getInstance()->findEvent( &ref, *events )) )
+	{
+		if ( p->type & ePlaylistEntry::SwitchTimerEntry )
+		{
+			gPixmap *pmap = eSkin::getActive()->queryImage("timer_symbol");
+			if (!pmap)
+				return;
+			timer_icon->setPixmap(pmap);
+			if ( !timer_icon->isVisible() )
+				timer_icon->show();
+		}
+		else if ( p->type & ePlaylistEntry::RecTimerEntry )
+		{
+			gPixmap *pmap = eSkin::getActive()->queryImage("timer_rec_symbol");
+			if (!pmap)
+				return;
+			timer_icon->setPixmap(pmap);
+			if ( !timer_icon->isVisible() )
+				timer_icon->show();
+		}
+	}
+	else if ( timer_icon->isVisible() )
+		timer_icon->hide();
 }
 
 void eEventDisplay::setList(const ePtrList<EITEvent> &e)

@@ -146,6 +146,7 @@
 		<actionmap name="enigmaMain" style="default">
 			<action name="showInfobar" key="ok" flags="m" />
 			<action name="hideInfobar" key="ok" flags="m" />
+			<action name="hideInfobar" key="LAME" flags="m" />
 			<action name="serviceListDown" key="down" flags="m" />
 			<action name="serviceListUp" key="up" flags="m" />
 			<action name="showEPG" key="info" flags="m" />
@@ -218,12 +219,13 @@
 		<actionmap name="epgSelector">
 			<action name="addTimerEvent" key="green" flags="m" />
 			<action name="removeTimerEvent" key="red" flags="m" />
-			<action name="removeTimerEvent" key="radio" flags="m" />
 		</actionmap>
 		<actionmap name="timerView">
 			<action name="removeTimerEntry" key="red" flags="m" />
 		</actionmap>
 		<actionmap name="enigmaEventView">
+			<action name="addTimerEvent" key="green" flags="m" />
+			<action name="removeTimerEvent" key="red" flags="m" />
 			<action name="close" key="info" flags="m" />
 		</actionmap>
 	</device>
