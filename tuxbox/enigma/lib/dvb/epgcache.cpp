@@ -384,7 +384,10 @@ void eEPGCache::restartEPG()
 void eEPGCache::startEPG()
 {
 	if (paused)  // called from the updateTimer during pause...
+	{
 		paused++;
+		return;
+	}
 
 	if (eDVB::getInstance()->time_difference)	
 	{

@@ -77,6 +77,8 @@ public:
 };
 
 
+
+
 class eAUGTable: public Object
 {
 protected:
@@ -165,7 +167,9 @@ public:
 
 	void getNext(int error)
 	{
-//		qDebug("eAUTable: got table (ready %d, error %d)", next->ready, next->error);
+//		printf("eAUTable: got table (ready %d, error %d\n", next->ready, next->error);
+		if ( current )
+			printf("current lockcount = %d", current->getLockCount() );
 		if (current && current->getLockCount())
 		{
 			delete next;

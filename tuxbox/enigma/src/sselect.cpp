@@ -218,7 +218,8 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 						if (descriptor->Tag()==DESCR_SHORT_EVENT)
 						{
 							ShortEventDescriptor *ss=(ShortEventDescriptor*)descriptor;
-							sdescr='('+ss->event_name+')';
+							if ( ss->event_name )
+								sdescr='('+ss->event_name+')';
 							break;
 						}
 					}

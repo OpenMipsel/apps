@@ -989,7 +989,11 @@ EIT::EIT(const EIT* eit)
 eTable *EIT::createNext()
 {
 	if (ts != tsFaked)
-		return new EIT(type, service_id, ts, incrementVersion(version));
+	{
+		int newversion = incrementVersion(version);
+		eDebug("oldversion=%d, newversion=%d\n",version, newversion);
+		return new EIT(type, service_id, ts, newversion);
+	}
 	return 0;
 }
 
@@ -1061,7 +1065,8 @@ BAT::BAT(): eTable(PID_BAT, TID_BAT)
 	entries.setAutoDelete(true);
 }
 
-MHWEIT::MHWEIT(int pid, int service_id): eSection(pid, 0x90, service_id, -1, 0, 0xFD)
+MHWEIT::MHWEIT(int pid, int service_id)
+: eSection(pid, 0x90, service_id, -1, 0, 0xFD)
 {
 	available=0;
 	events.resize(2);
@@ -1121,9 +1126,6 @@ int MHWEIT::sectionRead(__u8 *data)
 	while (len-- && (table->event_name[len+1]==' '))
 		;
 
-/*	for (int i=0; i<len; i++)
-		event.event_name+=table->event_name[i];*/
-
 	event.event_name.append( (char*) &table->event_name[0], len);
 
 	len=15;
@@ -1133,8 +1135,6 @@ int MHWEIT::sectionRead(__u8 *data)
 		;
 
 	event.short_description.append( (char*) &table->short_description[0], len);
-/*	for (int i=0; i<len; i++)
-		event.short_description+=table->short_description[i];*/
 
 	if (available==3)
 		return 1;

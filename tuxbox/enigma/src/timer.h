@@ -19,8 +19,7 @@ class eTimerManager: public Object
 		startEvent, pauseEvent, restartEvent, stopEvent,
 		startRecording, stopRecording, restartRecording,
 		pauseRecording, spinUpHarddiscs
-	};
-	int nextAction;
+	} nextAction;
 
 	eTimer actionTimer;  // to start timer related actions
 	void actionHandler(); // the action Handler

@@ -65,10 +65,10 @@ void eTimerManager::actionHandler()
 				nextAction=startCountdown;
 				actionTimer.start(0, true);
 			}
-    break;
+			break;
 
 		case showMessage:
-			eDebug("[eTimerManager] viewTimerMessage");
+			eDebug("[eTimerManager] showMessage");
 			long t;
 			if ( (t = getSecondsToBegin()) ) // event is not running
 			{
@@ -83,8 +83,8 @@ void eTimerManager::actionHandler()
 				conn = CONNECT( timer.timeout, eTimerManager::stopEvent );
 				int t = getTimeout();
 			}*/
-		break;
-		
+			break;
+
 		case startCountdown:
 			eDebug("[eTimerManager] startCountdown");
 			eZapMain::getInstance()->toggleTimerMode();
@@ -107,35 +107,38 @@ void eTimerManager::actionHandler()
 					if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 						t-=10;
 
-						actionTimer.start( t*1000 , true );					
+						actionTimer.start( t*1000 , true );
 				}
 				else
 					actionHandler();
 			}
-		break;
+			break;
 
 		case startEvent:
+			eDebug("[eTimerManager] startEvent");
 			nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
 			nextStartingEvent->type |= ePlaylistEntry::stateRunning;
-			eDebug("[eTimerManager] startEvent");
-			switch ( nextStartingEvent->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry) )
-			{
-				case ePlaylistEntry::SwitchTimerEntry:
-						// wakeUp from standby
-						eZapMain::getInstance()->handleStandby();
-				break;	
 
-				case ePlaylistEntry::RecTimerEntry:
-					nextAction = startRecording;
-					actionHandler();
-				break;
+			if (nextStartingEvent->type & ePlaylistEntry::typeShutOffTimer)
+			{
+				eDebug("event has already began");
 			}
+			else if (nextStartingEvent->type & ePlaylistEntry::RecTimerEntry)
+			{
+				nextAction = startRecording;
+				actionHandler();
+			}
+			else if (nextStartingEvent->type & ePlaylistEntry::SwitchTimerEntry)
+			{
+				eZapMain::getInstance()->handleStandby();
+			}
+
 			if ( !(nextStartingEvent->type & ePlaylistEntry::typeSmartTimer) )
 			{
 				nextAction = stopEvent;
 				actionTimer.start( getSecondsToEnd() * 1000, true );
 			}
-		break;
+			break;
 
 		case pauseEvent:
 			eDebug("[eTimerManager] pauseEvent");
@@ -146,7 +149,7 @@ void eTimerManager::actionHandler()
 				nextAction = pauseRecording;
 				actionHandler();
 			}
-		break;
+			break;
 
 		case restartEvent:
 			eDebug("[eTimerManager] restartEvent");
@@ -157,15 +160,17 @@ void eTimerManager::actionHandler()
 				nextAction=restartRecording;
 				actionHandler();
 			}
-    break;
-	
+			break;
+
 		case stopEvent:
 			eDebug("[eTimerManager] stopEvent");
 			if( nextStartingEvent->type & ePlaylistEntry::stateRunning )
 			{
 				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
 				if ( !(nextStartingEvent->type & ePlaylistEntry::stateError) )
+				{
 					nextStartingEvent->type |= ePlaylistEntry::stateFinished;
+				}
 					// when no ErrorCode is set the we set the state to finished
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 				{
@@ -180,19 +185,19 @@ void eTimerManager::actionHandler()
 			}
 			nextAction=setNextEvent;	// we set the Next Event... a new beginning *g*
 			actionTimer.start(0, true);
-		break;
+			break;
 
 		case setNextEvent:
 		{
+			eDebug("[eTimerManager] setNextEvent");
 			if (conn.connected() )
 				conn.disconnect();
 			if (conn2.connected() )
 				conn2.disconnect();
-			eDebug("[eTimerManager] setNextEvent");
 			nextStartingEvent=timerlist->getList().end();
-			int timeToNextEvent=0xFFFF, count=0;
+			int timeToNextEvent=INT_MAX, count=0;
 			// parse events... invalidate old, set nextEvent Timer
-			for (	std::list< ePlaylistEntry >::iterator i(timerlist->getList().begin()); i != timerlist->getList().end(); )
+			for ( std::list< ePlaylistEntry >::iterator i(timerlist->getList().begin()); i != timerlist->getList().end(); )
 			{
 				time_t nowTime=time(0)+eDVB::getInstance()->time_difference;
 				if ( i->type & ePlaylistEntry::stateWaiting )
@@ -204,7 +209,9 @@ void eTimerManager::actionHandler()
 						break;
 					}
 					else if ( i->type & ePlaylistEntry::stateError )
+					{
 						i->type &= ~ePlaylistEntry::stateWaiting;
+					}
 					else if ( i->time_begin+i->duration < nowTime ) // old event found
 					{
 						i->type &= ~ePlaylistEntry::stateWaiting;
@@ -218,10 +225,13 @@ void eTimerManager::actionHandler()
 					}
 					else
 						count++;
+
 					i++;
 				}
 				else if ( i->type & ePlaylistEntry::typeShutOffTimer )
+				{
 					i = timerlist->getList().erase(i);  // alten ShutOffTimer aus liste entfernen...
+				}
 				else
 					i++;
 			}
@@ -238,9 +248,9 @@ void eTimerManager::actionHandler()
 					if ( t > prepareTime )
 					{
 						nextAction=showMessage;
-						actionTimer.start( (t - 360) * 1000, true );		// set the Timer to eventBegin - 6 min
+						actionTimer.start( (t - 360) * 1000, true ); // set the Timer to eventBegin - 6 min
 					}
-					else  // time to begin is under 6 min or is currently running
+					else  // time to begin is under 6 min or the event is currently running
 					{
 						nextAction=zap;
 						actionHandler();
@@ -249,36 +259,33 @@ void eTimerManager::actionHandler()
 				else
 				{
 					nextAction=zap;
-					actionTimer.start( t * 1000, true );		// set the Timer to eventBegin
+					actionTimer.start( t * 1000, true );  // set the Timer to eventBegin
 				}
 			}
 		}
 		break;
 
 		case startRecording:
-			if ( !(nextStartingEvent->type & ePlaylistEntry::typeShutOffTimer ) )
+			eDebug("[eTimerManager] start recording");
+			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
-				if (nextStartingEvent->type & ePlaylistEntry::recDVR)
-				{
-//					eDebug("nextStartingEvent->service.data[0] = %d", nextStartingEvent->service.data[0] );
-//					eDebug("nextStartingEvent->service.descr = %s", nextStartingEvent->service.descr.c_str() );
-					eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->service.descr.c_str() );
-				}
-				else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
-				{
-					eDebug("Starte Ngrab aufnahme");
-					ENgrab::getNew()->sendstart();
-				}
-				else
-				{
-					// insert lirc ( VCR start ) here
-				}
+//				eDebug("nextStartingEvent->service.data[0] = %d", nextStartingEvent->service.data[0] );
+//				eDebug("nextStartingEvent->service.descr = %s", nextStartingEvent->service.descr.c_str() );
+				eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->service.descr.c_str() );
+			}
+			else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
+			{
+				eDebug("Starte Ngrab aufnahme");
+				ENgrab::getNew()->sendstart();
 			}
 			else
-				eDebug("[eTimerManager] recording is already running");
+			{
+				// insert lirc ( VCR start ) here
+			}
 			break;
 
 		case stopRecording:
+			eDebug("[eTimerManager] stop recording");
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
 				eZapMain::getInstance()->recordDVR(0, 0);
@@ -294,7 +301,7 @@ void eTimerManager::actionHandler()
 			break;
 
 		case restartRecording:
-		{
+			eDebug("[eTimerManager] restart recording");
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
 				eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -307,11 +314,9 @@ void eTimerManager::actionHandler()
 
 			}
 			eDebug("ok, recording...");
-		}
-		break;
+			break;
 
 		case pauseRecording:
-		{
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
 				eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -323,7 +328,7 @@ void eTimerManager::actionHandler()
 			{
 
 			}
-		}
+			break;
 
 		default:
 			eDebug("unhandled timer action");
@@ -334,14 +339,13 @@ void eTimerManager::switchedService( const eServiceReferenceDVB &ref, int err)
 {
 	if ( err || nextStartingEvent->service != (eServiceReference&)ref )
 	{
-		nextAction=stopEvent;
-		nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
-		nextStartingEvent->type |= (ePlaylistEntry::stateError|ePlaylistEntry::errorZapFailed);
+		abortEvent( ePlaylistEntry::errorZapFailed );
 	}
 	else  // zap okay
+	{
 		nextAction=startCountdown;
-
-	actionTimer.start(0,true);
+		actionTimer.start(0,true);
+	}
 }
 
 void eTimerManager::abortEvent( int err )
@@ -361,59 +365,62 @@ void eTimerManager::leaveService( const eServiceReferenceDVB& ref )
 void eTimerManager::EITready( int error )
 {
 	eDebug("[eTimerManager] EITready %s", strerror(-error));
-	EIT *eit = eDVB::getInstance()->getEIT();
-	if (!error && eit)
+	if (!error)
 	{
-		for (ePtrList<EITEvent>::const_iterator event(eit->events); event != eit->events.end(); ++event)		// always take the first one
+		EIT *eit = eDVB::getInstance()->getEIT();
+		if ( eit )
 		{
-			if ( nextStartingEvent != timerlist->getList().end() && event->event_id == nextStartingEvent->event_id )
+			for (ePtrList<EITEvent>::const_iterator event(eit->events); event != eit->events.end(); ++event)		// always take the first one
 			{
-				eDebugNoNewLine("running_status(%d) = ", event->running_status );
-				switch( event->running_status )
+				if ( nextStartingEvent != timerlist->getList().end() && event->event_id == nextStartingEvent->event_id )
 				{
-					case 0:
-						eDebug("undefined");
-						// premiere world sends either undefined or running
-					case 1:
-						eDebug("not running");
-						if ( nextStartingEvent->type & ePlaylistEntry::stateRunning )
-						{
-							nextAction=stopEvent;
-							actionHandler();
-						}
-					break;
-
-					case 2:
-						eDebug("starts in few seconds");
-					break;
-
-					case 3:
-						eDebug("pausing");
-						if ( nextStartingEvent->type & ePlaylistEntry::stateRunning )
-						{
-							nextAction=pauseEvent;
-							actionHandler();
-						}
-					break;
-
-					case 4:
-						eDebug("running");
-						if ( nextStartingEvent->type & ePlaylistEntry::stateWaiting )
-							nextAction=startEvent;
-						else if ( nextStartingEvent->type & ePlaylistEntry::statePaused )
-							nextAction=restartEvent;
-						else
+					eDebugNoNewLine("running_status(%d) = ", event->running_status );
+					switch( event->running_status )
+					{
+						case 0:
+							eDebug("undefined");
+							// premiere world sends either undefined or running
+						case 1:
+							eDebug("not running");
+							if ( nextStartingEvent->type & ePlaylistEntry::stateRunning )
+							{
+								nextAction=stopEvent;
+								actionHandler();
+							}
 							break;
-						actionHandler();
-					break;
-					case 5 ... 7:
-						eDebug("reserved for future use");
+
+						case 2:
+							eDebug("starts in few seconds");
+							break;
+
+						case 3:
+							eDebug("pausing");
+							if ( nextStartingEvent->type & ePlaylistEntry::stateRunning )
+							{
+								nextAction=pauseEvent;
+								actionHandler();
+							}
+							break;
+
+						case 4:
+							eDebug("running");
+							if ( nextStartingEvent->type & ePlaylistEntry::stateWaiting )
+								nextAction=startEvent;
+							else if ( nextStartingEvent->type & ePlaylistEntry::statePaused )
+								nextAction=restartEvent;
+							else
+								break;
+							actionHandler();
+							break;
+						case 5 ... 7:
+							eDebug("reserved for future use");
+							break;
+					}
 					break;
 				}
-				break;
 			}
+			eit->unlock();
 		}
-		eit->unlock();
 	}
 }
 
@@ -431,18 +438,17 @@ long eTimerManager::getSecondsToEnd()
 
 eTimerManager::~eTimerManager()
 {
+	eDebug("[eTimerManager] down ( %d events in list )", timerlist->getList().size() );
 	if (this == instance)
 		instance = 0;
-	eDebug("[eTimerManager] down ( %d events in list )", timerlist->getList().size() );
 	timerlist->save();
 	eServiceInterface::getInstance()->removeRef(timerlistref);
 }
 
-
 ePlaylistEntry* eTimerManager::findEvent( eServiceReference *service, EITEvent *evt )
 {
 	for ( std::list<ePlaylistEntry>::iterator i( timerlist->getList().begin() ); i != timerlist->getList().end(); i++)
-		if ( ( evt->event_id != -1 && i->current_position == evt->event_id ) ||
+		if ( ( evt->event_id != -1 && i->event_id == evt->event_id ) ||
 				 ( *service == i->service && evt->start_time == i->time_begin ) )
 			return &*i;
 
@@ -794,7 +800,7 @@ static const char *dayStr[7] = { _("Sunday"), _("Monday"), _("Tuesday"), _("Wedn
 const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"),
 											 _("Thu"), _("Fri"), _("Sat") };
 
-int weekday (int d, int m, int y)
+static int weekday (int d, int m, int y)
 {
 	static char table[13] = {0,0,3,2,5,0,3,5,1,4,6,2,4};
 	if (m<3)

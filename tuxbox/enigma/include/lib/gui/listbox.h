@@ -203,7 +203,7 @@ public:
 
 	eListBoxEntryTextStream(eListBox<eListBoxEntryTextStream>* lb)
 		:eListBoxEntry((eListBox<eListBoxEntry>*)lb)
-	{		
+	{
 	}
 
 	bool operator < ( const eListBoxEntryTextStream& e) const

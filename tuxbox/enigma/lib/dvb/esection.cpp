@@ -157,7 +157,7 @@ int eSection::setFilter(int pid, int tableid, int tableidext, int version, const
 
 	if (!(flags&SECREAD_NOABORT))
 		active.push_back(this);
-	
+
 	if (notifier)
 		delete notifier;
 
@@ -195,7 +195,7 @@ void eSection::data(int socket)
 			break;
 		maxsec=buf[7];
 
-//		printf("%d/%d, we want %d  | service_id %04x | version %04x\n", buf[6], maxsec, section, (buf[3]<<8)|buf[4], buf[5]);
+		//  printf("%d/%d, we want %d  | service_id %04x | version %04x\n", buf[6], maxsec, section, (buf[3]<<8)|buf[4], buf[5]);
 
 		if (flags&SECREAD_INORDER)
 			version=buf[5];

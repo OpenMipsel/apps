@@ -113,6 +113,8 @@
 			<action name="showEPGList" key="red" flags="m" />
 			<action name="playlistNextService" key="next" flags="mr" />
 			<action name="playlistPrevService" key="prev" flags="mr" />
+			<action name="nextSubService" key="right" flags="mr" />
+			<action name="prevSubService" key="left" flags="mr" />
 			<action name="nextService" key="right" flags="mr" />
 			<action name="prevService" key="left" flags="mr" />
 			<action name="volumeUp" key="volup" flags="mr" />
@@ -153,8 +155,8 @@
 		</actionmap>
 
 		<actionmap name="enigmaMain" style="classic">
-			<action name="volumeUp" key="right" flags="mr" />
-			<action name="volumeDown" key="left" flags="mr" />
+			<!--action name="volumeUp" key="right" flags="mr" />
+			<action name="volumeDown" key="left" flags="mr" /-->
 			<action name="nextService" key="up" flags="mr" />
 			<action name="prevService" key="down" flags="mr" />
 			<action name="showInfobar" key="info" flags="m" />

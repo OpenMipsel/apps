@@ -12,7 +12,7 @@ eDVBServiceController::eDVBServiceController(eDVB &dvb)
 	CONNECT(dvb.tPMT.tableReady, eDVBServiceController::PMTready);
 	CONNECT(dvb.tSDT.tableReady, eDVBServiceController::SDTready);
 	CONNECT(dvb.tEIT.tableReady, eDVBServiceController::EITready);
-	
+
 	initCAlist();
 
 	transponder=0;
@@ -30,13 +30,13 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 {
 #ifdef PROFILE
 	static timeval last_event;
-	
+
 	timeval now;
 	gettimeofday(&now, 0);
-	
+
 	int diff=(now.tv_sec-last_event.tv_sec)*1000000+(now.tv_usec-last_event.tv_usec);
 	last_event=now;
-	
+
 	char *what="unknown";
 
 	switch (event.type)
@@ -53,7 +53,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 	case eDVBServiceEvent::eventServiceFailed: what="Failed"; break;
 	default: { static char bug[100]; sprintf(bug, "%d", event.type); what=bug; }
 	}
-	
+
 	eDebug("[PROFILE] [%s] +%dus", what, diff);
 #endif
 	switch (event.type)
@@ -114,63 +114,62 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 //		eDebug("apid = %04x, vpid = %04x, pcrpid = %04x, tpid = %04x", Decoder::parms.apid, Decoder::parms.vpid, Decoder::parms.pcrpid, Decoder::parms.tpid );
 		/*emit*/ dvb.enterTransponder(event.transponder);
 		int nopmt=0;
-				// do we haved fixed or cached PID values?
-		{
-			eService *sp=eServiceInterface::getInstance()->addRef(service);
-			if (sp)
-			{
-				if (sp->dvb) // set cached pids...
-				{
-// VPID
-					int tmp = sp->dvb->get(eServiceDVB::cVPID);
-					if ( tmp != -1)
-						Decoder::parms.vpid=tmp;
 
+		// do we haved fixed or cached PID values?
+		eService *sp=eServiceInterface::getInstance()->addRef(service);
+		if (sp)
+		{
+			if (sp->dvb)
+			{
+// VPID
+				int tmp = sp->dvb->get(eServiceDVB::cVPID);
+				if ( tmp != -1)
+					Decoder::parms.vpid=tmp;
 // AC3PID
-					tmp = sp->dvb->get(eServiceDVB::cAC3PID);
+				tmp = sp->dvb->get(eServiceDVB::cAC3PID);
+				if ( tmp != -1)
+				{
+					Decoder::parms.audio_type=DECODE_AUDIO_AC3;
+					Decoder::parms.apid=tmp;
+				}
+/* APID*/ else
+				{
+					tmp = sp->dvb->get(eServiceDVB::cAPID);
 					if ( tmp != -1)
 					{
-						Decoder::parms.audio_type=DECODE_AUDIO_AC3;
+						Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
 						Decoder::parms.apid=tmp;
 					}
-/* APID*/ else
-					{
-						tmp = sp->dvb->get(eServiceDVB::cAPID);
-						if ( tmp != -1)
-						{
-							Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
-							Decoder::parms.apid=tmp;
-						}
-					}
-// TPID
-					tmp = sp->dvb->get(eServiceDVB::cTPID);
-					if (tmp != -1)
-						Decoder::parms.tpid=tmp;
-// PCRPID
-					tmp = sp->dvb->get(eServiceDVB::cPCRPID);
-					if ( tmp != -1)
-						Decoder::parms.pcrpid=tmp;
-// start yet...
-					if (sp->dvb->dxflags & eServiceDVB::dxNoPMT)
-					{
-						nopmt=1;
-						Decoder::Set();
-					}
 				}
-				eServiceInterface::getInstance()->removeRef(service);
+// TPID
+				tmp = sp->dvb->get(eServiceDVB::cTPID);
+				if (tmp != -1)
+					Decoder::parms.tpid=tmp;
+// PCRPID ... do not set on recorded streams..
+				tmp = sp->dvb->get(eServiceDVB::cPCRPID);
+				if ( tmp != -1 && !service.path.length() )
+					Decoder::parms.pcrpid=tmp;
+// start yet...
+				Decoder::Set();
+
+				if (sp->dvb->dxflags & eServiceDVB::dxNoPMT)
+					nopmt=1;
 			}
+			eServiceInterface::getInstance()->removeRef(service);
 		}
 
-		if (!nopmt)		// if not a dvb service, don't even try to search a PAT, PMT etc.
+		if (!nopmt) // if not a dvb service, don't even try to search a PAT, PMT etc.
 			dvb.tPAT.start(new PAT());
-			
+
 		if (tdt)
 			delete tdt;
-			
+
 		if (tMHWEIT)
+		{
 			delete tMHWEIT;
-			
-		tMHWEIT=0;
+			tMHWEIT=0;
+		}
+
 		tdt=new TDT();
 		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
 		tdt->start();
@@ -260,7 +259,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		}
 		if (dvb.getState()==eDVBServiceState::stateServiceGetPMT)
 			dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceSwitched));
- 		else
+		else
 			eDebug("nee, doch nicht (state ist %d)", (int)dvb.getState());
 		break;
 	case eDVBServiceEvent::eventServiceGotSDT:
@@ -327,6 +326,7 @@ void eDVBServiceController::EITready(int error)
 	if (!error)
 	{
 		EIT *eit=dvb.getEIT();
+		eDebug("eit = %p", eit);
 
 		for (ePtrList<EITEvent>::iterator i(eit->events); i != eit->events.end(); ++i)
 		{
@@ -353,10 +353,14 @@ bla:
 			dvb.parentEIT->events.setAutoDelete(true);
 			eit->events.setAutoDelete(false);
 		}
+		eDebug("emit dvb.gotEIT(no error)");
 		/*emit*/ dvb.gotEIT(eit, 0);
 		eit->unlock();
 	} else
+	{
+		eDebug("emit dvb.gotEIT(with error)");
 		/*emit*/ dvb.gotEIT(0, error);
+	}
 }
 
 void eDVBServiceController::TDTready(int error)
@@ -419,7 +423,7 @@ void eDVBServiceController::scanPMT()
 	Decoder::parms.pmtpid=pmtpid;
 
 	Decoder::parms.ecmpid=Decoder::parms.emmpid=Decoder::parms.casystemid=-1;
-	
+
 	int isca=0;
 
 	if ( dvb.getmID() > 4 )
@@ -431,12 +435,12 @@ void eDVBServiceController::scanPMT()
 	
 	DVBCI=eDVB::getInstance()->DVBCI;
 	DVBCI2=eDVB::getInstance()->DVBCI2;
-	
-  DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTflush, pmt->program_number));
-  DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTflush, pmt->program_number));
+
+	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTflush, pmt->program_number));
+	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTflush, pmt->program_number));
 
 	isca+=checkCA(calist, pmt->program_info);
-	
+
 	PMTEntry *audio=0, *ac3_audio=0, *video=0, *teletext=0;
 
 	int sac3default = 0;
@@ -445,19 +449,21 @@ void eDVBServiceController::scanPMT()
 
 	int audiopid=-1, videopid=-1;
 
-/*
-		// check formerly selected languages
-  eService *sp=eServiceInterface::getInstance()->addRef(service);
-  if (sp)
-  {
-  	if (sp->dvb)
-	 	{
-  		videopid=sp->dvb->get(eServiceDVB::cVPID);
-  		audiopid=sp->dvb->get(eServiceDVB::cAPID);
-  		sp->dvb->set(eServiceDVB::cPCRPID, Decoder::parms.pcrpid);
-  	}
-  	eServiceInterface::getInstance()->removeRef(service);
-  }*/
+	if ( Decoder::parms.pcrpid == -1 && !service.path.size() )
+		Decoder::parms.pcrpid = pmt->PCR_PID;
+
+	// get last selected audio / video pid from pid cache
+	eService *sp=eServiceInterface::getInstance()->addRef(service);
+	if (sp)
+	{
+		if (sp->dvb)
+		{
+			videopid=sp->dvb->get(eServiceDVB::cVPID);
+			audiopid=sp->dvb->get(eServiceDVB::cAPID);
+			sp->dvb->set(eServiceDVB::cPCRPID, Decoder::parms.pcrpid);
+		}
+		eServiceInterface::getInstance()->removeRef(service);
+	}
 
 	for (ePtrList<PMTEntry>::iterator i(pmt->streams); i != pmt->streams.end(); ++i)
 	{
@@ -470,7 +476,7 @@ void eDVBServiceController::scanPMT()
 		{
 		case 1:	// ISO/IEC 11172 Video
 		case 2: // ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream
-			if ((!video) || (pe->elementary_PID == videopid))
+			if ( (!video) || (pe->elementary_PID == videopid) )
 			{
 				video=pe;
 			}
@@ -478,7 +484,7 @@ void eDVBServiceController::scanPMT()
 			break;
 		case 3:	// ISO/IEC 11172 Audio
 		case 4: // ISO/IEC 13818-3 Audio
-			if ((!audio) || (pe->elementary_PID == audiopid))
+			if ( (!audio) || (pe->elementary_PID == audiopid) )
 			{
 				audio=pe;
 			}
@@ -489,7 +495,7 @@ void eDVBServiceController::scanPMT()
 			isca+=checkCA(calist, pe->ES_info);
 			for (ePtrList<Descriptor>::iterator i(pe->ES_info); i != pe->ES_info.end(); ++i)
 			{
-				if ((i->Tag()==DESCR_AC3) && ((!ac3_audio) || (pe->elementary_PID == audiopid)))
+				if ( (i->Tag()==DESCR_AC3) && ( (!ac3_audio) || (pe->elementary_PID == audiopid) ) )
 				{
 					ac3_audio=pe;
 				}
@@ -500,15 +506,17 @@ void eDVBServiceController::scanPMT()
 		}
 		case 0xC1:
 		{
-			if (tMHWEIT)	// nur eine zur zeit
-				delete tMHWEIT;
-			tMHWEIT=0;
 			for (ePtrList<Descriptor>::iterator i(pe->ES_info); i != pe->ES_info.end(); ++i)
 				if (i->Tag()==DESCR_MHW_DATA)
 				{
 					MHWDataDescriptor *mhwd=(MHWDataDescriptor*)*i;
 					if (!strncmp(mhwd->type, "PILOTE", 6))
 					{
+						if (tMHWEIT)	// nur eine zur zeit
+						{
+							delete tMHWEIT;
+							tMHWEIT=0;
+						}
 						eDebug("starting MHWEIT on pid %x, sid %x", pe->elementary_PID, service.getServiceID().get());
 						tMHWEIT=new MHWEIT(pe->elementary_PID, service.getServiceID().get());
 						CONNECT(tMHWEIT->ready, eDVBServiceController::MHWEITready);
@@ -521,20 +529,15 @@ void eDVBServiceController::scanPMT()
 		}
 	}
 
-  DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
-  DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
+	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
+	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
 
 	if (sac3default && ac3_audio)
 		audio=ac3_audio;
 
-	if ( Decoder::parms.vpid == -1 )
-		setPID(video);
-	if ( Decoder::parms.apid == -1 )
-		setPID(audio);
-	if ( Decoder::parms.tpid == -1 )
-		setPID(teletext);
-	if ( Decoder::parms.pcrpid == -1 && !service.path.size() )
-		Decoder::parms.pcrpid = pmt->PCR_PID;
+	setPID(video);
+	setPID(audio);
+	setPID(teletext);
 
 	/*emit*/ dvb.scrambled(isca);
 
@@ -587,7 +590,7 @@ void eDVBServiceController::setPID(const PMTEntry *entry)
 			}
 		}
 
-	  eService *sp=eServiceInterface::getInstance()->addRef(service);
+		eService *sp=eServiceInterface::getInstance()->addRef(service);
 		if (isaudio)
 		{
 			if (isAC3)
@@ -618,13 +621,13 @@ void eDVBServiceController::setPID(const PMTEntry *entry)
 		}
 		if (isteletext)
 		{
+			Decoder::parms.tpid=entry->elementary_PID;
 			if (sp && sp->dvb)
 				sp->dvb->set(eServiceDVB::cTPID, entry->elementary_PID);
-			Decoder::parms.tpid=entry->elementary_PID;
 		}
 
-  	if (sp)
-	  	eServiceInterface::getInstance()->removeRef(service);
+		if (sp)
+			eServiceInterface::getInstance()->removeRef(service);
 	}
 }
 
@@ -669,8 +672,11 @@ void eDVBServiceController::MHWEITready(int error)
 			e->events.push_back(ev);
 		}
 		e->ready=1;
-		dvb.tEIT.inject(e);
-	} else
+		// check if no normal eit exist...
+//		if (!dvb.tEIT.ready())
+//			dvb.tEIT.inject(e);
+	}
+	else
 	{
 		delete tMHWEIT;
 		tMHWEIT=0;

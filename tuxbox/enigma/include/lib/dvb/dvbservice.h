@@ -50,8 +50,6 @@ public:
 	MHWEIT *tMHWEIT;
 	TDT *tdt;
 
-//	void MHWEITready(int error);
-
 	struct CA
 	{
 		int casysid, ecmpid, emmpid;

@@ -129,7 +129,7 @@ public:
 	eWizardScanInit()
 	{
 		int diseqc=0;
-		if ( !eFrontend::getInstance()->Type() /* == DBOX_FE_CABLE */ )
+		if ( eFrontend::getInstance()->Type() == eFrontend::feCable )
 			return;
 again: // gotos considered harmless.. :)
 		eConfig::getInstance()->getKey("/elitedvb/wizards/diseqc", diseqc);

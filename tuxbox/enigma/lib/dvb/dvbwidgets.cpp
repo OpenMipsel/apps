@@ -125,7 +125,7 @@ struct selectSat: public std::unary_function<eListBoxEntryText&, void>
 
 	bool operator()(eListBoxEntryText& e)
 	{
-		eDebug("we have %d, we want %d",((eSatellite*)e.getKey())->getOrbitalPosition(), t->satellite.orbital_position );
+//		eDebug("we have %d, we want %d",((eSatellite*)e.getKey())->getOrbitalPosition(), t->satellite.orbital_position );
 		if ( ((eSatellite*)e.getKey())->getOrbitalPosition() == t->satellite.orbital_position )
 		{
 			l->setCurrent(&e);

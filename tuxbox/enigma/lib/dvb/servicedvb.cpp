@@ -377,6 +377,7 @@ void eServiceHandlerDVB::switchedService(const eServiceReferenceDVB &, int err)
 
 void eServiceHandlerDVB::gotEIT(EIT *, int)
 {
+	eDebug("eServiceHandlerDVB::gotEIT...\nsend serviceEvent evtGotEIT");
 	serviceEvent(eServiceEvent(eServiceEvent::evtGotEIT));
 }
 
@@ -469,14 +470,15 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 	if (service.type != eServiceReference::idDVB)
 		return -1;
-//	int oldflags=flags;
+	int oldflags=flags;
 	decoder=0;
 
 	if (service.path.length())
 		startPlayback(service.path);
-	flags &= ~(flagIsSeekable|flagSupportPosition);
+	else
+		flags &= ~(flagIsSeekable|flagSupportPosition);
 
-//	if (oldflags != flags)
+	if (oldflags != flags)
 		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 	if (sapi)
 	{
@@ -747,7 +749,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 			__u8 *descriptor=packet+0x13;
 			int len=descriptor[1];
 			dvb=new eServiceDVB(eServiceID((packet[0xf]<<8)|packet[0x10]), l.c_str());
-			dvb->dxflags|=5;
+			dvb->dxflags |= eServiceDVB::dxNoPMT;
 			len-=6;
 			descriptor+=2+6; // skip tag, len, ENIGMA
 			for (int i=0; i<len; i+=descriptor[i+1]+2)
@@ -767,9 +769,9 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 				case eServiceDVB::cTPID:
 					dvb->set(eServiceDVB::cTPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
 					break;
-/*				case eServiceDVB::cPCRPID:
+				case eServiceDVB::cPCRPID:
 					dvb->set(eServiceDVB::cPCRPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
-					break;*/
+					break;
 				}
 			}
 		} while (0);

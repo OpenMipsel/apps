@@ -27,6 +27,7 @@ class eCheckbox;
 class eButton;
 class gPainter;
 class NVODReferenceEntry;
+class LinkageDescriptor;
 class eServiceSelector;
 class eRecordingStatus;
 class ePlaylistEntry;
@@ -98,22 +99,25 @@ class NVODStream: public eListBoxEntryTextStream
 {
 	friend class eListBox<NVODStream>;
 	friend class eNVODSelector;
-	int valid;
+	int begTime;
 	eString redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 	void EITready(int error);
 	int validate();
+	void selfDestroy();
+	Signal0<void> ready;
 public:
+	int getBegTime() const { return begTime; }
 	NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type);
 	eServiceReferenceDVB service;
 	EIT eit;
 };
 
-class NVODReferenceEntry;
-
 class eNVODSelector: public eListBoxWindow<NVODStream>
 {
-private:
+	int count;
 	void selected(NVODStream *);
+	Signal0<void> clearEntrys;
+	void readyCallBack();
 public:
 	eNVODSelector();
 	void clear();
@@ -147,7 +151,28 @@ public:
 	void add(PMTEntry *);
 };
 
-class LinkageDescriptor;
+class VideoStream: public eListBoxEntryText
+{
+	friend class eListBox<VideoStream>;
+	friend class eVideoSelector;
+	int isAC3;
+	int component_tag;
+	void EITready(int error);
+	void parseEIT(EIT* eit);
+public:
+	VideoStream(eListBox<VideoStream> *listbox, PMTEntry *stream);
+	PMTEntry *stream;
+	bool operator < ( const VideoStream& e) const	{	return 0;	}
+};
+
+class eVideoSelector: public eListBoxWindow<VideoStream>
+{
+	void selected(VideoStream *);
+public:
+	eVideoSelector();
+	void clear();
+	void add(PMTEntry *);
+};
 
 class SubService: public eListBoxEntryText
 {
@@ -161,11 +186,16 @@ public:
 class eSubServiceSelector
 : public eListBoxWindow<SubService>
 {
+	int quickzap;
 	void selected(SubService *);
 	eButton *bAddToUserBouquet, *bToggleQuickZap;
 public:
 	Signal2<void, eServiceReference*, int> addToUserBouquet;
+	bool quickzapmode();
+	void prev();
+	void next();
 	void addPressed();
+	void quickZapPressed();
 	eSubServiceSelector();
 	void clear();
 	void add(eDVBNamespace dvb_namespace, const LinkageDescriptor *ref);
@@ -188,6 +218,7 @@ public:
 #define ENIGMA_NVOD		1	
 #define ENIGMA_AUDIO	2
 #define ENIGMA_SUBSERVICES 4
+#define ENIGMA_VIDEO	8
 
 class eEventDisplay;
 class eServiceEvent;
@@ -257,6 +288,7 @@ private:
 	eNVODSelector nvodsel;
 	eSubServiceSelector subservicesel;
 	eAudioSelector audiosel;
+	eVideoSelector videosel;
 	eEventDisplay *actual_eventDisplay;
 	eServiceReferenceDVB refservice;
 	
