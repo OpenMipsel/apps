@@ -504,7 +504,7 @@ siCA::siCA(eWidget *parent): eWidget(parent)
 
 eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParameters *parms): eWindow(1), statusbar(this)
 {
-	setText(mode?"Record mode - read manual":"Streaminfo");
+	setText(mode?_("Record mode - read manual"):_("Streaminfo"));
 	cmove(ePoint(140, 100));
 	cresize(eSize(470, 420));
 	eSize s(clientrect.size());
