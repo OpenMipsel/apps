@@ -7,6 +7,7 @@
 #include <memory.h>
 #include <linux/kd.h>
 
+#include <lib/dvb/edvb.h>
 #include <lib/system/econfig.h>
 #include <lib/gdi/fb.h>
 
@@ -65,20 +66,24 @@ fbClass::fbClass(const char *fb)
 	showConsole(state);
 	return;
 nolfb:
-	printf("framebuffer not available.\n");
 	lfb=0;
+	printf("framebuffer not available.\n");
+	return;
 }
 
 int fbClass::showConsole(int state)
 {
-	int fd=open("/dev/vc/0", O_RDWR);
-	if(fd>=0)
+	if ( eDVB::getInfo("mID").right(1) < 5 )
 	{
-		if(ioctl(fd, KDSETMODE, state?KD_TEXT:KD_GRAPHICS)<0)
+		int fd=open("/dev/vc/0", O_RDWR);
+		if(fd>=0)
 		{
-			eDebug("setting /dev/vc/0 status failed.");
+			if(ioctl(fd, KDSETMODE, state?KD_TEXT:KD_GRAPHICS)<0)
+			{
+				eDebug("setting /dev/vc/0 status failed.");
+			}
+			close(fd);
 		}
-		close(fd);
 	}
 	return 0;
 }
