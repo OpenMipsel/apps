@@ -1,25 +1,44 @@
 /*
-* Calling:
+ * $Id: streampes.c,v 1.4.2.5 2003/02/18 19:15:11 gandalfx Exp $
+ *
+ * Copyright (C) 2001 by tmbinc
+ * Copyright (C) 2001 by kwon
+ * Copyright (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
+ * Copyright (C) 2003 by Gandalfx
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * Calling:
  * GET /<pid>  \r\n -> for tcp opration
  * GET /<pid>,<udpport> \r\n -> for udp operation, tcp connection ist maintained as control connection
- * to end udp streaming
- *
- * TCP-Streaming Code by Simplex
- * Quick and Dirty udp Extension by Gandalfx (for ggrab and Tuxvision)
-*/
+ *                              to end udp streaming
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include <sys/ioctl.h>
-#include <unistd.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/signal.h>
+#include <sys/wait.h>
 #include <fcntl.h>
-#include <time.h>
-#include <fcntl.h>
-#include <sys/poll.h>
 #include <errno.h>
 #include <string.h>
 
@@ -28,217 +47,142 @@
 #include <ost/sec.h>
 #include <ost/video.h>
 
-#include <pthread.h>
-#include <unistd.h>
+#define UDP_SEND_LEN	(1444)
+#define BSIZE		(16*1024)
+#define DMX_BUFFER_SIZE (1024*1024)
 
-#define DEBUG
-#ifdef DEBUG
-#define dprint fprintf
-#else
-#define dprint
-#endif
-
-
-// size of one buffer
-#define BSIZE					(1024*16)
-// number of buffers
-#define BUFFERS 				50
-
-#define UDP_SEND_LEN				1444 //First Version, comaptible to ggrab 0.21 will later be higher
-
-char 		gbuffers[BUFFERS][BSIZE];
-volatile int 	gbufferState[BUFFERS];
-int		gport;
-pthread_cond_t	gsignal;
-pthread_mutex_t	gmutex;
-
-void * tcp_writer(void *);
-void * udp_writer(void *);
-void * check_alive(void *);
+static void * send_udp(void *);
+static int    gport;
+static int    gfd;
 
 int main(int argc, char **argv)
 {
-	pthread_t			h_writer;
-	pthread_t			h_control;
-	int				fd;
-	int				pid;
-	struct dmxPesFilterParams 	flt;
-	char *				bp;
-	int 				currentBuffer = 0;
-	int 				i;
-	int				fill_len;
-	int				pr;
-	int				tr;
-	int				r;
-
-
-
-
+	pthread_t 	thread;
+	unsigned short	pid;
+	struct 		dmxPesFilterParams 	flt;
+	static char 	buffer[BSIZE];
+	char * 		bp;
+	unsigned char 	c;
 	
-	for(i = 0; i < BUFFERS; i++)
-	{
-		gbufferState[i] = 0;
-	}
-
-	bp=gbuffers[0];
-	while (bp-gbuffers[0] < BSIZE)
-	{
-		unsigned char c;
-		read(1, &c, 1);
+	bp = buffer;
+	while ((bp-buffer) < BSIZE) {
+		read(STDIN_FILENO, &c, 1);
 		if ((*bp++=c)=='\n')
 			break;
 	}
-	*bp++=0;
 
-	bp=gbuffers[0];
-	if (!strncmp(bp, "GET /", 5))
+	*bp++ = 0;
+	bp = buffer;
+	if (!strncmp(buffer, "GET /", 5))
 	{
-		printf("HTTP/1.1 200 OK\r\nServer: d-Box network\r\n\r\n"); // Content-Type: video/mpeg\r\n\r\n");
-		bp+=5;
+		printf("HTTP/1.1 200 OK\r\nServer: d-Box network\r\n\r\n");
+		bp += 5;
 	}
-	fflush(stdout);
-
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
-	if (fd<0)
-	{
-		perror("/dev/dvb/card0/demux0");
-		return -fd;
-	}
-	ioctl(fd, DMX_SET_BUFFER_SIZE, 1024*1024);
-	sscanf(bp, "%x", &pid);
+	sscanf(bp, "%hx", &pid);
 	
 	gport = 0;
 	if ((bp=strchr(bp,',')) != 0) {
 		bp++;
 		sscanf(bp, "%d", &gport);
 	}
+
+	fflush(stdout);
+	gfd=open("/dev/dvb/card0/demux0", O_RDWR);
+	if (gfd<0)
+	{
+		perror("/dev/dvb/card0/demux0");
+		return -gfd;
+	}
+	ioctl(gfd, DMX_SET_BUFFER_SIZE, DMX_BUFFER_SIZE);
+	
 	flt.pid =	pid;
 	flt.input =	DMX_IN_FRONTEND;
 	flt.output =	DMX_OUT_TAP;
 	flt.pesType =	DMX_PES_OTHER;
 	flt.flags =	0;
 	
-	if (ioctl(fd, DMX_SET_PES_FILTER, &flt)<0)
+	if (ioctl(gfd, DMX_SET_PES_FILTER, &flt)<0)
 	{
 		perror ("DMX_SET_PES_FILTER");
 		return errno;
 	}
-	if (ioctl(fd, DMX_START, 0)<0)
+	if (ioctl(gfd, DMX_START, 0)<0)
 	{
 		perror ("DMX_SET_PES_FILTER");
 		return errno;
 	}
-	pthread_cond_init(&gsignal, 0);
-	pthread_mutex_init(&gmutex, 0);
-	
-	if (gport > 1023) {
-		pthread_create( &h_writer, 0, udp_writer, NULL);
-		pthread_create( &h_control, 0, check_alive, NULL);
-		fill_len = UDP_SEND_LEN - 4;
 
+	if (gport > 1023) {
+		if (pthread_create(&thread, 0, send_udp, NULL)) {
+			return (-1);
+		}
+			
+		while (read(STDIN_FILENO,buffer,1) >= 0);
 	}
 	else {
-		pthread_create( &h_writer, 0, tcp_writer, NULL);
-		fill_len = BSIZE;
-	}
-
-	fcntl(fd,F_SETFL,fcntl(fd,F_GETFL)| O_NONBLOCK);
-
-	while (1)
-	{
-		pr=0;
-		tr=fill_len;
+		setpriority(PRIO_PROCESS,0,-10);
+		// Workaround für Write-Blockierung im Socket Interface
+//		int sockopt = 100;
+//		sockopt = setsockopt(STDOUT_FILENO, SOL_SOCKET,SO_SNDBUF,&sockopt,sizeof(sockopt));
 		
-		while (gbufferState[currentBuffer] != 0) {
-			static struct timespec t1 = {0,20 * 1000 * 1000};
-			nanosleep(&t1, 0);
-			perror("buffer overflow");
-		}
-		
-		while (tr)
-		{
-			if ((r=read(fd, gbuffers[currentBuffer]+pr, tr))<=0)
-			{
-				if (errno == EAGAIN) {
-					static struct timespec t2 = {0,10 * 1000 * 1000};
-					nanosleep(&t2, 0);
+		while (1) {
+			int pr = 0, r;
+			int tr = BSIZE;
+			while (tr) {
+				if ((r=read(gfd, buffer+pr, tr)) <= 0) {
+					if (errno == EAGAIN) {
+						usleep(3000);
+						continue;
+					}
+					break;
 				}
-				continue;
+				pr+=r;
+				tr-=r;
+				if(tr) {
+					usleep(3000);  
+				}
 			}
-			pr+=r;
-			tr-=r;
-			if (tr) {
-				static struct timespec t2 = {0,10 * 1000 * 1000};
-				nanosleep(&t2, 0);;
+			tr = BSIZE;
+			pr = 0;
+
+			while (tr) {
+				r = write(STDOUT_FILENO, buffer+pr, tr);
+				if (r <= 0) {
+					if (errno == EAGAIN) {
+						continue;
+					}
+					break;
+				}
+				pr += r;
+				tr -= r;
 			}
 		}
-
-		pthread_mutex_lock(&gmutex);
-		gbufferState[currentBuffer] = 1;
-		pthread_mutex_unlock(&gmutex);
-		pthread_cond_signal (&gsignal);	
-		
-		currentBuffer ++;
-		currentBuffer %= BUFFERS;
 	}
-	close(fd);
-	return 0;
+
+	close(gfd);
+	exit(0);
 }
 
-void* tcp_writer( void* param)
-{
-	int currentBuffer = 0;
-	int tr,pr,b;
-	
-	while(1)
-	{
-		pthread_mutex_lock(&gmutex);
-        	
-		while (gbufferState[currentBuffer] != 1)
-	        {
-			pthread_cond_wait(&gsignal, &gmutex);
-	        }
-	
-		pthread_mutex_unlock(&gmutex);
-		
-		tr = BSIZE;
-		pr = 0;
-		while (tr)
-		{
-			b = write(STDOUT_FILENO, gbuffers[currentBuffer] + pr, tr);
-
-			if (b <= 0)
-        		{
-				if (b == EAGAIN) {
-					static struct timespec t1 = {0,5 * 1000 * 1000};
-					nanosleep(&t1, 0);
-					continue;
-				}
-        		}
-			
-			tr -= b;
-			pr += b;
-			if (tr) {
-				static struct timespec t1 = {0,5 * 1000 * 1000};
-				nanosleep(&t1, 0);
-			}
-		}
-		
-		gbufferState[currentBuffer] = 0;
-		currentBuffer++;
-		currentBuffer %= BUFFERS;
-	}
-	return (0);
-}
 void *
-udp_writer (void * p) {
+send_udp (void * ret) {
 	int			pnr = 0;
 	int                     sockfd;
         struct sockaddr_in      cli_addr, serv_addr;
 	int			addr_len = sizeof (serv_addr);
-	int			currentBuffer = 0;
-	int			b;
+	static	char 		buffer[UDP_SEND_LEN];
+				char a[100];
+				sprintf(a,"/tmp/aaa%d.log",gport);
+				FILE * fp = fopen (a,"a");
+				fprintf(fp,"hallo1");
+				fclose(fp);
 
+	setpriority(PRIO_PROCESS,0,-10);
+	
+	int flags = fcntl(gfd,F_GETFL,0);
+	if (flags != -1) {
+		fcntl(gfd,F_SETFL, flags | O_NONBLOCK);
+	}
+	
 	if(getpeername(STDOUT_FILENO, (struct sockaddr *) &serv_addr, &addr_len)) {
 		exit(-1);
 	}
@@ -258,49 +202,58 @@ udp_writer (void * p) {
 	if (bind(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr)) < 0) {
 		exit(-1);
 	}
-	
-	//fcntl(gfd,F_SETFL,fcntl(gfd,F_GETFL)| O_NONBLOCK);
-	
-	while(1)
-	{
-		pthread_mutex_lock(&gmutex);
-        	
-		while (gbufferState[currentBuffer] != 1)
-	        {
-			pthread_cond_wait(&gsignal, &gmutex);
-	        }
-	
-		pthread_mutex_unlock(&gmutex);
 		
-		while (1)
-		{
-			*((int *)(&(gbuffers[currentBuffer][UDP_SEND_LEN-4])))=pnr++;	
-			b = sendto(sockfd, gbuffers[currentBuffer], UDP_SEND_LEN, 0, (struct sockaddr *) &serv_addr, addr_len);
-
-			if (b <= 0)
-        		{
-				if (b == EAGAIN) {
-					static struct timespec t1 = {0,5 * 1000 * 1000};
-					nanosleep(&t1, 0);
+	// Workaround für Write-Blockierung im Socket Interface
+//	int sockopt = 100;
+//	sockopt = setsockopt(sockfd, SOL_SOCKET,SO_SNDBUF,&sockopt,sizeof(sockopt));
+	
+	while (1) {
+		int pr=0, r;
+		int tr=UDP_SEND_LEN-4;
+		while (tr) {
+			if ((r=read(gfd, buffer+pr, tr)) <= 0) {
+				if (errno == EAGAIN) {
+					usleep(20000); //wait for 10 ms = max. 10 kb 
 					continue;
 				}
-				perror("udp_writer: sendto");
 				continue;
-        		}
+			}
+			pr+=r;
+			tr-=r;
+			if(tr) {
+				usleep(20000);  
+			}
+		}
+
+		*((int *)(&(buffer[UDP_SEND_LEN-4])))=pnr++;	
+		while (1) {
+			fd_set 		tfds;
+			struct timeval 	tv;
+			FD_ZERO(&tfds);
+			FD_SET(sockfd, &tfds);
+			tv.tv_sec = 0;
+			tv.tv_usec = 500 * 1000;
+
+			// New Workaround fpor blocking of socket: close, and open it again....
+			r = select(sockfd + 1, NULL, &tfds, NULL, &tv);
+			if (r == 0) {
+				close(sockfd);	
+				if ( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+					exit(-1);
+				}
+				if (bind(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr)) < 0) {
+					exit(-1);
+				}
+			}
+			if ((r = sendto(sockfd, buffer, UDP_SEND_LEN, 0, (struct sockaddr *) &serv_addr, addr_len)) < 0) {
+				if (errno == EAGAIN) {
+					usleep (10000);
+					continue;
+				}
+			}
 			break;
 		}
-		
-		gbufferState[currentBuffer] = 0;
-		currentBuffer++;
-		currentBuffer %= BUFFERS;
 	}
-	return (0);
+	return ret;
 }
 
-void * 
-check_alive(void * p) {
-	char b;
-	while (read(STDIN_FILENO,&b,1) >= 0);
- 	exit(0);
-}
-	
