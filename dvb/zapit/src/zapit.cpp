@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.39 2003/05/22 20:52:57 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.40 2003/05/25 08:03:39 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -98,7 +98,6 @@ bool playbackStopForced = false;
 int debug = 0;
 int waitForMotor = 0;
 int motorRotationSpeed = 0; //in 0.1 degrees per second
-bool firstZapAfterBoot = true;
 diseqc_t diseqcType;
 
 /* near video on demand */
@@ -220,19 +219,15 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 	/* have motor move satellite dish to satellite's position if necessary */
 	if ((diseqcType == DISEQC_1_2) && (motorPositions[channel->getSatelliteName()] != 0))
 	{
-		if (firstZapAfterBoot || (frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
+		if ((frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
 		{
-			firstZapAfterBoot = false; //just send motor positioning command the first time after a boot to make sure motor is in right position
 			printf("[zapit] currentSatellitePosition = %d, satellitePosition = %d\n", frontend->getCurrentSatellitePosition(), channel->getSatellitePosition());
 			printf("[zapit] motorPosition = %d\n", motorPositions[channel->getSatelliteName()]);
 			frontend->positionMotor(motorPositions[channel->getSatelliteName()]);
 		
-			if (!firstZapAfterBoot)
-			{
-				waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / motorRotationSpeed; //assuming 1.8 degrees/second motor rotation speed for the time being...
-				printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
-				sleep(waitForMotor);
-			}
+			waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / motorRotationSpeed; //assuming 1.8 degrees/second motor rotation speed for the time being...
+			printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
+			sleep(waitForMotor);
 		
 			frontend->setCurrentSatellitePosition(channel->getSatellitePosition());
 		}
@@ -1523,7 +1518,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.39 2003/05/22 20:52:57 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.40 2003/05/25 08:03:39 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
