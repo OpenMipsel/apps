@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_extra.cpp,v 1.1.2.11 2003/08/07 19:18:49 ghostrider Exp $
+ * $Id: setup_extra.cpp,v 1.1.2.12 2003/08/25 22:10:28 ghostrider Exp $
  */
 
 #include <setup_extra.h>
@@ -37,10 +37,10 @@ eExpertSetup::eExpertSetup()
 	int entry=0;
 #ifndef DISABLE_NETWORK
 	CONNECT((new eListBoxEntryMenu(&list, _("Communication Setup"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eExpertSetup::communication_setup);
-	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab Streaming Setup"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eExpertSetup::ngrab_setup);
-	CONNECT((new eListBoxEntryMenu(&list, _("Software Update"), eString().sprintf("(%d) %s", ++entry, _("open on software update")) ))->selected, eExpertSetup::software_update);
+	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab Streaming Setup"), eString().sprintf("(%d) %s", ++entry, _("open ngrab server setup")) ))->selected, eExpertSetup::ngrab_setup);
+	CONNECT((new eListBoxEntryMenu(&list, _("Software Update"), eString().sprintf("(%d) %s", ++entry, _("open software update")) ))->selected, eExpertSetup::software_update);
 #endif
-	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control"), eString().sprintf("(%d) %s", ++entry, _("open on audio/video settings")) ))->selected, eExpertSetup::rc_setup);
+	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control"), eString().sprintf("(%d) %s", ++entry, _("open remote control setup")) ))->selected, eExpertSetup::rc_setup);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin Setup"), eString().sprintf("(%d) %s", ++entry, _("open skin setup")) ))->selected, eExpertSetup::skin_setup);
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Skip confirmations"), "/elitedvb/extra/profimode", _("enable/disable confirmations"));
