@@ -811,7 +811,7 @@
 	</object>
 
 	<object name="eWizardLanguage">
-		<eWizardLanguage cposition="120:110" csize="500:400" text="Menu language">
+		<eWizardLanguage cposition="120:110" csize="500:400" text="OSD Language">
 			<eLabel name="head" position="40:50" size="e:50" font="head" />
 			<eLabel name="help" position="0:100" size="e:30" align="center" />
 			<eListbox name="list" position="50:140" size="e-50:e-50" loadDeco="" />
