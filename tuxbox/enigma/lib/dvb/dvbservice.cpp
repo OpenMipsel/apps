@@ -140,13 +140,9 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		  }
 		}
 		
-		if (nodvb)		// if not a dvb service, don't even try to search a PAT, PMT etc.
-		{
-			dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceSwitched));
-			break;
-		}
-		
-		dvb.tPAT.start(new PAT());
+		if (!nodvb)		// if not a dvb service, don't even try to search a PAT, PMT etc.
+			dvb.tPAT.start(new PAT());
+			
 		if (tdt)
 			delete tdt;
 		if (tMHWEIT)
@@ -155,6 +151,18 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		tdt=new TDT();
 		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
 		tdt->start();
+
+
+		if (nodvb)
+		{
+			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
+			service_state=0;
+			/*emit*/ dvb.enterService(service);
+			/*emit*/ dvb.switchedService(service, -service_state);
+			dvb.setState(eDVBServiceState(eDVBServiceState::stateIdle));
+			break;
+		}
+
 
 		dvb.tSDT.start(new SDT());
 		switch (service.getServiceType())
@@ -375,7 +383,6 @@ void eDVBServiceController::scanPMT()
   {
   	if (sp->dvb)
 	 	{
-  		// yes, not a real dvb service.
   		videopid=sp->dvb->get(eServiceDVB::cVPID);
   		audiopid=sp->dvb->get(eServiceDVB::cAPID);
   		sp->dvb->set(eServiceDVB::cPCRPID, Decoder::parms.pcrpid);
