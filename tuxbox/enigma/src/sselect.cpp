@@ -49,12 +49,12 @@ public:
 	{
 		addActionMap( &i_EPGStyleSelectorActions->map );
 		move(ePoint(100,100));
-		int last=0;
+		int last=1;
 		eListBoxEntryText*sel=0;
-		eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", last);
+		eConfig::getInstance()->getKey("/ezap/serviceselector/lastEPGStyle", last);
 		new eListBoxEntryText(&list,_("Channel EPG"), (void*)1, 0, _("open EPG for selected Channel") );
 		sel = new eListBoxEntryText(&list,_("Multi EPG"), (void*)2, 0, _("open EPG for next five channels") );
-		if ( last )
+		if ( last==2 )
 			list.setCurrent(sel);
 		CONNECT( list.selected, eEPGStyleSelector::entrySelected );
 	}
@@ -77,10 +77,10 @@ public:
 	{
 		if (e)
 		{
-			int last=0;
-			eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", last);
+			int last=1;
+			eConfig::getInstance()->getKey("/ezap/serviceselector/lastEPGStyle", last);
 			if ( last != (int) e->getKey() )
-				eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", (int)e->getKey());
+				eConfig::getInstance()->setKey("/ezap/serviceselector/lastEPGStyle", (int)e->getKey());
 			close( (int)e->getKey() );
 		}
 		else
