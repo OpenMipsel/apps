@@ -873,7 +873,7 @@ static eString message(eString request, eString dirpath, eString opt, eHTTPConne
 {
 	if (opt.length())
 	{
-		opt.strReplace("%20", " ");
+		opt = httpUnescape(opt);
 		eZapMain::getInstance()->postMessage(eZapMessage(1, "external message", opt, 10), 0);
 		return eString("ok\n");
 	} else
