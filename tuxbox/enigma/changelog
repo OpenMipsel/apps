@@ -67,7 +67,7 @@
 200303211951 5 56 Add new Colorformat YPbPr ( for beamers )
 200304040020 7 * Add possibility to display remaining time in infobar
 200304050000 7 * Add many testscreens
-200304090124 2 * Add Timeshift
+200304090124 2 56 Add Timeshift
 200304131503 4 * Redesign Timer .. for repeated Events
 200304131503 5 * Add support to select subservices in Timer (when exist)
 200304131503 4 * Add support to edit satellites.xml ( transponders for scan )
@@ -75,4 +75,38 @@
 200304172159 5 * Don't change voltage on PIN8 in Standby
 200304192330 4 * Fix repeated timer.. and overlapping test ( hope its now okay )
 200304211300 4 * Many other timer bugs fixed
+200304292117 4 * another time bug fixed
+200305061831 4 56 Fix CI init ( no more need manual reset the CI after boot )
+200305071857 7 * Add simple Parentallocking
+200305081851 8 * Add Sleeptimer to new Shutdonw Menu ( press power button for more than one second)
+200305080239 6 * Add Multi EPG for better overview ( in service list press info on a channel )
+200305080239 6 * Add Powersave in Standby ( shut off LNB Power )
+200305100255 5 * Improved EPG Cache 
+200305102104 5 234 Add automatic scart switching
+200305120402 5 * Add reboot to shutdown menu
+200305121415 5 * Add FastDiSEqC Option see here http:://lists.berlios.de/pipermail/tuxbox-cvs/2003-May/011632.html
+200305152001 5 * Add Colorbuttons to serviceselector ( which colorbutton do what )
+200305171541 6 * Add ability to set NextCharTimeout ( RC Setup )
 200305180353 2 * Add time zone setup
+200305181446 6 * Improve Multi EPG ( faster and scrollsupport )
+200305190457 8 * Many gui speed fixes
+200305190558 8 * Many LCD Fixes
+200305221517 5 * Fix slow service scan
+200305230535 7 * Add ability to wakeup a ngrab server with Wake On LAN
+200305230535 7 * add many regitry buffer flushes
+200305241612 5 * fix not correct working Lame/Home Button
+200305241612 4 * Add ability to change skin without complete reboot
+200305241612 4 234 Do first work on wakeup from deep standby
+200305252354 5 * Work on Pid Caching.. AC3 PIDs now cached too
+200305261321 4 * Dont set hardly 4:3 mode in 16:9 TVs ( i think cinerrama or othe modes now works better )
+200305261321 4 * Tuxtxt can now change the WSS and Scart Voltage ( it can switch tv to 16:9 Anamorph mode )
+200305261636 6 * Support for persistent plugins, plugins can hook into the setup
+200305300307 8 * Add ability to change timer begin-/endtime in minute steps with vol +/- and bouq +/- buttons
+200305300307 3 * Add much better handling for broken provider UTC Times ( now the time should be correct on all transponders ) 
+200305300307 5 * Final Multi EPG Fix
+200305300307 5 * Add ability to hide the infobar when playing VOB/MPG or other files
+200305300540 4 * Little better MPEG1/MPEG2 ( need improvements )
+200305310036 7 * Add A/V Setup ( move entries from normal setup into this )
+200306011945 5 * Dont scan non locking transponders more than once
+200306030130 5 * Improve transpoder editor ( satellites.xml ) now satellite scan optins and name can changed
+200306061841 5 * Add ability to enable/disable the color buttons in service selector ( in service context menu )

@@ -462,7 +462,7 @@
 			<eLabel text="EPG" position="246:129" font="Blue.Bold;17" size="78:15" foregroundColor="white" />
 			<eLabel text="subservices" position="353:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
 			<eLabel text="audio track" position="462:129" font="Blue.Bold;17" size="78:15" foregroundColor="white" />
-			<eLabel text="videotext" position="569:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
+			<eLabel text="plugins" position="569:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
 
 			<eLabel name="recStatus" position="476:34" size="18:18" pixmap="rec_symbol" alphatest="on" />
 
