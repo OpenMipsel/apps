@@ -1,5 +1,6 @@
 INCLUDES = \
 	-I$(top_srcdir)/lib \
+        @CONNECTION_CFLAGS@ \
 	@EVENTSERVER_CFLAGS@ \
 	-I@DRIVER@
 
@@ -13,6 +14,7 @@ sectionsd_SOURCES = sectionsd.cpp dmxapi.cpp dmx.cpp SIsections.cpp SIevents.cpp
 sdt_SOURCES = sdt.cpp dmxapi.cpp SIsections.cpp SIevents.cpp SIutils.cpp
 
 sectionsd_LDADD = \
+        @CONNECTION_LIBS@ \
 	@EVENTSERVER_LIBS@ \
 	-lpthread
 
