@@ -109,6 +109,7 @@ eServiceDVB::eServiceDVB(const eServiceDVB &c):
 	service_type=c.service_type;
 	service_provider=c.service_provider;
 	service_number=c.service_number;
+	dxflags=c.dxflags;
 	memcpy(cache, c.cache, sizeof(cache));
 	dvb=this;
 }
