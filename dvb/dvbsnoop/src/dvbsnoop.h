@@ -1,5 +1,5 @@
 /*
-$Id: dvbsnoop.h,v 1.4 2002/09/13 23:57:04 obi Exp $
+$Id: dvbsnoop.h,v 1.4.2.1 2003/07/06 05:23:31 obi Exp $
 
  -- dvbsnoop
  -- a dvb sniffer tool
@@ -8,6 +8,15 @@ $Id: dvbsnoop.h,v 1.4 2002/09/13 23:57:04 obi Exp $
    (c) rasc
 
 $Log: dvbsnoop.h,v $
+Revision 1.4.2.1  2003/07/06 05:23:31  obi
+merge from cvs head
+
+Revision 1.6  2003/06/24 23:51:03  rasc
+bugfixes and enhancements
+
+Revision 1.5  2002/11/01 20:38:40  Jolt
+Changes for the new API
+
 Revision 1.4  2002/09/13 23:57:04  obi
 define NEWSTRUCT to work with current linuxtv cvs
 
@@ -23,9 +32,8 @@ dvbsnoop v0.7  -- Commit to CVS
 
 */
 
-#define VERSION  "0.7b"
+#define DVBSNOOP_VERSION  "0.9b"
 
-//#define NEWSTRUCT
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +44,9 @@ dvbsnoop v0.7  -- Commit to CVS
 #include <fcntl.h>
 #include <unistd.h>
 
-#ifdef NEWSTRUCT
+#include <config.h>
+
+#ifndef HAVE_OST_DMX_H
 #include <linux/dvb/dmx.h>
 #define DEMUX_DEVICE "/dev/dvb/adapter0/demux0"
 #define DVR_DEVICE   "/dev/dvb/adapter0/dvr0"
@@ -44,6 +54,9 @@ dvbsnoop v0.7  -- Commit to CVS
 #include <ost/dmx.h>
 #define DEMUX_DEVICE "/dev/dvb/card0/demux0"
 #define DVR_DEVICE   "/dev/dvb/card0/dvr0"
+#define dmx_pes_filter_params dmxPesFilterParams
+#define dmx_sct_filter_params dmxSctFilterParams
+#define pes_type pesType
 #endif
 
 #include "helper.h"

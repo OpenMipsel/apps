@@ -1,5 +1,5 @@
 /*
-$Id: dmx_sect.c,v 1.3 2002/08/17 20:36:12 obi Exp $
+$Id: dmx_sect.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
 
  -- (c) 2001 rasc
  --  Sections Streams
@@ -10,6 +10,15 @@ $Id: dmx_sect.c,v 1.3 2002/08/17 20:36:12 obi Exp $
 
 
 $Log: dmx_sect.c,v $
+Revision 1.3.2.1  2003/07/06 05:23:31  obi
+merge from cvs head
+
+Revision 1.5  2003/05/28 01:35:01  obi
+fixed read() return code handling
+
+Revision 1.4  2002/11/01 20:38:40  Jolt
+Changes for the new API
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -59,8 +68,8 @@ int  doReadSECT (OPTION *opt)
   */
 
 {
-  struct dmxSctFilterParams flt;
-  memset (&flt, 0, sizeof (struct dmxSctFilterParams));
+  struct dmx_sct_filter_params flt;
+  memset (&flt, 0, sizeof (struct dmx_sct_filter_params));
   flt.pid = opt->pid;
   flt.filter.filter[0] = opt->filter;
   flt.filter.mask[0] = opt->mask;
@@ -93,10 +102,11 @@ int  doReadSECT (OPTION *opt)
       -- error ?
     */
 
-    if (n <= 0) {
-        fprintf (stderr,"Error on read: %ld\n",n);
-        continue;
-    }
+    if (n == -1)
+	perror("read");
+
+    if (n <= 0)
+	continue;
 
 
 

@@ -1,5 +1,5 @@
 /*
-$Id: dmx_pes.c,v 1.3 2002/08/17 20:36:12 obi Exp $
+$Id: dmx_pes.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
 
  -- (c) 2001 rasc
  -- PE Streams
@@ -10,6 +10,18 @@ $Id: dmx_pes.c,v 1.3 2002/08/17 20:36:12 obi Exp $
 
 
 $Log: dmx_pes.c,v $
+Revision 1.3.2.1  2003/07/06 05:23:31  obi
+merge from cvs head
+
+Revision 1.6  2003/05/28 01:35:01  obi
+fixed read() return code handling
+
+Revision 1.5  2003/01/07 00:43:58  obi
+set buffer size to 256kb
+
+Revision 1.4  2002/11/01 20:38:40  Jolt
+Changes for the new API
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -32,8 +44,8 @@ dvbsnoop v0.7  -- Commit to CVS
 
 
 
-#define PES_BUF_SIZE  (1024 *1024)
-#define READ_BUF_SIZE (2* 64 * 1024)  // larger as 64KB !!
+#define PES_BUF_SIZE  (256 * 1024)
+#define READ_BUF_SIZE (2 * 64 * 1024)  // larger as 64KB !!
 
 
 
@@ -62,15 +74,15 @@ int  doReadPES (OPTION *opt)
   */
 
 {
-  struct dmxPesFilterParams flt;
+  struct dmx_pes_filter_params flt;
 
   ioctl (fd,DMX_SET_BUFFER_SIZE, PES_BUF_SIZE);
-  memset (&flt, 0, sizeof (struct dmxPesFilterParams));
+  memset (&flt, 0, sizeof (struct dmx_pes_filter_params));
 
   flt.pid = opt->pid;
   flt.input  = DMX_IN_FRONTEND;
   flt.output = DMX_OUT_TAP;
-  flt.pesType = DMX_PES_OTHER;
+  flt.pes_type = DMX_PES_OTHER;
   flt.flags = 0;
 
   if ((i=ioctl(fd,DMX_SET_PES_FILTER,&flt)) < 0) {
@@ -117,10 +129,11 @@ int  doReadPES (OPTION *opt)
       -- error ?
     */
 
-    if (n <= 0) {
-        fprintf (stderr,"Error on read: %ld\n",n);
+    if (n == -1)
+	perror("read");
+    
+    if (n <= 0)
         continue;
-    }
 
 
 

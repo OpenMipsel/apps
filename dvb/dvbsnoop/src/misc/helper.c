@@ -1,14 +1,36 @@
 /*
-$Id: helper.c,v 1.3 2002/08/17 20:36:12 obi Exp $
+$Id: helper.c,v 1.3.2.1 2003/07/06 05:23:31 obi Exp $
 
  -- dvbsnoop
  -- a dvb sniffer tool
  -- mainly for me to learn the dvb streams
 
- -- (c) rasc
+ -- (c) rasc rainer.Scherg@t-online.de
 
 
 $Log: helper.c,v $
+Revision 1.3.2.1  2003/07/06 05:23:31  obi
+merge from cvs head
+
+Revision 1.9  2003/06/24 23:51:03  rasc
+bugfixes and enhancements
+
+Revision 1.8  2003/02/26 16:45:16  obi
+- make dvbsnoop work on little endian machines again
+- fixed mask in getBits for bitlen >= 32
+
+Revision 1.7  2003/02/09 23:11:07  rasc
+no message
+
+Revision 1.6  2003/02/09 23:02:47  rasc
+-- endian check (bug fix)
+
+Revision 1.5  2003/02/09 23:01:10  rasc
+-- endian check (bug fix)
+
+Revision 1.4  2003/02/09 22:59:33  rasc
+-- endian check (bug fix)
+
 Revision 1.3  2002/08/17 20:36:12  obi
 no more compiler warnings
 
@@ -34,12 +56,9 @@ dvbsnoop v0.7  -- Commit to CVS
 
 
 
-
-
 /* 
   -- get bits out of buffer
-  -- This code is system dependend (works not on Intel!)
-  -- startbit ist von links nacvh rechts im buffer!!!!
+  -- (getting more than 24 bits is not save)
   -- return: value
 */
 
@@ -48,44 +67,41 @@ unsigned long getBits (u_char *buf, int byte_offset, int startbit, int bitlen)
 {
  u_char *b;
  unsigned long  v;
- int           bytepos;
  unsigned long mask;
  unsigned long tmp_long;
- //int           i;
- //int           xstartbit;
 
-
-//printf ("\ngetbits: byteoffset: %d , start: %d, len: %d\n", byte_offset, startbit, bitlen);
-
- b = (unsigned char *)buf;
-
- bytepos = byte_offset + (startbit / 8);
+ b = &buf[byte_offset + (startbit / 8)];
  startbit %= 8;
 
- b += bytepos;
  tmp_long = (unsigned long)( ((*b)<<24) + (*(b+1)<<16) +
-	 (*(b+2)<<8) + *(b+3) );
+		 (*(b+2)<<8) + *(b+3) );
 
-//printf (" -- corrected1:: bytepos: %d , start: %d\n", bytepos, startbit);
  startbit = 32 - startbit - bitlen;
 
-
-//printf (" -- corrected2::  start: %d, len: %d\n", startbit, bitlen);
-//printf (" -- tmp_long: 0x%08lx\n",tmp_long);
-
  tmp_long = tmp_long >> startbit;
- mask = (1<<bitlen) - 1;
 
-
-//printf (" -- mask: 0x%08lx\n",mask);
-//printf (" -- shifted tmp_long: 0x%08lx\n",tmp_long);
+ // ja, das ULL muss so sein (fuer bitlen == 32 z.b.)...
+ mask = (1ULL << bitlen) - 1;
 
  v = tmp_long & mask;
 
-
-//printf (" -- ret value: 0x%08lx\n\n",v);
-
  return v;
+}
+
+
+
+/*
+  -- get ISO 639  (3char) language code into string[4]
+  -- terminate string with \0
+  -- return ptr to buf;
+ */
+
+u_char *getISO639_3 (u_char *str, u_char *buf)
+
+{
+  strncpy (str, buf, 3);
+  *(str+3) = '\0';
+  return str;
 }
 
 
