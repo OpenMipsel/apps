@@ -30,6 +30,7 @@
 
 #define SAA_NTSC                0
 #define SAA_PAL                 1
+#define SAA_PAL_M               2
 
 #define SAA_INP_MP1             1
 #define SAA_INP_MP2             2
@@ -102,6 +103,7 @@ void eAVSwitch::reloadSettings()
 	unsigned int colorformat;
 	eConfig::getInstance()->getKey("/elitedvb/video/colorformat", colorformat);
 	setColorFormat((eAVColorFormat)colorformat);
+	setVSystem(system);
 }
 
 int eAVSwitch::setVolume(int vol)
@@ -380,10 +382,14 @@ int eAVSwitch::setAspectRatio(eAVAspectRatio as)
 
 void eAVSwitch::setVSystem(eVSystem _system)
 {
-	if (system != _system)
+	unsigned int palM = 0;
+	eConfig::getInstance()->getKey("/elitedvb/video/palM", palM );
+
+//	if (system != _system)
 	{
-		int saa = (_system == vsNTSC) ? SAA_NTSC : SAA_PAL;
-		::ioctl(saafd, SAAIOSENC, &saa);
+		int saa = (_system == vsNTSC) ? (palM ? SAA_PAL_M : SAA_NTSC) : SAA_PAL;
+		if ( ::ioctl(saafd, SAAIOSENC, &saa) < 0 )
+			eDebug("SAAIOSENC failed (%m)");
 	}
 	system = _system;
 }

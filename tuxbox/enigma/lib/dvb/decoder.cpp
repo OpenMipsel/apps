@@ -634,7 +634,7 @@ void Decoder::startTrickmode()
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
 	}
 	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,1)<0)
-		eDebug("AUDIO_PAUSE failed (%m)");
+		eDebug("AUDIO_SET_MUTE failed (%m)");
 }
 
 void Decoder::stopTrickmode()
@@ -648,7 +648,7 @@ void Decoder::stopTrickmode()
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
 	}
 	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,0)<0)
-		eDebug("AUDIO_PAUSE failed (%m)");
+		eDebug("AUDIO_SET_MUTE failed (%m)");
 }
 
 void Decoder::addCADescriptor(__u8 *descriptor)

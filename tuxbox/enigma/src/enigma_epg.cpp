@@ -185,7 +185,9 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 		#else
 			selService(+1);
 		#endif
-		else if ((event.action == &i_cursorActions->ok) && eventvalid)
+		else if (event.action == &i_cursorActions->ok)
+			close(eventvalid?0:-1);
+		else if ((event.action == &i_epgSelectorActions->showExtendedInfo) && eventvalid)
 		{
 			eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current_service->service);
 			eEventDisplay ei(service ? service->service_name.c_str() : "", current_service->service, 0, (EITEvent*)current_service->current_entry->event);
@@ -347,7 +349,7 @@ void eZapEPG::selService(int dir)
 		if (current_service == serviceentries.end())
 		{
 			focusColumn=0;
-			close(1);
+			close(2);
 			return;
 		}
 		else
@@ -361,7 +363,7 @@ void eZapEPG::selService(int dir)
 		}
 		else
 		{
-			close(0);
+			close(1);
 			focusColumn=numservices-1;
 			return;
 		}
@@ -405,7 +407,7 @@ void eZapEPG::selEntry(int dir)
 		if ( dir == -1 && offs >= hours*3600 )
 		{
 			offs -= hours*3600;
-			close(2);
+			close(3);
 		}
 /*		else
 			eDebug("invalid service");*/
@@ -425,7 +427,7 @@ void eZapEPG::selEntry(int dir)
 			if ( eventWidget->isVisible() )
 			{
 				offs += hours*3600;
-				close(3);
+				close(4);
 			}
 			else
 				--current_service->current_entry;
@@ -438,7 +440,7 @@ void eZapEPG::selEntry(int dir)
 			if ( offs >= hours*3600 )
 			{
 				offs -= hours*3600;
-				close(2);
+				close(3);
 			}
 			return;
 		}
@@ -452,10 +454,10 @@ void eZapEPG::selEntry(int dir)
 void eZapEPG::buildPage(int direction)
 {
 	/*
-			direction 0  ->  left
-			direction 1  ->  right
-			direction 2  ->  up
-			direction 3  ->  down  */
+			direction 1  ->  left
+			direction 2  ->  right
+			direction 3  ->  up
+			direction 4  ->  down  */
 	if ( eventWidget )
 		eventWidget->hide();
 	serviceentries.clear();
@@ -474,7 +476,7 @@ void eZapEPG::buildPage(int direction)
 	time_t now=time(0)+eDVB::getInstance()->time_difference+offs,
 				 end=now+hours*3600;
 
-	if ( direction == 0 )
+	if ( direction == 1 )
 		// go left.. we must count "numservices" back
 	{
 		std::list<eServiceReferenceDVB>::iterator s(curS);
@@ -504,9 +506,9 @@ void eZapEPG::buildPage(int direction)
 		while( s != curS );
 		curS=curE=s;
 	}
-	else if ( direction == 1 ) // right
+	else if ( direction == 2 ) // right
 		curS=curE;
-	else if ( direction > 1 )  // up or down
+	else if ( direction > 2 )  // up or down
 		curE=curS;
 
 #ifdef DIR_V
@@ -559,7 +561,7 @@ void eZapEPG::buildPage(int direction)
 			buildService(service, now, end);
 
    // set focus line
-			if ( direction == 2 )  // up pressed
+			if ( direction == 3 )  // up pressed
     // set focus to last line
 				service.current_entry = --service.entries.end();
 			else  // set focus to first line

@@ -2,6 +2,7 @@
 #include <list>
 
 #include <enigma.h>
+#include <enigma_epg.h>
 #include <enigma_main.h>
 #include <sselect.h>
 
@@ -1000,14 +1001,15 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				{
 					case 1:
 						/*emit*/ showEPGList((eServiceReferenceDVB&)selected);
+						show();
 						break;
 					case 2:
-						/*emit*/ showMultiEPG();
+						showMultiEPG();
 						break;
 					default:
+						show();
 						break;
 				}
-				show();
 			}
 			else if (event.action == &i_serviceSelectorActions->pathUp)
 				pathUp();
@@ -1504,6 +1506,30 @@ void eServiceSelector::enterDirectory(const eServiceReference &ref)
 	if (!selectService( eServiceInterface::getInstance()->service ))
 		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
 	services->endAtomic();
+}
+
+void eServiceSelector::showMultiEPG()
+{
+	eZapEPG epg;
+
+	epg.move(ePoint(50, 50));
+	epg.resize(eSize(620, 470));
+
+	int direction = 1;
+	epg.show();
+	do
+	{
+		epg.buildPage(direction);
+		direction = epg.exec();
+	}
+	while ( direction > 0 );
+	epg.hide();
+	if ( !direction ) // switch to service requested...
+	{
+		selectService( epg.getCurSelected()->service );
+		result=&selected;
+		close(0);
+	}
 }
 
 void eServiceSelector::doSPFlags(const eServiceReference &ref)

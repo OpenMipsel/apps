@@ -601,7 +601,7 @@ TransponderScan::~TransponderScan()
 {
 }
 
-void showPic()
+void showScanPic()
 {
 	FILE *f = fopen(CONFIGDIR "/enigma/pictures/scan.mvi", "r");
 	if ( f )
@@ -628,7 +628,7 @@ int TransponderScan::exec(tState initial)
 
 	while (state != stateEnd)
 	{
-		showPic();
+		showScanPic();
 
 		switch (state)
 		{
@@ -669,7 +669,7 @@ int TransponderScan::exec(tState initial)
 
 			eDVB::getInstance()->setMode(eDVB::controllerScan);        
 
-			showPic();
+			showScanPic();
 #ifndef DISABLE_LCD
 			tsManual manual_scan(this, transponder, LCDTitle, LCDElement);
 #else
@@ -698,7 +698,7 @@ int TransponderScan::exec(tState initial)
 		{
 			eDVB::getInstance()->setMode(eDVB::controllerScan);
 
-			showPic();
+			showScanPic();
 
 			tsAutomatic automatic_scan(this);
 #ifndef DISABLE_LCD

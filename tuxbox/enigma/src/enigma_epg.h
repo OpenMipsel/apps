@@ -58,6 +58,7 @@ class eZapEPG: public eWindow
 	void selService(int dir);
 	void selEntry(int dir);
 public:
+	std::list<serviceentry>::iterator& getCurSelected() { return current_service; }
 	void addToList( const eServiceReference& ref );
 	eZapEPG();
 	void buildPage(int direction);

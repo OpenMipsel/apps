@@ -51,7 +51,6 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/gdi/lcd.h>
 #include <lib/gdi/glcddc.h>
-#include <enigma_epg.h>
 
 		// bis waldi das in nen .h tut
 #define MOVIEDIR "/hdd/movie"
@@ -1541,7 +1540,6 @@ eZapMain::eZapMain()
 	CONNECT(sel->showMenu, eZapMain::showServiceMenu);
 	CONNECT_2_1(sel->setMode, eZapMain::setMode, 0);
 	CONNECT(sel->moveEntry, eZapMain::moveService);
-	CONNECT(sel->showMultiEPG, eZapMain::showMultiEPG);
 	CONNECT(sel->showEPGList, eZapMain::showEPGList);
 	CONNECT(sel->getRoot, eZapMain::getRoot);
 	CONNECT(sel->deletePressed, eZapMain::deleteService );
@@ -3279,7 +3277,6 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 
 //		eDebug("play");
 		eServiceInterface::getInstance()->play(service);
-
 		if ( flags&psSeekPos )
 		{
 			std::list<ePlaylistEntry>::iterator i =
@@ -3331,7 +3328,10 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 		if (first)
 			playlist->current = playlist->getList().begin();
 		if (playlist->current != playlist->getConstList().end())
-			eServiceInterface::getInstance()->play((eServiceReference&)(*playlist->current));
+		{
+			eServiceReference ref=(eServiceReference&)(*playlist->current);
+			eServiceInterface::getInstance()->play(ref);
+		}
 		else
 		{
 			Description->setText(_("This directory doesn't contain anything playable!"));
@@ -4149,6 +4149,30 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 	return eWidget::eventHandler(event);
 }
 
+void showMP3Pic()
+{
+	FILE *f = fopen(CONFIGDIR "/enigma/pictures/mp3.mvi", "r");
+	if ( f )
+	{
+		fclose(f);
+		Decoder::displayIFrameFromFile(CONFIGDIR "/enigma/pictures/mp3.mvi" );
+	}
+	else
+		Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/mp3.mvi" );
+}
+
+void showRadioPic()
+{
+	FILE *f = fopen(CONFIGDIR "/enigma/pictures/radio.mvi", "r");
+	if ( f )
+	{
+		fclose(f);
+		Decoder::displayIFrameFromFile(CONFIGDIR "/enigma/pictures/radio.mvi" );
+	}
+	else
+		Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/radio.mvi" );
+}
+
 void eZapMain::handleServiceEvent(const eServiceEvent &event)
 {
 	switch (event.type)
@@ -4180,7 +4204,30 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 	{
 		int err = eServiceInterface::getInstance()->getService()->getErrorInfo();
 		serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
-		startService(eServiceInterface::getInstance()->service, err);
+
+		eServiceReference &ref = eServiceInterface::getInstance()->service;
+		startService(ref, err);
+
+// SHOW PICTURE
+		switch(mode)
+		{
+			case modeFile:
+				if (ref.type == eServiceReference::idUser &&
+					ref.data[0] == eMP3Decoder::codecMP3 )
+				{
+					showMP3Pic();
+				}
+				break;
+			case modeRadio:
+				if (ref.type == eServiceReference::idDVB &&
+					Decoder::parms.vpid == -1)
+				{
+					showRadioPic();
+				}
+				break;
+			default:
+				break;
+		}
 		break;
 	}
 	case eServiceEvent::evtStop:
@@ -5040,24 +5087,6 @@ void eZapMain::moveService(const eServiceReference &path, const eServiceReferenc
 		after=currentSelectedUserBouquet->getList().end();
 
 	currentSelectedUserBouquet->moveService(it, after);
-}
-
-void eZapMain::showMultiEPG()
-{
-	eZapEPG epg;
-
-	epg.move(ePoint(50, 50));
-	epg.resize(eSize(620, 470));
-
-	int direction = 1;
-	epg.show();
-	do
-	{
-		epg.buildPage(direction);
-		direction = epg.exec();
-	}
-	while ( direction != -1 );
-	epg.hide();
 }
 
 #ifndef DISABLE_FILE

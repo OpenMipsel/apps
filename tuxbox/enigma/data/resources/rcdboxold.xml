@@ -190,6 +190,7 @@
 			<action name="addNGRABTimerEvent" key="yellow" flags="m" />
 			<action name="addSwitchTimerEvent" key="blue" flags="m" />
 			<action name="removeTimerEvent" key="red" flags="m" />
+			<action name="showExtendedInfo" key="?" flags="m" />
 		</actionmap>
 
 		<actionmap name="enigmaVCR">

@@ -533,7 +533,6 @@ public:
 	void getServiceSelectorPath(eServicePath &path);
 
 	void moveService(const eServiceReference &path, const eServiceReference &ref, const eServiceReference &after);
-	void showMultiEPG();
 
 	void loadPlaylist( bool create = false );
 	void savePlaylist( bool destory = false );

@@ -31,11 +31,14 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	if (eConfig::getInstance()->getKey("/elitedvb/video/disableWSS", v_disableWSS ))
 		v_disableWSS = 0;
 
+	if (eConfig::getInstance()->getKey("/elitedvb/video/palM", v_palM ))
+		v_palM=0;
+
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	setText(_("A/V Settings"));
-	move(ePoint(160, 116));
-	cresize(eSize(390, 290));
+	move(ePoint(160, 100));
+	cresize(eSize(390, 330));
 
 	eLabel *l=new eLabel(this);
 	l->setText(_("Color Format:"));
@@ -82,7 +85,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	c_disableWSS->resize(eSize(350,30));
 	c_disableWSS->setText(_("Disable WSS on 4:3"));
 	c_disableWSS->setHelpText(_("don't send WSS signal when A-ratio is 4:3"));
-	CONNECT( c_disableWSS->checked, eZapVideoSetup::VDisableWSSChanged );
+	CONNECT( c_disableWSS->checked, eZapVideoSetup::DisableWSSChanged );
 
 	int sac3default = 0;
 	sac3default=eAudio::getInstance()->getAC3default();
@@ -94,11 +97,18 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	ac3default->setHelpText(_("enable/disable ac3 default output (ok)"));
 	CONNECT( ac3default->checked, eZapVideoSetup::ac3defaultChanged );
 
+	palM=new eCheckbox(this, v_palM, 1);
+	palM->setText(_("use PAL-M for NTSC"));
+	palM->move(ePoint(20, 190));
+	palM->resize(eSize(350, 30));
+	palM->setHelpText(_("use PAL-M instead of real NTSC"));
+	CONNECT( palM->checked, eZapVideoSetup::palMChanged );
+
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 205));
+	ok->move(ePoint(20, 245));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -123,6 +133,7 @@ void eZapVideoSetup::okPressed()
 	eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat );
 	eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 );
 	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", v_disableWSS );
+	eConfig::getInstance()->setKey("/elitedvb/video/palM", v_palM);
 	eAudio::getInstance()->saveSettings();
 	eConfig::getInstance()->flush();
 	close(1);
@@ -170,7 +181,7 @@ void eZapVideoSetup::VPin8Changed( eListBoxEntryText * e)
 	}
 }
 
-void eZapVideoSetup::VDisableWSSChanged( int i )
+void eZapVideoSetup::DisableWSSChanged( int i )
 {
 	unsigned int old = 0;
 	eConfig::getInstance()->getKey("/elitedvb/video/disableWSS", old );
@@ -179,6 +190,16 @@ void eZapVideoSetup::VDisableWSSChanged( int i )
 	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", v_disableWSS );
 	eStreamWatchdog::getInstance()->reloadSettings();
 	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", old );
+}
+
+void eZapVideoSetup::palMChanged( int i )
+{
+	unsigned int old = 0;
+	eConfig::getInstance()->getKey("/elitedvb/video/palM", old );
+	v_palM = (unsigned int) i;
+	eConfig::getInstance()->setKey("/elitedvb/video/palM", v_palM);
+	eAVSwitch::getInstance()->reloadSettings();
+	eConfig::getInstance()->setKey("/elitedvb/video/palM", old );
 }
 
 void eZapVideoSetup::ac3defaultChanged( int i )

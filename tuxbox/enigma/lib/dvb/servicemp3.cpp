@@ -662,7 +662,10 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			int br=audiodecoder->getAverageBitrate();
 			if ( br <= 0 )
 				break;
-			br/=128;
+			if ( type == codecMPG )
+				br/=128;
+			else
+				br/=32;
 			br*=message.parm;
 			offset=input.size();
 			if ( type == codecMPG )

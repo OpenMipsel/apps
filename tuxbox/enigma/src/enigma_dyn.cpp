@@ -182,7 +182,8 @@ static eString switchService(eString request, eString dirpath, eString opt, eHTT
 		if(!iface)
 			return "-1";
 		eServiceReferenceDVB *ref=new eServiceReferenceDVB(eDVBNamespace(dvb_namespace), eTransportStreamID(transport_stream_id), eOriginalNetworkID(original_network_id), eServiceID(service_id), service_type);
-		iface->play(*ref);
+		eZapMain::getInstance()->playService(*ref, eZapMain::psSetMode|eZapMain::psDontAdd);
+//		iface->play(*ref);
 		result="0";
 	} else
 	{
@@ -493,7 +494,8 @@ static eString getWatchContent(eString mode, eString path)
 
 		if (! (current_service.flags&eServiceReference::isDirectory))	// is playable
 		{
-			iface->play(current_service);
+			eZapMain::getInstance()->playService(current_service, eZapMain::psSetMode|eZapMain::psDontAdd);
+//			iface->play(current_service);
 //			result+="ok, hear the music..";
 		} else
 		{
@@ -851,7 +853,6 @@ static eString getsi(eString request, eString dirpath, eString opt, eHTTPConnect
 		}
 	}
 
-
 	result+=eString("<html>" CHARSETMETA "<head><title>streaminfo</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/si.css\"></head><body bgcolor=#000000>");
 	result+=eString("<table cellspacing=0 cellpadding=0 border=0>");
 	result+=eString("<tr><td>name:</td><td>"+name+"</td></tr>");
@@ -1108,7 +1109,8 @@ static eString navigator(eString request, eString dirpath, eString opt, eHTTPCon
 
 	if (! (current_service.flags&eServiceReference::isDirectory))	// is playable
 	{
-		iface->play(current_service);
+		eZapMain::getInstance()->playService(current_service, eZapMain::psSetMode|eZapMain::psDontAdd);
+//		iface->play(current_service);
 		res+="ok, hear the music..";
 	} else
 	{
@@ -1207,8 +1209,9 @@ static eString screenshot(eString request, eString dirpath, eString opts, eHTTPC
 void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 {
 	dyn_resolver->addDyn("GET", "/", web_root);
-	dyn_resolver->addDyn("GET", "/setVolume", setVolume);
+	dyn_resolver->addDyn("GET", NAVIGATOR_PATH, navigator);
 
+	dyn_resolver->addDyn("GET", "/setVolume", setVolume);
 	dyn_resolver->addDyn("GET", "/cgi-bin/status", doStatus);
 	dyn_resolver->addDyn("GET", "/cgi-bin/switchService", switchService);
 	dyn_resolver->addDyn("GET", "/cgi-bin/admin", admin);
@@ -1217,8 +1220,6 @@ void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 	dyn_resolver->addDyn("GET", "/cgi-bin/message", message);
 	dyn_resolver->addDyn("GET", "/control/message", message);
 	dyn_resolver->addDyn("GET", "/cgi-bin/xmessage", xmessage);
-
-	dyn_resolver->addDyn("GET", NAVIGATOR_PATH, navigator);
 
 	dyn_resolver->addDyn("GET", "/audio.m3u", audiom3u);
 	dyn_resolver->addDyn("GET", "/version", version);

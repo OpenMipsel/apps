@@ -127,8 +127,6 @@ public:
 		const eServiceReference &			// service AFTER moved service
 		> moveEntry;
 
-	Signal0<void> showMultiEPG;
-	
 	Signal1<void,eServiceReferenceDVB>showEPGList;
 
 	const eServicePath &getPath() { return path; }
@@ -150,6 +148,7 @@ public:
 	void removeCurrent(bool=false);
 	void invalidateCurrent(eServiceReference ref=eServiceReference());
 	void updateNumbers();
+	void showMultiEPG();
 
 	int toggleMoveMode();  // enable / disable move entry Mode ( only in userBouquets )
 	int toggleEditMode();  // enable / disable edit UserBouquet Mode
