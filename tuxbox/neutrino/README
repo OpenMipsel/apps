@@ -14,10 +14,13 @@ Suitable other source code:
 apps/dvb/zapit      : rel_alexW
 apps/misc/libs      : HEAD
 apps/tuxbox/lcd     : rel_1_0_0
-apps/tuxbox/neutrino: HEAD (patched, see above)
-apps/tuxbox/plugins : rel_1_0_0
+apps/tuxbox/neutrino: HEAD        (patched, see above)
+apps/tuxbox/plugins : rel_1_0_0   (call "make .libsigc" before
+                                   compiling them, since in the
+                                   HEAD cdk, .plugins does not
+                                   depend on .libsigc)
 apps/tuxbox/tools   : rel_1_0_0
-cdk                 : HEAD (Makefile.am patched, see below)
+cdk                 : HEAD        (Makefile.am patched, see below)
 driver              : rel_alexW
 
 
