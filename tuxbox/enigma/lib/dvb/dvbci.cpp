@@ -429,7 +429,7 @@ void eDVBCI::sendData(unsigned char tc_id,unsigned char *data,unsigned int len)
 			memcpy(lpdu+2,data+rp,PAYLOAD_LEN);
 			rp+=PAYLOAD_LEN;
 			bytesleft-=PAYLOAD_LEN;
-#if 0			
+#if 0
 			int i;
 			for(i=0;i<PAYLOAD_LEN+2;i++)
 				printf("%02x ",lpdu[i]);
@@ -449,7 +449,7 @@ void eDVBCI::sendData(unsigned char tc_id,unsigned char *data,unsigned int len)
 			memcpy(lpdu+2,data+rp,bytesleft+2);
 #if 0
 			int i;
-			for(i=0;i<bytesleft+2;i++)
+			for(i=0;i<(int)bytesleft+2;i++)
 				printf("%02x ",lpdu[i]);
 			printf("\n");	
 #endif
@@ -699,6 +699,8 @@ int eDVBCI::service_available(unsigned long service_class)
 void eDVBCI::handle_spdu(unsigned int tpdu_tc_id,unsigned char *data,int len)
 {
 	unsigned char buffer[40];
+
+	printf("handle_spdu()\n");
 	
 	switch(data[0])
 	{
@@ -731,7 +733,7 @@ void eDVBCI::handle_spdu(unsigned int tpdu_tc_id,unsigned char *data,int len)
 				buffer[8]=i& 0xff;
 				sendTPDU(0xA0,9,tpdu_tc_id,buffer);
 
-				eDebug("[DVBCI] serviceclass (%x) requested accepted on %d",*(unsigned long*)(data+2),i);
+				eDebug("[DVBCI] serviceclass (%x) request accepted on %d",*(unsigned long*)(data+2),i);
 				
 				if(sessions[i].service_class==0x10041)
 					help_manager(i);
@@ -755,6 +757,15 @@ void eDVBCI::handle_spdu(unsigned int tpdu_tc_id,unsigned char *data,int len)
 				memcpy(buffer,"\x96\x3\x0",3);
 				buffer[3]=data[2];
 				buffer[4]=data[3];
+			
+				for(int i=1;i<MAX_SESSIONS;i++)
+					if(sessions[i].state!=STATE_FREE)
+						if(sessions[i].service_class == 0x400041)
+						{
+							sessions[i].state=STATE_FREE;
+							printf("freeing session %d\n",i);
+							break;
+						}
 				sendTPDU(0xA0,5,tpdu_tc_id,buffer);
 				break;
 			}										
@@ -775,7 +786,7 @@ void eDVBCI::receiveTPDU(unsigned char tpdu_tag,unsigned int tpdu_len,unsigned c
 			break;
 		case 0x83:
 			eDebug("[DVBCI] T_C_ID %d wurde erstellt",tpdu_tc_id);	
-			//pollTimer.start(800);		//200
+			pollTimer.start(200);		//200
 			break;
 		case 0xA0:
 			if(tpdu_len)
@@ -783,6 +794,7 @@ void eDVBCI::receiveTPDU(unsigned char tpdu_tag,unsigned int tpdu_len,unsigned c
 				if(data[0] >= 0x90 && data[0] <= 0x96)
 				{
 					handle_spdu(tpdu_tc_id,data,tpdu_len);
+					pollTimer.start(200);		//200
 				}
 				else
 				{
@@ -793,6 +805,7 @@ void eDVBCI::receiveTPDU(unsigned char tpdu_tag,unsigned int tpdu_len,unsigned c
 	}		
 }
 
+#if 0
 void eDVBCI::incoming(unsigned char *buffer,int len)
 {
 	int tc_id;
@@ -883,6 +896,153 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 	}	
 	//pollTimer.start(200);
 }
+#else
+
+ptrlpduQueueElem eDVBCI::AllocLpduQueueElem(unsigned char t_c_id)
+{
+	ptrlpduQueueElem curElem;
+	
+	curElem = (ptrlpduQueueElem) malloc(sizeof(lpduQueueElem));
+		
+	//memset(curElem, 0, sizeof(lpduQueueElem));
+			
+	curElem->lpduLen = 0;
+			
+	(curElem->lpdu)[0] = t_c_id;
+						
+	curElem->nextElem = NULL;
+						
+	return curElem;
+}
+
+int eDVBCI::lpduQueueElemIsMore(ptrlpduQueueElem curElem)
+// Check header of contained LPDU for "more" flag
+{
+	
+	if ((curElem->lpdu)[1] & 0x80)
+		return 1;
+	else
+		return 0;
+}
+
+void eDVBCI::incoming(unsigned char *buffer,int len)
+{
+	ptrlpduQueueElem curElem, lastElem;
+
+	unsigned char t_c_id;
+	
+	unsigned char * payloadData;
+	long payloadIndex;
+	long length;
+	unsigned char from_t_c_id;
+
+	payloadData = NULL;
+	length = 0;
+	from_t_c_id = 0;
+	
+	// Allocate LPDU queue element
+	curElem = AllocLpduQueueElem(0);
+
+	// Get LPDU
+	memcpy(curElem->lpdu,buffer,len);
+	curElem->lpduLen=len;
+
+	// get transport ID
+	t_c_id = (curElem->lpdu)[0];
+
+	// Append to the current receive queue for the transport ID
+	lastElem = lpduReceiveQueues[t_c_id].firstLPDU;
+
+	if (lastElem == NULL)
+	{
+		lpduReceiveQueues[t_c_id].firstLPDU = curElem;
+	}
+	else
+	{
+		while (lastElem->nextElem != NULL)
+			lastElem = lastElem->nextElem;
+
+		lastElem->nextElem = curElem;
+	}
+			// Increment LPDU count
+	lpduReceiveQueues[t_c_id].numLPDUS++;
+
+	if (!lpduQueueElemIsMore(curElem))
+	{
+		payloadIndex = 0;
+
+		length = lpduReceiveQueues[t_c_id].numLPDUS * LPDUPAYLOADLEN;
+		from_t_c_id = t_c_id;
+
+		payloadData = (unsigned char *) malloc(length);
+		length = 0;
+
+		curElem = lpduReceiveQueues[t_c_id].firstLPDU;
+
+		while (curElem != NULL)
+		{
+			memcpy(payloadData + payloadIndex, (curElem->lpdu) + LPDUHEADERLEN, (curElem->lpduLen) - LPDUHEADERLEN);
+
+			payloadIndex += ((curElem->lpduLen) - LPDUHEADERLEN);
+			(length) += ((curElem->lpduLen) - LPDUHEADERLEN);
+			
+			lastElem = curElem;
+			curElem = curElem->nextElem;
+
+			// And remove element
+			free(lastElem);
+		}
+		
+		lpduReceiveQueues[t_c_id].numLPDUS = 0;
+		lpduReceiveQueues[t_c_id].firstLPDU = NULL;
+	
+		//printf("data assembled\n");
+		//for(int i=0;i<length;i++)
+		//	printf("%02x ",payloadData[i]);
+		//printf("\n");	
+		
+		//if(payloadData[length-4] != 0x80)
+		//	printf("Status-Field broken!!! (tag)\n");
+
+		//if(payloadData[length-3] != 0x2)
+		//	printf("Status-Field broken!!! (len)\n");
+
+		if(payloadData[length-1] == 0x80)
+		{
+			//printf("query data\n");
+			sendTPDU(0x81,0,payloadData[length-2],0);
+		}
+
+		length-=4;
+		
+		int cl=payloadData[1] & 0x7f;
+		int lenfield=1;
+		if(payloadData[1] & 0x80)
+		{
+			lenfield = payloadData[1] & 0x7f;
+			
+			cl=0;
+			for(int i=0;i<lenfield;i++)
+				cl |= payloadData[2+i] << ((lenfield-(i+1))*8);
+
+			lenfield++;
+			//printf("lenfield:%d len:%d\n",lenfield,cl);
+		}	
+		
+		//printf("tpdu\n");
+		//for(int i=0;i<length;i++)
+		//	printf("%02x ",payloadData[i]);
+		//printf("\n");	
+	
+		if(length>1)
+			receiveTPDU(payloadData[0],cl,t_c_id,payloadData+(2+lenfield));
+
+		free(payloadData);	
+
+		pollTimer.start(250);
+	}
+}
+#endif
 
 void eDVBCI::dataAvailable(int what)
 {
@@ -955,13 +1115,13 @@ void eDVBCI::dataAvailable(int what)
 		sendTPDU(0x82,0,1,0);	
 		ci_state=2;
 	}
-	//pollTimer.start(200);		//200
+	pollTimer.start(200);		//200
 }
 
 void eDVBCI::poll()
 {
 	int present;
-#if 0
+#if 1
 	printf("TIMER\n");
 #endif
 	::ioctl(fd,CI_GET_STATUS,&present);	

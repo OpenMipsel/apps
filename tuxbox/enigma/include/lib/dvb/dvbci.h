@@ -27,6 +27,31 @@ struct tempPMT_t
 };
 
 
+
+#define MAXTRANSPORTSESSIONS 32
+#define PCMCIABUFLEN 255
+#define LPDUHEADERLEN 2
+#define LPDUPAYLOADLEN (PCMCIABUFLEN - LPDUHEADERLEN)
+
+typedef struct _lpduQueueElem lpduQueueElem;
+typedef struct _lpduQueueElem * ptrlpduQueueElem;
+
+typedef struct _lpduQueueHeader lpduQueueHeader;
+
+struct _lpduQueueElem
+{
+	unsigned char lpduLen;
+	unsigned char lpdu[PCMCIABUFLEN];
+	ptrlpduQueueElem nextElem;
+};
+			
+struct _lpduQueueHeader
+{
+	long numLPDUS;
+	ptrlpduQueueElem firstLPDU;
+};
+
+
 class eDVBCI: private eThread, public eMainloop, public Object
 {
 	static int instance_count;
@@ -57,6 +82,17 @@ protected:
 	unsigned char ml_buffer[1024];
 	int ml_bufferlen;
 	int ml_buffersize;
+
+	//----------------------
+	lpduQueueHeader lpduSendQueues[MAXTRANSPORTSESSIONS];
+	lpduQueueHeader lpduReceiveQueues[MAXTRANSPORTSESSIONS];
+
+
+	ptrlpduQueueElem eDVBCI::AllocLpduQueueElem(unsigned char t_c_id);
+	int eDVBCI::lpduQueueElemIsMore(ptrlpduQueueElem curElem);
+	
+	
+	//----------------------
 
 	void clearCAIDs();
 	void addCAID(int caid);	
