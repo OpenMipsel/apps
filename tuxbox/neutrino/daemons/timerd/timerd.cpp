@@ -4,7 +4,7 @@
 	Copyright (C) 2001 Steffen Hehn 'McClean'
 	Homepage: http://dbox.cyberphoria.org/
 
-	$Id: timerd.cpp,v 1.31 2002/10/17 10:01:27 thegoodguy Exp $
+	$Id: timerd.cpp,v 1.31.2.1 2002/10/24 20:40:32 thegoodguy Exp $
 
 	License: GPL
 
@@ -40,7 +40,7 @@
 #include <sectionsdclient/sectionsdMsg.h>
 #include <sectionsdclient/sectionsdclient.h>
 
-#include <zapit/basicmessage.h>
+#include <zapit/client/basicmessage.h>
 
 bool doLoop;
 
