@@ -71,7 +71,7 @@ int CScanTs::exec(CMenuTarget* parent, string)
 	CNeutrinoApp::getInstance()->getScanSettings().toSatList( satList);
 	g_Zapit->setScanSatelliteList( satList);
 
-	bool finish = !(g_Zapit->startScan());
+	bool success = g_Zapit->startScan();
 
 	paint();
 
@@ -82,7 +82,7 @@ int CScanTs::exec(CMenuTarget* parent, string)
 	ypos+= mheight;
 	g_Fonts->menu->RenderString(x+ 10, ypos+ mheight, width, g_Locale->getText("scants.services").c_str(), COL_MENUCONTENT);
 	ypos+= mheight;
-	if (g_info.fe==1)
+	if (g_info.delivery_system == DVB_S)
 	{	//sat only
 		g_Fonts->menu->RenderString(x+ 10, ypos+ mheight, width, g_Locale->getText("scants.actsatellite").c_str(), COL_MENUCONTENT);
 	}
@@ -96,9 +96,11 @@ int CScanTs::exec(CMenuTarget* parent, string)
 
 	ypos= y+ hheight + (mheight >>1);
 
-	uint msg; uint data;
+	uint msg;
+	uint data;
+	bool istheend = !success;
 
-	while (!finish)
+	while (!istheend)
 	{
 		char filename[30];
 		sprintf(filename, "radar%d.raw", pos);
@@ -142,11 +144,12 @@ int CScanTs::exec(CMenuTarget* parent, string)
 				delete (unsigned char*) data;
 			}
 			else
-			if ( msg == NeutrinoMessages::EVT_SCAN_COMPLETE )
-			{
-				finish= true;
-				msg = CRCInput::RC_timeout;
-			}
+				if ((msg == NeutrinoMessages::EVT_SCAN_COMPLETE) || (msg == NeutrinoMessages::EVT_SCAN_FAILED))
+				{
+					success  = (msg == NeutrinoMessages::EVT_SCAN_COMPLETE);
+					istheend = true;
+					msg      = CRCInput::RC_timeout;
+				}
 			else
 			if ( ( msg>= CRCInput::RC_WithData ) && ( msg< CRCInput::RC_WithData+ 0x10000000 ) )
 				delete (unsigned char*) data;
@@ -154,8 +157,8 @@ int CScanTs::exec(CMenuTarget* parent, string)
 	}
 
 	hide();
-	g_Sectionsd->setPauseScanning( false );
-	ShowMsg ( "messagebox.info", g_Locale->getText("scants.finished"), CMessageBox::mbBack, CMessageBox::mbBack, "info.raw" );
+	g_Sectionsd->setPauseScanning(false);
+	ShowMsg("messagebox.info", success ? g_Locale->getText("scants.finished") : g_Locale->getText("scants.failed"), CMessageBox::mbBack, CMessageBox::mbBack, "info.raw", 450, -1, true); // UTF-8
 
 	return menu_return::RETURN_REPAINT;
 }
