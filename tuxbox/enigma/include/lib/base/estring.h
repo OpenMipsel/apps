@@ -37,7 +37,6 @@ eString convertDVBUTF8(unsigned char *data, int len);
 eString convertLatin1UTF8(const eString &string);
 int isUTF8(const eString &string);
 
-
 /////////////////////////////////////////////// Copy Constructors ////////////////////////////////////////////////
 inline eString::eString(const std::string &s)
 	:std::string(s)

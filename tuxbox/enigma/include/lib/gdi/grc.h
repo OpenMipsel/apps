@@ -8,10 +8,10 @@
 */
 
 #include <pthread.h>
-#include <deque>
 #include <stack>
 
 #include <lib/base/estring.h>
+#include <lib/base/ringbuffer.h>
 #include <lib/base/erect.h>
 #include <lib/system/elock.h>
 #include <lib/gdi/gpixmap.h>
@@ -128,13 +128,28 @@ class gRC
 	void *thread();
 	
 	eLock queuelock;
-	std::deque<gOpcode> queue;
+	
+	queueRingBuffer<gOpcode> queue;
 	
 public:
 	gRC();
 	virtual ~gRC();
 
-	void submit(const gOpcode &opcode);
+	void submit(const gOpcode &o)
+	{
+		static int collected=0;
+		queue.enqueue(o);
+		collected++;
+		if (o.opcode==gOpcode::end)
+		{
+			queuelock.unlock(collected);
+#ifdef SYNC_PAINT
+			thread();
+#endif
+			collected=0;
+		}
+	}
+
 	static gRC &getInstance();
 };
 
@@ -168,7 +183,17 @@ public:
 	
 	void clear();
 	
-	void blit(gPixmap &src, ePoint pos, eRect clip=eRect(), int flags=0);
+	void gPainter::blit(gPixmap &pixmap, ePoint pos, eRect clip=eRect(), int flags=0)
+	{
+		gOpcode o;
+		o.dc=&dc;
+		o.opcode=gOpcode::blit;
+		pos+=logicalZero;
+		clip.moveBy(logicalZero.x(), logicalZero.y());
+		o.parm.blit=new gOpcode::para::pblit(pixmap.lock(), pos, clip);
+		o.flags=flags;
+		rc.submit(o);
+	}
 
 	void setPalette(gRGB *colors, int start=0, int len=256);
 	void mergePalette(gPixmap &target);

@@ -63,6 +63,8 @@ void eZap::status()
 {
 }
 
+#include <lib/base/ringbuffer.h>
+
 eZap::eZap(int argc, char **argv)
 	: eApplication(/*argc, argv, 0*/)
 {

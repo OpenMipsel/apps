@@ -772,7 +772,7 @@ void eTransponderList::readLNBData()
 				eString cur = tmp.mid(i);
 				int x = atoi( cur.mid(0,4).c_str() );
 				int y = atoi( cur.mid(4,3).c_str() );
-				eDebug("satpos = %d, pos=%d", y,x);
+//				eDebug("satpos = %d, pos=%d", y,x);
 				lnb.getDiSEqC().RotorTable[x] = y;
 			}
 		}
@@ -895,7 +895,7 @@ void eTransponderList::writeLNBData()
 			else
 				tmpStr+=eString().sprintf("%04d%03d", i->first, i->second );
 		}
-		eDebug("satpos %s",tmpStr.c_str());
+//		eDebug("satpos %s",tmpStr.c_str());
 
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/RotorTable").c_str(), tmpStr.c_str() );
         

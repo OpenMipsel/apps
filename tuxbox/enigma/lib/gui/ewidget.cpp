@@ -727,7 +727,8 @@ void eWidget::setFocus(eWidget *newfocus)
 
 	if (focus == newfocus)
 	{
-		/* emit */ focusChanged(focus);
+//		eDebug("focus == newfocus");
+//		/* emit */ focusChanged(focus);
 		return;
 	}
 

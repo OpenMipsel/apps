@@ -168,7 +168,7 @@ static unsigned long c88599[128]={
 
 		// UPC Direct / HBO strange two-character encoding. 0xC2 means acute, 0xCF caron.
 		// many thanks to the czechs who helped me while solving this.
-unsigned int doCzech(int c1, int c2)
+static inline unsigned int doCzech(int c1, int c2)
 {
 	switch (c1)
 	{
@@ -219,7 +219,7 @@ unsigned int doCzech(int c1, int c2)
 	}
 }
 
-unsigned int recode(unsigned char d, int cp)
+static inline unsigned int recode(unsigned char d, int cp)
 {
 	if (d < 0x80)
 		return d;

@@ -216,10 +216,10 @@ class eMainloop
 	void processOneEvent();
 public:
 	eMainloop():app_quit_now(0),loop_level(0)	{	}
-	void addSocketNotifier(eSocketNotifier *sn);
+ 	void addSocketNotifier(eSocketNotifier *sn);
 	void removeSocketNotifier(eSocketNotifier *sn);
 	void addTimer(eTimer* e)	{		TimerList.push_back(e);		TimerList.sort();	}
-	void removeTimer(eTimer* e)	{		TimerList.remove(e);	}	
+	void removeTimer(eTimer* e)	{		TimerList.remove(e);	}
 
 	int looplevel() { return loop_level; }
 	

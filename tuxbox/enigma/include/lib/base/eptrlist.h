@@ -167,13 +167,20 @@ public:
 	std::vector<T>* getVector()
 	{
 		// Creates an vector and copys all elements to this vector
-		// returns a pointer to this new vector ( the reserved memory must deletes from the receiver !! )
+		// returns a pointer to this new vector ( the reserved memory must deletet from the receiver !! )
 		std::vector<T>* v=new std::vector<T>();
 		v->reserve( size() );
     for ( std_list_T_iterator it( std::list<T*>::begin() ); it != std::list<T*>::end(); it++)
 			v->push_back( **it );
 
 		return v;
+	}
+
+	inline iterator insert_in_order( T* e )
+	{
+		// added a new item to the list... in order
+		// returns a iterator to the new item
+		return insert( std::lower_bound( std::list<T*>::begin(), std::list<T*>::end(), e ), e );
 	}
 
 };
@@ -568,10 +575,10 @@ void ePtrList<T>::setAutoDelete(bool b)
 }
 
 template <class T>
-bool ePtrList<T>::isAutoDelete()	
-{		
+bool ePtrList<T>::isAutoDelete()
+{
 // returns a bool that contains the state of autoDelete
-	return autoDelete;	
+	return autoDelete;
 }
 
 #endif // _E_PTRLIST

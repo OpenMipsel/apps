@@ -93,6 +93,10 @@ int eWindow::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
+		case eWidgetEvent::willShow:
+			if (focus)
+				focusChanged( focus );
+		break;
 		case eWidgetEvent::changedText:
 		{
 			redraw(getTitleBarRect());
@@ -118,10 +122,12 @@ void eWindow::willShow()
 {
 	if (LCDTitle)
 		LCDTitle->setText(text);
+	eWidget::willShow();
 }
 
 void eWindow::willHide()
 {
+	eWidget::willHide();
 }
 
 static eWidget *create_eWindow(eWidget *parent)

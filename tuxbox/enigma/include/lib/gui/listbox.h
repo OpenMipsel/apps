@@ -897,7 +897,7 @@ inline int eListBoxWindow<T>::eventHandler( const eWidgetEvent& e)
 {
 	switch(e.type)
 	{
-		case eWidgetEvent::execBegin:
+		case eWidgetEvent::willShow:
 			if (statusbar)
 				statusbar->setText( list.getCurrent()->getHelpText() );
 		break;
