@@ -125,11 +125,9 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 			if (sp->dvb)
 			{
 // VPID
-				int tmp = sp->dvb->get(eServiceDVB::cVPID);
-				if ( tmp != -1)
-					Decoder::parms.vpid=tmp;
+				Decoder::parms.vpid=sp->dvb->get(eServiceDVB::cVPID);
 // AC3PID
-				tmp = sp->dvb->get(eServiceDVB::cAC3PID);
+				int tmp = sp->dvb->get(eServiceDVB::cAC3PID);
 				if ( tmp != -1)
 				{
 					Decoder::parms.audio_type=DECODE_AUDIO_AC3;
@@ -145,9 +143,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 					}
 				}
 // TPID
-				tmp = sp->dvb->get(eServiceDVB::cTPID);
-				if (tmp != -1)
-					Decoder::parms.tpid=tmp;
+				Decoder::parms.tpid=sp->dvb->get(eServiceDVB::cTPID);
 // PCRPID ... do not set on recorded streams..
 				tmp = sp->dvb->get(eServiceDVB::cPCRPID);
 				if ( tmp != -1 && !service.path.length() )
@@ -447,7 +443,7 @@ void eDVBServiceController::scanPMT()
 
 	sac3default=eAudio::getInstance()->getAC3default();
 
-	int audiopid=-1, videopid=-1;
+	int audiopid=-1, videopid=-1, ac3pid=-1;
 
 	if ( Decoder::parms.pcrpid == -1 && !service.path.size() )
 		Decoder::parms.pcrpid = pmt->PCR_PID;
@@ -460,6 +456,7 @@ void eDVBServiceController::scanPMT()
 		{
 			videopid=sp->dvb->get(eServiceDVB::cVPID);
 			audiopid=sp->dvb->get(eServiceDVB::cAPID);
+			ac3pid=sp->dvb->get(eServiceDVB::cAC3PID);
 			sp->dvb->set(eServiceDVB::cPCRPID, Decoder::parms.pcrpid);
 		}
 		eServiceInterface::getInstance()->removeRef(service);
@@ -508,7 +505,7 @@ void eDVBServiceController::scanPMT()
 						isac3=1;
 				}
 				
-				if (isac3 && ( (!ac3_audio) || (pe->elementary_PID == audiopid) ) )
+				if (isac3 && ( (!ac3_audio) || (pe->elementary_PID == ac3pid) ) )
 				{
 					ac3_audio=pe;
 				}
@@ -547,11 +544,18 @@ void eDVBServiceController::scanPMT()
 	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
 #endif
 
-	if (sac3default && ac3_audio)
-		audio=ac3_audio;
+	if ( ac3_audio && ( sac3default || (ac3pid != -1) ) )
+	{
+		audiopid = ac3pid;
+		audio = ac3_audio;
+	}
 
-	setPID(video);
-	setPID(audio);
+	if ( video && video->elementary_PID != videopid )
+		setPID(video);
+
+	if ( audio && audiopid != audio->elementary_PID )
+		setPID(audio);
+
 	setPID(teletext);
 
 	/*emit*/ dvb.scrambled(isca);
