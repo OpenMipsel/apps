@@ -201,12 +201,11 @@ struct saveService: public std::unary_function<const eServiceDVB&, void>
 		fprintf(f, "%s\n", s.service_name.c_str());
 		if (s.dxflags)
 			fprintf(f, "f:%x,", s.dxflags);
-		if (s.dxflags & eServiceDVB::dxNoDVB)
-			for (int i=0; i<eServiceDVB::cacheMax; ++i)
-			{
-				if (s.cache[i] != -1)
-					fprintf(f, "c:%02d%04x,", i, s.cache[i]);
-			}
+		for (int i=0; i<eServiceDVB::cacheMax; ++i)
+		{
+			if (s.cache[i] != -1)
+				fprintf(f, "c:%02d%04x,", i, s.cache[i]);
+		}
 		fprintf(f, "p:%s\n", s.service_provider.c_str());
 	}
 	~saveService()

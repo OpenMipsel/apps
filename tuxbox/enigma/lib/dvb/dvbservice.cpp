@@ -378,6 +378,7 @@ void eDVBServiceController::scanPMT()
   		// yes, not a real dvb service.
   		videopid=sp->dvb->get(eServiceDVB::cVPID);
   		audiopid=sp->dvb->get(eServiceDVB::cAPID);
+  		sp->dvb->set(eServiceDVB::cPCRPID, Decoder::parms.pcrpid);
   	}
   	eServiceInterface::getInstance()->removeRef(service);
   }
