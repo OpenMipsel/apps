@@ -25,7 +25,7 @@ class eZapLCDSetup: public eWindow
 
 	eButton *ok, *abort;
 	void okPressed();
-	void abortPressed();
+	int eventHandler( const eWidgetEvent&);
 	void brightnessChanged( int );
 	void contrastChanged( int );
 	void standbyChanged( int );

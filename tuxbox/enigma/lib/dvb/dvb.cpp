@@ -81,7 +81,10 @@ int eTransponder::satellite::tune(eTransponder *trans)
 }
 
 eService::eService(const eString &service_name, int spflags)
-	: service_name(service_name), spflags(spflags), dvb(0), id3(0)
+	: service_name(service_name), spflags(spflags), dvb(0)
+#ifndef DISABLE_FILE
+	, id3(0)
+#endif
 {
 }
 

@@ -1,3 +1,5 @@
+#ifndef DISABLE_NETWORK
+
 #ifndef __xmlrpc_h_
 #define __xmlrpc_h_
 
@@ -75,3 +77,5 @@ public:
 };
 
 #endif
+
+#endif //DISABLE_NETWORK

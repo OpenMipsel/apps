@@ -119,7 +119,7 @@ eZapLCDSetup::eZapLCDSetup(): eWindow(0)
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
-	CONNECT(abort->selected, eZapLCDSetup::abortPressed);
+	CONNECT(abort->selected, eWidget::reject);
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -146,14 +146,20 @@ void eZapLCDSetup::okPressed()
 	close(1);
 }
 
-void eZapLCDSetup::abortPressed()
+int eZapLCDSetup::eventHandler( const eWidgetEvent& e)
 {
-	eConfig::getInstance()->getKey("/ezap/lcd/brightness", lcdbrightness);
-	eConfig::getInstance()->getKey("/ezap/lcd/contrast", lcdcontrast);
-	eConfig::getInstance()->flush();
-	eDBoxLCD::getInstance()->setInverted( lcdinverted );
-	update(lcdbrightness, lcdcontrast);
-	close(0);
+	switch (e.type)
+	{
+		case eWidgetEvent::execDone:
+			eConfig::getInstance()->getKey("/ezap/lcd/brightness", lcdbrightness);
+			eConfig::getInstance()->getKey("/ezap/lcd/contrast", lcdcontrast);
+			eDBoxLCD::getInstance()->setInverted( lcdinverted );
+			update(lcdbrightness, lcdcontrast);
+			break;
+		default:
+			return eWindow::eventHandler( e );
+	}
+	return 1;
 }
 
 #endif //DISABLE_LCD

@@ -1,3 +1,5 @@
+#ifndef DISABLE_NETWORK
+
 #include <lib/system/xmlrpc.h>
 
 #include <lib/dvb/dvb.h>
@@ -514,3 +516,5 @@ eHTTPDataSource *eHTTPXMLRPCResolver::getDataSource(eString request, eString pat
 		return new eXMLRPCResponse(conn);
 	return 0;
 }
+
+#endif //DISABLE_NETWORK

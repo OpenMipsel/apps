@@ -94,14 +94,18 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_enigmaEventViewActions->close)
 				close(0);
+#ifndef DISABLE_FILE
 			else if (event.action == &i_enigmaEventViewActions->addDVRTimerEvent)
 				addtype = ePlaylistEntry::RecTimerEntry |
 									ePlaylistEntry::recDVR|
 									ePlaylistEntry::stateWaiting;
+#endif
+#ifndef DISABLE_NETWORK
 			else if (event.action == &i_enigmaEventViewActions->addNGRABTimerEvent)
 				addtype = ePlaylistEntry::RecTimerEntry|
 									ePlaylistEntry::recNgrab|
 									ePlaylistEntry::stateWaiting;
+#endif
 			else if (event.action == &i_enigmaEventViewActions->addSwitchTimerEvent)
 				addtype = ePlaylistEntry::SwitchTimerEntry|
 									ePlaylistEntry::stateWaiting;
@@ -183,8 +187,12 @@ eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const e
 	descr->resize( eSize( descr->getSize().width(), newheight + (int)lineheight/6 ) );
 	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
 
+#ifndef DISABLE_FILE
 	addActionToHelpList( &i_enigmaEventViewActions->addDVRTimerEvent );
+#endif
+#ifndef DISABLE_NETWORK
 	addActionToHelpList( &i_enigmaEventViewActions->addNGRABTimerEvent );
+#endif
 	addActionToHelpList( &i_enigmaEventViewActions->addSwitchTimerEvent );
 	addActionToHelpList( &i_enigmaEventViewActions->removeTimerEvent );
 	addActionToHelpList( &i_enigmaEventViewActions->close );

@@ -1603,7 +1603,9 @@ void eZapMain::prepareNonDVRHelp()
 	addActionToHelpList(&i_enigmaMainActions->toggleDVRFunctions);
 	addActionToHelpList(&i_enigmaMainActions->modeTV);
 	addActionToHelpList(&i_enigmaMainActions->modeRadio);
+#ifndef DISABLE_FILE
 	addActionToHelpList(&i_enigmaMainActions->modeFile);
+#endif
 	addActionToHelpList(&i_enigmaMainActions->playlistNextService);
 	addActionToHelpList(&i_enigmaMainActions->playlistPrevService);
 
@@ -2281,24 +2283,25 @@ void eZapMain::standbyRelease()
 				eSleepTimer t;
 				t.show();
 				EITEvent *evt = (EITEvent*) t.exec();
+				int i = t.getCheckboxState();
 				if (evt != (EITEvent*)-1)
 				{
 					eServiceReference ref;
-					ref.descr = _("SleepTimer");
+					ref.descr = ( i==2 ? _("ShutdownTimer") : _("SleepTimer") );
 					eTimerManager::getInstance()->addEventToTimerList( &t,
-							&ref, evt,
-							ePlaylistEntry::stateWaiting|
-							ePlaylistEntry::typeShutOffTimer|
-							ePlaylistEntry::SwitchTimerEntry
-							);
-					wasSleeping = t.getCheckboxState();
+						&ref, evt,
+						ePlaylistEntry::stateWaiting|
+						ePlaylistEntry::doFinishOnly|
+						(i==2?ePlaylistEntry::doShutdown:0)|
+						(i==3?ePlaylistEntry::doGoSleep:0)
+					);
 					delete evt;
 				}
 				t.hide();
 				break;
 			}
 			case 4: // reboot
-					eZap::getInstance()->quit(1);	
+					eZap::getInstance()->quit(1);
 					break;
 			case 1: // shutdown
 /*				if (handleState())*/
@@ -2681,8 +2684,11 @@ void eZapMain::stopSkip(int dir)
 
 #endif //DISABLE_FILE
 
-void eZapMain::handleStandby()
+void eZapMain::handleStandby(int i)
 {
+	if ( i )
+		wasSleeping = i;
+
 	if (state & stateSleeping)
 	{
 		wasSleeping=1;
@@ -2690,23 +2696,26 @@ void eZapMain::handleStandby()
 		// this breakes the eZapStandby mainloop...
 		// and enigma wake up
 	}
-	else if (wasSleeping==1) // before record we was in sleep mode...
-	{  // delayed standby...
-		if ( delayedStandbyTimer.isActive() )
-			delayedStandbyTimer.stop();
-		else
-			delayedStandbyTimer.start( 1000 * 60 * 10, true );
-			// delayed Standby after 10min
-	}
-	else if (wasSleeping==2)
+	else switch(wasSleeping) // before record we was in sleep mode...
 	{
-		// we do hardly shutdown the box..
-		// any pending timers are ignored
-		wasSleeping=0;
-		message_notifier.send(eZapMain::messageShutdown);
+		case 1: // delayed standby
+			if ( delayedStandbyTimer.isActive() )
+				delayedStandbyTimer.stop();
+			else // delayed Standby after 10min
+				delayedStandbyTimer.start( 1000 * 60 * 10, true );
+			break;
+		case 2: // complete Shutdown
+			// we do hardly shutdown the box..
+			// any pending timers are ignored
+			wasSleeping=0;
+			message_notifier.send(eZapMain::messageShutdown);
+			break;
+		case 3: // immediate go to standby
+			delayedStandby();
+			break;
+		default:
+			break;
 	}
-	else if (wasSleeping==3)
-		delayedStandby();
 }
 
 void eZapMain::delayedStandby()
@@ -3758,13 +3767,15 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 
 						if (evt != (EITEvent*)-1)
 						{
+							int i = e.getCheckboxState();
 							eTimerManager::getInstance()->addEventToTimerList( &e, &eServiceInterface::getInstance()->service, evt,
 									ePlaylistEntry::stateWaiting|
-									ePlaylistEntry::typeShutOffTimer|
 									ePlaylistEntry::RecTimerEntry|
-									ePlaylistEntry::recDVR
+									ePlaylistEntry::recDVR|
+									ePlaylistEntry::doFinishOnly|
+									(i==2?ePlaylistEntry::doShutdown:0)|
+									(i==3?ePlaylistEntry::doGoSleep:0)
 									);
-							wasSleeping = e.getCheckboxState();
 							delete evt;
 						}
 
@@ -3779,13 +3790,15 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 						EITEvent *evt = (EITEvent*) e.exec();
 						if (evt != (EITEvent*)-1)
 						{
+							int i = e.getCheckboxState();
 							eTimerManager::getInstance()->addEventToTimerList( &e, &eServiceInterface::getInstance()->service, evt,
 								ePlaylistEntry::stateWaiting|
-								ePlaylistEntry::typeShutOffTimer|
 								ePlaylistEntry::RecTimerEntry|
-								ePlaylistEntry::recDVR
-								);
-							wasSleeping = e.getCheckboxState();
+								ePlaylistEntry::recDVR|
+								ePlaylistEntry::doFinishOnly|
+								(i==2?ePlaylistEntry::doShutdown:0)|
+								(i==3?ePlaylistEntry::doGoSleep:0)
+ 							);
 							delete evt;
 						}
 						e.hide();

@@ -1,4 +1,4 @@
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 
 #include <setupengrab.h>
 #include <plugin.h>
@@ -201,4 +201,4 @@ void ENgrabSetup::abortPressed()
 	close(0);
 }
 
-#endif // DISABLE_FILE
+#endif // DISABLE_NETWORK

@@ -137,15 +137,21 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 		if (servicevalid)
 			if ( current_service->current_entry != current_service->entries.end())
 				eventvalid = 1;
+#ifndef DISABLE_FILE
 		if (event.action == &i_epgSelectorActions->addDVRTimerEvent)
 			addtype = ePlaylistEntry::RecTimerEntry |
 								ePlaylistEntry::recDVR|
 								ePlaylistEntry::stateWaiting;
-		else if (event.action == &i_epgSelectorActions->addNGRABTimerEvent)
+		else
+#endif
+#ifndef DISABLE_NETWORK
+		if (event.action == &i_epgSelectorActions->addNGRABTimerEvent)
 			addtype = ePlaylistEntry::RecTimerEntry|
 								ePlaylistEntry::recNgrab|
 								ePlaylistEntry::stateWaiting;
-		else if (event.action == &i_epgSelectorActions->addSwitchTimerEvent)
+		else
+#endif
+		if (event.action == &i_epgSelectorActions->addSwitchTimerEvent)
 			addtype = ePlaylistEntry::SwitchTimerEntry|
 								ePlaylistEntry::stateWaiting;
 		else if (event.action == &i_epgSelectorActions->removeTimerEvent)

@@ -469,7 +469,7 @@ public:
 	void toggleTimerMode();
 	void toggleEditMode(eServiceSelector *);
 	void toggleMoveMode(eServiceSelector *);
-	void handleStandby();
+	void handleStandby(int i=0);
 
 	void setNewServiceSelectorRoot( eServiceReference root=eServiceReference(), eServiceReference path=eServiceReference() );
 	void setServiceSelectorPath(eServicePath path);

@@ -136,7 +136,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
-	CONNECT(abort->selected, eZapRCSetup::abortPressed);
+	CONNECT(abort->selected, eWidget::reject );
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -183,13 +183,20 @@ void eZapRCSetup::okPressed()
 	close(1);
 }
 
-void eZapRCSetup::abortPressed()
+int eZapRCSetup::eventHandler( const eWidgetEvent & e )
 {
-	setStyle();
-	eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
-	eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);
-	update();
-	close(0);
+	switch(e.type)
+	{
+		case eWidgetEvent::execDone:
+			setStyle();
+			eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
+			eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);
+			update();
+			break;
+		default:
+			return eWindow::eventHandler( e );
+	}
+	return 1;
 }
 
 void eZapRCSetup::setStyle()

@@ -18,8 +18,10 @@ class eZapVideoSetup: public eWindow
 
 	unsigned int v_colorformat, v_pin8;
 private:
+	void CFormatChanged( eListBoxEntryText * );
+	void VPin8Changed( eListBoxEntryText *);
 	void okPressed();
-	void abortPressed();
+	int eventHandler( const eWidgetEvent &e );
 
 public:
 	eZapVideoSetup();

@@ -208,7 +208,9 @@ eZap::eZap(int argc, char **argv)
 		}
 	}
 
+#ifndef DISABLE_NETWORK
 	ezapInitializeXMLRPC(httpd);
+#endif
 	httpd->addResolver(dyn_resolver);
 	httpd->addResolver(fileresolver);
 

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.22 2003/05/19 03:58:17 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.23 2003/05/24 14:12:09 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -45,7 +45,8 @@
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/testpicture.h>
-#include "upgrade.h"
+#include <upgrade.h>
+#include <enigma.h>
 
 eZapSetup::eZapSetup()
 	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 9, 450, true)
@@ -107,7 +108,7 @@ eZapSetup::eZapSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), eString().sprintf("(%d) %s", ++entry, _("open skin selector")) ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
 	CONNECT((new eListBoxEntryMenu(&list, _("Time Zone..."), eString().sprintf("(%d) %s", ++entry, _("open time zone setup")) ))->selected, eZapSetup::sel_timezone);
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab..."), eString().sprintf("(%d) %s", ++entry, _("open ngrab config")) ))->selected, eZapSetup::sel_engrab);
 #endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Extra settings..."), eString().sprintf("(%d) %s", ++entry, _("open extra config")) ))->selected, eZapSetup::sel_extra);
@@ -229,9 +230,10 @@ void eZapSetup::sel_skin()
 	setup.hide();
 	if (!res)
 	{
-		eMessageBox msg(_("You have to reboot to apply the new skin"), _("Skin changed"));
+		eMessageBox msg(_("You have to restart enigma to apply the new skin\nRestart now?"), _("Skin changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
 		msg.show();
-		msg.exec();
+		if ( msg.exec() == eMessageBox::btYes )
+			eZap::getInstance()->quit(2);
 		msg.hide();
 	}
 	show();
@@ -250,7 +252,7 @@ void eZapSetup::sel_video()
 	show();
 }
 
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 void eZapSetup::sel_engrab()
 {
 	hide();

@@ -152,7 +152,9 @@ public:
 
 	void loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node, const eServiceReference &ref);
 	eService *createService(const eServiceReference &node);
+#ifndef DISABLE_FILE
 	void addFile(void *node, const eString &filename);
+#endif
 
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);

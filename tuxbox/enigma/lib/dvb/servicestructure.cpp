@@ -10,7 +10,9 @@ eServiceStructureHandler::eServiceStructureHandler(): eServiceHandler(eServiceRe
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeRoot), new eService(_("root node")));
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeTV), new eService(_("TV mode")));
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeRadio), new eService(_("Radio Mode")));
+#ifndef DISABLE_FILE
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeFile), new eService(_("File Mode")));
+#endif
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeTvRadio), new eService(_("TV/Radio")));
 }
 

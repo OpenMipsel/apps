@@ -50,7 +50,7 @@ eZapAudioSetup::eZapAudioSetup():
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 
-	CONNECT(abort->selected, eZapAudioSetup::abortPressed);
+	CONNECT(abort->selected, eWidget::reject );
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -60,6 +60,19 @@ eZapAudioSetup::eZapAudioSetup():
 
 eZapAudioSetup::~eZapAudioSetup()
 {
+}
+
+int eZapAudioSetup::eventHandler( const eWidgetEvent &evt)
+{
+	switch (evt.type)
+	{
+		case eWidgetEvent::execDone:
+			eAudio::getInstance()->reloadSettings();
+			break;
+		default:
+			return eWindow::eventHandler(evt);
+	}
+	return 1;
 }
 
 void eZapAudioSetup::ac3defaultChanged( int i )
@@ -73,9 +86,4 @@ void eZapAudioSetup::okPressed()
 	close(1);
 }
 
-void eZapAudioSetup::abortPressed()
-{
-	eAudio::getInstance()->reloadSettings();
-	close(0);
-}
 

@@ -19,6 +19,7 @@ class eZapOsdSetup: public eWindow
 	eButton *ok, *abort, *pluginoffs;
 	int alpha, brightness, gamma;
 private:
+	int eventHandler(const eWidgetEvent&);
 	void consoleStateChanged( int );
 	void alphaChanged( int );
 	void brightnessChanged( int );
@@ -26,7 +27,6 @@ private:
 	void fieldSelected(int *number);
 	void okPressed();
 	void PluginOffsetPressed();
-	void abortPressed();
 public:
 	eZapOsdSetup();
 	~eZapOsdSetup();

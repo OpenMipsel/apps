@@ -53,6 +53,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 
 	colorformat->setCurrent(entrys[v_colorformat-1]);
 	colorformat->setHelpText(_("choose colour format ( left, right )"));
+	CONNECT( colorformat->selchanged, eZapVideoSetup::CFormatChanged );
 
   l=new eLabel(this);
 	l->setText(_("Aspect Ratio:"));
@@ -70,6 +71,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	entrys[1]=new eListBoxEntryText(pin8, _("4:3 panscan"), (void*)1);
 	entrys[2]=new eListBoxEntryText(pin8, _("16:9"), (void*)2);
 	pin8->setCurrent(entrys[v_pin8]);
+	CONNECT( pin8->selchanged, eZapVideoSetup::VPin8Changed );
 
 	ok=new eButton(this);
 	ok->setText(_("save"));
@@ -88,8 +90,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
-
-	CONNECT(abort->selected, eZapVideoSetup::abortPressed);
+	CONNECT(abort->selected, eWidget::reject );
 
 	status = new eStatusBar(this);	
 	status->move( ePoint(0, clientrect.height()-30) );
@@ -105,29 +106,49 @@ eZapVideoSetup::~eZapVideoSetup()
 
 void eZapVideoSetup::okPressed()
 {
-	v_colorformat = (int) colorformat->getCurrent()->getKey();
-	eDebug("v_colorformat = %i", v_colorformat);
-	v_pin8 = (int) pin8->getCurrent()->getKey();
-	eDebug("v_pin8 = %i", v_pin8 );
-	if ( eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat ))
-	{
-		eConfig::getInstance()->delKey("/elitedvb/video/colorformat");
-		eDebug("Write v_colorformat with error %i", eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat ) );
-	}
-	if ( eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 ))
-	{
-		eConfig::getInstance()->delKey("/elitedvb/video/pin8");
-		eDebug("Write v_pin8 with error %i", eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 ));
-	}
+	eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat );
+	eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 );
 	eConfig::getInstance()->flush();
-	eAVSwitch::getInstance()->reloadSettings();
-	eStreamWatchdog::getInstance()->reloadSettings();
 	close(1);
 }
 
-void eZapVideoSetup::abortPressed()
+int eZapVideoSetup::eventHandler( const eWidgetEvent &e)
 {
-	close(0);
+	switch(e.type)
+	{
+		case eWidgetEvent::execDone:
+			eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat );
+			eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 );
+			eAVSwitch::getInstance()->reloadSettings();
+			eStreamWatchdog::getInstance()->reloadSettings();
+			break;
+		default:
+			return eWindow::eventHandler( e );
+	}
+	return 1;
 }
 
+void eZapVideoSetup::CFormatChanged( eListBoxEntryText * e )
+{
+	int old = v_colorformat;
+	if ( e )
+	{
+		v_colorformat = (int) e->getKey();
+		eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat );
+		eAVSwitch::getInstance()->reloadSettings();
+		eConfig::getInstance()->setKey("/elitedvb/video/colorformat", old );
+	}
+}
+
+void eZapVideoSetup::VPin8Changed( eListBoxEntryText * e)
+{
+	int old = v_pin8;
+	if ( e )
+	{
+		v_pin8 = (int) e->getKey();
+		eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 );
+		eStreamWatchdog::getInstance()->reloadSettings();
+		eConfig::getInstance()->setKey("/elitedvb/video/pin8", old );
+	}
+}
 

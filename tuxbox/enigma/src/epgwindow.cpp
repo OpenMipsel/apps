@@ -321,8 +321,12 @@ eEPGSelector::eEPGSelector(const eServiceReferenceDVB &service)
 	CONNECT(events->selected, eEPGSelector::entrySelected);
 	fillEPGList();
 	addActionMap( &i_epgSelectorActions->map );
+#ifndef DISABLE_FILE
 	addActionToHelpList( &i_epgSelectorActions->addDVRTimerEvent );
+#endif
+#ifndef DISABLE_NETWORK
 	addActionToHelpList( &i_epgSelectorActions->addNGRABTimerEvent );
+#endif
 	addActionToHelpList( &i_epgSelectorActions->addSwitchTimerEvent );
 	addActionToHelpList( &i_epgSelectorActions->removeTimerEvent );
 }
@@ -333,15 +337,21 @@ int eEPGSelector::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
+#ifndef DISABLE_FILE
 			if (event.action == &i_epgSelectorActions->addDVRTimerEvent)
 				addtype = ePlaylistEntry::RecTimerEntry |
 									ePlaylistEntry::recDVR|
 									ePlaylistEntry::stateWaiting;
-			else if (event.action == &i_epgSelectorActions->addNGRABTimerEvent)
+			else
+#endif
+#ifndef DISABLE_NETWORK
+			if (event.action == &i_epgSelectorActions->addNGRABTimerEvent)
 				addtype = ePlaylistEntry::RecTimerEntry|
 									ePlaylistEntry::recNgrab|
 									ePlaylistEntry::stateWaiting;
-			else if (event.action == &i_epgSelectorActions->addSwitchTimerEvent)
+			else
+#endif
+			if (event.action == &i_epgSelectorActions->addSwitchTimerEvent)
 				addtype = ePlaylistEntry::SwitchTimerEntry|
 									ePlaylistEntry::stateWaiting;
 			else if (event.action == &i_epgSelectorActions->removeTimerEvent)

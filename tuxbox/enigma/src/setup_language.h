@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_language.h,v 1.4 2002/10/15 23:31:29 Ghostrider Exp $
+ * $Id: setup_language.h,v 1.4.2.1 2003/05/24 14:12:09 ghostrider Exp $
  */
 
 #ifndef __APPS__ENIGMA__SETUP_LANGUAGE_H
@@ -35,9 +35,8 @@
 
 class eZapLanguageSetup: public eWindow
 {
-private:
 	void okPressed();
-	void abortPressed();
+	int eventHandler( const eWidgetEvent & );
 
 	eButton *ok, *abort;
 	eListBox<eListBoxEntryText> *language;

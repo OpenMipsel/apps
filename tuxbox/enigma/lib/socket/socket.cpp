@@ -121,7 +121,7 @@ void eSocket::notifier(int what)
 					unsigned long frame, parity, overrun, brk;
 					unsigned long buf_overrun;
 				} icount;
-				      
+
 				if (!ioctl(getDescriptor(), TIOCGICOUNT, &icount))
 				{
 					if (last_break == 0xFFFFFFFF)
@@ -227,7 +227,7 @@ int eSocket::getDescriptor()
 
 int eSocket::connectToHost(eString hostname, int port)
 {
-	struct hostent		*server;
+	struct hostent *server;
 	int res;
 
 	if(!socketdesc){

@@ -30,7 +30,7 @@ private:
 	void sel_rfmod();
 #endif
 	void sel_num(int n);
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 	void sel_engrab();
 #endif
 	void sel_extra();

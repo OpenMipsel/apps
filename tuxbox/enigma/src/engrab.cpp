@@ -1,4 +1,4 @@
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 
 #include <engrab.h>
 #include <stdio.h>
@@ -204,8 +204,8 @@ ENgrabWnd::ENgrabWnd()
 
 	CONNECT((new eListBoxEntryMenu(&lb, _("[close]"), _("close Window") ))->selected, ENgrabWnd::onBackSelected);
 	CONNECT((new eListBoxEntryMenu(&lb, _("start recording"), _("start manual recording") ))->selected, ENgrabWnd::manualStart);
-	CONNECT((new eListBoxEntryMenu(&lb, _("stopp recording"), _("stop manual recording") ))->selected, ENgrabWnd::manualStop);
+	CONNECT((new eListBoxEntryMenu(&lb, _("stop recording"), _("stop manual recording") ))->selected, ENgrabWnd::manualStop);
 	lb.moveSelection(eListBox<eListBoxEntryMenu>::dirFirst);
 }
 
-#endif // DISABLE_FILE
+#endif // DISABLE_NETWORK

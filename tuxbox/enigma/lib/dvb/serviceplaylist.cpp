@@ -149,7 +149,7 @@ int ePlaylist::save(const char *filename)
 				fprintf(f, "#DESCRIPTION: %s\r\n", i->service.descr.c_str());
 			if (i->type & ePlaylistEntry::PlaylistEntry && i->current_position != -1)
 				fprintf(f, "#CURRENT_POSITION %d\r\n", i->current_position);
-			else if ( i->type & ePlaylistEntry::typeMultiple && i->last_activation != -1 )
+			else if ( i->type & ePlaylistEntry::isRepeating && i->last_activation != -1 )
 				fprintf(f, "#LAST_ACTIVATION %d\r\n", i->last_activation);
 			else if ( i->event_id != -1)
 				fprintf(f, "#EVENT_ID %d\r\n", i->event_id);

@@ -292,7 +292,9 @@ public:
 	int spflags;
 
 	class eServiceDVB *dvb;
+#ifndef DISABLE_FILE
 	class eServiceID3 *id3;
+#endif
 };
 
 class eServiceDVB: public eService

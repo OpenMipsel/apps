@@ -81,14 +81,16 @@ public:
 				result+=eString().setNum(service->dvb->service_number, 10);
 				result+="</number></dvb>\n";
 			}
+#ifndef DISABLE_FILE
 			if (service->id3)
-			{	
+			{
 				std::map<eString, eString> & tags = service->id3->getID3Tags();
 				result+="<id3>";
 				for (std::map<eString, eString>::iterator i(tags.begin()); i != tags.end(); ++i)
 					result+="<tag id=\"" + i->first + "\"><" + i->second + "<tag/>\n";
 				result+="</id3>";
 			}
+#endif
 		}
 		iface.removeRef(e);
 		result+="</service>\n";

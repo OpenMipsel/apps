@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_language.cpp,v 1.10.2.6 2003/01/20 14:24:53 tmbinc Exp $
+ * $Id: setup_language.cpp,v 1.10.2.7 2003/05/24 14:12:09 ghostrider Exp $
  */
 
 #include <setup_language.h>
@@ -50,7 +50,7 @@ eZapLanguageSetup::eZapLanguageSetup(): eWindow(0)
 	char *temp;
 	if ( eConfig::getInstance()->getKey("/elitedvb/language", temp) )
 		temp=0;
-		
+
 	eListBoxEntryText *cur=0;
 
 	if (!f)
@@ -94,7 +94,7 @@ eZapLanguageSetup::eZapLanguageSetup(): eWindow(0)
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
-	CONNECT(abort->selected, eZapLanguageSetup::abortPressed);
+	CONNECT(abort->selected, eWidget::reject );
 
 	statusbar = new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30) );
@@ -106,14 +106,29 @@ void eZapLanguageSetup::okPressed()
 {
 	eConfig::getInstance()->setKey("/elitedvb/language", ((eString*) language->getCurrent()->getKey())->c_str() );
 	eConfig::getInstance()->flush();
-	setlocale(LC_ALL, ((eString*)language->getCurrent()->getKey())->c_str() );
-
 	close(1);
 }
 
-void eZapLanguageSetup::abortPressed()
+int eZapLanguageSetup::eventHandler( const eWidgetEvent & e )
 {
-	close(0);
+	switch (e.type)
+	{
+		case eWidgetEvent::execDone:
+		{
+			char *tmp;
+			if ( !eConfig::getInstance()->getKey("/elitedvb/language", tmp ) )
+			{
+				setlocale(LC_ALL, tmp );
+				free(tmp);
+			}
+			else
+				setlocale(LC_ALL, "C" );
+			break;
+		}
+		default:
+			return eWindow::eventHandler( e );
+	}
+	return 1;
 }
 
 eZapLanguageSetup::~eZapLanguageSetup()

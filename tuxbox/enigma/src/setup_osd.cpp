@@ -276,7 +276,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
 
-	CONNECT(abort->selected, eZapOsdSetup::abortPressed);
+	CONNECT(abort->selected, eWidget::reject );
 
 	statusbar=new eStatusBar(this);
 	statusbar->move( ePoint(0, clientrect.height()-30 ) );
@@ -332,18 +332,24 @@ void eZapOsdSetup::okPressed()
 	eConfig::getInstance()->setKey("/ezap/osd/showOSDOnEITUpdate", showOSDOnEITUpdate->isChecked());
 	eConfig::getInstance()->setKey("/ezap/osd/showCurrentRemaining", showCurrentRemaining->isChecked());
 	eConfig::getInstance()->setKey("/ezap/osd/showConsoleOnFB", showConsoleOnFB->isChecked());
-
 	eConfig::getInstance()->flush();
 	close(1);
 }
 
-void eZapOsdSetup::abortPressed()
+int eZapOsdSetup::eventHandler( const eWidgetEvent &e )
 {
-// restore old settings..
-	int state=0;
-	eConfig::getInstance()->getKey("/ezap/osd/showConsoleOnFB", state);
-	fbClass::getInstance()->showConsole(state);
-	gFBDC::getInstance()->reloadSettings();
-
-	close(0);
+	switch (e.type)
+	{
+		case eWidgetEvent::execDone:
+		{
+			int state=0;
+			eConfig::getInstance()->getKey("/ezap/osd/showConsoleOnFB", state);
+			fbClass::getInstance()->showConsole(state);
+			gFBDC::getInstance()->reloadSettings();
+			break;
+		}
+		default:
+			return eWindow::eventHandler( e );
+	}
+	return 1;
 }

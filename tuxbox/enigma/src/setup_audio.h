@@ -15,7 +15,7 @@ class eZapAudioSetup: public eWindow
 private:
 	void ac3defaultChanged( int i );
 	void okPressed();
-	void abortPressed();
+	int eventHandler( const eWidgetEvent &evt );
 public:
 	eZapAudioSetup();
 	~eZapAudioSetup();

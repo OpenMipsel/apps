@@ -564,8 +564,8 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2),
 			new eService( _("Satellites"), eService::spfColSingle)
 		);
-	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
 #ifndef DISABLE_FILE
+	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
 	recording=0;
 	CONNECT(messages.recv_msg, eServiceHandlerDVB::gotMessage);
 	messages.start();
@@ -773,9 +773,9 @@ int eServiceHandlerDVB::stop()
 	return 0;
 }
 
+#ifndef DISABLE_FILE
 void eServiceHandlerDVB::addFile(void *node, const eString &filename)
 {
-#ifndef DISABLE_FILE
 	if (filename.right(3).upper()==".TS")
 	{
 		struct stat s;
@@ -783,8 +783,8 @@ void eServiceHandlerDVB::addFile(void *node, const eString &filename)
 			return;
 		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
 	}
-#endif
 }
+#endif
 
 struct eServiceHandlerDVB_addService
 {

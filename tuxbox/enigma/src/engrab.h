@@ -1,4 +1,4 @@
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 
 #ifndef __engrab_h
 #define __engrab_h
@@ -39,4 +39,4 @@ public:
 
 #endif
 
-#endif // DISABLE_FILE
+#endif // DISABLE_NETWORK

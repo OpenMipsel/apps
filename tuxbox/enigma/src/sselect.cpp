@@ -283,12 +283,14 @@ void eServiceSelector::setKeyDescriptions()
 			key[2]->setText(_("Provider"));
 			key[3]->setText(_("User Bouquets"));
 			break;
+#ifndef DISABLE_FILE
 		case eZapMain::modeFile:
 		 	key[0]->setText("");
 			key[1]->setText("");
 			key[2]->setText(_("Root"));
 			key[3]->setText(_("Movies"));
 			break;
+#endif
 		}
 	} else {
 		key[0]->setText(_("Menu"));
@@ -910,9 +912,11 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			} else if (event.action == &i_serviceSelectorActions->modeRadio && !movemode && !editMode) {
 				/*emit*/ setMode(eZapMain::modeRadio);
 				setKeyDescriptions();
+#ifndef DISABLE_FILE
 			} else if (event.action == &i_serviceSelectorActions->modeFile && !movemode && !editMode) {
 				/*emit*/ setMode(eZapMain::modeFile);
 				setKeyDescriptions();
+#endif
 			} else if (event.action == &i_serviceSelectorActions->gotoFirstService)
 				services->moveSelection(services->dirFirst);
 			else if (event.action == &i_serviceSelectorActions->gotoLastService)
@@ -1224,7 +1228,9 @@ eServiceSelector::eServiceSelector()
 	addActionToHelpList(&i_serviceSelectorActions->pathUp);
 	addActionToHelpList(&i_serviceSelectorActions->modeTV);
 	addActionToHelpList(&i_serviceSelectorActions->modeRadio);
+#ifndef DISABLE_FILE
 	addActionToHelpList(&i_serviceSelectorActions->modeFile);
+#endif
 	
 	key[0] = key[1] = key[2] = key[3] = 0;
 

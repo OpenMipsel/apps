@@ -1,4 +1,4 @@
-#ifndef DISABLE_FILE
+#ifndef DISABLE_NETWORK
 
 #ifndef __setupengrab_h
 #define __setupengrab_h
@@ -29,4 +29,4 @@ public:
 };
 #endif
 
-#endif // DISABLE_FILE
+#endif // DISABLE_NETWORK

@@ -28,7 +28,7 @@ class eZapRCSetup: public eWindow
 	                	
 	eButton *ok, *abort;
 	void okPressed();
-	void abortPressed();
+	int eventHandler( const eWidgetEvent& );
 	void repeatChanged( int );
 	void delayChanged( int );
 	void styleChanged( eListBoxEntryText* );
