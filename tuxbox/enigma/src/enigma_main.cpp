@@ -2733,7 +2733,11 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	eServiceReference path=sel->getPath().current();
 
 	sel->hide();
+#ifndef DISABLE_LCD
+	eServiceContextMenu m(ref, path, LCDTitle, LCDElement);
+#else
 	eServiceContextMenu m(ref, path);
+#endif
 	m.show();
 	int res=m.exec();
 	m.hide();
@@ -3709,7 +3713,11 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		{
 			if ( state & stateRecording && !(state & stateInTimerMode) )
 			{
+#ifndef DISABLE_LCD
+				eRecordContextMenu menu(LCDTitle, LCDElement);
+#else
 				eRecordContextMenu menu;
+#endif
 				hide();
 				menu.show();
 				int ret = menu.exec();
@@ -4870,8 +4878,12 @@ void eZapMain::redrawIndexmarks()
 }
 #endif // DISABLE_FILE
 
-eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path): eListBoxWindow<eListBoxEntryText>(_("Service Menu"), 8), ref(ref)
+eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path, eWidget *lcdTitle, eWidget *lcdElement)
+: eListBoxWindow<eListBoxEntryText>(_("Service Menu"), 8), ref(ref)
 {
+#ifndef DISABLE_LCD
+	setLCD(lcdTitle,lcdElement);
+#endif
 	move(ePoint(150, 170));
 	new eListBoxEntryText(&list, _("back"), (void*)0);
 
@@ -4947,14 +4959,17 @@ void eServiceContextMenu::entrySelected(eListBoxEntryText *test)
 		close((int)test->getKey());
 }
 
-eSleepTimerContextMenu::eSleepTimerContextMenu()
+eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdElement )
 	: eListBoxWindow<eListBoxEntryText>(_("Shutdown/Standby Menu"), 5)
 {
+#ifndef DISABLE_LCD
+	setLCD(lcdTitle, lcdElement);
+#endif
 	move(ePoint(150, 200));
-	new eListBoxEntryText(&list, _("back"), (void*)0);
 	new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
 	new eListBoxEntryText(&list, _("goto standby"), (void*)2);
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
+	new eListBoxEntryText(&list, _("[back]"), (void*)0);
 	CONNECT(list.selected, eSleepTimerContextMenu::entrySelected);
 }
 

@@ -501,7 +501,7 @@ class eServiceContextMenu: public eListBoxWindow<eListBoxEntryText>
 	eServiceReference ref;
 	void entrySelected(eListBoxEntryText *s);
 public:
-	eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path);
+	eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path, eWidget *LCDTitle=0, eWidget *LCDElement=0);
 };
 
 class eSleepTimerContextMenu: public eListBoxWindow<eListBoxEntryText>
@@ -509,7 +509,7 @@ class eSleepTimerContextMenu: public eListBoxWindow<eListBoxEntryText>
 	eServiceReference ref;
 	void entrySelected(eListBoxEntryText *s);
 public:
-	eSleepTimerContextMenu();
+	eSleepTimerContextMenu(eWidget *LCDTitle=0, eWidget *LCDElement=0);
 };
 
 class eShutdownStandbySelWindow: public eWindow
