@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.5 2003/02/25 14:12:22 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.6 2003/02/25 19:58:04 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -926,14 +926,17 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 
 	case CZapitMessages::CMD_GETPIDS:
 	{
-		CZapitClient::responseGetOtherPIDs responseGetOtherPIDs;
-		responseGetOtherPIDs.vpid = channel->getVideoPid();
-		responseGetOtherPIDs.ecmpid = NONE; // TODO: remove
-		responseGetOtherPIDs.vtxtpid = channel->getTeletextPid();
-		responseGetOtherPIDs.pcrpid = channel->getPcrPid();
-		responseGetOtherPIDs.selected_apid = channel->getAudioChannelIndex();
-		CBasicServer::send_data(connfd, &responseGetOtherPIDs, sizeof(responseGetOtherPIDs));
-		sendAPIDs(connfd);
+		if (channel)
+		{
+			CZapitClient::responseGetOtherPIDs responseGetOtherPIDs;
+			responseGetOtherPIDs.vpid = channel->getVideoPid();
+			responseGetOtherPIDs.ecmpid = NONE; // TODO: remove
+			responseGetOtherPIDs.vtxtpid = channel->getTeletextPid();
+			responseGetOtherPIDs.pcrpid = channel->getPcrPid();
+			responseGetOtherPIDs.selected_apid = channel->getAudioChannelIndex();
+			CBasicServer::send_data(connfd, &responseGetOtherPIDs, sizeof(responseGetOtherPIDs));
+			sendAPIDs(connfd);
+		}
 		break;
 	}
 
@@ -1089,6 +1092,14 @@ void internalSendChannels(int connfd, ChannelList* channels, const unsigned int 
 
 void sendAPIDs(int connfd)
 {
+	CZapitMessages::responseGeneralInteger responseInteger;
+	responseInteger.number = channel->getAudioChannelCount();
+	if (CBasicServer::send_data(connfd, &responseInteger, sizeof(responseInteger)) == false)
+	{
+		ERROR("could not send any return");
+		return;
+	}
+
 	for (uint32_t i = 0; i < channel->getAudioChannelCount(); i++)
 	{
 		CZapitClient::responseGetAPIDs response;
@@ -1457,7 +1468,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.5 2003/02/25 14:12:22 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.6 2003/02/25 19:58:04 thegoodguy Exp $\n");
 
 	if (argc > 1)
 	{
