@@ -4,6 +4,19 @@
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
  ******************************************************************************
  * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.10  2003/06/03 14:54:48  obi
+ * fixed
+ * tuxtxt.c: In function `MyFaceRequester':
+ * tuxtxt.c:198: warning: unused parameter `request_data'
+ * tuxtxt.c: In function `CleanUp':
+ * tuxtxt.c:532: warning: empty body in an if-statement
+ * tuxtxt.c: In function `ConfigMenu':
+ * tuxtxt.c:1326: warning: empty body in an if-statement
+ * tuxtxt.c: In function `CopyBB2FB':
+ * tuxtxt.c:2910: warning: comparison between signed and unsigned
+ * tuxtxt.c: In function `CacheThread':
+ * tuxtxt.c:3427: warning: unused parameter `arg'
+ *
  * Revision 1.37.2.9  2003/03/06 17:58:32  lazyt
  * fix error-detection and configmenu
  *
@@ -35,7 +48,7 @@
 
 void plugin_exec(PluginParam *par)
 {
-	char cvs_revision[] = "$Revision: 1.37.2.9 $", versioninfo[16];
+	char cvs_revision[] = "$Revision: 1.37.2.10 $", versioninfo[16];
 
 	//show versioninfo
 
@@ -198,6 +211,7 @@ void plugin_exec(PluginParam *par)
 FT_Error MyFaceRequester(FTC_FaceID face_id, FT_Library library, FT_Pointer request_data, FT_Face *aface)
 {
 	FT_Error result;
+	(void)request_data;
 
 	result = FT_New_Face(library, face_id, 0, aface);
 
@@ -529,9 +543,10 @@ void CleanUp()
 		{
 			for(clear_subpage = 0; clear_subpage < 0x79; clear_subpage++)
 			{
-				if(cachetable[clear_page][clear_subpage] != 0);
+				if(cachetable[clear_page][clear_subpage] != 0)
 				{
 					free(cachetable[clear_page][clear_subpage]);
+					cachetable[clear_page][clear_subpage] = 0;
 				}
 			}
 		}
@@ -1323,7 +1338,7 @@ void ConfigMenu(int Init)
 														{
 															for(clear_subpage = 0; clear_subpage < 0x79; clear_subpage++)
 															{
-																if(cachetable[clear_page][clear_subpage] != 0);
+																if(cachetable[clear_page][clear_subpage] != 0)
 																{
 																	free(cachetable[clear_page][clear_subpage]);
 																	cachetable[clear_page][clear_subpage] = 0;
@@ -2872,7 +2887,8 @@ void CreateLine25()
 
 void CopyBB2FB()
 {
-	int src, dst = 0;
+	int src;
+	unsigned int dst = 0;
 	int fillcolor = black;
 
 	//line 25
@@ -3432,6 +3448,7 @@ void *CacheThread(void *arg)
 	int b1, b2, b3, b4;
 	int packet_number;
 	unsigned char magazine;
+	(void)arg;
 
 	while(1)
 	{
