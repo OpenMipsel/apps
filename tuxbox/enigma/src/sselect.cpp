@@ -35,7 +35,7 @@ struct serviceSelectorActions
 {
 	eActionMap map;
 	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
-			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio, 
+			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio,
 			modeFile, toggleStyle, toggleFocus, gotoFirstService, gotoLastService,
 			showAll, showSatellites, showProvider, showBouquets;
 	serviceSelectorActions():
@@ -984,9 +984,9 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			if (enterPath.size())
 			{
 				ci->clear();
-				if ( path.bottom() == enterPath.bottom() )
-					pathUp();
-				else
+//Fixme				if ( path.bottom() == enterPath.bottom() )
+//					pathUp();
+//				else
 					setPath(enterPath);
 			}
 			else if (num)
