@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-04-15 16:14+0200\n"
+"POT-Creation-Date: 2003-05-06 14:51+0200\n"
 "PO-Revision-Date: Sun Mar 16 22:35:21 CET 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: German / Felix Domke <TMBINC@GMX.NET>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "cancel partition check"
 msgstr "отмена проверки"
 
-#: default.esml:382 src/enigma_info.cpp:49
+#: default.esml:382 src/enigma_info.cpp:48
 msgid "Satfind"
 msgstr "Поиск спутника"
 
@@ -799,7 +799,7 @@ msgstr "выбор Переключателя 3 "
 msgid "motor drive speed, in degrees per second"
 msgstr "Скорость перемещения позиционера в градусах в секунду"
 
-#: default.esml:658 src/enigma_info.cpp:48
+#: default.esml:658 src/enigma_info.cpp:47
 msgid "About..."
 msgstr "О тюнере..."
 
@@ -1097,7 +1097,7 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-#: lib/gui/listbox.cpp:434 lib/gui/listbox.cpp:667 src/enigma_main.cpp:2306
+#: lib/gui/listbox.cpp:434 lib/gui/listbox.cpp:667 src/enigma_main.cpp:2310
 msgid "no description available"
 msgstr "нет доступного описания"
 
@@ -1233,7 +1233,7 @@ msgstr "Размер файла:"
 msgid "Filename: "
 msgstr "Имя файла:"
 
-#: src/enigma.cpp:195
+#: src/enigma.cpp:201
 #, fuzzy
 msgid ""
 "Welcome to enigma.\n"
@@ -1246,7 +1246,7 @@ msgstr ""
 "Пожалуйста, первоначально, просканируйте транспондеры.\n"
 "(Основное меню &gt; Установки &gt; Каналы &gt; Сканирование транспондеров)"
 
-#: src/enigma.cpp:197
+#: src/enigma.cpp:203
 msgid "First start of enigma"
 msgstr "Первый старт енигмы"
 
@@ -1310,7 +1310,7 @@ msgstr "сброс... подождите"
 msgid "Infos"
 msgstr "Информация"
 
-#: src/enigma_info.cpp:43 src/enigma_main.cpp:4874 src/enigma_scan.cpp:41
+#: src/enigma_info.cpp:43 src/enigma_main.cpp:4877 src/enigma_scan.cpp:41
 #: src/enigma_scan.cpp:175 src/enigma_setup.cpp:92
 msgid "[back]"
 msgstr "[назад]"
@@ -1335,73 +1335,73 @@ msgstr "Показать версию BN..."
 msgid "show the Current Version of the Betanova FW"
 msgstr "zeigt die aktuelle Version der Betanova Software"
 
-#: src/enigma_info.cpp:48
+#: src/enigma_info.cpp:47
 msgid "open the about dialog"
 msgstr "открыть диалог"
 
-#: src/enigma_info.cpp:49
+#: src/enigma_info.cpp:48
 msgid "shows the satfinder"
 msgstr "показать поиск спутн."
 
-#: src/enigma_info.cpp:195
+#: src/enigma_info.cpp:194
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: src/enigma_info.cpp:203
+#: src/enigma_info.cpp:202
 msgid "my"
 msgstr "мое"
 
-#: src/enigma_info.cpp:212
+#: src/enigma_info.cpp:211
 msgid "Processor: XPC823, 66MHz"
 msgstr "Процессор: XPC823, 66MHz"
 
-#: src/enigma_info.cpp:215
+#: src/enigma_info.cpp:214
 msgid "Processor: XPC823, 80MHz"
 msgstr "Процессор: XPC823, 80 MHz"
 
-#: src/enigma_info.cpp:218
+#: src/enigma_info.cpp:217
 msgid "Processor: STB04500, 252MHz"
 msgstr "Процессор: STB04500, 252MHz"
 
-#: src/enigma_info.cpp:221
+#: src/enigma_info.cpp:220
 msgid "Processor: STB25xxx, 252MHz"
 msgstr "Процессор: STB25xxx, 252MHz"
 
-#: src/enigma_info.cpp:247
+#: src/enigma_info.cpp:246
 msgid "Frontend: Satellite"
 msgstr "Приемник: Спутник"
 
-#: src/enigma_info.cpp:250
+#: src/enigma_info.cpp:249
 msgid "Frontend: Cable"
 msgstr "Приемник: Кабель"
 
-#: src/enigma_info.cpp:253
+#: src/enigma_info.cpp:252
 msgid "Frontend: Terrestrial"
 msgstr "Tuner: Terrestrisch"
 
-#: src/enigma_info.cpp:256
+#: src/enigma_info.cpp:255
 msgid "Frontend: Simulator"
 msgstr "Приемник: Эмулятор"
 
-#: src/enigma_info.cpp:302 src/streaminfo.cpp:268 src/streaminfo.cpp:279
+#: src/enigma_info.cpp:301 src/streaminfo.cpp:268 src/streaminfo.cpp:279
 #: src/streaminfo.cpp:291 src/streaminfo.cpp:303 src/streaminfo.cpp:315
 #: src/streaminfo.cpp:439 src/streaminfo.cpp:475
 msgid "none"
 msgstr "нет"
 
-#: src/enigma_info.cpp:308 src/timer.cpp:1592 src/upgrade.cpp:239
+#: src/enigma_info.cpp:307 src/timer.cpp:1593 src/upgrade.cpp:239
 msgid "unknown"
 msgstr "неизвестно"
 
-#: src/enigma_info.cpp:313
+#: src/enigma_info.cpp:312
 msgid "release"
 msgstr "Версия"
 
-#: src/enigma_info.cpp:314
+#: src/enigma_info.cpp:313
 msgid "beta"
 msgstr "beta"
 
-#: src/enigma_info.cpp:315
+#: src/enigma_info.cpp:314
 msgid "internal"
 msgstr "внутрений"
 
@@ -1517,7 +1517,7 @@ msgstr "пауза проигрывателя"
 msgid "resume playback"
 msgstr "итог проигрывателя"
 
-#: src/enigma_main.cpp:106 src/enigma_main.cpp:2296
+#: src/enigma_main.cpp:106 src/enigma_main.cpp:2300
 msgid "record"
 msgstr "запись"
 
@@ -1622,7 +1622,7 @@ msgstr "многократный Services"
 msgid "enable quickzap"
 msgstr "включить quickzap"
 
-#: src/enigma_main.cpp:721 src/enigma_main.cpp:4644
+#: src/enigma_main.cpp:721 src/enigma_main.cpp:4647
 msgid "add to user bouquet"
 msgstr "добавить к списку пользователя"
 
@@ -1671,73 +1671,73 @@ msgstr "Фаворитные (Radio)"
 msgid "no EPG available"
 msgstr "EPG отсутствует"
 
-#: src/enigma_main.cpp:2296
+#: src/enigma_main.cpp:2300
 msgid "Sorry, you cannot record this service."
 msgstr "Жаль, Вы неможете записать этот сервис."
 
-#: src/enigma_main.cpp:2454
+#: src/enigma_main.cpp:2458
 msgid "Show recorded movies?"
 msgstr "Показать записаные фильмы?"
 
-#: src/enigma_main.cpp:2454
+#: src/enigma_main.cpp:2458
 msgid "recording finished"
 msgstr "окончание записи"
 
-#: src/enigma_main.cpp:2614
+#: src/enigma_main.cpp:2618
 msgid "Sorry, you cannot delete this service."
 msgstr "Жаль, Вы не можете удалить этот сервис."
 
-#: src/enigma_main.cpp:2614
+#: src/enigma_main.cpp:2618
 msgid "delete service"
 msgstr "удалить сервис"
 
-#: src/enigma_main.cpp:2638
+#: src/enigma_main.cpp:2642
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
 msgstr "Это записаный канал! Удалять?"
 
-#: src/enigma_main.cpp:2638
+#: src/enigma_main.cpp:2642
 msgid "Delete recorded stream"
 msgstr "Удаление записаного фильма"
 
-#: src/enigma_main.cpp:2698
+#: src/enigma_main.cpp:2702
 msgid "Enter name for the new bouquet:"
 msgstr "Введите имя для нового списка:"
 
-#: src/enigma_main.cpp:2699
+#: src/enigma_main.cpp:2703
 msgid "Add new user bouquet"
 msgstr "Добавить список нового пользователя "
 
-#: src/enigma_main.cpp:2735
+#: src/enigma_main.cpp:2739
 msgid "Enter new name for the user bouquet:"
 msgstr "Введите новое имя для списка пользователя:"
 
-#: src/enigma_main.cpp:2736
+#: src/enigma_main.cpp:2740
 msgid "Rename user bouquet"
 msgstr "Переименование списка пользователя"
 
-#: src/enigma_main.cpp:2769
+#: src/enigma_main.cpp:2773
 msgid "unnamed bouquet"
 msgstr "список не назван"
 
-#: src/enigma_main.cpp:2813
+#: src/enigma_main.cpp:2817
 msgid "Enter new name:"
 msgstr "Введите новое имя:"
 
-#: src/enigma_main.cpp:2814
+#: src/enigma_main.cpp:2818
 msgid "Rename entry"
 msgstr "Переименование входа"
 
-#: src/enigma_main.cpp:3021 src/enigma_main.cpp:3022
+#: src/enigma_main.cpp:3025 src/enigma_main.cpp:3026
 msgid "This directory doesn't contain anything playable!"
 msgstr "Эта директория не содержит ничего для просмотра!"
 
-#: src/enigma_main.cpp:3022
+#: src/enigma_main.cpp:3026
 msgid "Play"
 msgstr "Воспроизвести"
 
-#: src/enigma_main.cpp:3319
+#: src/enigma_main.cpp:3323
 msgid ""
 "A timer based digital recording is currently in progress!\n"
 "This stops the timer, and digital recording!"
@@ -1745,7 +1745,7 @@ msgstr ""
 "Es findet gerade eine timergesteuerte digitale Aufnahme statt!\n"
 "Der Timer und die digitale Aufnahme wird beendet!"
 
-#: src/enigma_main.cpp:3329
+#: src/enigma_main.cpp:3333
 msgid ""
 "A digital recording is currently in progress!\n"
 "This stops the digital recording!"
@@ -1753,7 +1753,7 @@ msgstr ""
 "Идет запись!\n"
 "Это остановит запись!"
 
-#: src/enigma_main.cpp:3339
+#: src/enigma_main.cpp:3343
 msgid ""
 "A timer event is currently in progress!\n"
 "This stops the timer event!"
@@ -1761,118 +1761,118 @@ msgstr ""
 "Таймер запущен! \n"
 "Это остановит таймер!"
 
-#: src/enigma_main.cpp:3347
+#: src/enigma_main.cpp:3351
 msgid "Really do this?"
 msgstr "Сделать?"
 
-#: src/enigma_main.cpp:3961 src/enigma_main.cpp:3962
+#: src/enigma_main.cpp:3964 src/enigma_main.cpp:3965
 msgid "One moment please..."
 msgstr "Подождите..."
 
-#: src/enigma_main.cpp:3962 src/enigma_main.cpp:3967 src/enigma_main.cpp:3977
-#: src/enigma_main.cpp:3985 src/enigma_main.cpp:3992 src/enigma_main.cpp:3997
-#: src/enigma_main.cpp:4003 src/timer.cpp:1240
+#: src/enigma_main.cpp:3965 src/enigma_main.cpp:3970 src/enigma_main.cpp:3980
+#: src/enigma_main.cpp:3988 src/enigma_main.cpp:3995 src/enigma_main.cpp:4000
+#: src/enigma_main.cpp:4006 src/timer.cpp:1241
 msgid "switch"
 msgstr "переключить"
 
-#: src/enigma_main.cpp:3966 src/enigma_main.cpp:3967
+#: src/enigma_main.cpp:3969 src/enigma_main.cpp:3970
 msgid "Service could not be found !"
 msgstr "Сервис не найден."
 
-#: src/enigma_main.cpp:3976 src/enigma_main.cpp:3977
+#: src/enigma_main.cpp:3979 src/enigma_main.cpp:3980
 msgid "This service could not be descrambled"
 msgstr "Сервис не дешифруется"
 
-#: src/enigma_main.cpp:3984 src/enigma_main.cpp:3985
+#: src/enigma_main.cpp:3987 src/enigma_main.cpp:3988
 msgid "This service doesn't currently send a signal"
 msgstr "Нет сигнала от сервиса."
 
-#: src/enigma_main.cpp:3990 src/enigma_main.cpp:3992
+#: src/enigma_main.cpp:3993 src/enigma_main.cpp:3995
 msgid "This content could not be displayed"
 msgstr "Это не отображается"
 
-#: src/enigma_main.cpp:3995 src/enigma_main.cpp:3997
+#: src/enigma_main.cpp:3998 src/enigma_main.cpp:4000
 msgid "NVOD Service - please select a starttime"
 msgstr "NVOD сервис - выберите время запуска!"
 
-#: src/enigma_main.cpp:4001 src/enigma_main.cpp:4003
+#: src/enigma_main.cpp:4004 src/enigma_main.cpp:4006
 msgid "Unknown error!!"
 msgstr "Неизвестная ошибка!!"
 
-#: src/enigma_main.cpp:4416
+#: src/enigma_main.cpp:4419
 msgid "Playlist"
 msgstr "Список для воспроизведения"
 
-#: src/enigma_main.cpp:4418
+#: src/enigma_main.cpp:4421
 msgid "History"
 msgstr "История"
 
-#: src/enigma_main.cpp:4612
+#: src/enigma_main.cpp:4615
 msgid "Service Menu"
 msgstr "Сервисное Меню"
 
-#: src/enigma_main.cpp:4615 src/enigma_main.cpp:4709
+#: src/enigma_main.cpp:4618 src/enigma_main.cpp:4712
 #: src/setup_harddisk.cpp:180
 msgid "back"
 msgstr "[назад]"
 
-#: src/enigma_main.cpp:4621
+#: src/enigma_main.cpp:4624
 msgid "add service to playlist"
 msgstr "добавить сервис к списку воспроизведения"
 
-#: src/enigma_main.cpp:4625
+#: src/enigma_main.cpp:4628
 msgid "delete"
 msgstr "удалить"
 
-#: src/enigma_main.cpp:4627 src/enigma_main.cpp:4629
+#: src/enigma_main.cpp:4630 src/enigma_main.cpp:4632
 msgid "rename"
 msgstr "переименовать"
 
-#: src/enigma_main.cpp:4633
+#: src/enigma_main.cpp:4636
 msgid "disable move mode"
 msgstr "отключить режим перемещения"
 
-#: src/enigma_main.cpp:4635
+#: src/enigma_main.cpp:4638
 msgid "enable move mode"
 msgstr "включить режим перемещения"
 
-#: src/enigma_main.cpp:4646
+#: src/enigma_main.cpp:4649
 msgid "copy to user bouquets"
 msgstr "копирование списка пользователя"
 
-#: src/enigma_main.cpp:4654
+#: src/enigma_main.cpp:4657
 msgid "disable edit mode"
 msgstr "отключить режим режактирования"
 
-#: src/enigma_main.cpp:4656
+#: src/enigma_main.cpp:4659
 msgid "enable edit mode"
 msgstr "включить режим редактирования"
 
-#: src/enigma_main.cpp:4661
+#: src/enigma_main.cpp:4664
 msgid "create new user bouquet"
 msgstr "создать новый список пользователя"
 
-#: src/enigma_main.cpp:4706
+#: src/enigma_main.cpp:4709
 msgid "Record Menu"
 msgstr "Меню записи"
 
-#: src/enigma_main.cpp:4710
+#: src/enigma_main.cpp:4713
 msgid "stop record now"
 msgstr "остановка записи"
 
-#: src/enigma_main.cpp:4711
+#: src/enigma_main.cpp:4714
 msgid "set record duration"
 msgstr "установить продолжит.записи"
 
-#: src/enigma_main.cpp:4712
+#: src/enigma_main.cpp:4715
 msgid "set record stop time"
 msgstr "установить время остановки"
 
-#: src/enigma_main.cpp:4842
+#: src/enigma_main.cpp:4845
 msgid "press ok to start edit mode"
 msgstr "нажмите OK для начала редактирования"
 
-#: src/enigma_main.cpp:4869
+#: src/enigma_main.cpp:4872
 msgid "User Bouquets"
 msgstr "Пользовательский список"
 
@@ -1892,7 +1892,7 @@ msgstr "Режим радио"
 msgid "File mode"
 msgstr "Файловый режим"
 
-#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1571 src/rotorconfig.cpp:909
+#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1572 src/rotorconfig.cpp:909
 msgid "Information"
 msgstr "Информация"
 
@@ -3250,7 +3250,7 @@ msgstr ""
 "Вы хотите обновить выполняющееся задание...\n"
 "это остановит режим таймера (записи)!"
 
-#: src/timer.cpp:670 src/timer.cpp:1424
+#: src/timer.cpp:670 src/timer.cpp:1425
 msgid "Update event in timerlist"
 msgstr "Обновление задания в таймере"
 
@@ -3297,28 +3297,28 @@ msgstr "Добавить задание в таймер"
 msgid "remove this entry from timer list"
 msgstr "удалить эту запись из таймера"
 
-#: src/timer.cpp:1073
+#: src/timer.cpp:1074
 msgid "Timer list"
 msgstr "Список заданий"
 
-#: src/timer.cpp:1243
+#: src/timer.cpp:1244
 msgid "record DVR"
 msgstr "запись DVR"
 
-#: src/timer.cpp:1244
+#: src/timer.cpp:1245
 msgid "Ngrab"
 msgstr "Ngrab"
 
-#: src/timer.cpp:1288 src/enigma_event.cpp:278 src/enigma_event.cpp:289
+#: src/timer.cpp:1289 src/enigma_event.cpp:278 src/enigma_event.cpp:289
 msgid "no description is available"
 msgstr "нет доступного описания"
 
-#: src/timer.cpp:1308
+#: src/timer.cpp:1309
 #, fuzzy
 msgid "unknown service"
 msgstr "неизвестно"
 
-#: src/timer.cpp:1424
+#: src/timer.cpp:1425
 #, fuzzy
 msgid ""
 "Invalid begin or end time.!\n"
@@ -3327,7 +3327,7 @@ msgstr ""
 "Неправильное время!\n"
 "Пожалуйста проверте"
 
-#: src/timer.cpp:1571
+#: src/timer.cpp:1572
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
@@ -3335,7 +3335,7 @@ msgstr ""
 "Жаль, Вы не можете добавить время изменения сервиса вручную на таймер.\n"
 "Пожалуйста закройте таймер и используйте EPG для добавления!"
 
-#: src/timer.cpp:1615
+#: src/timer.cpp:1616
 #, fuzzy
 msgid "no description found"
 msgstr "нет доступного описания"

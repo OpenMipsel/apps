@@ -7,606 +7,647 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-04-13 20:55+0200\n"
-"PO-Revision-Date: Sun Apr 13 20:44:31 CEST 2003\n"
+"POT-Creation-Date: 2003-05-06 14:51+0200\n"
+"PO-Revision-Date: Tue May 6 14:48:59 CEST 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: Suomi / Ippeh & Heilis <i_h@jippii.fi>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: chk_blue2.esml:313
+#: chk_blue2.esml:316
 msgid "FF "
 msgstr "FF "
 
-#: default.esml:700
+#: default.esml:652
+msgid "search event name for this beg-/end time in epg"
+msgstr ""
+
+#: default.esml:721
 msgid "cancel partition check"
 msgstr "lopeta osioinnin tarkistus"
 
-#: default.esml:617
-msgid "press ok to edit the selected event"
-msgstr "paina ok, muokataksesi valintaa"
-
 # 
-#: default.esml:378 src/enigma_info.cpp:49
+#: default.esml:382 src/enigma_info.cpp:48
 msgid "Satfind"
 msgstr "Satelliitti etsin"
 
-#: chk_blue2.esml:312
+#: chk_blue2.esml:315
 msgid "Pause "
 msgstr "Keskeyt‰ "
 
-#: default.esml:342 default.esml:372 default.esml:428 default.esml:511
-#: default.esml:723 src/setup_language.cpp:82 src/setup_lcd.cpp:106
-#: src/setup_osd.cpp:258 src/setup_rc.cpp:108 src/setupnetwork.cpp:97
+#: default.esml:346 default.esml:376 default.esml:432 default.esml:515
+#: default.esml:744 src/setup_language.cpp:82 src/setup_lcd.cpp:106
+#: src/setup_osd.cpp:257 src/setup_rc.cpp:108 src/setupnetwork.cpp:97
 #: src/setupvideo.cpp:71 src/setup_rfmod.cpp:121 src/setup_audio.cpp:36
 msgid "save"
 msgstr "tallenna"
 
-#: default.esml:402
+#: default.esml:406
 msgid "motor power input difference between running and not running"
 msgstr "moottorin sis‰‰nmeno virran ero k‰ynniss‰ ja sammuneena"
 
-#: default.esml:439 default.esml:519 src/rotorconfig.cpp:617
+#: default.esml:635 src/timer.cpp:23
+msgid "Tue"
+msgstr "Ti"
+
+#: default.esml:443 default.esml:523 src/rotorconfig.cpp:594
 msgid "Satellite:"
 msgstr "Satelliitti:"
 
-#: chk_blue2.esml:311
+#: chk_blue2.esml:314
 msgid "Play "
 msgstr "Toista "
 
 # 
-#: default.esml:440
+#: default.esml:444
 msgid "choose the Satellite you wish to find"
 msgstr "valitse Sateliitti jonka haluat lˆyt‰‰"
 
-#: default.esml:343 default.esml:373 default.esml:429 default.esml:512
-#: default.esml:724 src/setup_language.cpp:95 src/setup_lcd.cpp:119
-#: src/setup_osd.cpp:272 src/setup_rc.cpp:121 src/setupnetwork.cpp:112
+#: default.esml:347 default.esml:377 default.esml:433 default.esml:516
+#: default.esml:745 src/setup_language.cpp:95 src/setup_lcd.cpp:119
+#: src/setup_osd.cpp:271 src/setup_rc.cpp:121 src/setupnetwork.cpp:112
 #: src/setupvideo.cpp:85 src/setup_audio.cpp:51
 msgid "ignore changes and return"
 msgstr "hylk‰‰ muutokset ja palaa takaisin"
 
-#: default.esml:640
+#: default.esml:661
 msgid "processor: "
 msgstr "suoritin: "
 
-#: default.esml:414
+#: default.esml:418
 msgid "choose entry to edit or remove"
 msgstr "valitse muokkaa tai poista"
 
-#: default.esml:641
+#: default.esml:632
+msgid "Endtime"
+msgstr ""
+
+#: default.esml:662
 msgid "frontend: "
 msgstr "j‰rjestelm‰:"
 
 # 
-#: default.esml:417
+#: default.esml:421
 msgid "enter where this orbital position is (to) stored in motor"
 msgstr "syˆt‰ moottoriin tallenettava satelliitin sijainti"
 
-#: default.esml:566
+#: default.esml:570
 msgid "SNR"
 msgstr "SNR"
 
-#: default.esml:486
+#: default.esml:490
 msgid "erase bouquets and services before scan"
 msgstr "poista kanavat ja palvelut ennen hakua"
 
 # 
-#: default.esml:383
+#: default.esml:387
 msgid "AGC:"
 msgstr "AGC:"
 
 # 
-#: default.esml:359
+#: default.esml:363
 msgid "Uncommitted Switch:"
 msgstr "K‰ytt‰m‰tˆn Kytkin:"
 
-#: default.esml:526
+#: default.esml:530
 msgid "enable/disable inversion here (ok)"
 msgstr "p‰‰lle/pois k‰‰nteinen (ok)"
 
-#: default.esml:371
+#: default.esml:375
 msgid "prev. page"
 msgstr "seur. sivu"
 
 # 
-#: default.esml:370
+#: default.esml:374
 msgid "Motor Setup"
 msgstr "Moottorin asetukset"
 
-#: default.esml:336
+#: default.esml:340
 msgid "LOF/L:"
 msgstr "LOF/L:"
 
-#: default.esml:658 default.esml:671
+#: default.esml:679 default.esml:692
 msgid "standby  "
 msgstr "valmiustila "
 
-#: default.esml:697
+#: default.esml:636 src/timer.cpp:21
+msgid "Wednesday"
+msgstr "Keskiviikka"
+
+#: default.esml:718
 msgid "Partition Check"
 msgstr "Osioinnin tarkistus"
 
-#: default.esml:655 default.esml:668
+#: default.esml:676 default.esml:689
 msgid "enter recording end time (0..9, left, right, ok)"
 msgstr "syˆt‰ tallennuksen p‰‰ttymisaika (0..9, vasen, oikea, ok)"
 
-#: default.esml:618 default.esml:622
+#: default.esml:641 default.esml:645
 msgid "select year (ok)"
 msgstr "valitse vuosi (ok)"
 
-#: default.esml:628
-msgid "close timer menu (ok)"
-msgstr "sulje ajastin valikko (ok)"
-
-#: default.esml:341
+#: default.esml:345
 msgid "increased voltage"
 msgstr "korotettu j‰nnite"
 
-#: default.esml:531
+#: default.esml:535
 msgid "FEC:"
 msgstr "FEC:"
 
 # 
-#: default.esml:392 default.esml:569
+#: default.esml:396 default.esml:573
 msgid "LOCK"
 msgstr "LOCK"
 
 # 
-#: default.esml:410
+#: default.esml:414
 msgid "Latitude:"
 msgstr "Satelliitti:"
 
-#: default.esml:393 default.esml:570
+#: default.esml:397 default.esml:574
 msgid "SYNC"
 msgstr "SYNC"
 
-#: default.esml:509
+#: default.esml:513
 msgid "Skins:"
 msgstr "Teema:"
 
-#: default.esml:391 default.esml:647 src/enigma_ci.cpp:469
+#: default.esml:395 default.esml:668 src/enigma_ci.cpp:469
 #: src/enigma_ci.cpp:478
 msgid "ok"
 msgstr "ok"
 
-#: default.esml:529
+#: default.esml:533
 msgid "choose polarity (left, right)"
 msgstr "valitse polarisaatio (vasen, oikea)"
 
 # 
-#: default.esml:472
+#: default.esml:476
 msgid "enable/disable use BAT for scan (if exists)"
 msgstr "p‰‰lle/pois BAT etsinn‰ss‰ (jos on olemassa)"
 
-#: default.esml:526
+#: default.esml:530
 msgid "Inv:"
 msgstr "Inv:"
 
 # 
-#: default.esml:621
+#: default.esml:644
 msgid "edit the start time (0..9, left, right)"
 msgstr "muokkaa alkamisaikaa (0..9, vasen, oikea)"
 
 # 
-#: default.esml:335
+#: default.esml:339
 msgid "enter LNB lowband offset frequency (0..9, ok)"
 msgstr "syˆt‰ LNB:n alataajuus (0..9, ok)"
 
-#: chk_blue2.esml:315
+#: chk_blue2.esml:318
 msgid "Record "
 msgstr "Tallennus "
 
 # 
-#: default.esml:508
+#: default.esml:512
 msgid "Skin Selector"
 msgstr "Avaa teema valikko"
 
-#: default.esml:496
+#: default.esml:500
 msgid "transponder scanned:"
 msgstr "l‰hetint‰ etsitty:"
 
-#: default.esml:667
+# 
+#: default.esml:630
+#, fuzzy
+msgid "press ok to change event name manually"
+msgstr "paina ok lis‰t‰ksesi nimen"
+
+#: default.esml:688
 msgid "recording end time:"
 msgstr "nauhoituksen p‰‰ttymisaika:"
 
-#: default.esml:399
+#: default.esml:638 src/timer.cpp:22
+msgid "Friday"
+msgstr "Perjantai"
+
+#: default.esml:403
 msgid "Use motor input power for running detection.. else use timeout"
 msgstr ""
 "k‰yt‰ moottorin sis‰‰nmeno virtaa k‰ynniss‰ etsimiseen.. muuten k‰yt‰ ajan "
 "loppumista"
 
-#: default.esml:422 default.esml:444
+#: default.esml:426 default.esml:448
 msgid "Direction:"
 msgstr "Suunta:"
 
-#: default.esml:360
+#: default.esml:364
 msgid "send the complete DiSEqC sequence dupe"
 msgstr "l‰het‰ valmis DiSEqC jakson j‰ljenne"
 
-#: default.esml:524 default.esml:544
+#: default.esml:528 default.esml:548
 msgid "MHz"
 msgstr "MHz"
 
-#: default.esml:495
+#: default.esml:499
 msgid "services scanned     :"
 msgstr "palveluita etsitty :"
 
-#: default.esml:629
-msgid "update"
-msgstr "p‰ivit‰"
-
 # 
-#: default.esml:511 src/setup_language.cpp:87 src/setup_lcd.cpp:111
-#: src/setup_osd.cpp:263 src/setup_rc.cpp:113 src/setupnetwork.cpp:102
+#: default.esml:515 src/setup_language.cpp:87 src/setup_lcd.cpp:111
+#: src/setup_osd.cpp:262 src/setup_rc.cpp:113 src/setupnetwork.cpp:102
 #: src/setupvideo.cpp:76 src/setup_audio.cpp:41
 msgid "save changes and return"
 msgstr "tallenna muutokset ja sulje ikkuna"
 
-#: default.esml:419
+#: default.esml:423
 msgid "Orbital Position:"
 msgstr "Satelliitin sijainti:"
 
-#: default.esml:426 default.esml:631
+#: default.esml:430 default.esml:623 default.esml:774
 msgid "remove"
 msgstr "poista"
 
-#: default.esml:398 default.esml:436
+#: default.esml:402 default.esml:440
 msgid "Motor Config"
 msgstr "Moottorin asetukset"
 
 # 
-#: default.esml:337
+#: default.esml:341
 msgid "enter LNB highband offset frequency (0..9, ok)"
 msgstr "syˆt‰ LNB:n yl‰taajuus (L.O. 10.600) (0..9, OK)"
 
-#: default.esml:357
+#: default.esml:361
 msgid "DiSEqC Repeats:"
 msgstr "DiSEqC:in toistoja:"
 
-#: default.esml:723
+#: default.esml:744
 msgid "save changes and close window"
 msgstr "tallenna muutokset ja sulje ikkuna"
 
-#: default.esml:543
+#: default.esml:547
 msgid "enter frequency (0..9, left, right)"
 msgstr "syˆt‰ taajuus (0..9, vasen, oikea)"
 
-#: default.esml:426
+#: default.esml:430
 msgid "remove selected entry"
 msgstr "poista valinta"
 
 # 
-#: default.esml:364
+#: default.esml:368
 msgid "select Uncommitted Switch 2 option"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen 2 asetukset"
 
-#: default.esml:657 default.esml:670
+#: default.esml:678 default.esml:691
 msgid "shutdown the box after recording (ok)"
 msgstr "sammuta laite tallennuksen j‰lkeen (ok)"
 
-#: default.esml:352
+#: default.esml:356
 msgid "select DiSEqC mode (ok)"
 msgstr "valitse DiSEqC-tila (ok)"
 
-#: default.esml:361
+#: default.esml:365
 msgid "Swap Commands"
 msgstr "Vaihto Komennot"
 
 # 
-#: default.esml:370
+#: default.esml:374
 msgid "opens the motor setup"
 msgstr "avaa moottorin asetukset"
 
-#: default.esml:739
+#: default.esml:760
 msgid "Please choose your DiSEqC-Configuration:"
 msgstr "Valitse sinun DiSEqC-asetukset:"
 
-#: default.esml:653 default.esml:666
+#: default.esml:674 default.esml:687
 msgid "Stop Record"
 msgstr "Lopeta tallennus"
 
 # 
-#: default.esml:340
+#: default.esml:344
 msgid "enter LNB threshold frequency (0..9, ok)"
 msgstr "syˆt‰ LNB:n rajataajuus (0..9, OK)"
 
 # 
-#: default.esml:452
+#: default.esml:456
 msgid "close motor setup"
 msgstr "sulje moottorin asetukset"
 
-#: default.esml:536 default.esml:548
+#: default.esml:540 default.esml:552
 msgid "KSymb/s"
 msgstr "KSymb/s"
 
 # 
-#: default.esml:437
+#: default.esml:441
 msgid "Mode:"
 msgstr "Moodi:"
 
-#: default.esml:476 default.esml:488 default.esml:512 default.esml:660
-#: default.esml:673 default.esml:713 src/enigma_ci.cpp:77 src/scan.cpp:38
-#: src/setup_language.cpp:92 src/setup_lcd.cpp:116 src/setup_osd.cpp:269
+#: default.esml:480 default.esml:492 default.esml:516 default.esml:681
+#: default.esml:694 default.esml:734 src/enigma_ci.cpp:77 src/scan.cpp:39
+#: src/setup_language.cpp:92 src/setup_lcd.cpp:116 src/setup_osd.cpp:268
 #: src/setup_rc.cpp:118 src/setupnetwork.cpp:109 src/setupvideo.cpp:82
 #: src/setup_rfmod.cpp:132 src/setup_audio.cpp:48
 msgid "abort"
 msgstr "keskeyt‰"
 
-#: default.esml:499
+#: default.esml:503
 msgid "Progress:"
 msgstr "Edennyt:"
 
-#: default.esml:691
+#: default.esml:712
 msgid "select filsystem to format"
 msgstr "valitse tiedostoj‰rjestelm‰n formaatti"
 
 # 
-#: default.esml:311
+#: default.esml:315
 msgid "Satellite Configuration"
 msgstr "Satelliitin asetukset"
 
 # 
-#: default.esml:379
+#: default.esml:383
 msgid "SNR:"
 msgstr "SNR:"
 
 # 
-#: default.esml:701
+#: default.esml:722
 msgid "close window"
 msgstr "sulje ikkuna "
 
-#: default.esml:387 default.esml:568
+#: default.esml:651
+#, fuzzy
+msgid "save data and close window"
+msgstr "tallenna muutokset ja sulje ikkuna"
+
+#: default.esml:391 default.esml:572
 msgid "BER"
 msgstr "BER"
 
-#: default.esml:339
+#: default.esml:343
 msgid "Threshold:"
 msgstr "Raja-arvo:"
 
-#: default.esml:446
+#: default.esml:450
 msgid "Recalc Params:"
 msgstr "Uudelleen lasketut parametrit: "
 
-#: default.esml:523
+#: default.esml:527
 msgid "enter transponder frequeny (0..9, left, right)"
 msgstr "syˆt‰ taajuus (0..9, vasen, oikea)"
 
-#: default.esml:372
+#: default.esml:376
 msgid "save changes"
 msgstr "tallennat muutokset"
 
 # 
-#: default.esml:453
+#: default.esml:773
+#, fuzzy
+msgid "edit selected transponder (ok)"
+msgstr "poistu etsinn‰st‰"
+
+# 
+#: default.esml:457
 msgid "save in motor"
 msgstr "tallenna moottoriin"
 
-#: default.esml:689
+#: default.esml:710
 msgid "do a filesystem check"
 msgstr "tee tiedostoj‰rjestelm‰n tarkistus"
 
-#: default.esml:528
+#: default.esml:532
 msgid "Polarity:"
 msgstr "Polarisaatio:"
 
-#: default.esml:425 default.esml:630
+#: default.esml:429 default.esml:622 default.esml:772
 msgid "add"
 msgstr "lis‰‰"
 
-#: default.esml:688
+#: default.esml:709
 msgid "initialize the disk for use with the dreambox"
 msgstr "alusta kovalevy k‰ytt‰en dreambox:ia"
 
+#: default.esml:634
+#, fuzzy
+msgid "Mo"
+msgstr "Ma"
+
 # 
-#: default.esml:475
+#: default.esml:479
 msgid "start the transponder scan"
 msgstr "aloita l‰hettimien etsint‰"
 
-#: default.esml:314
+#: default.esml:318
 msgid "LNB"
 msgstr "LNB"
 
-#: default.esml:475 default.esml:487
+#: default.esml:479 default.esml:491
 msgid "start scan"
 msgstr "aloita etsint‰"
 
-#: default.esml:473
+#: default.esml:477
 msgid "remove all services before scan"
 msgstr "poista kaikki palvelut ennen etsint‰‰"
 
-#: default.esml:354
+#: default.esml:358
 msgid "select DiSEqC parameter (ok)"
 msgstr "valitse DiSEqC-parametri (ok)"
 
 # 
-#: stone.esml:463 silver.esml:473
+#: stone.esml:465 silver.esml:472
 msgid "videotext"
 msgstr "videoteksti"
 
-#: default.esml:476 default.esml:488
+#: default.esml:480 default.esml:492
 msgid "close window and do not scan"
 msgstr "sulje ikkuna ja ‰l‰ suorita etsint‰‰"
 
-#: default.esml:628 default.esml:701
+#: default.esml:722
 msgid "close"
 msgstr "sulje"
 
-#: default.esml:486
+#: default.esml:490
 msgid "erase all"
 msgstr "poista kaikki"
 
-#: default.esml:689
+#: default.esml:710
 msgid "check"
 msgstr "tarkista"
 
-#: default.esml:522 default.esml:542
+#: default.esml:526 default.esml:546
 msgid "Frequency:"
 msgstr "Taajuus:"
 
-#: default.esml:582 default.esml:589 default.esml:596
+#: default.esml:586 default.esml:593 default.esml:600
 msgid "Services"
 msgstr "Palvelut"
 
-#: default.esml:451
+#: default.esml:455
 msgid "0"
 msgstr "ei asetettu"
 
 # 
-#: default.esml:362
+#: default.esml:366
 msgid "select Uncommitted Switch 1 option"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen 1 asetukset"
 
-#: default.esml:369
+# 
+#: default.esml:774
+#, fuzzy
+msgid "remove selected satellite"
+msgstr "poista valittu sateliitti"
+
+#: default.esml:373
 msgid "U-Switch 4:"
 msgstr "U-kytkin 4:"
 
 # 
-#: default.esml:535 default.esml:547
+#: default.esml:539 default.esml:551
 msgid "enter symbol rate (0..9, left, right)"
 msgstr "syˆt‰ symbolinopeus (0..9, vasen, oikea)"
 
 # 
-#: default.esml:721
+#: default.esml:742
 msgid "press ok to enter the name"
 msgstr "paina ok lis‰t‰ksesi nimen"
 
-#: default.esml:554
+#: default.esml:558
 msgid "enable/disable inversion (ok)"
 msgstr "p‰‰lle/pois k‰‰nteinen (ok)"
 
 # 
-#: stone.esml:461 silver.esml:471
+#: stone.esml:463 silver.esml:470
 msgid "subservices"
 msgstr "alipalvelut"
 
-#: default.esml:401
+#: default.esml:405
 msgid "/sec"
 msgstr "/sek"
 
-#: default.esml:631
+#: default.esml:623
 msgid "delete the current selected timer (ok)"
 msgstr "poista valittu ajastin (ok)"
 
-#: default.esml:350
+#: default.esml:354
 msgid "select MiniDiSEqC parameter (ok)"
 msgstr "valitse MiniDiSEqC parametri (ok)"
 
-#: default.esml:425
+#: default.esml:429
 msgid "add to table/existing is overwritten"
 msgstr "lis‰‰ listaan/ vanhan p‰‰lle kirjoitetaan"
 
-#: default.esml:482
+#: default.esml:486
 msgid "Network:"
 msgstr "Verkko:"
 
 # 
-#: default.esml:645
+#: default.esml:666
 msgid "Software Version:"
 msgstr "Ohjelmiston versio:"
 
-#: default.esml:365
+#: default.esml:369
 msgid "U-Switch 2:"
 msgstr "U-kytkin 2:"
 
 # 
-#: default.esml:408
+#: default.esml:412
 msgid "enter your longitude (0..9, +, -, ok)"
 msgstr "syˆt‰ pituusaste (0..9, +, -, ok)"
 
 # 
-#: default.esml:320
+#: default.esml:324
 msgid "remove the selected Satellite"
 msgstr "poista valittu sateliitti"
 
-#: default.esml:520
+#: default.esml:524
 msgid "choose wished satellite (ok)"
 msgstr "valitse toivottu satelliitti (ok)"
 
 # 
-#: default.esml:730
+#: default.esml:751
 msgid "Your language"
 msgstr "Kieli:"
 
-#: default.esml:619 default.esml:623
+#: default.esml:642 default.esml:646
 msgid "select month (ok)"
 msgstr "valitse kuukausi (ok)"
 
 # 
-#: default.esml:690
+#: default.esml:711
 msgid "show extended configuration"
 msgstr "n‰yt‰ laajennetut asetukset"
 
-#: default.esml:660 default.esml:673
+#: default.esml:681 default.esml:694
 msgid "close window and use no record timer (ok)"
 msgstr "sulje ikkuna ja ‰l‰ k‰yt‰ ajastinta (ok)"
 
 # 
-#: default.esml:411
+#: default.esml:415
 msgid "enter your latitude (0..9, +, -, ok)"
 msgstr "syˆt‰ leveysaste (0..9, +, -, ok)"
 
-#: default.esml:353
+#: default.esml:357
 msgid "DiSEqC Mode:"
 msgstr "DiSEqC-tila"
 
 # 
-#: default.esml:438
+#: default.esml:442
 msgid "choose what you want to do"
 msgstr "valitse mit‰ haluat tehd‰(ok)"
 
-#: default.esml:494
+#: default.esml:771
+#, fuzzy
+msgid "select sat ( up/down )"
+msgstr "valitse p‰iv‰ (ok)"
+
+#: default.esml:640 src/timer.cpp:21
+msgid "Sunday"
+msgstr "Sunnuntai"
+
+#: default.esml:498
 msgid "scanning..."
 msgstr "etsit‰‰n..."
 
-#: default.esml:327
+#: default.esml:331
 msgid "LNB Configuration"
 msgstr "LNB-asetukset"
 
 # 
-#: default.esml:416
+#: default.esml:420
 msgid "Number in motor:"
 msgstr "Moottoreita:"
 
-#: default.esml:680
+#: default.esml:701
 msgid "model:"
 msgstr "malli:"
 
-#: default.esml:361
+#: default.esml:365
 msgid "swaps normal and opt.Switch DiSEqC Cmds"
 msgstr "vaihda normaalin ja optisen DiSEqC-kytkimen komennot"
 
 # 
-#: default.esml:320
+#: default.esml:324
 msgid "erase"
 msgstr "poista kaikki"
 
-#: default.esml:313
+#: default.esml:317
 msgid "Sat/Position"
 msgstr "Sat/sijainti"
 
-#: default.esml:449
+#: default.esml:453
 msgid "calc param 3 (see your motor manual or let it 00)"
 msgstr "laske parametri 3 (katso moottorin manuaalista tai laita 00)"
 
-#: default.esml:629
-msgid "update the current selected timer (ok)"
-msgstr "p‰ivit‰ valittu ajastin (ok)"
-
 # 
-#: default.esml:342
+#: default.esml:346
 msgid "save changes and use current selected LNB for the chosen satellite"
 msgstr "tallenna muutokset ja k‰yt‰ LNB:t‰ valitussa satelliitissa"
 
-#: default.esml:567
+#: default.esml:571
 msgid "AGC"
 msgstr "AGC"
 
-#: default.esml:355
+#: default.esml:359
 msgid "DiSEqC Parameter:"
 msgstr "DiSEqC-parametri:"
 
 # 
-#: default.esml:428
+#: default.esml:432
 msgid ""
 "save changes and use the selected LNB (in first page) for the choosen "
 "satellite"
@@ -615,359 +656,450 @@ msgstr ""
 "valintaan"
 
 # 
-#: default.esml:550
+#: default.esml:554
 msgid "Modulation:"
 msgstr "Modulaatio:"
 
-#: default.esml:341
+#: default.esml:345
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
 msgstr "0,5 V korkeampi LNB-j‰nnite (pitk‰lle kaapelille) (ok)"
 
 # 
-#: default.esml:358
+#: default.esml:362
 msgid "select uncommitted input"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n sis‰‰ntulo"
 
-#: default.esml:471
+#: default.esml:475
 msgid "enable/disable check ONIT on any transponder"
 msgstr "p‰‰lle/pois l‰hettimen ONIT tarkistus"
 
-#: default.esml:643
+#: default.esml:664
 msgid "harddisk: "
 msgstr "kovalevy:"
 
-#: default.esml:399
+#: default.esml:403
 msgid "Use Motor Input Power"
 msgstr "k‰yt‰ moottorin sis‰‰nmeno virtaa"
 
 # 
-#: default.esml:405
+#: default.esml:409
 msgid "when the motor support this, then use"
 msgstr "kun moottori tukee t‰t‰, niin k‰yt‰"
 
-#: default.esml:686
+#: default.esml:707
 msgid "status:"
 msgstr "tila:"
 
 # 
-#: default.esml:368
+#: default.esml:372
 msgid "select Uncommitted Switch 4 option"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen 4 asetukset"
 
-#: default.esml:472
+#: default.esml:476
 msgid "use BAT"
 msgstr "k‰yt‰ BAT"
 
-#: default.esml:546
+#: default.esml:631
+msgid "Starttime"
+msgstr ""
+
+#: default.esml:550
 msgid "Symbolrate:"
 msgstr "Symbolinopeus:"
 
-#: default.esml:305
+#: default.esml:309
 msgid "HTTP Download"
 msgstr "HTTP lataus"
 
-#: default.esml:371
+#: default.esml:375
 msgid "goto prev page (LNB)"
 msgstr "edellinen sivu (LNB)"
 
 # 
-#: default.esml:551
+#: default.esml:555
 msgid "choose wished modulation (ok)"
 msgstr "valitse toivottu modulaatio (ok)"
 
-#: chk_blue2.esml:310
+# 
+#: default.esml:768
+#, fuzzy
+msgid "Transponders"
+msgstr "L‰hettimet:"
+
+#: chk_blue2.esml:313
 msgid "FR "
 msgstr "FR "
 
-#: default.esml:420
+#: default.esml:424
 msgid "enter orbital position without dot (19.2 = 192)"
 msgstr "syˆt‰ satelliitin asema ilman pistett‰ (19.2 = 192)"
 
-#: default.esml:659 default.esml:672
+#: default.esml:680 default.esml:693
 msgid "set recording end time and close window (ok)"
 msgstr "syˆt‰ tallennuksen p‰‰ttymisaika ja sulje ikkuna (ok)"
 
-#: default.esml:405
+#: default.esml:409
 msgid "Use gotoXX Function"
 msgstr "K‰yt‰ siirryXX funktiota"
 
 # 
-#: default.esml:321
+#: default.esml:325
 msgid "close Satellite Configuration"
 msgstr "sulje Satelliitti asetukset"
 
-#: default.esml:462
+#: default.esml:466
 msgid "transponder scan"
 msgstr "l‰hettimien etsint‰"
 
-#: default.esml:334
+#: default.esml:338
 msgid "choose the LNB you wish to apply or edit"
 msgstr "valitse LNB jota k‰yt‰t tai muokkaat"
 
-#: default.esml:473
+#: default.esml:477
 msgid "clear list before"
 msgstr "tyhjenn‰ lista ensin"
 
-#: default.esml:610 default.esml:616 stone.esml:460 silver.esml:470
+#: default.esml:614 default.esml:620 stone.esml:462 silver.esml:469
 msgid "EPG"
 msgstr "EPG"
 
-#: default.esml:684
+#: default.esml:773
+#, fuzzy
+msgid "edit"
+msgstr "tee se"
+
+#: default.esml:639
+#, fuzzy
+msgid "Sa"
+msgstr "La"
+
+#: default.esml:633
+msgid "for a multiple event enable this"
+msgstr ""
+
+#: default.esml:705
 msgid "connected:"
 msgstr "kytketty:"
 
-#: default.esml:344 default.esml:430
+#: default.esml:621
+#, fuzzy
+msgid "press ok to select another event"
+msgstr "paina ok valitaksesi toinen 22kHz tila"
+
+#: default.esml:348 default.esml:434
 msgid "next page"
 msgstr "seur. sivu"
 
-#: default.esml:657 default.esml:670
+#: default.esml:678 default.esml:691
 msgid "shutdown  "
 msgstr "sammuta  "
 
 # 
-#: default.esml:534
+#: default.esml:538
 msgid "Symbol Rate:"
 msgstr "Symbolinopeus:"
 
 # 
-#: default.esml:442
+#: default.esml:446
 msgid "Transponder:"
 msgstr "L‰hettimet:"
 
-#: default.esml:659 default.esml:672
+#: default.esml:680 default.esml:693
 msgid "set"
 msgstr "aseta"
 
-#: default.esml:445
+#: default.esml:449
 msgid "press left or right to move motor"
 msgstr "paina vasenmalle tai oikealle liikuttaaksesi moottoria"
 
-#: default.esml:448
+#: default.esml:452
 msgid "calc param 2 (see your motor manual or let it 00)"
 msgstr "laske parametri 2 (katso moottorin manuaalista tai laita 00)"
 
-#: default.esml:626
+#: default.esml:649
 msgid "select the timer type (ok)"
 msgstr "valitse ajastin tyyppi (ok)"
 
-#: default.esml:315
+#: default.esml:319
 msgid "22Khz"
 msgstr "22 Khz"
 
-#: default.esml:351
+#: default.esml:355
 msgid "MiniDiSEqC Parameter:"
 msgstr "MiniDiSEqC parametri:"
 
 # 
-#: default.esml:483
+#: default.esml:487
 msgid "choose satellite/cable provider (ok)"
 msgstr "valitse satelliitti-/ohjelman operaattoti (ok)"
 
-#: default.esml:669
+#: default.esml:690
 msgid "o'clock"
 msgstr "kello"
 
-#: default.esml:338
+#: default.esml:342
 msgid "LOF/H:"
 msgstr "LOF/H:"
 
 # 
-#: default.esml:366
+#: default.esml:370
 msgid "select Uncommitted Switch 3 option"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen 3 asetukset"
 
-#: default.esml:400
+#: default.esml:404
 msgid "motor drive speed, in degrees per second"
 msgstr "moottorin ajonopeus, astetta sekunnissa"
 
-#: default.esml:637 src/enigma_info.cpp:48
+#: default.esml:658 src/enigma_info.cpp:47
 msgid "About..."
 msgstr "Tietoja..."
 
-#: default.esml:630
+#: default.esml:622
 msgid "add new Timer (ok)"
 msgstr "lis‰‰ uusi ajastin (ok)"
 
-#: default.esml:627
+#: default.esml:650
 msgid "to change service press ok"
 msgstr "vaihda palvelua paina ok"
 
-#: default.esml:450
+#: default.esml:454
 msgid "Counter(Movement)"
 msgstr "Laskuri(Liike)"
 
 # 
-#: default.esml:454
+#: default.esml:458
 msgid "search"
 msgstr "etsi"
 
-#: default.esml:471
+#: default.esml:475
 msgid "use ONIT"
 msgstr "k‰yt‰ ONIT"
 
-#: default.esml:474
+#: default.esml:478
 msgid "enable/disable initiate network search"
 msgstr "p‰‰lle/pois etsint‰ verkosta"
 
-#: default.esml:321 lib/gui/emessage.cpp:97 src/enigma_ci.cpp:220
+#: default.esml:652
+msgid "scan EPG"
+msgstr ""
+
+#: default.esml:325 lib/gui/emessage.cpp:99 src/enigma_ci.cpp:220
 msgid "OK"
 msgstr "OK"
 
-#: stone.esml:462 silver.esml:472
+#: stone.esml:464 silver.esml:471
 msgid "audio track"
 msgstr "audio raita"
 
-#: default.esml:319
+#: default.esml:640
+#, fuzzy
+msgid "Su"
+msgstr "Su"
+
+#: default.esml:323
 msgid "new"
 msgstr "uusi"
 
-#: chk_blue2.esml:314
+#: chk_blue2.esml:317
 msgid "Stop "
 msgstr "Pys‰yt‰ "
 
-#: default.esml:532
+#: default.esml:636 src/timer.cpp:23
+msgid "Wed"
+msgstr "Ke"
+
+#: default.esml:536
 msgid "choose the FEC (left, right)"
 msgstr "valitse FEC (vasen, oikea)"
 
-#: default.esml:356
+#: default.esml:360
 msgid "select DiSEqC repeats (ok)"
 msgstr "valitse DiSEqC toisto (ok)"
 
 # 
-#: default.esml:707
+#: default.esml:728
 msgid "Software upgrade..."
 msgstr "Ohjelmiston p‰ivitys..."
 
 # 
-#: default.esml:407
+#: default.esml:411
 msgid "Longitude:"
 msgstr "Pituusaste:"
 
-#: default.esml:409 default.esml:412 default.esml:423
+#: default.esml:413 default.esml:416 default.esml:427
 msgid "choose direction"
 msgstr "valitse suunta"
 
-#: default.esml:682
+#: default.esml:703
 msgid "capacity:"
 msgstr "kapasiteetti:"
 
-#: default.esml:738
+#: default.esml:759
 msgid "DiSEqC..."
 msgstr "DiSEqC..."
 
-#: default.esml:510
+#: default.esml:514
 msgid "select skin and press ok or choose save"
 msgstr "valitse teema ja paina ok tai valitse tallenna"
 
-#: default.esml:447
+#: default.esml:451
 msgid "calc param 1 (see your motor manual or let it 00)"
 msgstr "laske parametri 1 (katso moottorin manuaalista tai laita 00)"
 
 # 
-#: default.esml:452
+#: default.esml:456
 msgid "prev page"
 msgstr "edel. sivu"
 
-#: default.esml:620 default.esml:624
+#: default.esml:643 default.esml:647
 msgid "select day (ok)"
 msgstr "valitse p‰iv‰ (ok)"
 
-#: default.esml:343 default.esml:373 default.esml:429 default.esml:700
-#: default.esml:724
+#: default.esml:347 default.esml:377 default.esml:433 default.esml:721
+#: default.esml:745
 msgid "cancel"
 msgstr "peruuta"
 
-#: default.esml:344
+# 
+#: default.esml:637 src/timer.cpp:24
+msgid "Thu"
+msgstr "To"
+
+#: default.esml:348
 msgid "goto next page (DiSEqC)"
 msgstr "seuraava sivu (DiSEqC)"
 
-#: default.esml:625
+#: default.esml:648
 msgid "edit the end time (0..9, left, right)"
 msgstr "muokkaa p‰‰ttymisaikaa (0..9, vasen, oikea)"
 
-#: default.esml:654
+#: default.esml:635 src/timer.cpp:21
+msgid "Tuesday"
+msgstr "Tiistai"
+
+#: default.esml:675
 msgid "recording duration:"
 msgstr "tallennuksen kesto:"
 
-#: default.esml:367
+#: default.esml:651
+msgid "apply"
+msgstr ""
+
+#: default.esml:629
+#, fuzzy
+msgid "Timer Edit"
+msgstr "Ajastinlista"
+
+#: default.esml:371
 msgid "U-Switch 3:"
 msgstr "U-kytkin 3:"
 
+#: default.esml:638
+#, fuzzy
+msgid "Fr"
+msgstr "Pe"
+
 # 
-#: default.esml:443
+#: default.esml:447
 msgid "choose the Transponder you wish to find"
 msgstr "valitse l‰hetin jonka haluat lˆyt‰‰"
 
+#: default.esml:772
+msgid "add new Transponder to selected sat (ok)"
+msgstr ""
+
+#: default.esml:637 src/timer.cpp:22
+msgid "Thursday"
+msgstr "Torstai"
+
+#: default.esml:633
+#, fuzzy
+msgid "Repeated timer"
+msgstr "Toisto nopeus:"
+
 # 
-#: default.esml:698
+#: default.esml:719
 msgid "status output:"
 msgstr "ulostulon tila:"
 
-#: default.esml:360
+#: default.esml:364
 msgid "Sequence repeat"
 msgstr "Jakson toisto"
 
-#: default.esml:319
+#: default.esml:323
 msgid "add a new Satellite"
 msgstr "lis‰‰ uusi Satelliitti"
 
 # 
-#: default.esml:441
+#: default.esml:445
 msgid "enter stored satellite pos"
 msgstr "syˆt‰ tallennettu satelliitin sijainti"
 
 # 
-#: default.esml:454
+#: default.esml:458
 msgid "open transponder scan"
 msgstr "l‰hettimien etsint‰"
 
-#: default.esml:679
+#: default.esml:700
 msgid "Harddisk"
 msgstr "Kovalevy"
 
-#: default.esml:656
+#: default.esml:677
 msgid "min"
 msgstr "min"
 
-#: default.esml:403
+#: default.esml:407
 msgid "mA"
 msgstr "mA"
 
-#: default.esml:658 default.esml:671
+#: default.esml:679 default.esml:692
 msgid "goto standby after recording (ok)"
 msgstr "mene valmiustilaan tallennuksen j‰lkeen (ok)"
 
-#: default.esml:553
+#: default.esml:557
 msgid "Inversion:"
 msgstr "K‰‰nteinen:"
 
 # 
-#: default.esml:430
+#: default.esml:434
 msgid "goto advanced motor setup"
 msgstr "syv‰lliset moottorin asetukset"
 
-#: default.esml:688
+#: default.esml:634 src/timer.cpp:21
+msgid "Monday"
+msgstr "Maanantai"
+
+#: default.esml:639 src/timer.cpp:22
+msgid "Saturday"
+msgstr "Lauantai"
+
+#: default.esml:709
 msgid "format"
 msgstr "alustaa"
 
 # 
-#: default.esml:487
+#: default.esml:491
 msgid "starts the transponder scan"
 msgstr "aloitetaan l‰hettimien etsint‰"
 
-#: default.esml:363
+#: default.esml:771
+#, fuzzy
+msgid "sat"
+msgstr "aseta"
+
+#: default.esml:367
 msgid "U-Switch 1:"
 msgstr "U-kytkin 1:"
 
-#: default.esml:316
+#: default.esml:320
 msgid "Voltage"
 msgstr "J‰nnite"
 
-#: default.esml:474
+#: default.esml:478
 msgid "network search"
 msgstr "verkkon etsint‰"
 
-#: default.esml:575
+#: default.esml:579
 msgid "Help"
 msgstr "Apua"
 
@@ -979,7 +1111,7 @@ msgstr "vertikaali"
 msgid "horizontal"
 msgstr "horizontaali"
 
-#: lib/dvb/serviceplaylist.cpp:124
+#: lib/dvb/serviceplaylist.cpp:126
 #, c-format
 msgid " (%d entries)"
 msgstr "(%d merkint‰‰)"
@@ -1014,161 +1146,165 @@ msgstr "Yhdistet‰‰n..."
 msgid "playing..."
 msgstr "soitetaan..."
 
-#: lib/gui/emessage.cpp:98
+#: lib/gui/emessage.cpp:100
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: lib/gui/emessage.cpp:99
+#: lib/gui/emessage.cpp:101
 msgid "Yes"
 msgstr "Kyll‰"
 
-#: lib/gui/emessage.cpp:100
+#: lib/gui/emessage.cpp:102
 msgid "No"
 msgstr "Ei"
 
-#: src/channelinfo.cpp:75
+#: lib/gui/listbox.cpp:434 lib/gui/listbox.cpp:667 src/enigma_main.cpp:2310
+msgid "no description available"
+msgstr "kuvausta ei saatavilla"
+
+#: src/channelinfo.cpp:76
 msgid "Movie"
 msgstr "Elokuva"
 
-#: src/channelinfo.cpp:75
+#: src/channelinfo.cpp:76
 msgid "Adventure"
 msgstr "Seikkailu"
 
-#: src/channelinfo.cpp:75
+#: src/channelinfo.cpp:76
 msgid "SciFi"
 msgstr "SciFi"
 
-#: src/channelinfo.cpp:75
+#: src/channelinfo.cpp:76
 msgid "Comedy"
 msgstr "Komedia"
 
 # 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:77
 msgid "Soap"
 msgstr "Saippua"
 
 # 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:77
 msgid "Romance"
 msgstr "Romantiikka"
 
 # 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:77
 msgid "Serious"
 msgstr "Draama"
 
-#: src/channelinfo.cpp:76
+#: src/channelinfo.cpp:77
 msgid "Adult"
 msgstr "Aikuis"
 
 # 
-#: src/channelinfo.cpp:79
+#: src/channelinfo.cpp:80
 msgid "News"
 msgstr "Uutiset"
 
-#: src/channelinfo.cpp:79
+#: src/channelinfo.cpp:80
 msgid "Weather"
 msgstr "S‰‰"
 
 # 
-#: src/channelinfo.cpp:79
+#: src/channelinfo.cpp:80
 msgid "Magazine"
 msgstr "Aikakausi"
 
-#: src/channelinfo.cpp:79
+#: src/channelinfo.cpp:80
 msgid "Documentary"
 msgstr "Dokumentti"
 
 # 
-#: src/channelinfo.cpp:79
+#: src/channelinfo.cpp:80
 msgid "Discussion"
 msgstr "Pohdinta"
 
-#: src/channelinfo.cpp:83
+#: src/channelinfo.cpp:84
 msgid "Show"
 msgstr "Viihde"
 
-#: src/channelinfo.cpp:83
+#: src/channelinfo.cpp:84
 msgid "Game Show"
 msgstr "Peli viihde"
 
 # 
-#: src/channelinfo.cpp:83
+#: src/channelinfo.cpp:84
 msgid "Variety"
 msgstr "Varietee"
 
-#: src/channelinfo.cpp:83
+#: src/channelinfo.cpp:84
 msgid "Talk"
 msgstr "Keskustelu"
 
-#: src/channelinfo.cpp:87
+#: src/channelinfo.cpp:88
 msgid "Sports"
 msgstr "Urheilu"
 
-#: src/channelinfo.cpp:88
+#: src/channelinfo.cpp:89
 msgid "Athletics"
 msgstr "Urheilu"
 
-#: src/channelinfo.cpp:89
+#: src/channelinfo.cpp:90
 msgid "Martial Sports"
 msgstr "Kamppailu urheilu"
 
-#: src/channelinfo.cpp:92
+#: src/channelinfo.cpp:93
 msgid "Children"
 msgstr "Lapset"
 
-#: src/channelinfo.cpp:93
+#: src/channelinfo.cpp:94
 msgid "Cartoons"
 msgstr "Piirretty"
 
-#: src/channelinfo.cpp:101
+#: src/channelinfo.cpp:102
 msgid "Culture"
 msgstr "Kulttuuri"
 
 # 
-#: src/channelinfo.cpp:102
+#: src/channelinfo.cpp:103
 msgid "Film"
 msgstr "Elokuva"
 
-#: src/channelinfo.cpp:105
+#: src/channelinfo.cpp:106
 msgid "Social"
 msgstr "Yhteiskunta"
 
-#: src/channelinfo.cpp:109
+#: src/channelinfo.cpp:110
 msgid "Education"
 msgstr "Opetus"
 
-#: src/channelinfo.cpp:110
+#: src/channelinfo.cpp:111
 msgid "Further Ed."
 msgstr "Edistynyt opetus"
 
-#: src/channelinfo.cpp:113
+#: src/channelinfo.cpp:114
 msgid "Hobbies"
 msgstr "Harrastukset"
 
-#: src/channelinfo.cpp:114
+#: src/channelinfo.cpp:115
 msgid "Shopping"
 msgstr "Ostokset"
 
-#: src/channelinfo.cpp:117
+#: src/channelinfo.cpp:118
 msgid "Orig. Lang."
 msgstr "Alkup. Kieli"
 
-#: src/channelinfo.cpp:232
+#: src/channelinfo.cpp:233
 msgid "no data for this service avail"
 msgstr "palvelusta ei tietoa saatavilla"
 
-#: src/channelinfo.cpp:260
+#: src/channelinfo.cpp:261
 msgid "Filesize: "
 msgstr "Tiedostokoko:"
 
 # 
-#: src/channelinfo.cpp:263
+#: src/channelinfo.cpp:264
 msgid "Filename: "
 msgstr "Tiedoston nimi:"
 
 # 
-#: src/enigma.cpp:195
+#: src/enigma.cpp:201
 msgid ""
 "Welcome to enigma.\n"
 "\n"
@@ -1180,7 +1316,7 @@ msgstr ""
 " Etsi ensin l‰hettimet. \n"
 "(p‰‰valikko > asetukset > kanavat > l‰hettimien etsint‰ )"
 
-#: src/enigma.cpp:197
+#: src/enigma.cpp:203
 msgid "First start of enigma"
 msgstr "Enigman ensimm‰inen k‰ynnistys"
 
@@ -1252,8 +1388,8 @@ msgstr "k‰ynnistet‰‰n uudestaan...odota"
 msgid "Infos"
 msgstr "Info"
 
-#: src/enigma_info.cpp:43 src/enigma_main.cpp:4719 src/enigma_scan.cpp:40
-#: src/enigma_scan.cpp:161 src/enigma_setup.cpp:91
+#: src/enigma_info.cpp:43 src/enigma_main.cpp:4877 src/enigma_scan.cpp:41
+#: src/enigma_scan.cpp:175 src/enigma_setup.cpp:92
 msgid "[back]"
 msgstr "[takaisin]"
 
@@ -1279,378 +1415,373 @@ msgstr "N‰yt‰ BN versio"
 msgid "show the Current Version of the Betanova FW"
 msgstr "n‰yt‰‰ Betanova FW:st‰ nykyisen versio"
 
-#: src/enigma_info.cpp:48
+#: src/enigma_info.cpp:47
 msgid "open the about dialog"
 msgstr "avaa tietoja valikko"
 
-#: src/enigma_info.cpp:49
+#: src/enigma_info.cpp:48
 msgid "shows the satfinder"
 msgstr "n‰yt‰‰ satelliitti etsimen"
 
-#: src/enigma_info.cpp:195
+#: src/enigma_info.cpp:194
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: src/enigma_info.cpp:203
+#: src/enigma_info.cpp:202
 msgid "my"
 msgstr "minun"
 
-#: src/enigma_info.cpp:212
+#: src/enigma_info.cpp:211
 msgid "Processor: XPC823, 66MHz"
 msgstr "Prosessori: XPC823, 66MHz"
 
-#: src/enigma_info.cpp:215
+#: src/enigma_info.cpp:214
 msgid "Processor: XPC823, 80MHz"
 msgstr "Prosessori: XPC823, 80MHz"
 
-#: src/enigma_info.cpp:218
+#: src/enigma_info.cpp:217
 msgid "Processor: STB04500, 252MHz"
 msgstr "Prosessori: STB04500, 252MHz"
 
-#: src/enigma_info.cpp:221
+#: src/enigma_info.cpp:220
 msgid "Processor: STB25xxx, 252MHz"
 msgstr "Prosessori: STB25xxx, 252MHz"
 
-#: src/enigma_info.cpp:247
+#: src/enigma_info.cpp:246
 msgid "Frontend: Satellite"
 msgstr "J‰rjestelm‰: Satelliitti"
 
-#: src/enigma_info.cpp:250
+#: src/enigma_info.cpp:249
 msgid "Frontend: Cable"
 msgstr "J‰rjestelm‰: Kaapeli"
 
 # 
-#: src/enigma_info.cpp:253
+#: src/enigma_info.cpp:252
 msgid "Frontend: Terrestrial"
 msgstr "J‰rjestelm‰: Maanp‰‰llinen"
 
-#: src/enigma_info.cpp:256
+#: src/enigma_info.cpp:255
 msgid "Frontend: Simulator"
 msgstr "J‰rjestelm‰: Simulaattori"
 
-#: src/enigma_info.cpp:302 src/streaminfo.cpp:268 src/streaminfo.cpp:279
+#: src/enigma_info.cpp:301 src/streaminfo.cpp:268 src/streaminfo.cpp:279
 #: src/streaminfo.cpp:291 src/streaminfo.cpp:303 src/streaminfo.cpp:315
 #: src/streaminfo.cpp:439 src/streaminfo.cpp:475
 msgid "none"
 msgstr "ei"
 
-#: src/enigma_info.cpp:308 src/timer.cpp:1138 src/timer.cpp:1307
-#: src/upgrade.cpp:239
+#: src/enigma_info.cpp:307 src/timer.cpp:1593 src/upgrade.cpp:239
 msgid "unknown"
 msgstr "tuntematon"
 
-#: src/enigma_info.cpp:313
+#: src/enigma_info.cpp:312
 msgid "release"
 msgstr "julkaisu"
 
-#: src/enigma_info.cpp:314
+#: src/enigma_info.cpp:313
 msgid "beta"
 msgstr "beta"
 
-#: src/enigma_info.cpp:315
+#: src/enigma_info.cpp:314
 msgid "internal"
 msgstr "sis‰inen"
 
-#: src/enigma_main.cpp:71
+#: src/enigma_main.cpp:73
 msgid "enigma Zapp"
 msgstr "enigma Zapp"
 
-#: src/enigma_main.cpp:72
+#: src/enigma_main.cpp:74
 msgid "show main menu"
 msgstr "n‰yt‰ p‰‰valikko"
 
-#: src/enigma_main.cpp:73
+#: src/enigma_main.cpp:75
 msgid "go to standby (press)"
 msgstr "siirry valmiustilaan (paina)"
 
-#: src/enigma_main.cpp:74
+#: src/enigma_main.cpp:76
 msgid "go to standby (repeat)"
 msgstr "siirry valmiustilaan (toista)"
 
-#: src/enigma_main.cpp:75
+#: src/enigma_main.cpp:77
 msgid "go to standby (release)"
 msgstr "siirry valmiustilaan (vapauta)"
 
 # 
-#: src/enigma_main.cpp:77
+#: src/enigma_main.cpp:79
 msgid "show infobar"
 msgstr "n‰yt‰ info"
 
-#: src/enigma_main.cpp:78
+#: src/enigma_main.cpp:80
 msgid "hide infobar"
 msgstr "piilota info"
 
-#: src/enigma_main.cpp:79
+#: src/enigma_main.cpp:81
 msgid "show infobar or EPG"
 msgstr "n‰yt‰ info tai EPG"
 
-#: src/enigma_main.cpp:80
+#: src/enigma_main.cpp:82
 msgid "show service selector"
 msgstr "n‰yt‰ palvelu valitsin"
 
-#: src/enigma_main.cpp:81
+#: src/enigma_main.cpp:83
 msgid "show subservices/NVOD"
 msgstr "n‰yt‰ alapalvelut/NVOD"
 
-#: src/enigma_main.cpp:82
+#: src/enigma_main.cpp:84
 msgid "show audio selector"
 msgstr "n‰yt‰ ‰‰ni valitsin "
 
-#: src/enigma_main.cpp:83
+#: src/enigma_main.cpp:85
 msgid "show Videotext"
 msgstr "n‰yt‰ Videoteksti"
 
-#: src/enigma_main.cpp:84
+#: src/enigma_main.cpp:86
 msgid "show epg schedule list"
 msgstr "n‰yt‰ EPG taulukko"
 
-#: src/enigma_main.cpp:85
+#: src/enigma_main.cpp:87
 msgid "show extended info"
 msgstr "n‰yt‰ laajennettu info"
 
-#: src/enigma_main.cpp:86
+#: src/enigma_main.cpp:88
 msgid "zap to next subService"
 msgstr "vaihda seuraavaan alapalveluun"
 
-#: src/enigma_main.cpp:87
+#: src/enigma_main.cpp:89
 msgid "zap to prev subService"
 msgstr "vaihda edelliseen alapalveluun"
 
-#: src/enigma_main.cpp:88
+#: src/enigma_main.cpp:90
 msgid "quickzap next"
 msgstr "nopea vaihto seuraavaan"
 
-#: src/enigma_main.cpp:89
+#: src/enigma_main.cpp:91
 msgid "quickzap prev"
 msgstr "nopea vaihto edelliseen"
 
 # 
-#: src/enigma_main.cpp:91
+#: src/enigma_main.cpp:93
 msgid "playlist/history next"
 msgstr "soittolista/historia seuraava"
 
 # 
-#: src/enigma_main.cpp:92
+#: src/enigma_main.cpp:94
 msgid "playlist/history prev"
 msgstr "soittolista/historia edellinen"
 
-#: src/enigma_main.cpp:94
+#: src/enigma_main.cpp:96
 msgid "service list and down"
 msgstr "palvelulista ja alas"
 
-#: src/enigma_main.cpp:95
+#: src/enigma_main.cpp:97
 msgid "service list and up"
 msgstr "palvelulista ja ylˆs"
 
-#: src/enigma_main.cpp:97 src/enigma_main.cpp:138
+#: src/enigma_main.cpp:99 src/enigma_main.cpp:140
 msgid "volume up"
 msgstr "‰‰nenvoimakkuus +"
 
-#: src/enigma_main.cpp:98 src/enigma_main.cpp:139
+#: src/enigma_main.cpp:100 src/enigma_main.cpp:141
 msgid "volume down"
 msgstr "‰‰nenvoimakkuus -"
 
-#: src/enigma_main.cpp:99 src/enigma_main.cpp:140
+#: src/enigma_main.cpp:101 src/enigma_main.cpp:142
 msgid "toggle mute flag"
 msgstr "vaihda vaimenna ilmaisin"
 
-#: src/enigma_main.cpp:101
+#: src/enigma_main.cpp:103
 msgid "stop playback"
 msgstr "pys‰yt‰ toisto"
 
-#: src/enigma_main.cpp:102
+#: src/enigma_main.cpp:104
 msgid "pause playback"
 msgstr "keskeyt‰ toisto"
 
-#: src/enigma_main.cpp:103
+#: src/enigma_main.cpp:105
 msgid "resume playback"
 msgstr "jatka toistoa"
 
-#: src/enigma_main.cpp:104 src/enigma_main.cpp:2199
+#: src/enigma_main.cpp:106 src/enigma_main.cpp:2300
 msgid "record"
 msgstr "tallenna"
 
-#: src/enigma_main.cpp:106
+#: src/enigma_main.cpp:108
 msgid "start skipping forward"
 msgstr "aloita kelaus eteenp‰in"
 
-#: src/enigma_main.cpp:107
+#: src/enigma_main.cpp:109
 msgid "repeat skipping forward"
 msgstr "toista kelaus eteenp‰in"
 
-#: src/enigma_main.cpp:108
+#: src/enigma_main.cpp:110
 msgid "stop skipping forward"
 msgstr "pys‰yt‰ kelaus eteenp‰in"
 
-#: src/enigma_main.cpp:110
+#: src/enigma_main.cpp:112
 msgid "start skipping reverse"
 msgstr "aloita kelaus taaksep‰in"
 
-#: src/enigma_main.cpp:111
+#: src/enigma_main.cpp:113
 msgid "repeat skipping reverse"
 msgstr "toista kelaus taaksep‰in"
 
-#: src/enigma_main.cpp:112
+#: src/enigma_main.cpp:114
 msgid "stop skipping reverse"
 msgstr "pys‰yt‰ kelaus taaksep‰in"
 
-#: src/enigma_main.cpp:114
+#: src/enigma_main.cpp:116
 msgid "open the serviceselector and show user bouquets"
 msgstr "avaa palveluvalitsin ja n‰yt‰ k‰ytt‰j‰n kanavat"
 
-#: src/enigma_main.cpp:115
+#: src/enigma_main.cpp:117
 msgid "open the serviceselector and show DVB bouquets"
 msgstr "avaa palveluvalitsin ja n‰yt‰ DVB kanavat"
 
-#: src/enigma_main.cpp:116
+#: src/enigma_main.cpp:118
 msgid "open the serviceselector and show recorded movies"
 msgstr "avaa palveluvalitsin ja n‰yt‰ tallennetut elokuvat"
 
-#: src/enigma_main.cpp:117
+#: src/enigma_main.cpp:119
 msgid "open the serviceselector and shows the playlist"
 msgstr "avaa palveluvalitsin ja n‰yt‰ soittolista"
 
-#: src/enigma_main.cpp:119 src/sselect.cpp:50
+#: src/enigma_main.cpp:121 src/sselect.cpp:50
 msgid "switch to TV mode"
 msgstr "vaihda TV-tilaan"
 
-#: src/enigma_main.cpp:120 src/sselect.cpp:51
+#: src/enigma_main.cpp:122 src/sselect.cpp:51
 msgid "switch to Radio mode"
 msgstr "vaihda Radio-tilaan"
 
-#: src/enigma_main.cpp:121 src/sselect.cpp:52
+#: src/enigma_main.cpp:123 src/sselect.cpp:52
 msgid "switch to File mode"
 msgstr "vaihda Tiedosto-tilaan"
 
-#: src/enigma_main.cpp:123
+#: src/enigma_main.cpp:125
 msgid "toggle DVR panel"
 msgstr "vaihda DVR paneeli"
 
 # 
-#: src/enigma_main.cpp:124
+#: src/enigma_main.cpp:126
 msgid "toggle index mark"
 msgstr "vaihda hakemiston j‰lki"
 
-#: src/enigma_main.cpp:157
+#: src/enigma_main.cpp:159
 msgid "enigma standby"
 msgstr "enigma valmiustilaan"
 
-#: src/enigma_main.cpp:158
+#: src/enigma_main.cpp:160
 msgid "wake up enigma"
 msgstr "her‰t‰ enigma"
 
-#: src/enigma_main.cpp:338
+#: src/enigma_main.cpp:339
 msgid " to "
 msgstr "jonnekin "
 
-#: src/enigma_main.cpp:348
+#: src/enigma_main.cpp:349
 msgid " Euro lost)"
 msgstr "Euro menetetty )"
 
-#: src/enigma_main.cpp:387
+#: src/enigma_main.cpp:389
 msgid "not valid!"
 msgstr "ei kelpaa!"
 
-#: src/enigma_main.cpp:405
+#: src/enigma_main.cpp:408
 msgid "NVOD"
 msgstr "NVOD"
 
 # 
-#: src/enigma_main.cpp:541
+#: src/enigma_main.cpp:544
 msgid "Video"
 msgstr "Video"
 
-#: src/enigma_main.cpp:650
+#: src/enigma_main.cpp:653
 msgid "Audio"
 msgstr "ƒ‰ni"
 
-#: src/enigma_main.cpp:679
+#: src/enigma_main.cpp:702
 msgid "multiple Services"
 msgstr "moninkertaiset palvelut"
 
-#: src/enigma_main.cpp:688 src/enigma_main.cpp:738 src/enigma_main.cpp:754
+#: src/enigma_main.cpp:713 src/enigma_main.cpp:764 src/enigma_main.cpp:780
 msgid "enable quickzap"
 msgstr "nopea vaihto p‰‰lle"
 
 # 
-#: src/enigma_main.cpp:696 src/enigma_main.cpp:4520
+#: src/enigma_main.cpp:721 src/enigma_main.cpp:4647
 msgid "add to user bouquet"
 msgstr "lis‰‰ k‰ytt‰j‰n kanaviin"
 
-#: src/enigma_main.cpp:734
+#: src/enigma_main.cpp:760
 msgid "disable quickzap"
 msgstr "nopea vaihto pois"
 
-#: src/enigma_main.cpp:803
+#: src/enigma_main.cpp:848
 msgid "Channel"
 msgstr "Kanava"
 
-#: src/enigma_main.cpp:808
+#: src/enigma_main.cpp:853
 msgid "Channel:"
 msgstr "Kanava:"
 
-#: src/enigma_main.cpp:881
+#: src/enigma_main.cpp:928
 #, c-format
 msgid "Please wait while the motor is turning to %d.%d%c ...."
 msgstr "Odota, moottori k‰‰ntyy %d.%d%c ...."
 
-#: src/enigma_main.cpp:881
+#: src/enigma_main.cpp:928
 msgid "Message"
 msgstr "Viesti"
 
-#: src/enigma_main.cpp:968
+#: src/enigma_main.cpp:1015
 msgid "recorded movies"
 msgstr "tallennetut elokuvat"
 
-#: src/enigma_main.cpp:1045
+#: src/enigma_main.cpp:1092
 msgid "User - bouquets (TV)"
 msgstr "K‰ytt‰j‰ - kanavat (TV)"
 
-#: src/enigma_main.cpp:1055
+#: src/enigma_main.cpp:1102
 msgid "User - bouquets (Radio)"
 msgstr "K‰ytt‰j‰ - kanavat (Radio)"
 
 # 
-#: src/enigma_main.cpp:1094
+#: src/enigma_main.cpp:1141
 msgid "Favourites (TV)"
 msgstr "Suosikit (TV)"
 
 # 
-#: src/enigma_main.cpp:1099
+#: src/enigma_main.cpp:1146
 msgid "Favourites (Radio)"
 msgstr "Suosikit (Radio)"
 
-#: src/enigma_main.cpp:1655
+#: src/enigma_main.cpp:1715
 msgid "no EPG available"
 msgstr "EPG:t‰ ei saatavilla"
 
-#: src/enigma_main.cpp:2199
+#: src/enigma_main.cpp:2300
 msgid "Sorry, you cannot record this service."
 msgstr "Et voi tallentaa t‰t‰ palvelua."
 
-#: src/enigma_main.cpp:2209
-msgid "no description available"
-msgstr "kuvausta ei saatavilla"
-
 # 
-#: src/enigma_main.cpp:2356
+#: src/enigma_main.cpp:2458
 msgid "Show recorded movies?"
 msgstr "N‰ytet‰‰nkˆ tallennetut elokuvat?"
 
 # 
-#: src/enigma_main.cpp:2356
+#: src/enigma_main.cpp:2458
 msgid "recording finished"
 msgstr "nauhoitus p‰‰ttynyt"
 
-#: src/enigma_main.cpp:2516
+#: src/enigma_main.cpp:2618
 msgid "Sorry, you cannot delete this service."
 msgstr "Et voi poistaa t‰t‰ palvelua."
 
-#: src/enigma_main.cpp:2516
+#: src/enigma_main.cpp:2618
 msgid "delete service"
 msgstr "poista palvelu"
 
-#: src/enigma_main.cpp:2540
+#: src/enigma_main.cpp:2642
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
@@ -1658,48 +1789,48 @@ msgstr ""
 "T‰m‰ on tallenne!\n"
 "Poistetaanko?"
 
-#: src/enigma_main.cpp:2540
+#: src/enigma_main.cpp:2642
 msgid "Delete recorded stream"
 msgstr "Poista tallenne"
 
-#: src/enigma_main.cpp:2600
+#: src/enigma_main.cpp:2702
 msgid "Enter name for the new bouquet:"
 msgstr "Anna nimi uusille kanaville:"
 
-#: src/enigma_main.cpp:2601
+#: src/enigma_main.cpp:2703
 msgid "Add new user bouquet"
 msgstr "Lis‰‰ k‰ytt‰j‰lle uudet kanavat"
 
-#: src/enigma_main.cpp:2637
+#: src/enigma_main.cpp:2739
 msgid "Enter new name for the user bouquet:"
 msgstr "Anna nimi k‰ytt‰j‰ kanaville:"
 
-#: src/enigma_main.cpp:2638
+#: src/enigma_main.cpp:2740
 msgid "Rename user bouquet"
 msgstr "Uudelleen nime‰ k‰yttt‰j‰n kanavat"
 
-#: src/enigma_main.cpp:2671
+#: src/enigma_main.cpp:2773
 msgid "unnamed bouquet"
 msgstr "nimettˆm‰t kanavat"
 
-#: src/enigma_main.cpp:2715
+#: src/enigma_main.cpp:2817
 msgid "Enter new name:"
 msgstr "Syˆt‰ uusi nimi:"
 
-#: src/enigma_main.cpp:2716
+#: src/enigma_main.cpp:2818
 msgid "Rename entry"
 msgstr "Nime‰ uudelleen sis‰‰ntulo"
 
-#: src/enigma_main.cpp:2872 src/enigma_main.cpp:2873
+#: src/enigma_main.cpp:3025 src/enigma_main.cpp:3026
 msgid "This directory doesn't contain anything playable!"
 msgstr "T‰ss‰ kansiossa ei ole mit‰‰n katsottavaa!"
 
-#: src/enigma_main.cpp:2873
+#: src/enigma_main.cpp:3026
 msgid "Play"
 msgstr "Toista"
 
 # 
-#: src/enigma_main.cpp:3169
+#: src/enigma_main.cpp:3323
 msgid ""
 "A timer based digital recording is currently in progress!\n"
 "This stops the timer, and digital recording!"
@@ -1708,7 +1839,7 @@ msgstr ""
 "T‰m‰ lopettaa ajastetun nauhoituksen!"
 
 # 
-#: src/enigma_main.cpp:3179
+#: src/enigma_main.cpp:3333
 msgid ""
 "A digital recording is currently in progress!\n"
 "This stops the digital recording!"
@@ -1717,7 +1848,7 @@ msgstr ""
 "T‰m‰ lopettaa nauhoituksen!"
 
 # 
-#: src/enigma_main.cpp:3189
+#: src/enigma_main.cpp:3343
 msgid ""
 "A timer event is currently in progress!\n"
 "This stops the timer event!"
@@ -1725,129 +1856,129 @@ msgstr ""
 "Ajastin on t‰ll‰ hetkell‰ p‰‰ll‰!\n"
 "T‰m‰ lopettaa ajastimen!"
 
-#: src/enigma_main.cpp:3197
+#: src/enigma_main.cpp:3351
 msgid "Really do this?"
 msgstr "Oletko varma?"
 
-#: src/enigma_main.cpp:3813 src/enigma_main.cpp:3814
+#: src/enigma_main.cpp:3964 src/enigma_main.cpp:3965
 msgid "One moment please..."
 msgstr "Hetkinen..."
 
-#: src/enigma_main.cpp:3814 src/enigma_main.cpp:3819 src/enigma_main.cpp:3829
-#: src/enigma_main.cpp:3837 src/enigma_main.cpp:3844 src/enigma_main.cpp:3849
-#: src/enigma_main.cpp:3855 src/timer.cpp:968
+#: src/enigma_main.cpp:3965 src/enigma_main.cpp:3970 src/enigma_main.cpp:3980
+#: src/enigma_main.cpp:3988 src/enigma_main.cpp:3995 src/enigma_main.cpp:4000
+#: src/enigma_main.cpp:4006 src/timer.cpp:1241
 msgid "switch"
 msgstr "kytkin"
 
-#: src/enigma_main.cpp:3818 src/enigma_main.cpp:3819
+#: src/enigma_main.cpp:3969 src/enigma_main.cpp:3970
 msgid "Service could not be found !"
 msgstr "Palvelua ei lˆydy!"
 
-#: src/enigma_main.cpp:3828 src/enigma_main.cpp:3829
+#: src/enigma_main.cpp:3979 src/enigma_main.cpp:3980
 msgid "This service could not be descrambled"
 msgstr "T‰t‰ palvelua ei voida -descrambled-"
 
 # 
-#: src/enigma_main.cpp:3836 src/enigma_main.cpp:3837
+#: src/enigma_main.cpp:3987 src/enigma_main.cpp:3988
 msgid "This service doesn't currently send a signal"
 msgstr "T‰m‰ palvelu ei l‰het‰ (t‰ll‰ hetkell‰) mit‰‰n"
 
-#: src/enigma_main.cpp:3842 src/enigma_main.cpp:3844
+#: src/enigma_main.cpp:3993 src/enigma_main.cpp:3995
 msgid "This content could not be displayed"
 msgstr "T‰t‰ ei voida n‰ytt‰‰"
 
 # 
-#: src/enigma_main.cpp:3847 src/enigma_main.cpp:3849
+#: src/enigma_main.cpp:3998 src/enigma_main.cpp:4000
 msgid "NVOD Service - please select a starttime"
 msgstr "NVOD Palvelu - valitse aloitusaika"
 
-#: src/enigma_main.cpp:3853 src/enigma_main.cpp:3855
+#: src/enigma_main.cpp:4004 src/enigma_main.cpp:4006
 msgid "Unknown error!!"
 msgstr "Tuntematon virhe!!"
 
 # 
-#: src/enigma_main.cpp:4288
+#: src/enigma_main.cpp:4419
 msgid "Playlist"
 msgstr "Soittolista"
 
 # 
-#: src/enigma_main.cpp:4290
+#: src/enigma_main.cpp:4421
 msgid "History"
 msgstr "Historia"
 
-#: src/enigma_main.cpp:4488
+#: src/enigma_main.cpp:4615
 msgid "Service Menu"
 msgstr "Palvelu valikko"
 
-#: src/enigma_main.cpp:4491 src/enigma_main.cpp:4554
+#: src/enigma_main.cpp:4618 src/enigma_main.cpp:4712
 #: src/setup_harddisk.cpp:180
 msgid "back"
 msgstr "takaisin"
 
-#: src/enigma_main.cpp:4497
+#: src/enigma_main.cpp:4624
 msgid "add service to playlist"
 msgstr "lis‰‰ palvelu soittolistaan"
 
 # 
-#: src/enigma_main.cpp:4501
+#: src/enigma_main.cpp:4628
 msgid "delete"
 msgstr "poista"
 
 # 
-#: src/enigma_main.cpp:4503 src/enigma_main.cpp:4505
+#: src/enigma_main.cpp:4630 src/enigma_main.cpp:4632
 msgid "rename"
 msgstr "nime‰ uudelleen"
 
-#: src/enigma_main.cpp:4509
+#: src/enigma_main.cpp:4636
 msgid "disable move mode"
 msgstr "liikutus tila pois p‰‰lt‰"
 
-#: src/enigma_main.cpp:4511
+#: src/enigma_main.cpp:4638
 msgid "enable move mode"
 msgstr "liikutus tila p‰‰lle"
 
 # 
-#: src/enigma_main.cpp:4522
+#: src/enigma_main.cpp:4649
 msgid "copy to user bouquets"
 msgstr "kopioi k‰ytt‰jien kanaviin"
 
 # 
-#: src/enigma_main.cpp:4530
+#: src/enigma_main.cpp:4657
 msgid "disable edit mode"
 msgstr "Lukitse editointi moodi"
 
 # 
-#: src/enigma_main.cpp:4532
+#: src/enigma_main.cpp:4659
 msgid "enable edit mode"
 msgstr "Editointi moodi p‰‰lle"
 
-#: src/enigma_main.cpp:4537
+#: src/enigma_main.cpp:4664
 msgid "create new user bouquet"
 msgstr "luo uusi k‰ytt‰j‰ kanavalle"
 
-#: src/enigma_main.cpp:4551
+#: src/enigma_main.cpp:4709
 msgid "Record Menu"
 msgstr "Tallennus valikko"
 
-#: src/enigma_main.cpp:4555
+#: src/enigma_main.cpp:4713
 msgid "stop record now"
 msgstr "lopeta tallennus"
 
-#: src/enigma_main.cpp:4556
+#: src/enigma_main.cpp:4714
 msgid "set record duration"
 msgstr "aseta tallennuksen kesto"
 
-#: src/enigma_main.cpp:4557
+#: src/enigma_main.cpp:4715
 msgid "set record stop time"
 msgstr "aseta tallennuksen p‰‰ttymis aika"
 
 # 
-#: src/enigma_main.cpp:4687
+#: src/enigma_main.cpp:4845
 msgid "press ok to start edit mode"
 msgstr "paina ok aloittaaksesi muokkaus tilan"
 
 # 
-#: src/enigma_main.cpp:4714
+#: src/enigma_main.cpp:4872
 msgid "User Bouquets"
 msgstr "K‰ytt‰j‰n kanavat"
 
@@ -1870,7 +2001,7 @@ msgid "File mode"
 msgstr "Tiedostot"
 
 # 
-#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1286 src/rotorconfig.cpp:918
+#: src/enigma_mainmenu.cpp:56 src/timer.cpp:1572 src/rotorconfig.cpp:909
 msgid "Information"
 msgstr "Informaatio"
 
@@ -1879,7 +2010,7 @@ msgstr "Informaatio"
 msgid "Shutdown"
 msgstr "Sammuta"
 
-#: src/enigma_mainmenu.cpp:62 src/enigma_setup.cpp:49
+#: src/enigma_mainmenu.cpp:62 src/enigma_setup.cpp:50
 msgid "Setup"
 msgstr "Asetukset"
 
@@ -1896,9 +2027,14 @@ msgstr "VCR"
 msgid "Timer"
 msgstr "Ajastin"
 
-#: src/enigma_mainmenu.cpp:75 src/enigma_mainmenu.cpp:218
+#: src/enigma_mainmenu.cpp:75 src/enigma_mainmenu.cpp:226
 msgid "Mainmenu"
 msgstr "P‰‰valikko"
+
+#: src/enigma_mainmenu.cpp:180
+#, fuzzy
+msgid "setup"
+msgstr "Asetukset"
 
 #: src/enigma_plugins.cpp:123
 msgid "Plugins"
@@ -1917,58 +2053,70 @@ msgstr "Ei voi lukea plugin hakemistoa %s"
 msgid "Error"
 msgstr "Virhe"
 
-#: src/enigma_plugins.cpp:194
+#: src/enigma_plugins.cpp:195
 #, c-format
 msgid "plugin '%s' not found"
 msgstr "lis‰osaa '%s' ei lˆydy"
 
-#: src/enigma_plugins.cpp:197
+#: src/enigma_plugins.cpp:198
 msgid "no name given"
 msgstr "nime‰ ei annettu"
 
-#: src/enigma_scan.cpp:37
+#: src/enigma_scan.cpp:38
 msgid "Channels"
 msgstr "Kanavat"
 
 # 
-#: src/enigma_scan.cpp:40 src/enigma_setup.cpp:91
+#: src/enigma_scan.cpp:41 src/enigma_setup.cpp:92
 msgid "back to main menu"
 msgstr "takaisin p‰‰valikkoon"
 
-#: src/enigma_scan.cpp:41
+#: src/enigma_scan.cpp:42
 msgid "Transponder scan"
 msgstr "L‰hettimien etsint‰"
 
 # 
-#: src/enigma_scan.cpp:41
+#: src/enigma_scan.cpp:42
 msgid "goto transponder scan"
 msgstr "l‰hettimien etsint‰"
 
-#: src/enigma_scan.cpp:44
+# 
+#: src/enigma_scan.cpp:45
+#, fuzzy
+msgid "Transponders..."
+msgstr "L‰hettimet:"
+
+# 
+#: src/enigma_scan.cpp:45
+#, fuzzy
+msgid "goto transponder edit dialog"
+msgstr "l‰hettimien etsint‰"
+
+#: src/enigma_scan.cpp:46
 msgid "Satellites..."
 msgstr "Satelliitit..."
 
 # 
-#: src/enigma_scan.cpp:44
+#: src/enigma_scan.cpp:46
 msgid "goto satellite config"
 msgstr "siirry satelliitti asetuksiin"
 
 # 
-#: src/enigma_scan.cpp:45
+#: src/enigma_scan.cpp:47
 msgid "Motor Setup..."
 msgstr "Moottorin asetukset..."
 
 # 
-#: src/enigma_scan.cpp:45
+#: src/enigma_scan.cpp:47
 msgid "goto Motor Setup"
 msgstr "siirry moottorin asetuksiin"
 
 # 
-#: src/enigma_scan.cpp:47
+#: src/enigma_scan.cpp:49
 msgid "SID..."
 msgstr "SID..."
 
-#: src/enigma_scan.cpp:117
+#: src/enigma_scan.cpp:131
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "motor is connected"
@@ -1977,11 +2125,11 @@ msgstr ""
 "moottori on kytketty"
 
 # 
-#: src/enigma_scan.cpp:117
+#: src/enigma_scan.cpp:131
 msgid "Info"
 msgstr "Info"
 
-#: src/enigma_scan.cpp:131
+#: src/enigma_scan.cpp:145
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
@@ -1989,175 +2137,185 @@ msgstr ""
 "Ei lˆydetty LNB:t‰ jolla olisi DiSEqC 1.2 p‰‰ll‰,\n"
 "mene ensin Sateliitti asetuksiin, ja kytke DiSEqC 1.2 p‰‰lle"
 
-#: src/enigma_scan.cpp:131 src/rotorconfig.cpp:699 src/rotorconfig.cpp:894
+#: src/enigma_scan.cpp:145 src/rotorconfig.cpp:688 src/rotorconfig.cpp:885
 msgid "Warning"
 msgstr "Varoitus"
 
-#: src/enigma_scan.cpp:158
+#: src/enigma_scan.cpp:172
 msgid "Select LNB"
 msgstr "Valitse LNB"
 
 # 
-#: src/enigma_scan.cpp:161
+#: src/enigma_scan.cpp:175
 msgid "go to prev menu"
 msgstr "edelliseen valikkoon"
 
-#: src/enigma_scan.cpp:166
+#: src/enigma_scan.cpp:180
 #, c-format
 msgid "use LNB %d for Motor"
 msgstr "k‰yt‰ LNB %d moottorin kanssa"
 
-#: src/enigma_setup.cpp:92
+#: src/enigma_setup.cpp:93
 msgid "Channels..."
 msgstr "Kanavat..."
 
-#: src/enigma_setup.cpp:92
+#: src/enigma_setup.cpp:93
 msgid "open channel setup"
 msgstr "avaa kanava asetukset"
 
-#: src/enigma_setup.cpp:94
+#: src/enigma_setup.cpp:95
 msgid "Network..."
 msgstr "Verkko..."
 
-#: src/enigma_setup.cpp:94
+#: src/enigma_setup.cpp:95
 msgid "open network setup"
 msgstr "avaa verkko asetukset"
 
-#: src/enigma_setup.cpp:95
+#: src/enigma_setup.cpp:96
 msgid "OSD..."
 msgstr "Kuvaruutun‰yttˆ..."
 
 # 
-#: src/enigma_setup.cpp:95
+#: src/enigma_setup.cpp:96
 msgid "open OSD setup"
 msgstr "avaa OSD asetukset"
 
-#: src/enigma_setup.cpp:97
+#: src/enigma_setup.cpp:98
 msgid "LCD..."
 msgstr "LC-n‰yttˆ..."
 
 # 
-#: src/enigma_setup.cpp:97
+#: src/enigma_setup.cpp:98
 msgid "open LCD setup"
 msgstr "avaa LC-n‰ytˆn asetukset"
 
-#: src/enigma_setup.cpp:98
+#: src/enigma_setup.cpp:99
 msgid "Remote Control..."
 msgstr "Kaukos‰‰din..."
 
 # 
-#: src/enigma_setup.cpp:98
+#: src/enigma_setup.cpp:99
 msgid "open remote control setup"
 msgstr "avaa kaukos‰‰timen asetukset"
 
-#: src/enigma_setup.cpp:99
+#: src/enigma_setup.cpp:100
 msgid "Video..."
 msgstr "Video..."
 
-#: src/enigma_setup.cpp:99
+#: src/enigma_setup.cpp:100
 msgid "open video setup"
 msgstr "avaa video asetukset"
 
 # 
-#: src/enigma_setup.cpp:100
+#: src/enigma_setup.cpp:101
 msgid "Audio..."
 msgstr "ƒ‰ni"
 
 # 
-#: src/enigma_setup.cpp:100
+#: src/enigma_setup.cpp:101
 msgid "open audio setup"
 msgstr "avaa ‰‰ni asetukset"
 
-#: src/enigma_setup.cpp:101
+#: src/enigma_setup.cpp:102
 msgid "Skin..."
 msgstr "Teema..."
 
-#: src/enigma_setup.cpp:101
+#: src/enigma_setup.cpp:102
 msgid "open skin selector"
 msgstr "avaa teema valikko"
 
-#: src/enigma_setup.cpp:102
+#: src/enigma_setup.cpp:103
 msgid "Language..."
 msgstr "Kieli..."
 
-#: src/enigma_setup.cpp:102
+#: src/enigma_setup.cpp:103
 msgid "open language selector"
 msgstr "avaa kieli valikko"
 
 # 
-#: src/enigma_setup.cpp:103
+#: src/enigma_setup.cpp:104
 msgid "Ngrab..."
 msgstr "Ngrab..."
 
-#: src/enigma_setup.cpp:103
+#: src/enigma_setup.cpp:104
 msgid "open ngrab config"
 msgstr "avaa ngrab asetukset"
 
-#: src/enigma_setup.cpp:104
+#: src/enigma_setup.cpp:105
 msgid "Extra settings..."
 msgstr "Lis‰ asetukset..."
 
 # 
-#: src/enigma_setup.cpp:104
+#: src/enigma_setup.cpp:105
 msgid "open extra config"
 msgstr "avaa lis‰ asetukset"
 
 #: src/enigma_setup.cpp:106
+#, fuzzy
+msgid "Parental settings..."
+msgstr "Lis‰ asetukset..."
+
+#: src/enigma_setup.cpp:106
+#, fuzzy
+msgid "open parental setup"
+msgstr "avaa kanava asetukset"
+
+#: src/enigma_setup.cpp:108
 msgid "Harddisk..."
 msgstr "Kovalevy..."
 
 # 
-#: src/enigma_setup.cpp:106
+#: src/enigma_setup.cpp:108
 msgid "open harddisk setup"
 msgstr "kovalevyn asetukset"
 
-#: src/enigma_setup.cpp:108
+#: src/enigma_setup.cpp:110
 msgid "Common Interface..."
 msgstr "Common interface..."
 
 # 
-#: src/enigma_setup.cpp:108
+#: src/enigma_setup.cpp:110
 msgid "show CI Menu"
 msgstr "n‰yt‰ CI valikko"
 
-#: src/enigma_setup.cpp:110
+#: src/enigma_setup.cpp:112
 msgid "Upgrade..."
 msgstr "P‰ivit‰..."
 
-#: src/enigma_setup.cpp:110
+#: src/enigma_setup.cpp:112
 msgid "upgrade firmware"
 msgstr "p‰ivit‰ firmware"
 
 # 
-#: src/enigma_setup.cpp:112
+#: src/enigma_setup.cpp:114
 msgid "RF-Modulator..."
 msgstr "RF-Modulaatio:"
 
-#: src/enigma_setup.cpp:112
+#: src/enigma_setup.cpp:114
 msgid "setup modulator"
 msgstr "asenna modulaattori"
 
-#: src/enigma_setup.cpp:113
+#: src/enigma_setup.cpp:115
 msgid "Video calibration..."
 msgstr "Videon kalibrointi.."
 
-#: src/enigma_setup.cpp:113
+#: src/enigma_setup.cpp:115
 msgid "show calibration picture"
 msgstr "n‰yt‰ kalibrointi kuva"
 
-#: src/enigma_setup.cpp:202
+#: src/enigma_setup.cpp:204
 msgid "You have to reboot to apply the new skin"
 msgstr "K‰ynnist‰ uudelleen saadaksesi uuden teeman"
 
-#: src/enigma_setup.cpp:202
+#: src/enigma_setup.cpp:204
 msgid "Skin changed"
 msgstr "Teema vaihdettu"
 
-#: src/enigma_setup.cpp:262
+#: src/enigma_setup.cpp:264
 msgid "sorry, no harddisks found!"
 msgstr "Kovalevy‰ ei lˆydy"
 
-#: src/enigma_setup.cpp:262
+#: src/enigma_setup.cpp:264
 msgid "Harddisk setup..."
 msgstr "Kovalevyn asetukset..."
 
@@ -2227,7 +2385,7 @@ msgstr "ei standardin mukainen laitteisto"
 msgid "special"
 msgstr "erikois"
 
-#: src/satconfig.cpp:128
+#: src/satconfig.cpp:127
 msgid ""
 "Configuration contains some elements\n"
 "which don't fit into new DiSEqC-Type. Drop these items?"
@@ -2235,385 +2393,385 @@ msgstr ""
 "Asetukset sis‰lt‰v‰t joitain kohtia\n"
 "jotka eiv‰t sovi uuteen DiSEqC-tyyppiin. Unohda n‰m‰ kohdat?"
 
-#: src/satconfig.cpp:128
+#: src/satconfig.cpp:127
 msgid "Change DiSEqC-Type..."
 msgstr "Muuta DiSEqC-tyyppi.."
 
-#: src/satconfig.cpp:288
+#: src/satconfig.cpp:287
 msgid "direct connection"
 msgstr "suora yhdistys"
 
-#: src/satconfig.cpp:625
+#: src/satconfig.cpp:624
 msgid "press ok to select another satellite, or delete this satellite"
 msgstr ""
 "paina ok valitaksesi toinen satelliitti, tai poistaaksesi t‰m‰n satelliitin"
 
-#: src/satconfig.cpp:645
+#: src/satconfig.cpp:644
 msgid "press ok to goto LNB config"
 msgstr "paina ok, niin p‰‰set LNB asetuksiin"
 
-#: src/satconfig.cpp:663
+#: src/satconfig.cpp:662
 msgid "press ok to select another 22kHz mode"
 msgstr "paina ok valitaksesi toinen 22kHz tila"
 
 # 
-#: src/satconfig.cpp:664
+#: src/satconfig.cpp:663
 msgid "22kHz signal is automatically switched"
 msgstr "22KHz-signaali on automaattisesti kytketty"
 
-#: src/satconfig.cpp:665
+#: src/satconfig.cpp:664
 msgid "22kHz is always enabled (high band)"
 msgstr "22KHz on aina p‰‰ll‰ (yl‰taajuus)"
 
-#: src/satconfig.cpp:666
+#: src/satconfig.cpp:665
 msgid "22kHz is always disabled (low band)"
 msgstr "22KHz on aina pois p‰‰lt‰ (alataajuus)"
 
-#: src/satconfig.cpp:676
+#: src/satconfig.cpp:675
 msgid "press ok to select another LNB Voltage mode"
 msgstr "paina ok valitaksesi jokin toinen LNB j‰nnite tila"
 
 # 
-#: src/satconfig.cpp:677
+#: src/satconfig.cpp:676
 msgid "Voltage is automatically changed"
 msgstr "J‰nnite on automaattisesti muutettu"
 
-#: src/satconfig.cpp:678
+#: src/satconfig.cpp:677
 msgid "Voltage is always 14V (vertical)"
 msgstr "J‰nnite on aina 14V (vertikaali)"
 
 # 
-#: src/satconfig.cpp:679
+#: src/satconfig.cpp:678
 msgid "Voltage is always 18V (horizontal)"
 msgstr "J‰nnite on aina 18V (horisontaali)"
 
-#: src/satconfig.cpp:680
+#: src/satconfig.cpp:679
 msgid "Voltage is always off"
 msgstr "J‰nnite ei ole kytketty"
 
-#: src/satconfig.cpp:950
+#: src/satconfig.cpp:949
 msgid "New"
 msgstr "Uusi"
 
-#: src/satconfig.cpp:1000 src/satconfig.cpp:1046 src/satconfig.cpp:1056
+#: src/satconfig.cpp:999 src/satconfig.cpp:1045 src/satconfig.cpp:1055
 msgid "None"
 msgstr "Ei yht‰‰n"
 
-#: src/satconfig.cpp:1000
+#: src/satconfig.cpp:999
 msgid "sends no tone burst"
 msgstr "ei l‰het‰ ‰‰ni pursketta "
 
-#: src/satconfig.cpp:1001
+#: src/satconfig.cpp:1000
 msgid "sends modulated tone burst"
 msgstr "l‰hett‰‰ moduloidun ‰‰ni purskeen"
 
-#: src/satconfig.cpp:1002
+#: src/satconfig.cpp:1001
 msgid "sends unmodulated tone burst"
 msgstr "l‰hett‰‰ moduloimattoman ‰‰ni purskeen"
 
-#: src/satconfig.cpp:1009
+#: src/satconfig.cpp:1008
 msgid "Disable DiSEqC"
 msgstr "DiSEqC ei k‰ytˆss‰"
 
-#: src/satconfig.cpp:1010
+#: src/satconfig.cpp:1009
 msgid "Use DiSEqC Version 1.0"
 msgstr "K‰yt‰ DiSEqC versio 1.0"
 
-#: src/satconfig.cpp:1011
+#: src/satconfig.cpp:1010
 msgid "Use DiSEqC Version 1.1"
 msgstr "K‰yt‰ DiSEqC versio 1.1"
 
-#: src/satconfig.cpp:1012
+#: src/satconfig.cpp:1011
 msgid "Use DiSEqC Version 1.2"
 msgstr "K‰yt‰ DiSEqC versio 1.2"
 
-#: src/satconfig.cpp:1020
+#: src/satconfig.cpp:1019
 msgid "sends DiSEqC cmd A/A"
 msgstr "l‰hett‰‰ DiSEqC  A/A"
 
-#: src/satconfig.cpp:1021
+#: src/satconfig.cpp:1020
 msgid "sends DiSEqC cmd A/B"
 msgstr "l‰hett‰‰ DiSEqC  A/B"
 
-#: src/satconfig.cpp:1022
+#: src/satconfig.cpp:1021
 msgid "sends DiSEqC cmd B/A"
 msgstr "l‰hett‰‰ DiSEqC  B/A"
 
-#: src/satconfig.cpp:1023
+#: src/satconfig.cpp:1022
 msgid "sends DiSEqC cmd B/B"
 msgstr "l‰hett‰‰ DiSEqC  B/B"
 
 # 
-#: src/satconfig.cpp:1024
+#: src/satconfig.cpp:1023
 msgid "sends no committed DiSEqC cmd"
 msgstr "l‰het‰ m‰‰rittelem‰ttˆm‰lle DiSEqC-kytkimelle"
 
-#: src/satconfig.cpp:1025
+#: src/satconfig.cpp:1024
 msgid "sends switch cmd 1"
 msgstr "l‰hett‰‰ vaihtokytkimelle 1"
 
-#: src/satconfig.cpp:1026
+#: src/satconfig.cpp:1025
 msgid "sends switch cmd 2"
 msgstr "l‰hett‰‰ vaihtokytkimelle 2"
 
-#: src/satconfig.cpp:1027
+#: src/satconfig.cpp:1026
 msgid "sends switch cmd 3"
 msgstr "l‰hett‰‰ vaihtokytkimelle 3"
 
-#: src/satconfig.cpp:1028
+#: src/satconfig.cpp:1027
 msgid "sends switch cmd 4"
 msgstr "l‰hett‰‰ vaihtokytkimelle 4"
 
-#: src/satconfig.cpp:1029
+#: src/satconfig.cpp:1028
 msgid "sends switch cmd 5"
 msgstr "l‰hett‰‰ vaihtokytkimelle 5"
 
-#: src/satconfig.cpp:1030
+#: src/satconfig.cpp:1029
 msgid "sends switch cmd 6"
 msgstr "l‰hett‰‰ vaihtokytkimelle 6"
 
-#: src/satconfig.cpp:1031
+#: src/satconfig.cpp:1030
 msgid "sends switch cmd 7"
 msgstr "l‰hett‰‰ vaihtokytkimelle 7"
 
-#: src/satconfig.cpp:1032
+#: src/satconfig.cpp:1031
 msgid "sends switch cmd 8"
 msgstr "l‰hett‰‰ vaihtokytkimelle 8"
 
-#: src/satconfig.cpp:1033
+#: src/satconfig.cpp:1032
 msgid "sends switch cmd 9"
 msgstr "l‰hett‰‰ vaihtokytkimelle 9"
 
-#: src/satconfig.cpp:1034
+#: src/satconfig.cpp:1033
 msgid "sends switch cmd 10"
 msgstr "l‰hett‰‰ vaihtokytkimelle 10"
 
-#: src/satconfig.cpp:1035
+#: src/satconfig.cpp:1034
 msgid "sends switch cmd 11"
 msgstr "l‰hett‰‰ vaihtokytkimelle 11"
 
-#: src/satconfig.cpp:1036
+#: src/satconfig.cpp:1035
 msgid "sends switch cmd 12"
 msgstr "l‰hett‰‰ vaihtokytkimelle 12"
 
-#: src/satconfig.cpp:1037
+#: src/satconfig.cpp:1036
 msgid "sends switch cmd 13"
 msgstr "l‰hett‰‰ vaihtokytkimelle 13"
 
-#: src/satconfig.cpp:1038
+#: src/satconfig.cpp:1037
 msgid "sends switch cmd 14"
 msgstr "l‰hett‰‰ vaihtokytkimelle 14"
 
-#: src/satconfig.cpp:1039
+#: src/satconfig.cpp:1038
 msgid "sends switch cmd 15"
 msgstr "l‰hett‰‰ vaihtokytkimelle 15"
 
-#: src/satconfig.cpp:1040
+#: src/satconfig.cpp:1039
 msgid "sends switch cmd 16"
 msgstr "l‰hett‰‰ vaihtokytkimelle 16"
 
-#: src/satconfig.cpp:1046
+#: src/satconfig.cpp:1045
 msgid "sends no DiSEqC repeats"
 msgstr "ei l‰het‰ DiSEqC toistoa"
 
-#: src/satconfig.cpp:1047
+#: src/satconfig.cpp:1046
 msgid "One"
 msgstr "Yksi"
 
-#: src/satconfig.cpp:1047
+#: src/satconfig.cpp:1046
 msgid "sends one repeat"
 msgstr "l‰hett‰ yhden toiston"
 
-#: src/satconfig.cpp:1048
+#: src/satconfig.cpp:1047
 msgid "Two"
 msgstr "Kaksi"
 
-#: src/satconfig.cpp:1048
+#: src/satconfig.cpp:1047
 msgid "sends two repeats"
 msgstr "l‰hett‰‰ kaksi toistoa"
 
-#: src/satconfig.cpp:1049
+#: src/satconfig.cpp:1048
 msgid "Three"
 msgstr "Kolme"
 
-#: src/satconfig.cpp:1049
+#: src/satconfig.cpp:1048
 msgid "sends three repeats"
 msgstr "l‰hett‰‰ kolme toistoa"
 
 # 
-#: src/satconfig.cpp:1056
+#: src/satconfig.cpp:1055
 msgid "sends no uncommitted switch command"
 msgstr "l‰het‰ kytkimelle vaihto komento"
 
-#: src/satconfig.cpp:1057
+#: src/satconfig.cpp:1056
 msgid "Input 1"
 msgstr "Sis‰‰ntulo 1"
 
 # 
-#: src/satconfig.cpp:1057
+#: src/satconfig.cpp:1056
 msgid "select uncommitted switch Input 1"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 1"
 
-#: src/satconfig.cpp:1058
+#: src/satconfig.cpp:1057
 msgid "Input 2"
 msgstr "Sis‰‰ntulo 2"
 
 # 
-#: src/satconfig.cpp:1058
+#: src/satconfig.cpp:1057
 msgid "select uncommitted switch Input 2"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 2"
 
-#: src/satconfig.cpp:1059
+#: src/satconfig.cpp:1058
 msgid "Input 3"
 msgstr "Sis‰‰ntulo 3"
 
 # 
-#: src/satconfig.cpp:1059
+#: src/satconfig.cpp:1058
 msgid "select uncommitted switch Input 3"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 3"
 
-#: src/satconfig.cpp:1060
+#: src/satconfig.cpp:1059
 msgid "Input 4"
 msgstr "Sis‰‰ntulo 4"
 
 # 
-#: src/satconfig.cpp:1060
+#: src/satconfig.cpp:1059
 msgid "select uncommitted switch Input 4"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 4"
 
-#: src/satconfig.cpp:1061
+#: src/satconfig.cpp:1060
 msgid "Input 5"
 msgstr "Sis‰‰ntulo 5"
 
 # 
-#: src/satconfig.cpp:1061
+#: src/satconfig.cpp:1060
 msgid "select uncommitted switch Input 5"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 5"
 
-#: src/satconfig.cpp:1062
+#: src/satconfig.cpp:1061
 msgid "Input 6"
 msgstr "Sis‰‰ntulo 6"
 
 # 
-#: src/satconfig.cpp:1062
+#: src/satconfig.cpp:1061
 msgid "select uncommitted switch Input 6"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 6"
 
-#: src/satconfig.cpp:1063
+#: src/satconfig.cpp:1062
 msgid "Input 7"
 msgstr "Sis‰‰ntulo 7"
 
 # 
-#: src/satconfig.cpp:1063
+#: src/satconfig.cpp:1062
 msgid "select uncommitted switch Input 7"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 7"
 
-#: src/satconfig.cpp:1064
+#: src/satconfig.cpp:1063
 msgid "Input 8"
 msgstr "Sis‰‰ntulo 8"
 
 # 
-#: src/satconfig.cpp:1064
+#: src/satconfig.cpp:1063
 msgid "select uncommitted switch Input 8"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 8"
 
-#: src/satconfig.cpp:1065
+#: src/satconfig.cpp:1064
 msgid "Input 9"
 msgstr "Sis‰‰ntulo 9"
 
 # 
-#: src/satconfig.cpp:1065
+#: src/satconfig.cpp:1064
 msgid "select uncommitted switch Input 9"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 9"
 
-#: src/satconfig.cpp:1066
+#: src/satconfig.cpp:1065
 msgid "Input 10"
 msgstr "Sis‰‰ntulo 10"
 
 # 
-#: src/satconfig.cpp:1066
+#: src/satconfig.cpp:1065
 msgid "select uncommitted switch Input 10"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 10"
 
-#: src/satconfig.cpp:1067
+#: src/satconfig.cpp:1066
 msgid "Input 11"
 msgstr "Sis‰‰ntulo 11"
 
 # 
-#: src/satconfig.cpp:1067
+#: src/satconfig.cpp:1066
 msgid "select uncommitted switch Input 11"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 11"
 
-#: src/satconfig.cpp:1068
+#: src/satconfig.cpp:1067
 msgid "Input 12"
 msgstr "Sis‰‰ntulo 12"
 
 # 
-#: src/satconfig.cpp:1068
+#: src/satconfig.cpp:1067
 msgid "select uncommitted switch Input 12"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 12"
 
-#: src/satconfig.cpp:1069
+#: src/satconfig.cpp:1068
 msgid "Input 13"
 msgstr "Sis‰‰ntulo 13"
 
 # 
-#: src/satconfig.cpp:1069
+#: src/satconfig.cpp:1068
 msgid "select uncommitted switch Input 13"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 13"
 
-#: src/satconfig.cpp:1070
+#: src/satconfig.cpp:1069
 msgid "Input 14"
 msgstr "Sis‰‰ntulo 14"
 
 # 
-#: src/satconfig.cpp:1070
+#: src/satconfig.cpp:1069
 msgid "select uncommitted switch Input 14"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 14"
 
-#: src/satconfig.cpp:1071
+#: src/satconfig.cpp:1070
 msgid "Input 15"
 msgstr "Sis‰‰ntulo 15"
 
 # 
-#: src/satconfig.cpp:1071
+#: src/satconfig.cpp:1070
 msgid "select uncommitted switch Input 15"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 15"
 
-#: src/satconfig.cpp:1072
+#: src/satconfig.cpp:1071
 msgid "Input 16"
 msgstr "Sis‰‰ntulo 16"
 
 # 
-#: src/satconfig.cpp:1072
+#: src/satconfig.cpp:1071
 msgid "select uncommitted switch Input 16"
 msgstr "valitse k‰ytt‰m‰ttˆm‰n kytkimen sis‰‰ntulo 16"
 
-#: src/scan.cpp:36
+#: src/scan.cpp:37
 msgid "auto scan"
 msgstr "automaattinen etsint‰"
 
 # 
-#: src/scan.cpp:36
+#: src/scan.cpp:37
 msgid "open automatic transponder scan"
 msgstr "avaa automaattisen l‰hettimien etsint‰n"
 
-#: src/scan.cpp:37
+#: src/scan.cpp:38
 msgid "manual scan.."
 msgstr "manuaalinen etsint‰"
 
 # 
-#: src/scan.cpp:37
+#: src/scan.cpp:38
 msgid "open manual transponder scan"
 msgstr "avaa manuaalisen l‰hettimien etsinn‰n"
 
 # 
-#: src/scan.cpp:38
+#: src/scan.cpp:39
 msgid "leave transponder scan"
 msgstr "poistu etsinn‰st‰"
 
 # 
-#: src/scan.cpp:244
+#: src/scan.cpp:245
 msgid ""
 "To begin searching for a valid satellite press OK, or choose your desired "
 "satellite manually and press OK"
@@ -2622,7 +2780,7 @@ msgstr ""
 "haluttu satelliitti manuaalisesti ja paina OK. "
 
 # 
-#: src/scan.cpp:247
+#: src/scan.cpp:248
 msgid ""
 "To begin searching for a valid cable provider press OK, or choose your "
 "desired cable provider manually and press OK"
@@ -2630,12 +2788,12 @@ msgstr ""
 "Etsinn‰n aloittamiseksi valitusta operaattorista paina OK, tai valitse "
 "haluttu operaattori manuaalisesti ja paina OK. "
 
-#: src/scan.cpp:314
+#: src/scan.cpp:315
 msgid ""
 "A valid transponder has been found. Verify that the right network is selected"
 msgstr "L‰hetin on lˆydetty. Varmista ett‰ kyseess‰ on oikea verkko. "
 
-#: src/scan.cpp:376
+#: src/scan.cpp:377
 msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try manual search if its some obscure satellite/"
@@ -2645,7 +2803,7 @@ msgstr ""
 "antenni/kaapeli-asetukset tai yrit‰ manuaalista etsint‰‰ jos se on jokin "
 "toinen sateliitti/verkko."
 
-#: src/scan.cpp:384
+#: src/scan.cpp:385
 msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try another satellite/network."
@@ -2653,29 +2811,29 @@ msgstr ""
 "Kaikki tunnetut l‰hettimet on k‰yty l‰pi, mutta lukkoa ei lˆytynyt.tarkista "
 "antenni/kaapeli-asetukset tai yrit‰ eri satelliittia/verkkoa. "
 
-#: src/scan.cpp:393
+#: src/scan.cpp:394
 msgid "Search in progress "
 msgstr "Etsit‰‰n..."
 
-#: src/scan.cpp:505
+#: src/scan.cpp:506
 #, c-format
 msgid "%02i minutes and %02i seconds left"
 msgstr "%02i minuuttia ja %02i sekuntia j‰ljell‰"
 
-#: src/scan.cpp:507
+#: src/scan.cpp:508
 #, c-format
 msgid "%02i seconds left"
 msgstr "%02i sekuntia j‰ljell‰"
 
-#: src/scan.cpp:596
+#: src/scan.cpp:597
 msgid "Transponder Scan"
 msgstr "L‰hettimien etsint‰"
 
-#: src/scan.cpp:728
+#: src/scan.cpp:736
 msgid "Scan is in progress... please wait"
 msgstr "Etsint‰ k‰ynniss‰...ole hyv‰ ja odota"
 
-#: src/scan.cpp:732
+#: src/scan.cpp:740
 #, c-format
 msgid ""
 "The transponder scan has finished and found %i new Transponders, %i new TV "
@@ -2686,13 +2844,35 @@ msgstr ""
 "Radio-palvelua ja %i uutta Data-palvelua. %i L‰hetint‰ sis‰lt‰en %i palvelua "
 "on l‰pik‰yty."
 
-#: src/scan.cpp:741
+#: src/scan.cpp:749
 msgid "Done."
 msgstr "Valmis."
 
-#: src/scan.cpp:746
+#: src/scan.cpp:754
 msgid "Scan is in finished, press ok to close window"
 msgstr "Etsint‰ on loppunut, sulje ikkuna painamalla ok"
+
+#: src/scan.cpp:757
+#, c-format
+msgid "Do you want to scan another %s?"
+msgstr ""
+
+#: src/scan.cpp:757
+#, fuzzy
+msgid "Satellite"
+msgstr "Satelliitti:"
+
+# 
+#: src/scan.cpp:757
+#, fuzzy
+msgid "Transponder"
+msgstr "L‰hettimet:"
+
+# 
+#: src/scan.cpp:758
+#, fuzzy
+msgid "Scan finished"
+msgstr "nauhoitus p‰‰ttynyt"
 
 #: src/setup_harddisk.cpp:174
 msgid "harddisk setup..."
@@ -2797,11 +2977,11 @@ msgstr "Valitse kieli (vasen / oikea)"
 msgid "LC-Display Setup"
 msgstr "LC-n‰ytˆn asetukset"
 
-#: src/setup_lcd.cpp:62 src/setup_osd.cpp:222
+#: src/setup_lcd.cpp:62 src/setup_osd.cpp:221
 msgid "Brightness:"
 msgstr "Kirkkaus:"
 
-#: src/setup_lcd.cpp:67 src/setup_osd.cpp:235
+#: src/setup_lcd.cpp:67 src/setup_osd.cpp:234
 msgid "Contrast:"
 msgstr "Kontrasti:"
 
@@ -2878,28 +3058,28 @@ msgstr "N‰yt‰ konsoli kehyspuskurissa"
 msgid "shows the linux console on TV"
 msgstr "n‰ytt‰‰ linux konsolin TV:ss‰"
 
-#: src/setup_osd.cpp:209
+#: src/setup_osd.cpp:208
 msgid "Alpha:"
 msgstr "Alfa: "
 
-#: src/setup_osd.cpp:216
+#: src/setup_osd.cpp:215
 msgid "change the transparency correction"
 msgstr "muuta l‰pin‰kyvyytt‰"
 
-#: src/setup_osd.cpp:229
+#: src/setup_osd.cpp:228
 msgid "change the brightness correction"
 msgstr "muuta kirkkautta"
 
-#: src/setup_osd.cpp:242
+#: src/setup_osd.cpp:241
 msgid "change the contrast"
 msgstr "muuta kontrastia"
 
 # 
-#: src/setup_osd.cpp:247
+#: src/setup_osd.cpp:246
 msgid "plugin offset"
 msgstr "Lis‰osat"
 
-#: src/setup_osd.cpp:248
+#: src/setup_osd.cpp:247
 msgid "set the pluging offset coordinates (tuxtxt, a.o. )"
 msgstr "aseta lis‰osan koordinaatit (tuxtxt,, jne)"
 
@@ -3093,12 +3273,12 @@ msgstr "n‰yt‰ palvelun tarjoajat"
 msgid "show user bouquets"
 msgstr "n‰yt‰ k‰ytt‰j‰n kanavalista"
 
-#: src/sselect.cpp:187
+#: src/sselect.cpp:195
 msgid "[GO UP]"
 msgstr "[MENE YL÷S]"
 
 # 
-#: src/sselect.cpp:189
+#: src/sselect.cpp:197
 msgid "(removed service)"
 msgstr "(poistettu palvelu)"
 
@@ -3169,12 +3349,76 @@ msgstr "Tietoja salausj‰rjestelm‰st‰ (vasen, oikea)"
 msgid "Transponder information (left)"
 msgstr "Tietoja l‰hettimest‰ (vasen)"
 
-#: src/timer.cpp:40
+#: src/timer.cpp:17
+msgid "January"
+msgstr "Tammikuu"
+
+#: src/timer.cpp:17
+msgid "February"
+msgstr "Helmikuu"
+
+#: src/timer.cpp:17
+msgid "March"
+msgstr "Maaliskuu"
+
+#: src/timer.cpp:18
+msgid "April"
+msgstr "Huhtikuu"
+
+#: src/timer.cpp:18
+msgid "May"
+msgstr "Toukokuu"
+
+#: src/timer.cpp:18
+msgid "June"
+msgstr "Kes‰kuu"
+
+#: src/timer.cpp:18
+msgid "July"
+msgstr "Hein‰kuu"
+
+#: src/timer.cpp:19
+msgid "August"
+msgstr "Elokuu"
+
+#: src/timer.cpp:19
+msgid "September"
+msgstr "Syyskuu"
+
+#: src/timer.cpp:19
+msgid "October"
+msgstr "Lokakuu"
+
+#: src/timer.cpp:20
+msgid "November"
+msgstr "Marraskuu"
+
+#: src/timer.cpp:20
+msgid "December"
+msgstr "Joulukuu"
+
+#: src/timer.cpp:23
+msgid "Sun"
+msgstr "Su"
+
+#: src/timer.cpp:23
+msgid "Mon"
+msgstr "Ma"
+
+#: src/timer.cpp:24
+msgid "Fri"
+msgstr "Pe"
+
+#: src/timer.cpp:24
+msgid "Sat"
+msgstr "La"
+
+#: src/timer.cpp:146
 msgid "Timerlist"
 msgstr "Ajastinlista"
 
 # 
-#: src/timer.cpp:507
+#: src/timer.cpp:663
 msgid ""
 "You would to delete the running event..\n"
 "this stops the timer mode (recording)!"
@@ -3183,48 +3427,48 @@ msgstr ""
 " t‰m‰ lopettaa tallennuksen! "
 
 # 
-#: src/timer.cpp:508
+#: src/timer.cpp:664
 msgid "Delete the event from the timerlist"
 msgstr "Poista ohjelma ajastinlistalta"
 
-#: src/timer.cpp:509
+#: src/timer.cpp:665
 msgid "Really delete this event?"
 msgstr "Haluatko poistaa t‰m‰n ohjelman?"
 
 # 
-#: src/timer.cpp:513
+#: src/timer.cpp:669
 msgid ""
 "You would to update the running event.. \n"
 "this stops the timer mode (recording)!"
 msgstr "Voit p‰ivit‰‰ tapahtumat... t‰m‰ lopettaa tallennuksen! "
 
-#: src/timer.cpp:514 src/timer.cpp:1030
+#: src/timer.cpp:670 src/timer.cpp:1425
 msgid "Update event in timerlist"
 msgstr "P‰ivit‰ ohjelma ajastinlistassa"
 
-#: src/timer.cpp:515
+#: src/timer.cpp:671
 msgid "Really update this event?"
 msgstr "Haluatko p‰ivitt‰‰ n‰m‰ tiedot?"
 
-#: src/timer.cpp:571
+#: src/timer.cpp:717 src/timer.cpp:747
 msgid "This event is already in the timerlist."
 msgstr "T‰m‰ ohjelma on jo listalla. "
 
-#: src/timer.cpp:571 src/timer.cpp:594 src/timer.cpp:1104
+#: src/timer.cpp:718 src/timer.cpp:747 src/timer.cpp:786
 msgid "Add event to timerlist"
 msgstr "Lis‰‰ ohjelma ajastimeen"
 
 # 
-#: src/timer.cpp:583
+#: src/timer.cpp:775
 msgid "The Endtime overlaps with another event in the timerlist"
 msgstr "P‰‰ttymisaika ylitt‰‰ seuraavan ajastuksen aloitusajan. "
 
-#: src/timer.cpp:583
+#: src/timer.cpp:775
 msgid "Set Stop Time"
 msgstr "Syˆt‰ p‰‰ttymisaika"
 
 # 
-#: src/timer.cpp:592
+#: src/timer.cpp:784
 msgid ""
 "This event cannot added to the timerlist.\n"
 "The event overlaps with another event in the timerlist\n"
@@ -3234,137 +3478,42 @@ msgstr ""
 " Tapahtumat menev‰t p‰‰llekk‰in. \n"
 " Tarkista listan tapahtumat!"
 
-# 
-#: src/timer.cpp:618 src/enigma_event.cpp:278 src/enigma_event.cpp:289
-msgid "no description is available"
-msgstr "kuvausta ei saatavilla"
-
-#: src/timer.cpp:651
+#: src/timer.cpp:860
 msgid "timerView"
 msgstr "n‰yt‰ ajastin"
 
-#: src/timer.cpp:652
+#: src/timer.cpp:861
+#, fuzzy
+msgid "add new event to Timerlist"
+msgstr "Lis‰‰ ohjelma ajastimeen"
+
+#: src/timer.cpp:862
 msgid "remove this entry from timer list"
 msgstr "poista t‰m‰ ohjelma ajastimesta"
 
-#: src/timer.cpp:830
-msgid "January"
-msgstr "Tammikuu"
-
-#: src/timer.cpp:830
-msgid "February"
-msgstr "Helmikuu"
-
-#: src/timer.cpp:830
-msgid "March"
-msgstr "Maaliskuu"
-
-#: src/timer.cpp:831
-msgid "April"
-msgstr "Huhtikuu"
-
-#: src/timer.cpp:831
-msgid "May"
-msgstr "Toukokuu"
-
-#: src/timer.cpp:831
-msgid "June"
-msgstr "Kes‰kuu"
-
-#: src/timer.cpp:831
-msgid "July"
-msgstr "Hein‰kuu"
-
-#: src/timer.cpp:832
-msgid "August"
-msgstr "Elokuu"
-
-#: src/timer.cpp:832
-msgid "September"
-msgstr "Syyskuu"
-
-#: src/timer.cpp:832
-msgid "October"
-msgstr "Lokakuu"
-
-#: src/timer.cpp:833
-msgid "November"
-msgstr "Marraskuu"
-
-#: src/timer.cpp:833
-msgid "December"
-msgstr "Joulukuu"
-
-#: src/timer.cpp:834
-msgid "Sunday"
-msgstr "Sunnuntai"
-
-#: src/timer.cpp:834
-msgid "Monday"
-msgstr "Maanantai"
-
-#: src/timer.cpp:834
-msgid "Tuesday"
-msgstr "Tiistai"
-
-#: src/timer.cpp:834
-msgid "Wednesday"
-msgstr "Keskiviikka"
-
-#: src/timer.cpp:835
-msgid "Thursday"
-msgstr "Torstai"
-
-#: src/timer.cpp:835
-msgid "Friday"
-msgstr "Perjantai"
-
-#: src/timer.cpp:835
-msgid "Saturday"
-msgstr "Lauantai"
-
-#: src/timer.cpp:836
-msgid "Sun"
-msgstr "Su"
-
-#: src/timer.cpp:836
-msgid "Mon"
-msgstr "Ma"
-
-#: src/timer.cpp:836
-msgid "Tue"
-msgstr "Ti"
-
-#: src/timer.cpp:836
-msgid "Wed"
-msgstr "Ke"
-
-# 
-#: src/timer.cpp:837
-msgid "Thu"
-msgstr "To"
-
-#: src/timer.cpp:837
-msgid "Fri"
-msgstr "Pe"
-
-#: src/timer.cpp:837
-msgid "Sat"
-msgstr "La"
-
-#: src/timer.cpp:937
+#: src/timer.cpp:1074
 msgid "Timer list"
 msgstr "Ajastinlista"
 
-#: src/timer.cpp:971
+#: src/timer.cpp:1244
 msgid "record DVR"
 msgstr "tallenna DVR "
 
-#: src/timer.cpp:972
+#: src/timer.cpp:1245
 msgid "Ngrab"
 msgstr "Ngrab"
 
-#: src/timer.cpp:1030
+# 
+#: src/timer.cpp:1289 src/enigma_event.cpp:278 src/enigma_event.cpp:289
+msgid "no description is available"
+msgstr "kuvausta ei saatavilla"
+
+#: src/timer.cpp:1309
+#, fuzzy
+msgid "unknown service"
+msgstr "tuntematon"
+
+#: src/timer.cpp:1425
 msgid ""
 "Invalid begin or end time.!\n"
 "Please check time and date"
@@ -3372,26 +3521,18 @@ msgstr ""
 "Virheellinen alkamis- tai p‰‰ttymisaika!\n"
 "Tarkista aika ja p‰iv‰ "
 
-# 
-#: src/timer.cpp:1103
-msgid ""
-"Invalid begin or end time.!\n"
-"You cannot add this to timerlist"
-msgstr ""
-"Virheellinen alkamis- tai p‰‰ttymisaika!\n"
-"Et voi lis‰t‰ t‰t‰ listaan."
-
-#: src/timer.cpp:1167
-msgid "choose service"
-msgstr "valitse palvelu"
-
-#: src/timer.cpp:1286
+#: src/timer.cpp:1572
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
 msgstr ""
 "Et voi lis‰t‰ palvelua manuaalisesti ajastimeen.\n"
 "Sulje ajastin ja k‰yt‰ EPG:t‰ lis‰t‰ksesi haluttu palvelu!"
+
+#: src/timer.cpp:1616
+#, fuzzy
+msgid "no description found"
+msgstr "kuvausta ei saatavilla"
 
 # 
 #: src/upgrade.cpp:116
@@ -3538,152 +3679,152 @@ msgstr "Pohjoinen"
 msgid "South"
 msgstr "Etel‰"
 
-#: src/rotorconfig.cpp:312 src/rotorconfig.cpp:368
+#: src/rotorconfig.cpp:291 src/rotorconfig.cpp:347
 msgid "delete me"
 msgstr "poista minut"
 
-#: src/rotorconfig.cpp:403 src/rotorconfig.cpp:406
+#: src/rotorconfig.cpp:382 src/rotorconfig.cpp:385
 msgid "drive Motor East"
 msgstr "k‰‰nn‰ moottoria it‰‰n"
 
-#: src/rotorconfig.cpp:404
+#: src/rotorconfig.cpp:383
 msgid "drive Motor East.. one step"
 msgstr "k‰‰nn‰ moottoria it‰‰n.. yksi aste"
 
-#: src/rotorconfig.cpp:405
+#: src/rotorconfig.cpp:384
 msgid "stop Motor drive East"
 msgstr "pys‰ty‰ moottorin k‰‰ntˆ it‰‰n"
 
-#: src/rotorconfig.cpp:407
+#: src/rotorconfig.cpp:386
 msgid "drive Motor West.. one step"
 msgstr "k‰‰nn‰ moottoria l‰nteen.. yksi aste"
 
-#: src/rotorconfig.cpp:408
+#: src/rotorconfig.cpp:387
 msgid "stop Motor drive West"
 msgstr "pys‰yt‰ moottorin k‰‰ntˆ l‰nteen"
 
 # 
-#: src/rotorconfig.cpp:499
+#: src/rotorconfig.cpp:458
 msgid "position"
 msgstr "sijainti"
 
-#: src/rotorconfig.cpp:499
+#: src/rotorconfig.cpp:458
 msgid "store new sat positions"
 msgstr "tallenna uudet satelliittien sijainnit"
 
-#: src/rotorconfig.cpp:500
+#: src/rotorconfig.cpp:459
 msgid "drive to stored pos"
 msgstr "k‰‰nn‰ tallennettuun sijaintiin"
 
-#: src/rotorconfig.cpp:500
+#: src/rotorconfig.cpp:459
 msgid "drive to stored position"
 msgstr "k‰‰nn‰ tallennettuun paikkaan"
 
 # 
-#: src/rotorconfig.cpp:501
+#: src/rotorconfig.cpp:460
 msgid "drive to satellite"
 msgstr "k‰‰nn‰ satelliittiin"
 
 # 
-#: src/rotorconfig.cpp:501
+#: src/rotorconfig.cpp:460
 msgid "drive to stored satellite"
 msgstr "k‰‰nn‰ tallennettuun satelliittiin"
 
-#: src/rotorconfig.cpp:502
+#: src/rotorconfig.cpp:461
 msgid "drive to 0"
 msgstr "K‰‰nn‰ kohtaan 0"
 
-#: src/rotorconfig.cpp:502
+#: src/rotorconfig.cpp:461
 msgid "drives to 0"
 msgstr "K‰‰nn‰ kohtaan 0"
 
-#: src/rotorconfig.cpp:503
+#: src/rotorconfig.cpp:462
 msgid "recalculate"
 msgstr "uudelleen laskenta"
 
-#: src/rotorconfig.cpp:503
+#: src/rotorconfig.cpp:462
 msgid "recalculate stored positions rel. to current pos"
 msgstr "laske uudelleen tallennetut paikat nykyiseen paikkaan"
 
-#: src/rotorconfig.cpp:504
+#: src/rotorconfig.cpp:463
 msgid "set east limit"
 msgstr "aseta it‰ raja"
 
-#: src/rotorconfig.cpp:504
+#: src/rotorconfig.cpp:463
 msgid "set east soft limit"
 msgstr "aseta it‰inen rajoitus"
 
-#: src/rotorconfig.cpp:505
+#: src/rotorconfig.cpp:464
 msgid "set west limit"
 msgstr "aseta l‰nsi raja"
 
-#: src/rotorconfig.cpp:505
+#: src/rotorconfig.cpp:464
 msgid "set west soft limit"
 msgstr "aseta l‰ntinen rajoitus"
 
-#: src/rotorconfig.cpp:506
+#: src/rotorconfig.cpp:465
 msgid "disable limits"
 msgstr "poista rajat"
 
 # 
-#: src/rotorconfig.cpp:506 src/rotorconfig.cpp:551
+#: src/rotorconfig.cpp:465 src/rotorconfig.cpp:528
 msgid "disable soft limits"
 msgstr "poista rajoitukset"
 
-#: src/rotorconfig.cpp:507
+#: src/rotorconfig.cpp:466
 msgid "enable limits"
 msgstr "rajat p‰‰lle"
 
-#: src/rotorconfig.cpp:507 src/rotorconfig.cpp:555
+#: src/rotorconfig.cpp:466 src/rotorconfig.cpp:532
 msgid "enable soft limits"
 msgstr "rajoitukset p‰‰lle"
 
-#: src/rotorconfig.cpp:527
+#: src/rotorconfig.cpp:504
 msgid "store current pos in motor"
 msgstr "tallenna nykyinen sijainti moottoriin"
 
-#: src/rotorconfig.cpp:528 src/rotorconfig.cpp:544 src/rotorconfig.cpp:548
-#: src/rotorconfig.cpp:854
+#: src/rotorconfig.cpp:505 src/rotorconfig.cpp:521 src/rotorconfig.cpp:525
+#: src/rotorconfig.cpp:845
 msgid "store"
 msgstr "tallenna"
 
-#: src/rotorconfig.cpp:531
+#: src/rotorconfig.cpp:508
 msgid "drive motor to stored pos"
 msgstr "aja moottori tallennettuun sijaintiin"
 
-#: src/rotorconfig.cpp:532 src/rotorconfig.cpp:536 src/rotorconfig.cpp:560
+#: src/rotorconfig.cpp:509 src/rotorconfig.cpp:513 src/rotorconfig.cpp:537
 msgid "go"
 msgstr "mene"
 
-#: src/rotorconfig.cpp:535
+#: src/rotorconfig.cpp:512
 msgid "drive motor to reference position"
 msgstr "aja moottori vertailu sijaintiin"
 
-#: src/rotorconfig.cpp:539
+#: src/rotorconfig.cpp:516
 msgid "recalculate all stored positions"
 msgstr "laske uudelleen kaikki tallennetut sijainnit"
 
-#: src/rotorconfig.cpp:540
+#: src/rotorconfig.cpp:517
 msgid "recalc"
 msgstr "laske uudelleen"
 
-#: src/rotorconfig.cpp:543
+#: src/rotorconfig.cpp:520
 msgid "store current pos as east soft limit"
 msgstr "aseta t‰m‰n hetkinen sijainti it‰iseksi rajaksi"
 
-#: src/rotorconfig.cpp:547
+#: src/rotorconfig.cpp:524
 msgid "store current pos as west soft limit"
 msgstr "aseta t‰m‰n hetkinen sijainti l‰ntiseksi rajaksi"
 
-#: src/rotorconfig.cpp:552 src/rotorconfig.cpp:556
+#: src/rotorconfig.cpp:529 src/rotorconfig.cpp:533
 msgid "do it"
 msgstr "tee se"
 
-#: src/rotorconfig.cpp:559
+#: src/rotorconfig.cpp:536
 msgid "drive motor to satellite"
 msgstr "aja moottori satelliittiin"
 
-#: src/rotorconfig.cpp:698
+#: src/rotorconfig.cpp:687
 msgid ""
 "Wrong use of this function can corrupt all stored sat positions.\n"
 "Are you sure you want to use this function?"
@@ -3692,36 +3833,36 @@ msgstr ""
 "paikat.\n"
 "Oletko varma ett‰ haluat k‰ytt‰‰ t‰t‰ toimintoa?"
 
-#: src/rotorconfig.cpp:760
+#: src/rotorconfig.cpp:749
 msgid "one step East..."
 msgstr "yksi aste it‰‰n..."
 
-#: src/rotorconfig.cpp:769
+#: src/rotorconfig.cpp:758
 msgid "one step west..."
 msgstr "yksi aste l‰nteen..."
 
-#: src/rotorconfig.cpp:783
+#: src/rotorconfig.cpp:772
 msgid "turning to east..."
 msgstr "k‰‰ntyy it‰‰n..."
 
-#: src/rotorconfig.cpp:794
+#: src/rotorconfig.cpp:783
 msgid "turning to west..."
 msgstr "k‰‰ntyy l‰nteen..."
 
-#: src/rotorconfig.cpp:806
+#: src/rotorconfig.cpp:796
 msgid "<    Stop    >"
 msgstr "< Seis >"
 
-#: src/rotorconfig.cpp:842
+#: src/rotorconfig.cpp:833
 msgid "Storage Location:"
 msgstr "Tallennus paikka:"
 
 # 
-#: src/rotorconfig.cpp:844
+#: src/rotorconfig.cpp:835
 msgid "change storage Location or store"
 msgstr "muuta tallennettua sijaintia"
 
-#: src/rotorconfig.cpp:894
+#: src/rotorconfig.cpp:885
 #, c-format
 msgid ""
 "%d.%d%c is currently stored at location %d!\n"
@@ -3732,7 +3873,7 @@ msgstr ""
 "Kun tallennat t‰m‰n paikkaan %d, meid‰n on poistettava vanha sijainti.\n"
 "Oletko varma ett‰ haluat tehd‰ t‰m‰n?"
 
-#: src/rotorconfig.cpp:916
+#: src/rotorconfig.cpp:907
 #, c-format
 msgid ""
 "Store %d.%d%c at location %d.\n"
@@ -3841,3 +3982,26 @@ msgstr "AC3 ulostulo"
 #: src/setup_audio.cpp:32
 msgid "enable/disable ac3 default output (ok)"
 msgstr "p‰‰lle/pois ac3 ulostulo (ok)"
+
+#~ msgid "choose service"
+#~ msgstr "valitse palvelu"
+
+#~ msgid "close timer menu (ok)"
+#~ msgstr "sulje ajastin valikko (ok)"
+
+# 
+#~ msgid ""
+#~ "Invalid begin or end time.!\n"
+#~ "You cannot add this to timerlist"
+#~ msgstr ""
+#~ "Virheellinen alkamis- tai p‰‰ttymisaika!\n"
+#~ "Et voi lis‰t‰ t‰t‰ listaan."
+
+#~ msgid "press ok to edit the selected event"
+#~ msgstr "paina ok, muokataksesi valintaa"
+
+#~ msgid "update"
+#~ msgstr "p‰ivit‰"
+
+#~ msgid "update the current selected timer (ok)"
+#~ msgstr "p‰ivit‰ valittu ajastin (ok)"
