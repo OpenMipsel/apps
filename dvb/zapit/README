@@ -1,12 +1,26 @@
 In order to compile zapit for rel_alexW you have to check out the HEAD
 versions of the following directories/files:
 
-apps/dvb/zapit/include/zapit/client
-apps/dvb/zapit/lib
-apps/dvb/zapit/src/pzapit.cpp
-apps/dvb/zapit/src/zapci
-apps/dvb/zapit/src/bouquets.cpp
-apps/dvb/zapit/src/channel.cpp
-apps/dvb/zapit/src/dvbstring.cpp
-apps/dvb/zapit/src/transponder.cpp
-apps/dvb/zapit/src/xmlinterface.cpp
+apps/dvb/zapit/include/zapit/client        \
+apps/dvb/zapit/include/zapit/bat.h         \
+apps/dvb/zapit/include/zapit/debug.h       \
+apps/dvb/zapit/include/zapit/descriptors.h \
+apps/dvb/zapit/include/zapit/dmx.h         \
+apps/dvb/zapit/include/zapit/nit.h         \
+apps/dvb/zapit/include/zapit/pat.h         \
+apps/dvb/zapit/include/zapit/pmt.h         \
+apps/dvb/zapit/include/zapit/sdt.h         \
+apps/dvb/zapit/lib                         \
+apps/dvb/zapit/src/bouquets.cpp            \
+apps/dvb/zapit/src/channel.cpp             \
+apps/dvb/zapit/src/dvbstring.cpp           \
+apps/dvb/zapit/src/pzapit.cpp              \
+apps/dvb/zapit/src/transponder.cpp         \
+apps/dvb/zapit/src/xmlinterface.cpp        \
+apps/dvb/zapit/src/zapci                   \
+apps/dvb/zapit/src/zapost/dmx.cpp          \
+apps/dvb/zapit/src/zapsi/bat.cpp           \
+apps/dvb/zapit/src/zapsi/nit.cpp           \
+apps/dvb/zapit/src/zapsi/pat.cpp           \
+apps/dvb/zapit/src/zapsi/pmt.cpp           \
+apps/dvb/zapit/src/zapsi/sdt.cpp
