@@ -3,7 +3,7 @@
 
 typedef struct _PluginParam
 {
-	char				*id;
+	const char	*id;
 	char				*val;
 	struct _PluginParam	*next;
 
