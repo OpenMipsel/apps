@@ -227,8 +227,8 @@ public:
 	{
 		cVPID, cAPID, cTPID, cPCRPID, cacheMax
 	};
-	eService(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, const SDTEntry *sdtentry, int service_number=-1);
-	eService(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number=-1);
+	eService(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, const SDTEntry *sdtentry/*, int service_number=-1*/);
+	eService(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id/*, int service_number=-1*/);
 	eService(eServiceID service_id, const char *name);
 	void update(const SDTEntry *sdtentry);
 	
@@ -239,7 +239,7 @@ public:
 	
 	std::string service_name, service_provider;
 	
-	int service_number;		// gleichzeitig sortierkriterium.
+//	int service_number;		// gleichzeitig sortierkriterium.
 	
 	int cache[cacheMax];
 	
@@ -560,13 +560,15 @@ class eTransponderList
 	static eTransponderList* instance;
 	std::map<tsref,eTransponder> transponders;
 	std::map<eServiceReferenceDVB,eService> services;
-	std::map<int,eService*> channel_number;
 	
 	std::map<int,eSatellite*> satellites;
 	std::list<eLNB> lnbs;
 	friend class eLNB;
 	friend class eSatellite;
 public:
+	void clearServices()	{	services.clear(); }
+	void clearTransponders()	{	transponders.clear(); }
+
 	static eTransponderList* getInstance()	{ return instance; }
 	eTransponderList();
 
@@ -581,9 +583,8 @@ public:
 	void readLNBData();
 	void writeLNBData();
 
-	void updateStats(int &transponders, int &scanned, int &services);
 	eTransponder &createTransponder(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
-	eService &createService(const eServiceReferenceDVB &service, int service_number=-1, bool *newService=0);
+	eService &createService(const eServiceReferenceDVB &service/*, int service_number=-1*/, bool *newService=0);
 	int handleSDT(const SDT *sdt);
 	Signal1<void, eTransponder*> transponder_added;
 	Signal2<void, const eServiceReferenceDVB &, bool> service_found;
@@ -591,7 +592,7 @@ public:
 	eTransponder *searchTS(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
 	eService *searchService(const eServiceReference &service);
 	const eServiceReferenceDVB *searchService(eOriginalNetworkID original_network_id, eServiceID service_id);
-	eService *searchServiceByNumber(int channel_number);
+//	eService *searchServiceByNumber(int channel_number);
 	
 	template <class T> 
 	void forEachService(T ob)

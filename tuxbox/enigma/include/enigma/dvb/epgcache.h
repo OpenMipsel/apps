@@ -130,7 +130,7 @@ private:
 	int firstScheduleEventId;
 	int firstNowNextEventId;
 	int isRunning;
-	bool paused;
+	int paused;
 	int sectionRead(__u8 *data, int source);
 	static eEPGCache *instance;
 
