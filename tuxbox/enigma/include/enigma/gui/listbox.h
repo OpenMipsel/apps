@@ -75,7 +75,6 @@ public:
 	T* goPrev();
 
 	void sort();
-	void renumberEntrys();
 
 	template <class Z>
 	int forEachEntry(Z ob)
@@ -117,7 +116,6 @@ class eListBoxEntry: public Object
 {
 	friend class eListBox<eListBoxEntry>;
 protected:
-	int num;
 	eListBox<eListBoxEntry>* listbox;
 	eString helptext;
 public:
@@ -135,7 +133,6 @@ public:
 
 	void drawEntryRect( gPainter* rc, const eRect& where, const gColor& coActiveB, const gColor& coActiveF, const gColor& coNormalB, const gColor& coNormalF, int state );
 	const eString &getHelpText() const { return helptext; }
-	int getNum() const { return num; }
 };
 
 class eListBoxEntryText: public eListBoxEntry
@@ -738,14 +735,6 @@ void eListBox<T>::endAtomic()
 			else
 				selchanged(*current);
 	}
-}
-
-template <class T>
-void eListBox<T>::renumberEntrys()
-{
-	int i = 1;
-	for (ePtrList_T_iterator it(childs); it != childs.end(); it++)
-		it->num = i++;
 }
 
 template <class T>

@@ -130,6 +130,7 @@ private:
 	int firstScheduleEventId;
 	int firstNowNextEventId;
 	int isRunning;
+	bool paused;
 	int sectionRead(__u8 *data, int source);
 	static eEPGCache *instance;
 
@@ -147,6 +148,8 @@ public:
 	void enterService(const eServiceReferenceDVB &, int);
 	void cleanLoop();
 	void timeUpdated();
+	void pauseEPG();
+	void restartEPG();
 	eEPGCache();
 	~eEPGCache();
 	static eEPGCache *getInstance() { return instance; }
