@@ -82,8 +82,8 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 		close(2);
 #endif
 
-		if (execlp("camd", "camd", buffer[0], buffer[1], buffer[4], descriptor, 0)<0)
-			eDebug("camd");
+/*		if (execlp("camd", "camd", buffer[0], buffer[1], buffer[4], descriptor, 0)<0)
+			eDebug("camd");*/
 
 		_exit(0);
 		break;
@@ -294,7 +294,7 @@ int Decoder::Set()
 			if (fd.audio<0)
 			eDebug("fd.audio couldn't be opened");
 /*			else
-			eDebug("fd.audio opened");*/
+				eDebug("fd.audio opened");*/
 		}
 
 		// get audio status
@@ -357,8 +357,8 @@ int Decoder::Set()
 				fd.demux_pcr=open(DEMUX_DEV, O_RDWR);
 				if (fd.demux_pcr<0)
 					eDebug("fd.demux_pcr couldn't be opened");
-/*			else
-					eDebug("fd.demux_pcr opened");*/
+			else
+					eDebug("fd.demux_pcr opened");
 			}
 			if ( current.pcrpid != -1 )
 			{
@@ -430,7 +430,7 @@ int Decoder::Set()
 			{
 				close(fd.demux_video);
 				fd.demux_video=-1;
-				//			eDebug("fd.demux_video closed");
+//				eDebug("fd.demux_video closed");
 			}
 
 ////////////////////////// DEMUX_PCR SET FILTER /////////////////////////
@@ -452,7 +452,7 @@ int Decoder::Set()
 			{
 				close(fd.demux_pcr);
 				fd.demux_pcr=-1;
-//					eDebug("fd.demux_pcr closed");
+//				eDebug("fd.demux_pcr closed");
 			}
 		}
 	}
@@ -486,7 +486,7 @@ int Decoder::Set()
 		{
 			close(fd.demux_audio);
 			fd.demux_audio=-1;
-//					eDebug("fd.demux_audio closed");
+			eDebug("fd.demux_audio closed");
 		}
 		if ( (changed & 0x0F) != 2 )  //  only apid changed
 		{
@@ -500,7 +500,7 @@ int Decoder::Set()
 			}
 			else  // no vpid
 			{
-//					eDebug("fd.video closed");
+				eDebug("fd.video closed");
 				close(fd.video);
 				fd.video = -1;
 			}
@@ -516,7 +516,7 @@ int Decoder::Set()
 			{
 				close(fd.audio);
 				fd.audio = -1;
-//			eDebug("fd.audio closed");
+//				eDebug("fd.audio closed");
 			}
 
 			if ( parms.pcrpid != -1 )

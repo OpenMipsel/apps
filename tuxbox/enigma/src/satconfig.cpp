@@ -129,6 +129,7 @@ void eSatelliteConfigurationManager::typeChanged(eListBoxEntryText* newtype)
 		}
 	}
 	setComplexity(complexity=newcomplexity);
+	updateButtons(newcomplexity);
 }
 
 void eSatelliteConfigurationManager::setComplexity(int complexity)
@@ -227,7 +228,14 @@ int eSatelliteConfigurationManager::checkDiseqcComplexity(eSatellite *s)
 	
 	if (entryMap.count(s))
 		se=&entryMap[s];
-	
+
+	if (  s->getLNB()->getLOFHi() != 10600000 ||
+				s->getLNB()->getLOFLo() != 9750000 ||
+				s->getLNB()->getLOFThreshold() != 11700000 )
+	{
+		eDebug("lof hi, lo or threshold changed");
+		return 3;
+	}
 	if (s->getSwitchParams().VoltageMode != eSwitchParameter::HV)
 	{
 		eDebug("voltage mode unusual");
@@ -325,7 +333,7 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 	lnb->getDiSEqC().uncommitted_switch=0;
 	lnb->getDiSEqC().uncommitted_gap=0;
 	lnb->getDiSEqC().useGotoXX=1;
-	lnb->getDiSEqC().useRotorInPower=70 << 8;
+	lnb->getDiSEqC().useRotorInPower=40<<8;
 	lnb->getDiSEqC().DegPerSec=1.0;
 	lnb->getDiSEqC().gotoXXLatitude=0.0;
 	lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
@@ -679,7 +687,7 @@ void eSatelliteConfigurationManager::newPressed()
 		lnb->getDiSEqC().uncommitted_switch=0;
 		lnb->getDiSEqC().uncommitted_gap=0;
 		lnb->getDiSEqC().useGotoXX=1;
-		lnb->getDiSEqC().useRotorInPower=70<<8;
+		lnb->getDiSEqC().useRotorInPower=40<<8;
 		lnb->getDiSEqC().DegPerSec=1.0;
 		lnb->getDiSEqC().gotoXXLatitude=0.0;
 		lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;

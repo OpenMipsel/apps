@@ -318,7 +318,6 @@
 			<eLabel name="lDeltaA" text="mA" position="390:10" size="e-10:35" vcenter="on" />
 
 			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:55" size="300:35" helptext="when the rotor support this, then use" vcenter="on" />
-			<eCheckbox text="Use East Fix" name="useEastFix" position="320:55" size="e-10:35" helptext="check this when your Rotor do not drive to east" />
 
 			<eLabel name="lLongitude" text="Longitude:" position="10:100" size="250:35" vcenter="on" /> <!--shortcut="1" shortcutFocus="Longitude" /-->
 			<eNumber name="Longitude" position="320:100" size="100:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />

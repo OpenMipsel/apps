@@ -382,7 +382,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 //		eDebug("(%d) %d mA\n", cnt, runningPowerInput);
 //		cnt++;
 
-		if ( abs(runningPowerInput-idlePowerInput ) < 70 ) // rotor running ?
+		if ( abs(runningPowerInput-idlePowerInput ) < DeltaA ) // rotor running ?
 		{
 			usleep(50000);  // not... then wait 50ms
 		}
@@ -403,7 +403,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	if ( !timeout )  // then the Rotor is Running... we wait if it stops..
 	{
 		// set rotor timeout to 120sec's...
-		timeout = time(0) + 120;
+		timeout = time(0) + 150;
 //		cnt=0;
 		while(true)
 		{
@@ -415,7 +415,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 //				eDebug("(%d) %d mA", cnt, runningPowerInput);
 //				cnt++;
 
-			if ( abs( idlePowerInput-runningPowerInput ) > 70 ) // rotor stoped ?
+			if ( abs( idlePowerInput-runningPowerInput ) > DeltaA ) // rotor stoped ?
 			{
 				usleep(50000);  // not... then wait 50ms
 			}
@@ -639,7 +639,7 @@ int eFrontend::tune(eTransponder *trans,
 		// Rotor Support
 		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && !noRotorCmd )
 		{           
-			if ( lnb->getDiSEqC().useGotoXX & 1 )
+			if ( lnb->getDiSEqC().useGotoXX )
 			{
 				int pos = sat->getOrbitalPosition();
 				int satDir = pos < 0 ? eDiSEqC::WEST : eDiSEqC::EAST;
@@ -663,22 +663,14 @@ int eFrontend::tune(eTransponder *trans,
 				double declination=calcDeclination( SiteLat, azimuth, elevation );
 				double satHourAngle=calcSatHourangle( azimuth, elevation, declination, SiteLat );
 				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
-				int east = satHourAngle < 180;
-				int tmp=0;
-				if ( east && !(lnb->getDiSEqC().useGotoXX & 65536) )
-					tmp = (int)round( (256.00 - fabs( 180 - satHourAngle )) * 10.0 );
-				else
-					tmp = (int)round( fabs( 180 - satHourAngle ) * 10.0 );
-
+				
+				int tmp=(int)round( fabs( 180 - satHourAngle ) * 10.0 );
 				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
-				// East Fix for SG-2100 and .... other Rotors ??
-				if (east)
-				{
-					if (lnb->getDiSEqC().useGotoXX & 65536)
-						RotorCmd |= 0xE000;
-					else
-						RotorCmd |= 0xF000;
-				} 
+
+				if (satHourAngle < 180)  // the east
+					RotorCmd |= 0xE000;
+				else                     // west
+					RotorCmd |= 0xD000;
 			}
 			else  // we use builtin rotor sat table
 			{
@@ -703,7 +695,7 @@ int eFrontend::tune(eTransponder *trans,
 				commands[cmdCount-1].u.diseqc.addr=0x31;     // normal positioner
 				commands[cmdCount-1].u.diseqc.cmdtype=0xE0;  // no replay... first transmission
 					
-				if ( lnb->getDiSEqC().useGotoXX & 1 )
+				if ( lnb->getDiSEqC().useGotoXX )
 				{
 					eDebug("Rotor DiSEqC Param = %04x (useGotoXX)", RotorCmd);
 					commands[cmdCount-1].u.diseqc.cmd=0x6E; // gotoXX Drive Motor to Angular Position

@@ -114,8 +114,6 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 	CONNECT(b_start->selected, tsManual::start);
 	CONNECT(b_abort->selected, tsManual::abort);
 	CONNECT(transponder_widget->updated, tsManual::retune);
-
-	retune();
 }
 
 void tsManual::start()
@@ -159,7 +157,7 @@ int tsManual::eventHandler(const eWidgetEvent &event)
 			break;
 		return 1;
 	case eWidgetEvent::execBegin:
-		retune();
+//		retune();
 		break;
 	default:
 		break;

@@ -77,13 +77,10 @@ enigmaCImmi::enigmaCImmi(): eWindow(0), mmi(0)
 	
 	abort=new eButton(this);
 	abort->setText(_("abort"));
-//<<<<<<< enigma_ci.cpp
+
 	abort->move(ePoint(450, 280));
 	abort->resize(eSize(90, fd+4));
-//=======
-//	abort->move(ePoint(310, 280));
-//	abort->resize(eSize(150, 30));
-//>>>>>>> 1.12.2.2
+
 	abort->setHelpText(_("leave ci mmi"));
 	abort->loadDeco();
 
@@ -92,7 +89,7 @@ enigmaCImmi::enigmaCImmi(): eWindow(0), mmi(0)
 	lentrys=new eListBox<eListBoxMenuEntry>(this);
 	lentrys->setName("MenuEntrys");
 	lentrys->move(ePoint(20, 100));
-	lentrys->resize(eSize(560, (fd+4)*6));
+	lentrys->resize(eSize(getClientSize().width()-40, (fd+4)*6));
 	lentrys->setFlags(eListBoxBase::flagNoPageMovement);
 	lentrys->hide();
 	CONNECT(lentrys->selected, enigmaCImmi::entrySelected);		
