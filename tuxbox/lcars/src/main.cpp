@@ -15,6 +15,30 @@
  ***************************************************************************/
 /*
 $Log: main.cpp,v $
+Revision 1.31.2.1  2003/06/29 18:36:33  thedoc
+today is the day :)
+
+Revision 1.31  2003/01/05 22:48:34  TheDOC
+mtd number
+
+Revision 1.30  2003/01/05 21:42:30  TheDOC
+small changes
+
+Revision 1.29  2003/01/05 21:07:09  TheDOC
+new version-number and README updated
+
+Revision 1.28  2003/01/05 19:52:47  TheDOC
+forgot include
+
+Revision 1.27  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.26  2003/01/05 02:41:53  TheDOC
+lcars supports inputdev now
+
+Revision 1.25  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.24  2002/09/18 10:48:37  obi
 use devfs devices
 
@@ -89,14 +113,10 @@ Revision 1.6  2001/11/15 00:43:45  TheDOC
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <dbox/info.h>
 #include <string>
 #include <stdio.h>
 
-#include <dbox/avia_gt_vbi.h>
-#include <dbox/fp.h>
-//#include <dbox/event.h>
-
+#include "devices.h"
 #include "sdt.h"
 #include "zap.h"
 #include "nit.h"
@@ -121,6 +141,7 @@ Revision 1.6  2001/11/15 00:43:45  TheDOC
 #include "control.h"
 #include "variables.h"
 #include "ir.h"
+#include "lcd.h"
 
 #include "config.h"
 
@@ -142,7 +163,7 @@ int main(int argc, char **argv)
 
 
 	plugins plugins;
-
+	
 	cam cam;
 	sdt sdt;
 	nit nit;
@@ -150,7 +171,7 @@ int main(int argc, char **argv)
 
 	settings settings(&cam);
 
-	settings.setVersion("0.22 cvs");
+	settings.setVersion("0.30");
 
 	hardware hardware(&settings, &variables);
 	hardware.useDD(false);
@@ -158,6 +179,9 @@ int main(int argc, char **argv)
 	rc rc(&hardware, &settings);
 
 	//printf("Starting OSD\n");
+	lcd lcd;
+	lcd.loadFont(FONTDIR "/ds9.ttf");
+
 	fbClass fb(&variables);
 	fb.setPalette(255, 0, 0, 0, 0xff);
 	fb.setTransparent(255);
@@ -174,7 +198,7 @@ int main(int argc, char **argv)
 
 
 	update update(&osd, &rc, &settings);
-	update.cramfsmtd = 6;
+	update.cramfsmtd = 2;
 	//osd.loadSkin("/home/projekte/lcarsneu/skin.lcars");
 	//command_list list;
 	//list.insert(list.end(), "FILLBOX 100 100 200 200 1");
@@ -186,10 +210,10 @@ int main(int argc, char **argv)
 	//printf("Ending OSD\n");
 
 
-	int test = open("/dev/dvb/card0/demux0", O_RDWR);
+	int test = open(DEMUX_DEV, O_RDWR);
 	if (test < 0)
 	{
-		rc.start_thread(true);
+		rc.start_thread();
 		osd.createIP();
 		osd.setIPDescription("Please enter IP-address!");
 		osd.addCommand("SHOW ip");
@@ -203,16 +227,16 @@ int main(int argc, char **argv)
 				osd.setIP(number);
 				osd.setIPNextPosition();
 			}
-			else if (key == RC1_RIGHT)
+			else if (key == RC_RIGHT)
 			{
 				osd.setIPNextPosition();
 			}
-			else if (key == RC1_LEFT)
+			else if (key == RC_LEFT)
 			{
 				osd.setIPPrevPosition();
 			}
-		} while ( key != RC1_OK && key != RC1_HOME);
-		if (key == RC1_OK)
+		} while ( key != RC_OK && key != RC_HOME);
+		if (key == RC_OK)
 		{
 			settings.setIP(osd.getIPPart(0), osd.getIPPart(1), osd.getIPPart(2), osd.getIPPart(3));
 
@@ -256,7 +280,7 @@ int main(int argc, char **argv)
 	if (rc.command_available())
 	{
 		int com = rc.read_from_rc();
-		if (com == RC1_HELP)
+		if (com == RC_HELP)
 		{
 			//printf("Emergency channel-scan\n");
 			channels = scan.scanChannels(NORMAL);
@@ -344,9 +368,9 @@ int main(int argc, char **argv)
 	int txtfd;*/
 
 	hardware.setOutputMode(settings.getOutputFormat());
-	rc.start_thread(true);
+	rc.start_thread();
 
-	control control(&osd, &rc, &hardware, &settings, &scan, &channels, &eit, &cam, &zap, &tuner, &update, &timer, &plugins, &checker, &fb, &variables, &ir, &pig, &teletext, &sdt);
+	control control(&osd, &rc, &hardware, &settings, &scan, &channels, &eit, &cam, &zap, &tuner, &update, &timer, &plugins, &checker, &fb, &variables, &ir, &pig, &teletext, &sdt, &lcd);
 	
 	network network(&zap, &channels, &fb, &osd, &settings, &tuner, &pat, &pmt, &eit, &scan, &rc, &control, &variables);
 	network.startThread();

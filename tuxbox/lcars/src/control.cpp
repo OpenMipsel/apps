@@ -1,6 +1,6 @@
 #include "control.h"
 
-control::control (osd *o, rc *r, hardware *h, settings *s, scan *s1, channels *c, eit *e, cam *c1, zap *z, tuner *t, update *u, timer *t1, plugins *p, checker *c2, fbClass *f, variables *v, ir *i, pig *p1, teletext *t2, sdt *s2)
+control::control (osd *o, rc *r, hardware *h, settings *s, scan *s1, channels *c, eit *e, cam *c1, zap *z, tuner *t, update *u, timer *t1, plugins *p, checker *c2, fbClass *f, variables *v, ir *i, pig *p1, teletext *t2, sdt *s2, lcd *l)
 {
 	osd_obj = o;
 	rc_obj = r;
@@ -22,6 +22,7 @@ control::control (osd *o, rc *r, hardware *h, settings *s, scan *s1, channels *c
 	pig_obj = p1;
 	teletext_obj = t2;
 	sdt_obj = s2;
+	lcd_obj = l;
 
 	last_read.TS = -1;
 	last_read.ONID = -1;
@@ -725,6 +726,92 @@ int control::runCommand(command_class command, bool val)
 					system("rm /var/etc/.lcars");
 				}
 			}
+			else if (command.args[0] == "IP")
+			{
+				osd_obj->createIP();
+				if (command.args[1] == "BoxIP")
+				{
+					osd_obj->setIPn(0, settings_obj->getIP(0));
+					osd_obj->setIPn(1, settings_obj->getIP(1));
+					osd_obj->setIPn(2, settings_obj->getIP(2));
+					osd_obj->setIPn(3, settings_obj->getIP(3));
+					osd_obj->setIPDescription("Please enter IP-address!");
+				}
+				else if (command.args[1] == "ServerIP")
+				{
+					osd_obj->setIPn(0, settings_obj->getserverIP(0));
+					osd_obj->setIPn(1, settings_obj->getserverIP(1));
+					osd_obj->setIPn(2, settings_obj->getserverIP(2));
+					osd_obj->setIPn(3, settings_obj->getserverIP(3));
+					osd_obj->setIPDescription("Please enter LCARS-Server IP-address!");
+				}
+				else if (command.args[1] == "GatewayIP")
+				{
+					osd_obj->setIPn(0, settings_obj->getgwIP(0));
+					osd_obj->setIPn(1, settings_obj->getgwIP(1));
+					osd_obj->setIPn(2, settings_obj->getgwIP(2));
+					osd_obj->setIPn(3, settings_obj->getgwIP(3));
+					osd_obj->setIPDescription("Please enter gateway's IP-address!");
+				}
+				else if (command.args[1] == "DNSIP")
+				{
+					osd_obj->setIPn(0, settings_obj->getdnsIP(0));
+					osd_obj->setIPn(1, settings_obj->getdnsIP(1));
+					osd_obj->setIPn(2, settings_obj->getdnsIP(2));
+					osd_obj->setIPn(3, settings_obj->getdnsIP(3));				
+					osd_obj->setIPDescription("Please enter DNS-IP-address!");
+				}
+				osd_obj->addCommand("SHOW ip");
+				osd_obj->addCommand("COMMAND ip position 0");
+				
+				unsigned short key = 0;
+				int number = 0;
+				do
+				{
+					key = rc_obj->read_from_rc();
+					number = rc_obj->get_number();
+
+					if (number != -1)
+					{
+						osd_obj->setIP(number);
+						osd_obj->setIPNextPosition();
+					}
+					else if (key == RC_RIGHT)
+					{
+						osd_obj->setIPNextPosition();
+					}
+					else if (key == RC_LEFT)
+					{
+						osd_obj->setIPPrevPosition();
+					}
+				} while ( key != RC_OK && key != RC_HOME);
+				
+				if (key == RC_OK)
+				{
+					if (command.args[1] == "BoxIP")
+					{
+						settings_obj->setIP(osd_obj->getIPPart(0), osd_obj->getIPPart(1), osd_obj->getIPPart(2), osd_obj->getIPPart(3));
+					}
+					else if (command.args[1] == "ServerIP")
+					{
+						settings_obj->setserverIP(osd_obj->getIPPart(0), osd_obj->getIPPart(1), osd_obj->getIPPart(2), osd_obj->getIPPart(3));
+						update_obj->ip[0] = osd_obj->getIPPart(0);
+						update_obj->ip[1] = osd_obj->getIPPart(1);
+						update_obj->ip[2] = osd_obj->getIPPart(2);
+						update_obj->ip[3] = osd_obj->getIPPart(3);
+					}
+					if (command.args[1] == "GatewayIP")
+					{
+						settings_obj->setgwIP(osd_obj->getIPPart(0), osd_obj->getIPPart(1), osd_obj->getIPPart(2), osd_obj->getIPPart(3));					
+					}
+					if (command.args[1] == "DNSIP")
+					{
+						settings_obj->setdnsIP(osd_obj->getIPPart(0), osd_obj->getIPPart(1), osd_obj->getIPPart(2), osd_obj->getIPPart(3));
+						
+					}
+				}
+				osd_obj->addCommand("HIDE ip");
+			} // IP
 		}
 		else if (command.command == C_Var)
 		{
@@ -986,6 +1073,18 @@ int control::runCommand(command_class command, bool val)
 					teletext_obj->stopReinsertion();
 					osd_obj->addCommand("COMMAND proginfo set_teletext false");
 				}
+				lcd_obj->loadFromFile(DATADIR "/lcars/lcdbackground.raw");
+				lcd_obj->writeToLCD();
+
+				lcd_obj->setTextSize(10);
+				std::stringstream ostr;
+				ostr << ((int)channels_obj->getCurrentChannelNumber());
+				lcd_obj->putText(8, 13, 0, ostr.str());
+				lcd_obj->setTextSize(12);
+				lcd_obj->putText(8, 33, 0, channels_obj->getCurrentServiceName());
+				//lcd_obj->setTextSize(12);
+				//lcd_obj->putText(80, 58, 0, "23:39");
+
 			}
 			else if (command.args[0] == "Audio")
 			{
@@ -1840,31 +1939,31 @@ void control::openMenu(int menuNumber)
 		key = rc_obj->read_from_rc();
 		number = rc_obj->get_number();
 
-		if (key == RC1_DOWN)
+		if (key == RC_DOWN)
 		{
 			osd_obj->selectNextEntry();
 		}
-		else if (key == RC1_UP)
+		else if (key == RC_UP)
 		{
 			osd_obj->selectPrevEntry();
 		}
-		else if (key == RC1_OK)
+		else if (key == RC_OK)
 		{
 			number = osd_obj->menuSelectedIndex();
 		}
-		else if (key == RC1_RED)
+		else if (key == RC_RED)
 		{
 			number = 30;
 		}
-		else if (key == RC1_GREEN)
+		else if (key == RC_GREEN)
 		{
 			number = 31;
 		}
-		else if (key == RC1_YELLOW)
+		else if (key == RC_YELLOW)
 		{
 			number = 32;
 		}
-		else if (key == RC1_BLUE)
+		else if (key == RC_BLUE)
 		{
 			number = 33;
 		}
@@ -2017,7 +2116,7 @@ void control::openMenu(int menuNumber)
 			osd_obj->addCommand("SHOW menu");
 			osd_obj->addCommand("COMMAND menu select next");
 		}
-	} while(key != RC1_HOME && key != RC1_RIGHT && key != RC1_LEFT);
+	} while(key != RC_HOME && key != RC_RIGHT && key != RC_LEFT);
 	osd_obj->addCommand("HIDE menu");
 	vars->setvalue("%PLUGINMENU", "false");
 }
