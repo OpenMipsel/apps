@@ -412,16 +412,6 @@ struct eServiceReferenceDVB: public eServiceReference
 	eServiceReferenceDVB()
 	{
 	}
-
-	struct equalONIDSID
-	{
-		bool operator()(const eServiceReferenceDVB &a, const eServiceReferenceDVB &b) const
-		{
-			return (a.type == b.type) &&
-					(a.getServiceID() == b.getServiceID()) &&
-					(a.getOriginalNetworkID() == b.getOriginalNetworkID());
-		}
-	};
 };
 
 class eBouquet
