@@ -616,7 +616,7 @@ int tetris_exec( int fdfb, int fdrc, int fdlcd, char *cfgfile )
 		if ( proxy_addr )
 			free ( proxy_addr );
 		if ( proxy_user )
-			free ( proxy_user );*/
+			free ( proxy_user );
 #endif
 		if ( hscore )
 			free ( hscore );
