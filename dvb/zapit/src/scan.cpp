@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.3 2003/03/26 17:09:29 thegoodguy Exp $
+ * $Id: scan.cpp,v 1.96.2.4 2003/05/11 11:36:18 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -39,7 +39,8 @@ short scan_runs;
 short curr_sat;
 static int status = 0;
 uint processed_transponders;
-
+uint32_t actual_freq;
+uint actual_polarisation;
 
 CBouquetManager* scanBouquetManager;
 
@@ -47,15 +48,79 @@ extern tallchans allchans;   //  defined in zapit.cpp
 extern int found_transponders;
 extern int found_channels;
 extern std::map <t_channel_id, uint8_t> service_types;
+//extern uint32_t found_tv_chans;
+//extern uint32_t found_radio_chans;
+//extern uint32_t found_data_chans;
 
 /* zapit.cpp */
 extern CFrontend *frontend;
 extern xmlDocPtr scanInputParser;
 extern std::map <uint8_t, std::string> scanProviders;
+extern std::map <string, int32_t> satellitePositions;
+extern std::map <string, uint8_t> motorPositions;
 extern CZapitClient::bouquetMode bouquetMode;
 extern CEventServer *eventServer;
 
+void cp(char * from, char * to)
+{
+	char cmd[256] = "cp -f ";
+	strcat(cmd, from);
+	strcat(cmd, " ");
+	strcat(cmd, to);
+	system(cmd);
+}
 
+void copy_to_satellite(FILE * fd, FILE * fd1, char * providerName)
+{
+	//copies services from previous services.xml file from start up to the sat that is being scanned...
+	char buffer[256] = "";
+	
+	//look for sat to be scanned... or end of file
+	fgets(buffer, 255, fd);
+	while(!feof(fd1) && !((strstr(buffer, "sat name") && strstr(buffer, providerName)) || strstr(buffer, "</zapit>")))
+	{
+		fputs(buffer, fd);
+		fgets(buffer, 255, fd1);
+	}
+	
+	// if not end of file
+	if (!feof(fd1) && !strstr(buffer, "</zapit>"))
+		// skip to end of satellite
+		while (!feof(fd1) && !strstr(buffer, "</sat>"))
+			fgets(buffer, 255, fd1);
+}
+
+void copy_to_end(FILE * fd, FILE * fd1, char * providerName)
+{
+	//copies the services from previous services.xml file from the end of sat being scanned to the end of the file...
+	char buffer[256] ="";
+	
+	fgets(buffer, 255, fd1);
+	while(!feof(fd1) && !strstr(buffer, "</zapit>"))
+	{
+		fputs(buffer, fd);
+		fgets(buffer, 255, fd1);
+	}
+	fclose(fd1);
+	unlink(SERVICES_TMP);
+}
+
+char *getFrontendName(void)
+{
+	if (!frontend)
+		return NULL;
+
+	switch (frontend->getInfo()->type) {
+	case FE_QPSK:   /* satellite frontend */
+		return "sat";
+	case FE_QAM:    /* cable frontend */
+		return "cable";
+	case FE_OFDM:   /* terrestrial frontend */
+		return "terrestrial";
+	default:        /* unsupported frontend */
+		return NULL;
+	}
+}
 
 void stop_scan(const bool success)
 {
@@ -75,7 +140,6 @@ void stop_scan(const bool success)
 		delete scanBouquetManager;
 	}
 }
-
 
 int bla_hiess_mal_fake_pat_hat_aber_nix_mit_pat_zu_tun(uint32_t TsidOnid, FrontendParameters *feparams, uint8_t polarity, uint8_t DiSEqC)
 {
@@ -113,7 +177,6 @@ int bla_hiess_mal_fake_pat_hat_aber_nix_mit_pat_zu_tun(uint32_t TsidOnid, Fronte
 	return 1;
 }
 
-
 /* build transponder for cable-users with sat-feed*/
 int build_bf_transponder(FrontendParameters *feparams)
 {
@@ -135,7 +198,6 @@ int get_nits(FrontendParameters *feparams, uint8_t polarization, uint8_t DiSEqC)
 	return status;
 }
 
-
 int get_sdts(void)
 {
 	stiterator tI;
@@ -156,35 +218,21 @@ int get_sdts(void)
 	return 0;
 }
 
-FILE *write_xml_header(const char *filename)
+void write_xml_header(FILE * fd, const char *filename)
 {
-	FILE *fd = fopen(filename, "w");
-
-	if (fd == NULL)
-	{
-		ERROR(filename);
-		stop_scan(false);
-		pthread_exit(0);
-	}
-
 	fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<zapit>\n");
-
-	return fd;
 }
 
-int write_xml_footer(FILE *fd)
+void write_xml_footer(FILE *fd)
 {
-	if (fd != NULL)	{
-		fprintf(fd, "</zapit>\n");
-		return fclose(fd);
-	}
-
-	return -1;
+	fprintf(fd, "</zapit>\n");
+	fclose(fd);
 }
 
 void write_bouquets(void)
 {
-	if (bouquetMode == CZapitClient::BM_DELETEBOUQUETS) {
+	if (bouquetMode == CZapitClient::BM_DELETEBOUQUETS) 
+	{
 		INFO("removing existing bouquets");
 		unlink(BOUQUETS_XML);
 	}
@@ -200,7 +248,7 @@ void write_transponder(FILE *fd, t_transport_stream_id transport_stream_id, t_or
 {
 	stiterator tI = scantransponders.find((transport_stream_id << 16) | original_network_id);
 
-	switch (frontend->getInfo()->type) {
+		switch (frontend->getInfo()->type) {
 	case FE_QAM: /* cable */
 		fprintf(fd,
 			"\t\t<transponder id=\"%04x\" onid=\"%04x\" frequency=\"%u\" inversion=\"%hu\" symbol_rate=\"%u\" fec_inner=\"%hu\" modulation=\"%hu\">\n",
@@ -250,16 +298,12 @@ void write_transponder(FILE *fd, t_transport_stream_id transport_stream_id, t_or
 	return;
 }
 
-FILE *write_provider(FILE *fd, const char *type, const char *provider_name, const uint8_t DiSEqC)
+int write_provider(FILE *fd, const char *type, const char *provider_name, const uint8_t DiSEqC)
 {
+	int status = -1;
+	
 	if (!scantransponders.empty())
 	{
-		/* create new file if needed */
-		if (fd == NULL)
-		{
-			fd = write_xml_header(SERVICES_XML);
-		}
-
 		/* cable tag */
 		if (!strcmp(type, "cable"))
 		{
@@ -280,29 +324,124 @@ FILE *write_provider(FILE *fd, const char *type, const char *provider_name, cons
 
 		/* end tag */
 		fprintf(fd, "\t</%s>\n", type);
+		status = 0; // this indicates that services have been found and that bouquets should be written...
 	}
 
 	/* clear results for next provider */
 	allchans.clear();                  // different provider may have the same onid/sid pair // FIXME
 	scantransponders.clear();
 
-	return fd;
+	return status;
+}
+
+int scan_transponder(xmlNodePtr transponder, bool satfeed, uint8_t diseqc_pos)
+{
+	uint8_t polarization = 0;
+	FrontendParameters feparams;
+		
+	feparams.Frequency = xmlGetNumericAttribute(transponder, "frequency", 0);
+	feparams.Inversion = INVERSION_AUTO;
+
+	/* cable */
+	if (frontend->getInfo()->type == FE_QAM)
+	{
+		feparams.u.qam.SymbolRate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
+		feparams.u.qam.FEC_inner = CFrontend::getFEC(xmlGetNumericAttribute(transponder, "fec_inner", 0));
+		feparams.u.qam.QAM = CFrontend::getModulation(xmlGetNumericAttribute(transponder, "modulation", 0));
+	}
+
+	/* satellite */
+	else if (frontend->getInfo()->type == FE_QPSK)
+	{
+		feparams.u.qpsk.SymbolRate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
+		feparams.u.qpsk.FEC_inner = CFrontend::getFEC(xmlGetNumericAttribute(transponder, "fec_inner", 0));
+		polarization = xmlGetNumericAttribute(transponder, "polarization", 0);
+	}
+
+	if ((frontend->getInfo()->type == FE_QAM) && satfeed) 
+	{
+		/* build special transponder for cable with satfeed */
+		status = build_bf_transponder(&feparams);
+	}
+	else 
+	{
+		/* read network information table */
+		status = get_nits(&feparams, polarization, diseqc_pos);
+	}
+	
+	return 0;
+}
+
+void scan_provider(xmlNodePtr search, char * providerName, bool satfeed, uint8_t diseqc_pos)
+{
+	xmlNodePtr transponder = NULL;
+
+	/* send sat name to client */
+	eventServer->sendEvent(CZapitClient::EVT_SCAN_SATELLITE, CEventServer::INITID_ZAPIT, providerName, strlen(providerName) + 1);
+	transponder = search->xmlChildrenNode;
+
+	/* read all transponders */
+	while ((transponder = xmlGetNextOccurence(transponder, "transponder")) != NULL)
+	{
+		scan_transponder(transponder, satfeed, diseqc_pos);
+
+		/* next transponder */
+		transponder = transponder->xmlNextNode;
+	}
+
+	/* 
+	 * parse:
+	 * service description table,
+	 * program association table,
+	 * bouquet association table,
+	 * network information table
+	 */
+	status = get_sdts();
+
+	/*
+	 * channels from PAT do not have service_type set.
+	 * some channels set the service_type in the BAT or the NIT.
+	 * should the NIT be parsed on every transponder?
+	 */
+	std::map <t_channel_id, uint8_t>::iterator stI;
+	for (stI = service_types.begin(); stI != service_types.end(); stI++)
+	{
+		tallchans_iterator scI = allchans.find(stI->first);
+
+		if (scI != allchans.end())
+		{
+			if (scI->second.getServiceType() != stI->second)
+			{
+				INFO("setting service_type of channel_id " PRINTF_CHANNEL_ID_TYPE " from %02x to %02x",
+					stI->first,
+					scI->second.getServiceType(),
+					stI->second);
+						
+				scI->second.setServiceType(stI->second);
+			}
+		}
+	}
 }
 
 void *start_scanthread(void *)
 {
 	FILE *fd = NULL;
-
-	char providerName[32];
-	char *type;
-	
+	FILE *fd1 = NULL;
+	char providerName[32] = "";
+	char *type = NULL;
 	uint8_t diseqc_pos = 0;
-	uint8_t polarization = 0;
-
 	bool satfeed = false;
+	int scan_status = -1;
 
 	scanBouquetManager = new CBouquetManager();
 	processed_transponders = 0;
+ //	found_tv_chans = 0;
+ //	found_radio_chans = 0;
+ //	found_data_chans = 0;
+ 	int32_t currentSatellitePosition = 0;
+ 	int32_t satellitePosition = 0;
+
+
 	curr_sat = 0;
 
         if ((type = getFrontendName()) == NULL)
@@ -332,102 +471,57 @@ void *start_scanthread(void *)
 		}
 
 		/* provider is not wanted - jump to the next one */
-		if (spI == scanProviders.end())
+		if (spI != scanProviders.end())
 		{
-			search = search->xmlNextNode;
-			continue;
-		}
-
-		/* Special mode for cable-users with sat-feed */
-		if (frontend->getInfo()->type == FE_QAM)
-			if (!strcmp(type, "cable") && xmlGetAttribute(search, "satfeed"))
-				if (!strcmp(xmlGetAttribute(search, "satfeed"), "true"))
-					satfeed = true;
-
-		/* increase sat counter */
-		curr_sat++;
-
-		/* satellite receivers might need diseqc */
-		if (frontend->getInfo()->type == FE_QPSK)
-			diseqc_pos = spI->first;
-
-		/* send sat name to client */
-		eventServer->sendEvent(CZapitClient::EVT_SCAN_SATELLITE, CEventServer::INITID_ZAPIT, &providerName, strlen(providerName) + 1);
-		transponder = search->xmlChildrenNode;
-
-		/* read all transponders */
-		while ((transponder = xmlGetNextOccurence(transponder, "transponder")) != NULL)
-		{
-			FrontendParameters feparams;
-
-			feparams.Frequency = xmlGetNumericAttribute(transponder, "frequency", 0);
-			feparams.Inversion = INVERSION_AUTO;
-
-			/* cable */
+			/* Special mode for cable-users with sat-feed */
 			if (frontend->getInfo()->type == FE_QAM)
+				if (!strcmp(type, "cable") && xmlGetAttribute(search, "satfeed"))
+					if (!strcmp(xmlGetAttribute(search, "satfeed"), "true"))
+						satfeed = true;
+
+			/* increase sat counter */
+			curr_sat++;
+
+			/* copy services.xml to /tmp directory */
+			cp(SERVICES_XML, SERVICES_TMP);
+		
+			if ((fd = fopen(SERVICES_XML, "w")))
 			{
-				feparams.u.qam.SymbolRate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
-				feparams.u.qam.FEC_inner = CFrontend::getFEC(xmlGetNumericAttribute(transponder, "fec_inner", 0));
-				feparams.u.qam.QAM = CFrontend::getModulation(xmlGetNumericAttribute(transponder, "modulation", 0));
-			}
-
-			/* satellite */
-			else if (frontend->getInfo()->type == FE_QPSK)
-			{
-				feparams.u.qpsk.SymbolRate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
-				feparams.u.qpsk.FEC_inner = CFrontend::getFEC(xmlGetNumericAttribute(transponder, "fec_inner", 0));
-				polarization = xmlGetNumericAttribute(transponder, "polarization", 0);
-			}
-
-			/* build special transponder for cable with satfeed */
-			if (!strcmp(type,"cable") && satfeed) {
-				status = build_bf_transponder(&feparams);
-			}
-
-			/* read network information table */
-			else {
-				status = get_nits(&feparams, polarization, diseqc_pos);
-			}
-
-			/* next transponder */
-			transponder = transponder->xmlNextNode;
-		}
-
-		/* 
-		 * parse:
-		 * service description table,
-		 * program association table,
-		 * bouquet association table,
-		 * network information table
-		 */
-		status = get_sdts();
-
-		/*
-		 * channels from PAT do not have service_type set.
-		 * some channels set the service_type in the BAT or the NIT.
-		 * should the NIT be parsed on every transponder?
-		 */
-		std::map <t_channel_id, uint8_t>::iterator stI;
-		for (stI = service_types.begin(); stI != service_types.end(); stI++)
-		{
-			tallchans_iterator scI = allchans.find(stI->first);
-
-			if (scI != allchans.end())
-			{
-				if (scI->second.getServiceType() != stI->second)
+				if ((fd1 = fopen(SERVICES_TMP, "r")))
+					copy_to_satellite(fd, fd1, providerName);
+				else
+					write_xml_header(fd, SERVICES_XML);
+					
+				/* satellite receivers might need diseqc */
+				if (frontend->getInfo()->type == FE_QPSK)
+					diseqc_pos = spI->first;
+				
+				/* position satellite dish if provider is on a different satellite */
+				currentSatellitePosition = frontend->getCurrentSatellitePosition();
+				satellitePosition = satellitePositions[providerName];
+				if ((frontend->getDiseqcType() == DISEQC_1_2) && (currentSatellitePosition != satellitePosition))
 				{
-					INFO("setting service_type of channel_id " PRINTF_CHANNEL_ID_TYPE " from %02x to %02x",
-							stI->first,
-							scI->second.getServiceType(),
-							stI->second);
-
-					scI->second.setServiceType(stI->second);
+					printf("[scan] start_scanthread: moving satellite dish from satellite position %d to %d\n", currentSatellitePosition, satellitePosition);
+					frontend->positionMotor(motorPositions[providerName]);
 				}
+						
+				scan_provider(search, providerName, satfeed, diseqc_pos);
+					
+				/* write services */
+				scan_status = write_provider(fd, type, providerName, diseqc_pos);
+			
+				if (fd1)		
+					copy_to_end(fd, fd1, providerName);
+					
+				write_xml_footer(fd);
+			}
+			else
+			{
+				ERROR(SERVICES_XML);
+				stop_scan(false);
+				pthread_exit(0);
 			}
 		}
-
-		/* write services */
-		fd = write_provider(fd, type, providerName, diseqc_pos);
 
 		/* go to next satellite */
 		search = search->xmlNextNode;
@@ -437,12 +531,9 @@ void *start_scanthread(void *)
 	delete transponder;
 	delete search;
 
-	/* close xml tags */
-	if (write_xml_footer(fd) != -1)
-	{
-		/* write bouquets if channels did not fail */
+	/* write bouquets if services were found */
+	if (scan_status != -1)
 		write_bouquets();
-	}
 
 	/* report status */
 	INFO("found %d transponders and %d channels", found_transponders, found_channels);
@@ -455,20 +546,4 @@ void *start_scanthread(void *)
 	pthread_exit(0);
 }
 
-char *getFrontendName(void)
-{
-	if (!frontend)
-		return NULL;
-
-	switch (frontend->getInfo()->type) {
-	case FE_QPSK:   /* satellite frontend */
-		return "sat";
-	case FE_QAM:    /* cable frontend */
-		return "cable";
-	case FE_OFDM:   /* terrestrial frontend */
-		return "terrestrial";
-	default:        /* unsupported frontend */
-		return NULL;
-	}
-}
 
