@@ -1,0 +1,28 @@
+diff -Naur HEAD/apps/tuxbox/neutrino/src/driver/rcinput.cpp rel_alexW/apps/tuxbox/neutrino/src/driver/rcinput.cpp
+--- HEAD/apps/tuxbox/neutrino/src/driver/rcinput.cpp	2003-02-20 18:01:56.000000000 +0100
++++ rel_alexW/apps/tuxbox/neutrino/src/driver/rcinput.cpp	2003-02-20 18:02:35.000000000 +0100
+@@ -59,6 +59,8 @@
+ #include <global.h>
+ #include <neutrino.h>
+ 
++#define OLD_RC_API 1
++
+ #ifdef OLD_RC_API
+ #define RC_EVENT_DEVICE "/dev/dbox/rc0"
+ #define RC_standby_release (KEY_MAX + 1)
+diff -Naur HEAD/apps/tuxbox/neutrino/src/gui/gamelist.cpp rel_alexW/apps/tuxbox/neutrino/src/gui/gamelist.cpp
+--- HEAD/apps/tuxbox/neutrino/src/gui/gamelist.cpp	2003-02-20 12:20:07.000000000 +0100
++++ rel_alexW/apps/tuxbox/neutrino/src/gui/gamelist.cpp	2003-02-20 12:22:27.000000000 +0100
+@@ -47,9 +47,9 @@
+ 
+ #include "gamelist.h"
+ 
+-/* for alexW images with old drivers: 
+- * #define USE_VBI_INTERFACE 1
+- */
++/* for alexW images with old drivers: */
++#define USE_VBI_INTERFACE 1
++/* */
+ 
+ #ifdef USE_VBI_INTERFACE
+  #define AVIA_VBI_START_VTXT	1

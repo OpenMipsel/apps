@@ -1,0 +1,3 @@
+Please check out HEAD and apply the patch:
+
+patch -p0 < patch.HEAD.for.alexW
