@@ -1,3 +1,4 @@
+#define RECORD_TELETEXT
 #include <lib/dvb/edvb.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -301,8 +302,44 @@ void eDVB::recBegin(const char *filename, eServiceReferenceDVB service)
 	} else
 	{
 		recorder->addPID(pmt->PCR_PID);
+#ifdef RECORD_ECM
+		for (ePtrList<Descriptor>::iterator i(pmt->program_info.begin()); i != pmt->program_info.end(); ++i)
+			if (i->Tag() == 9)
+				recorder->addPID(((CADescriptor*)*i)->CA_PID);
+#endif
 		for (ePtrList<PMTEntry>::iterator i(pmt->streams); i != pmt->streams.end(); ++i)
-			recorder->addPID(i->elementary_PID);
+		{
+			int record=0;
+			switch (i->stream_type)
+			{
+			case 1:	// video..
+			case 2:
+				record=1;
+				break;
+			case 3:	// audio..
+			case 4:
+				record=1;
+				break;
+			case 6:
+				for (ePtrList<Descriptor>::iterator it(i->ES_info); it != i->ES_info.end(); ++it)
+				{
+					if (it->Tag() == DESCR_AC3)
+						record=1;
+#ifdef RECORD_TELETEXT
+					if (it->Tag() == DESCR_TELETEXT)
+						record=1;
+#endif
+				}
+				break;
+			}
+			if (record)
+				recorder->addPID(i->elementary_PID);
+#ifdef RECORD_ECM
+			for (ePtrList<Descriptor>::iterator it(i->ES_info); it != i->ES_info.end(); ++it)
+				if (it->Tag() == 9)
+					recorder->addPID(((CADescriptor*)*it)->CA_PID);
+#endif
+		}
 		pmt->unlock();
 	}
 	
