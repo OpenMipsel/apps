@@ -665,8 +665,11 @@ int eFrontend::tune(eTransponder *trans,
 				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
 				int east = satHourAngle < 180;
 				int tmp = (int)round( fabs( 180 - satHourAngle ) * 10.0 );
+				if ( east && !(lnb->getDiSEqC().useGotoXX & 65536) )
+					tmp = -tmp;
 				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
-				if (east)
+				// East Fix for SG-2100 and .... other Rotors ??
+				if (east && (lnb->getDiSEqC().useGotoXX & 65536) )
 					RotorCmd |= 0xE000;
 			}
 			else  // we use builtin rotor sat table

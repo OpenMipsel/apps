@@ -312,6 +312,7 @@
 	<object name="RotorConfig">
 		<RotorConfig text="Rotor Config" cposition="100:80" csize="550:400" >
 			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use" vcenter="on" />
+			<eCheckbox text="Use East Fix" name="useEastFix" position="290:10" size="200:35" helptext="check this when your Rotor do not drive to east" />
 			<eCheckbox text="Use Rotor Input Power" name="useRotorInPower" position="10:55" size="300:35" helptext="Use rotor input power for running detection.. else use timeout" />
 			<eNumber name="DegPerSec" position="e-170:55" size="100:35"  helptext="rotor drive speed, in degrees per second" loadDeco="" />
 			<eLabel name="lDegPerSec" text="°/sec" position="e-70:55" size="e-10:35" />

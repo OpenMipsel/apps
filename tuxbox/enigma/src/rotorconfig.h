@@ -22,7 +22,7 @@ class RotorConfig: public eWindow, public existNetworks
 	eLabel *lLatitude, *lLongitude, *lOrbitalPosition, *lStoredRotorNo, *lDirection, *lDegPerSec;
 	eNumber *orbital_position, *number, *Latitude, *Longitude, *DegPerSec;
 	eButton *add, *remove, *save, *cancel;
-	eCheckbox *useGotoXX, *useRotorInPower;
+	eCheckbox *useGotoXX, *useRotorInPower, *useEastFix;
 	eComboBox *direction, *LaDirection, *LoDirection;
 	eStatusBar* statusbar;
 	void onAdd();

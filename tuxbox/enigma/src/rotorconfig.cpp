@@ -21,6 +21,9 @@ RotorConfig::RotorConfig(eLNB *lnb )
 	useGotoXX = new eCheckbox(this);
 	useGotoXX->setName("useGotoXX");
 
+	useEastFix = new eCheckbox(this);
+	useEastFix->setName("useEastFix");
+
 	useRotorInPower = new eCheckbox(this);
 	useRotorInPower->setName("useRotorInPower");	
 
@@ -153,6 +156,10 @@ struct savePosition: public std::unary_function< eListBoxEntryText&, void>
 void RotorConfig::onSavePressed()
 {
 	lnb->getDiSEqC().useGotoXX = useGotoXX->isChecked();
+	if ( useEastFix->isChecked() )
+		lnb->getDiSEqC().useGotoXX |= 65536;
+	else
+		lnb->getDiSEqC().useGotoXX &= ~65536; 
 	lnb->getDiSEqC().useRotorInPower = useRotorInPower->isChecked();
 	lnb->getDiSEqC().DegPerSec = DegPerSec->getFixedNum();
 	lnb->getDiSEqC().gotoXXLaDirection = (int) LaDirection->getCurrent()->getKey();
@@ -195,6 +202,7 @@ void RotorConfig::gotoXXChanged( int state )
 		direction->hide();
 		positions->hide();
 
+		useEastFix->show();
 		lLongitude->show();
 		Longitude->show();
 		LoDirection->show();
@@ -210,7 +218,8 @@ void RotorConfig::gotoXXChanged( int state )
 		lLatitude->hide();
 		Latitude->hide();
 		LaDirection->hide();
-
+		useEastFix->hide();
+		
 		positions->show();
 		add->show();
 		remove->show();
@@ -256,7 +265,8 @@ void RotorConfig::setLNBData( eLNB *lnb )
 		for ( std::map<int, int>::iterator it ( DiSEqC.RotorTable.begin() ); it != DiSEqC.RotorTable.end(); it++ )
 			new eListBoxEntryText( positions, eString().sprintf(" %d / %03d %c", it->second, abs(it->first), it->first > 0 ? 'E' : 'W'), (void*) it->first );
 
-		useGotoXX->setCheck( (int) lnb->getDiSEqC().useGotoXX );
+		useGotoXX->setCheck( (int) lnb->getDiSEqC().useGotoXX ? 1 : 0 );
+		useEastFix->setCheck( (int) (lnb->getDiSEqC().useGotoXX & 65536) ? 1 : 0 );
 		gotoXXChanged( (int) lnb->getDiSEqC().useGotoXX );
 		useRotorInPower->setCheck( (int) lnb->getDiSEqC().useRotorInPower );
 		useRotorInPowerChanged( (int) lnb->getDiSEqC().useRotorInPower );
@@ -274,6 +284,7 @@ void RotorConfig::setLNBData( eLNB *lnb )
 		LoDirection->setCurrent(0);
 		DegPerSec->setFixedNum( 1.0 );
 		useGotoXX->setCheck( 1 );
+		useEastFix->setCheck( 0 );
 		useRotorInPower->setCheck( 0 );
 	}
 
