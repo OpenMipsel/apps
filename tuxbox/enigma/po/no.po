@@ -7,10 +7,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-16 00:41+0100\n"
-"PO-Revision-Date: Thu Jan 16 1:36:47 CET 2003\n"
+"POT-Creation-Date: 2003-01-20 01:22+0100\n"
+"PO-Revision-Date: Mon Jan 20 2:18:58 CET 2003\n"
 "Last-Translator: unknown\n"
-"Language-Team: Norwegian / Anna Steinhauer, anna.dreiundzwanzig@gmx.de\n"
+"Language-Team: Norwegian / Anna Steinhauer <anna.dreiundzwanzig@gmx.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -912,12 +912,12 @@ msgstr "Favouritenliste"
 msgid "TV/Radio"
 msgstr "Radio"
 
-#: lib/dvb/servicemp3.cpp:142
+#: lib/dvb/servicemp3.cpp:144
 #, fuzzy
 msgid "Connecting..."
 msgstr "Suchlauf"
 
-#: lib/dvb/servicemp3.cpp:273
+#: lib/dvb/servicemp3.cpp:319
 #, fuzzy
 msgid "playing..."
 msgstr "Suchlauf"

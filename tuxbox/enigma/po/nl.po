@@ -7,10 +7,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-16 00:41+0100\n"
-"PO-Revision-Date: Thu Jan 16 1:36:47 CET 2003\n"
+"POT-Creation-Date: 2003-01-20 01:22+0100\n"
+"PO-Revision-Date: Mon Jan 20 2:18:57 CET 2003\n"
 "Last-Translator: unknown\n"
-"Language-Team: Dutch / Michel Weeren, sales@dream-multimedia.nl\n"
+"Language-Team: Dutch / Michel Weeren <sales@dream-multimedia.nl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,7 +25,7 @@ msgstr "FF"
 
 #: default.esml:606
 msgid "cancel partition check"
-msgstr ""
+msgstr "partitie controle afbreken"
 
 #: default.esml:525
 msgid "press ok to edit the selected event"
@@ -39,10 +39,10 @@ msgstr "kies satelliet/kabel provider (ok)"
 msgid "Pause "
 msgstr "pauze"
 
+# 
 #: default.esml:368
-#, fuzzy
 msgid "save in rotor"
-msgstr "Nummer in rotor:"
+msgstr "opslaan in rotor"
 
 #: default.esml:266 default.esml:287 default.esml:343 default.esml:426
 #: src/setup_language.cpp:82 src/setup_lcd.cpp:106 src/setup_osd.cpp:78
@@ -59,19 +59,19 @@ msgstr "Satelliet:"
 msgid "Play "
 msgstr "Afspelen"
 
+# 
 #: default.esml:355
-#, fuzzy
 msgid "choose the Satellite you wish to find"
-msgstr "Kies het LNB dat u wilt gebruiken of aanpassen"
+msgstr "Kies de satelliet die u wilt zoeken"
 
+# 
 #: default.esml:595
-#, fuzzy
 msgid "close harddisk menu"
-msgstr "harddisk: "
+msgstr "harddisk menu afsluiten "
 
 #: default.esml:362
 msgid "calc param 1 (see your rotor manual or let it 00)"
-msgstr ""
+msgstr "calc param 1 (zie rotor gebruiksaanwijzing of stel in op 00)"
 
 #: default.esml:548
 msgid "processor: "
@@ -85,10 +85,10 @@ msgstr "kies item om te bewerken of verwijderen"
 msgid "Tonwahl"
 msgstr "Audio keuze"
 
+# 
 #: default.esml:345
-#, fuzzy
 msgid "goto advanced rotor setup"
-msgstr "open netwerk instellingen"
+msgstr "Ga naar geavanceerde rotor instellingen"
 
 #: default.esml:549
 msgid "frontend: "
@@ -124,7 +124,7 @@ msgstr "standby"
 
 #: default.esml:603
 msgid "Partition Check"
-msgstr ""
+msgstr "Partitie controle"
 
 #: default.esml:562 default.esml:575
 msgid "enter recording end time (0..9, left, right, ok)"
@@ -141,6 +141,7 @@ msgstr "timer menu afsluiten (ok)"
 #: default.esml:314
 msgid "Use rotor input power for running detection.. else use timeout"
 msgstr ""
+"Gebruik rotor input power voor draaidetectie.. Selecteer anders timeout"
 
 #: default.esml:265
 msgid "increased voltage"
@@ -150,10 +151,10 @@ msgstr "verhoogd voltage"
 msgid "FEC:"
 msgstr "FEC:"
 
+# 
 #: default.esml:369
-#, fuzzy
 msgid "open Transponderscan"
-msgstr "Transponder scan"
+msgstr "Transponderscan openen"
 
 #: default.esml:307 default.esml:484
 msgid "LOCK"
@@ -169,7 +170,7 @@ msgstr "SYNC"
 
 #: default.esml:360
 msgid "press left or right to move rotor"
-msgstr ""
+msgstr "druk op links/rechts om de rotor te draaien"
 
 #: default.esml:424
 msgid "Skins:"
@@ -236,10 +237,10 @@ msgstr "Mhz"
 msgid "services scanned     :"
 msgstr "gescande zenders:"
 
+# 
 #: default.esml:367
-#, fuzzy
 msgid "close rotor setup"
-msgstr "open netwerk instellingen"
+msgstr "rotor instellingen menu afsluiten"
 
 #: default.esml:537
 msgid "update"
@@ -247,7 +248,7 @@ msgstr "vernieuwen"
 
 #: default.esml:315
 msgid "rotor drive speed, in degrees per second"
-msgstr ""
+msgstr "rotor draaisnelheid in graden per seconde"
 
 #: default.esml:334
 msgid "Orbital Position:"
@@ -301,10 +302,10 @@ msgstr "voer de starttijd in (0..9, links, rechts)"
 msgid "KSymb/s"
 msgstr "KSymb/s"
 
+# 
 #: default.esml:352
-#, fuzzy
 msgid "Mode:"
-msgstr "model:"
+msgstr "Modus:"
 
 #: default.esml:391 default.esml:403 default.esml:427 default.esml:567
 #: default.esml:580 src/enigma_ci.cpp:79 src/scan.cpp:37
@@ -322,10 +323,10 @@ msgstr "voortgang:"
 msgid "SNR:"
 msgstr "SNR:"
 
+# 
 #: default.esml:607
-#, fuzzy
 msgid "close window"
-msgstr "venster sluiten en niet scannen"
+msgstr "venster sluiten"
 
 #: default.esml:302 default.esml:483
 msgid "BER"
@@ -345,11 +346,11 @@ msgstr "Nummer in rotor:"
 
 #: default.esml:363
 msgid "calc param 2 (see your rotor manual or let it 00)"
-msgstr ""
+msgstr "calc param 2 (zie rotor gebruiksaanwijzing of stel in op 00)"
 
 #: default.esml:361
 msgid "Recalc Params:"
-msgstr ""
+msgstr "Recalc Params:"
 
 #: default.esml:267 default.esml:288 default.esml:344
 msgid "leave lnb-setup (no changes are saved)"
@@ -405,7 +406,7 @@ msgstr "sluiten"
 
 #: default.esml:597
 msgid "check"
-msgstr ""
+msgstr "controleer"
 
 #: default.esml:437 default.esml:457
 msgid "Frequency:"
@@ -417,11 +418,11 @@ msgstr "Zenders"
 
 #: default.esml:366
 msgid "0"
-msgstr ""
+msgstr "niet voorhanden"
 
 #: default.esml:364
 msgid "calc param 3 (see your rotor manual or let it 00)"
-msgstr ""
+msgstr "calc param 3 (zie rotor gebruiksaanwijzing of stel in op 00)"
 
 #: default.esml:285
 msgid "opens the Rotor Setup"
@@ -433,7 +434,7 @@ msgstr "Inversie aan-/uitschakelen (ok)"
 
 #: default.esml:313 default.esml:351
 msgid "Rotor Config"
-msgstr ""
+msgstr "Rotor instellingen"
 
 #: default.esml:287 default.esml:343
 msgid ""
@@ -443,7 +444,7 @@ msgstr "Opslaan en gebruik de geselecteerde LNB voor deze satelliet"
 
 #: default.esml:316
 msgid "/sec"
-msgstr ""
+msgstr "/sec"
 
 #: default.esml:539
 msgid "delete the current selected timer (ok)"
@@ -489,10 +490,10 @@ msgstr "voer de breedtegraad in (0..9, + , - , ok)"
 msgid "DiSEqC Mode:"
 msgstr "DiSEqC Modus:"
 
+# 
 #: default.esml:353
-#, fuzzy
 msgid "choose what you want to do"
-msgstr "selecteer de gewenste modulatie (ok)"
+msgstr "maak uw keuze"
 
 #: default.esml:251
 msgid "LNB Configuration"
@@ -520,7 +521,7 @@ msgstr "De huidige timer vernieuwen (ok)"
 
 #: default.esml:317
 msgid "rotor power input difference between running and not running"
-msgstr ""
+msgstr "rotor power input difference between running and not running   "
 
 #: default.esml:482
 msgid "AGC"
@@ -620,7 +621,7 @@ msgstr "volgende pagina"
 
 #: default.esml:597
 msgid "do a filsystem check"
-msgstr ""
+msgstr "voer een bestandssysteem controle uit"
 
 #: default.esml:564 default.esml:577
 msgid "shutdown  "
@@ -630,10 +631,10 @@ msgstr "uitschakelen"
 msgid "enter lnb threshold frequency (0..9, ok)"
 msgstr "voer de LNB treshhold frequentie in ( 0...9, ok )"
 
+# 
 #: default.esml:357
-#, fuzzy
 msgid "Transponder:"
-msgstr "transponderscan"
+msgstr "Transponder:"
 
 #: default.esml:566 default.esml:579
 msgid "set"
@@ -641,7 +642,7 @@ msgstr "instellen"
 
 #: default.esml:314
 msgid "Use Rotor Input Power"
-msgstr ""
+msgstr "Gebruik rotor input power"
 
 #: stone.esml:465 silver.esml:469
 msgid "Videotext"
@@ -693,12 +694,12 @@ msgstr "selecteer de zender (ok)"
 
 #: default.esml:365
 msgid "Counter(Movement)"
-msgstr ""
+msgstr "Teller (beweging)"
 
+# 
 #: default.esml:369
-#, fuzzy
 msgid "search"
-msgstr "Maart"
+msgstr "zoeken"
 
 #: default.esml:386
 msgid "use ONIT"
@@ -710,7 +711,7 @@ msgstr "Netwerk zoekfunctie in-/uitschakelen"
 
 #: default.esml:596
 msgid "initialize the disc for use with the dreambox"
-msgstr ""
+msgstr "initialiseer de disk voor gebruik in de Dreambox"
 
 #: default.esml:243
 msgid "new"
@@ -740,8 +741,8 @@ msgstr "kies richting"
 msgid "capacity:"
 msgstr "capaciteit:"
 
+# 
 #: default.esml:367
-#, fuzzy
 msgid "prev page"
 msgstr "vorige pagina"
 
@@ -781,19 +782,19 @@ msgstr "symbolrate invoeren (0..9, links rechts)"
 msgid "abort skin setup ( no changes are saved )"
 msgstr "Skin instellingen afsluiten (wijzigingen gaan verloren)"
 
+# 
 #: default.esml:358
-#, fuzzy
 msgid "choose the Transponder you wish to find"
-msgstr "Kies het LNB dat u wilt gebruiken of aanpassen"
+msgstr "kies de transponder die u wilt zoeken"
 
 #: default.esml:245
 msgid "close Satelliteconfiguration"
 msgstr "Satelliet configuratie afsluiten"
 
+# 
 #: default.esml:604
-#, fuzzy
 msgid "status output:"
-msgstr "status:"
+msgstr "status output:"
 
 #: default.esml:282
 msgid "Sequence repeat"
@@ -803,10 +804,10 @@ msgstr "Sequence repeat"
 msgid "add a new Satellite"
 msgstr "nieuwe satelliet toevoegen"
 
+# 
 #: default.esml:356
-#, fuzzy
 msgid "enter stored satellite pos"
-msgstr "één enkele satelliet"
+msgstr "voer de opgeslagen satelliet positie in"
 
 #: default.esml:586
 msgid "Harddisk"
@@ -818,7 +819,7 @@ msgstr "min"
 
 #: default.esml:318
 msgid "mA"
-msgstr ""
+msgstr "mA"
 
 #: default.esml:565 default.esml:578
 msgid "goto standby after recording (ok)"
@@ -877,11 +878,11 @@ msgstr "Favorieten"
 msgid "TV/Radio"
 msgstr "TV/Radio"
 
-#: lib/dvb/servicemp3.cpp:142
+#: lib/dvb/servicemp3.cpp:144
 msgid "Connecting..."
 msgstr "verbinden..."
 
-#: lib/dvb/servicemp3.cpp:273
+#: lib/dvb/servicemp3.cpp:319
 msgid "playing..."
 msgstr "speelt..."
 
@@ -1045,68 +1046,68 @@ msgstr ""
 msgid "First start of enigma"
 msgstr "Dit is de eerste start van Enigma"
 
+# 
 #: src/enigma_ci.cpp:50
-#, fuzzy
 msgid "Common Interface Module - mmi"
-msgstr "Common Interface..."
+msgstr "Common Interface module - mmi"
 
 #: src/enigma_ci.cpp:84
 msgid "leave ci mmi"
-msgstr ""
+msgstr "CI mmi afsluiten"
 
 #: src/enigma_ci.cpp:201
 msgid "mmi input field"
-msgstr ""
+msgstr "mmi invoer veld"
 
 #: src/enigma_ci.cpp:226
 msgid "send data to ci"
-msgstr ""
+msgstr "zend gegevens naar de CI"
 
+# 
 #: src/enigma_ci.cpp:402
-#, fuzzy
 msgid "Common Interface Modules"
-msgstr "Common Interface..."
+msgstr "Common Interface modules"
 
+# 
 #: src/enigma_ci.cpp:409
-#, fuzzy
 msgid "Common Interface Module"
-msgstr "Common Interface..."
+msgstr "Common Interface module"
 
+# 
 #: src/enigma_ci.cpp:415 src/enigma_ci.cpp:444
-#, fuzzy
 msgid "Reset"
-msgstr "instellen"
+msgstr "Reset"
 
 #: src/enigma_ci.cpp:418 src/enigma_ci.cpp:447
 msgid "reset the common interface module"
-msgstr ""
+msgstr "reset de common interface module   "
 
 #: src/enigma_ci.cpp:424 src/enigma_ci.cpp:453
 msgid "Init"
-msgstr ""
+msgstr "Init"
 
 #: src/enigma_ci.cpp:427 src/enigma_ci.cpp:456
 msgid "send the ca-pmt to ci"
-msgstr ""
+msgstr "zend de ca-pmt naar de ci"
 
 #: src/enigma_ci.cpp:433 src/enigma_ci.cpp:462
 msgid "waiting for module"
-msgstr ""
+msgstr "wacht op module"
 
+# 
 #: src/enigma_ci.cpp:436 src/enigma_ci.cpp:465
-#, fuzzy
 msgid "enter ci menu (mmi)"
-msgstr "timer menu afsluiten (ok)"
+msgstr "CI menu openen (mmi)"
 
+# 
 #: src/enigma_ci.cpp:474 src/enigma_ci.cpp:483
-#, fuzzy
 msgid "leave common interface menu"
-msgstr "Common Interface..."
+msgstr "common Interface menu afsluiten"
 
+# 
 #: src/enigma_ci.cpp:530 src/enigma_ci.cpp:536
-#, fuzzy
 msgid "resetting....please wait"
-msgstr "Bezig met scannen... Een ogenblik geduld a.u.b."
+msgstr "reset... een ogenblik geduld a.u.b."
 
 #: src/enigma_info.cpp:40
 msgid "Infos"
@@ -1365,10 +1366,10 @@ msgstr "schakel naar bestand modus"
 msgid "toggle DVR panel"
 msgstr "wissel DVR menu"
 
+# 
 #: src/enigma_main.cpp:115
-#, fuzzy
 msgid "toggle index mark"
-msgstr "geluidsdemping aan/uit"
+msgstr "wissel index markering"
 
 #: src/enigma_main.cpp:126
 msgid "enigma standby"
@@ -1409,11 +1410,11 @@ msgstr "Zender:"
 #: src/enigma_main.cpp:558
 #, c-format
 msgid "Please wait while the rotor is driving to %d.%d%c ...."
-msgstr ""
+msgstr "Een ogenblik geduld. De rotor draait nu naar %d.%d%c ...."
 
 #: src/enigma_main.cpp:558
 msgid "Message"
-msgstr ""
+msgstr "Bericht"
 
 #: src/enigma_main.cpp:766
 msgid "TV"
@@ -1670,55 +1671,59 @@ msgstr "Satellieten..."
 msgid "goto satellite config"
 msgstr "ga naar satelliet configuratie"
 
+# 
 #: src/enigma_scan.cpp:45
-#, fuzzy
 msgid "Rotor Setup..."
-msgstr "Rotor instellingen"
+msgstr "Rotor instellingen..."
 
+# 
 #: src/enigma_scan.cpp:45
-#, fuzzy
 msgid "goto Rotor Setup"
-msgstr "Rotor instellingen"
+msgstr "ga naar rotor instellingen"
 
+# 
 #: src/enigma_scan.cpp:47
-#, fuzzy
 msgid "SID..."
-msgstr "OSD..."
+msgstr "SID..."
 
 #: src/enigma_scan.cpp:114
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
+"Er is op meer dan 1 LNB DiSEqC 1.2 aangeschakelt. Selecteer het LNB waarop "
+"uw rotor is aangesloten"
 
+# 
 #: src/enigma_scan.cpp:114
-#, fuzzy
 msgid "Info"
-msgstr "info"
+msgstr "Info"
 
 #: src/enigma_scan.cpp:128
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
+"Er is geen LNB gevonder waarbij DiSEqC 1.2 is aangeschakelt.\n"
+" Schakel DiSEqC 1.2 aan"
 
 #: src/enigma_scan.cpp:128 src/rotorconfig.cpp:695 src/rotorconfig.cpp:896
 msgid "Warning"
-msgstr ""
+msgstr "Waarschuwing"
 
 #: src/enigma_scan.cpp:155
 msgid "Select LNB"
-msgstr ""
+msgstr "Selecteer LB"
 
+# 
 #: src/enigma_scan.cpp:158
-#, fuzzy
 msgid "go to prev menu"
-msgstr "ga naar de vorige pagina"
+msgstr "ga naar het vorige menu"
 
 #: src/enigma_scan.cpp:163
 #, c-format
 msgid "use LNB %d for Rotor"
-msgstr ""
+msgstr "gebruik LNB %d voor de rotor   "
 
 #: src/enigma_setup.cpp:45
 msgid "Setup"
@@ -1816,14 +1821,14 @@ msgstr "Software update..."
 msgid "upgrade firmware"
 msgstr "Update mislukt"
 
+# 
 #: src/enigma_setup.cpp:100
-#, fuzzy
 msgid "RF-Modulator..."
-msgstr "Modulatie:"
+msgstr "RF-Modulator:"
 
 #: src/enigma_setup.cpp:100
 msgid "setup modulator"
-msgstr ""
+msgstr "Modulator instellen"
 
 #: src/enigma_setup.cpp:182
 msgid "You have to reboot to apply the new skin"
@@ -1877,8 +1882,8 @@ msgstr "4 satellieten via DiSEqC optie A/B"
 msgid "3 LNBs via Diseqc"
 msgstr "3 LNB's via DiSEqC"
 
+# 
 #: src/satconfig.cpp:62
-#, fuzzy
 msgid "non-standard user defined configuration..."
 msgstr "non-standard gebruikers configuratie..."
 
@@ -2260,24 +2265,24 @@ msgstr "geinitialiseerd - onbekende bestandsindeling"
 
 #: src/setup_harddisk.cpp:455
 msgid "could not unmount the filesystem... "
-msgstr ""
+msgstr "could not unmount the filesystem... "
 
+# 
 #: src/setup_harddisk.cpp:456 src/setup_harddisk.cpp:468
 #: src/setup_harddisk.cpp:490
-#, fuzzy
 msgid "check filesystem..."
-msgstr "Het aanmaken van de bestandsindeling is mislukt."
+msgstr "controleer bestandsindeling..."
 
+# 
 #: src/setup_harddisk.cpp:467
-#, fuzzy
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr ""
-"sorry, het programma sfdisk t.b.v. het partitioneren van de HD kon niet "
-"worden gevonden."
+"sorry, het programma fsck.ext3 t.b.v. het controleren van de ext3 "
+"bestandsindeling kon niet worden gevonden."
 
 #: src/setup_harddisk.cpp:489
 msgid "not supportet filesystem for check."
-msgstr ""
+msgstr "dit bestandssysteem ondersteunt geen controle"
 
 #: src/setup_language.cpp:31
 msgid "Language Setup"
@@ -2801,10 +2806,10 @@ msgstr "handmatige upload"
 msgid "downloading catalog..."
 msgstr "Katalogus downloaden..."
 
+# 
 #: src/upgrade.cpp:182
-#, fuzzy
 msgid "downloading changelog..."
-msgstr "Katalogus downloaden..."
+msgstr "changelog downloaden..."
 
 #: src/upgrade.cpp:207
 msgid "downloading image..."
@@ -2850,10 +2855,10 @@ msgstr ""
 msgid "upgrade in progress"
 msgstr "update bezig"
 
+# 
 #: src/upgrade.cpp:504
-#, fuzzy
 msgid "upgrade failed with errorcode UD0"
-msgstr "Update mislukt. Foutcode UA15"
+msgstr "Update mislukt. Foutcode UD0"
 
 #: src/upgrade.cpp:505 src/upgrade.cpp:543
 msgid "upgrade failed"
@@ -2883,206 +2888,209 @@ msgstr "Upgrade voltooid"
 msgid "upgrade failed with errorcode UA15"
 msgstr "Update mislukt. Foutcode UA15"
 
+# 
 #: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99
-#, fuzzy
 msgid "East"
-msgstr "artiest"
+msgstr "Oost"
 
 #: src/rotorconfig.cpp:56 src/rotorconfig.cpp:100
 msgid "West"
-msgstr ""
+msgstr "West"
 
+# 
 #: src/rotorconfig.cpp:70
-#, fuzzy
 msgid "North"
-msgstr "afbreken"
+msgstr "Noord"
 
 #: src/rotorconfig.cpp:71
 msgid "South"
-msgstr ""
+msgstr "Zuid"
 
+# 
 #: src/rotorconfig.cpp:311 src/rotorconfig.cpp:367
-#, fuzzy
 msgid "delete me"
-msgstr "item wissen"
+msgstr "wis mij"
 
 #: src/rotorconfig.cpp:402 src/rotorconfig.cpp:405
 msgid "drive Motor East"
-msgstr ""
+msgstr "draai rotor > oost"
 
 #: src/rotorconfig.cpp:403
 msgid "drive Motor East.. one step"
-msgstr ""
+msgstr "draai rotor naar oostelijke richting (1stap)"
 
 #: src/rotorconfig.cpp:404
 msgid "stop Motor drive East"
-msgstr ""
+msgstr "stop rotor > oosterlijke richting"
 
 #: src/rotorconfig.cpp:406
 msgid "drive Motor West.. one step"
-msgstr ""
+msgstr "draai de rotor in westelijke richting (1 stap)"
 
 #: src/rotorconfig.cpp:407
 msgid "stop Motor drive West"
-msgstr ""
+msgstr "stop rotor > westelijke richting"
 
+# 
 #: src/rotorconfig.cpp:496
-#, fuzzy
 msgid "position"
-msgstr "Sat/Positie"
+msgstr "positie"
 
 #: src/rotorconfig.cpp:496
 msgid "store new sat positions"
-msgstr ""
+msgstr "sla nieuwe satelliet posities op"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored pos"
-msgstr ""
+msgstr "draai naar opgeslagen pos"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored position"
-msgstr ""
+msgstr "draai naar opgeslagen positie"
 
+# 
 #: src/rotorconfig.cpp:498
-#, fuzzy
 msgid "drive to satellite"
-msgstr "geselecteerde satelliet verwijderen"
+msgstr "draai naar satelliet"
 
+# 
 #: src/rotorconfig.cpp:498
-#, fuzzy
 msgid "drive to stored satellite"
-msgstr "één enkele satelliet"
+msgstr "draai naar de opgeslagen satelliet"
 
 #: src/rotorconfig.cpp:499
 msgid "drive to 0"
-msgstr ""
+msgstr "draai naar 0"
 
 #: src/rotorconfig.cpp:499
 msgid "drives to 0"
-msgstr ""
+msgstr "draait naar 0"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate"
-msgstr ""
+msgstr "herberekenen"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate stored positions rel. to current pos"
-msgstr ""
+msgstr "herbereken de opgeslagen positie releatief tot de huidige positie"
 
 #: src/rotorconfig.cpp:501
 msgid "set east limit"
-msgstr ""
+msgstr "oost limiet instellen"
 
 #: src/rotorconfig.cpp:501
 msgid "set east soft limit"
-msgstr ""
+msgstr "oost soft-limiet instellen"
 
 #: src/rotorconfig.cpp:502
 msgid "set west limit"
-msgstr ""
+msgstr "west limiet instellen"
 
 #: src/rotorconfig.cpp:502
 msgid "set west soft limit"
-msgstr ""
+msgstr "west soft-limiet instellen"
 
 #: src/rotorconfig.cpp:503
 msgid "disable limits"
-msgstr ""
+msgstr "limieten uitschakelen"
 
+# 
 #: src/rotorconfig.cpp:503 src/rotorconfig.cpp:548
-#, fuzzy
 msgid "disable soft limits"
-msgstr "verplaats modus uitschakelen"
+msgstr "soft limieten uitschakelen"
 
 #: src/rotorconfig.cpp:504
 msgid "enable limits"
-msgstr ""
+msgstr "limieten aanschakelen"
 
 #: src/rotorconfig.cpp:504 src/rotorconfig.cpp:552
 msgid "enable soft limits"
-msgstr ""
+msgstr "soft-limieten aanschakelen"
 
 #: src/rotorconfig.cpp:524
 msgid "store current pos in rotor"
-msgstr ""
+msgstr "huidige positie in de rotor opslaan"
 
 #: src/rotorconfig.cpp:525 src/rotorconfig.cpp:541 src/rotorconfig.cpp:545
 #: src/rotorconfig.cpp:856
 msgid "store"
-msgstr ""
+msgstr "opslaan"
 
 #: src/rotorconfig.cpp:528
 msgid "drive rotor to stored pos"
-msgstr ""
+msgstr "draai de rotor naar de opgeslagen positie"
 
 #: src/rotorconfig.cpp:529 src/rotorconfig.cpp:533 src/rotorconfig.cpp:557
 msgid "go"
-msgstr ""
+msgstr "ok"
 
 #: src/rotorconfig.cpp:532
 msgid "driver rotor to reference position"
-msgstr ""
+msgstr "draai de rotor naar de referentie positie"
 
 #: src/rotorconfig.cpp:536
 msgid "recalculate all stored positions"
-msgstr ""
+msgstr "herbereken alle opgeslagen posities"
 
+# 
 #: src/rotorconfig.cpp:537
-#, fuzzy
 msgid "recalc"
-msgstr "speciaal"
+msgstr "recalc"
 
 #: src/rotorconfig.cpp:540
 msgid "store current pos as east soft limit"
-msgstr ""
+msgstr "sla de huidige positie als oost soft-limiet op"
 
 #: src/rotorconfig.cpp:544
 msgid "store current pos as west soft limit"
-msgstr ""
+msgstr "de huidige positie als west soft-limiet opslaan"
 
 #: src/rotorconfig.cpp:549 src/rotorconfig.cpp:553
 msgid "do it"
-msgstr ""
+msgstr "ok"
 
+# 
 #: src/rotorconfig.cpp:556
-#, fuzzy
 msgid "drive rotor to satellite"
-msgstr "één enkele satelliet"
+msgstr "draai rotor naar satelliet"
 
 #: src/rotorconfig.cpp:695
 msgid ""
 "In the case of wrong use you can falsify all stored sat positions.\n"
 "Do you really want to use this function?"
 msgstr ""
+"In geval van een verkeerde instelling kun je alle satelliet posities "
+"wissen.\n"
+"Weet u zeker dat u dit wilt doen?"
 
 #: src/rotorconfig.cpp:758
 msgid "one step East..."
-msgstr ""
+msgstr "één stap oost..."
 
 #: src/rotorconfig.cpp:767
 msgid "one step west..."
-msgstr ""
+msgstr "één stap west..."
 
 #: src/rotorconfig.cpp:783
 msgid "driving to east..."
-msgstr ""
+msgstr "draai naar het oosten..."
 
 #: src/rotorconfig.cpp:796
 msgid "driving to west..."
-msgstr ""
+msgstr "draai naar het westen..."
 
 #: src/rotorconfig.cpp:808
 msgid "<    Stop    >"
-msgstr ""
+msgstr "< Stop >"
 
 #: src/rotorconfig.cpp:844
 msgid "Storage Location:"
-msgstr ""
+msgstr "Opslag positie:"
 
+# 
 #: src/rotorconfig.cpp:846
-#, fuzzy
 msgid "change storage Location or store"
-msgstr "contrast aanpassen"
+msgstr "verander opslag lokatie of opslaan"
 
 #: src/rotorconfig.cpp:896
 #, c-format
@@ -3091,6 +3099,10 @@ msgid ""
 "When you store this now at Location %d, we must remove the old Location.\n"
 "Do you really want to do this?"
 msgstr ""
+"%d.%d%c is opgeslagen op geheugen positie %d!\n"
+"Als u nu opslaat onder positie %d, worden oude instellingen van deze positie "
+"overschreven.\n"
+"Weet u het zeker?"
 
 #: src/rotorconfig.cpp:918
 #, c-format
@@ -3099,75 +3111,79 @@ msgid ""
 "If you want another location, then say no and change the location manually.\n"
 "Do you really want to store at this location?"
 msgstr ""
+"%d.%d%c opslaag op positie %d.\n"
+"Indien u een andere geheugen positie wilt gebruiken, kies dan NEE en "
+"verander de positie handmatig.\n"
+"Weet u zeker dat u op deze positie wilt opslaan?"
 
+# 
 #: src/setup_rfmod.cpp:19
-#, fuzzy
 msgid "RF-Modulator Setup"
-msgstr "Rotor instellingen"
+msgstr "RF-Modulator instellingen"
 
 #: src/setup_rfmod.cpp:24 src/setup_rfmod.cpp:165
 msgid "Test Pattern"
-msgstr ""
+msgstr "Testbeeld"
 
 #: src/setup_rfmod.cpp:27
 msgid "enable test pattern"
-msgstr ""
+msgstr "testbeeld aanschakelen"
 
 #: src/setup_rfmod.cpp:34
 msgid "Sound enable"
-msgstr ""
+msgstr "Geluid aanschakelen"
 
+# 
 #: src/setup_rfmod.cpp:37
-#, fuzzy
 msgid "enable Sound"
-msgstr "verplaats modus aanschakelen"
+msgstr "geluid aanschakelen"
 
+# 
 #: src/setup_rfmod.cpp:56
-#, fuzzy
 msgid "4.5 MHz"
-msgstr "Mhz"
+msgstr "4.5 Mhz"
 
+# 
 #: src/setup_rfmod.cpp:57
-#, fuzzy
 msgid "5.5 MHz"
-msgstr "Mhz"
+msgstr "5.5 Mhz"
 
+# 
 #: src/setup_rfmod.cpp:58
-#, fuzzy
 msgid "6.0 MHz"
-msgstr "Mhz"
+msgstr "6.0 Mhz"
 
+# 
 #: src/setup_rfmod.cpp:59
-#, fuzzy
 msgid "6.5 MHz"
-msgstr "Mhz"
+msgstr "6.5 Mhz"
 
 #: src/setup_rfmod.cpp:69
 msgid "change sound subcarrier frequency"
-msgstr ""
+msgstr "verander de geluids subcarrier frequentie"
 
+# 
 #: src/setup_rfmod.cpp:93
-#, fuzzy
 msgid "change channel"
-msgstr "afbreken"
+msgstr "zender schakelen"
 
 #: src/setup_rfmod.cpp:117
 msgid "250Khz steps"
-msgstr ""
+msgstr "stappen van 250Khz"
 
+# 
 #: src/setup_rfmod.cpp:127
-#, fuzzy
 msgid "save settings and leave rf setup"
-msgstr "wijzigingen opslaan en afsluiten"
+msgstr "wijzigingen opslaan en RF instellingen afsluiten"
 
+# 
 #: src/setup_rfmod.cpp:135
-#, fuzzy
 msgid "leave rf setup (no changes are saved)"
 msgstr "menu sluiten (instellingen gaan verloren)"
 
 #: src/setup_rfmod.cpp:165
 msgid "if you can read this your rfmod will not work."
-msgstr ""
+msgstr "Indien u dit kunt lezen, wekt uw RF-Mod niet."
 
 #: src/enigma_event.cpp:17
 msgid "enigma event view"

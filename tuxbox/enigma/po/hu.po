@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-16 00:41+0100\n"
-"PO-Revision-Date: Thu Jan 16 1:36:48 CET 2003\n"
+"POT-Creation-Date: 2003-01-20 01:22+0100\n"
+"PO-Revision-Date: Mon Jan 20 2:19:00 CET 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: Hungarian / lbalogh@mediavox.hu\n"
 "MIME-Version: 1.0\n"
@@ -866,11 +866,11 @@ msgstr "Zsáner"
 msgid "TV/Radio"
 msgstr "TV/Rádió"
 
-#: lib/dvb/servicemp3.cpp:142
+#: lib/dvb/servicemp3.cpp:144
 msgid "Connecting..."
 msgstr "Kapcsolódás..."
 
-#: lib/dvb/servicemp3.cpp:273
+#: lib/dvb/servicemp3.cpp:319
 msgid "playing..."
 msgstr "lejátszás..."
 
@@ -1035,67 +1035,60 @@ msgid "First start of enigma"
 msgstr "Az Enigma elsö indítása!"
 
 #: src/enigma_ci.cpp:50
-#, fuzzy
 msgid "Common Interface Module - mmi"
-msgstr "Common Interface..."
+msgstr "Common Interface modul - mmi"
 
 #: src/enigma_ci.cpp:84
 msgid "leave ci mmi"
-msgstr ""
+msgstr "CI mmi elhagyása"
 
 #: src/enigma_ci.cpp:201
 msgid "mmi input field"
-msgstr ""
+msgstr "MMI bementi mezö"
 
 #: src/enigma_ci.cpp:226
 msgid "send data to ci"
-msgstr ""
+msgstr "CI-nek adatokat küldök"
 
 #: src/enigma_ci.cpp:402
-#, fuzzy
 msgid "Common Interface Modules"
-msgstr "Common Interface..."
+msgstr "CI modulok"
 
 #: src/enigma_ci.cpp:409
-#, fuzzy
 msgid "Common Interface Module"
-msgstr "Common Interface..."
+msgstr "Common Interface modul"
 
 #: src/enigma_ci.cpp:415 src/enigma_ci.cpp:444
-#, fuzzy
 msgid "Reset"
-msgstr "beállítás"
+msgstr "Újraindítás"
 
 #: src/enigma_ci.cpp:418 src/enigma_ci.cpp:447
 msgid "reset the common interface module"
-msgstr ""
+msgstr "CI modul újraindítása"
 
 #: src/enigma_ci.cpp:424 src/enigma_ci.cpp:453
 msgid "Init"
-msgstr ""
+msgstr "Érvényesítés"
 
 #: src/enigma_ci.cpp:427 src/enigma_ci.cpp:456
 msgid "send the ca-pmt to ci"
-msgstr ""
+msgstr "CA-pmt küldése a CI-nek"
 
 #: src/enigma_ci.cpp:433 src/enigma_ci.cpp:462
 msgid "waiting for module"
-msgstr ""
+msgstr "Várok a modulra (bennt van?)"
 
 #: src/enigma_ci.cpp:436 src/enigma_ci.cpp:465
-#, fuzzy
 msgid "enter ci menu (mmi)"
-msgstr "Idözítö menü bezárása (ok)"
+msgstr "Belépés a CI menübe (mmi)"
 
 #: src/enigma_ci.cpp:474 src/enigma_ci.cpp:483
-#, fuzzy
 msgid "leave common interface menu"
-msgstr "Common Interface..."
+msgstr "Kilépés a Common Interface menüböl"
 
 #: src/enigma_ci.cpp:530 src/enigma_ci.cpp:536
-#, fuzzy
 msgid "resetting....please wait"
-msgstr "Nyugi, keresek... türelem."
+msgstr "Újraindítom, várj egy picit"
 
 #: src/enigma_info.cpp:40
 msgid "Infos"
@@ -2786,9 +2779,8 @@ msgid "downloading catalog..."
 msgstr "lista letöltése..."
 
 #: src/upgrade.cpp:182
-#, fuzzy
 msgid "downloading changelog..."
-msgstr "lista letöltése..."
+msgstr "Lognapló letöltése..."
 
 #: src/upgrade.cpp:207
 msgid "downloading image..."
@@ -2867,205 +2859,198 @@ msgid "upgrade failed with errorcode UA15"
 msgstr "Sajnos nem sikerült a frissítés. UA15-ös hibát érzékelek."
 
 #: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99
-#, fuzzy
 msgid "East"
-msgstr "elöadó"
+msgstr "Kelet"
 
 #: src/rotorconfig.cpp:56 src/rotorconfig.cpp:100
 msgid "West"
-msgstr ""
+msgstr "Nyugat"
 
 #: src/rotorconfig.cpp:70
-#, fuzzy
 msgid "North"
-msgstr "megszakítás"
+msgstr "Észak"
 
 #: src/rotorconfig.cpp:71
 msgid "South"
-msgstr ""
+msgstr "Dél"
 
 #: src/rotorconfig.cpp:311 src/rotorconfig.cpp:367
-#, fuzzy
 msgid "delete me"
-msgstr "csatorna törlése"
+msgstr "törölj ki"
 
 #: src/rotorconfig.cpp:402 src/rotorconfig.cpp:405
 msgid "drive Motor East"
-msgstr ""
+msgstr "Motor forgatása Kelet felé"
 
 #: src/rotorconfig.cpp:403
 msgid "drive Motor East.. one step"
-msgstr ""
+msgstr "Motor forgatása Kelet felé.. lépésenként"
 
 #: src/rotorconfig.cpp:404
 msgid "stop Motor drive East"
-msgstr ""
+msgstr "Motor Kelet felé való forgatásának megállítása"
 
 #: src/rotorconfig.cpp:406
 msgid "drive Motor West.. one step"
-msgstr ""
+msgstr "Motor forgatása Nyugat felé.. lépésenként"
 
 #: src/rotorconfig.cpp:407
 msgid "stop Motor drive West"
-msgstr ""
+msgstr "Motor Nyugat felé való forgatásának megállítása"
 
 #: src/rotorconfig.cpp:496
-#, fuzzy
 msgid "position"
-msgstr "Mühold pozíció"
+msgstr "pozíció"
 
 #: src/rotorconfig.cpp:496
 msgid "store new sat positions"
-msgstr ""
+msgstr "Új müholdpozíciók tárolása"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored pos"
-msgstr ""
+msgstr "Ant. forgatása a tárolt pozícióra"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored position"
-msgstr ""
+msgstr "Antenna forgatása a tárolt pozícióra"
 
 #: src/rotorconfig.cpp:498
-#, fuzzy
 msgid "drive to satellite"
-msgstr "Kiválasztott mühód törlése"
+msgstr "Müholdra fordítás"
 
 #: src/rotorconfig.cpp:498
-#, fuzzy
 msgid "drive to stored satellite"
-msgstr "Add meg a mentett mühold pozícióját"
+msgstr "Ant. fordítása a tárolt müholdpozícióra"
 
 #: src/rotorconfig.cpp:499
 msgid "drive to 0"
-msgstr ""
+msgstr "forgatás 0-ra"
 
 #: src/rotorconfig.cpp:499
 msgid "drives to 0"
-msgstr ""
+msgstr "0 pozícióra való forgatás"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate"
-msgstr ""
+msgstr "újraszámítás"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate stored positions rel. to current pos"
-msgstr ""
+msgstr "pozíciók újraszámolása a jelenlegi pozícióhoz képest"
 
 #: src/rotorconfig.cpp:501
 msgid "set east limit"
-msgstr ""
+msgstr "keleti limit beállítása"
 
 #: src/rotorconfig.cpp:501
 msgid "set east soft limit"
-msgstr ""
+msgstr "keleti szoftveres határérték megadása"
 
 #: src/rotorconfig.cpp:502
 msgid "set west limit"
-msgstr ""
+msgstr "nyugati limit megadása"
 
 #: src/rotorconfig.cpp:502
 msgid "set west soft limit"
-msgstr ""
+msgstr "nyugati szoftveres határérték megadása"
 
 #: src/rotorconfig.cpp:503
 msgid "disable limits"
-msgstr ""
+msgstr "limitek kikapcsolása"
 
 #: src/rotorconfig.cpp:503 src/rotorconfig.cpp:548
-#, fuzzy
 msgid "disable soft limits"
-msgstr "mozgatás mód kikapcsolása"
+msgstr "szoftveres határértékek kikapcsolása"
 
 #: src/rotorconfig.cpp:504
 msgid "enable limits"
-msgstr ""
+msgstr "limitek engedélyezése"
 
 #: src/rotorconfig.cpp:504 src/rotorconfig.cpp:552
 msgid "enable soft limits"
-msgstr ""
+msgstr "szoftveres határértékek bekapcsolása"
 
 #: src/rotorconfig.cpp:524
 msgid "store current pos in rotor"
-msgstr ""
+msgstr "jelenlegi pozíció tárolása a rotor-ban"
 
 #: src/rotorconfig.cpp:525 src/rotorconfig.cpp:541 src/rotorconfig.cpp:545
 #: src/rotorconfig.cpp:856
 msgid "store"
-msgstr ""
+msgstr "tárolás"
 
 #: src/rotorconfig.cpp:528
 msgid "drive rotor to stored pos"
-msgstr ""
+msgstr "Rotor forgatása a tárolt pozícióra"
 
 #: src/rotorconfig.cpp:529 src/rotorconfig.cpp:533 src/rotorconfig.cpp:557
 msgid "go"
-msgstr ""
+msgstr "mehet"
 
 #: src/rotorconfig.cpp:532
 msgid "driver rotor to reference position"
-msgstr ""
+msgstr "Rotor forgatása a referencia pozícióra"
 
 #: src/rotorconfig.cpp:536
 msgid "recalculate all stored positions"
-msgstr ""
+msgstr "az összes tárolt pozíció újraszámolása"
 
 #: src/rotorconfig.cpp:537
-#, fuzzy
 msgid "recalc"
-msgstr "spciális"
+msgstr "újraszámol"
 
 #: src/rotorconfig.cpp:540
 msgid "store current pos as east soft limit"
-msgstr ""
+msgstr "jelenlegi pozíciót tárolom mint keleti szoft limitet"
 
 #: src/rotorconfig.cpp:544
 msgid "store current pos as west soft limit"
-msgstr ""
+msgstr "jelenlegi pozíciót tárolom mint nyugati szoft limitet"
 
 #: src/rotorconfig.cpp:549 src/rotorconfig.cpp:553
 msgid "do it"
-msgstr ""
+msgstr "csináld meg"
 
 #: src/rotorconfig.cpp:556
-#, fuzzy
 msgid "drive rotor to satellite"
-msgstr "Add meg a mentett mühold pozícióját"
+msgstr "Rotor forgatása a müholdra"
 
 #: src/rotorconfig.cpp:695
 msgid ""
 "In the case of wrong use you can falsify all stored sat positions.\n"
 "Do you really want to use this function?"
 msgstr ""
+"Ha valamit rosszul adtál meg, akkor ez elronthatja az összes tárolt "
+"pozíciót.\n"
+"Biztos hogy ezt akarod tenni?"
 
 #: src/rotorconfig.cpp:758
 msgid "one step East..."
-msgstr ""
+msgstr "egy lépés Kelet felé.."
 
 #: src/rotorconfig.cpp:767
 msgid "one step west..."
-msgstr ""
+msgstr "egy lépés Nyugat felé.."
 
 #: src/rotorconfig.cpp:783
 msgid "driving to east..."
-msgstr ""
+msgstr "Keleti irányba forgatok..."
 
 #: src/rotorconfig.cpp:796
 msgid "driving to west..."
-msgstr ""
+msgstr "Nyugati irányba forgatok..."
 
 #: src/rotorconfig.cpp:808
 msgid "<    Stop    >"
-msgstr ""
+msgstr "< Állj >"
 
 #: src/rotorconfig.cpp:844
 msgid "Storage Location:"
-msgstr ""
+msgstr "Tárolási hely:"
 
 #: src/rotorconfig.cpp:846
-#, fuzzy
 msgid "change storage Location or store"
-msgstr "Kontraszt megváltoztatása"
+msgstr "Tárolási hely megváltoztatása vagy tárolás"
 
 #: src/rotorconfig.cpp:896
 #, c-format
@@ -3074,6 +3059,10 @@ msgid ""
 "When you store this now at Location %d, we must remove the old Location.\n"
 "Do you really want to do this?"
 msgstr ""
+"A %d.%d%c jelenleg a %d pozíció alatt van eltárolva!\n"
+"Ha most ezt el akarod tárolni a %d alá, akkor elöbb le kell törölni a régi "
+"pozíciót.\n"
+"Biztos hogy ezt akarod tenni?"
 
 #: src/rotorconfig.cpp:918
 #, c-format
@@ -3082,75 +3071,79 @@ msgid ""
 "If you want another location, then say no and change the location manually.\n"
 "Do you really want to store at this location?"
 msgstr ""
+"%d.%d%c tárolása a %d pozíció alá.\n"
+"Ha máshová akarod letárolni, akkor válaszd a nem-et és tárold el "
+"manuálisan.\n"
+"Biztos hogy erre a pozíciór akarod letárolni?"
 
+# 
 #: src/setup_rfmod.cpp:19
-#, fuzzy
 msgid "RF-Modulator Setup"
-msgstr "Rotor beállítások"
+msgstr "RF-modulátor beállítások"
 
 #: src/setup_rfmod.cpp:24 src/setup_rfmod.cpp:165
 msgid "Test Pattern"
-msgstr ""
+msgstr "Teszt ábra"
 
 #: src/setup_rfmod.cpp:27
 msgid "enable test pattern"
-msgstr ""
+msgstr "teszt ábra bekapcsolása"
 
 #: src/setup_rfmod.cpp:34
 msgid "Sound enable"
-msgstr ""
+msgstr "Hang bekapcsolása"
 
+# 
 #: src/setup_rfmod.cpp:37
-#, fuzzy
 msgid "enable Sound"
-msgstr "mozgatás mód bekapcsolása"
+msgstr "hang engedélyezése"
 
+# 
 #: src/setup_rfmod.cpp:56
-#, fuzzy
 msgid "4.5 MHz"
-msgstr "MHz"
+msgstr "4.5 MHz"
 
+# 
 #: src/setup_rfmod.cpp:57
-#, fuzzy
 msgid "5.5 MHz"
-msgstr "MHz"
+msgstr "5.5 MHz"
 
+# 
 #: src/setup_rfmod.cpp:58
-#, fuzzy
 msgid "6.0 MHz"
-msgstr "MHz"
+msgstr "6.0 MHz"
 
+# 
 #: src/setup_rfmod.cpp:59
-#, fuzzy
 msgid "6.5 MHz"
-msgstr "MHz"
+msgstr "6.5 MHz"
 
 #: src/setup_rfmod.cpp:69
 msgid "change sound subcarrier frequency"
-msgstr ""
+msgstr "Hang segédvivö freki megváltoztatása"
 
+# 
 #: src/setup_rfmod.cpp:93
-#, fuzzy
 msgid "change channel"
-msgstr "mégsem"
+msgstr "Csatorna váltása"
 
 #: src/setup_rfmod.cpp:117
 msgid "250Khz steps"
-msgstr ""
+msgstr "250kHz-es lépések"
 
+# 
 #: src/setup_rfmod.cpp:127
-#, fuzzy
 msgid "save settings and leave rf setup"
-msgstr "változások mentése, majd kép beállítások elhagyása"
+msgstr "változások mentése, majd RF beállítások elhagyása"
 
+# 
 #: src/setup_rfmod.cpp:135
-#, fuzzy
 msgid "leave rf setup (no changes are saved)"
-msgstr "Kép beállítások elhagyása (nem mentek semmit)"
+msgstr "RF beállítások elhagyása (nem mentek semmit)"
 
 #: src/setup_rfmod.cpp:165
 msgid "if you can read this your rfmod will not work."
-msgstr ""
+msgstr "Ha ezt a szöveget látod, akkor az RF-modulátorod nem fog müködni."
 
 #: src/enigma_event.cpp:17
 msgid "enigma event view"

@@ -7,10 +7,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-16 00:41+0100\n"
-"PO-Revision-Date: Thu Jan 16 1:36:46 CET 2003\n"
+"POT-Creation-Date: 2003-01-20 01:22+0100\n"
+"PO-Revision-Date: Mon Jan 20 2:18:57 CET 2003\n"
 "Last-Translator: unknown\n"
-"Language-Team: Swedish / unknown\n"
+"Language-Team: Swedish / Jason <info@scandvision.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,7 +41,7 @@ msgstr "Paus"
 
 #: default.esml:368
 msgid "save in rotor"
-msgstr ""
+msgstr "spara i motorn"
 
 #: default.esml:266 default.esml:287 default.esml:343 default.esml:426
 #: src/setup_language.cpp:82 src/setup_lcd.cpp:106 src/setup_osd.cpp:78
@@ -58,12 +58,11 @@ msgstr "Satellit:"
 msgid "Play "
 msgstr "Spela upp"
 
+# 
 #: default.esml:355
-#, fuzzy
 msgid "choose the Satellite you wish to find"
 msgstr "välj den satellit du önskar söka efter"
 
-# 
 #: default.esml:595
 msgid "close harddisk menu"
 msgstr "stäng hårddiskmenyn"
@@ -84,7 +83,6 @@ msgstr "ange proceduringång för editering eller avlägsna"
 msgid "Tonwahl"
 msgstr "Tonval"
 
-# 
 #: default.esml:345
 msgid "goto advanced rotor setup"
 msgstr "gå till avancerad motorinstallation"
@@ -139,7 +137,7 @@ msgstr "stäng timermeny (OK)"
 
 #: default.esml:314
 msgid "Use rotor input power for running detection.. else use timeout"
-msgstr ""
+msgstr "Justera motorns strömstyrka manuellt enligt önskat värde"
 
 #: default.esml:265
 msgid "increased voltage"
@@ -149,7 +147,6 @@ msgstr "ökad nätspänning"
 msgid "FEC:"
 msgstr "FEC:"
 
-# 
 #: default.esml:369
 msgid "open Transponderscan"
 msgstr "öppna transpondersökning"
@@ -235,7 +232,6 @@ msgstr "MHz"
 msgid "services scanned     :"
 msgstr "Sökta kanaler:"
 
-# 
 #: default.esml:367
 msgid "close rotor setup"
 msgstr "stäng motorinstallationen"
@@ -246,7 +242,7 @@ msgstr "uppdatera"
 
 #: default.esml:315
 msgid "rotor drive speed, in degrees per second"
-msgstr ""
+msgstr "motorns hastighet i grader per sekund"
 
 #: default.esml:334
 msgid "Orbital Position:"
@@ -300,7 +296,6 @@ msgstr "ange starttid (0..9, vänster, höger)"
 msgid "KSymb/s"
 msgstr "KSymb/s"
 
-# 
 #: default.esml:352
 msgid "Mode:"
 msgstr "Läge:"
@@ -321,7 +316,6 @@ msgstr "Sökningsförlopp:"
 msgid "SNR:"
 msgstr "SNR:"
 
-# 
 #: default.esml:607
 msgid "close window"
 msgstr "stäng fönstret "
@@ -340,7 +334,7 @@ msgstr "Tröskel:"
 
 #: default.esml:331
 msgid "Number in Rotor:"
-msgstr ""
+msgstr "Lagrad pos. i motorn: "
 
 #: default.esml:363
 msgid "calc param 2 (see your rotor manual or let it 00)"
@@ -490,8 +484,8 @@ msgstr "ange din latitud (0..9, +, -, OK)"
 msgid "DiSEqC Mode:"
 msgstr "DiSEqC:"
 
+# 
 #: default.esml:353
-#, fuzzy
 msgid "choose what you want to do"
 msgstr "välj vad du önskar göra"
 
@@ -631,7 +625,6 @@ msgstr "stäng av"
 msgid "enter lnb threshold frequency (0..9, ok)"
 msgstr "ange LNB:ns tröskelfrekvens (0..9, OK)"
 
-# 
 #: default.esml:357
 msgid "Transponder:"
 msgstr "Transponder:"
@@ -642,7 +635,7 @@ msgstr "ange"
 
 #: default.esml:314
 msgid "Use Rotor Input Power"
-msgstr ""
+msgstr "Justera motorns strömstyrka"
 
 #: stone.esml:465 silver.esml:469
 msgid "Videotext"
@@ -668,8 +661,8 @@ msgstr "22 KHz"
 msgid "MiniDiSEqC Parameter:"
 msgstr "Parametrar för MiniDiSEqC:"
 
+# 
 #: default.esml:320
-#, fuzzy
 msgid "when the rotor support this, then use"
 msgstr "när motorn stöder detta, använd då"
 
@@ -695,9 +688,8 @@ msgstr "tryck på OK för att ändra tjänst"
 
 #: default.esml:365
 msgid "Counter(Movement)"
-msgstr ""
+msgstr "Räkneverk (för hastighet)"
 
-# 
 #: default.esml:369
 msgid "search"
 msgstr "sökning"
@@ -742,7 +734,6 @@ msgstr "välj riktning"
 msgid "capacity:"
 msgstr "kapacitet:"
 
-# 
 #: default.esml:367
 msgid "prev page"
 msgstr "föreg. sida"
@@ -783,19 +774,19 @@ msgstr "ange symbolvärde (0..9, vänster, höger)"
 msgid "abort skin setup ( no changes are saved )"
 msgstr "ta bort utseende (inga ändringar sparas)"
 
+# 
 #: default.esml:358
-#, fuzzy
 msgid "choose the Transponder you wish to find"
-msgstr "välj den LNB du önskar använda eller editera"
+msgstr "Välj den transponder du önskar hitta"
 
 #: default.esml:245
 msgid "close Satelliteconfiguration"
 msgstr "stäng satellitkonfiguration"
 
+# 
 #: default.esml:604
-#, fuzzy
 msgid "status output:"
-msgstr "status:"
+msgstr "Utgångsstatus:"
 
 #: default.esml:282
 msgid "Sequence repeat"
@@ -805,7 +796,6 @@ msgstr "Upprepning av sekvens"
 msgid "add a new Satellite"
 msgstr "lägg till en ny satellit"
 
-# 
 #: default.esml:356
 msgid "enter stored satellite pos"
 msgstr "ange sparad satellitposition"
@@ -879,11 +869,11 @@ msgstr "Favoriter"
 msgid "TV/Radio"
 msgstr "TV/radio"
 
-#: lib/dvb/servicemp3.cpp:142
+#: lib/dvb/servicemp3.cpp:144
 msgid "Connecting..."
 msgstr "Ansluter..."
 
-#: lib/dvb/servicemp3.cpp:273
+#: lib/dvb/servicemp3.cpp:319
 msgid "playing..."
 msgstr "avspelning..."
 
@@ -1047,68 +1037,68 @@ msgstr ""
 msgid "First start of enigma"
 msgstr "Första start av enigma"
 
+# 
 #: src/enigma_ci.cpp:50
-#, fuzzy
 msgid "Common Interface Module - mmi"
-msgstr "Common interface..."
+msgstr "Common interface-modul - mmi"
 
 #: src/enigma_ci.cpp:84
 msgid "leave ci mmi"
-msgstr ""
+msgstr "lämna ci mmi"
 
 #: src/enigma_ci.cpp:201
 msgid "mmi input field"
-msgstr ""
+msgstr "mmi ingångsfält"
 
 #: src/enigma_ci.cpp:226
 msgid "send data to ci"
-msgstr ""
+msgstr "sänd data till ci"
 
+# 
 #: src/enigma_ci.cpp:402
-#, fuzzy
 msgid "Common Interface Modules"
-msgstr "Common interface..."
+msgstr "Common interface-moduler"
 
+# 
 #: src/enigma_ci.cpp:409
-#, fuzzy
 msgid "Common Interface Module"
-msgstr "Common interface..."
+msgstr "Common interface-modul"
 
+# 
 #: src/enigma_ci.cpp:415 src/enigma_ci.cpp:444
-#, fuzzy
 msgid "Reset"
-msgstr "ange"
+msgstr "Återställ"
 
 #: src/enigma_ci.cpp:418 src/enigma_ci.cpp:447
 msgid "reset the common interface module"
-msgstr ""
+msgstr "återställ common interface-modul"
 
 #: src/enigma_ci.cpp:424 src/enigma_ci.cpp:453
 msgid "Init"
-msgstr ""
+msgstr "Init"
 
 #: src/enigma_ci.cpp:427 src/enigma_ci.cpp:456
 msgid "send the ca-pmt to ci"
-msgstr ""
+msgstr "sänd ca-pmt till ci"
 
 #: src/enigma_ci.cpp:433 src/enigma_ci.cpp:462
 msgid "waiting for module"
-msgstr ""
+msgstr "väntar på modul"
 
+# 
 #: src/enigma_ci.cpp:436 src/enigma_ci.cpp:465
-#, fuzzy
 msgid "enter ci menu (mmi)"
-msgstr "stäng timermeny (OK)"
+msgstr "ange ci-meny (mmi)"
 
+# 
 #: src/enigma_ci.cpp:474 src/enigma_ci.cpp:483
-#, fuzzy
 msgid "leave common interface menu"
-msgstr "Common interface..."
+msgstr "lämna common interface-menyn"
 
+# 
 #: src/enigma_ci.cpp:530 src/enigma_ci.cpp:536
-#, fuzzy
 msgid "resetting....please wait"
-msgstr "Sökning pågår...var god vänta"
+msgstr "Återställer...var god vänta"
 
 #: src/enigma_info.cpp:40
 msgid "Infos"
@@ -1141,7 +1131,7 @@ msgstr "visa nuvarande version av Betanova FW"
 
 #: src/enigma_info.cpp:48
 msgid "open the about dialog"
-msgstr ""
+msgstr "öppna info-rutan"
 
 #: src/enigma_info.cpp:49
 msgid "Satfind"
@@ -1369,7 +1359,7 @@ msgstr "vrid DVR-panelen"
 
 #: src/enigma_main.cpp:115
 msgid "toggle index mark"
-msgstr ""
+msgstr "vrid indexmarkören"
 
 #: src/enigma_main.cpp:126
 msgid "enigma standby"
@@ -1671,17 +1661,14 @@ msgstr "Satelliter..."
 msgid "goto satellite config"
 msgstr "gå till satellitkonfig."
 
-# 
 #: src/enigma_scan.cpp:45
 msgid "Rotor Setup..."
 msgstr "Motorinstallation..."
 
-# 
 #: src/enigma_scan.cpp:45
 msgid "goto Rotor Setup"
 msgstr "gå till motorinstallationen"
 
-# 
 #: src/enigma_scan.cpp:47
 msgid "SID..."
 msgstr "SID..."
@@ -1691,8 +1678,9 @@ msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
+"Fler än en LNB har aktiverad DiSEqC 1.2. Välj den LNB till vilken motorn har "
+"anslutits."
 
-# 
 #: src/enigma_scan.cpp:114
 msgid "Info"
 msgstr "Info"
@@ -1702,6 +1690,8 @@ msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
+"Hittade ingen LNB med aktiverad DiSEqC 1.2.\n"
+"Gå till satellitkonfigurationen och aktivera DiSEqC 1.2  "
 
 #: src/enigma_scan.cpp:128 src/rotorconfig.cpp:695 src/rotorconfig.cpp:896
 msgid "Warning"
@@ -1711,7 +1701,6 @@ msgstr "Varning"
 msgid "Select LNB"
 msgstr "Välj LNB"
 
-# 
 #: src/enigma_scan.cpp:158
 msgid "go to prev menu"
 msgstr "gå till föreg. meny"
@@ -1719,7 +1708,7 @@ msgstr "gå till föreg. meny"
 #: src/enigma_scan.cpp:163
 #, c-format
 msgid "use LNB %d for Rotor"
-msgstr ""
+msgstr "använd denna LNB %d till motorn"
 
 #: src/enigma_setup.cpp:45
 msgid "Setup"
@@ -1817,14 +1806,13 @@ msgstr "Uppdatera..."
 msgid "upgrade firmware"
 msgstr "uppdatera mjukvara"
 
-# 
 #: src/enigma_setup.cpp:100
 msgid "RF-Modulator..."
 msgstr "RF-modulator..."
 
 #: src/enigma_setup.cpp:100
 msgid "setup modulator"
-msgstr ""
+msgstr "installera modulator"
 
 #: src/enigma_setup.cpp:182
 msgid "You have to reboot to apply the new skin"
@@ -1854,8 +1842,8 @@ msgstr "lägg detta program i timerlistan"
 msgid "remove this event from timer list"
 msgstr "radera detta program från timerlistan"
 
+# 
 #: src/satconfig.cpp:59
-#, fuzzy
 msgid "one single satellite"
 msgstr "Enstaka satellit"
 
@@ -1881,7 +1869,7 @@ msgstr "3 LNB:n via DiSEqc"
 
 #: src/satconfig.cpp:62
 msgid "non-standard user defined configuration..."
-msgstr ""
+msgstr "ej standardkonfiguration..."
 
 #: src/satconfig.cpp:62
 msgid "special"
@@ -2257,15 +2245,13 @@ msgstr "initialiserad, men filsystemet okänt"
 
 #: src/setup_harddisk.cpp:455
 msgid "could not unmount the filesystem... "
-msgstr ""
+msgstr "kunde inte avinstallera filsystemet..."
 
-# 
 #: src/setup_harddisk.cpp:456 src/setup_harddisk.cpp:468
 #: src/setup_harddisk.cpp:490
 msgid "check filesystem..."
 msgstr "kontrollera filsystem"
 
-# 
 #: src/setup_harddisk.cpp:467
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr "Tyvärr kunde inte fsck.ext3 hittas vid kontroll av filsystemet ext3."
@@ -2793,10 +2779,10 @@ msgstr "manuell uppladdning"
 msgid "downloading catalog..."
 msgstr "laddar ned katalog"
 
+# 
 #: src/upgrade.cpp:182
-#, fuzzy
 msgid "downloading changelog..."
-msgstr "laddar ned katalog"
+msgstr "laddar ned ändringslogg..."
 
 #: src/upgrade.cpp:207
 msgid "downloading image..."
@@ -2842,7 +2828,6 @@ msgstr ""
 msgid "upgrade in progress"
 msgstr "uppdatering pågår"
 
-# 
 #: src/upgrade.cpp:504
 msgid "upgrade failed with errorcode UD0"
 msgstr "Uppdateringen misslyckades. Felkod UD0"
@@ -2875,208 +2860,209 @@ msgstr "Uppdatera OK"
 msgid "upgrade failed with errorcode UA15"
 msgstr "uppdateringen misslyckades. Felkod UA15"
 
+# 
 #: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99
-#, fuzzy
 msgid "East"
-msgstr "artist"
+msgstr "Öst"
 
 #: src/rotorconfig.cpp:56 src/rotorconfig.cpp:100
 msgid "West"
-msgstr ""
+msgstr "Väst"
 
+# 
 #: src/rotorconfig.cpp:70
-#, fuzzy
 msgid "North"
-msgstr "avbryt"
+msgstr "Nord"
 
 #: src/rotorconfig.cpp:71
 msgid "South"
-msgstr ""
+msgstr "Syd"
 
+# 
 #: src/rotorconfig.cpp:311 src/rotorconfig.cpp:367
-#, fuzzy
 msgid "delete me"
-msgstr "Radera program"
+msgstr "Radera"
 
 #: src/rotorconfig.cpp:402 src/rotorconfig.cpp:405
 msgid "drive Motor East"
-msgstr ""
+msgstr "kör motorn åt öst"
 
 #: src/rotorconfig.cpp:403
 msgid "drive Motor East.. one step"
-msgstr ""
+msgstr "vrid motorn ett steg åt öst"
 
 #: src/rotorconfig.cpp:404
 msgid "stop Motor drive East"
-msgstr ""
+msgstr "stoppa körning av motorn åt öst"
 
 #: src/rotorconfig.cpp:406
 msgid "drive Motor West.. one step"
-msgstr ""
+msgstr "vrid motorn ett steg åt väst"
 
 #: src/rotorconfig.cpp:407
 msgid "stop Motor drive West"
-msgstr ""
+msgstr "stoppa körning av motorn åt väst"
 
+# 
 #: src/rotorconfig.cpp:496
-#, fuzzy
 msgid "position"
-msgstr "Sat/position"
+msgstr "position"
 
 #: src/rotorconfig.cpp:496
 msgid "store new sat positions"
-msgstr ""
+msgstr "spara nya sat. positioner"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored pos"
-msgstr ""
+msgstr "kör till sparad pos."
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored position"
-msgstr ""
-
-#: src/rotorconfig.cpp:498
-#, fuzzy
-msgid "drive to satellite"
-msgstr "avlägsna den valda satelliten"
+msgstr "kör till sparad position"
 
 # 
 #: src/rotorconfig.cpp:498
-#, fuzzy
+msgid "drive to satellite"
+msgstr "kör till satellit"
+
+# 
+#: src/rotorconfig.cpp:498
 msgid "drive to stored satellite"
-msgstr "ange sparad satellitposition"
+msgstr "Kör till sparad satellit"
 
 #: src/rotorconfig.cpp:499
 msgid "drive to 0"
-msgstr ""
+msgstr "nollställ"
 
 #: src/rotorconfig.cpp:499
 msgid "drives to 0"
-msgstr ""
+msgstr "kör till 0"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate"
-msgstr ""
+msgstr "omberäkna"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate stored positions rel. to current pos"
-msgstr ""
+msgstr "omberäkna sparade pos. i förhållande till nuvarande pos."
 
 #: src/rotorconfig.cpp:501
 msgid "set east limit"
-msgstr ""
+msgstr "justera det östra gränsläget"
 
 #: src/rotorconfig.cpp:501
 msgid "set east soft limit"
-msgstr ""
+msgstr "justera det östra gränsläget"
 
 #: src/rotorconfig.cpp:502
 msgid "set west limit"
-msgstr ""
+msgstr "justera det västra gränsläget"
 
 #: src/rotorconfig.cpp:502
 msgid "set west soft limit"
-msgstr ""
+msgstr "justera det västra gränsläget"
 
 #: src/rotorconfig.cpp:503
 msgid "disable limits"
-msgstr ""
+msgstr "avaktivera gränslägena"
 
+# 
 #: src/rotorconfig.cpp:503 src/rotorconfig.cpp:548
-#, fuzzy
 msgid "disable soft limits"
-msgstr "avaktivera flyttningsfunktionen"
+msgstr "avaktivera gränslägena"
 
 #: src/rotorconfig.cpp:504
 msgid "enable limits"
-msgstr ""
+msgstr "aktivera gränslägena"
 
 #: src/rotorconfig.cpp:504 src/rotorconfig.cpp:552
 msgid "enable soft limits"
-msgstr ""
+msgstr "aktivera gränslägena"
 
 #: src/rotorconfig.cpp:524
 msgid "store current pos in rotor"
-msgstr ""
+msgstr "spara nuvarande pos. i motorn"
 
 #: src/rotorconfig.cpp:525 src/rotorconfig.cpp:541 src/rotorconfig.cpp:545
 #: src/rotorconfig.cpp:856
 msgid "store"
-msgstr ""
+msgstr "spara"
 
 #: src/rotorconfig.cpp:528
 msgid "drive rotor to stored pos"
-msgstr ""
+msgstr "kör motorn till sparade pos."
 
 #: src/rotorconfig.cpp:529 src/rotorconfig.cpp:533 src/rotorconfig.cpp:557
 msgid "go"
-msgstr ""
+msgstr "gå"
 
 #: src/rotorconfig.cpp:532
 msgid "driver rotor to reference position"
-msgstr ""
+msgstr "vrid motorn till referenspositionen"
 
 #: src/rotorconfig.cpp:536
 msgid "recalculate all stored positions"
-msgstr ""
+msgstr "omberäkn. alla sparade positioner"
 
+# 
 #: src/rotorconfig.cpp:537
-#, fuzzy
 msgid "recalc"
-msgstr "special"
+msgstr "omberäkn."
 
 #: src/rotorconfig.cpp:540
 msgid "store current pos as east soft limit"
-msgstr ""
+msgstr "spara nuvarande pos. som det östra gränsläget"
 
 #: src/rotorconfig.cpp:544
 msgid "store current pos as west soft limit"
-msgstr ""
+msgstr "spara nuvarande pos. som det västra gränsläget"
 
 #: src/rotorconfig.cpp:549 src/rotorconfig.cpp:553
 msgid "do it"
-msgstr ""
+msgstr "genomför detta"
 
 # 
 #: src/rotorconfig.cpp:556
-#, fuzzy
 msgid "drive rotor to satellite"
-msgstr "ange sparad satellitposition"
+msgstr "vrid motorn mot satelliten"
 
 #: src/rotorconfig.cpp:695
 msgid ""
 "In the case of wrong use you can falsify all stored sat positions.\n"
 "Do you really want to use this function?"
 msgstr ""
+"Vid felaktig användning kan du av misstag ändra alla sparade sat. "
+"positioner.\n"
+"Är du säker på att du vill använda denna funktion?"
 
 #: src/rotorconfig.cpp:758
 msgid "one step East..."
-msgstr ""
+msgstr "ett steg åt öst..."
 
 #: src/rotorconfig.cpp:767
 msgid "one step west..."
-msgstr ""
+msgstr "ett steg åt väst..."
 
 #: src/rotorconfig.cpp:783
 msgid "driving to east..."
-msgstr ""
+msgstr "vrid åt öst..."
 
 #: src/rotorconfig.cpp:796
 msgid "driving to west..."
-msgstr ""
+msgstr "vrid åt väst..."
 
 #: src/rotorconfig.cpp:808
 msgid "<    Stop    >"
-msgstr ""
+msgstr "< Stopp>"
 
 #: src/rotorconfig.cpp:844
 msgid "Storage Location:"
-msgstr ""
+msgstr "Lagringsplats:"
 
+# 
 #: src/rotorconfig.cpp:846
-#, fuzzy
 msgid "change storage Location or store"
-msgstr "justering av kontrast"
+msgstr "ändra lagringsplats eller spara"
 
 #: src/rotorconfig.cpp:896
 #, c-format
@@ -3085,6 +3071,9 @@ msgid ""
 "When you store this now at Location %d, we must remove the old Location.\n"
 "Do you really want to do this?"
 msgstr ""
+"%d.%d%c är för närvarande sparad på plats %d!\n"
+"När du nu sparar på plats %d, måste den gamla platsen avlägsnas.\n"
+"Är du säker på att du vill göra detta?"
 
 #: src/rotorconfig.cpp:918
 #, c-format
@@ -3093,75 +3082,78 @@ msgid ""
 "If you want another location, then say no and change the location manually.\n"
 "Do you really want to store at this location?"
 msgstr ""
+"Spara %d.%d%c på denna plats %d.\n"
+"If önskar du spara på annan plats, välj då nej och ändra plats manuellt.\n"
+"Vill du verkligen spara på denna plats?"
 
+# 
 #: src/setup_rfmod.cpp:19
-#, fuzzy
 msgid "RF-Modulator Setup"
-msgstr "Motorinstallation"
+msgstr "Installation av RF-modulatorn"
 
 #: src/setup_rfmod.cpp:24 src/setup_rfmod.cpp:165
 msgid "Test Pattern"
-msgstr ""
+msgstr "Testbild"
 
 #: src/setup_rfmod.cpp:27
 msgid "enable test pattern"
-msgstr ""
+msgstr "aktivera testbilden"
 
 #: src/setup_rfmod.cpp:34
 msgid "Sound enable"
-msgstr ""
+msgstr "Aktivera ljudet"
 
+# 
 #: src/setup_rfmod.cpp:37
-#, fuzzy
 msgid "enable Sound"
-msgstr "aktivera flyttningsfunktionen"
+msgstr "aktivera ljudet"
 
+# 
 #: src/setup_rfmod.cpp:56
-#, fuzzy
 msgid "4.5 MHz"
-msgstr "MHz"
+msgstr "4.5 MHz"
 
+# 
 #: src/setup_rfmod.cpp:57
-#, fuzzy
 msgid "5.5 MHz"
-msgstr "MHz"
+msgstr "5.5 MHz"
 
+# 
 #: src/setup_rfmod.cpp:58
-#, fuzzy
 msgid "6.0 MHz"
-msgstr "MHz"
+msgstr "6.0 MHz"
 
+# 
 #: src/setup_rfmod.cpp:59
-#, fuzzy
 msgid "6.5 MHz"
-msgstr "MHz"
+msgstr "6.5 MHz"
 
 #: src/setup_rfmod.cpp:69
 msgid "change sound subcarrier frequency"
-msgstr ""
+msgstr "ändra ljudbärvågens frekvens"
 
+# 
 #: src/setup_rfmod.cpp:93
-#, fuzzy
 msgid "change channel"
-msgstr "avbryt"
+msgstr "ändra kanal"
 
 #: src/setup_rfmod.cpp:117
 msgid "250Khz steps"
-msgstr ""
+msgstr "250 Khz per steg"
 
+# 
 #: src/setup_rfmod.cpp:127
-#, fuzzy
 msgid "save settings and leave rf setup"
-msgstr "spara ändringar och lämna videoinstallationen"
+msgstr "spara ändringarna och lämna rf-installationen"
 
+# 
 #: src/setup_rfmod.cpp:135
-#, fuzzy
 msgid "leave rf setup (no changes are saved)"
-msgstr "avbryt videoinstallationen (inga ändringar sparas)"
+msgstr "avbryt installationen av rf (inga ändringar sparas)"
 
 #: src/setup_rfmod.cpp:165
 msgid "if you can read this your rfmod will not work."
-msgstr ""
+msgstr "Om du kan läsa detta, kommer din rfmod inte att fungera."
 
 #: src/enigma_event.cpp:17
 msgid "enigma event view"

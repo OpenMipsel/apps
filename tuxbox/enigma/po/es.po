@@ -7,10 +7,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-16 00:41+0100\n"
-"PO-Revision-Date: Thu Jan 16 1:36:46 CET 2003\n"
+"POT-Creation-Date: 2003-01-20 01:22+0100\n"
+"PO-Revision-Date: Mon Jan 20 2:18:57 CET 2003\n"
 "Last-Translator: unknown\n"
-"Language-Team: Spanish / info@comant.tv\n"
+"Language-Team: Spanish / J.M. Degen <info@comant.tv>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -866,11 +866,11 @@ msgstr "Lista favoritos"
 msgid "TV/Radio"
 msgstr "TV/Radio"
 
-#: lib/dvb/servicemp3.cpp:142
+#: lib/dvb/servicemp3.cpp:144
 msgid "Connecting..."
 msgstr "Conectando..."
 
-#: lib/dvb/servicemp3.cpp:273
+#: lib/dvb/servicemp3.cpp:319
 msgid "playing..."
 msgstr "Tocando..."
 
@@ -1034,68 +1034,68 @@ msgstr ""
 msgid "First start of enigma"
 msgstr "Primer lancamiento de enigma"
 
+# 
 #: src/enigma_ci.cpp:50
-#, fuzzy
 msgid "Common Interface Module - mmi"
-msgstr "Interfaz commun..."
+msgstr "Módulo Interfaz commun - mmi"
 
 #: src/enigma_ci.cpp:84
 msgid "leave ci mmi"
-msgstr ""
+msgstr "Quitar CI mmi"
 
 #: src/enigma_ci.cpp:201
 msgid "mmi input field"
-msgstr ""
+msgstr "campo de datos mmi"
 
 #: src/enigma_ci.cpp:226
 msgid "send data to ci"
-msgstr ""
+msgstr "Enviar datos al CI"
 
+# 
 #: src/enigma_ci.cpp:402
-#, fuzzy
 msgid "Common Interface Modules"
-msgstr "Interfaz commun..."
+msgstr "Módulos Interfaz Commún"
 
+# 
 #: src/enigma_ci.cpp:409
-#, fuzzy
 msgid "Common Interface Module"
-msgstr "Interfaz commun..."
+msgstr "Módulo Interfaz commún"
 
+# 
 #: src/enigma_ci.cpp:415 src/enigma_ci.cpp:444
-#, fuzzy
 msgid "Reset"
-msgstr "grabar"
+msgstr "Reset"
 
 #: src/enigma_ci.cpp:418 src/enigma_ci.cpp:447
 msgid "reset the common interface module"
-msgstr ""
+msgstr "Resetear módulo interfaz commún"
 
 #: src/enigma_ci.cpp:424 src/enigma_ci.cpp:453
 msgid "Init"
-msgstr ""
+msgstr "Init"
 
 #: src/enigma_ci.cpp:427 src/enigma_ci.cpp:456
 msgid "send the ca-pmt to ci"
-msgstr ""
+msgstr "Mandar CA-PMT al CI"
 
 #: src/enigma_ci.cpp:433 src/enigma_ci.cpp:462
 msgid "waiting for module"
-msgstr ""
+msgstr "Esperando módulo"
 
+# 
 #: src/enigma_ci.cpp:436 src/enigma_ci.cpp:465
-#, fuzzy
 msgid "enter ci menu (mmi)"
-msgstr "Cerrar menu temporizador (ok)"
+msgstr "Ir al menú CI (mmi)"
 
+# 
 #: src/enigma_ci.cpp:474 src/enigma_ci.cpp:483
-#, fuzzy
 msgid "leave common interface menu"
-msgstr "Interfaz commun..."
+msgstr "Quitar menú interfaz commún"
 
+# 
 #: src/enigma_ci.cpp:530 src/enigma_ci.cpp:536
-#, fuzzy
 msgid "resetting....please wait"
-msgstr "Búsqueda en progreso... espere"
+msgstr "Reseteando... espere"
 
 #: src/enigma_info.cpp:40
 msgid "Infos"
@@ -2772,10 +2772,10 @@ msgstr "Actualización manual"
 msgid "downloading catalog..."
 msgstr "Bajando catálogo..."
 
+# 
 #: src/upgrade.cpp:182
-#, fuzzy
 msgid "downloading changelog..."
-msgstr "Bajando catálogo..."
+msgstr "Bajando cambios..."
 
 #: src/upgrade.cpp:207
 msgid "downloading image..."
@@ -2853,206 +2853,208 @@ msgstr "actualización ok"
 msgid "upgrade failed with errorcode UA15"
 msgstr "actualización errónea (Error UA15)"
 
+# 
 #: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99
-#, fuzzy
 msgid "East"
-msgstr "Artista"
+msgstr "Este"
 
 #: src/rotorconfig.cpp:56 src/rotorconfig.cpp:100
 msgid "West"
-msgstr ""
+msgstr "Oeste"
 
+# 
 #: src/rotorconfig.cpp:70
-#, fuzzy
 msgid "North"
-msgstr "cancelar"
+msgstr "Norte"
 
 #: src/rotorconfig.cpp:71
 msgid "South"
-msgstr ""
+msgstr "Sur"
 
+# 
 #: src/rotorconfig.cpp:311 src/rotorconfig.cpp:367
-#, fuzzy
 msgid "delete me"
-msgstr "Borrar servicio"
+msgstr "Borrame"
 
 #: src/rotorconfig.cpp:402 src/rotorconfig.cpp:405
 msgid "drive Motor East"
-msgstr ""
+msgstr "Girar motor este"
 
 #: src/rotorconfig.cpp:403
 msgid "drive Motor East.. one step"
-msgstr ""
+msgstr "Girar motor este.. un paso"
 
 #: src/rotorconfig.cpp:404
 msgid "stop Motor drive East"
-msgstr ""
+msgstr "Parar motor (giro este)"
 
 #: src/rotorconfig.cpp:406
 msgid "drive Motor West.. one step"
-msgstr ""
+msgstr "Girar motor oeste.. un paso"
 
 #: src/rotorconfig.cpp:407
 msgid "stop Motor drive West"
-msgstr ""
+msgstr "Parar motor (giro oeste)"
 
+# 
 #: src/rotorconfig.cpp:496
-#, fuzzy
 msgid "position"
-msgstr "Sat/Posición"
+msgstr "Posición"
 
 #: src/rotorconfig.cpp:496
 msgid "store new sat positions"
-msgstr ""
+msgstr "Memorizar posiciones satélite nuevas"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored pos"
-msgstr ""
+msgstr "Girar a pos. memorizada"
 
 #: src/rotorconfig.cpp:497
 msgid "drive to stored position"
-msgstr ""
+msgstr "Girar a posición grabada"
 
+# 
 #: src/rotorconfig.cpp:498
-#, fuzzy
 msgid "drive to satellite"
-msgstr "Borrar satélite elegido"
+msgstr "Girar hacia satélite"
 
+# 
 #: src/rotorconfig.cpp:498
-#, fuzzy
 msgid "drive to stored satellite"
-msgstr "Elige pos. satélite grabada"
+msgstr "Girar a satélite grabado"
 
 #: src/rotorconfig.cpp:499
 msgid "drive to 0"
-msgstr ""
+msgstr "girar a 0"
 
 #: src/rotorconfig.cpp:499
 msgid "drives to 0"
-msgstr ""
+msgstr "Girar a 0"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate"
-msgstr ""
+msgstr "Recalcular"
 
 #: src/rotorconfig.cpp:500
 msgid "recalculate stored positions rel. to current pos"
-msgstr ""
+msgstr "Recalcular posiciones grabados en relación de la pos actual"
 
 #: src/rotorconfig.cpp:501
 msgid "set east limit"
-msgstr ""
+msgstr "Memorizar limite este"
 
 #: src/rotorconfig.cpp:501
 msgid "set east soft limit"
-msgstr ""
+msgstr "Memorizar limite este soft"
 
 #: src/rotorconfig.cpp:502
 msgid "set west limit"
-msgstr ""
+msgstr "Memorizar limite oeste"
 
 #: src/rotorconfig.cpp:502
 msgid "set west soft limit"
-msgstr ""
+msgstr "Memorizar limite oeste soft"
 
 #: src/rotorconfig.cpp:503
 msgid "disable limits"
-msgstr ""
+msgstr "Desactivar limites"
 
+# 
 #: src/rotorconfig.cpp:503 src/rotorconfig.cpp:548
-#, fuzzy
 msgid "disable soft limits"
-msgstr "Desactivar modo mover"
+msgstr "Desactivar limites software"
 
 #: src/rotorconfig.cpp:504
 msgid "enable limits"
-msgstr ""
+msgstr "activar limites"
 
 #: src/rotorconfig.cpp:504 src/rotorconfig.cpp:552
 msgid "enable soft limits"
-msgstr ""
+msgstr "activar limites software"
 
 #: src/rotorconfig.cpp:524
 msgid "store current pos in rotor"
-msgstr ""
+msgstr "Memorizar posicion actual en el rotor"
 
 #: src/rotorconfig.cpp:525 src/rotorconfig.cpp:541 src/rotorconfig.cpp:545
 #: src/rotorconfig.cpp:856
 msgid "store"
-msgstr ""
+msgstr "grabar"
 
 #: src/rotorconfig.cpp:528
 msgid "drive rotor to stored pos"
-msgstr ""
+msgstr "Girar rotor a pos memorizado"
 
 #: src/rotorconfig.cpp:529 src/rotorconfig.cpp:533 src/rotorconfig.cpp:557
 msgid "go"
-msgstr ""
+msgstr "ir"
 
 #: src/rotorconfig.cpp:532
 msgid "driver rotor to reference position"
-msgstr ""
+msgstr "Girar rotor a la posición referencia"
 
 #: src/rotorconfig.cpp:536
 msgid "recalculate all stored positions"
-msgstr ""
+msgstr "recalcular todas las posiciones grabadas"
 
+# 
 #: src/rotorconfig.cpp:537
-#, fuzzy
 msgid "recalc"
-msgstr "Especial"
+msgstr "recalc"
 
 #: src/rotorconfig.cpp:540
 msgid "store current pos as east soft limit"
-msgstr ""
+msgstr "Grabar posición actual como limite este"
 
 #: src/rotorconfig.cpp:544
 msgid "store current pos as west soft limit"
-msgstr ""
+msgstr "Grabar posición actual como limite oeste"
 
 #: src/rotorconfig.cpp:549 src/rotorconfig.cpp:553
 msgid "do it"
-msgstr ""
+msgstr "Hazlo"
 
+# 
 #: src/rotorconfig.cpp:556
-#, fuzzy
 msgid "drive rotor to satellite"
-msgstr "Elige pos. satélite grabada"
+msgstr "Girar rotor al satélite"
 
 #: src/rotorconfig.cpp:695
 msgid ""
 "In the case of wrong use you can falsify all stored sat positions.\n"
 "Do you really want to use this function?"
 msgstr ""
+"En caso de error se pueden falsificar todas las posiciones grabadas.\n"
+"Seguro deseen continuar?"
 
 #: src/rotorconfig.cpp:758
 msgid "one step East..."
-msgstr ""
+msgstr "Un impulso este..."
 
 #: src/rotorconfig.cpp:767
 msgid "one step west..."
-msgstr ""
+msgstr "Un impulso oeste..."
 
 #: src/rotorconfig.cpp:783
 msgid "driving to east..."
-msgstr ""
+msgstr "Girando al este..."
 
 #: src/rotorconfig.cpp:796
 msgid "driving to west..."
-msgstr ""
+msgstr "Girando al oeste..."
 
 #: src/rotorconfig.cpp:808
 msgid "<    Stop    >"
-msgstr ""
+msgstr "< Parar >"
 
 #: src/rotorconfig.cpp:844
 msgid "Storage Location:"
-msgstr ""
+msgstr "Grabarlo en:"
 
+# 
 #: src/rotorconfig.cpp:846
-#, fuzzy
 msgid "change storage Location or store"
-msgstr "Ajustar contraste"
+msgstr "Buscar pos. grabación o memorizar"
 
 #: src/rotorconfig.cpp:896
 #, c-format
@@ -3061,6 +3063,9 @@ msgid ""
 "When you store this now at Location %d, we must remove the old Location.\n"
 "Do you really want to do this?"
 msgstr ""
+"%d.%d%c está ahora en posición  %d!\n"
+"Si se memoriza ehoan en la posición %d, se va a borrar la posición antigua.\n"
+"Seguro deseen continuar?"
 
 #: src/rotorconfig.cpp:918
 #, c-format
@@ -3069,75 +3074,79 @@ msgid ""
 "If you want another location, then say no and change the location manually.\n"
 "Do you really want to store at this location?"
 msgstr ""
+"Memorizar %d.%d%c en posición  %d.\n"
+"Para grabarlo en otra posición, elige no y seleccione la posicion "
+"manualmente.\n"
+"Seguro deseen continuar"
 
+# 
 #: src/setup_rfmod.cpp:19
-#, fuzzy
 msgid "RF-Modulator Setup"
-msgstr "Ajustes del rotor"
+msgstr "Ajustes del modulador RF"
 
 #: src/setup_rfmod.cpp:24 src/setup_rfmod.cpp:165
 msgid "Test Pattern"
-msgstr ""
+msgstr "Imagen pruebas"
 
 #: src/setup_rfmod.cpp:27
 msgid "enable test pattern"
-msgstr ""
+msgstr "Activar imagen pruebas"
 
 #: src/setup_rfmod.cpp:34
 msgid "Sound enable"
-msgstr ""
+msgstr "Activar sonido"
 
+# 
 #: src/setup_rfmod.cpp:37
-#, fuzzy
 msgid "enable Sound"
-msgstr "Activar modo mover"
+msgstr "Activar sonido"
 
+# 
 #: src/setup_rfmod.cpp:56
-#, fuzzy
 msgid "4.5 MHz"
-msgstr "MHz"
+msgstr "4.5 MHz"
 
+# 
 #: src/setup_rfmod.cpp:57
-#, fuzzy
 msgid "5.5 MHz"
-msgstr "MHz"
+msgstr "5.5 MHz"
 
+# 
 #: src/setup_rfmod.cpp:58
-#, fuzzy
 msgid "6.0 MHz"
-msgstr "MHz"
+msgstr "6.0 MHz"
 
+# 
 #: src/setup_rfmod.cpp:59
-#, fuzzy
 msgid "6.5 MHz"
-msgstr "MHz"
+msgstr "6.5 MHz"
 
 #: src/setup_rfmod.cpp:69
 msgid "change sound subcarrier frequency"
-msgstr ""
+msgstr "Cambiar portadora audio"
 
+# 
 #: src/setup_rfmod.cpp:93
-#, fuzzy
 msgid "change channel"
-msgstr "Cancelar"
+msgstr "Cambiar canal"
 
 #: src/setup_rfmod.cpp:117
 msgid "250Khz steps"
-msgstr ""
+msgstr "Pasos 250KHz"
 
+# 
 #: src/setup_rfmod.cpp:127
-#, fuzzy
 msgid "save settings and leave rf setup"
-msgstr "Grabar cambios y volver al menú anterior"
+msgstr "Grabar valores y volver"
 
+# 
 #: src/setup_rfmod.cpp:135
-#, fuzzy
 msgid "leave rf setup (no changes are saved)"
 msgstr "Volver al menú anterior (omitir cambios)"
 
 #: src/setup_rfmod.cpp:165
 msgid "if you can read this your rfmod will not work."
-msgstr ""
+msgstr "Si puedes leer este texto, el modulador no funciona."
 
 #: src/enigma_event.cpp:17
 msgid "enigma event view"
