@@ -2199,7 +2199,11 @@ void eZapMain::showInfobar()
 
 void eZapMain::hideInfobar()
 {
-	if (eServiceInterface::getInstance()->service.type == eServiceReference::idDVB)
+	eServiceReference &ref = eServiceInterface::getInstance()->service;
+	if ( ref.type == eServiceReference::idDVB ||
+			(ref.type == eServiceReference::idFile &&
+			 ref.data[0] == eMP3Decoder::codecMPG )
+		 )
 	{
 		timeout.stop();
 		hide();
