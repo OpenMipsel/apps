@@ -36,7 +36,7 @@ void eSectionReader::close()
 
 int eSectionReader::open(int pid, __u8 *data, __u8 *mask, int len, int _flags, const char* dmxdev)
 {
-	flags=flags;
+	flags=_flags;
 	dmxSctFilterParams secFilterParams;
 	close();
 
@@ -193,6 +193,8 @@ void eSection::closeFilter()
 void eSection::data(int socket)
 {
 	int max = 200;
+	(void)socket;
+
 	while (max--)
 	{
 		if (lockcount)
@@ -258,6 +260,7 @@ int eSection::abortAll()
 
 int eSection::sectionRead(__u8 *data)
 {
+	(void)data;
 	return -1;
 }
 
