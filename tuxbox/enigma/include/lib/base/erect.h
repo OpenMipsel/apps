@@ -144,7 +144,7 @@ inline bool eRect::isNull() const
 { return x2 == x1 && y2 == y1; }
 
 inline bool eRect::isEmpty() const
-{ return x1 > x2 || y1 > y2; }
+{ return x1 >= x2 || y1 >= y2; }
 
 inline bool eRect::isValid() const
 { return x1 <= x2 && y1 <= y2; }

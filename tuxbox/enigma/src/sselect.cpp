@@ -957,7 +957,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				if (num != -1)
 				{
 					if (selectService( num ))
-     {
+					{
 						result=&services->getCurrent()->service;
 						close(0);
 					}
@@ -1078,7 +1078,7 @@ void eServiceSelector::setStyle(int newStyle)
 			bouquets->hide();
 			delete bouquets;
 		}
-		
+/*		
 		if (key[0])
 			delete key[0];
 		if (key[1])
@@ -1086,7 +1086,7 @@ void eServiceSelector::setStyle(int newStyle)
 		if (key[2])
 			delete key[2];
 		if (key[3])
-			delete key[3];
+			delete key[3];*/
 
 		if (newStyle == styleSingleColumn)
 		{
@@ -1115,7 +1115,7 @@ void eServiceSelector::setStyle(int newStyle)
 		bouquets->setName("bouquets");
 		bouquets->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
 		bouquets->hide();
-		
+
 		if ( newStyle == styleSingleColumn )
 		{
 			if (eSkin::getActive()->build(this, "eServiceSelector_singleColumn"))
@@ -1134,12 +1134,12 @@ void eServiceSelector::setStyle(int newStyle)
 			CONNECT( bouquets->selected, eServiceSelector::bouquetSelected );
 			bouquets->show();
 		}
-		
+/*
 		key[0] = key[1] = key[2] = key[3] = 0;
 		key[0] = (eLabel*)search("key_red");
 		key[1] = (eLabel*)search("key_green");
 		key[2] = (eLabel*)search("key_yellow");
-		key[3] = (eLabel*)search("key_blue");
+		key[3] = (eLabel*)search("key_blue");*/
 
 		style = newStyle;
 		CONNECT(services->selected, eServiceSelector::serviceSelected);

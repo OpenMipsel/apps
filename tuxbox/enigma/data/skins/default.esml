@@ -591,34 +591,38 @@
 	
 	<object name="eServiceSelector_singleColumn">
 		<eServiceSelector cposition="90:100" csize="560:420" text="Services">
-			<eButton name="key_red" position="0:0" size="140:40" backgroundColor="std_dred" loadDeco="" font="epg.title" />
+			<!--eButton name="key_red" position="0:0" size="140:40" backgroundColor="std_dred" loadDeco="" font="epg.title" />
 			<eButton name="key_green" position="140:0" size="140:40" backgroundColor="std_dgreen" loadDeco="" font="epg.title" />
 			<eButton name="key_yellow" position="280:0" size="140:40" backgroundColor="std_dyellow" loadDeco="" font="epg.title" />
 			<eButton name="key_blue" position="420:0" size="140:40" backgroundColor="std_dblue" loadDeco="" font="epg.title" />
-			<eListbox name="services" position="0:40" size="e:e-80" />
+			<eListbox name="services" position="0:40" size="e:e-80" /-->
+			<eListbox name="services" position="0:0" size="e:e-80" />
 			<eChannelInfo name="channelinfo" position="0:e-80" size="e:80" loadDeco="" />
 		</eServiceSelector>
 	</object>
 
 	<object name="eServiceSelector_multiColumn">
 		<eServiceSelector cposition="90:100" csize="560:420" text="Services">
-			<eButton name="key_red" position="0:0" size="140:40" backgroundColor="std_dred" loadDeco="" font="epg.title" />
+			<!--eButton name="key_red" position="0:0" size="140:40" backgroundColor="std_dred" loadDeco="" font="epg.title" />
 			<eButton name="key_green" position="140:0" size="140:40" backgroundColor="std_dgreen" loadDeco="" font="epg.title" />
 			<eButton name="key_yellow" position="280:0" size="140:40" backgroundColor="std_dyellow" loadDeco="" font="epg.title" />
 			<eButton name="key_blue" position="420:0" size="140:40" backgroundColor="std_dblue" loadDeco="" font="epg.title" />
-			<eListbox name="services" columns="3" position="0:40" size="e:e-80" />
+			<eListbox name="services" columns="3" position="0:40" size="e:e-80" /-->
+			<eListbox name="services" columns="3" position="0:0" size="e:e-80" />
 			<eChannelInfo name="channelinfo" position="0:e-80" size="e:80" loadDeco="" />
 		</eServiceSelector>
 	</object>
 
 	<object name="eServiceSelector_combiColumn">
 		<eServiceSelector cposition="90:100" csize="560:420" text="Services">
-			<eButton name="key_red" position="0:0" size="140:40" backgroundColor="std_dred" loadDeco="" font="epg.title" />
+			<!--eButton name="key_red" position="0:0" size="140:40" backgroundColor="std_dred" loadDeco="" font="epg.title" />
 			<eButton name="key_green" position="140:0" size="140:40" backgroundColor="std_dgreen" loadDeco="" font="epg.title" />
 			<eButton name="key_yellow" position="280:0" size="140:40" backgroundColor="std_dyellow" loadDeco="" font="epg.title" />
 			<eButton name="key_blue" position="420:0" size="140:40" backgroundColor="std_dblue" loadDeco="" font="epg.title" />
 			<eListbox name="bouquets" position="5:45" size="150:e-85" loadDeco="" />
-			<eListbox name="services" columns="2" position="155:45" size="e-5:e-85" loadDeco="" />
+			<eListbox name="services" columns="2" position="155:45" size="e-5:e-85" loadDeco="" /-->
+			<eListbox name="bouquets" position="5:0" size="150:e-85" loadDeco="" />
+			<eListbox name="services" columns="2" position="155:0" size="e-5:e-85" loadDeco="" />
 			<eChannelInfo name="channelinfo" position="0:e-80" size="e:80" loadDeco="" />
 		</eServiceSelector>
 	</object>

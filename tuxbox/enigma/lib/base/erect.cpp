@@ -131,7 +131,10 @@ bool eRect::contains( const ePoint &p) const
 
 bool eRect::contains( const eRect &r) const
 {
-	return r.x1 >= x1 && r.x2 <= x2 && r.y1 >= y1 && r.y2 <= y2;
+	return r.x1 >= x1 &&
+				 r.x2 <= x2 &&
+				 r.y1 >= y1 &&
+				 r.y2 <= y2;
 }
 
 eRect& eRect::operator|=(const eRect &r)

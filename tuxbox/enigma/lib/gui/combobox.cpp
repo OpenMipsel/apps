@@ -19,7 +19,6 @@ pm(0), entries(OpenEntries), current(0)
 	CONNECT( selected, eComboBox::onOkPressed );
 	CONNECT( listbox.selected, eComboBox::onEntrySelected );
 	CONNECT( listbox.selchanged, eComboBox::onSelChanged );
-	this->zOrderRaise();
 	listbox.zOrderRaise();
 	addActionMap(&i_cursorActions->map);
 }
