@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.6 2003/05/28 08:40:46 digi_casi Exp $
+ * $Id: frontend.h,v 1.24.2.7 2003/06/10 11:21:07 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -50,7 +50,7 @@ class CFrontend
 		/* information about the used frontend type */
 		FrontendInfo *info;
 		/* current tuned transport stream id / original network id */
-		uint32_t currentTsidOnid;
+		//uint32_t currentTsidOnid;
 		/* current tuned satellite position / transport stream id / original network id */
 		uint64_t currentSposTsidOnid;
 		/* current tuned frequency */

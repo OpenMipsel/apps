@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.h,v 1.51.2.5 2003/06/04 08:30:01 digi_casi Exp $
+ * $Id: getservices.h,v 1.51.2.6 2003/06/10 11:21:07 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -41,7 +41,7 @@ void ParseTransponders(xmlNodePtr xmltransponder, const unsigned char DiSEqC, t_
 void ParseChannels    (xmlNodePtr node, const t_transport_stream_id transport_stream_id, const t_original_network_id original_network_id, const unsigned char DiSEqC, t_satellite_position satellitePosition);
 void FindTransponder  (xmlNodePtr root);
 void LoadSortList     ();
-int LoadServices      (diseqc_t diseqcType);
+int LoadServices      (fe_type_t, diseqc_t);
 
 struct transponder
 {

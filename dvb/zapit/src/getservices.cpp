@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.cpp,v 1.67.2.9 2003/06/04 08:30:01 digi_casi Exp $
+ * $Id: getservices.cpp,v 1.67.2.10 2003/06/10 11:21:07 digi_casi Exp $
  *
  * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -250,12 +250,16 @@ int LoadSatellitePositions(void)
 	return 0;
 }
 
-int LoadServices(diseqc_t diseqcType)
+int LoadServices(fe_type_t frontendType, diseqc_t diseqcType)
 {
-	LoadSatellitePositions();
+	if (frontendType == FE_QPSK)
+	{
+		//satellite only
+		LoadSatellitePositions();
 	
-	if (diseqcType == DISEQC_1_2)
-		LoadMotorPositions();
+		if (diseqcType == DISEQC_1_2)
+			LoadMotorPositions();
+	}
 	
 	xmlDocPtr parser = parseXmlFile(string(SERVICES_XML));
 
