@@ -455,7 +455,7 @@ inline int eListBox<T>::moveSelection(int dir)
 				if (current == childs.begin())
 					break;
 
-				if (--current == top && current != childs.begin() )	// oben (links) angekommen? page up
+				if (current-- == top && current != childs.begin() )	// oben (links) angekommen? page up
 				{
 					for (int i = 0; i < MaxEntries * columns; ++i)
 					{
@@ -675,7 +675,7 @@ inline int eListBox<T>::setCurrent(const T *c)
 			if ( bottom != childs.end() )
 				top = bottom;		// nächster Durchlauf
 
-			for (	i = 0; (i < MaxEntries) && (bottom != childs.end()); ++bottom, ++i)
+			for (	i = 0; (i < (MaxEntries*columns) ) && (bottom != childs.end()); ++bottom, ++i)
 			{
 				if (bottom == item)
 				{
