@@ -424,7 +424,6 @@ inline void eListBox<T>::init()
 template <class T>
 inline int eListBox<T>::moveSelection(int dir)
 {
-	eDebug("moveSelection dir = %i, childs.empty() = %i", dir, childs.empty() );
 	if (childs.empty())
 		return 0;
 
