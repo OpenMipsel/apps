@@ -19,6 +19,8 @@ class eServicePlaylistHandler: public eServiceHandler
 	static eServicePlaylistHandler *instance; 
 	void addFile(void *node, const eString &filename);
 
+	std::multimap<eServiceReference,eServiceReference> playlists;
+
 public:
 	enum { ID = 0x1001 } ;
 	static eServicePlaylistHandler *getInstance() { return instance; }
@@ -34,10 +36,10 @@ public:
 
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);
-	
-	
+
 		// playlist functions
-	eServiceReference newPlaylist();
+	eServiceReference newPlaylist(const eServiceReference &parent=eServiceReference(), const eServiceReference &serviceref=eServiceReference());
+	void removePlaylist(const eServiceReference &service);
 };
 
 #endif

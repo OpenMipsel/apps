@@ -399,7 +399,7 @@ public:
 	eString toString();
 	void up();
 	void down(const eServiceReference &ref);
-	eServiceReference current();
+	eServiceReference current() const;
 };
 
 struct eServiceReferenceDVB: public eServiceReference
