@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.9 2003/01/20 14:24:53 tmbinc Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.10 2003/02/13 14:32:02 tmbinc Exp $
  */
 
 #include <enigma_info.h>
@@ -116,12 +116,26 @@ static eString getVersionInfo(const char *info)
 
 class eAboutScreen: public eWindow
 {
-	eLabel *machine, *processor, *frontend, *harddisks, *vendor, *dreamlogo, *version;
+	eLabel *machine, *processor, *frontend, *harddisks, *vendor, *dreamlogo, *version, *translation;
 	eButton *okButton;
 public:
 	eAboutScreen()
 	{
 		int mID=atoi( eDVB::getInstance()->getInfo("mID").c_str());
+		
+		eString translation_info=gettext("");
+		unsigned int i;
+		i=translation_info.find("Language-Team:");
+		if (i != eString::npos)
+		{
+			translation_info=translation_info.mid(i+15);
+			translation_info=translation_info.left(translation_info.find('\n'));
+			if (translation_info.find(" <") != eString::npos)
+				translation_info=translation_info.left(translation_info.find(" <"));
+			if (translation_info.find("/") != eString::npos)
+				translation_info[translation_info.find("/")]=':';
+		} else
+			translation_info="";
 		
 		machine=new eLabel(this);
 		machine->setName("machine");
@@ -146,6 +160,10 @@ public:
 
 		version=new eLabel(this);
 		version->setName("version");
+		
+		translation=new eLabel(this);
+		translation->setName("translation");
+		translation->setText(translation_info);
 
 		if (eSkin::getActive()->build(this, "eAboutScreen"))
 			eFatal("skin load of \"eAboutScreen\" failed");
