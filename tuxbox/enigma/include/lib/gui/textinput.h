@@ -5,7 +5,8 @@
 
 class eTextInputField: public eButton
 {
-	unsigned int curPos, maxChars;
+	int curPos;
+	unsigned int maxChars;
 	int eventHandler( const eWidgetEvent &);
 	void redrawWidget( gPainter *target, const eRect &area );
 	void drawCursor();

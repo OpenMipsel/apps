@@ -5087,17 +5087,19 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		|| ( ref.type == eServiceReference::idDVB && ref.path ) ) )
 			new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
 
-	new eListBoxEntryText(&list, _("delete"), (void*)1);   // CEDR 27.04.03
+	eListBoxEntryText *sel=0;
 	if ((ref.type == eServicePlaylistHandler::ID)&&(path.type==eServicePlaylistHandler::ID) || ref.data[0]==-3 /* DVB Bouquet */ )
-			new eListBoxEntryText(&list, _("rename"), (void*)7);
+		new eListBoxEntryText(&list, _("rename"), (void*)7);
 	if (path.type == eServicePlaylistHandler::ID)
 	{
+		new eListBoxEntryText(&list, _("delete"), (void*)1);
+
 		if ( ref.type == eServiceReference::idDVB )
 			new eListBoxEntryText(&list, _("rename"), (void*)9);
 
 		// move Mode ( only in Favourite lists... )
 		if ( eZap::getInstance()->getServiceSelector()->movemode )
-			new eListBoxEntryText(&list, _("disable move mode"), (void*)2);
+			sel = new eListBoxEntryText(&list, _("disable move mode"), (void*)2);
 		else
 			new eListBoxEntryText(&list, _("enable move mode"), (void*)2);
 		// delete Service ( only in Favourite lists... )
@@ -5117,19 +5119,17 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 			else if (ref.data[0] == -2 || ref.data[0] == -3 )
 				new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
 		}
-
-#ifndef DISABLE_FILE
-		if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile
-			|| eZapMain::getInstance()->getRecordingsref() == path )
-		{
-			// Favourite Mode ( simple add services to favourite list )
-			if ( eZap::getInstance()->getServiceSelector()->editMode )
-				new eListBoxEntryText(&list, _("disable edit mode"), (void*)5);
-			else
-				new eListBoxEntryText(&list, _("enable edit mode"), (void*)5);
-		}
-#endif
 	}
+	if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile
+		|| eZapMain::getInstance()->getRecordingsref() == path )
+	{
+		// Favourite Mode ( simple add services to favourite list )
+		if ( eZap::getInstance()->getServiceSelector()->editMode )
+			sel = new eListBoxEntryText(&list, _("disable edit mode"), (void*)5);
+		else
+			new eListBoxEntryText(&list, _("enable edit mode"), (void*)5);
+	}
+
 		// add current service to playlist
 	if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
 		new eListBoxEntryText(&list, _("create new user bouquet"), (void*)6);
@@ -5146,6 +5146,8 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		else
 			new eListBoxEntryText(&list, _("enable parental lock"), (void*)12 );
 	}
+	if ( sel )
+		list.setCurrent( sel );
 	CONNECT(list.selected, eServiceContextMenu::entrySelected);
 }
 

@@ -35,10 +35,10 @@ void eTextInputField::updated()
 
 void eTextInputField::nextChar()
 {
-	if ( curPos+1 < maxChars )
+	if ( curPos+1 < (int)maxChars )
 	{
 		++curPos;
-		if ( curPos > isotext.length()-1 )
+		if ( curPos > (int)isotext.length()-1 )
 			isotext+=' ';
 		updated();
 	}
@@ -95,65 +95,64 @@ void eTextInputField::setNextCharTimeout( unsigned int newtimeout )
 
 void eTextInputField::drawCursor()
 {
+//	eDebug("length = %d", isotext.length());
 	eRect rc;
 	rc.setTop(crect.bottom()-4);
 	rc.setHeight( 3 );
-	if ( para )
+	if ( isotext.length() )  // text exist?
 	{
-		if ( isotext.length() )  // text exist?
+		if ( (int)isotext.length() > curPos) // before or on the last char?
 		{
-			if ( isotext.length() > curPos) // before or on the last char?
+			const eRect &bbox = para->getGlyphBBox(curPos);
+			if ( !bbox.width() )  // Space
 			{
-				const eRect &bbox = para->getGlyphBBox(curPos);
-				if ( !bbox.width() )  // Space
+				if (curPos)  // char before space?
 				{
-					if (curPos)  // char before space?
-					{
-						const eRect &bbBefore = para->getGlyphBBox(curPos-1);
-						rc.setLeft( bbBefore.right()+2 );
-					}
-					if ( isotext.length() > curPos+1) // char after space ?
-					{
-						const eRect &bbAfter = para->getGlyphBBox(curPos+1);
-						rc.setRight( bbAfter.left()-2 );
-					}
-					else  // no char behind Space
-						rc.setWidth( 10 );
+					const eRect &bbBefore = para->getGlyphBBox(curPos-1);
+					rc.setLeft( bbBefore.right()+2 );
 				}
-				else
+				if ( (int)isotext.length() > curPos+1) // char after space ?
 				{
-					rc.setLeft( bbox.left() );
-					rc.setWidth( bbox.width() );
+					const eRect &bbAfter = para->getGlyphBBox(curPos+1);
+					rc.setRight( bbAfter.left()-2 );
 				}
+				else  // no char behind Space
+					rc.setWidth( 10 );
 			}
-			else // we are behind the last character
+			else
 			{
-				const eRect &bbox = para->getGlyphBBox(isotext.length()-1);
-				rc.setLeft( bbox.right() + ( ( curPos-isotext.length() ) * 10 ) + 2 );
-				rc.setWidth( 10 );
+				rc.setLeft( bbox.left() );
+				rc.setWidth( bbox.width() );
 			}
 		}
-		else  //  no one character in text
+		else // we are behind the last character
 		{
-			rc.setLeft( 2 );
+			const eRect &bbox = para->getGlyphBBox(isotext.length()-1);
+			rc.setLeft( bbox.right() + ( ( curPos-isotext.length() ) * 10 ) + 2 );
 			rc.setWidth( 10 );
 		}
-		rc.moveBy( (deco_selected?crect_selected.left():crect.left())+1, 0 );
-		gPainter *painter = getPainter( deco_selected?crect_selected:crect );
-		painter->setForegroundColor( getForegroundColor() );
-		painter->setBackgroundColor( getBackgroundColor() );
+	}
+	else  //  no one character in text
+	{
+		rc.setLeft( 2 );
+		rc.setWidth( 10 );
+	}
+	rc.moveBy( (deco_selected?crect_selected.left():crect.left())+1, 0 );
+	gPainter *painter = getPainter( deco_selected?crect_selected:crect );
+	painter->setForegroundColor( getForegroundColor() );
+	painter->setBackgroundColor( getBackgroundColor() );
+	painter->clip( rc );
+	painter->fill( rc );
+	painter->clippop();
+	if(capslock)
+	{
+		rc.setTop(crect.top());
+		rc.setHeight( 3 );
 		painter->clip( rc );
 		painter->fill( rc );
 		painter->clippop();
-		if(capslock){
-			rc.setTop(crect.top());
-			rc.setHeight( 3 );
-			painter->clip( rc );
-			painter->fill( rc );
-			painter->clippop();
-		}
-		delete painter;
 	}
+	delete painter;
 }
 
 int eTextInputField::eventHandler( const eWidgetEvent &event )
@@ -168,6 +167,9 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 		break;
 		case eWidgetEvent::evtAction:
 		{
+			if ( curPos < 0 )
+				curPos=0;
+//			eDebug("curPos=%d, isotext.length=%d",curPos, isotext.length());
 			int key = -1;
 			if ( event.action == &i_cursorActions->capslock && editMode)
 			{
@@ -175,44 +177,38 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				eLabel::invalidate();
 				drawCursor();
 			}
-			else if ( (event.action == &i_cursorActions->up || event.action == &i_cursorActions->down) && editMode)
+			else if ( (event.action == &i_cursorActions->up ||
+				event.action == &i_cursorActions->down) && editMode )
 			{
 				nextCharTimer.stop();
 				const char *pc1=useableChars.c_str();
-				if ( curPos>=isotext.length() ){
-					if (event.action == &i_cursorActions->down){
-						while(*pc1)pc1++;
-					  pc1--;
-					}
-				  isotext += *pc1;
+				const char *pc2=strchr( pc1, isotext[curPos] );
+
+				if( !pc2 || !pc2[0] )
+					pc2=pc1;
+
+				if(event.action == &i_cursorActions->up)
+				{
+					pc2++;
+					if(!*pc2)
+						pc2=pc1;
 				}
 				else
 				{
-					const char *pc2=strchr( pc1, isotext[curPos] );
-
-					if( !pc2 || !pc2[0] )
-						pc2=pc1;
-
-					if(event.action == &i_cursorActions->up)
-					{
-						pc2++;
-						if(!pc2[0])
-							pc2=pc1;
-					}
-					else
-					{
-						if(pc2==pc1)
-							while(*pc2)
-								pc2++;
-						pc2--;
-					}
-					isotext[curPos] = *pc2;
+					if(pc2==pc1)
+						while(*pc2)
+							pc2++;
+					pc2--;
 				}
+				if ( isotext.length() )
+					isotext[curPos] = *pc2;
+				else
+					isotext+=*pc2;
 				updated();
 			}
 			else if (event.action == &i_cursorActions->insertchar && editMode)
 			{
-				if ( isotext.length()<maxChars )
+				if ( isotext.length() && isotext.length() < maxChars )
 				{
 					isotext.insert( curPos, " ");
 					updated();
@@ -224,10 +220,10 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				{
 					isotext.erase( curPos, 1 );
 //					eDebug("curPos=%d, length=%d", curPos, text.length() );
-					if ( isotext.length() == curPos )
+					if ( (int)isotext.length() == curPos )
 					{
 //						eDebug("curPos--");
-						curPos--;
+						--curPos;
 					}
 					updated();
 				}
@@ -279,6 +275,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				nextCharTimer.stop();
 				editMode=false;
 				setText(oldText);
+				setHelpText(oldHelpText);
 				eWindow::globalCancel(eWindow::ON);
 			}
 			else if (event.action == &i_numberActions->key0)
@@ -312,6 +309,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				nextCharTimer.stop();
 				nextChar();
 			}
+//			eDebug("editMode = %d, key = %d", editMode, key);
 			if ( editMode && key != -1 )
 			{
 				char newChar = 0;
@@ -326,13 +324,14 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				{
 					newChar = keys[capslock][key][0];
 				}
+//				eDebug("newChar = %d", newChar );
 				char testChar = newChar;
 				do
 				{
 					if ( strchr( useableChars.c_str(), newChar ) ) // char useable?
 					{
-						if ( curPos == isotext.length() )
-							text += newChar;
+						if ( curPos == (int)isotext.length() )
+							isotext += newChar;
 						else
 							isotext[curPos] = newChar;
 						updated();

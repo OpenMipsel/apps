@@ -49,8 +49,13 @@ public:
 	{
 		addActionMap( &i_EPGStyleSelectorActions->map );
 		move(ePoint(100,100));
+		int last=0;
+		eListBoxEntryText*sel=0;
+		eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", last);
 		new eListBoxEntryText(&list,_("Channel EPG"), (void*)1, 0, _("open EPG for selected Channel") );
-		new eListBoxEntryText(&list,_("Multi EPG"), (void*)2, 0, _("open EPG for next five channels") );
+		sel = new eListBoxEntryText(&list,_("Multi EPG"), (void*)2, 0, _("open EPG for next five channels") );
+		if ( last )
+			list.setCurrent(sel);
 		CONNECT( list.selected, eEPGStyleSelector::entrySelected );
 	}
 	int eventHandler( const eWidgetEvent &event )
@@ -71,7 +76,13 @@ public:
 	void entrySelected( eListBoxEntryText* e )
 	{
 		if (e)
+		{
+			int last=0;
+			eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", last);
+			if ( last != (int) e->getKey() )
+				eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", (int)e->getKey());
 			close( (int)e->getKey() );
+		}
 		else
 			close(-1);
 	}
@@ -970,7 +981,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->showMenu && focus != bouquets )
 				/*emit*/ showMenu(this);
-			else if (event.action == &i_serviceSelectorActions->toggleRoot && !movemode && !editMode)
+			else if (event.action == &i_serviceSelectorActions->toggleRoot && !movemode )
 				/*emit*/ rotateRoot();
 			else if (event.action == &i_serviceSelectorActions->addService && !movemode && !editMode)
 				/*emit*/ addServiceToPlaylist(selected);
