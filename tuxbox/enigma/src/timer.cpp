@@ -36,52 +36,51 @@ static time_t getNextEventStartTime( time_t t, int duration, int type, bool notT
 	tm tmp = *localtime( &now ),  // now
 		tmp2 = *localtime( &t );    // activation hour:min
 
-	if ( notToday )  // add one day.. and normalize struct tm
-	{
-		tmp.tm_mday++;
-		normalize(tmp);
-		time_t b=mktime(&tmp);
-		tmp = *localtime(&b);
-	}
-
 	bool found=false;
 
+// set mask for current weekday
 	int i = ePlaylistEntry::Su;
 	for ( int x = 0; x < tmp.tm_wday; x++ )
 		i*=2;
 
 	int mask=i;
    
-	for (; i <= ePlaylistEntry::Sa; i*=2 )
+	for (; i <= ePlaylistEntry::Sa; i*=2, tmp.tm_mday++ )
 	{
 		if ( type & i ) // next day found for this event
 		{
-			if ( i == mask )
+			if ( i == mask )  // today is in event mask...
 			{
-				int begTimeSec = tmp2.tm_hour*3600+tmp2.tm_min;
-				int nowTimeSec = tmp.tm_hour*3600+tmp.tm_sec;
+				int begTimeSec = tmp2.tm_hour*3600+tmp2.tm_min*60+tmp2.tm_sec;
+				int nowTimeSec = tmp.tm_hour*3600+tmp.tm_min*60+tmp.tm_sec;
+				// but event has already ended
 				if ( nowTimeSec > begTimeSec+duration )
-				{
-					tmp.tm_mday++;
-					break;
-				}
+					continue;
+			}
+			if ( notToday )
+			{
+				notToday=false;
+				continue;
 			}
 			found=true;
 			break;
 		}
-		tmp.tm_mday++;
 	}
 
 	if ( !found )
 	{
-		for ( int i=ePlaylistEntry::Su; i <= mask; i*=2 )
+		for ( int i=ePlaylistEntry::Su; i <= mask; i*=2, tmp.tm_mday++ )
 		{
 			if ( type & i ) // next day found for this event
 			{
+				if ( notToday )
+				{
+					notToday=false;
+					continue;
+				}
 				found=true;
 				break;
 			}
-			tmp.tm_mday++;
 		}
 	}
 	if ( !found )  // No day(s) selected
@@ -1064,6 +1063,11 @@ static int weekday (int d, int m, int y)
 
 void normalize( struct tm &t )
 {
+	while ( t.tm_sec > 59 )
+	{
+		t.tm_sec -= 60;
+		t.tm_min++;
+	}
 	while ( t.tm_min > 59 )
 	{
 		t.tm_min -= 60;
@@ -1074,8 +1078,8 @@ void normalize( struct tm &t )
 		t.tm_hour-=24;
 		t.tm_mday++;
 	}
-	int days = monthdays[t.tm_mon+1];
-	if ( __isleap(t.tm_year) )
+	int days = monthdays[t.tm_mon];
+	if ( days==28 && __isleap(t.tm_year) )
 		days++;
 	while ( t.tm_mday > days )
 	{
