@@ -81,9 +81,11 @@
 			<action name="nextBouquet" key="+" flags="mr" />
 			<action name="prevBouquet" key="-" flags="mr" />
 			<action name="showBouquetSelector" key="d-box" flags="m" />
-			<action name="showEPGSelector" key="red" flags="m" />
-			<action name="showMenu" key="blue" flags="m" />
+			<action name="showEPGSelector" key="?" flags="m" />
 			<action name="addService" key="yellow" flags="m" />
+			<action name="showMenu" key="red" flags="m" />
+			<action name="showFavourite" key="blue" flags="m" />
+			<action name="addServiceToFavourite" key="green" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">

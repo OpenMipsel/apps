@@ -72,7 +72,7 @@ public:
 		flagHaveSubservices=2, 
 		flagHaveMultipleAudioStreams=4,
 		flagIsSeekable=8,
-		flagSupportPosition
+		flagSupportPosition=16
 	};
 	enum
 	{
