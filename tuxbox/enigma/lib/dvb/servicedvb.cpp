@@ -1,3 +1,4 @@
+// #define TIMESHIFT
 #include <lib/dvb/servicedvb.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
@@ -12,7 +13,8 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler): handler(handler), buffer(64*1024), lock(), messages(this, 1)
+eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler): 
+		handler(handler), buffer(64*1024), liveupdatetimer(this), lock(), messages(this, 1)
 {
 	state=stateInit;
 
@@ -27,6 +29,8 @@ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *ha
 	
 	outputsn=new eSocketNotifier(this, dvrfd, eSocketNotifier::Write, 0);
 	CONNECT(outputsn->activated, eDVRPlayerThread::outputReady);
+	
+	CONNECT(liveupdatetimer.timeout, eDVRPlayerThread::updatePosition);
 	
 	filename=_filename;
 	
@@ -74,10 +78,14 @@ int eDVRPlayerThread::openFile(int slice)
 	sourcefd=::open(tfilename.c_str(), O_RDONLY|O_LARGEFILE);
 	if (!slice)
 	{
-		slicesize=lseek64(sourcefd, 0, SEEK_END);
-		if (slicesize <= 0)
-			slicesize=1024*1024;
-		lseek64(sourcefd, 0, SEEK_SET);
+		if (!livemode)
+		{
+			slicesize=lseek64(sourcefd, 0, SEEK_END);
+			if (slicesize <= 0)
+				slicesize=1024*1024*1024;
+			lseek64(sourcefd, 0, SEEK_SET);
+		} else
+			slicesize=1024*1024*1024;
 	}
 	if (sourcefd >= 0)
 	{
@@ -113,12 +121,15 @@ void eDVRPlayerThread::outputReady(int what)
 	{
 		eDebug("buffer empty, state %d", state);
 		outputsn->stop();
-		if (state!=stateFileEnd)
+		if (state != stateFileEnd)
 			state=stateBuffering;
 		else
 		{
-			eDebug("ok, everything played..");
-			handler->messages.send(eServiceHandlerDVB::eDVRPlayerThreadMessage(eServiceHandlerDVB::eDVRPlayerThreadMessage::done));
+			if (!livemode)
+			{
+				eDebug("ok, everything played..");
+				handler->messages.send(eServiceHandlerDVB::eDVRPlayerThreadMessage(eServiceHandlerDVB::eDVRPlayerThreadMessage::done));
+			}
 		}
 	}
 }
@@ -143,22 +154,38 @@ void eDVRPlayerThread::readMore(int what)
 	{
 		if (buffer.fromfile(sourcefd, maxBufferSize) < maxBufferSize)
 		{
-			if (openFile(++slice)) // if no next part found, else continue there...
-				flushbuffer=1;
+			int next=1;
+			if (livemode)
+			{
+				struct stat s;
+				eString tfilename=filename;
+				tfilename += eString().sprintf(".%03d", slice+1);
+				
+				if (::stat(tfilename.c_str(), &s) < 0)
+				{
+					state=stateFileEnd;
+					if (inputsn)
+						inputsn->stop();
+					next=0;
+				}
+			}
+			if (next)
+				if (openFile(++slice)) // if no next part found, else continue there...
+					flushbuffer=1;
 		}
 	}
 	
 	if ((state == stateBuffering) && (buffer.size()>16384))
 	{
 		state=statePlaying;
-		eDebug("entering playing state");
 		outputsn->start();
 	}
 	
 	if (flushbuffer)
 	{
-		eDebug("end of file...");
 		state=stateFileEnd;
+		if (inputsn)
+			inputsn->stop();
 	}
 	
 	if ((state == statePlaying) && (buffer.size() >= maxBufferSize))
@@ -181,6 +208,18 @@ eDVRPlayerThread::~eDVRPlayerThread()
 		::close(dvrfd);
 	if (sourcefd >= 0)
 		::close(sourcefd);
+}
+
+void eDVRPlayerThread::updatePosition()
+{
+	if (state == stateFileEnd)
+	{
+		printf("file end reached, retrying..\n");
+		state = stateBuffering;
+		if (inputsn)
+			inputsn->start();
+	}
+	printf("position update! hihi\n");
 }
 
 int eDVRPlayerThread::getPosition(int real)
@@ -209,12 +248,15 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 		if (state == stateInit)
 		{
 			state=stateBuffering;
-			eDebug("init message..");
 			inputsn->start();
 		}
+		livemode=message.parm;
+		if (livemode)
+			liveupdatetimer.start(1000); 
+		else
+			liveupdatetimer.stop();
 		break;
 	case eDVRPlayerThreadMessage::exit:
-		eDebug("got quit message..");
 		quit();
 		break;
 	case eDVRPlayerThreadMessage::setSpeed:
@@ -232,7 +274,6 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 			}
 		} else if (state == statePause)
 		{
-			eDebug("resume");
 			inputsn->start();
 			outputsn->start();
 			speed=message.parm;
@@ -277,9 +318,9 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 			br/=8;
 			
 			br*=message.parm;
-			offset=-(buffer.size()+1000*1000); // account for pvr buffer
 			buffer.clear();
-			offset+=br;
+			offset=br;
+			offset-=(buffer.size()+1000*1000); // account for pvr buffer
 			if (message.type == eDVRPlayerThreadMessage::skip)
 				offset+=lseek64(sourcefd, 0, SEEK_CUR)+slice*slicesize;
 			if (offset<0)
@@ -344,20 +385,31 @@ void eServiceHandlerDVB::handleDVBEvent( const eDVBEvent & e )
 	}
 }
 
-void eServiceHandlerDVB::startPlayback(const eString &filename)
+void eServiceHandlerDVB::startPlayback(const eString &filename, int livemode)
 {
 	stopPlayback();
 	decoder=new eDVRPlayerThread(filename.c_str(), this);
-	decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start));
+	decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start, livemode));
 	flags=flagIsSeekable|flagSupportPosition;
+	pcrpid = Decoder::parms.pcrpid;
+		// stop pcrpid
+	Decoder::parms.pcrpid = -1;
+	Decoder::Set();
+	serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 }
 
 void eServiceHandlerDVB::stopPlayback()
 {
 	if (decoder)
 	{
+			// reenable pcrpid
+		Decoder::parms.pcrpid = pcrpid;
+		Decoder::Set();
+		flags&=~(flagIsSeekable|flagSupportPosition);
+		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::exit));
 		delete decoder;
+		decoder=0;
 	}
 }
 
@@ -377,7 +429,6 @@ void eServiceHandlerDVB::switchedService(const eServiceReferenceDVB &, int err)
 
 void eServiceHandlerDVB::gotEIT(EIT *, int)
 {
-	eDebug("eServiceHandlerDVB::gotEIT...\nsend serviceEvent evtGotEIT");
 	serviceEvent(eServiceEvent(eServiceEvent::evtGotEIT));
 }
 
@@ -474,7 +525,7 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	decoder=0;
 
 	if (service.path.length())
-		startPlayback(service.path);
+		startPlayback(service.path, 0);
 	else
 		flags &= ~(flagIsSeekable|flagSupportPosition);
 
@@ -482,10 +533,7 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 
 	if (sapi)
-	{
-		eDebug("play -> switchService");
 		return sapi->switchService((const eServiceReferenceDVB&)service);
-	}
 	return -1;
 }
 
@@ -500,7 +548,9 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			char *filename=reinterpret_cast<char*>(cmd.parm);
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 			eDVB::getInstance()->recBegin(filename, sapi ? sapi->service : eServiceReferenceDVB());
-//			startPlayback(filename);
+#ifdef TIMESHIFT 
+			startPlayback(filename, 1);
+#endif
 			delete[] (filename);
 			recording=1;
 		} else
@@ -526,6 +576,9 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 	case eServiceCommand::cmdRecordClose:
 		if (recording)
 		{
+#ifdef TIMESHIFT
+			stopPlayback();
+#endif
 			recording=0;
 			eDVB::getInstance()->recEnd();
 		} else
@@ -624,8 +677,6 @@ int eServiceHandlerDVB::getErrorInfo()
 int eServiceHandlerDVB::stop()
 {
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
-
-	eDebug("eServiceHandlerDVB::stop()");
 
 	if (sapi)
 		sapi->switchService(eServiceReferenceDVB());

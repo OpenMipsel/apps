@@ -24,6 +24,10 @@ class eDVRPlayerThread: public eThread, public eMainloop, public Object
 	int sourcefd;
 	int speed;
 	int slice;
+	
+	int livemode; 		// used in timeshift where end-of-file is only temporary
+	eTimer liveupdatetimer;
+	void updatePosition();
 
 	int filelength; // in 1880 packets
 	int position;
@@ -103,12 +107,14 @@ class eServiceHandlerDVB: public eServiceHandler
 	void leaveService(const eServiceReferenceDVB &);
 	void aspectRatioChanged(int ratio);
 	int state, aspect, error;
+	
+	int pcrpid;
 
 	eServiceCache<eServiceHandlerDVB> cache;
 	void handleDVBEvent( const eDVBEvent& );
 	
 			// (u.a.) timeshift:
-	void startPlayback(const eString &file);
+	void startPlayback(const eString &file, int livemode);
 	void stopPlayback();
 public:
 	int getID() const;
