@@ -1022,7 +1022,7 @@ void eZapMain::onRotorStart( int newPos )
 {
 	if (!pRotorMsg)
 	{
-		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the motor is turning to %d.%d\xAF%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
+		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the motor is turning to %d.%d\xB0%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
 		pRotorMsg->show();
 	}
 }
@@ -4252,7 +4252,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 				opos = refservice.data[4]>>16;
 			else
 				opos = serviceref.data[4]>>16;
-			name+=eString().sprintf(" (%d.%d\xAF%c)", abs(opos / 10), abs(opos % 10), opos>0?'E':'W');
+			name+=eString().sprintf(" (%d.%d\xB0%c)", abs(opos / 10), abs(opos % 10), opos>0?'E':'W');
 //			name+=eString().sprintf("(%04x)",((eServiceReferenceDVB&)_serviceref).getServiceID().get() );
 		}
 		ChannelName->setText(name);
