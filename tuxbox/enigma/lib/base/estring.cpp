@@ -377,7 +377,7 @@ int isUTF8(const eString &string)
 	{
 		if (!(string[i]&0x80)) // normal ASCII
 			continue;
-		if ((string[i] & 0xE0) == 0xE0) // one char following.
+		if ((string[i] & 0xE0) == 0xC0) // one char following.
 		{
 				// first, length check:
 			if (i+1 >= len)
