@@ -943,7 +943,8 @@ void eServiceSelector::enterDirectory(const eServiceReference &ref)
 	services->beginAtomic();
 	path.down(ref);
 	actualize();
-	selectService( eServiceInterface::getInstance()->service );
+	if (! selectService( eServiceInterface::getInstance()->service ))
+		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
 	services->endAtomic();
 }
 

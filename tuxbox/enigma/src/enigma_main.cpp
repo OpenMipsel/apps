@@ -528,9 +528,12 @@ eZapMain::eZapMain()
 	VolumeBar.setRightColor( eSkin::getActive()->queryColor("volume_right") );
 	VolumeBar.setBorder(0);
 	
-	dvrFunctions=new eWidget(this);
+	dvrFunctions=new eLabel(this);
 	dvrFunctions->setName("dvrFunctions");
 	dvrFunctions->hide();
+
+	nonDVRfunctions=new eWidget(this);
+	nonDVRfunctions->setName("nonDVRfunctions");
 	
 	dvrfunctions=0;
 	
@@ -2763,9 +2766,14 @@ void eZapMain::showDVRFunctions(int show)
 	dvrfunctions=show;
 
 	if (dvrfunctions)
+	{
+		nonDVRfunctions->hide();
 		dvrFunctions->show();
-	else
+	} else
+	{
 		dvrFunctions->hide();
+		nonDVRfunctions->show();
+	}
 }
 
 void eZapMain::showFavourites()

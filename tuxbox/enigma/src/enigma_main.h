@@ -180,7 +180,7 @@ private:
 	eLabel *DolbyOn, *DolbyOff, *CryptOn, *CryptOff, *WideOn, *WideOff, *recstatus;
 	eLabel mute, volume;
 
-	eWidget *dvrFunctions;
+	eWidget *dvrFunctions, *nonDVRfunctions;
 	int dvrfunctions;
 
 	// eRecordingStatus *recstatus;

@@ -212,7 +212,6 @@ void eWidget::invalidate(eRect area, int force)
 		if (!w->parent)	// spaetestens fuers TLW sollte backgroundcolor aber non-transparent sein
 			break;
 		area.moveBy(w->position.x(), w->position.y());
-
 		w=w->parent;
 		area.moveBy(w->clientrect.x(), w->clientrect.y());
 	}
