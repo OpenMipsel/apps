@@ -140,12 +140,10 @@ int eZapTimeZoneSetup::loadTimeZones()
 	if (!root)
 		return -1;
 
-	char *temp;
-	if ( eConfig::getInstance()->getKey("/elitedvb/timezone", temp) )
-		temp=0;
-		
-	const char *ctimeZone = (const char*) temp;
-	
+	char *ctimeZone;
+	if ( eConfig::getInstance()->getKey("/elitedvb/timezone", ctimeZone) )
+		ctimeZone=0;
+
 	eListBoxEntryText *cur=0;
 	for (XMLTreeNode *node = root->GetChild(); node; node = node->GetNext())
 		if (!strcmp(node->GetType(), "zone"))
@@ -157,14 +155,17 @@ int eZapTimeZoneSetup::loadTimeZones()
 				return -1;
 			}
 			eListBoxEntryText *tz=new eListBoxEntryText( *timeZone, name, (void*) new eString(name) );
-			if (strcmp(ctimeZone, name)==0)
+			if ( ctimeZone && !strcmp(ctimeZone, name) )
 			{
 				cur=tz;
 			}
 		} else
 			eFatal("error in a file timezone.xml, unknown timezone");	
-	timeZone->setCurrent(cur);
-	free(temp);
+
+	if ( timeZone->setCurrent(cur) == eComboBox::E_INVALID_ENTRY )
+		timeZone->moveSelection( eListBoxBase::dirFirst );
+
+	free(ctimeZone);
 
 	return 0;
 }
@@ -201,16 +202,14 @@ const char *eZapTimeZoneSetup::cmdTimeZones()
 	if (!root)
 		return "";
 
-	char *temp;
-	if ( eConfig::getInstance()->getKey("/elitedvb/timezone", temp) )
-		temp=0;
-		
+	char *ctimeZone;
+	if ( eConfig::getInstance()->getKey("/elitedvb/timezone", ctimeZone) )
+		ctimeZone=0;
+
 	int cuseDst;
 	if ( eConfig::getInstance()->getKey("/elitedvb/useDst", cuseDst) )
 		cuseDst=1;
-		
-	const char *ctimeZone = (const char*) temp;
-	
+
 	for (XMLTreeNode *node = root->GetChild(); node; node = node->GetNext())
 		if (!strcmp(node->GetType(), "zone"))
 		{
@@ -222,7 +221,7 @@ const char *eZapTimeZoneSetup::cmdTimeZones()
 				eFatal("error in a file timezone.xml, no name timezone");
 				return "";
 			}
-			if (strcmp(ctimeZone, name)==0)
+			if ( ctimeZone && !strcmp(ctimeZone, name) )
 			{
 				if (cuseDst)
 					return eString().sprintf("%s%s",zone,dst).c_str();
@@ -232,7 +231,7 @@ const char *eZapTimeZoneSetup::cmdTimeZones()
 		} 
 		else
 			eFatal("error in a file timezone.xml, unknown timezone");
-	free(temp);
+	free(ctimeZone);
 	
 	return "";
 }
