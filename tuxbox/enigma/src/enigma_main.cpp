@@ -1477,10 +1477,15 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			setMode(modeFile);
 			showBouquetList(1);
 		}
-		else if (wasSleeping) // before record we was in sleep mode...
+		else if (wasSleeping==1) // before record we was in sleep mode...
 		{
 			wasSleeping=0;
 			message_notifier.send(eZapMain::messageGoSleep);
+		}
+		else if (wasSleeping==2)
+		{
+			wasSleeping=0;
+			message_notifier.send(eZapMain::messageShutdown);
 		}
 		return 0;
 	}
@@ -2162,10 +2167,14 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 						eTimerInput e;
 						e.show();
 						EITEvent *evt = (EITEvent*) e.exec();
-						
+
 						if (evt != (EITEvent*)-1)
-							eTimerManager::getInstance()->addEventToTimerList( &e, &eServiceInterface::getInstance()->service, evt, ePlaylistEntry::stateWaiting|ePlaylistEntry::typeShutOffTimer );	
-										
+						{
+							eTimerManager::getInstance()->addEventToTimerList( &e, &eServiceInterface::getInstance()->service, evt, ePlaylistEntry::stateWaiting|ePlaylistEntry::typeShutOffTimer|ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR );
+							wasSleeping = e.getCheckboxState();
+							delete evt;
+						}
+
 						e.hide();
 					}
 					break;
@@ -2175,9 +2184,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 						eRecTimeInput e;
 						e.show();
 						EITEvent *evt = (EITEvent*) e.exec();
-
-						if (evt)
-						
+						if (evt != (EITEvent*)-1)
+						{
+							eTimerManager::getInstance()->addEventToTimerList( &e, &eServiceInterface::getInstance()->service, evt, ePlaylistEntry::stateWaiting|ePlaylistEntry::typeShutOffTimer|ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR );
+							wasSleeping = e.getCheckboxState();
+							delete evt;
+						}
 						e.hide();
 					}
 					break;
@@ -2739,6 +2751,13 @@ void eZapMain::gotMessage(const int &c)
 		standbyRelease();
 		return;
 	}
+	else if ( c == eZapMain::messageShutdown )
+	{
+		eDebug("Shutdown");
+		eZap::getInstance()->quit();
+		return;
+	}
+	
 	if ((!c) && pMsg) // noch eine gueltige message vorhanden
 	{
 		return;
@@ -2994,7 +3013,7 @@ eRecordContextMenu::eRecordContextMenu()
 	new eListBoxEntryText(&list, _("back"), (void*)0);
 	new eListBoxEntryText(&list, _("stop record now"), (void*)1);
 	new eListBoxEntryText(&list, _("set record duration"), (void*)2);
-//	new eListBoxEntryText(&list, _("set record stop time"), (void*)3);	
+	new eListBoxEntryText(&list, _("set record stop time"), (void*)3);	
 	CONNECT(list.selected, eRecordContextMenu::entrySelected);
 }
 
@@ -3017,6 +3036,7 @@ eRecStopWindow::eRecStopWindow(eWidget *parent, int len, int min, int max, int m
 	set->setName("set");
 	cancel = new eButton(this);
 	cancel->setName("abort");
+	CONNECT( num->selected, eRecStopWindow::fieldSelected );
 	CONNECT( Shutdown->checked, eRecStopWindow::ShutdownChanged );
 	CONNECT( Standby->checked, eRecStopWindow::StandbyChanged );
 	CONNECT( cancel->selected, eWidget::reject );
@@ -3032,6 +3052,11 @@ void eRecStopWindow::ShutdownChanged( int checked )
 {
 	if ( checked )
 		Standby->setCheck( 0 );
+}
+
+int eRecStopWindow::getCheckboxState()
+{
+	return Standby->isChecked()?1:Shutdown->isChecked()?2:0; 	
 }
 
 eTimerInput::eTimerInput()
@@ -3078,24 +3103,36 @@ eRecTimeInput::eRecTimeInput()
 	CONNECT( set->selected, eRecTimeInput::setPressed );
 }
 
+extern time_t normalize( struct tm & t );
+
 void eRecTimeInput::setPressed()
 {
-/*	time_t now = time(0)+eDVB::getInstance()->time_difference;
-	struct tm *t = localtime( &now );
-	t.tm_year = (int)byear->getCurrent()->getKey();
-	t.tm_mon = (int)bmonth->getCurrent()->getKey();
-	t.tm_mday = (int)bday->getCurrent()->getKey();
-	t.tm_hour = btime->getNumber(0);
-	t.tm_min = btime->getNumber(1);
-	t.tm_sec = 0;
-	bTime = mktime( &beginTime );
+	int hour = num->getNumber(0);
+	int min = num->getNumber(1);
 
+	time_t now = time(0)+eDVB::getInstance()->time_difference;
+	struct tm *t = localtime( &now );
+
+	if ( hour*60+min < t->tm_hour*60+t->tm_min )
+	{
+		t->tm_mday++;
+		t->tm_hour = hour;
+		t->tm_min = min;
+		normalize(*t);
+	}
+	else
+	{
+		t->tm_hour = hour;
+		t->tm_min = min;
+	}	
+
+	time_t tmp = mktime( t );
 
 	EITEvent *evt = new EITEvent();
-	evt.start_time = time(0)+eDVB::getInstance()->time_difference;
-	evt.duration = num->getNumber();
-	evt.event_id = -1;
-	evt.free_CA_mode = -1;
-	evt.running_status = -1;
-	return evt;*/
+	evt->start_time = time(0)+eDVB::getInstance()->time_difference;
+	evt->duration = tmp - evt->start_time;
+	evt->event_id = -1;
+	evt->free_CA_mode = -1;
+	evt->running_status = -1;
+	close((int)evt);
 }

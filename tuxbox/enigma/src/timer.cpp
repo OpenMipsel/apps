@@ -790,6 +790,35 @@ int weekday (int d, int m, int y)
 		--y;
 	return (y+y/4-y/100+y/400+table[m]+d)%7;
 }
+  
+void normalize( struct tm &t )
+{
+	if ( t.tm_min > 59 )
+	{
+		t.tm_min -= 60;
+		t.tm_hour++;
+	}
+	if ( t.tm_hour > 23 )
+	{
+		t.tm_hour-=24;
+		t.tm_mday++;
+	}
+	int days = monthdays[t.tm_mon+1];
+	if ( __isleap(t.tm_year) )
+		days++;
+	if ( t.tm_mday > days )
+	{
+		t.tm_mday -= days;
+		t.tm_mon++;
+	}
+	if ( t.tm_mon > 11 )
+	{
+		t.tm_year++;
+		t.tm_mon-=11;
+	}
+	t.tm_wday=-1;
+	t.tm_yday=-1;
+}
 
 eTimerView::eTimerView( ePlaylistEntry* e)
 	:eWindow(0)

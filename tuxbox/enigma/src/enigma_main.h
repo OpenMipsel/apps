@@ -168,7 +168,7 @@ class eZapMain: public eWidget
 public:
 	enum { modeTV, modeRadio, modeFile, modePlaylist, modeEnd };
 	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32 };
-	enum { messageGoSleep=2 };
+	enum { messageGoSleep=2, messageShutdown=3 };
 
 private:
 	eLabel 	*ChannelNumber, *ChannelName, *Clock, *EINow, *EINext,
@@ -361,13 +361,15 @@ class eRecStopWindow: public eWindow
 {
 	eCheckbox *Standby, *Shutdown;
 	eButton *cancel;
-	void StandbyChanged( int );
-	void ShutdownChanged( int );
+	void StandbyChanged(int);
+	void ShutdownChanged(int);
+	void fieldSelected(int *){focusNext(eWidget::focusDirNext);}
 protected:
 	virtual void setPressed()=0;
 	eButton *set;
 	eNumber *num;
 public:
+	int getCheckboxState();
 	eRecStopWindow( eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive=0, eWidget* descr=0, int grabfocus=1, const char* deco="eNumber" );
 };
 
