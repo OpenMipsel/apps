@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.7 2003/02/25 21:05:47 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.8 2003/03/02 11:37:40 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -1043,21 +1043,23 @@ void addChannelToBouquet(const unsigned int bouquet, const t_channel_id channel_
 
 void sendBouquets(int connfd, const bool emptyBouquetsToo)
 {
-	for (uint i=0; i<bouquetManager->Bouquets.size(); i++)
+	CZapitClient::responseGetBouquets msgBouquet;
+
+	for (uint i = 0; i < bouquetManager->Bouquets.size(); i++)
 	{
 		if (emptyBouquetsToo ||
-			((currentMode & RADIO_MODE) && (bouquetManager->Bouquets[i]->radioChannels.size()> 0) && (!bouquetManager->Bouquets[i]->bHidden)) ||
-			(currentMode & TV_MODE) && (bouquetManager->Bouquets[i]->tvChannels.size()> 0) && (!bouquetManager->Bouquets[i]->bHidden))
+		    ((!bouquetManager->Bouquets[i]->bHidden) &&
+		     ((currentMode & RADIO_MODE) && !bouquetManager->Bouquets[i]->radioChannels.empty()) ||
+		     ((currentMode & TV_MODE) && !bouquetManager->Bouquets[i]->tvChannels.empty())))
 		{
 // ATTENTION: in RECORD_MODE empty bouquets are not send!
-			if ((!(currentMode & RECORD_MODE)) || ((currentMode & RECORD_MODE) &&
-							       (((currentMode & RADIO_MODE) && (bouquetManager->Bouquets[i]->recModeRadioSize( frontend->getTsidOnid())) > 0 ) ||
-								(currentMode & TV_MODE)    && (bouquetManager->Bouquets[i]->recModeTVSize( frontend->getTsidOnid())) > 0 )))
+			if ((!(currentMode & RECORD_MODE)) ||
+			    ((channel != NULL) &&
+			     (((currentMode & RADIO_MODE) && (bouquetManager->Bouquets[i]->recModeRadioSize(channel->getTsidOnid()) > 0)) ||
+			      ((currentMode & TV_MODE)    && (bouquetManager->Bouquets[i]->recModeTVSize(channel->getTsidOnid()) > 0)))))
 			{
-				CZapitClient::responseGetBouquets msgBouquet;
-
-				strncpy(msgBouquet.name, bouquetManager->Bouquets[i]->Name.c_str(), 30);
 				msgBouquet.bouquet_nr = i;
+				strncpy(msgBouquet.name, bouquetManager->Bouquets[i]->Name.c_str(), 30);
 				msgBouquet.locked     = bouquetManager->Bouquets[i]->bLocked;
 				msgBouquet.hidden     = bouquetManager->Bouquets[i]->bHidden;
 				if (CBasicServer::send_data(connfd, &msgBouquet, sizeof(msgBouquet)) == false)
@@ -1067,6 +1069,12 @@ void sendBouquets(int connfd, const bool emptyBouquetsToo)
 				}
 			}
 		}
+	}
+	msgBouquet.bouquet_nr = 0xFFFF; /* <- end marker */
+	if (CBasicServer::send_data(connfd, &msgBouquet, sizeof(msgBouquet)) == false)
+	{
+		ERROR("could not send end marker");
+		return;
 	}
 }
 
@@ -1478,7 +1486,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.7 2003/02/25 21:05:47 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.8 2003/03/02 11:37:40 thegoodguy Exp $\n");
 
 	if (argc > 1)
 	{
