@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.5 2003/05/11 15:24:26 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.6 2003/05/11 20:17:21 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -203,14 +203,20 @@ int get_sdts(void)
 	stiterator tI;
 
 	for (tI = scantransponders.begin(); tI != scantransponders.end(); tI++) {
-			/* msg to neutrino */
-			processed_transponders++;
-			eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_NUM_SCANNED_TRANSPONDERS, CEventServer::INITID_ZAPIT, &processed_transponders, sizeof(processed_transponders));
+		/* msg to neutrino */
+		processed_transponders++;
+		eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_NUM_SCANNED_TRANSPONDERS, CEventServer::INITID_ZAPIT, &processed_transponders, sizeof(processed_transponders));
 
 		if (!frontend->tuneFrequency(tI->second.feparams, tI->second.polarization, tI->second.DiSEqC))
 			continue;
 
 		INFO("parsing SDT (tsid:onid %04x:%04x)", tI->second.transport_stream_id, tI->second.original_network_id);
+		
+		actual_freq = tI->second.feparams.Frequency;
+		
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_FREQUENCY,CEventServer::INITID_ZAPIT, &actual_freq,sizeof(actual_freq));
+ 		actual_polarisation = (uint)tI->second.polarization;
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_REPORT_FREQUENCYP,CEventServer::INITID_ZAPIT,&actual_polarisation,sizeof(actual_polarisation));
 
 		parse_sdt(tI->second.transport_stream_id, tI->second.original_network_id, tI->second.DiSEqC);
 	}
