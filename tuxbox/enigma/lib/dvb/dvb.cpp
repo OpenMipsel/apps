@@ -793,6 +793,10 @@ void eTransponderList::readLNBData()
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/DiSEqCMode").c_str(), tmpint );
 		lnb.getDiSEqC().DiSEqCMode = (eDiSEqC::tDiSEqCMode) tmpint;
 
+		tmpint=0;
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/FastDiSEqC").c_str(), tmpint );
+		lnb.getDiSEqC().FastDiSEqC = tmpint;
+
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/DiSEqCParam").c_str(), tmpint );
 		lnb.getDiSEqC().DiSEqCParam = tmpint;
 
@@ -884,6 +888,7 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().DiSEqCParam=eDiSEqC::AA;
 			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;
 			lnb.getDiSEqC().DiSEqCRepeats=0;
+			lnb.getDiSEqC().FastDiSEqC=0;
 			lnb.getDiSEqC().SeqRepeat=0;
 			lnb.getDiSEqC().SwapCmds=0;
 			lnb.getDiSEqC().uncommitted_cmd=0;
@@ -902,6 +907,7 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().DiSEqCParam=eDiSEqC::AB;
 			lnb.getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;
 			lnb.getDiSEqC().DiSEqCRepeats=0;
+			lnb.getDiSEqC().FastDiSEqC=0;
 			lnb.getDiSEqC().SeqRepeat=0;
 			lnb.getDiSEqC().SwapCmds=0;
 			lnb.getDiSEqC().uncommitted_cmd=0;
@@ -931,6 +937,7 @@ void eTransponderList::writeLNBData()
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/MiniDiSEqCParam").c_str(), (int) it->getDiSEqC().MiniDiSEqCParam );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/DiSEqCParam").c_str(), (int) it->getDiSEqC().DiSEqCParam );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/DiSEqCRepeats").c_str(), (int) it->getDiSEqC().DiSEqCRepeats );
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/FastDiSEqC").c_str(), (int) it->getDiSEqC().FastDiSEqC );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/SeqRepeat").c_str(), (int) it->getDiSEqC().SeqRepeat );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/SwapCmds").c_str(), (int) it->getDiSEqC().SwapCmds );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_cmd").c_str(), (int) it->getDiSEqC().uncommitted_cmd );

@@ -122,7 +122,8 @@ class eDiSEqCPage : public eWidget
 	eButton *cancel; // close the window without apply changes
 	eButton *prev; // shows the LNB Configuration Dialog
 //	eButton *next; // shows the Rotor Setup (for non GotoXX Rotors)
-	eCheckbox *SeqRepeat, *SwapCmds;
+	eCheckbox *SeqRepeat, *SwapCmds,
+						*FastDiSEqC; // sends no DiSEqC when only hi/lo or H/V Changed
 	eLabel *lDiSEqCRepeats, *lDiSEqCParam, *lucInput;
 	eStatusBar *statusbar;
          

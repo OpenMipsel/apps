@@ -945,7 +945,7 @@ int eFrontend::tune(eTransponder *trans,
 
 		// set cmd ptr in sequence..
 		seq.commands=commands;
-    
+
 		// handle DiSEqC Rotor
 		if ( lastRotorCmd != RotorCmd && !noRotorCmd )
 		{
@@ -972,8 +972,9 @@ int eFrontend::tune(eTransponder *trans,
 				}
 			}
 		}
-		else if ( lastucsw != ucsw || lastcsw != csw || ( ToneBurst && lastToneBurst != ToneBurst) )
+		else if ( lastucsw != ucsw || ( ToneBurst && lastToneBurst != ToneBurst) )
 		{
+send:
 			seq.voltage=voltage;
 			if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 			{
@@ -985,6 +986,13 @@ int eFrontend::tune(eTransponder *trans,
 				usleep( 100000 ); // between seq repeats we wait 80ms
 				ioctl(secfd, SEC_SEND_SEQUENCE, &seq);  // just do it *g*
 			}
+		}
+		else if ( lastcsw != csw )
+		{
+			// faster zap workaround... send only diseqc when satpos changed
+			if ( lnb->getDiSEqC().FastDiSEqC && (csw / 4) == (lastcsw / 4) )
+				seq.numCommands=0;
+			goto send; // jump above...
 		}
 
 		lastcsw = csw;

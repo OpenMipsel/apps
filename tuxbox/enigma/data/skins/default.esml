@@ -368,8 +368,9 @@
 			<eLabel text="DiSEqC Repeats:" name="lDiSEqCRepeats" position="10:145" size="290:35" vcenter="on" shortcut="4" shortcutFocus="DiSEqCRepeats" />
 			<eComboBox name="ucInput" position="310:190" size="e-10:35" helptext="select uncommitted input" loadDeco="" />
 			<eLabel name="lucInput" text="Uncommitted Switch:" position="10:190" size="290:35" vcenter="on" shortcut="5" shortcutFocus="ucInput" />
-			<eCheckbox text="Sequence repeat" name="SeqRepeat" position="10:230" size="290:30" helptext="send the complete DiSEqC sequence dupe" shortcut="6" swaptxtpixmap="on" />
-			<eCheckbox text="Swap Commands" name="SwapCmds" position="10:270" size="290:30" helptext="swaps normal and opt.Switch DiSEqC Cmds" shortcut="7" swaptxtpixmap="on" />
+			<eCheckbox text="Sequence repeat" name="SeqRepeat" position="10:240" size="290:30" helptext="send the complete DiSEqC sequence dupe" shortcut="6" swaptxtpixmap="on" />
+			<eCheckbox text="Swap Commands" name="SwapCmds" position="310:240" size="e-10:30" helptext="swaps normal and opt.Switch DiSEqC Cmds" shortcut="8" swaptxtpixmap="on" />
+			<eCheckbox text="Fast DiSEqC" name="FastDiSEqC" position="10:280" size="290:30" helptext="send no DiSEqC when only Hi/Lo or H/V changes" shortcut="7" swaptxtpixmap="on" />
 			<!--eComboBox name="uSwitch1" position="170:230" size="90:35" helptext="select Uncommitted Switch 1 option" loadDeco="" />
 			<eLabel name="luSwitch1" text="U-Switch 1:" position="10:230" size="150:35" vcenter="on" shortcut="7" shortcutFocus="uSwitch1" />
 			<eComboBox name="uSwitch2" position="450:230" size="90:35" helptext="select Uncommitted Switch 2 option" loadDeco="" />

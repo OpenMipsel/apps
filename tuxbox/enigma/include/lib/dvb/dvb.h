@@ -646,6 +646,7 @@ struct eDiSEqC
 
 	std::map< int, int > RotorTable; // used for Rotors does not support gotoXX Cmd
 	int DiSEqCRepeats;      // for cascaded switches
+	int FastDiSEqC;         // send no DiSEqC on H/V or Lo/Hi change
 	int SeqRepeat;          // send the complete DiSEqC Sequence dupe...
 	int SwapCmds;           // swaps the committed & uncommitted cmd
 	int uncommitted_cmd;    // state of the 4 uncommitted switches..

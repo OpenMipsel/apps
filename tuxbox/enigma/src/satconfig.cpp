@@ -370,6 +370,7 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 			lnb->getDiSEqC().DiSEqCMode=eDiSEqC::V1_0;
 		break;
 	}
+	lnb->getDiSEqC().FastDiSEqC=0;
 	lnb->getDiSEqC().DiSEqCRepeats=0;
 	lnb->getDiSEqC().SeqRepeat=0;
 	lnb->getDiSEqC().SwapCmds=0;	
@@ -840,6 +841,7 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().DiSEqCMode = (eDiSEqC::tDiSEqCMode) (int) DiSEqCPage->DiSEqCMode->getCurrent()->getKey();
 	p->getDiSEqC().DiSEqCParam = (int) DiSEqCPage->DiSEqCParam->getCurrent()->getKey();
 	p->getDiSEqC().DiSEqCRepeats = (int) DiSEqCPage->DiSEqCRepeats->getCurrent()->getKey();
+	p->getDiSEqC().FastDiSEqC = (int) DiSEqCPage->FastDiSEqC->isChecked();
 	p->getDiSEqC().SeqRepeat = DiSEqCPage->SeqRepeat->isChecked();
 	p->getDiSEqC().SwapCmds = DiSEqCPage->SwapCmds->isChecked();	
 	p->getDiSEqC().uncommitted_cmd = (int)DiSEqCPage->ucInput->getCurrent()->getKey();
@@ -1085,6 +1087,9 @@ eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
 	SwapCmds = new eCheckbox(this);
 	SwapCmds->setName("SwapCmds");
 
+	FastDiSEqC = new eCheckbox(this);
+	FastDiSEqC->setName("FastDiSEqC");
+
 /*	next = new eButton(this);
 	next->setName("next");*/
           
@@ -1124,6 +1129,7 @@ void eDiSEqCPage::DiSEqCModeChanged( eListBoxEntryText* e )
 			SwapCmds->show();
 		case eDiSEqC::V1_0:
 			lDiSEqCParam->show();
+			FastDiSEqC->show();
 			DiSEqCParam->show();
 			SeqRepeat->show();
 		break;
@@ -1132,6 +1138,7 @@ void eDiSEqCPage::DiSEqCModeChanged( eListBoxEntryText* e )
 	{
 		default:
 		case eDiSEqC::NONE:
+			FastDiSEqC->hide();
 			SeqRepeat->hide();
 			DiSEqCParam->hide();
 			lDiSEqCParam->hide();
@@ -1157,6 +1164,7 @@ void eDiSEqCPage::lnbChanged( eListBoxEntryText *lnb )
 		MiniDiSEqCParam->setCurrent( (void*) diseqc.MiniDiSEqCParam );
 		DiSEqCParam->setCurrent( (void*) diseqc.DiSEqCParam );
 		DiSEqCRepeats->setCurrent( (void*) diseqc.DiSEqCRepeats );
+		FastDiSEqC->setCheck( (int) diseqc.FastDiSEqC );
 		SeqRepeat->setCheck( (int) diseqc.SeqRepeat );
 		SwapCmds->setCheck( (int) diseqc.SwapCmds );	
 		ucInput->setCurrent( (void*) diseqc.uncommitted_cmd );
@@ -1167,6 +1175,7 @@ void eDiSEqCPage::lnbChanged( eListBoxEntryText *lnb )
 		DiSEqCParam->setCurrent( 0 );
 		MiniDiSEqCParam->setCurrent( 0 );
 		DiSEqCRepeats->setCurrent( 0 );
+		FastDiSEqC->setCheck( 0 );
 		SeqRepeat->setCheck( 0 );
 		SwapCmds->setCheck( 0 );
 		ucInput->setCurrent( (void*) 0 );
