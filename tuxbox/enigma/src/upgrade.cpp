@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 
 #define TMP_IMAGE "/var/tmp/root.cramfs"
+#define TMP_IMAGE_ALT "/var/tmp/cdk.cramfs"
 #define TMP_CHANGELOG "/var/tmp/changelog"
 
 static eString getVersionInfo(const char *info)
@@ -143,6 +144,8 @@ eUpgrade::eUpgrade()
 	ourversion=getVersionInfo("version");
 	
 	struct stat s;
+	if (!stat(TMP_IMAGE_ALT, &s))
+		rename(TMP_IMAGE_ALT, TMP_IMAGE);
 	if (!stat(TMP_IMAGE, &s))
 		new eListBoxEntryImage(images, _("manual upload"), "", "", "", "", 0);
 }
