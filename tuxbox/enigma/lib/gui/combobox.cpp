@@ -106,6 +106,15 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 	return 1;
 }
 
+int eComboBox::moveSelection ( int dir )
+{
+	int ret = listbox.moveSelection( dir );
+	eListBoxEntryText *cur = listbox.getCurrent();
+	if ( cur )
+		setText( cur->getText() );
+}
+
+
 void eComboBox::onEntrySelected( eListBoxEntryText* e)
 {
 	listbox.hide();
