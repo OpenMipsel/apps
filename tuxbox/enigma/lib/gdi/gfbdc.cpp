@@ -29,6 +29,7 @@ gFBDC::gFBDC()
 	
 	pixmap->clut.colors=256;
 	pixmap->clut.data=new gRGB[pixmap->clut.colors];
+	memset(pixmap->clut.data, 0, sizeof(*pixmap->clut.data)*pixmap->clut.colors);
 	reloadSettings();
 }
 
