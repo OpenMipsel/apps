@@ -85,9 +85,7 @@ eZapRFmodSetup::eZapRFmodSetup(): eWindow(0)
 	eListBoxEntryText* clentrys[49];
 
 	for(int i=21;i<70;i++)
-	{
-		clentrys[i]=new eListBoxEntryText(Channel,eString().sprintf("%d",i),(void*)i,eTextPara::dirCenter);
-	}
+		clentrys[i-21]=new eListBoxEntryText(Channel,eString().sprintf("%d",i),(void*)i,eTextPara::dirCenter);
 
 	Channel->setCurrent(clentrys[0]);
 	Channel->setHelpText(_("change channel"));
@@ -108,12 +106,12 @@ eZapRFmodSetup::eZapRFmodSetup(): eWindow(0)
 	for(int i=-40;i<41;i++)
 	{
 		if(i>0)
-			flentrys[i]=new eListBoxEntryText(FineTune,eString().sprintf("+%d",i),(void*)i,eTextPara::dirCenter);
+			flentrys[i+40]=new eListBoxEntryText(FineTune,eString().sprintf("+%d",i),(void*)i,eTextPara::dirCenter);
 		else
-			flentrys[i]=new eListBoxEntryText(FineTune,eString().sprintf("%d",i),(void*)i,eTextPara::dirCenter);
+			flentrys[i+40]=new eListBoxEntryText(FineTune,eString().sprintf("%d",i),(void*)i,eTextPara::dirCenter);
 	}
 
-	FineTune->setCurrent(flentrys[0]);
+	FineTune->setCurrent(flentrys[40]);
 	FineTune->setHelpText(_("250Khz steps"));
 	CONNECT(FineTune->selchanged, eZapRFmodSetup::FineTune_selected);		
 	
@@ -144,8 +142,6 @@ eZapRFmodSetup::eZapRFmodSetup(): eWindow(0)
 
 eZapRFmodSetup::~eZapRFmodSetup()
 {
-	if (status)
-		delete status;
 }
 
 void eZapRFmodSetup::okPressed()
