@@ -77,7 +77,9 @@ void eListBoxEntryEPG::build()
 		}
 		else if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
 		{
+			// build parent Service Reference
 			eServiceReferenceDVB nvodService(service.data[2], service.data[3], ((TimeShiftedEventDescriptor*)descriptor)->reference_service_id, service.data[0] );
+			// get EITEvent from Parent...
 			EITEvent* evt = eEPGCache::getInstance()->lookupEvent(nvodService, ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id );
 			if (evt)
 			{
@@ -192,7 +194,7 @@ void eEPGSelector::fillEPGList()
 			{
 				for (std::list<NVODReferenceEntry>::const_iterator it( RefList->begin() ); it != RefList->end(); it++ )
 				{
-					eServiceReferenceDVB ref( it->transport_stream_id, it->original_network_id, it->service_id, 1 );
+					eServiceReferenceDVB ref( it->transport_stream_id, it->original_network_id, it->service_id, 5 );
 					const eventMap *eMap = eEPGCache::getInstance()->getEventMap( ref );
 					if (eMap)
 					{
@@ -215,7 +217,7 @@ void eEPGSelector::fillEPGList()
 										e.event_id = refEvt.event_id;
 										e.free_CA_mode = refEvt.free_CA_mode;
 										e.running_status = refEvt.running_status;
-										new eListBoxEntryEPG(e, events, current);
+										new eListBoxEntryEPG(e, events, ref);
 										break;
 									}
 								}
@@ -289,12 +291,12 @@ int eEPGSelector::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
-			if (event.action == &i_epgSelectorActions->addTimerEvent && current.getServiceType() != 4)  // disable NVOD .. fix later
+			if (event.action == &i_epgSelectorActions->addTimerEvent)
 			{
-				if ( eTimerManager::getInstance()->addEventToTimerList( this, (eServiceReference*)&current, &events->getCurrent()->event ) )
+				if ( eTimerManager::getInstance()->addEventToTimerList( this, &events->getCurrent()->service, &events->getCurrent()->event ) )
 				{
 					hide();
-					eTimerView v( eTimerManager::getInstance()->findEvent( (eServiceReference*)&current, &events->getCurrent()->event ) );
+					eTimerView v( eTimerManager::getInstance()->findEvent( &events->getCurrent()->service, &events->getCurrent()->event ) );
 					v.show();
 					v.exec();
 					v.hide();

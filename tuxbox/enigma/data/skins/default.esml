@@ -58,7 +58,7 @@
 		<map name="eventview.date" font="Nimbus" size="18" />
 		<map name="eventview.time" font="Nimbus" size="18" />
 		<map name="eventview.channel" font="Nimbus" size="18" />
-		<map name="eFEStatus.values" font="Nimbus" size="22" />
+		<map name="eFEStatus.values" font="Nimbus" size="20" />
 	</fontalias>
 
 	<images basepath="" target="fb">
@@ -226,7 +226,7 @@
 	</object>
 
 	<object name="eLNBSetup">
-		<eLNBSetup text="LNB Configuration" position="100:50" csize="550:400">
+		<eLNBSetup text="LNB Configuration" position="75:50" csize="550:400">
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eLNBSetup>
 	</object>
@@ -401,14 +401,17 @@
 
 	<object name="eFEStatusWidget">
 		<eFEStatusWidget size="400:85">
-			<eProgress name="snr" position="80:5" size="230:20" />
-			<eProgress name="agc" position="80:30" size="230:20" />
-			<eLabel name="snr_num" position="310:5" size="80:20" font="eFEStatus.values" vcenter="on" align="right" />
-			<eLabel name="agc_num" position="310:30" size="80:20" font="eFEStatus.values" vcenter="on" align="right" />
-			<eLabel text="SNR" position="10:5" size="70:25" />
-			<eLabel text="AGC" position="10:30" size="70:25" />
-			<eCheckbox text="Lock" name="lock" position="10:55" size="80:30" vcenter="on" />
-			<eCheckbox text="Sync" name="sync" position="95:55" size="e-10:30" vcenter="on" />
+			<eProgress name="snr" position="80:0" size="230:15" />
+			<eProgress name="agc" position="80:20" size="230:15" />
+			<eProgress name="ber" position="80:40" size="230:15" />
+			<eLabel name="snr_num" position="310:0" size="80:15" font="eFEStatus.values" vcenter="on" align="right" />
+			<eLabel name="agc_num" position="310:20" size="80:15" font="eFEStatus.values" vcenter="on" align="right" />
+			<eLabel name="ber_num" position="310:40" size="80:15" font="eFEStatus.values" vcenter="on" align="right" />			
+			<eLabel text="SNR" position="10:0" size="70:15" font="eFEStatus.values" vcenter="on" />
+			<eLabel text="AGC" position="10:20" size="70:15" font="eFEStatus.values" vcenter="on" />
+			<eLabel text="BER" position="10:40" size="70:15" font="eFEStatus.values" vcenter="on" />
+			<eCheckbox text="LOCK" name="lock" position="10:60" size="80:20" font="eFEStatus.values" vcenter="on" />
+			<eCheckbox text="SYNC" name="sync" position="95:60" size="e-10:20" font="eFEStatus.values" vcenter="on"  />
 		</eFEStatusWidget>
 	</object>
 

@@ -292,6 +292,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	secCommand *commands = (secCommand*) cmds;
 	int idlePowerInput=0;
 	int runningPowerInput=0;
+	int secTone = seq.continuousTone;
 //	int cnt=0;
 
 	// open front prozessor
@@ -307,6 +308,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	seq.numCommands--;
 
 	// send DiSEqC Sequence ( normal diseqc switches )
+	seq.continuousTone=SEC_TONE_OFF;
 	if ( ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 	{
 		perror("SEC_SEND_SEQUENCE");
@@ -331,18 +333,19 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	seq.commands=&commands[seq.numCommands];  // last command is rotor cmd... see above...
 	seq.numCommands=1;  // only rotor cmd
 
+	seq.continuousTone=secTone;
 	if ( ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 	{
 		perror("SEC_SEND_SEQUENCE");
 		return -1;
 	}
-	else if ( SeqRepeat )  // Sequence repeat ?
+/*	else if ( SeqRepeat )  // Sequence repeat ?
 	{
 		usleep( 80000 ); // between seq repeats we wait 80ms
 		ioctl(secfd, SEC_SEND_SEQUENCE, &seq);
-	}
+	}*/
 
-	// set rotor start timeout
+	// set rotor start timeout  // 5 sek..
 	time_t timeout=time(0)+5;
 
 	// now wait for rotor start
@@ -653,16 +656,15 @@ int eFrontend::tune(eTransponder *trans,
 		int local = Frequency - ( Frequency > lnb->getLOFThreshold() ? lnb->getLOFHi() : lnb->getLOFLo() );
 		front.Frequency = local > 0 ? local : -local;
 
-		int secTone = SEC_TONE_OFF;
 		// set Continuous Tone ( 22 Khz... low - high band )
 		if ( (swParams.HiLoSignal == eSwitchParameter::ON) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency > lnb->getLOFThreshold()) ) )
-			secTone = SEC_TONE_ON;
-/*		else if ( (swParams.HiLoSignal == eSwitchParameter::OFF) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency <= lnb->getLOFThreshold()) ) )
-			seq.continuousTone = SEC_TONE_OFF;*/
+			seq.continuousTone = SEC_TONE_ON;
+		else if ( (swParams.HiLoSignal == eSwitchParameter::OFF) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency <= lnb->getLOFThreshold()) ) )
+			seq.continuousTone = SEC_TONE_OFF;
 
 
 		// Voltage( 0/14/18V  vertical/horizontal )
-		int voltage = SEC_VOLTAGE_OFF;
+	int voltage = SEC_VOLTAGE_OFF;
 		if ( swParams.VoltageMode == eSwitchParameter::_14V || ( polarisation == polVert && swParams.VoltageMode == eSwitchParameter::HV )  )
 		{
 			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_13_5 : SEC_VOLTAGE_13;
@@ -678,9 +680,8 @@ int eFrontend::tune(eTransponder *trans,
 		// handle DiSEqC Rotor
 		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && sendSeq == -3 && !noRotorCmd )
 		{
-			// drive rotor always with 18V ( is faster )
+   // drive rotor always with 18V ( is faster )
 			seq.voltage = SEC_VOLTAGE_18;
-			seq.continuousTone = SEC_TONE_OFF;
 
 			RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
 //		RotorUseTimeout(seq, sat->getOrbitalPosition() );
@@ -692,17 +693,6 @@ int eFrontend::tune(eTransponder *trans,
 				ioctl(secfd, SEC_SET_VOLTAGE, &voltage);
 				usleep(20);
 			}
-
-			__u8 delay=17;
-			if ( secTone != SEC_TONE_OFF )
-			{
-				eDebug("enable continuous tone after send rotor cmd..wait 80ms");
-				usleep(delay); // wait..
-				delay=0;
-				if( ioctl(secfd, SEC_SET_TONE, &secTone) )
-					perror("SEC_SET_TONE");
-				usleep(80); // wait 80ms after enable continuous Tone
-			}
 		}
 		else  // no Rotor avail... we send the complete cmd...
 		{
@@ -710,7 +700,6 @@ int eFrontend::tune(eTransponder *trans,
 			{
 				eDebug("sendSeq");
 				seq.voltage=voltage;
-				seq.continuousTone=secTone;
 				if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 				{
 					perror("SEC_SEND_SEQUENCE");
@@ -776,3 +765,4 @@ int eFrontend::tune_qam(eTransponder *transponder,
 {
 	return tune(transponder, Frequency, 0, SymbolRate, getFEC(FEC_inner), Inversion?INVERSION_ON:INVERSION_OFF, 0, getModulation(QAM));
 }
+
