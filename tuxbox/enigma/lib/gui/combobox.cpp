@@ -43,7 +43,9 @@ void eComboBox::onOkPressed()
 		listbox.move( ePoint( pt.x(), pt.y()-listbox.getSize().height() ) );
 	else
 		listbox.move( ePoint( pt.x(), pt.y()+getSize().height() ) );
- listbox.show();
+
+	eWindow::globalCancel( eWindow::OFF );
+	listbox.show();
 }
 
 int eComboBox::setProperty( const eString& prop, const eString& val )
@@ -132,6 +134,8 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 	}
 	else
 		setFocus( this );
+
+	eWindow::globalCancel( eWindow::ON );
 }
 
 void eComboBox::onSelChanged(eListBoxEntryText* le)
