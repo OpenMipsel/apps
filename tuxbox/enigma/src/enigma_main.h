@@ -310,6 +310,7 @@ private:
 
 	eWidget *dvrInfoBar, *dvbInfoBar, *fileInfoBar;
 	int dvrfunctions;
+	int stateOSD;
 
 	// eRecordingStatus *recstatus;
 

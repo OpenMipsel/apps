@@ -1394,6 +1394,7 @@ eZapMain::eZapMain()
 	fileinfos->setName("fileinfos");
 
 	dvrfunctions=-1;
+	stateOSD=0;
 
 	recstatus=new eLabel(this);
 	recstatus->setName("recStatus");
@@ -3743,9 +3744,15 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_enigmaMainActions->standby_release)
 			standbyRelease();
 		else if ( !isVisible() && event.action == &i_enigmaMainActions->showInfobar)
+		{
+			stateOSD=1;
 			showInfobar();
+		}
 		else if (event.action == &i_enigmaMainActions->hideInfobar)
+		{
+			stateOSD=0;
 			hideInfobar();
+		}
 		else if ( isVisible() && event.action == &i_enigmaMainActions->showInfobarEPG)
 			showEPG();
 		else if (event.action == &i_enigmaMainActions->showServiceSelector)
@@ -4539,14 +4546,16 @@ void eZapMain::gotPMT()
 
 void eZapMain::timeOut()
 {
+	int state=1;
+	eConfig::getInstance()->getKey("/ezap/osd/anableAutohideOSDOn", state);
 	if (pRotorMsg && pRotorMsg->isVisible() )
 	{
 		pRotorMsg->hide();
 		delete pRotorMsg;
 		pRotorMsg=0;
 	}
-	else if (eZap::getInstance()->focus==this)
-		hide();
+	else if ((eZap::getInstance()->focus==this) && ((state == 1) || (stateOSD == 0)))
+			hide();
 }
 
 void eZapMain::leaveService()
