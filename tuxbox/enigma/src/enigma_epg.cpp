@@ -301,7 +301,7 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 					break;
 				}
 			tm *begin=ev->start_time!=-1?localtime(&ev->start_time):0;
-			e->setHelpText( eString().sprintf("%02d.%02d %02d:%02d %s - %s",
+			e->setHelpText( eString().sprintf("%02d.%02d. %02d:%02d %s - %s",
 				begin->tm_mday,
 				begin->tm_mon+1,
 				begin->tm_hour,
@@ -310,6 +310,7 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 				e->description.c_str() ) );
 
 			e->event = ev;
+			e->show();
 		} else
 			delete ev;
 	}
@@ -508,6 +509,7 @@ void eZapEPG::buildPage(int direction)
 
 			// set column service name
 			service.header->setText(stext);
+			service.header->show();
 
 			buildService(service, now, end);
 
