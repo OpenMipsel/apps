@@ -730,7 +730,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				services->beginAtomic();
 				if (style == styleCombiColumn)
 				{
-					if (bouquets->goNext()->flags & eListBoxEntryService::flagIsReturn)
+					if (bouquets->goPrev()->flags & eListBoxEntryService::flagIsReturn)
 						bouquets->goPrev();
 				} else
 				{

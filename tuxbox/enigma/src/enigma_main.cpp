@@ -904,7 +904,7 @@ eZapMain::eZapMain()
 	userFileBouquets->load((eplPath+"/userbouquets.file.epl").c_str());
 
 	int i=0;
-	for (int d = modeTV; d <= modeFile; d++)
+	for (int d = modeTV; d <= modeRadio; d++)
 	{
 		ePlaylist* parentList=0;
 		switch(d)
@@ -931,7 +931,7 @@ eZapMain::eZapMain()
 	if(!i)  // no favlist loaded...
 	{    
 		// create default user bouquet lists (favourite lists)
-		for (int i = modeTV; i <= modeFile; i++)
+		for (int i = modeTV; i <= modeRadio; i++)
 		{
 			eServiceReference ref = eServicePlaylistHandler::getInstance()->newPlaylist();
 			ePlaylist* parentList=0;
@@ -992,10 +992,10 @@ eZapMain::eZapMain()
 		}
 		else  // no path in registry... create default..
 		{
-			modeLast[mode][1]=(mode==modeTV)?userTVBouquetsRef:(mode==modeRadio)?userRadioBouquetsRef:userFileBouquetsRef;
+			modeLast[mode][1]=(mode==modeTV)?userTVBouquetsRef:(mode==modeRadio)?userRadioBouquetsRef:playlistref;
 			modeLast[mode][1].down( eServiceReference() );
 		}
-		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode).c_str(), str) )
+/*		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode).c_str(), str) )
 		{
 			modeLast[mode][2].setString(str);
 //			eDebug(str);
@@ -1005,7 +1005,7 @@ eZapMain::eZapMain()
 		{
 			modeLast[mode][2]=playlistref;
 			modeLast[mode][2].down( eServiceReference() );
-		}
+		}*/
 	}
 
 	// set serviceSelector style
@@ -1062,7 +1062,7 @@ eZapMain::~eZapMain()
 	// save for all modes the servicePath to registry
 	for (mode=modeTV; mode < modeEnd; mode++ )
 	{
-		for (int i=0; i < 3; i++)
+		for (int i=0; i < 2; i++)
 		{
 			eString str = modeLast[mode][i].toString();
 			eConfig::getInstance()->setKey( eString().sprintf("/ezap/ui/modes/%d/path%d", mode, i).c_str(), str.c_str() );
@@ -1081,11 +1081,11 @@ eZapMain::~eZapMain()
 		eServiceInterface::getInstance()->removeRef(it->service);
 	eServiceInterface::getInstance()->removeRef(userRadioBouquetsRef);
 	
-	// save and destroy userFileBouquetList
+/*	// save and destroy userFileBouquetList
 	userFileBouquets->save();
 	for (std::list<ePlaylistEntry>::iterator it(userFileBouquets->getList().begin()); it != userFileBouquets->getList().end(); it++ )
 		eServiceInterface::getInstance()->removeRef(it->service);
-	eServiceInterface::getInstance()->removeRef(userFileBouquetsRef);
+	eServiceInterface::getInstance()->removeRef(userFileBouquetsRef);*/
 	
 	// save and destroy playlist
 	playlist->save();
@@ -2033,11 +2033,22 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		if (removeEntry)  // handle recorded streams..
 		{
 			eServiceInterface::getInstance()->removeRef(ref);
+			std::list<ePlaylistEntry>::iterator i = it;
+			i++;
+			if ( i == pl->getList().end() )
+			{
+				i=it;
+				i--;
+				if ( i != pl->getList().end() )
+					sel->prev();
+			}
+			else
+				sel->next();
+			
 			pl->deleteService(it);
 			pl->save();
 			sel->actualize();
 		}
-
 		break;
 	}
 	case 2: // enable/disable movemode

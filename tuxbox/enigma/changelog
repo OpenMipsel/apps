@@ -43,3 +43,5 @@
 200302190420 3 * Fix support for Rotors behind DiSEqC Switches
 200302190420 6 * Show Streaminfo on doubleklick Info Button
 200302242113 4 * Volume&mute keys will work everywhere
+200302242125 6 * Add support to zap with numbers in the service selector ( only in user bouquets )
+200302242125 6 * Add support to rename each service in a user bouquet ( recorded movies / DVB services )

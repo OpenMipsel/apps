@@ -413,8 +413,8 @@ public:
 		eServicePath tmp;
 		getServiceSelectorPath(tmp); // save current path
 		modeLast[mode][0]=modeLast[mode][1];
-		modeLast[mode][1]=modeLast[mode][2];
-		modeLast[mode][2]=tmp;
+//		modeLast[mode][1]=modeLast[mode][2];
+		modeLast[mode][1]=tmp;
 		setServiceSelectorPath(modeLast[mode][0]); // set new path
 	}
 	void toggleTimerMode();
