@@ -19,6 +19,15 @@
 	/* ----------------------- dreambox fernbedienung ---------------------- */
 void eRCDeviceDreambox2::handleCode(int rccode)
 {
+	if (rccode == 0x00FF) // break code
+	{
+		timeout.stop();
+		repeattimer.stop();
+		timeOut();
+		ccode=rccode;
+		return;
+	}
+	
 	timeout.start(150, 1);
 	int old=ccode;
 	ccode=rccode;
