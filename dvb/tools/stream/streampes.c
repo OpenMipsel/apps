@@ -18,6 +18,7 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <time.h>
+#include <fcntl.h>
 #include <sys/poll.h>
 #include <errno.h>
 #include <string.h>
@@ -30,82 +31,57 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#define DEBUG
+#ifdef DEBUG
+#define dprint fprintf
+#else
+#define dprint
+#endif
+
+
 // size of one buffer
-#define BSIZE					1024*16
+#define BSIZE					(1024*16)
 // number of buffers
-#define BUFFERS 				100
+#define BUFFERS 				50
 
 #define UDP_SEND_LEN				1444 //First Version, comaptible to ggrab 0.21 will later be higher
 
-// the mutex for locking the bufferstate array
-pthread_mutex_t lock;
-// the thread writing the stream
-pthread_t writer;
+char 		gbuffers[BUFFERS][BSIZE];
+volatile int 	gbufferState[BUFFERS];
+int		gport;
+pthread_cond_t	gsignal;
+pthread_mutex_t	gmutex;
 
-// array holding the state of each buffer
-// 0 : buffer is empty
-// 1 : buffer is ready to write
-int bufferState[BUFFERS];
-
-// the buffers
-char buffers[BUFFERS][BSIZE];
-
-int	gfd;
-int	gport;
-
-
-void * send_udp(void *);
-
-void* start_writer( void* param)
-{
-	long counter = 0;
-	int currentBuffer = 0;
-
-	while(1)
-	{
-    	// sleep until our current buffer is ready to write
-        while (bufferState[currentBuffer] != 1)
-        {
-			usleep(10);
-        }
-        // write the buffer
-		int p = 0;
-		while (p < BSIZE)
-		{
-			int b = write(1, buffers[currentBuffer] + p, BSIZE - p);
-        		p += b;
-			if (b <= 0)
-        	{
-        		perror("output");
-        		break;
-        	}
-		}
-		// set the buffer's state to empty
-		pthread_mutex_lock(&lock);
-		bufferState[currentBuffer] = 0;
-		pthread_mutex_unlock(&lock);
-		// set currentBuffer to the next one
-		counter++;
-		currentBuffer = counter % BUFFERS;
-	}
-	return (0);
-}
+void * tcp_writer(void *);
+void * udp_writer(void *);
+void * check_alive(void *);
 
 int main(int argc, char **argv)
 {
-	int fd, pid;
-	struct dmxPesFilterParams flt;
-	char *bp;
-	long counter = 0;
-	int currentBuffer = 0;
-	int i;
-	for(i = 0; i<BUFFERS; i++)
+	pthread_t			h_writer;
+	pthread_t			h_control;
+	int				fd;
+	int				pid;
+	struct dmxPesFilterParams 	flt;
+	char *				bp;
+	int 				currentBuffer = 0;
+	int 				i;
+	int				fill_len;
+	int				pr;
+	int				tr;
+	int				r;
+
+
+
+
+	
+	for(i = 0; i < BUFFERS; i++)
 	{
-		bufferState[i] = 0;
+		gbufferState[i] = 0;
 	}
 
-	bp=buffers[0];
-	while (bp-buffers[0] < BSIZE)
+	bp=gbuffers[0];
+	while (bp-gbuffers[0] < BSIZE)
 	{
 		unsigned char c;
 		read(1, &c, 1);
@@ -114,8 +90,8 @@ int main(int argc, char **argv)
 	}
 	*bp++=0;
 
-	bp=buffers[0];
-	if (!strncmp(buffers[0], "GET /", 5))
+	bp=gbuffers[0];
+	if (!strncmp(bp, "GET /", 5))
 	{
 		printf("HTTP/1.1 200 OK\r\nServer: d-Box network\r\n\r\n"); // Content-Type: video/mpeg\r\n\r\n");
 		bp+=5;
@@ -136,76 +112,132 @@ int main(int argc, char **argv)
 		bp++;
 		sscanf(bp, "%d", &gport);
 	}
-	flt.pid=pid;
-	flt.input=DMX_IN_FRONTEND;
-	flt.output=DMX_OUT_TAP;
-	flt.pesType=DMX_PES_OTHER;
-	flt.flags=0;
+	flt.pid =	pid;
+	flt.input =	DMX_IN_FRONTEND;
+	flt.output =	DMX_OUT_TAP;
+	flt.pesType =	DMX_PES_OTHER;
+	flt.flags =	0;
 	
 	if (ioctl(fd, DMX_SET_PES_FILTER, &flt)<0)
 	{
-		perror("DMX_SET_PES_FILTER");
+		perror ("DMX_SET_PES_FILTER");
 		return errno;
 	}
 	if (ioctl(fd, DMX_START, 0)<0)
 	{
-		perror("DMX_SET_PES_FILTER");
+		perror ("DMX_SET_PES_FILTER");
 		return errno;
 	}
+	pthread_cond_init(&gsignal, 0);
+	pthread_mutex_init(&gmutex, 0);
+	
 	if (gport > 1023) {
-		gfd = fd;
-		pthread_create( &writer, 0, send_udp, NULL);
-		while (read(STDIN_FILENO,buffers[0],1) >= 0);
-	 	exit(0);
+		pthread_create( &h_writer, 0, udp_writer, NULL);
+		pthread_create( &h_control, 0, check_alive, NULL);
+		fill_len = UDP_SEND_LEN - 4;
+
 	}
 	else {
-		// init mutex for the bufferstate array
-		pthread_mutex_init(&lock, NULL);
-		// create the thread that writes the buffers to the streaming app
-		pthread_create( &writer, 0, start_writer, NULL);
-
-
-		while (1)
-		{
-			int pr=0, r;
-			int tr=BSIZE;
-
-		if (bufferState[currentBuffer] != 0)
-			{
-				// current buffer is not ready for read
-				perror("output");
-			}
-			// read stream into buffer until buffer is full
-			while (tr)
-			{
-				if ((r=read(fd, buffers[currentBuffer]+pr, tr))<=0)
-				{
-					continue;
-				}
-				pr+=r;
-				tr-=r;
-			}
-
-			// set the buffer state on "ready to write"
-			pthread_mutex_lock(&lock);
-			bufferState[currentBuffer] = 1;
-			pthread_mutex_unlock(&lock);
-			// set current buffer to the next one
-			counter++;
-			currentBuffer = counter % BUFFERS;
-		}
+		pthread_create( &h_writer, 0, tcp_writer, NULL);
+		fill_len = BSIZE;
 	}
 
+	fcntl(fd,F_SETFL,fcntl(fd,F_GETFL)| O_NONBLOCK);
+
+	while (1)
+	{
+		pr=0;
+		tr=fill_len;
+		
+		while (gbufferState[currentBuffer] != 0) {
+			static struct timespec t1 = {0,20 * 1000 * 1000};
+			nanosleep(&t1, 0);
+			perror("buffer overflow");
+		}
+		
+		while (tr)
+		{
+			if ((r=read(fd, gbuffers[currentBuffer]+pr, tr))<=0)
+			{
+				if (errno == EAGAIN) {
+					static struct timespec t2 = {0,10 * 1000 * 1000};
+					nanosleep(&t2, 0);
+				}
+				continue;
+			}
+			pr+=r;
+			tr-=r;
+			if (tr) {
+				static struct timespec t2 = {0,10 * 1000 * 1000};
+				nanosleep(&t2, 0);;
+			}
+		}
+
+		pthread_mutex_lock(&gmutex);
+		gbufferState[currentBuffer] = 1;
+		pthread_mutex_unlock(&gmutex);
+		pthread_cond_signal (&gsignal);	
+		
+		currentBuffer ++;
+		currentBuffer %= BUFFERS;
+	}
 	close(fd);
 	return 0;
 }
+
+void* tcp_writer( void* param)
+{
+	int currentBuffer = 0;
+	int tr,pr,b;
+	
+	while(1)
+	{
+		pthread_mutex_lock(&gmutex);
+        	
+		while (gbufferState[currentBuffer] != 1)
+	        {
+			pthread_cond_wait(&gsignal, &gmutex);
+	        }
+	
+		pthread_mutex_unlock(&gmutex);
+		
+		tr = BSIZE;
+		pr = 0;
+		while (tr)
+		{
+			b = write(STDOUT_FILENO, gbuffers[currentBuffer] + pr, tr);
+
+			if (b <= 0)
+        		{
+				if (b == EAGAIN) {
+					static struct timespec t1 = {0,5 * 1000 * 1000};
+					nanosleep(&t1, 0);
+					continue;
+				}
+        		}
+			
+			tr -= b;
+			pr += b;
+			if (tr) {
+				static struct timespec t1 = {0,5 * 1000 * 1000};
+				nanosleep(&t1, 0);
+			}
+		}
+		
+		gbufferState[currentBuffer] = 0;
+		currentBuffer++;
+		currentBuffer %= BUFFERS;
+	}
+	return (0);
+}
 void *
-send_udp (void * p) {
+udp_writer (void * p) {
 	int			pnr = 0;
 	int                     sockfd;
         struct sockaddr_in      cli_addr, serv_addr;
 	int			addr_len = sizeof (serv_addr);
-	static	char 		buffer[UDP_SEND_LEN];
+	int			currentBuffer = 0;
+	int			b;
 
 	if(getpeername(STDOUT_FILENO, (struct sockaddr *) &serv_addr, &addr_len)) {
 		exit(-1);
@@ -227,21 +259,48 @@ send_udp (void * p) {
 		exit(-1);
 	}
 	
-	while (1) {
-		int pr=0, r;
-		int tr=UDP_SEND_LEN-4;
-		while (tr) {
-			if ((r=read(gfd, buffer+pr, tr)) <= 0) {
-				usleep(10000); //wait for 10 ms = max. 10 kb Only for NONBLOCK operation not activated due to Bug in driver 
+	//fcntl(gfd,F_SETFL,fcntl(gfd,F_GETFL)| O_NONBLOCK);
+	
+	while(1)
+	{
+		pthread_mutex_lock(&gmutex);
+        	
+		while (gbufferState[currentBuffer] != 1)
+	        {
+			pthread_cond_wait(&gsignal, &gmutex);
+	        }
+	
+		pthread_mutex_unlock(&gmutex);
+		
+		while (1)
+		{
+			*((int *)(&(gbuffers[currentBuffer][UDP_SEND_LEN-4])))=pnr++;	
+			b = sendto(sockfd, gbuffers[currentBuffer], UDP_SEND_LEN, 0, (struct sockaddr *) &serv_addr, addr_len);
+
+			if (b <= 0)
+        		{
+				if (b == EAGAIN) {
+					static struct timespec t1 = {0,5 * 1000 * 1000};
+					nanosleep(&t1, 0);
+					continue;
+				}
+				perror("udp_writer: sendto");
 				continue;
-			}
-			pr+=r;
-			tr-=r;
+        		}
+			break;
 		}
-		*((int *)(&(buffer[UDP_SEND_LEN-4])))=pnr++;	
-		if (sendto(sockfd, buffer, UDP_SEND_LEN, 0, (struct sockaddr *) &serv_addr, addr_len) < 0) {
-			continue;
-		}
+		
+		gbufferState[currentBuffer] = 0;
+		currentBuffer++;
+		currentBuffer %= BUFFERS;
 	}
-	return(p);
+	return (0);
 }
+
+void * 
+check_alive(void * p) {
+	char b;
+	while (read(STDIN_FILENO,&b,1) >= 0);
+ 	exit(0);
+}
+	
