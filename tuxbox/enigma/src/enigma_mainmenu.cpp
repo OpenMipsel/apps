@@ -29,7 +29,7 @@ void eMainMenu::setActive(int i)
 	switch (i)
 	{
 	case 0:
-		description->setText("--> \xc2\x86 <---"); //_("TV mode"));
+		description->setText(_("TV mode"));
 		break;
 	case 1:
 		description->setText(_("Radio mode"));
