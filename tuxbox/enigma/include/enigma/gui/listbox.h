@@ -1,5 +1,5 @@
-#ifndef __listbox_h
-#define __listbox_h
+#ifndef __ss_listbox_h
+#define __ss_listbox_h
 
 #include <sstream>
 
@@ -22,7 +22,9 @@ protected:
 	eLabel* tmpDescr; // used for description Label in LCD
 	gColor colorActiveB, colorActiveF;
 	eRect crect, crect_selected;
-	int MaxEntries, item_height, flags;
+	enum  { arNothing, arCurrentOld, arAll};
+	int MaxEntries, item_height, flags, in_atomic, atomic_redraw, atomic_old, atomic_new;
+	bool atomic_selchanged;
 public:
 	enum	{		flagNoUpDownMovement=1,		flagNoPageMovement=2,		flagShowEntryHelp=4	};
 	enum	{		OK = 0,		ERROR=1,		E_ALLREADY_SELECTED = 2,		E_COULDNT_FIND = 4,		E_INVALID_ENTRY = 8	};
@@ -92,6 +94,9 @@ public:
 
 	int moveSelection(int dir);
 	void setActiveColor(gColor back, gColor front);
+
+	void beginAtomic();
+	void endAtomic();
 };
 
 class eListBoxEntry: public Object
@@ -238,6 +243,16 @@ inline void eListBox<T>::clearList()
 {
 	while (!childs.empty())
 		delete childs.first();
+	current = top = bottom = childs.end();
+	if (!in_atomic)
+	{
+		selchanged(0);
+		invalidate();
+	} else
+	{
+		atomic_selchanged=1;
+		atomic_redraw=arAll;
+	}
 }
 
 template <class T>
@@ -339,8 +354,8 @@ inline void eListBox<T>::gotFocus()
 		else if ( isVisible() )
 		{
 			int i=0;	
-			for ( ePtrList_T_iterator entry(top); entry != bottom; i++, ++entry)
-				if (*entry == *current)
+			for (ePtrList_T_iterator entry(top); entry != bottom; ++i, ++entry)
+				if (entry == current)
 					invalidateEntry(i);
 		}
 }
@@ -363,7 +378,7 @@ inline void eListBox<T>::lostFocus()
 		{
 			int i = 0;
 			for (ePtrList_T_iterator entry(top); entry != bottom; i++, ++entry)
-				if (*entry == *current)
+				if (entry == current)
 					invalidateEntry(i);
 		}
 
@@ -380,6 +395,10 @@ inline void eListBox<T>::init()
 	for (int i = 0; i < MaxEntries; i++, bottom++)
 		if (bottom == childs.end() )
 			break;	
+	if (!in_atomic)
+		invalidate();
+	else
+		atomic_redraw=arAll;
 }
 
 template <class T>
@@ -387,9 +406,9 @@ inline int eListBox<T>::moveSelection(int dir)
 {
 	if (childs.empty())
 		return 0;
-		
-	T *oldptr = *current,
-		*oldtop = *top;
+
+	ePtrList_T_iterator oldptr=current, oldtop=top;
+
 	switch (dir)
 	{
 		case dirPageDown:
@@ -412,14 +431,17 @@ inline int eListBox<T>::moveSelection(int dir)
 			if (top == childs.begin())
 				current = top;
 			else
-				for (int i = 0; i < MaxEntries; i++)
+				for (int i = 0; i < MaxEntries; ++i)
 				{	
 					if (top == childs.begin())
 						break;
-					bottom--;
 					top--;
 					current--;
 				}
+				bottom=top;
+				for (int i = 0; i < MaxEntries; ++i, ++bottom)
+					if (bottom == childs.end())
+						break;
 		break;
 		
 		case dirUp:
@@ -434,8 +456,12 @@ inline int eListBox<T>::moveSelection(int dir)
 			else
 				if (current-- == top) // new top must set
 				{
-					for (int i = 0;i < MaxEntries; i++, top--, bottom--)
+					for (int i = 0;i < MaxEntries; i++, top--)
 						if (top == childs.begin())
+							break;
+					bottom=top;
+					for (int i = 0; i < MaxEntries; ++i, ++bottom)
+						if (bottom == childs.end())
 							break;
 				}
 		break;
@@ -468,32 +494,52 @@ inline int eListBox<T>::moveSelection(int dir)
 			return 0;
 	}
 	
-	if (*current != oldptr)  // current has changed
-		/*emit*/ selchanged(*current);
+	if (current != oldptr)  // current has changed
+	{
+		if (!in_atomic)
+			selchanged(*current);
+		else
+			atomic_selchanged=1;
+	}
 
 	if (flags & flagShowEntryHelp)
 		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description avail")));
 
 	if (isVisible())
 	{
-		if (oldtop != *top)
-			invalidate();
-		else if ( *current != oldptr)
+		if (oldtop != top)
+		{
+			if (in_atomic)
+				atomic_redraw=arAll;
+			else
+				invalidate();
+		} else if ( current != oldptr)
 		{
 			int i=0;
 			int old=-1, cur=-1;
 			
 			for (ePtrList_T_iterator entry(top); entry != bottom; i++, ++entry)
-				if ( *entry == oldptr)
+				if ( entry == oldptr)
 					old=i;
-				else if ( *entry == *current )
+				else if ( entry == current )
 					cur=i;
 			
-			if (old != -1)
-				invalidateEntry(old);
-
-			if ( (cur != -1) )
-				invalidateEntry(cur);
+			if (in_atomic)
+			{
+				if (atomic_redraw == arNothing)
+				{
+					atomic_old=old;
+					atomic_redraw = arCurrentOld;
+				}
+				if (atomic_redraw == arCurrentOld)
+					atomic_new=cur;
+			} else
+			{
+				if (old != -1)
+					invalidateEntry(old);
+				if (cur != -1)
+					invalidateEntry(cur);
+			}
 		}
 	}
 	return 1;
@@ -540,16 +586,16 @@ inline int eListBox<T>::eventHandler(const eWidgetEvent &event)
 template <class T>
 inline int eListBox<T>::setCurrent(const T *c)
 {
-	if (childs.empty() || *current == c)  // no entries or current is equal the entry to search
+	if (childs.empty() || ((current != childs.end()) && (*current == c)))  // no entries or current is equal the entry to search
 		return E_ALLREADY_SELECTED;	// do nothing
 
-	ePtrList_T_iterator it(childs.begin());
+	ePtrList_T_iterator item(childs.begin()), it(childs.begin());
 
-	for ( ; it != childs.end(); it++)
-		if ( *it == c )
+	for ( ; item != childs.end(); item++)
+		if ( *item == c )
 			break;
 
-	if ( it == childs.end() ) // entry not in listbox... do nothing
+	if ( item == childs.end() ) // entry not in listbox... do nothing
 		return E_COULDNT_FIND;
 
 	int newCurPos=-1;
@@ -558,37 +604,49 @@ inline int eListBox<T>::setCurrent(const T *c)
 
 	int i = 0;
 
-	for (it=top; it != bottom; it++, i++ )  // check if entry to set between bottom and top
+	for (it=top; it != bottom; ++it, ++i)  // check if entry to set between bottom and top
 	{
-		if ( *it == c)
+		if (it == item)
 		{
 			newCurPos=i;
 			current = it;
 		}
-		if ( *it == *oldCur)
+		if ( it == oldCur)
 			oldCurPos=i;
 	}
 
-	if (newCurPos != -1) // the we start to search from begin
+	if (newCurPos != -1)	// found on current screen, so redraw only old and new
 	{
 		if (isVisible())
-		{			
-			invalidateEntry(newCurPos);
-			invalidateEntry(oldCurPos);
+		{
+			if (in_atomic)
+			{
+				if (atomic_redraw == arNothing)
+				{
+					atomic_redraw = arCurrentOld;
+					atomic_old = oldCurPos;
+				}
+				if (atomic_redraw == arCurrentOld)
+					atomic_new = newCurPos;
+			} else
+			{
+				invalidateEntry(newCurPos);
+				if (oldCurPos != -1)
+					invalidateEntry(oldCurPos);
+			}
 		}
-	}	
-	else
+	}	else // the we start to search from begin
 	{
 		bottom = childs.begin();
-						
+
 		while (newCurPos == -1 && MaxEntries )  // MaxEntries is already checked above...
 		{
 			if ( bottom != childs.end() )
 				top = bottom;		// nächster Durchlauf
 
-			for (	i = 0; i < MaxEntries && bottom != childs.end(); bottom++, i++)
+			for (	i = 0; (i < MaxEntries) && (bottom != childs.end()); ++bottom, ++i)
 			{
-				if ( *bottom == c )		// das suckt... hier werden Zeiger verglichen ! Hier wird nicht der Operator== von T benutzt !
+				if (bottom == item)
 				{
 					current = bottom;  // we have found
 					newCurPos++;
@@ -596,10 +654,18 @@ inline int eListBox<T>::setCurrent(const T *c)
       }
 		}
 		if (isVisible())
-			invalidate();   // Draw all
+		{
+			if (in_atomic)
+				invalidate();   // Draw all
+			else
+				atomic_redraw=arAll;
+		}
   }
 
-	/*emit*/ selchanged(*current);
+	if (! in_atomic)
+		selchanged(*current);
+	else
+		atomic_selchanged=1;
 
 	return OK;
 }
@@ -621,6 +687,40 @@ void eListBox<T>::setActiveColor(gColor back, gColor front)
 				break;
 			}
 		}
+	}
+}
+
+template <class T>
+void eListBox<T>::beginAtomic()
+{
+	if (!in_atomic++)
+	{
+		atomic_redraw=arNothing;
+		atomic_selchanged=0;
+		atomic_new=-1;
+	}
+}
+
+template <class T>
+void eListBox<T>::endAtomic()
+{
+	if (!--in_atomic)
+	{
+		if (atomic_redraw == arAll)
+			invalidate();
+		else if (atomic_redraw == arCurrentOld)
+		{
+			if (atomic_new != -1)
+				invalidateEntry(atomic_new);
+			if (atomic_old != -1)
+				invalidateEntry(atomic_old);
+		}
+		if (atomic_selchanged)
+			if (childs.empty())
+				selchanged(0);
+			else
+				selchanged(*current);
+			
 	}
 }
 
