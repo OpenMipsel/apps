@@ -244,7 +244,7 @@ void eDVBSettings::saveServices()
 	FILE *f=fopen(CONFIGDIR "/enigma/services", "wt");
 	if (!f)
 		eFatal("couldn't open servicefile - create " CONFIGDIR "/enigma!");
-	fprintf(f, "eDVB services - modify as long as you pay for the damage!\n");
+	fprintf(f, "eDVB services /1/\n");
 
 	getTransponders()->forEachTransponder(saveTransponder(f));
 	getTransponders()->forEachService(saveService(f));
@@ -390,7 +390,7 @@ void eDVBSettings::saveBouquets()
 	FILE *f=fopen(CONFIGDIR "/enigma/bouquets", "wt");
 	if (!f)
 		eFatal("couldn't open bouquetfile - create " CONFIGDIR "/enigma!");
-	fprintf(f, "eDVB bouquets - modify as long as you don't blame me!\n");
+	fprintf(f, "eDVB bouquets /1/");
 	fprintf(f, "bouquets\n");
 	for (ePtrList<eBouquet>::iterator i(*getBouquets()); i != getBouquets()->end(); ++i)
 	{
