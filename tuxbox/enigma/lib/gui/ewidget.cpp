@@ -359,13 +359,13 @@ void eWidget::willHideChildren()
 	}
 }
 
-void eWidget::findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *context)
+void eWidget::findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *context, const eString& style)
 {
 	for (actionMapList::iterator i = actionmaps.begin(); i != actionmaps.end(); ++i)
-		(*i)->findAction(prio, key, context);
-		
+		(*i)->findAction(prio, key, context, style );
+
 	if (focus && focus != this)
-		focus->findAction(prio, key, context);
+		focus->findAction(prio, key, context, style );
 }
 
 int eWidget::eventFilter(const eWidgetEvent &event)
@@ -394,15 +394,20 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		return 1;
 	case eWidgetEvent::evtKey:
 	{
-		eActionPrioritySet prio;
+		eActionPrioritySet prioDefault;
+		eActionPrioritySet prioStyle;
 
-		findAction(prio, *evt.key, this);
+		findAction(prioStyle, *evt.key, this, eActionMapList::getInstance()->getCurrentStyle() );
 		if (focus && (focus != this))
-			focus->findAction(prio, *evt.key, focus);
+			focus->findAction(prioStyle, *evt.key, focus, eActionMapList::getInstance()->getCurrentStyle() );
+
+		findAction(prioDefault, *evt.key, this, _("default") );
+		if (focus && (focus != this))
+			focus->findAction(prioDefault, *evt.key, focus, _("default") );
 
 		// and look at global ones. NOT YET.
 		
-		for (eActionPrioritySet::iterator i(prio.begin()); i != prio.end(); ++i)
+		for (eActionPrioritySet::iterator i(prioDefault.begin()); i != prioDefault.end(); ++i)
 		{
 			if (i->first)
 			{

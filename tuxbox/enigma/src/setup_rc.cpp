@@ -3,8 +3,10 @@
 #include <lib/gui/slider.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/elabel.h>
+#include <lib/gui/combobox.h>
 #include <lib/gui/enumber.h>
 #include <lib/gui/eskin.h>
+#include <lib/gui/actions.h>
 #include <lib/system/econfig.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/dvbwidgets.h>
@@ -33,7 +35,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 {
 	setText(_("Remotecontrol Setup"));
 	move(ePoint(150, 136));
-	resize(eSize(450, 280));
+	resize(eSize(450, 350));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
@@ -67,9 +69,28 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	srdelay->setHelpText(_("set RC repeat delay ( left / right )"));
 	CONNECT( srdelay->changed, eZapRCSetup::delayChanged );
 
+	lrcStyle=new eLabel(this);
+	lrcStyle->move(ePoint(20, 100));
+	lrcStyle->resize(eSize(220, fd+4));
+	lrcStyle->setText("Remotecontrol Style:");
+	rcStyle=new eComboBox(this, 4, lrcStyle);
+	rcStyle->move(ePoint(20, 140));
+	rcStyle->resize(eSize(170, 35));
+	rcStyle->setHelpText(_("select your favourite rc style (ok)"));
+	rcStyle->loadDeco();
+	CONNECT( rcStyle->selchanged, eZapRCSetup::styleChanged );
+  eListBoxEntryText *current=new eListBoxEntryText( *rcStyle, _("default") );
+	for (std::set<eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin()); it != eActionMapList::getInstance()->getExistingStyles().end(); it++ )
+	{
+		if ( *it == eActionMapList::getInstance()->getCurrentStyle() )
+			current = new eListBoxEntryText( *rcStyle, *it );
+		else
+			new eListBoxEntryText( *rcStyle, *it );
+	}
+	rcStyle->setCurrent( current );
 	ok=new eButton(this);
 	ok->setText(_("save"));
-	ok->move(ePoint(20, 135));
+	ok->move(ePoint(20, clientrect.height()-80));
 	ok->resize(eSize(170, 40));
 	ok->setHelpText(_("close window and save changes"));
 	ok->loadDeco();
@@ -77,7 +98,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 
 	abort=new eButton(this);
 	abort->setText(_("abort"));
-	abort->move(ePoint(210, 135));
+	abort->move(ePoint(210, clientrect.height()-80));
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("close window (no changes are saved)"));
 	abort->loadDeco();
@@ -96,8 +117,15 @@ eZapRCSetup::~eZapRCSetup()
 {
 }
 
+void eZapRCSetup::styleChanged( eListBoxEntryText* e)
+{
+	eActionMapList::getInstance()->setCurrentStyle( e->getText() );
+}
+
 void eZapRCSetup::okPressed()
 {
+	// save current selected style
+	eConfig::getInstance()->setKey("/ezap/rc/style", rcStyle->getCurrent()->getText().c_str() );
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->setKey("/ezap/rc/repeatDelay", rdelay);
 	eConfig::getInstance()->flush();
@@ -106,6 +134,11 @@ void eZapRCSetup::okPressed()
 
 void eZapRCSetup::abortPressed()
 {
+// restore old style
+	char *style;
+	eConfig::getInstance()->getKey("/ezap/rc/style", style);
+	eActionMapList::getInstance()->setCurrentStyle( style );
+
 	eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);
 	update();
