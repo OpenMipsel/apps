@@ -286,10 +286,10 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	return 0;
 }
 
-int eFrontend::RotorUseTimeout(secCmdSequence& seq, int newPosition )
+int eFrontend::RotorUseTimeout(secCmdSequence& seq, int newPosition, double degPerSec )
 {
-	int TimePerDegree=600; // msec
-	int startDelay=500;//1000;
+	double TimePerDegree=1000/degPerSec; // msec
+	int startDelay=800;  // we use hardcoded start delay of 800msec
 
 	// send DiSEqC Sequence ( normal diseqc switches )
 	if ( ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
@@ -846,12 +846,14 @@ int eFrontend::tune(eTransponder *trans,
 		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && lastRotorCmd != RotorCmd
 			&& !noRotorCmd )
 		{
-      lastRotorCmd=RotorCmd;
+			lastRotorCmd=RotorCmd;
 			// drive rotor always with 18V ( is faster )
 			seq.voltage = SEC_VOLTAGE_18;
 
-			RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
-			//RotorUseTimeout(seq, sat->getOrbitalPosition() );
+			if ( lnb->getDiSEqC().useRotorInPower )
+				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
+			else
+				RotorUseTimeout(seq, sat->getOrbitalPosition(), lnb->getDiSEqC().DegPerSec );
 
 			// set the right voltage
 			if ( voltage != SEC_VOLTAGE_18 )

@@ -14,11 +14,8 @@
 //#include <lib/driver/rc.h>
 
 eSatelliteConfigurationManager::eSatelliteConfigurationManager()
-	:refresh(0), deleteThisEntry( 0 )
+	:refresh(0)
 {
-	// send no more DiSEqC Commands on transponder::tune to Rotor
-	eFrontend::getInstance()->disableRotor();
-
 	lSatPos = new eLabel(this);
 	lSatPos->setName("lSatPos");
 
@@ -80,7 +77,8 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 
 	complexity=checkComplexity();
 	eConfig::getInstance()->getKey("/elitedvb/DVB/config/lnbs/type", complexity);
-	combo_type->setCurrent( (void*)complexity );
+	combo_type->setCurrent( (void*)(complexity-1) );
+	combo_type->setCurrent( (void*)complexity );	
 
 	repositionWidgets();
 
@@ -135,6 +133,7 @@ void eSatelliteConfigurationManager::typeChanged(eListBoxEntryText* newtype)
 
 void eSatelliteConfigurationManager::setComplexity(int complexity)
 {
+	eDebug("setComplexitiy = %d", complexity);
 	int i=0;
 	if (complexity < 3)
 	{
@@ -176,7 +175,7 @@ void eSatelliteConfigurationManager::setComplexity(int complexity)
 			setSimpleDiseqc(it->getSatelliteList().first(), i);
 		break;
 	case 2:
-		deleteSatellitesAbove(4);
+		deleteSatellitesAbove(4);		
 		while (eTransponderList::getInstance()->getLNBs().size() < 4)
 			newPressed();
 		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
@@ -288,11 +287,14 @@ start:
 		int index=0;
 		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); (it != eTransponderList::getInstance()->getLNBs().end()); ++it)
 			for ( ePtrList<eSatellite>::iterator si = it->getSatelliteList().begin() ; si != it->getSatelliteList().end(); si++)
-				if (index++ >= n)
+				if ( it->getSatelliteList().size() > 1 || index++ >= n )
 				{
-					delSatellite(si);
+					delSatellite(si, false);
 					goto start;
 				}
+
+		// redraw satellites
+		repositionWidgets();
 }
 
 void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr)
@@ -318,6 +320,8 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 	lnb->getDiSEqC().uncommitted_switch=0;
 	lnb->getDiSEqC().uncommitted_gap=0;
 	lnb->getDiSEqC().useGotoXX=1;
+	lnb->getDiSEqC().useRotorInPower=0;
+	lnb->getDiSEqC().DegPerSec=1.0;
 	lnb->getDiSEqC().gotoXXLatitude=0.0;
 	lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
 	lnb->getDiSEqC().gotoXXLongitude=0.0;
@@ -328,9 +332,6 @@ eSatelliteConfigurationManager::~eSatelliteConfigurationManager()
 {
 	if (refresh)
 		delete refresh;
-
-// enable send DiSEqC Commands to Rotor on eTransponder::tune
-	eFrontend::getInstance()->enableRotor();
 }
 
 eSatellite *eSatelliteConfigurationManager::getSat4SatCombo( const eComboBox *c )
@@ -378,20 +379,26 @@ eSatellite *eSatelliteConfigurationManager::getSat4LnbButton( const eButton *b )
 #define POS_Y 0
 void eSatelliteConfigurationManager::repositionWidgets()
 {
-	if (deleteThisEntry)
+	for (std::list<SatelliteEntry*>::iterator It( deleteEntryList.begin() ); It != deleteEntryList.end();)
 	{
-		delete deleteThisEntry->sat;
-		delete deleteThisEntry->lnb;
-		delete deleteThisEntry->voltage;
-		delete deleteThisEntry->hilo;
-		delete deleteThisEntry->fixed;
-		delete deleteThisEntry->description;
+		(**It).sat->hide();
+		(**It).lnb->hide();
+		(**It).voltage->hide();
+		(**It).hilo->hide();
+		(**It).fixed->hide();
+		(**It).description->hide();
+		delete (**It).sat;
+		delete (**It).lnb;
+		delete (**It).voltage;
+		delete (**It).hilo;
+		delete (**It).fixed;
+		delete (**It).description;
 		// search Entry in Map;		
 		std::map< eSatellite*, SatelliteEntry >::iterator it( entryMap.begin() );
-		for ( ; it != entryMap.end() && &it->second != deleteThisEntry ; it++);
+		for ( ; it != entryMap.end() && &it->second != *It ; it++);
 		if (it != entryMap.end() )
-			entryMap.erase( it );		
-		deleteThisEntry=0;
+			entryMap.erase( it );
+		It = deleteEntryList.erase(It);
 	}
 	int count=0, y=POS_Y;
 
@@ -481,7 +488,7 @@ void eSatelliteConfigurationManager::erasePressed()
 	}
 }
 
-void eSatelliteConfigurationManager::delSatellite( eSatellite* s )
+void eSatelliteConfigurationManager::delSatellite( eSatellite* s, bool redraw )
 {
 	eDVB::getInstance()->settings->removeOrbitalPosition(s->getOrbitalPosition());
 	eLNB* lnb = s->getLNB();
@@ -495,7 +502,11 @@ void eSatelliteConfigurationManager::delSatellite( eSatellite* s )
 	else
 		eDebug("do not delete lnb");
 
-	deleteThisEntry = &entryMap[ s ];
+	deleteEntryList.push_back(&entryMap[ s ]);
+
+	if(!redraw)
+		return;
+
 	if (!refresh)
 	{
 		refresh = new eTimer( eApp );
@@ -547,8 +558,8 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 	c->resize(eSize(250, 30));
 	c->setHelpText( _("press ok to select another satellite, or delete this satellite"));
 
-	if (complexity == 3)
-		new eListBoxEntryText( *c, _("*delete*"), (void*) 0 );   // this is to delete an satellite
+/*	if (complexity == 3)
+		new eListBoxEntryText( *c, _("*delete*"), (void*) 0 );   // this is to delete an satellite*/
 	for (std::list<tpPacket>::const_iterator i(networks.begin()); i != networks.end(); ++i)
 		if ( i->possibleTransponders.size() )
 			new eListBoxEntryText( *c, i->name, (void*) i->possibleTransponders.begin()->satellite.orbital_position );
@@ -634,7 +645,6 @@ void eSatelliteConfigurationManager::newPressed()
 		return;
 	}
 
-
 	eLNB *lnb;
 			// if not in user-defined mode, 
 	if ( (complexity < 3) || !eTransponderList::getInstance()->getLNBs().size() )  // lnb list is empty ?
@@ -653,6 +663,8 @@ void eSatelliteConfigurationManager::newPressed()
 		lnb->getDiSEqC().uncommitted_switch=0;
 		lnb->getDiSEqC().uncommitted_gap=0;
 		lnb->getDiSEqC().useGotoXX=1;
+		lnb->getDiSEqC().useRotorInPower=0;
+		lnb->getDiSEqC().DegPerSec=1.0;
 		lnb->getDiSEqC().gotoXXLatitude=0.0;
 		lnb->getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
 		lnb->getDiSEqC().gotoXXLongitude=0.0;
@@ -729,24 +741,15 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	DiSEqCPage->setLCD( lcdTitle, lcdElement );
 	LNBPage = new eLNBPage( this, sat );
 	LNBPage->setLCD( lcdTitle, lcdElement );
-	RotorPage = new eRotorPage( this, sat );
-	RotorPage->setLCD( lcdTitle, lcdElement );
-//	ManuallyRotorPage = new eManuallyRotorPage( this );
-	RotorPage->setLCD( lcdTitle, lcdElement );
     
 	DiSEqCPage->hide();
 	LNBPage->hide();
-	RotorPage->hide();
-//	ManuallyRotorPage->hide();
-	mp.addPage( LNBPage );    
-	mp.addPage( DiSEqCPage );
-//	mp.addPage( ManuallyRotorPage );
-	mp.addPage( RotorPage );
+	mp.addPage(LNBPage);
+	mp.addPage(DiSEqCPage);
 
 // here we can not use the Makro CONNECT ... slot (*this, .... is here not okay..
 	LNBPage->lnb_list->selchanged.connect( slot( *LNBPage, &eLNBPage::lnbChanged) );
 	LNBPage->lnb_list->selchanged.connect( slot( *DiSEqCPage, &eDiSEqCPage::lnbChanged) );
-	LNBPage->lnb_list->selchanged.connect( slot( *RotorPage, &eRotorPage::lnbChanged) );
    
 	CONNECT( DiSEqCPage->next->selected, eLNBSetup::onNext );
 	CONNECT( LNBPage->next->selected, eLNBSetup::onNext );
@@ -755,30 +758,7 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	CONNECT( LNBPage->cancel->selected, eLNBSetup::reject);
 	CONNECT( DiSEqCPage->save->selected, eLNBSetup::onSave);
 	CONNECT( DiSEqCPage->cancel->selected, eLNBSetup::reject);
-	CONNECT( RotorPage->prev->selected, eLNBSetup::onPrev );
-	CONNECT( RotorPage->save->selected, eLNBSetup::onSave );
-	CONNECT( RotorPage->cancel->selected, eLNBSetup::reject);
-//	CONNECT( ManuallyRotorPage->prev->selected, eLNBSetup::onPrev );
 } 
-
-struct savePosition: public std::unary_function< eListBoxEntryText&, void>
-{
-	std::map<int,int> &map;
-
-	savePosition(std::map<int,int> &map): map(map)
-	{
-	}
-
-	bool operator()(eListBoxEntryText& s)
-	{
-		if ( (int)s.getKey() == 0xFFFF )
-			return 0; // ignore sample Entry... delete me...
-
-		int num = atoi( s.getText().left( s.getText().find('/') ).c_str() );
-		map[ (int)s.getKey() ] = num;
-		return 0;
-	}
-};
 
 void eLNBSetup::onSave()
 {
@@ -805,13 +785,6 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().SeqRepeat = DiSEqCPage->SeqRepeat->isChecked();
 	p->getDiSEqC().uncommitted_switch = DiSEqCPage->uncommitted->isChecked();
 	p->getDiSEqC().uncommitted_gap = DiSEqCPage->uncommitted_gap->isChecked();
-	p->getDiSEqC().useGotoXX = RotorPage->useGotoXX->isChecked();
-	p->getDiSEqC().gotoXXLaDirection = (int)RotorPage->LaDirection->getCurrent()->getKey();
-	p->getDiSEqC().gotoXXLoDirection = (int)RotorPage->LoDirection->getCurrent()->getKey();
-	p->getDiSEqC().gotoXXLatitude = RotorPage->Latitude->getFixedNum();
-	p->getDiSEqC().gotoXXLongitude = RotorPage->Longitude->getFixedNum();
-	p->getDiSEqC().RotorTable.clear();
-	RotorPage->positions->forEachEntry( savePosition( p->getDiSEqC().RotorTable ) );
                 
 	if ( p != sat->getLNB() )  // the satellite must removed from the old lnb and inserts in the new
 	{
@@ -848,7 +821,6 @@ int eLNBSetup::eventHandler(const eWidgetEvent &event)
 		mp.first();
 		LNBPage->lnbChanged( LNBPage->lnb_list->getCurrent() );   // fake selchanged for initialize lofl, lofh, threshold...
 		DiSEqCPage->lnbChanged( LNBPage->lnb_list->getCurrent() );   // fake selchanged for initialize lofl, lofh, threshold...
-		RotorPage->lnbChanged( LNBPage->lnb_list->getCurrent() );   // fake selchanged for initialize lofl, lofh, threshold...        
 	break;
 	default:
 		break;
@@ -1033,8 +1005,8 @@ eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
 	uncommitted_gap = new eCheckbox(this);
 	uncommitted_gap->setName("uncommitted_gap");
 
-	next = new eButton(this);
-	next->setName("next");
+/*	next = new eButton(this);
+	next->setName("next");*/
             
 	prev = new eButton(this);
 	prev->setName("prev");
@@ -1119,320 +1091,3 @@ void eDiSEqCPage::lnbChanged( eListBoxEntryText *lnb )
 	DiSEqCModeChanged( (eListBoxEntryText*) DiSEqCMode->getCurrent() );
 }
 
-eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
-	:eWidget(parent), sat(sat)
-{
-	LCDTitle=parent->LCDTitle;
-	LCDElement=parent->LCDElement;
-
-	useGotoXX = new eCheckbox(this);
-	useGotoXX->setName("useGotoXX");
-
-	lLongitude = new eLabel(this);
-	lLongitude->setName("lLongitude");
-	lLongitude->hide();
-
-	Longitude = new eNumber(this, 2, 0, 360, 3, 0, 0, lLongitude );
-	Longitude->setFlags( eNumber::flagFixedNum );
-	Longitude->setName("Longitude");
-	Longitude->hide();
-
-	LoDirection = new eComboBox( this, 2 );
-	LoDirection->setName("LoDirection");
-	LoDirection->hide();
-	new eListBoxEntryText( *LoDirection, _("East"), (void*)eDiSEqC::EAST, 0, _("East") );
-	new eListBoxEntryText( *LoDirection, _("West"), (void*)eDiSEqC::WEST, 0, _("West") );
-
-	lLatitude = new eLabel(this);
-	lLatitude->setName("lLatitude");
-	lLatitude->hide();
-
-	Latitude = new eNumber(this, 2, 0, 360, 3, 0, 0, lLatitude );
-	Latitude->setFlags( eNumber::flagFixedNum );
-	Latitude->setName("Latitude");
-	Latitude->hide();
-
-	LaDirection = new eComboBox( this, 2 );
-	LaDirection->setName("LaDirection");
-	LaDirection->hide();
-	new eListBoxEntryText( *LaDirection, _("North"), (void*)eDiSEqC::NORTH, 0, _("North") );
-	new eListBoxEntryText( *LaDirection, _("South"), (void*)eDiSEqC::SOUTH, 0, _("South") );
-
-	positions = new eListBox< eListBoxEntryText >( this );  
-	positions->setFlags( eListBoxBase::flagNoPageMovement );
-	positions->setName("positions");
-	positions->hide();
-  
-	lStoredRotorNo = new eLabel(this);
-	lStoredRotorNo->setName("lStoredRotorNo");
-	lStoredRotorNo->hide();
-	number = new eNumber( this, 1, 0, 255, 3, 0, 0, lStoredRotorNo);
-	number->setName("StoredRotorNo");
-	number->hide();
-
-	lOrbitalPosition = new eLabel(this);
-	lOrbitalPosition->setName("lOrbitalPosition");
-	lOrbitalPosition->hide();
-	orbital_position = new eNumber( this, 1, 0, 360, 3, 0, 0, lOrbitalPosition);
-
-	orbital_position->setName("OrbitalPosition");
-	orbital_position->hide();
-  
-	lDirection = new eLabel(this);
-	lDirection->setName("lDirection");
-	lDirection->hide();
-	direction = new eComboBox( this, 2, lDirection );
-	direction->setName("Direction");
-	direction->hide();
-	new eListBoxEntryText( *direction, _("East"), (void*)0, 0, _("East") );
-	new eListBoxEntryText( *direction, _("West"), (void*)1, 0, _("West") );
-
-	add = new eButton( this );
-	add->setName("add");
-	add->hide();
-
-	remove = new eButton ( this );
-	remove->setName("remove");
-	remove->hide();
-  
-	prev = new eButton(this);
-	prev->setName("prev");
-
-	save = new eButton(this);
-	save->setName("save");
-
-	cancel = new eButton(this);
-	cancel->setName("cancel");
-
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eRotorPage"))
-		eFatal("skin load of \"eRotorPage\" failed");
-
-	CONNECT( orbital_position->selected, eRotorPage::numSelected );
-	CONNECT( Longitude->selected, eRotorPage::numSelected );
-	CONNECT( Latitude->selected, eRotorPage::numSelected );
-	CONNECT( number->selected, eRotorPage::numSelected );    
-	CONNECT( add->selected, eRotorPage::onAdd );
-	CONNECT( remove->selected, eRotorPage::onRemove );
-	CONNECT( positions->selchanged, eRotorPage::posChanged );
-	CONNECT( useGotoXX->checked, eRotorPage::gotoXXChanged );
-  
-	addActionMap(&i_focusActions->map);
-}
-
-void eRotorPage::gotoXXChanged( int state )
-{
-	eDebug("gotoXXChanged to %d", state);
-	if ( state )
-	{
-		add->hide();
-		remove->hide();
-		lOrbitalPosition->hide();
-		orbital_position->hide();
-		lStoredRotorNo->hide();
-		number->hide();
-		lDirection->hide();
-		direction->hide();
-		positions->hide();
-		
-		lLongitude->show();
-		Longitude->show();
-		LoDirection->show();
-		lLatitude->show();
-		Latitude->show();
-		LaDirection->show();
-	}
-	else
-	{
-		lLongitude->hide();
-		Longitude->hide();
-		LoDirection->hide();
-		lLatitude->hide();
-		Latitude->hide();
-		LaDirection->hide();
-
-		positions->show();
-		add->show();
-		remove->show();
-		lOrbitalPosition->show();
-		orbital_position->show();
-		lStoredRotorNo->show();
-		number->show();
-		lDirection->show();
-		direction->show();
-		positions->show();
-	}
-}
-
-void eRotorPage::lnbChanged( eListBoxEntryText *lnb )
-{
-	curlnb=(eLNB*)lnb->getKey();
-
-	positions->beginAtomic();
-
-	positions->clearList();
-	eDiSEqC &DiSEqC = ((eLNB*)lnb->getKey())->getDiSEqC();
-  
-	if ( lnb && lnb->getKey() )
-	{
-		for ( std::map<int, int>::iterator it ( DiSEqC.RotorTable.begin() ); it != DiSEqC.RotorTable.end(); it++ )
-			new eListBoxEntryText( positions, eString().sprintf(" %d / %03d %c", it->second, abs(it->first), it->first > 0 ? 'E' : 'W'), (void*) it->first );
-
-		useGotoXX->setCheck( (int) ((eLNB*)lnb->getKey())->getDiSEqC().useGotoXX );
-		gotoXXChanged( (int) ((eLNB*)lnb->getKey())->getDiSEqC().useGotoXX );
-		Latitude->setFixedNum( ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXLatitude );
-		LaDirection->setCurrent( (void*) ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXLaDirection );
-		Longitude->setFixedNum( ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXLongitude );
-		LoDirection->setCurrent( (void*) ((eLNB*)lnb->getKey())->getDiSEqC().gotoXXLoDirection );		
-	}
-	else
-	{
-		Latitude->setFixedNum(0);
-		LaDirection->setCurrent(0);
-		Longitude->setFixedNum(0);
-		LoDirection->setCurrent(0);		
-		useGotoXX->setCheck( 1 );
-	}
-
-	if ( positions->getCount() )
-	{
-		positions->sort();
-		positions->moveSelection(eListBox<eListBoxEntryText>::dirFirst);
-	}
-	else
-	{
-		new eListBoxEntryText( positions, _("delete me"), (void*) 0xFFFF );
-		posChanged(0);
-	}
-
-	positions->endAtomic();
-}
-
-void eRotorPage::posChanged( eListBoxEntryText *e )
-{
-	if ( e && (int)e->getKey() != 0xFFFF )
-	{
-		direction->setCurrent( e->getText().right( 1 ) == "E" ? 0 : 1 );
-		orbital_position->setNumber( (int) e->getKey() );
-		number->setNumber( atoi( e->getText().mid( 1 , e->getText().find('/')-1 ).c_str()) );
-	}
-	else
-	{
-		orbital_position->setNumber( 0 );
-		number->setNumber( 0 );
-		direction->setCurrent( 0 );
-	}
-}
-
-void eRotorPage::numSelected(int*)
-{
-	focusNext( eWidget::focusDirNext );
-}
-
-void eRotorPage::onAdd()
-{
-	positions->beginAtomic();
-
-	new eListBoxEntryText( positions,eString().sprintf(" %d / %03d %c",
-																											number->getNumber(),
-																											orbital_position->getNumber(),
-																											direction->getCurrent()->getKey() ? 'W':'E'
-																										),
-													(void*) ( direction->getCurrent()->getKey()
-													? - orbital_position->getNumber()
-													: orbital_position->getNumber() )
-												);
-
-	positions->sort();
-	positions->invalidateContent();
-	positions->endAtomic();
-}
-
-void eRotorPage::onRemove()
-{
-	positions->beginAtomic();
-
-	if (positions->getCurrent())
-		positions->remove( positions->getCurrent() );
-
-	if (!positions->getCount())
-	{
-		new eListBoxEntryText( positions, _("delete me"), (void*) 0xFFFF );
-		posChanged(0);
-	}
-
-	positions->invalidate();
-	positions->endAtomic();
-}
-
-eManuallyRotorPage::eManuallyRotorPage( eWidget *parent )
-	:eWidget(parent), transponder(*eDVB::getInstance()->settings->getTransponders())
-{
-	int ft=0;
- 
-	switch (eFrontend::getInstance()->Type())
-	{
-	case eFrontend::feSatellite:
-		ft=eTransponderWidget::deliverySatellite;
-		break;
-	case eFrontend::feCable:
-		ft=eTransponderWidget::deliveryCable;
-		break;
-	default:
-		ft=eTransponderWidget::deliverySatellite;
-		break;
-	}
-
-	transponder_widget=new eTransponderWidget(this, 1, ft);
-	transponder_widget->load();
-	transponder_widget->setName("transponder");
-
-	festatus_widget=new eFEStatusWidget(this, eFrontend::getInstance());
-	festatus_widget->setName("festatus");
-
-	prev = new eButton(this);
-	prev->setName("prev");
-
-	if ( eSkin::getActive()->build(this, "eRotorPageManual"))
-		eFatal("skin load of \"eRotorPageManual\" failed");
-
-	CONNECT(transponder_widget->updated, eManuallyRotorPage::retune );
-}
-
-void eManuallyRotorPage::retune()
-{
-	if (!transponder_widget->getTransponder(&transponder))
-		transponder.tune();
-}
-
-int eManuallyRotorPage::eventHandler( const eWidgetEvent &event )
-{
-	eDebug("eventHandler");
-	switch (event.type)
-	{
-		case eWidgetEvent::willShow:
-		{
-			eDebug("eventHandler->willShow()");
-			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
-
-			if (sapi && sapi->transponder)
-				transponder=*sapi->transponder;
-			else
-				switch (eFrontend::getInstance()->Type())
-				{
-				case eFrontend::feCable:
-					transponder.setCable(402000, 6900000, 0, 3);	// some cable transponder
-					break;
-				case eFrontend::feSatellite:
-					transponder.setSatellite(12551500, 22000000, eFrontend::polVert, 4, 0, 192 ); // some astra transponder
-					break;
-				default:
-					break;
-				}
-			transponder_widget->setTransponder(&transponder);
-		}
-		default:
-			return eWidget::eventHandler(event);
-	}
-	return 1;
-}

@@ -560,6 +560,8 @@ struct eDiSEqC
 	int uncommitted_switch; // send to uncommited switch
 	int uncommitted_gap;    // send uncommitted switch in DiSEqC Repeat gap
 	int useGotoXX;          // Rotor Support gotoXX Position ?
+	int useRotorInPower;    // can we use Rotor Input Power to detect Rotor state ?
+	double DegPerSec;       // degress per Second.. used when no Input Power can used
 	enum { NORTH, SOUTH, EAST, WEST };
 	int gotoXXLoDirection;  // EAST, WEST
 	int gotoXXLaDirection;  // NORT, SOUTH

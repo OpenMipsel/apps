@@ -48,7 +48,7 @@ class eFrontend: public Object
 			SpectralInversion Inversion, eSatellite* sat, Modulation QAM);
 
 	void timeout();
-	int RotorUseTimeout(secCmdSequence& seq, int newPos );
+	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec );
 	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat );
 	int noRotorCmd;
 public:

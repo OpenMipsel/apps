@@ -152,11 +152,31 @@ int tsManual::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
+	case eWidgetEvent::evtAction:
+		if (event.action == &i_cursorActions->cancel)
+			close(2);
+		else
+			break;
+		return 1;
 	case eWidgetEvent::execBegin:
 		retune();
 		break;
 	default:
 		break;
+	}
+	return 0;
+}
+
+int tsAutomatic::eventHandler(const eWidgetEvent &event)
+{
+	switch (event.type)
+	{
+	case eWidgetEvent::evtAction:
+		if (event.action == &i_cursorActions->cancel)
+			close(2);
+		else
+			break;
+		return 1;
 	}
 	return 0;
 }

@@ -17,18 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.4 2002/11/25 05:37:30 Ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.5 2002/12/22 23:51:07 Ghostrider Exp $
  */
 
 #include <enigma_scan.h>
 
 #include <satconfig.h>
+#include <rotorconfig.h>
 #include <scan.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gui/ewindow.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
+#include <lib/gui/emessage.h>
 #include <lib/base/i18n.h>
 
 eZapScan::eZapScan()
@@ -38,7 +40,11 @@ eZapScan::eZapScan()
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to mainmenu")))->selected, eZapScan::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Transponder scan"), _("goto transponder scan")))->selected, eZapScan::sel_scan);	
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )  // only when a sat box is avail we shows a satellite config
-		CONNECT((new eListBoxEntryMenu(&list, _("Satellites..."), _("goto satellite config")))->selected, eZapScan::sel_satconfig);	
+	{
+		CONNECT((new eListBoxEntryMenu(&list, _("Satellites..."), _("goto satellite config")))->selected, eZapScan::sel_satconfig);
+		CONNECT((new eListBoxEntryMenu(&list, _("Rotor Setup..."), _("goto Rotor Setup")))->selected, eZapScan::sel_rotorConfig);
+//		CONNECT((new eListBoxEntryMenu(&list, _("Manual Rotor Menu"), _("set Limits, drive East, drive West, ...")))->selected, eZapScan::sel_rotorManual);
+	}
 //	CONNECT((new eListBoxEntryMenu(&list, _("Bouquets...")))->selected, eZapScan::sel_bouquet);	
 }
 
@@ -73,4 +79,80 @@ void eZapScan::sel_satconfig()
 	satconfig.exec();
 	satconfig.hide();
 	show();
+}
+
+eLNB* eZapScan::getRotorLNB()
+{
+	int c=0;
+	std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin());
+	for (; it != eTransponderList::getInstance()->getLNBs().end(); it++ )
+	{
+		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
+			c++;
+	}
+	if ( c > 1 )  // we have more than one LNBs with DiSEqC 1.2
+	{
+		hide();
+		eMessageBox mb( _("More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the rotor is plugged"), _("Info"), eMessageBox::iconWarning|eMessageBox::btOK );
+		mb.show();
+		mb.exec();
+		mb.hide();
+		eLNBSelector sel;
+		sel.show();
+		int ret = sel.exec();
+		sel.hide();
+		show();
+		return (eLNB*) ret;
+	}
+	else if ( !c )
+	{
+		hide();
+		eMessageBox mb( _("Found no LNB with DiSEqC 1.2 enabled,\nplease goto Satellite Config first, and enable DiSEqC 1.2"), _("Warning"), eMessageBox::iconWarning|eMessageBox::btOK );
+		mb.show();
+		mb.exec();
+		mb.hide();
+		show();
+		return 0;
+	}
+	else // only one lnb with DiSEqC 1.2 is found.. this is correct :)
+		return &(*eTransponderList::getInstance()->getLNBs().begin());
+}
+
+void eZapScan::sel_rotorConfig()
+{
+	eLNB* lnb = getRotorLNB();
+	if (lnb)
+	{
+		hide();
+		RotorConfig c(lnb);
+		c.setLCD( LCDTitle, LCDElement );
+		c.show();
+		c.exec();
+		c.hide();
+		show();
+	}
+}
+
+void eZapScan::sel_rotorManual()
+{
+
+}
+
+eLNBSelector::eLNBSelector()
+	:eListBoxWindow<eListBoxEntryText>(_("Select LNB"), 5, 300, true)
+{
+	move(ePoint(150, 136));
+	new eListBoxEntryText(&list, _("[back]"), _("go to prev menu"));
+	int cnt=0;
+	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin()); it != eTransponderList::getInstance()->getLNBs().end(); it++, cnt++ )
+	{
+		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
+			new eListBoxEntryText( &list, eString().sprintf("LNB %d", cnt), (void*)&(*it), 0, eString().sprintf(_("use LNB %d for Rotor"), cnt ).c_str());
+	}
+	CONNECT( list.selected, eLNBSelector::selected );
+}
+
+void eLNBSelector::selected( eListBoxEntryText *e )
+{
+	close( e?(int)e->getKey():0 );
 }

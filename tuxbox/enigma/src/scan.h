@@ -75,6 +75,7 @@ class tsAutomatic: public existNetworks, public eWidget
 	int nextNetwork(int first=0);
 	int nextTransponder(int next);
 	int tuneNext(int next);
+	int eventHandler(const eWidgetEvent &event);
 public:
 	tsAutomatic(eWidget *parent);
 };
