@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.4 2003/05/07 18:42:12 digi_casi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.5 2003/05/09 11:09:14 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -438,7 +438,8 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 				original_network_id,
 				service_type,
 				DiSEqC, 
-				satelliteName
+				satelliteName, 
+				satellitePosition
 			)
 		)
 	);
