@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.11 2003/02/17 15:29:38 tmbinc Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.12 2003/03/02 02:20:23 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -102,11 +102,15 @@ void eZapScan::sel_satconfig()
 eLNB* eZapScan::getRotorLNB(int silent)
 {
 	int c=0;
+	std::list<eLNB>::iterator RotorLnb = eTransponderList::getInstance()->getLNBs().end();
 	std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin());
 	for (; it != eTransponderList::getInstance()->getLNBs().end(); it++ )
 	{
 		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
-			c++;
+		{
+			if (!c++)
+				RotorLnb=it;
+		}
 	}
 	if ( c > 1 )  // we have more than one LNBs with DiSEqC 1.2
 	{
@@ -132,7 +136,7 @@ eLNB* eZapScan::getRotorLNB(int silent)
 		return 0;
 	}
 	else // only one lnb with DiSEqC 1.2 is found.. this is correct :)
-		return &(*eTransponderList::getInstance()->getLNBs().begin());
+		return &(*RotorLnb);
 }
 
 void eZapScan::sel_rotorConfig()
