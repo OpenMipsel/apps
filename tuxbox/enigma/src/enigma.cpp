@@ -145,7 +145,7 @@ eZap::eZap(int argc, char **argv)
 	ezapInitializeDyn(dyn_resolver);
 
 	fileresolver = new eHTTPFilePathResolver();
-  fileresolver->addTranslation("/var/tuxbox/htdocs", "/www", 2); /* TODO: make user configurable */
+	fileresolver->addTranslation("/var/tuxbox/htdocs", "/www", 2); /* TODO: make user configurable */
 	fileresolver->addTranslation(CONFIGDIR , "/config", 3);
 	fileresolver->addTranslation("/", "/root", 3);
 	fileresolver->addTranslation(DATADIR "/enigma/htdocs", "/", 2);
@@ -159,7 +159,7 @@ eZap::eZap(int argc, char **argv)
   if ( eDVB::getInstance()->getmID() > 4 )
   {
   	eDebug("[ENIGMA] starting httpd on serial port...");
-    int fd=::open("/dev/tts/0", O_RDWR);
+	int fd=::open("/dev/tts/0", O_RDWR);
 		if (fd < 0)
 			eDebug("[ENIGMA] serial port error (%m)");
 		else

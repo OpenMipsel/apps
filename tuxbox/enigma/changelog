@@ -73,3 +73,5 @@
 200304131503 4 * Add support to edit satellites.xml ( transponders for scan )
 200304131503 5 * Add support to lock setup with a PIN ( parental locking follows... )
 200304172159 5 * Don't change voltage on PIN8 in Standby
+200304192330 4 * Fix repeated timer.. and overlapping test ( hope its now okay )
+200304211300 4 * Many other timer bugs fixed

@@ -186,7 +186,7 @@ void eDVBCI::mmi_menuansw(int val)
 void eDVBCI::PMTflush(int program)
 {
 	//eDebug("got new PMT for Program:%x",program);
-	for(int i=0;i<PMT_ENTRYS;i++)
+	for(int i=0;i<tempPMTentrys-1;i++)
 	{
 		if(tempPMT[i].type==2)
 		{

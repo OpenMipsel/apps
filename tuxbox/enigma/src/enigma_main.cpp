@@ -2391,8 +2391,6 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 			return -3; // couldn't record... warum auch immer.
 		} else
 		{
-			handleStandby();
-
 			eServiceReference ref2=ref;
 
   // no faked service types in recordings.epl
@@ -2463,10 +2461,6 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 					showServiceSelector( eServiceSelector::dirLast, eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile), recordingsref, modeFile );
 			}
 		}
-		else
-		{
-			handleStandby();
-		}
 		return 0;
 	}
 }
@@ -2481,7 +2475,7 @@ void eZapMain::handleStandby()
 		// and enigma wake up
 	}
 	else if (wasSleeping==1) // before record we was in sleep mode...
-	{
+	{  // delayed standby...
 		if ( delayedStandbyTimer.isActive() )
 			delayedStandbyTimer.stop();
 		else
@@ -2494,6 +2488,13 @@ void eZapMain::handleStandby()
 		// any pending timers are ignored
 		wasSleeping=0;
 		message_notifier.send(eZapMain::messageShutdown);
+	}
+	else if (wasSleeping==3)  
+	{  // shutofftimer .. undelayed.. standby...
+		wasSleeping=0;
+		// use message_notifier to goto sleep...
+		// we will not block the mainloop...
+		message_notifier.send(eZapMain::messageGoSleep);
 	}
 }
 
@@ -4755,7 +4756,7 @@ void eRecStopWindow::ShutdownChanged( int checked )
 
 int eRecStopWindow::getCheckboxState()
 {
-	return Standby->isChecked()?1:Shutdown->isChecked()?2:0;
+	return Standby->isChecked()?3:Shutdown->isChecked()?2:0;
 }
 
 eTimerInput::eTimerInput()

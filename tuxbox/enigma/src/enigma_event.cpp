@@ -223,6 +223,10 @@ void eEventDisplay::updateScrollbar()
 
 void eEventDisplay::setEvent(EITEvent *event)
 {
+	// update evt.. when setEvent is called from outside..
+	if ( evt )  
+		evt = event;
+
 	long_description->hide();
 	long_description->move( ePoint(0,0) );
 	if (event)

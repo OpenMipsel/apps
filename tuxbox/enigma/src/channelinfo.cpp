@@ -342,7 +342,7 @@ void eChannelInfo::redrawWidget(gPainter *target, const eRect& where)
 	if ( deco )
 		deco.drawDecoration(target, ePoint(width(), height()));
 
-	target->line( ePoint(clientrect.left() + clientrect.width()/8 + 1, clientrect.top()),ePoint(clientrect.left() + clientrect.width()/8 + 1,clientrect.bottom()));
+	target->line( ePoint(clientrect.left() + clientrect.width()/8 + 1, clientrect.top()), ePoint(clientrect.left() + clientrect.width()/8 + 1, clientrect.bottom()-1));
 }
 
 int eChannelInfo::eventHandler(const eWidgetEvent &event)
