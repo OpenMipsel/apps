@@ -33,7 +33,7 @@ public:
 	int setCurrent( int );
 	int setCurrent( void* );
 	int getCount() { return listbox.getCount(); }
-	int moveSelection ( int dir )	{	return listbox.moveSelection( dir ); }
+	int moveSelection ( int dir );
 	void clear() { listbox.clearList(); }
 	eListBoxEntryText* getCurrent();
 	operator eListBox<eListBoxEntryText>*()	{	return &listbox; }
