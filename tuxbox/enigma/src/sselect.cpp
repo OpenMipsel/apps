@@ -1089,12 +1089,13 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 #endif
 			else if (event.action == &i_serviceSelectorActions->gotoPrevMarker)
 			{
-				ePlaylist *p = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef(path.current());
-				std::list<ePlaylistEntry>::const_iterator it=
-					p->getConstList().end();
+				ePlaylist *p = 0;
+				if ( path.current().type == eServicePlaylistHandler::ID )
+					p = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef(path.current());
 				if ( p )
 				{
-					it = std::find( p->getConstList().begin(), p->getConstList().end(), selected );
+					std::list<ePlaylistEntry>::const_iterator it =
+						std::find( p->getConstList().begin(), p->getConstList().end(), selected );
 					if ( it != p->getConstList().end() )
 					{
 						for (--it ; it != p->getConstList().end(); --it )
@@ -1104,17 +1105,20 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 								break;
 							}
 					}
+					if ( it == p->getConstList().end() )
+						services->moveSelection(services->dirFirst);
 				}
-				if ( it == p->getConstList().end() )
+				else
 					services->moveSelection(services->dirFirst);
 			}
 			else if (event.action == &i_serviceSelectorActions->gotoNextMarker)
 			{
-				ePlaylist *p = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef(path.current());
-				std::list<ePlaylistEntry>::const_iterator it=
-					p->getConstList().end();
+				ePlaylist *p = 0;
+				if ( path.current().type == eServicePlaylistHandler::ID )
+					p = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef(path.current());
 				if ( p )
 				{
+					std::list<ePlaylistEntry>::const_iterator it;
 					eListBoxEntryService *cur = services->getCurrent();
 					if ( cur && cur->flags & eListBoxEntryService::flagIsReturn )
 						it = p->getConstList().begin();
@@ -1129,8 +1133,10 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 								break;
 							}
 					}
+					if ( it == p->getConstList().end() )
+						services->moveSelection(services->dirLast);
 				}
-				if ( it == p->getConstList().end() )
+				else
 					services->moveSelection(services->dirLast);
 			}
 			else if (event.action == &i_serviceSelectorActions->showAll && !movemode)
