@@ -2296,7 +2296,7 @@ void eZapMain::standbyRelease()
 				break;
 			}
 			case 4: // reboot
-					eZap::getInstance()->quit(1);
+					eZap::getInstance()->quit();	//ghost da haste was vergessen ->quit(1) ..das gibs in ebase nicht
 					break;
 			case 1: // shutdown
 /*				if (handleState())*/
@@ -4993,6 +4993,8 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 		new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
 		new eListBoxEntryText(&list, _("restart"), (void*)4);
 	}
+	else	
+		new eListBoxEntryText(&list, _("reboot now"), (void*)1);		//use this type to reboot (with complete unmount)
 	new eListBoxEntryText(&list, _("goto standby"), (void*)2);
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
 	CONNECT(list.selected, eSleepTimerContextMenu::entrySelected);

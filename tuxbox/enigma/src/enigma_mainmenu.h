@@ -10,7 +10,7 @@ class eLabel;
 #ifndef DISABLE_FILE
 #define MENU_ENTRIES 9
 #else
-#define MENU_ENTRIES 8
+#define MENU_ENTRIES 6
 #endif
 
 class eMainMenu: public eWidget

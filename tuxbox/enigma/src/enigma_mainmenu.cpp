@@ -74,19 +74,19 @@ void eMainMenu::setActive(int i)
 	case 2:
 		description->setText(eString("(3) ") + eString(_("Information")));
 		break;
+//	case 3:
+//		description->setText(eString("(4) ") + eString(_("Shutdown")));
+//		break;
 	case 3:
-		description->setText(eString("(4) ") + eString(_("Shutdown")));
-		break;
-	case 4:
 		description->setText(eString("(5) ") + eString(_("Setup")));
 		break;
-	case 5:
-		description->setText(eString("(6) ") + eString(_("Games")));
-		break;
-	case 6:
+//	case 4:
+//		description->setText(eString("(6) ") + eString(_("Games")));
+//		break;
+	case 4:
 		description->setText(eString("(7) ") + eString(_("VCR")));
 		break;
-	case 7:
+	case 5:
 		description->setText(eString("(8) ") + eString(_("Timer")));
 #endif
 	}
@@ -135,9 +135,13 @@ eMainMenu::eMainMenu()
 		"file",
 #endif
 		"info",
+#ifndef DISABLE_FILE
 		"shutdown",
+#endif
 		"setup",
+#ifndef DISABLE_FILE
 		"games",
+#endif
 		"scart",
 		"timer"};
 
@@ -371,19 +375,19 @@ void eMainMenu::selected(int i)
 	case 2:
 		sel_info();
 		break;
+//	case 3:
+//		sel_quit();
+//		break;
 	case 3:
-		sel_quit();
-		break;
-	case 4:
 		sel_setup();
 		break;
-	case 5:
-		sel_plugins();
-		break;
-	case 6:
+//	case 4:
+//		sel_plugins();
+//		break;
+	case 4:
 		sel_vcr();
 		break;
-	case 7:
+	case 5:
 		sel_timer();
 		break;
 #endif
