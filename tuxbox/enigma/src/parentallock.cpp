@@ -1,7 +1,7 @@
 #include <parentallock.h>
 
-#include <src/enigma.h>
-#include <src/enigma_main.h>
+#include <enigma.h>
+#include <enigma_main.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/elabel.h>

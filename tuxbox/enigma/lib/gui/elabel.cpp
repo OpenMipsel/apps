@@ -40,7 +40,7 @@ void eLabel::validate( const eSize* s )
 		para->setFont(font);
 		para->renderString(text, flags);
 		para->realign(align);
-  }
+	}
 }
 
 void eLabel::invalidate()

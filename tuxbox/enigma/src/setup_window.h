@@ -9,7 +9,8 @@ class eSetupWindow:public eListBoxWindow<eListBoxEntryMenu>
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:
- 	static Signal1<void,eSetupWindow*> setupHook;
+	eListBox<eListBoxEntryMenu>* getList() { return &list; }
+	static Signal2<void,eSetupWindow*,int*> setupHook;
 	eSetupWindow( const char *titlemm, int entries, int width );
 };
 

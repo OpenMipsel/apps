@@ -1,13 +1,13 @@
-#include <src/wizard_scan.h>
+#include <wizard_scan.h>
 #include <rotorconfig.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/listbox.h>
 #include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
-#include <src/satconfig.h>
-#include <src/scan.h>
-#include <src/enigma_scan.h>
+#include <satconfig.h>
+#include <scan.h>
+#include <enigma_scan.h>
 
 class eDiseqcChoice: public eListBoxEntry
 {

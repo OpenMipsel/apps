@@ -84,7 +84,7 @@ eZap::eZap(int argc, char **argv)
 	instance = this;
 	
 	init = new eInit();
-	
+
 	FILE *pluginlist = fopen(CONFIGDIR "/enigma/plugins", "rb");
 	if (pluginlist)
 	{
@@ -93,9 +93,7 @@ eZap::eZap(int argc, char **argv)
 		{
 			if (!fgets(filename, 127, pluginlist))
 				break;
-			if (*filename)
-				filename[strlen(filename)-1]=0;
-			else
+			if (!filename)
 				break;
 			eDebug("%s", filename);
 			void *handle=dlopen(filename, RTLD_NOW);

@@ -265,7 +265,7 @@ void eMPEGDemux::resync()
 
 int eMPEGDemux::getMinimumFramelength()
 {
-	return minFrameLength;
+	return minFrameLength*15;
 }
 
 int eMPEGDemux::getAverageBitrate()

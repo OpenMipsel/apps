@@ -1,9 +1,9 @@
 #ifndef __enigma_main_h
 #define __enigma_main_h
 
-#include <src/sselect.h>
-#include <src/enigma_lcd.h>
-#include <src/engrab.h>
+#include <sselect.h>
+#include <enigma_lcd.h>
+#include <engrab.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/edvb.h>
@@ -294,7 +294,7 @@ class eZapMain: public eWidget
 	friend class eEPGSelector;
 public:
 	enum { modeTV, modeRadio, modeFile, modeEnd };
-	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32, recNgrab=64 };
+	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32, recNgrab=64, statePaused=128 };
 	enum { messageGoSleep=2, messageShutdown, messageNoRecordSpaceLeft };
 
 private:

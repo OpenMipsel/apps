@@ -1,7 +1,7 @@
 #include "enigma_bouquet.h"
-#include <src/enigma.h>
-#include <src/enigma_main.h>
-#include <src/sselect.h>
+#include <enigma.h>
+#include <enigma_main.h>
+#include <sselect.h>
 #include <lib/dvb/servicestructure.h>
 #include <lib/gui/actions.h>
 

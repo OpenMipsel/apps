@@ -298,8 +298,8 @@ int eMP3Decoder::getOutputDelay(int i)
 {
 	int delay = 0;
 	(void)i;
-	if (::ioctl(dspfd[0], SNDCTL_DSP_GETODELAY, &delay) < 0)
-		eDebug("SNDCTL_DSP_GETODELAY failed");
+	if (::ioctl(dspfd[type==codecMPG], SNDCTL_DSP_GETODELAY, &delay) < 0)
+		eDebug("SNDCTL_DSP_GETODELAY failed (%m)");
 	else
 		eDebug("%d", delay);
 	return delay;
@@ -373,15 +373,17 @@ void eMP3Decoder::outputReady(int what)
 			pcmsettings=audiodecoder->pcmsettings;
 			
 			outputbr=pcmsettings.samplerate*pcmsettings.channels*16;
-			::ioctl(dspfd[0], SNDCTL_DSP_SPEED, &pcmsettings.samplerate);
-			::ioctl(dspfd[0], SNDCTL_DSP_CHANNELS, &pcmsettings.channels);
-			::ioctl(dspfd[0], SNDCTL_DSP_SETFMT, &pcmsettings.format);
+			if (::ioctl(dspfd[0], SNDCTL_DSP_SPEED, &pcmsettings.samplerate) < 0)
+				eDebug("SNDCTL_DSP_SPEED failed (%m)");
+			if (::ioctl(dspfd[0], SNDCTL_DSP_CHANNELS, &pcmsettings.channels) < 0)
+				eDebug("SNDCTL_DSP_CHANNELS failed (%m)");
+			if (::ioctl(dspfd[0], SNDCTL_DSP_SETFMT, &pcmsettings.format) < 0)
+				eDebug("SNDCTL_DSP_SETFMT failed (%m)");
 //			eDebug("reconfigured audio interface...");
 		}
 	}
 
 	output.tofile(dspfd[0], 65536);
-	
 	checkFlow(0);
 }
 
@@ -413,11 +415,13 @@ void eMP3Decoder::checkFlow(int last)
 	// playing    -> input queue (almost) empty, output queue filled
 	// bufferFull -> input queue full, reading disabled, output enabled
 	
-	if (!o[0])
+	if (!o[0] || (outputsn[1] && !o[1]) )
 	{
 		if (state == stateFileEnd)
 		{
 			outputsn[0]->stop();
+			if (outputsn[1])
+				outputsn[1]->stop();
 			eDebug("ok, everything played..");
 			handler->messages.send(eServiceHandlerMP3::eMP3DecoderMessage(eServiceHandlerMP3::eMP3DecoderMessage::done));
 			return;
@@ -436,7 +440,7 @@ void eMP3Decoder::checkFlow(int last)
 		else if (o[1] > 16384)
 			outputsn[1]->start();
 	}
-	
+
 	if ((o[0] > maxOutputBufferSize) || (o[1] > maxOutputBufferSize))
 	{
 		if (state != stateBufferFull)
@@ -501,9 +505,9 @@ void eMP3Decoder::recalcPosition()
 			position+=input.size();
 			position/=(audiodecoder->getAverageBitrate()>>3);
 			if (type != codecMPG)
-				position+=output.size()/pcmsettings.samplerate/pcmsettings.channels/2;
+				position += output.size() / pcmsettings.samplerate / pcmsettings.channels / 2;
 			else
-				position+=(output.size() + output2.size())/audiodecoder->getAverageBitrate();
+				position += (output.size() + output2.size()) / audiodecoder->getAverageBitrate();
 		} else
 			position=-1;
 	} else
@@ -512,16 +516,15 @@ void eMP3Decoder::recalcPosition()
 
 void eMP3Decoder::dspSync()
 {
-	if (type != codecMPG)
+	if (::ioctl(dspfd[type==codecMPG], SNDCTL_DSP_RESET) < 0)
+		eDebug("SNDCTL_DSP_RESET failed (%m)");
+
+	if (type == codecMPG)
 	{
-		if (dspfd[0] >= 0)
-			::ioctl(dspfd[0], SNDCTL_DSP_RESET);
-	} else
-	{
-		::ioctl(dspfd[0], VIDEO_FLUSH_BUFFER);
-		::ioctl(dspfd[1], SNDCTL_DSP_RESET);
-		Decoder::flushBuffer();
+		if (::ioctl(dspfd[0], VIDEO_FLUSH_BUFFER) < 0)
+			eDebug("VIDEO_FLUSH_BUFFER failed (%m)");
 	}
+	Decoder::flushBuffer();
 }
 
 void eMP3Decoder::decodeMoreHTTP()
@@ -540,7 +543,7 @@ void eMP3Decoder::decodeMore(int what)
 		return;
 	}
 
-	while ( input.size() < audiodecoder->getMinimumFramelength()*15 )
+	while ( input.size() < audiodecoder->getMinimumFramelength() )
 	{
 		if (input.fromfile(sourcefd, audiodecoder->getMinimumFramelength()) < audiodecoder->getMinimumFramelength())
 		{
@@ -650,16 +653,13 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			break;
 		if (!inputsn)
 			break;
-		if (audiodecoder->getAverageBitrate() <= 0)
-			break;
-
 		eDebug("seek/seekreal/skip, %d", message.parm);
-
 		int offset=0;
-
 		if (message.type != eMP3DecoderMessage::seekreal)
 		{
 			int br=audiodecoder->getAverageBitrate();
+			if ( br <= 0 )
+				break;
 			br/=128;
 			br*=message.parm;
 			offset=input.size();
@@ -680,13 +680,14 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			offset=message.parm;
 		}
 		
-		::lseek(sourcefd, offset, SEEK_SET);
+		if ( ::lseek(sourcefd, offset, SEEK_SET) < 0 )
+			eDebug("seek error (%m)");
 		dspSync();
 		output.clear();
 		audiodecoder->resync();
 
 		decodeMore(0);
-		
+
 		break;
 	}
 	}

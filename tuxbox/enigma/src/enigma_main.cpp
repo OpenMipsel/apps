@@ -2445,13 +2445,21 @@ void eZapMain::play()
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
-
+/*	if ( state & statePaused )
+	{
+		state &= ~statePaused;
+		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip, 0));
+		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
+		Decoder::Resume();
+	}
+	else */
 	if (skipping)
 	{
 		skipping=0;
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
-	} else if (handler->getState() == eServiceHandler::statePause)
-		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
+	}
+	else if (handler->getState() == eServiceHandler::statePause)
+		pause();
 	else if ( handler->getState() != eServiceHandler::statePlaying )
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
 	updateProgress();
@@ -2469,13 +2477,32 @@ void eZapMain::stop()
 
 void eZapMain::pause()
 {
+/*	if ( state != stateRecording )
+		record();
+	if ( !(state&statePaused) )
+	{
+		state |= statePaused;
+		Decoder::Pause();
+	}*/
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
+	eServiceReference &ref = eServiceInterface::getInstance()->service;
 	if (handler->getState() == eServiceHandler::statePause)
+	{
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
+		if ( ref.type == eServiceReference::idDVB && ref.path )
+			setPlaylistPosition();
+	}
 	else
+	{
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
+		if ( ref.type == eServiceReference::idDVB && ref.path )
+		{
+			getPlaylistPosition();
+			Decoder::flushBuffer();
+		}
+	}
 }
 
 void eZapMain::record()
@@ -3585,7 +3612,7 @@ extern eString getInfo(const char *file, const char *info);
 void eZapMain::runVTXT()
 {
 	eDebug("runVTXT");
-//	if (isVT)
+	if (isVT)
 	{
 		eZapPlugins plugins(2);
 		if ( plugins.execPluginByName("tuxtxt.cfg") != "OK" )

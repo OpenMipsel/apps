@@ -143,7 +143,6 @@ void eDVRPlayerThread::outputReady(int what)
 	seekbusy-=buffer.tofile(dvrfd, 65536);
 	if (seekbusy < 0)
 		seekbusy=0;
-	
 	if ((state == stateBufferFull) && (buffer.size()<maxBufferSize))
 	{
 		state=statePlaying;
@@ -176,7 +175,8 @@ void eDVRPlayerThread::outputReady(int what)
 
 void eDVRPlayerThread::dvrFlush()
 {
-	::ioctl(dvrfd, 0); // PVR_FLUSH_BUFFER
+	if ( ::ioctl(dvrfd, 0)< 0 )
+		eDebug("PVR_FLUSH_BUFFER failed (%m)");
 	Decoder::flushBuffer();
 }
 
@@ -325,14 +325,16 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 				state=statePause;
 				Decoder::Pause();
 			}
-		} else if (state == statePause)
+		}
+		else if (state == statePause)
 		{
 			inputsn->start();
 			outputsn->start();
 			speed=message.parm;
 			state=stateBuffering;
 			Decoder::Resume();
-		} else
+		}
+		else
 		{
 			buffer.clear();
 			dvrFlush();

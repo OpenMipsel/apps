@@ -117,8 +117,8 @@ ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* des
 eZapPlugins::eZapPlugins(int type, eWidget* lcdTitle, eWidget* lcdElement)
 	:eListBoxWindow<ePlugin>(type==2?_("Plugins"):_("Games"), 10, 400), type(type)
 {
-	PluginPath[0] = PLUGINDIR "/";
-	PluginPath[1] = "/var/tuxbox/plugins/";
+	PluginPath[0] = "/var/tuxbox/plugins/";
+	PluginPath[1] = PLUGINDIR "/";
 	PluginPath[2] = "";
 	setHelpText(_("select plugin and press ok"));
 	move(ePoint(150, 100));

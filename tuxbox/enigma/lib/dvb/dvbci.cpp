@@ -98,7 +98,8 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 			ci_progress(_("no module"));	
 		ci_state=0;
 		clearCAIDs();
-		::ioctl(fd,CI_RESET);
+		if (::ioctl(fd,CI_RESET)<0 )
+			eDebug("CI_RESET failed (%m)");
 		dataAvailable(0);
 		break;
 	case eDVBCIMessage::init:
@@ -565,7 +566,8 @@ void eDVBCI::ca_manager(unsigned int session)
 				unsigned char buffer[12];
 				sessions[session].internal_state=1;
 
-				::ioctl(fd,CI_TS_ACTIVATE);	
+				if (::ioctl(fd,CI_TS_ACTIVATE)<0)
+					eDebug("CI_TS_ACTIVATE failed (%m)");
 
 				clearCAIDs();
 				eDebug("[DVBCI] [CA MANAGER] up to now nothing happens -> ca_info_enq");
@@ -1063,7 +1065,8 @@ void eDVBCI::stopTimer()
 void eDVBCI::deadReset()
 {
 	eDebug("CI timeoutet... do reset");
-	::ioctl(fd, CI_RESET);
+	if (::ioctl(fd,CI_RESET)<0 )
+		eDebug("CI_RESET failed (%m)");
 	startTimer();
 }
 
@@ -1076,10 +1079,11 @@ void eDVBCI::dataAvailable(int what)
 
 	stopTimer();
 
-	::ioctl(fd,CI_GET_STATUS,&present);	
+	if (::ioctl(fd,CI_GET_STATUS,&present)<0)
+		eDebug("CI_GET_STATUS failed (%m)");
 
 	if(present!=1)						//CI removed
-	{	
+	{
 		eDebug("[DVBCI] module removed");	
 		memset(appName,0,sizeof(appName));
 		ci_progress(_("no module"));
@@ -1103,21 +1107,22 @@ void eDVBCI::dataAvailable(int what)
 
 		for(i=0;i<MAX_SESSIONS;i++)
 			sessions[i].state=STATE_FREE;
-			
+
 		ml_bufferlen=0;	
 
 		::read(fd,&buffer,0);	
 
-		if(::ioctl(fd,CI_RESET)!=0)
+		if (::ioctl(fd,CI_RESET)<0 )  // != 0
 		{
+			eDebug("CI_RESET failed (%m)");
 			ci_state=0;
 			clearCAIDs();
 			return;
-		}		
-	
+		}
+
 		ci_state=1;
-	}					
-		
+	}
+
 	size=::read(fd,&buffer,sizeof(buffer));
 	//eDebug("READ:%d",size);	
 
@@ -1147,7 +1152,8 @@ void eDVBCI::poll()
 #if 0
 	eDebug("TIMER");
 #endif
-	::ioctl(fd,CI_GET_STATUS,&present);	
+	if (::ioctl(fd,CI_GET_STATUS,&present)<0)
+		eDebug("CI_GET_STATUS failed (%m)");
 
 	if(present)						//CI removed
 	{

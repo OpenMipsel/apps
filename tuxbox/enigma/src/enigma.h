@@ -2,8 +2,8 @@
 #define __enigma_h
 
 #include <lib/base/ebase.h>
-#include <src/sselect.h>
-#include <src/hotplug.h>
+#include <sselect.h>
+#include <hotplug.h>
 
 class eServiceSelector;
 class eServicePath;
