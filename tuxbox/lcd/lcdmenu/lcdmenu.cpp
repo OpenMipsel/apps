@@ -1,5 +1,5 @@
 /*
- * $Id: lcdmenu.cpp,v 1.20.2.2 2003/02/24 17:42:55 thegoodguy Exp $
+ * $Id: lcdmenu.cpp,v 1.20.2.3 2003/05/24 07:46:45 alexw Exp $
  *
  * A startup menu for the d-box 2 linux project
  *
@@ -23,7 +23,9 @@
 
 #include "lcdmenu.h"
 
+#ifdef DEBUG
 #include <iostream>
+#endif
 
 CLCDMenu *CLCDMenu::instance;
 
@@ -32,7 +34,7 @@ CLCDMenu::CLCDMenu (std::string configFilename)
 	rc = new CRCInput();
 
 	fontRenderer = new LcdFontRenderClass(this);
-	fontRenderer->AddFont(FONTDIR "/micron_bold.ttf");
+	fontRenderer->AddFont(FONTDIR "/micron.ttf");
 	fontRenderer->InitFontCache();
 
 	entryCount = 0;
@@ -71,6 +73,9 @@ CLCDMenu::CLCDMenu (std::string configFilename)
 	visibleEntries = config->getInt32("visible_entries");
 	entryCount = entries.size();
 
+	if (entryCount < visibleEntries)
+		visibleEntries = entryCount;
+
 	if (defaultEntry >= visibleEntries)
 	{
 		upperRow = defaultEntry - visibleEntries + 1;
@@ -84,7 +89,7 @@ CLCDMenu::CLCDMenu (std::string configFilename)
 		addNumberPrefix();
 
 	newSalt = getNewSalt();
-	menuFont = fontRenderer->getFont("Micron", "Bold", fontSize);
+	menuFont = fontRenderer->getFont("Micron", "Regular", fontSize);
 	pinFailures = 0;
 }
 
@@ -248,16 +253,40 @@ bool CLCDMenu::rcLoop ()
 		{
 			/* 1-9: number keys */
 		case 1:
+			if (entryCount > 0)
+				selected = selectEntry(0);
+			break;
 		case 2:
+			if (entryCount > 1)
+				selected = selectEntry(1);
+			break;
 		case 3:
+			if (entryCount > 2)
+				selected = selectEntry(2);
+			break;
 		case 4:
+			if (entryCount > 3)
+				selected = selectEntry(3);
+			break;
 		case 5:
+			if (entryCount > 4)
+				selected = selectEntry(4);
+			break;
 		case 6:
+			if (entryCount > 5)
+				selected = selectEntry(5);
+			break;
 		case 7:
+			if (entryCount > 6)
+				selected = selectEntry(6);
+			break;
 		case 8:
+			if (entryCount > 7)
+				selected = selectEntry(7);
+			break;
 		case 9:
-			if (pressedKey <= entryCount)
-				selected = selectEntry(pressedKey - 1);
+			if (entryCount > 8)
+				selected = selectEntry(8);
 			break;
 
 		case 11: /* left arrow */
@@ -359,9 +388,45 @@ std::string CLCDMenu::pinScreen (std::string title, bool isNewPin)
 
     for (i = 0; i < pin_length; i++)
     {
-	char *digit = (char *) malloc(1);
-	sprintf(digit, "%d", rc->getKey());
-	pin += string(digit);
+	    char digit = 0;
+	    int code = rc->getKey();
+	    
+	    switch (code)
+	    {       
+	    case 0:
+		    digit = '0';
+		    break;
+	    case 1:
+		    digit = '1';
+		    break;
+	    case 2:
+		    digit = '2';
+		    break;
+	    case 3:
+		    digit = '3';
+		    break;
+	    case 4:
+		    digit = '4';
+		    break;
+	    case 5:
+		    digit = '5';
+		    break;
+	    case 6:
+		    digit = '6';
+		    break;
+	    case 7:
+		    digit = '7';
+		    break;
+	    case 8:
+		    digit = '8';
+		    break;
+	    case 9:
+		    digit = '9';
+		    break;
+	    }
+
+	    if (digit != 0)
+		    pin += digit;
 
 	menuFont->RenderString(left, 3*fontSize, fontSize, "*", CLCDDisplay::PIXEL_ON, 0);
 

@@ -1,5 +1,5 @@
 /*
- * $Id: rcinput.cpp,v 1.3 2002/01/03 17:18:59 obi Exp $
+ * $Id: rcinput.cpp,v 1.3.2.1 2003/05/24 07:46:45 alexw Exp $
  * 
  * Remote Control Handling Class
  *
@@ -24,6 +24,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  * $Log: rcinput.cpp,v $
+ * Revision 1.3.2.1  2003/05/24 07:46:45  alexw
+ * update
+ *
  * Revision 1.3  2002/01/03 17:18:59  obi
  * some reorganization.
  * removed buffer classes.
@@ -52,7 +55,7 @@ CRCInput::CRCInput()
 	prevrccode = 0xffff;
 
     tv_prev.tv_sec = 0;
-    repeat_block = 0;
+    repeat_block = 150000; // 150ms
 }
 
 /**************************************************************************
