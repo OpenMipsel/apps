@@ -67,7 +67,7 @@ protected:
 	int ci_state;
 	int buffersize;	
 		
-	eTimer pollTimer;
+	eTimer pollTimer, deadTimer;
 	eLock lock;
 
 	int tempPMTentrys;
@@ -116,6 +116,8 @@ protected:
 	void incoming(unsigned char *buffer,int len);
 	void dataAvailable(int what);
 	void poll();
+	void startTimer();
+	void deadReset();
 	void updateCIinfo(unsigned char *buffer);
 
 	void mmi_begin();

@@ -60,7 +60,7 @@ public:
 	
 	std::set<int> availableCASystems, usedCASystems;
 	ePtrList<CA> calist;		/** currently used ca-systems */
-	
+
 	int checkCA(ePtrList<CA> &list, const ePtrList<Descriptor> &descriptors);
 	
 #ifndef DISABLE_CI
@@ -90,6 +90,7 @@ public:
 	int switchService(const eServiceReferenceDVB &service); /** -> eventServiceSwitched */
 	
 	void initCAlist();
+	void clearCAlist();
 };
 
 #endif

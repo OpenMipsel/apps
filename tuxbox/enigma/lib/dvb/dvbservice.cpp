@@ -846,3 +846,13 @@ void eDVBServiceController::initCAlist()
 		availableCASystems.insert(0x4A70);	// DreamCrypt
 	}
 }
+
+void eDVBServiceController::clearCAlist()
+{
+	availableCASystems.clear();
+	initCAlist();
+	if (DVBCI)
+		DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::getcaids));
+	if (DVBCI2)
+		DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::getcaids));
+}

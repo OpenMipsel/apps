@@ -23,7 +23,7 @@
 int eDVBCI::instance_count=0;
 
 eDVBCI::eDVBCI()
-	:pollTimer(this), caidcount(0), ml_bufferlen(0), messages(this, 1)
+	:pollTimer(this), deadTimer(this), caidcount(0), ml_bufferlen(0), messages(this, 1)
 {
 	instance_count++;
 
@@ -53,6 +53,8 @@ eDVBCI::eDVBCI()
 	}
  
 	CONNECT(pollTimer.timeout,eDVBCI::poll);
+	CONNECT(deadTimer.timeout,eDVBCI::deadReset);
+
 	CONNECT(messages.recv_msg, eDVBCI::gotMessage);
 
 	memset(appName,0,sizeof(appName));
@@ -362,7 +364,7 @@ void eDVBCI::clearCAIDs()
 		return;
 
 	lock.lock();
-	sapi->availableCASystems.clear();
+	sapi->clearCAlist();
 	lock.unlock();
 	
 	caidcount=0;
@@ -785,11 +787,11 @@ void eDVBCI::receiveTPDU(unsigned char tpdu_tag,unsigned int tpdu_len,unsigned c
 			if(data[0]==0x80)
 				sendTPDU(0x81,0,tpdu_tc_id,0);
 			else
-				pollTimer.start(200);	
+				startTimer();
 			break;
 		case 0x83:
 			eDebug("[DVBCI] T_C_ID %d wurde erstellt",tpdu_tc_id);	
-			pollTimer.start(200);		//200
+			startTimer();
 			break;
 		case 0xA0:
 			if(tpdu_len)
@@ -797,7 +799,7 @@ void eDVBCI::receiveTPDU(unsigned char tpdu_tag,unsigned int tpdu_len,unsigned c
 				if(data[0] >= 0x90 && data[0] <= 0x96)
 				{
 					handle_spdu(tpdu_tc_id,data,tpdu_len);
-					pollTimer.start(200);		//200
+					startTimer();
 				}
 				else
 				{
@@ -897,7 +899,6 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 			x+=tpdu_len;
 		}	
 	}	
-	//pollTimer.start(200);
 }
 #else
 
@@ -1042,10 +1043,22 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 
 		free(payloadData);	
 
-		pollTimer.start(250);
+		startTimer();
 	}
 }
 #endif
+
+void eDVBCI::startTimer()
+{
+	deadTimer.start(2000,true);
+	pollTimer.start(200,true);
+}
+
+void eDVBCI::deadReset()
+{
+	eDebug("CI timeoutet... do reset");
+	::ioctl(fd, CI_RESET);
+}
 
 void eDVBCI::dataAvailable(int what)
 {
@@ -1119,7 +1132,7 @@ void eDVBCI::dataAvailable(int what)
 		sendTPDU(0x82,0,1,0);	
 		ci_state=2;
 	}
-	pollTimer.start(200);		//200
+	startTimer();
 }
 
 void eDVBCI::poll()
