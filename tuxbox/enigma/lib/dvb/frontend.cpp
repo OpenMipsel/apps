@@ -438,7 +438,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	return 0;
 }
 
-double calcAzimuth( double satlong, double eslat, double eslong)
+/*double calcAzimuth( double satlong, double eslat, double eslong)
 {
 	double longdiffr = (eslong-satlong) / 57.29578;
 	double esazimuth = 180 + 57.29578 * std::atan( std::tan(longdiffr) / std::sin( (eslat / 57.29578) ) );
@@ -449,7 +449,7 @@ double calcAzimuth( double satlong, double eslat, double eslong)
 		esazimuth=esazimuth+360.0;
 		
 	return esazimuth;
-}
+}*/
 
 double eFrontend::calcAzimuth( double Longitude, double Latitude, int OrbitalPos )
 {
