@@ -106,10 +106,14 @@ eListBoxEntryEPG::eListBoxEntryEPG(EITEvent& evt, eListBox<eListBoxEntryEPG> *li
 	build();
 }
 
-extern const char *dayStrShort[];
+/* extern const char *dayStrShort[]; bug fix - at localization, 
+   macro the type _ ("xxxxx") for a constant does not work, 
+   if it is declared outside of the function */
 
 const eString &eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
+	const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat") };
+
 	drawEntryRect(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, hilited);
 
 	int xpos=rect.left()+10;
