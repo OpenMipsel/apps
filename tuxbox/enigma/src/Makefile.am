@@ -25,10 +25,13 @@ enigma_LDADD_WHOLE = \
 
 enigma_LDADD = \
 	@FREETYPE_LIBS@ \
+	@ID3TAG_LIBS@ \
+	@MAD_LIBS@ \
+	@MD5SUM_LIBS@ \
 	@PNG_LIBS@ \
 	@SIGC_LIBS@ \
 	@XMLTREE_LIBS@ \
-	-ldl -lpthread -lcrypt -lresolv -lmd5sum -lid3tag -lmad
+	-ldl -lpthread -lcrypt -lresolv
 
 #\
 #	/dbox2/cdkroot/lib/libmpatrolmt.a -lbfd -liberty
