@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/tuxbox/neutrino/daemons/sectionsd/dmxapi.h,v 1.1.2.1 2003/02/06 18:53:53 thegoodguy Exp $
+ * $Header: /cvs/tuxbox/apps/tuxbox/neutrino/daemons/sectionsd/dmxapi.h,v 1.1.2.2 2003/02/18 13:53:10 thegoodguy Exp $
  *
  * DMX low level functions (sectionsd) - d-box2 linux project
  *
@@ -24,13 +24,27 @@
 #ifndef __sectionsd__dmxapi_h__
 #define __sectionsd__dmxapi_h__
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdint.h>
 
-#include <ost/dmx.h>
 
+#ifdef HAVE_OST_DMX_H
+
+#include <ost/dmx.h>
 #define dmx_sct_filter_params dmxSctFilterParams
 #define dmx_filter            dmxFilter
 const char DEMUX_DEVICE[] = "/dev/dvb/card0/demux0";
+
+#else /* HAVE_OST_DMX_H */
+
+#include <linux/dvb/dmx.h>
+const char DEMUX_DEVICE[] = "/dev/dvb/adapter0/demux0";
+
+#endif /* HAVE_OST_DMX_H */
+
 
 bool setfilter(const int fd, const uint16_t pid, const uint8_t filter, const uint8_t mask, const uint32_t flags);
 
