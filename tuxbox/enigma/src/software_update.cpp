@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: software_update.cpp,v 1.1.2.1 2003/07/31 16:44:54 ghostrider Exp $
+ * $Id: software_update.cpp,v 1.1.2.2 2003/08/05 00:31:59 ghostrider Exp $
  */
 
 #include <software_update.h>
@@ -28,11 +28,14 @@ eSoftwareUpdate::eSoftwareUpdate()
 	:eSetupWindow(_("Software Update"), 5, 400)
 {
 	move(ePoint(140, 100));
+#ifndef DISABLE_NETWORK
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Internet Update"), eString().sprintf("(%d) %s", ++entry, _("open internet update")) ))->selected, eSoftwareUpdate::internet_update );
 	CONNECT((new eListBoxEntryMenu(&list, _("Manual Update"), eString().sprintf("(%d) %s", ++entry, _("open manual update")) ))->selected, eSoftwareUpdate::manual_update );
+#endif
 }
 
+#ifndef DISABLE_NETWORK
 void eSoftwareUpdate::internet_update()
 {
 	hide();
@@ -67,3 +70,4 @@ void eSoftwareUpdate::manual_update()
 	}
 	show();
 }
+#endif

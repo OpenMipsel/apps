@@ -14,7 +14,8 @@
 #include <lib/gdi/font.h>
 #include <lib/system/econfig.h>
 
-eZapRFmodSetup::eZapRFmodSetup(): eWindow(0)
+eZapRFmodSetup::eZapRFmodSetup()
+	:eWindow(0)
 {
 //	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 

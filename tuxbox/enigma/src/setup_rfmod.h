@@ -1,4 +1,4 @@
-#ifndef ENABLE_RFMOD
+#ifdef ENABLE_RFMOD
 
 #ifndef __setuprfmod_h
 #define __setuprfmod_h

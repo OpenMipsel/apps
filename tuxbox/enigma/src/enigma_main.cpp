@@ -5187,6 +5187,7 @@ void eZapMain::ShowTimeCorrectionWindow( tsref ref )
 	wnd.hide();
 }
 
+#ifndef DISABLE_NETWORK
 void eZapMain::startNGrabRecord()
 {
 	state |= (stateRecording|recDVR);	
@@ -5198,6 +5199,7 @@ void eZapMain::stopNGrabRecord()
 	state &= ~(stateRecording|recDVR);
 	ENgrab::getNew()->sendstop();
 }
+#endif
 
 eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path, eWidget *lcdTitle, eWidget *lcdElement)
 : eListBoxWindow<eListBoxEntryText>(_("Service Menu"), 14), ref(ref)
