@@ -2070,7 +2070,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showInfobar();
 		else if (isVisible() && (event.action == &i_enigmaMainActions->toggleInfobar))
 			hideInfobar();
-		else if ((!isVisible()) && (event.action == &i_enigmaMainActions->showInfobarEPG))
+		else if (event.action == &i_enigmaMainActions->showInfobarEPG)
 		{
 			if (!isVisible())
 				showInfobar();
