@@ -431,7 +431,9 @@ void eUpgrade::flashImage(int checkmd5)
 				}
 				{
 					int fd=open(eString("/dev/mtdblock/" + mtd).c_str(), O_RDONLY);
-					if ((fd < 0) || !mmap(0, 0x800000, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0))
+					void *ptr;
+					volatile int a;
+					if ((fd < 0) || !(ptr=mmap(0, 0x600000, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0)))
 					{
 						eMessageBox mb(
 							_("upgrade failed with errorcode UD0"),
@@ -442,6 +444,8 @@ void eUpgrade::flashImage(int checkmd5)
 						mb.hide();
 						return;
 					}
+					for (int i=0; i<0x600000; ++i)
+						a=((__u8*)ptr)[i];
 				}
 				int res=system(eString("/bin/eraseall /dev/mtd/" + mtd).c_str())>>8;
 				mb.hide();
