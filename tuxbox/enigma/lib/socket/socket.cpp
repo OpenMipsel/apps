@@ -24,6 +24,16 @@ void eSocket::close()
 	}
 }
 
+void eSocket::enableRead()
+{
+	rsn->setRequested(rsn->getRequested()|eSocketNotifier::Read);
+}
+
+void eSocket::disableRead()
+{
+	rsn->setRequested(rsn->getRequested()&~eSocketNotifier::Read);
+}
+
 eString eSocket::readLine()
 {
 	int size=readbuffer.searchchr('\n');

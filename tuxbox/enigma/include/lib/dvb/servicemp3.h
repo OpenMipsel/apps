@@ -54,6 +54,7 @@ class eMP3Decoder: public eThread, public eMainloop, public Object
 	void decodeMoreHTTP();
 	void decodeMore(int what);
 	void outputReady(int what);
+	void checkFlow(int last);
 	eHTTPDataSource *createStreamSink(eHTTPConnection *conn);
 	
 	int maxOutputBufferSize;

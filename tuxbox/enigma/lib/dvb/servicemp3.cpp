@@ -61,7 +61,6 @@ void eHTTPStream::haveData(void *vdata, int len)
 	while (len)
 	{
 		int valid=len;
-		
 		if (!metadataleft)
 		{
 				// not in metadata mode.. process mp3 data (stream to input buffer)
@@ -75,7 +74,7 @@ void eHTTPStream::haveData(void *vdata, int len)
 				len--;
 				bytes=0;
 				continue;
-			} else if (metadatainterval < bytes)
+			} else if (metadatainterval && (metadatainterval < bytes))
 				eFatal("metadatainterval < bytes");
 
 				// otherwis there's really data.
@@ -120,6 +119,7 @@ eMP3Decoder::eMP3Decoder(const char *filename, eServiceHandlerMP3 *handler): han
 //	filename="http://sik1.oulu.fi:8002/";
 //	filename="http://64.236.34.141:80/stream/1022";
 //	filename="http://ios.h07.org:8006/";
+//	filename="http://10.0.0.112/join.mp3";
 	
 	if (strstr(filename, "://")) // assume streaming
 	{
@@ -203,6 +203,8 @@ void eMP3Decoder::streamingDone(int err)
 		eDebug("error !!!");
 	} else
 	{
+		state=stateFileEnd;
+		outputsn->start();
 		eDebug("streaming vorbei!");
 	}
 	http=0;
@@ -237,21 +239,78 @@ void eMP3Decoder::outputReady(int what)
 	}
 	
 	output.tofile(dspfd, 65536);
+	
+	checkFlow(0);
+}
 
-	if ((state == stateBufferFull) && (output.size()<maxOutputBufferSize))
+void eMP3Decoder::checkFlow(int last)
+{
+	eDebug("I: %d O: %d S: %d", input.size(), output.size(), state);
+	int i=input.size(), o=output.size();
+	
+	// states:
+	// buffering  -> output is stopped (since queue is empty)
+	// playing    -> input queue (almost) empty, output queue filled
+	// bufferFull -> input queue full, reading disabled, output enabled
+	
+	if (!o)
 	{
-		state=statePlaying;
-		inputsn->start();
-	}
-	if (output.empty())
-	{
-		outputsn->stop();
-		if (state!=stateFileEnd)
-			state=stateBuffering;
-		else
+		if (state == stateFileEnd)
 		{
+			outputsn->stop();
 			eDebug("ok, everything played..");
 			handler->messages.send(eServiceHandlerMP3::eMP3DecoderMessage(eServiceHandlerMP3::eMP3DecoderMessage::done));
+			return;
+		} else if (state != stateBuffering)
+		{
+//			eDebug("stateBuffering");
+			state=stateBuffering;
+			outputsn->stop();
+		}
+	}
+	
+	if ((state == stateBuffering) && o > 64*1024)
+	{
+//		eDebug("statePlaying...");
+		state=statePlaying;
+		outputsn->start();
+	}
+	
+	if (o > maxOutputBufferSize)
+	{
+		if (state != stateBufferFull)
+		{
+//			eDebug("stateBufferFull");
+			if (inputsn)
+				inputsn->stop();
+			else if (http)
+				http->disableRead();
+			state=stateBufferFull;
+		}
+	}
+	
+	if (o < maxOutputBufferSize)
+	{
+	
+		int samples=audiodecoder->decodeMore(last, 16384);
+		if (samples < 0)
+		{
+			state=stateFileEnd;
+			eDebug("datei TOTAL kaputt");
+		}
+		
+		if (!samples)
+		{
+			if (state == stateBufferFull)
+			{
+//				eDebug("stateBufferFull -> statePlaying");
+				state=statePlaying;
+			}
+//			eDebug("anyway, we need input.");
+			if (inputsn)
+				inputsn->start();
+			else if (http)
+				http->enableRead();
 		}
 	}
 }
@@ -264,18 +323,7 @@ void eMP3Decoder::dspSync()
 
 void eMP3Decoder::decodeMoreHTTP()
 {
-	if ((state != statePlaying) && (state != stateBuffering))
-	{
-		eDebug("eMP3Decoder: wrong state (%d)", state);
-		return;
-	}
-	
-	int samples=audiodecoder->decodeMore(0, 64*1024);
-	if (samples < 0)
-	{
-		state=stateFileEnd;
-		eDebug("datei TOTAL kaputt");
-	}
+	checkFlow(0);
 
 #if 0
 	if (audiodecoder->getAverageBitrate() > 0)
@@ -290,36 +338,19 @@ void eMP3Decoder::decodeMoreHTTP()
 	} else
 #endif
 		length=position=-1;
-
-	if ((state == stateBuffering) && (output.size()>64*1024))
-	{
-		state=statePlaying;
-		eDebug("STARTING PLAYBACK");
-		outputsn->start();
-	}
 }
 
 void eMP3Decoder::decodeMore(int what)
 {
-	if ((state != statePlaying) && (state != stateBuffering))
-	{
-		eDebug("eMP3Decoder: wrong state (%d)", state);
-		return;
-	}
-	
 	int flushbuffer=0;
+
 	if (input.size() < audiodecoder->getMinimumFramelength())
 	{
 		if (input.fromfile(sourcefd, audiodecoder->getMinimumFramelength()) < audiodecoder->getMinimumFramelength())
 			flushbuffer=1;
 	}
 	
-	int samples=audiodecoder->decodeMore(flushbuffer, 16384);
-	if (samples < 0)
-	{
-		state=stateFileEnd;
-		eDebug("datei TOTAL kaputt");
-	}
+	checkFlow(flushbuffer);
 
 	if (audiodecoder->getAverageBitrate() > 0)
 	{
@@ -333,24 +364,12 @@ void eMP3Decoder::decodeMore(int what)
 	} else
 		length=position=-1;
 
-	if ((state == stateBuffering) && (output.size()>16384))
-	{
-		state=statePlaying;
-		outputsn->start();
-	}
-	
 	if (flushbuffer)
 	{
 		eDebug("end of file...");
 		state=stateFileEnd;
 		inputsn->stop();
 		outputsn->start();
-	}
-	
-	if ((state == statePlaying) && (output.size() >= maxOutputBufferSize))
-	{
-		state=stateBufferFull;
-		inputsn->stop();
 	}
 }
 

@@ -41,7 +41,10 @@ public:
 	bool canReadLine();
 	eString readLine();
 	void close();
-			
+			// flow control: start/stop data delivery into read buffer.
+	void enableRead();
+	void disableRead();
+	
 	enum State {	Idle, HostLookup, Connecting,
 			Listening, Connection, Closing };
 	int state();
