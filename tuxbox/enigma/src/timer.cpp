@@ -19,6 +19,10 @@
 #include <lib/gui/echeckbox.h>
 
 static const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+/* bug fix - at localization, 
+   macro the type _ ("xxxxx") for a constant does not work, 
+   if it is declared outside of the function
+   
 static const char *monthStr[12] = { _("January"), _("February"), _("March"),
 													_("April"), _("May"), _("June"),	_("July"),
 													_("August"), _("September"), _("October"),
@@ -27,7 +31,7 @@ static const char *dayStr[7] = { _("Sunday"), _("Monday"), _("Tuesday"), _("Wedn
 											 _("Thursday"), _("Friday"), _("Saturday") };
 const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"),
 											 _("Thu"), _("Fri"), _("Sat") };
-
+*/
 eTimerManager* eTimerManager::instance=0;
 
 void normalize( struct tm & );
@@ -1071,6 +1075,7 @@ eListBoxEntryTimer::eListBoxEntryTimer( eListBox<eListBoxEntryTimer> *listbox, e
 
 const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
+	const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat") };
 	drawEntryRect(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, hilited);
 
 	int xpos=rect.left()+10;
@@ -1316,6 +1321,10 @@ eAutoInitP0<TimerEditActions> i_TimerEditActions(eAutoInitNumbers::actions, "tim
 
 void eTimerEditView::createWidgets()
 {
+	const char *monthStr[12] = { _("January"), _("February"), _("March"),
+										_("April"), _("May"), _("June"), _("July"),
+										_("August"), _("September"), _("October"),
+										_("November"), _("December") };
 	event_name = new eTextInputField(this);
 	event_name->setName("event_name");
 	event_name->setMaxChars(50);
@@ -1750,6 +1759,8 @@ void eTimerEditView::multipleChanged( int i )
 
 void eTimerEditView::updateDay( eComboBox* dayCombo, int year, int month, int day )
 {
+	const char *dayStr[7] = { _("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"),
+											 _("Thursday"), _("Friday"), _("Saturday") };
 	dayCombo->clear();
 	int wday = weekday( 1, month, year );
 	int days = monthdays[ month-1 ];
