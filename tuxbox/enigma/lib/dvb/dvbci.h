@@ -28,7 +28,9 @@ class eDVBCI: private eThread, public eMainloop, public Object
 	int CAPMTlen;
 	int CAPMTpos;
 	int CAPMTstate;
-	
+	int CAPMTdescrpos;
+	int CAPMTdescrlen;
+		
 	void createCAPMT(int type,unsigned char *data);
 	void sendCAPMT();
 	void clearCAIDs();
