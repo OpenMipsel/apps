@@ -28,13 +28,13 @@ protected:
 	eSocketNotifier	*rsn;
 	virtual void notifier(int);
 public:
-	eSocket();
-	eSocket(int socket, int issocket);
+	eSocket(eMainloop *ml);
+	eSocket(int socket, int issocket, eMainloop *ml);
 	~eSocket();
 	int connectToHost(eString hostname, int port);
 	int getDescriptor();
 	int writeBlock(const char *data, unsigned int len);
-	int setSocket(int socketfd, int issocket);
+	int setSocket(int socketfd, int issocket, eMainloop *ml);
 	int bytesToWrite();
 	int readBlock(char *data, unsigned int maxlen);
 	int bytesAvailable();

@@ -411,11 +411,11 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 			if (!ainversion)
 				ainversion="0";
 			if (!amodulation)
-				modulation="3";
+				amodulation="3";
 			int frequency=atoi(afrequency)/1000,
 					symbol_rate=atoi(asymbol_rate),
 					inversion=atoi(ainversion),
-					modulation=atoi(amodulation),
+					modulation=atoi(amodulation);
 			t.setCable(frequency, symbol_rate, inversion, modulation );
 			break;
 		}

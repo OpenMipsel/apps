@@ -4,38 +4,58 @@
 #include <lib/dvb/service.h>
 #include <lib/base/buffer.h>
 
-#include <mad.h>
 #include <lib/base/ebase.h>
 #include <lib/base/thread.h>
 #include <lib/base/message.h>
 #include <lib/system/elock.h>
+#include <lib/codecs/codec.h>
+
+#include <lib/system/httpd.h>
 
 class eServiceHandlerMP3;
 
+class eHTTPStream: public eHTTPDataSource
+{
+	eIOBuffer &buffer;
+public:
+	eHTTPStream(eHTTPConnection *c, eIOBuffer &buffer);
+	~eHTTPStream();
+	void haveData(void *data, int len);
+	Signal0<void> dataAvailable;
+};
+
 class eMP3Decoder: public eThread, public eMainloop, public Object
 {
-	enum { INPUT_BUFFER_SIZE=8192 };
-	unsigned char input_buffer[INPUT_BUFFER_SIZE];
 	eServiceHandlerMP3 *handler;
+	eAudioDecoder *audiodecoder;
 	eIOBuffer input;
 	eIOBuffer output;
 	enum
 	{
 		stateInit, stateError, stateBuffering, stateBufferFull, statePlaying, statePause, stateFileEnd
 	};
+
 	int state;
 	int dspfd;
+
 	int sourcefd;
-	int speed;
-	int framecnt;
+	eHTTPStream *stream;
+	eHTTPConnection *http;
+	
 	int error;
+	int outputbr;
 	eSocketNotifier *inputsn, *outputsn;
+	void streamingDone(int err);
+	void decodeMoreHTTP();
 	void decodeMore(int what);
 	void outputReady(int what);
+	eHTTPDataSource *createStreamSink(eHTTPConnection *conn);
+	
 	int maxOutputBufferSize;
 	
+	eAudioDecoder::pcmSettings pcmsettings;
+	
 	int filelength;
-	int avgbr, outputbr;
 	
 	int length;
 	int position;
@@ -43,11 +63,6 @@ class eMP3Decoder: public eThread, public eMainloop, public Object
 	
 	void dspSync();
 public:
-	mad_stream stream;
-	mad_frame frame;
-	mad_synth synth;
-	mad_timer_t timer;
-	
 	struct eMP3DecoderMessage
 	{
 		enum
@@ -67,14 +82,6 @@ public:
 	eFixedMessagePump<eMP3DecoderMessage> messages;
 	
 	void gotMessage(const eMP3DecoderMessage &message);
-	
-	struct mp3pcm
-	{
-		unsigned int samplerate;
-		unsigned int channels;
-		unsigned int format;
-		int reconfigure;
-	} pcmsettings;
 	
 	eMP3Decoder(const char *filename, eServiceHandlerMP3 *handler);
 	~eMP3Decoder();

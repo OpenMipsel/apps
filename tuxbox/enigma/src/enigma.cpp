@@ -159,7 +159,7 @@ eZap::eZap(int argc, char **argv)
 	fileresolver->addTranslation(DATADIR "/enigma/htdocs", "/", 2);
 
 	eDebug("[ENIGMA] starting httpd");
-	httpd = new eHTTPD(80);
+	httpd = new eHTTPD(80, eApp);
 
 	serialhttpd=0;
 #if 0
