@@ -8,8 +8,6 @@
 	<fonts>
 		<font file="bluehigh.ttf" name="Blue.Regular" /> <!-- Found at dafont.com freeware -->
 		<font file="bluebold.ttf" name="Blue.Bold" /> <!-- Found at dafont.com freeware -->
-		<font file="v5loxicar.ttf" name="v5Robusta" /> <!-- Found at dafont.com freeware -->
-		<font file="v5loxical.ttf" name="v5Lixera" /> <!-- Found at dafont.com freeware -->
 		<font file="pakenham.ttf" name="lcd" /> <!-- Found at dafont.com freeware -->
 	</fonts>
 	<fontalias>
@@ -416,7 +414,6 @@
 			<eLabel position="0:46" size="7:7" pixmap="lcd-clock" />
 			<eProgress position="9:56" size="64:8" name="volume_bar" foregroundColor="255" leftColor="255" rightColor="0" border="1" />
 			<eProgress position="9:46" size="64:9" name="progress_bar" foregroundColor="255" leftColor="255" rightColor="0" border="1" />
-
 		</eZapLCDMain>
 	</object> 
 
