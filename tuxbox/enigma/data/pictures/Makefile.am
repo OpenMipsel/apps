@@ -1,8 +1,7 @@
-SUBDIRS = chk_stone chk_v2 mainmenu
+SUBDIRS = mainmenu chk_stone chk_v2 neutrino
 
 EXTRA_DIST = \
-	checked.png crypt_off.png crypt_on.png format_on_small.png\
-	dolby_off.png dolby_on.png enigma2.png format_off.png format_on.png \
+	checked.png format_on_small.png dolby_on.png enigma2.png\
 	lcdmenu.png unchecked.png video.png button_red.png button_blue.png \
 	button_yellow.png button_gray.png button_green.png checked_lcd.png \
 	unchecked_lcd.png lcd_shutdown.png lcd_standby.png stereo_on.png \
