@@ -179,6 +179,7 @@ eZap::eZap(int argc, char **argv)
 	{
 		eDebug("[ENIGMA] starting httpd on serial port...");
 		int fd=::open("/dev/tts/0", O_RDWR);
+
 		if (fd < 0)
 			eDebug("[ENIGMA] serial port error (%m)");
 		else
@@ -201,8 +202,8 @@ eZap::eZap(int argc, char **argv)
 					"you may start a HTTP session now if you send a \"break\".\r\n";
 			write(fd, banner, strlen(banner));
 			serialhttpd = new eHTTPConnection(fd, 0, httpd, 1);
-			char *i="GET /log/debug HTTP/1.0\n\n";
-			serialhttpd->inject(i, strlen(i));
+			//char *i="GET /log/debug HTTP/1.0\n\n";
+			//serialhttpd->inject(i, strlen(i));
 		}
 	}
 

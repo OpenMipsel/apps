@@ -46,7 +46,10 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	entrys[0]=new eListBoxEntryText(colorformat, _("CVBS"), (void*)1);
 	entrys[1]=new eListBoxEntryText(colorformat, _("RGB"), (void*)2);
 	entrys[2]=new eListBoxEntryText(colorformat, _("SVideo"), (void*)3);
-	entrys[3]=new eListBoxEntryText(colorformat, _("YPbPr"), (void*)4);
+	
+	if(eDVB::getInstance()->getmID() != 6)	
+		entrys[3]=new eListBoxEntryText(colorformat, _("YPbPr"), (void*)4);
+
 	colorformat->setCurrent(entrys[v_colorformat-1]);
 	colorformat->setHelpText(_("choose colour format ( left, right )"));
 

@@ -209,7 +209,12 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	l->move(ePoint(20, 145));
 	l->resize(eSize(110, fd+4));
 	sAlpha = new eSlider( this, l, 0, 512 );
-	sAlpha->setIncrement( 10 ); // Percent !
+
+	if(eDVB::getInstance()->getmID() == 6)			//fb on vulcan sucks
+		sAlpha->setIncrement( 25 ); // Percent !
+	else
+		sAlpha->setIncrement( 10 ); // Percent !
+		
 	sAlpha->move( ePoint( 140, 145 ) );
 	sAlpha->resize(eSize( 280, fd+4 ) );
 	sAlpha->setHelpText(_("change the transparency correction"));

@@ -229,6 +229,26 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		system("/bin/sync");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target1/lun0/disc");
+
+		if(eDVB::getInstance()->getmID() == 6) //  in standby
+		{
+			time_t c=time(0)+eDVB::getInstance()->time_difference;
+			tm *t=localtime(&c);
+
+			int num=9999;
+			int stdby=1;
+			if (t && eDVB::getInstance()->time_difference)
+			{
+				num = t->tm_hour*100+t->tm_min;
+			}
+					
+			eDebug("write number to led-display");
+			int fd=::open("/dev/dbox/fp0",O_RDWR);
+			::ioctl(fd,11,&stdby);
+			::ioctl(fd,4,&num);
+			::close(fd);
+		}
+
 		break;
 	}
 	case eWidgetEvent::execDone:
@@ -247,6 +267,13 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 #ifndef DISABLE_LCD
 		eDBoxLCD::getInstance()->switchLCD(1);
 #endif
+		if(eDVB::getInstance()->getmID() == 6) //  out of standby
+		{
+			int stdby=0;
+			int fd=::open("/dev/dbox/fp0",O_RDWR);
+			::ioctl(fd,11,&stdby);
+			::close(fd);
+		}
 		break;
 	}
 	default:
@@ -4437,7 +4464,7 @@ void eZapMain::clockUpdate()
 		if(eDVB::getInstance()->getmID() == 6  // DM5K6...
 			&& eZapStandby::getInstance() ) //  in standby
 		{
-			int num = t->tm_hour*10+t->tm_min;
+			int num = t->tm_hour*100+t->tm_min;
 			eDebug("write number to led-display");
 			int fd=::open("/dev/dbox/fp0",O_RDWR);
 			::ioctl(fd,4,&num);
