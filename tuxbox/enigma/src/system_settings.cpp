@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: system_settings.cpp,v 1.1.2.2 2003/08/02 16:58:15 ghostrider Exp $
+ * $Id: system_settings.cpp,v 1.1.2.3 2003/08/07 19:18:49 ghostrider Exp $
  */
 
 #include <system_settings.h>
@@ -50,8 +50,6 @@ eSystemSettings::eSystemSettings()
 #ifndef DISABLE_LCD
 	CONNECT((new eListBoxEntryMenu(&list, _("LCD Settings"), eString().sprintf("(%d) %s", ++entry, _("open LCD settings")) ))->selected, eSystemSettings::lcd_settings);
 #endif
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Expert Mode"), "/ezap/extra/expertmode", _("enable/disable expert setup") );
 }
 
 void eSystemSettings::osd_settings()

@@ -12,6 +12,7 @@ class eExpertSetup: public eSetupWindow
 #endif
 	void rc_setup();
 	void skin_setup();
+	void colorbuttonsChanged(bool);
 public:
 	eExpertSetup();
 };

@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include <enigma.h>
+#include <enigma_lcd.h>
 #include <lib/base/eerror.h>
 #include <lib/gdi/lcd.h>
 #include <lib/gdi/font.h>
@@ -258,7 +259,7 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 
 #ifndef DISABLE_LCD
 	if (plugin->needlcd)
-    MakeParam(P_ID_LCD, eDBoxLCD::getInstance()->lock() );
+		MakeParam(P_ID_LCD, eDBoxLCD::getInstance()->lock() );
 #endif
 
 	int tpid = -1;
@@ -331,7 +332,7 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 			msg.hide();
 		}
 		else
-		{		
+		{
 			eDebug("exec Plugin now...");
 			execPlugin(first);
 			dlclose(libhandle[i-1]);
@@ -357,7 +358,10 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 
 #ifndef DISABLE_LCD
 	if (plugin->needlcd)
+	{
 		eDBoxLCD::getInstance()->unlock();
+		eZapLCD::getInstance()->invalidate();
+	}
 #endif
 
 	if (plugin->needvtxtpid)

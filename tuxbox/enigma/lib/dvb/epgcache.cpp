@@ -191,6 +191,7 @@ void eEPGCache::cleanLoop()
 		tmpMap temp;
 
 		for (eventCache::iterator DBIt = eventDB.begin(); DBIt != eventDB.end(); DBIt++)
+		{
 			for (timeMap::iterator It = DBIt->second.second.begin(); It != DBIt->second.second.end();)
 			{
 				cur_event = (*It->second).get();
@@ -215,16 +216,20 @@ void eEPGCache::cleanLoop()
 									if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
 									{
 										if ( ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id == HILO(cur_event->event_id))
+										{
 											// event is valid...
 											// we must check all other NVOD Events too
+											++It;
+											eDebug("hold valid NVOD Entry");
 											goto nextEvent;
+										}
 									}
 								}
 							}
 						}
 					}
-					goto removeEntry;
 					eDebug("delete no more used NVOD Entry");
+					goto removeEntry;
 				}
 				else if ( now > (TM+duration) )  // outdated normal entry (nvod references to)
 				{
@@ -247,6 +252,7 @@ removeEntry:
 nextEvent:
 				;
 			}
+		}
 
 		if (temp.size())
 			/*emit*/ EPGUpdated( &temp );

@@ -1718,13 +1718,3 @@ int eServiceSelector::toggleEditMode()
 	editMode^=1;
 	return editMode;
 }
-
-void eServiceSelector::toggleButtons()
-{
-	int showButtons=0;
-	eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", showButtons );
-	showButtons^=1;
-	eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", showButtons );
-	setStyle(style,true);
-}
-

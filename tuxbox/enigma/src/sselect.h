@@ -139,7 +139,6 @@ public:
 	int getStyle()	{ return style; }
 	void setStyle(int newStyle=-1, bool force=false);
 	void actualize();
-	void toggleButtons();
 	bool selectService(const eServiceReference &ref);
 	bool selectService(int num);
 	bool selectServiceRecursive( eServiceReference &ref );

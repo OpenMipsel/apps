@@ -935,7 +935,7 @@ eListBoxEntryCheck::eListBoxEntryCheck( eListBox<eListBoxEntry> *lb, const char*
 	selectable=1;
 	if ( regKey )
 	{
-		checked=0;
+		checked=false;
 		if ( eConfig::getInstance()->getKey( regKey.c_str(), checked ) )
 			eConfig::getInstance()->setKey( regKey.c_str(), checked );
 	}
@@ -947,9 +947,10 @@ void eListBoxEntryCheck::LBSelected(eListBoxEntry* t)
 {
 	if (t == this)
 	{
-		checked=checked?0:1;
+		checked=checked?false:true;
 		eConfig::getInstance()->setKey( regKey.c_str(), checked );
 		listbox->invalidateCurrent();
+		/* emit */ selected(checked);
 	}
 }
 

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_extra.cpp,v 1.1.2.10 2003/08/02 16:58:15 ghostrider Exp $
+ * $Id: setup_extra.cpp,v 1.1.2.11 2003/08/07 19:18:49 ghostrider Exp $
  */
 
 #include <setup_extra.h>
@@ -45,8 +45,14 @@ eExpertSetup::eExpertSetup()
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Skip confirmations"), "/elitedvb/extra/profimode", _("enable/disable confirmations"));
 	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Hide error windows"), "/elitedvb/extra/hideerror", _("enable/disable showing the zap error messages"));
-	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Serviceselector help buttons"), "/ezap/serviceselector/showButtons", _("show/hide service selector (color) help buttons"));
+	CONNECT((new eListBoxEntryCheck((eListBox<eListBoxEntry>*)&list,_("Serviceselector help buttons"),"/ezap/serviceselector/showButtons",	_("show/hide service selector (color) help buttons")))->selected, eExpertSetup::colorbuttonsChanged );
 	setHelpID(92);
+}
+
+void eExpertSetup::colorbuttonsChanged(bool b)
+{
+	eServiceSelector *sel = eZap::getInstance()->getServiceSelector();
+	sel->setStyle( sel->getStyle(), true );
 }
 
 #ifndef DISABLE_NETWORK

@@ -3573,6 +3573,7 @@ void eZapMain::runVTXT()
 
 void eZapMain::runPluginExt()
 {
+	hide();
 	eZapPlugins plugins(2);
 	plugins.exec();
 }
@@ -5340,7 +5341,6 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 	new eListBoxEntryText(&list, _("goto standby"), (void*)2);
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
 	CONNECT(list.selected, eSleepTimerContextMenu::entrySelected);
-	list.moveSelection( eListBoxBase::dirDown );
 	setHelpID(50);
 }
 

@@ -265,9 +265,9 @@ class eListBoxEntryCheck: public eListBoxEntryText
 	gPixmap *pm;
 	eString regKey;
 	int checked;
-
 	void LBSelected(eListBoxEntry* t);
 public:
+	Signal1<void,bool> selected;
 	eListBoxEntryCheck( eListBox<eListBoxEntry> *lb, const char* text, const char* regkey, const eString& hlptxt="" );
 	const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 };

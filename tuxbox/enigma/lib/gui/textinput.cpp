@@ -40,12 +40,12 @@ void eTextInputField::nextChar()
 {
 	if ( curPos+1 < (int)maxChars )
 	{
+		lastKey=-1;
 		++curPos;
 		if ( curPos > (int)isotext.length()-1 )
 			isotext+=' ';
 		updated();
 	}
-	lastKey=-1;
 }
 
 //		"abc2ABC",   // 2
@@ -207,6 +207,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			else if ( (event.action == &i_cursorActions->up ||
 				event.action == &i_cursorActions->down) && editMode )
 			{
+				lastKey=-1;
 				nextCharTimer.stop();
 				const char *pc1=useableChars.c_str();
 				const char *pc2=strchr( pc1, isotext[curPos] );
@@ -237,6 +238,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			{
 				if ( isotext.length() && isotext.length() < maxChars )
 				{
+					lastKey=-1;
 					isotext.insert( curPos, " ");
 					updated();
 				}
@@ -245,6 +247,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			{
 				if ( isotext.length() )
 				{
+					lastKey=-1;
 					isotext.erase( curPos, 1 );
 //					eDebug("curPos=%d, length=%d", curPos, text.length() );
 					if ( (int)isotext.length() == curPos )
@@ -354,7 +357,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				key=11;
 			else
 				return eButton::eventHandler( event );
-			if ( key != lastKey )
+			if ( key != lastKey && lastKey != -1 && key != -1 )
 			{
 				if ( nextCharTimer.isActive() )
 					nextCharTimer.stop();

@@ -161,6 +161,7 @@ PluginOffsetScreen::PluginOffsetScreen()
 	descr->move(ePoint(100,100));
 	descr->setText(_("here you can center the tuxtxt rectangle...\nfor more infos press help"));
 	eSize ext = descr->getExtend();
+	ext+=eSize(8,4);  // the given Size of the Text is okay... but the renderer sucks...
 	descr->resize( ext );
 	descr->move( ePoint( (width()/2)-(ext.width()/2) , (height()/2)-(ext.height()/2) ) );
 	descr->show();
