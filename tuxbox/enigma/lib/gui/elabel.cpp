@@ -91,7 +91,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 	
 	if (shortcutPixmap)
 	{
-		area.setWidth(area.width()-area.height());
+		//area.setWidth(area.width()-area.height());
 		area.setX(area.height());
 	}
 
