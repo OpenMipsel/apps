@@ -105,6 +105,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 			ci_state=0;
 		}
 		::ioctl(fd,CI_RESET);
+		ml_bufferlen=0;
 		dataAvailable(0);
 		break;
 	case eDVBCIMessage::reset:
@@ -114,6 +115,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 		ci_state=0;
 		clearCAIDs();
 		::ioctl(fd,CI_RESET);
+		ml_bufferlen=0;
 		dataAvailable(0);
 		break;
 	case eDVBCIMessage::init:
@@ -788,6 +790,7 @@ void eDVBCI::dataAvailable(int what)
 			return;
 		}		
 	
+		ml_bufferlen=0;
 		ci_state=1;
 	}					
 		
