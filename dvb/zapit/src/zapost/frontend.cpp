@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.3 2003/05/05 15:30:07 digi_casi Exp $
+ * $Id: frontend.cpp,v 1.41.2.4 2003/05/07 19:04:58 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -504,6 +504,42 @@ void CFrontend::secResetOverload ()
 /*
  * zapit frontend api
  */
+ 
+void CFrontend::positionMotor(uint8_t diseqc)
+{
+	const secStatus *state;
+  
+	printf("[frontend] positionMotor: ATTENTION this function is not tested yet.\n");
+
+  	secCmdSequence *sequence = new secCmdSequence();
+	sequence->commands = new secCommand[1]; //just one command
+
+	sequence->miniCommand = SEC_MINI_NONE;
+	sequence->continuousTone = currentToneMode; //???
+	sequence->voltage = SEC_VOLTAGE_18; //full power ;-)
+	sequence->numCommands = 1; //just one command
+
+	sequence->commands[0].type = SEC_CMDTYPE_DISEQC;
+	sequence->commands[0].u.diseqc.addr = 0x31;
+	sequence->commands[0].u.diseqc.cmd = 0x6B;	/* position motor */
+	sequence->commands[0].u.diseqc.numParams = 1;
+	sequence->commands[0].u.diseqc.params[0] = diseqc; /* goto satellite # */
+
+	secSendSequence(sequence);
+
+	delete sequence->commands;
+	delete sequence;
+	
+	if (failed == false)
+		printf("[frontend] positionMotor: seding diseqc sequence worked.\n");
+	else
+		printf("[frontend] positionMotor: seding diseqc sequence failed.\n");
+	
+	state = secGetStatus();
+	printf("[frontend] positionMotor: bus power is: %d\n", state->selVolt);
+	delete state;
+}
+
 const bool CFrontend::tuneChannel (CZapitChannel *channel)
 {
 	bool noNit = false;
@@ -521,6 +557,20 @@ const bool CFrontend::tuneChannel (CZapitChannel *channel)
 			return false;
 		}
 	}
+	
+	if ((diseqcType == DISEQC_1_2) && (currentDiseqc != channel->getDiSEqC()))
+	{
+		printf("[frontend] ATTENTION: this function is not working yet!\n");
+		printf("[frontend] tuneChannel: currentDiseqc = %d <> diseqc = %d => we need to position rotor now.\n", currentDiseqc, channel->getDiSEqC());
+		printf("[frontend] moving satellite dish from satellite position %d to %d...\n", currentSatellitePosition, channel->getSatellitePosition());
+		positionMotor(channel->getDiSEqC());
+		
+		waitForMotor = abs(channel->getSatellitePosition() - currentSatellitePosition) / 18; //assuming 1.8 degrees/second motor rotation speed for the time being...
+		printf("[frontend] tuneChannel: waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
+		sleep(waitForMotor);
+		
+		currentSatellitePosition = channel->getSatellitePosition();
+	}
 
 	currentTsidOnid = noNit ? currentTsidOnid : channel->getTsidOnid();
 
@@ -532,12 +582,6 @@ const bool CFrontend::tuneChannel (CZapitChannel *channel)
 		transponder->second.polarization,
 		transponder->second.DiSEqC
 	);
-}
-
-void positionMotor(uint8_t diseqc)
-{
-	// turn satellite dish to stored motor position indicated in diseqc
-	printf("[frontend] positionMotor: function not implemented yet.\n");
 }
 
 const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polarization, uint8_t diseqc)
@@ -610,19 +654,9 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 			break;
 
 		case DISEQC_1_1:
-			if ((currentVoltage != voltage) || (currentToneMode != toneMode) || (currentDiseqc != diseqc))
-			{
-				sendDiseqcCommand(toneMode, voltage, diseqc, diseqcRepeats);
-				secChanged = true;
-			}
-			break;
-			
 		case DISEQC_1_2:
 			if ((currentVoltage != voltage) || (currentToneMode != toneMode) || (currentDiseqc != diseqc))
 			{
-				if (currentDiseqc != diseqc)
-					positionMotor(diseqc);
-
 				sendDiseqcCommand(toneMode, voltage, diseqc, diseqcRepeats);
 				secChanged = true;
 			}
