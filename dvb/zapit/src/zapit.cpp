@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.16 2003/03/27 09:08:45 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.17 2003/03/27 10:00:58 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -1462,7 +1462,7 @@ int main(int argc, char **argv)
 {
 	CZapitClient::responseGetLastChannel test_lastchannel;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.16 2003/03/27 09:08:45 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.17 2003/03/27 10:00:58 thegoodguy Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
@@ -1525,7 +1525,7 @@ int main(int argc, char **argv)
 		frontend->setDiseqcType((diseqc_t) config.getInt32("diseqcType", NO_DISEQC));
 		frontend->setDiseqcRepeats(config.getInt32("diseqcRepeats", 0));
 
-		for (i = 0; i < MAX_LNBS; i++)
+		for (int i = 0; i < MAX_LNBS; i++)
 		{
 			/* low offset */
 			sprintf(tmp, "lnb%d_OffsetLow", i);

@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.1 2003/02/18 15:16:47 alexw Exp $
+ * $Id: frontend.cpp,v 1.41.2.2 2003/03/27 09:59:10 thegoodguy Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -617,6 +617,9 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 				sendDiseqcSmatvRemoteTuningCommand(toneMode, voltage, diseqc, feparams.Frequency);
 				secChanged = true;
 			}
+			break;
+		default:
+			WARN("Invalid DiSEqC type");
 			break;
 		}
 	}
