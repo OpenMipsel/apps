@@ -380,7 +380,7 @@ public:
 	enum
 	{
 		idInvalid=-1,
-		idStructure,	// service_id == 0 is root
+		idStructure, // service_id == 0 is root
 		idDVB,
 		idFile,
 		idUser=0x1000
@@ -405,7 +405,8 @@ public:
 		flagDirectory=isDirectory|mustDescent|canDescent,
 		shouldSort=8,			// should be ASCII-sorted according to service_name. great for directories.
 		hasSortKey=16,		// has a sort key in data[3]. not having a sort key implies 0.
-		sort1=32					// sort key is 1 instead of 0
+		sort1=32,					// sort key is 1 instead of 0
+		isMarker=64
 	};
 
 	inline int getSortKey() const { return (flags & hasSortKey) ? data[3] : ((flags & sort1) ? 1 : 0); }
