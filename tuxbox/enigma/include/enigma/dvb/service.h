@@ -47,7 +47,8 @@ public:
 
 		cmdSetSpeed,		// parm : ratio.. 1 normal, 0 pause, >1 fast forward, <0 reverse (if supported)
 		cmdSkip,				// parm : in ms (~)
-		cmdSeekAbsolute	// parm : percentage ~
+		cmdSeekAbsolute,	// parm : percentage ~
+		cmdSeekReal			// parm : service specific, as given by queryRealPosition
 	};
 	int type;
 	int parm;
@@ -70,7 +71,8 @@ public:
 		flagIsScrambled=1, 
 		flagHaveSubservices=2, 
 		flagHaveMultipleAudioStreams=4,
-		flagIsSeekable=8
+		flagIsSeekable=8,
+		flagSupportPosition
 	};
 	enum
 	{
@@ -108,12 +110,24 @@ public:
 	virtual int getErrorInfo();
 	
 	virtual int stop();
+	
+		// position query
+	enum {
+		posQueryLength,	// query length (in seconds)
+		posQueryCurrent, // query current position
+		posQueryRealLength, // service specific length, e.g. file length in bytes
+		posQueryRealCurrent // service specific current position, e.g. file position in bytes
+	};
+	virtual int getPosition(int what);	// -1 means: not available
 
 	Signal1<void, const eServiceEvent &> serviceEvent;
 
 		// service list functions
 	virtual void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	virtual void leaveDirectory(const eServiceReference &dir);
+
+	virtual int deleteService(const eServiceReference &dir, const eServiceReference &ref);
+	virtual int moveService(const eServiceReference &dir, const eServiceReference &ref, int dr);
 	
 	virtual eService *addRef(const eServiceReference &service);
 	virtual void removeRef(const eServiceReference &service);
@@ -158,6 +172,12 @@ public:
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);
 	
+		// stuff for modifiying ...
+
+	int deleteService(const eServiceReference &dir, const eServiceReference &ref);
+	enum { dirUp, dirDown };
+	int moveService(const eServiceReference &dir, const eServiceReference &ref, int dr);
+
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);
 };

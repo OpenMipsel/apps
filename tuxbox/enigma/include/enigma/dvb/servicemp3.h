@@ -8,6 +8,7 @@
 #include <core/base/ebase.h>
 #include <core/base/thread.h>
 #include <core/base/message.h>
+#include <core/system/elock.h>
 
 class eServiceHandlerMP3;
 
@@ -32,6 +33,13 @@ class eMP3Decoder: public eThread, public eMainloop, public Object
 	void outputReady(int what);
 	int maxOutputBufferSize;
 	
+	int filelength;
+	int avgbr, outputbr;
+	
+	int length;
+	int position;
+	eLock poslock;
+	
 	void dspSync();
 public:
 	mad_stream stream;
@@ -46,7 +54,8 @@ public:
 			start, exit,
 			skip,
 			setSpeed, // 0..
-			seek	// 0..65536
+			seek,	// 0..65536
+			seekreal
 		};
 		int type;
 		int parm;
@@ -68,6 +77,9 @@ public:
 	
 	eMP3Decoder(const char *filename, eServiceHandlerMP3 *handler);
 	~eMP3Decoder();
+	
+	int getPosition(int);
+	int getLength(int);
 	
 	void thread();
 };
@@ -111,6 +123,8 @@ public:
 	int getErrorInfo();
 
 	int stop();
+	
+	int getPosition(int what);
 
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);

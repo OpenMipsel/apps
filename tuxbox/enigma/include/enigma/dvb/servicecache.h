@@ -83,6 +83,25 @@ public:
 		c.service=service;
 		services.insert(std::pair<eServiceReference, eCachedService>(serviceref, c));
 	}
+	
+	int deleteService(const eServiceReference &dir, const eServiceReference &serviceref)
+	{
+		typename std::map<eServiceReference,eCachedService>::iterator c=services.find(serviceref);
+		if (c == services.end())
+			return 0;
+		if (c->second.refcnt)
+			return -1;
+		services.erase(c);
+		
+		typename std::map<eServiceReference,eNode>::iterator i=cache.find(dir);
+		if (i != cache.end())
+			for (std::list<eServiceReference>::iterator a(i->second.content.begin()); a != i->second.content.end();)
+				if (*a == serviceref)
+					a = i->second.content.erase(a);
+				else
+					++a;
+		return 0;
+	}
 
 	eService *addRef(const eServiceReference &serviceref)
 	{

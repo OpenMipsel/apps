@@ -35,7 +35,8 @@ public:
 			start, exit,
 			skip,
 			setSpeed, // 0..
-			seek	// 0..65536
+			seek,	// 0..65536
+			seekreal
 		};
 		int type;
 		int parm;

@@ -26,6 +26,8 @@ public:
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);
 
+	int deleteService(const eServiceReference &dir, const eServiceReference &ref);
+
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);
 
