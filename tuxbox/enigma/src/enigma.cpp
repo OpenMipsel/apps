@@ -288,9 +288,6 @@ int main(int argc, char **argv)
 
 	Decoder::Flush();
 
-	if ( res == 1 )
-		system("/sbin/reboot &");
-
 	exit(res);
 //	mcheck_check_all();
 //	muntrace();

@@ -529,7 +529,7 @@ int eTextPara::renderString(const eString &string, int rflags)
 	shape(uc_shape, uc_string);
 	
 		// now do the usual logical->visual reordering
-#ifdef HAVE_FRIBIDI
+#ifdef HAVE_FRIBIDI	
 	FriBidiCharType dir=FRIBIDI_TYPE_ON;
 	{
 		int size=uc_shape.size();

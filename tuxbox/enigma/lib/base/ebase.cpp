@@ -164,7 +164,8 @@ int eMainloop::exec()
 		app_quit_now = false;
 		enter_loop();
 	}
-	return 0;
+	eDebug("retval = %d", retval);
+	return retval;
 }
 
 void eMainloop::enter_loop()
@@ -197,8 +198,9 @@ void eMainloop::exit_loop()  // call this to leave the current loop
 	app_exit_loop = true;	
 }
 
-void eMainloop::quit()   // call this to leave all loops
+void eMainloop::quit( int ret )   // call this to leave all loops
 {
+	retval=ret;
 	app_quit_now = true;
 }
 

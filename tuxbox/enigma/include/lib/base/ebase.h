@@ -214,8 +214,9 @@ class eMainloop
 	bool app_quit_now;
 	int loop_level;
 	void processOneEvent();
+	int retval;
 public:
-	eMainloop():app_quit_now(0),loop_level(0)	{	}
+	eMainloop():app_quit_now(0),loop_level(0),retval(0){	}
  	void addSocketNotifier(eSocketNotifier *sn);
 	void removeSocketNotifier(eSocketNotifier *sn);
 	void addTimer(eTimer* e)	{		TimerList.push_back(e);		TimerList.sort();	}
@@ -223,8 +224,8 @@ public:
 
 	int looplevel() { return loop_level; }
 	
-	int exec();		// recursive enter the loop
-	void quit();	// leave all pending loops (recursive leave())
+	int exec();  // recursive enter the loop
+	void quit(int ret=0); // leave all pending loops (recursive leave())
 	void enter_loop();
 	void exit_loop();
 };

@@ -2296,7 +2296,7 @@ void eZapMain::standbyRelease()
 				break;
 			}
 			case 4: // reboot
-					eZap::getInstance()->quit();	//ghost da haste was vergessen ->quit(1) ..das gibs in ebase nicht
+					eZap::getInstance()->quit(1);	
 					break;
 			case 1: // shutdown
 /*				if (handleState())*/
