@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_language.cpp,v 1.10.2.4 2002/12/05 19:04:52 Ghostrider Exp $
+ * $Id: setup_language.cpp,v 1.10.2.5 2003/01/09 18:51:16 Ghostrider Exp $
  */
 
 #include <setup_language.h>
@@ -80,6 +80,8 @@ eZapLanguageSetup::eZapLanguageSetup(): eWindow(0)
 
 	ok=new eButton(this);
 	ok->setText(_("save"));
+	ok->setShortcut("green");
+	ok->setShortcutPixmap("green");
 	ok->move(ePoint(20, 80));
 	ok->resize(eSize(170, 40));
 	ok->setHelpText(_("save changes and close window"));
