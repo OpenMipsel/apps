@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/tuxbox/neutrino/daemons/sectionsd/dmx.cpp,v 1.2.2.2 2003/02/06 17:56:07 thegoodguy Exp $
+ * $Header: /cvs/tuxbox/apps/tuxbox/neutrino/daemons/sectionsd/dmx.cpp,v 1.2.2.3 2003/02/17 19:26:13 thegoodguy Exp $
  *
  * DMX class (sectionsd) - d-box2 linux project
  *
@@ -220,7 +220,7 @@ int DMX::start(void)
 
 	if ((fd = open(DEMUX_DEVICE, O_RDWR)) == -1)
 	{
-		perror("[sectionsd] open dmx: ");
+		perror("[sectionsd] open dmx");
 		pthread_mutex_unlock(&start_stop_mutex);
 		return 2;
 	}
