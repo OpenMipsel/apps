@@ -34,8 +34,6 @@ public:
 	~eLanguageEntry()
 	{	
 		delete para;
-		if (pixmap)
-			delete pixmap;
 	}
 	
 	const eString &getLanguageID() const
@@ -133,7 +131,7 @@ eWizardLanguage::eWizardLanguage()
 			*d++=0;
 			eLanguageEntry *c=new eLanguageEntry(list, id, d);
 			
-			if (!strcmp(id, current))
+			if ((current && !strcmp(id, current)) || !cur)
 				cur=c;
 		}
 	}
