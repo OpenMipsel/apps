@@ -19,6 +19,7 @@ private:
 	int number[24];
 	int len, dspace, space_selected, active;
 	gColor cursorB, cursorF, normalB, normalF;
+	int oldmax;	
 	int have_focus;
 	int min, max, digit, maxdigits, isactive;
 	int flags;

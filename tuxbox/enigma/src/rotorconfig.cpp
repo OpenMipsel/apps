@@ -430,6 +430,7 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	lCounter = new eLabel(this);
 	lCounter->setName("lCounter");
 
+	running=false;
 /*	lRecalcParams = new eLabel(this);
 	lRecalcParams->setName("lRecalcParams");*/
 
@@ -741,8 +742,6 @@ void eRotorManual::onScanPressed()
 
 int eRotorManual::eventHandler( const eWidgetEvent& e)
 {
-	static timeval begTime=0;
-	static bool running=false;
 	switch (e.type)
 	{
 		case eWidgetEvent::execDone:

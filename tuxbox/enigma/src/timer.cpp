@@ -779,12 +779,12 @@ void eTimerView::fillTimerList()
 	events->endAtomic();
 }
 
-const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-const char *monthStr[12] = { _("January"), _("February"), _("March"),
+static const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+static const char *monthStr[12] = { _("January"), _("February"), _("March"),
 													_("April"), _("May"), _("June"),	_("July"),
 													_("August"), _("September"), _("October"),
 													_("November"), _("December") };
-const char *dayStr[7] = { _("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"),
+static const char *dayStr[7] = { _("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"),
 											 _("Thursday"), _("Friday"), _("Saturday") };
 const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"),
 											 _("Thu"), _("Fri"), _("Sat") };

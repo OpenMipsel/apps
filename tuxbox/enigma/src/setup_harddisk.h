@@ -25,6 +25,7 @@ class eHarddiskMenu: public eWindow
 	eStatusBar *sbar;
 	int dev;
 	int numpart;
+	int visible;
 	void s_format();
 	void extPressed();
 	void check();

@@ -481,6 +481,7 @@ int tsScan::eventHandler(const eWidgetEvent &event)
 		return 1;
 	case eWidgetEvent::execBegin:
 	{
+		scantime=0;
 		eDVBScanController *sapi=eDVB::getInstance()->getScanAPI();
 		if (!sapi)
 		{	
@@ -498,7 +499,6 @@ int tsScan::eventHandler(const eWidgetEvent &event)
 
 void tsScan::updateTime()
 {
-		static int scantime=0;
 		scantime++;
 		int sek = (int) (( (double) scantime / tpScanned) * tpLeft);
 		if (sek > 59)
@@ -520,6 +520,7 @@ void tsScan::serviceFound(const eServiceReferenceDVB &service, bool newService)
 	if (newService)
 	switch(s->service_type)
 	{
+		case 4:	// NVOD reference service
 		case 1:	// digital television service
 			newTVServices++;
 		break;
@@ -529,9 +530,6 @@ void tsScan::serviceFound(const eServiceReferenceDVB &service, bool newService)
 		break;
 
 		case 3:	// teletext service
-		break;
-
-		case 4:	// NVOD reference service
 		break;
 
 		case 5:	// NVOD time shifted service

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.15 2003/02/18 23:13:27 bernroth Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.16 2003/02/25 03:09:15 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -255,7 +255,6 @@ void eHarddiskMenu::check()
 
 void eHarddiskMenu::extPressed()
 {
-	static int visible = 0;
 	if ( visible )
 	{
 		gPixmap *pm = eSkin::getActive()->queryImage("arrow_down");
@@ -431,6 +430,7 @@ void eHarddiskMenu::readStatus()
 
 eHarddiskMenu::eHarddiskMenu(int dev): dev(dev)
 {
+	visible=0;
 	status=new eLabel(this); status->setName("status");
 	model=new eLabel(this); model->setName("model");
 	capacity=new eLabel(this); capacity->setName("capacity");

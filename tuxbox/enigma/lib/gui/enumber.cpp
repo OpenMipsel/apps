@@ -242,7 +242,6 @@ int eNumber::keyDown(int key)
 		}
 		else if (flags & flagFixedNum)
 		{
-			static int oldmax = max;
 			if (active)
 				max=999;
 			else
@@ -378,6 +377,7 @@ void eNumber::setLimits(int _min, int _max)
 {
 	min=_min;
 	max=_max;
+	oldmax=max;
 }
 
 void eNumber::setNumberOfFields(int n)

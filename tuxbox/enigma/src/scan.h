@@ -78,7 +78,7 @@ class tsScan: public eWidget
 	eTimer timer;
 	eLabel *timeleft, *service_name, *service_provider, *services_scanned, *transponder_scanned;
 	eProgress *progress;
-	int tpLeft;
+	int tpLeft, scantime;
 protected:
 	int eventHandler(const eWidgetEvent &event);
 	void dvbEvent(const eDVBEvent &event);
