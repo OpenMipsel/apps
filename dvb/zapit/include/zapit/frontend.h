@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.1 2003/02/18 15:16:46 alexw Exp $
+ * $Id: frontend.h,v 1.24.2.2 2003/05/07 18:55:54 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -59,6 +59,8 @@ class CFrontend
 		secVoltage currentVoltage;
 		/* current diseqc position */
 		uint8_t currentDiseqc;
+		/* current satellite position */
+		uint32_t currentSatellitePosition;
 		/* how often to repeat DiSEqC 1.1 commands */
 		uint32_t diseqcRepeats;
 		/* DiSEqC type of attached hardware */
@@ -99,6 +101,7 @@ class CFrontend
 		void secSendSequence (secCmdSequence *sequence);
 		//void secResetOverload ();
 		const secStatus *secGetStatus ();
+		void positionMotor(uint8_t diseqc);
 
 		/* zapit tuner api */
 		const bool tuneChannel (CZapitChannel *channel);
