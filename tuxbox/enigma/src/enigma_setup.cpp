@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.20 2003/05/09 16:53:08 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.21 2003/05/17 21:25:03 alexvrs Exp $
  */
 
 #include <enigma_setup.h>
@@ -27,6 +27,7 @@
 #include <setupvideo.h>
 #include <setup_audio.h>
 #include <wizard_language.h>
+#include <setup_timezone.h>
 #include <setup_osd.h>
 #include <setup_lcd.h>
 #include <setup_rc.h>
@@ -105,6 +106,7 @@ eZapSetup::eZapSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), eString().sprintf("(%d) %s", ++entry, _("open audio setup")) ))->selected, eZapSetup::sel_sound);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), eString().sprintf("(%d) %s", ++entry, _("open skin selector")) ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
+	CONNECT((new eListBoxEntryMenu(&list, _("Time Zone..."), eString().sprintf("(%d) %s", ++entry, _("open time zone setup")) ))->selected, eZapSetup::sel_timezone);
 #ifndef DISABLE_FILE
 	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab..."), eString().sprintf("(%d) %s", ++entry, _("open ngrab config")) ))->selected, eZapSetup::sel_engrab);
 #endif
@@ -288,6 +290,19 @@ void eZapSetup::sel_language()
 	setup.hide();
 	show(); */
 	eWizardLanguage::run();
+}
+
+void eZapSetup::sel_timezone()
+{
+	hide();
+	eZapTimeZoneSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
 }
 
 #ifndef DISABLE_FILE
