@@ -5,8 +5,16 @@
 #include <string>
 #include <map>       
 #include <new>
+#include <libsig_comp.h>
 
 void eFatal(const char* fmt, ...);
+
+class eString;
+
+enum { lvlDebug=1, lvlWarning=2, lvlFatal=4 };
+
+extern Signal2<void, int, const eString&> logOutput;
+extern int logOutputConsole;
 
 #ifdef ASSERT
 #undef ASSERT

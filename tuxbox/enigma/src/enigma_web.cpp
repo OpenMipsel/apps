@@ -27,7 +27,7 @@ eString xmlEscape(const eString &string)
 static const eString xmlversion="<?xml version=\"1.0\"?>\n";
 static inline eString xmlstylesheet(const eString &ss)
 {
-	return eString("<?xml-stylesheet type=\"text/xsl\" href=\"/xst/") + ss + ".xsl\"?>\n";
+	return eString("<?xml-stylesheet type=\"text/xsl\" href=\"/stylesheets/") + ss + ".xsl\"?>\n";
 }
 
 static eString web_root(eString request, eString dirpath, eString opts, eHTTPConnection *content)
@@ -112,8 +112,124 @@ static eString xml_services(eString request, eString dirpath, eString opt, eHTTP
 	return res;
 }
 
-void ezapInitializeWeb(eHTTPDynPathResolver *dyn_resolver)
+class eHTTPLog: public eHTTPDataSource, public Object
+{
+	int mask, format;
+	int ok, last;
+	void recvMessage(int lvl, const eString &str);
+	eString toWrite;
+public:
+	eHTTPLog(eHTTPConnection *c, int mask, int format);
+	~eHTTPLog();
+	
+	int doWrite(int);
+};
+
+eHTTPLog::eHTTPLog(eHTTPConnection *c, int mask, int format):
+	eHTTPDataSource(c), mask(mask), format(format), ok(0)
+{
+	if (format == 0)
+		connection->local_header["Content-Type"]="text/plain";
+	else if (format == 1)
+		connection->local_header["Content-Type"]="text/html";
+	connection->code=200;
+	connection->code_descr="OK";
+	CONNECT(logOutput, eHTTPLog::recvMessage);
+	last = -1;
+	if (format == 1)
+	{
+		toWrite="<html><head>" 
+		"<link type=\"text/css\" rel=\"stylesheet\" href=\"/stylesheets/log.css\">"
+		"<title>Enigma Event Log</title>"
+		"</head><body><pre>\n";
+	}
+}
+
+int eHTTPLog::doWrite(int hm)
+{
+	// we don't have YET data to send (but there's much to come)
+	ok=1;
+	if (toWrite.size())
+	{
+		connection->writeBlock(toWrite.c_str(), toWrite.size());
+		toWrite="";
+	}
+	return 0;
+}
+
+void eHTTPLog::recvMessage(int lvl, const eString &msg)
+{
+	eString res;
+	if (lvl & mask)
+	{
+		if (format == 0) // text/plain
+		{
+			res=msg;
+			res.strReplace("\n", "\r\n");
+		} else
+		{
+			if (last != lvl)
+			{
+				eString cl="unknown";
+				if (lvl == lvlWarning)
+					cl="warning";
+				else if (lvl == lvlFatal)
+					cl="fatal";
+				else if (lvl == lvlDebug)
+					cl="debug";
+				
+				if (last != -1)
+					res+="</div>";
+				res+="<div class=\"" + cl + "\">";
+				last=lvl;
+			}
+			res+=msg;
+			// res.strReplace("\n", "<br>\n");  <-- we are <pre>, so no need
+		}
+		if (ok)
+			connection->writeBlock(res.c_str(), res.size());
+		else
+			toWrite+=res;
+	}
+}
+
+eHTTPLog::~eHTTPLog()
+{
+}
+
+class eHTTPLogResolver: public eHTTPPathResolver
+{
+public:
+	eHTTPLogResolver();
+	eHTTPDataSource *getDataSource(eString request, eString path, eHTTPConnection *conn);
+};
+
+eHTTPLogResolver::eHTTPLogResolver()
+{
+}
+
+eHTTPDataSource *eHTTPLogResolver::getDataSource(eString request, eString path, eHTTPConnection *conn)
+{
+	if ((path=="/log/debug") && (request=="GET"))
+		return new eHTTPLog(conn, -1, 0);
+	if ((path=="/log/warn") && (request=="GET"))
+		return new eHTTPLog(conn, 3, 0);
+	if ((path=="/log/crit") && (request=="GET"))
+		return new eHTTPLog(conn, 1, 0);
+
+	if ((path=="/log/debug.html") && (request=="GET"))
+		return new eHTTPLog(conn, -1, 1);
+	if ((path=="/log/warn.html") && (request=="GET"))
+		return new eHTTPLog(conn, 3, 1);
+	if ((path=="/log/crit.html") && (request=="GET"))
+		return new eHTTPLog(conn, 1, 1);
+	return 0;
+}
+
+void ezapInitializeWeb(eHTTPD *httpd, eHTTPDynPathResolver *dyn_resolver)
 {
 	dyn_resolver->addDyn("GET", "/dyn2/", web_root);
 	dyn_resolver->addDyn("GET", "/dyn2/services", xml_services);
+	httpd->addResolver(new eHTTPLogResolver);
 }
+

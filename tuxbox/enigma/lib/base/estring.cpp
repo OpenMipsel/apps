@@ -80,9 +80,13 @@ eString& eString::strReplace(const char* fstr, const eString& rstr)
 //	replace all occurrence of fstr with rstr and, and returns a reference to itself
 	unsigned int index=0;
 	unsigned int fstrlen = strlen(fstr);
+	int rstrlen=rstr.size();
 
 	while ( ( index = find(fstr, index) ) != npos )
-		replace(index++, fstrlen, rstr);
+	{
+		replace(index, fstrlen, rstr);
+		index+=rstrlen;
+	}
 	
 	return *this;
 }

@@ -160,10 +160,10 @@ void enigmaCImmi::getmmi(const char *data)
 	const unsigned char TAG_MMI_ENQ[]      ={0x9F,0x88,0x07};
 
 	int rp=5;
-	eDebug("new mmi message received");
-	for(int i=0;i<data[0];i++)
-		printf("%02x ",data[i]);
-	printf("\n");
+//	eDebug("new mmi message received");
+//	for(int i=0;i<data[0];i++)
+//		printf("%02x ",data[i]);
+//	printf("\n");
 
 	lentrys->clearList();
 	lentrys->hide();
@@ -312,9 +312,9 @@ void enigmaCImmi::getmmi(const char *data)
 	answok->hide();
 	headansw->hide();
 	
-	for(int i=1;i<data[0];i++)
-		printf("%02x ",data[i]);
-	printf("\n");
+//	for(int i=1;i<data[0];i++)
+//		printf("%02x ",data[i]);
+//	printf("\n");
 
 	if(data[5] == 0x9F && data[6] == 0x88)
 	{

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <signal.h>
+#include <sys/klog.h>
 
 #include <lib/base/i18n.h>
 #include <lib/driver/rc.h>
@@ -65,7 +66,7 @@ void eZap::status()
 
 #include <lib/base/ringbuffer.h>
 
-extern void ezapInitializeWeb(eHTTPDynPathResolver *dyn_resolver);
+extern void ezapInitializeWeb(eHTTPD *httpd, eHTTPDynPathResolver *dyn_resolver);
 
 eZap::eZap(int argc, char **argv)
 	: eApplication(/*argc, argv, 0*/)
@@ -142,7 +143,6 @@ eZap::eZap(int argc, char **argv)
 
 	dyn_resolver = new eHTTPDynPathResolver();
 	ezapInitializeDyn(dyn_resolver);
-	ezapInitializeWeb(dyn_resolver);	
 
 	fileresolver = new eHTTPFilePathResolver();
   fileresolver->addTranslation("/var/tuxbox/htdocs", "/www", 2); /* TODO: make user configurable */
@@ -152,10 +152,11 @@ eZap::eZap(int argc, char **argv)
 
 	eDebug("[ENIGMA] starting httpd");
 	httpd = new eHTTPD(80, eApp);
+	ezapInitializeWeb(httpd, dyn_resolver);	
 
 	serialhttpd=0;
-#if 0
-  if ( eDVB::getInstance()->getmID).c_str()) > 4 )
+#if 1
+  if ( eDVB::getInstance()->getmID() > 4 )
   {
   	eDebug("[ENIGMA] starting httpd on serial port...");
     int fd=::open("/dev/tts/0", O_RDWR);
@@ -173,11 +174,16 @@ eZap::eZap(int argc, char **argv)
 			tio.c_cc[VMIN] = 1;
 			tcflush(fd, TCIFLUSH);
 			tcsetattr(fd, TCSANOW, &tio); 
+			
+			logOutputConsole=0; // disable enigma logging to console
+			klogctl(8, 0, 1); // disable kernel log to serial
 
 			char *banner="Welcome to the enigma serial access.\r\n"
-					"you may start a HTTP session now.\r\n";
+					"you may start a HTTP session now if you send a \"break\".\r\n";
 			write(fd, banner, strlen(banner));
 			serialhttpd = new eHTTPConnection(fd, 0, httpd, 1);
+			char *i="GET /log/debug HTTP/1.0\n\n";
+			serialhttpd->inject(i, strlen(i));
 		}
 	}
 #endif
