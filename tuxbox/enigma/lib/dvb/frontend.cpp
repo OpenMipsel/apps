@@ -498,11 +498,21 @@ int eFrontend::tune(eTransponder *trans,
 		{
 			eDebug("csw=%d, csw<<2=%d", csw, csw << 2);
 			csw = 0xF0 | ( csw << 2 );
-			if ( polarisation==polHor )
+			if ( polarisation==polHor)
+			{
 				csw |= 2;  // Horizontal
+				eDebug("Horizontal");
+			}
+			else
+				eDebug("Vertikal");
         
 			if ( Frequency > lnb->getLOFThreshold() )
+			{
 				csw |= 1;   // 22 Khz enabled
+				eDebug("Hi Band");
+			}
+			else
+				eDebug("Low Band");			
 		}
 		//else we sent directly the cmd 0xF0..0xFF
 
@@ -708,9 +718,14 @@ int eFrontend::tune(eTransponder *trans,
 			// set the right voltage
 			if ( voltage != SEC_VOLTAGE_18 )
 			{
-				eDebug("set voltage after send rotor cmd..wait 20ms");
-				ioctl(secfd, SEC_SET_VOLTAGE, &voltage);
-				usleep(20);
+				seq.commands=0;
+				seq.numCommands=0;
+				seq.voltage=voltage;
+				if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
+				{
+					perror("SEC_SEND_SEQUENCE");
+					return -1;
+				}
 			}
 		}
 		else
