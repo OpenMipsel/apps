@@ -336,6 +336,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 
 		if ( rc.contains(rect) )
 		{
+			target->clip(rect);
 			if ( entry == current )
 			{
 				if ( LCDTmp ) // LCDTmp is only valid, when we have the focus
@@ -347,6 +348,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 			}
 			else
 				entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 0 : ( MaxEntries > 1 ? 2 : 0 ) )	);
+			target->clippop();
 		}
 
 		i++;
