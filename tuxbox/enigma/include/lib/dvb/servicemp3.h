@@ -17,11 +17,16 @@ class eServiceHandlerMP3;
 class eHTTPStream: public eHTTPDataSource
 {
 	eIOBuffer &buffer;
+	int bytes;
+	int metadatainterval, metadataleft, metadatapointer;
+	__u8 metadata[16*256+1]; // maximum size
+	void processMetaData();
 public:
 	eHTTPStream(eHTTPConnection *c, eIOBuffer &buffer);
 	~eHTTPStream();
 	void haveData(void *data, int len);
 	Signal0<void> dataAvailable;
+	Signal0<void> metaDataUpdated;
 };
 
 class eMP3Decoder: public eThread, public eMainloop, public Object
@@ -139,6 +144,21 @@ public:
 
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);
+};
+
+class eServiceID3
+{
+public:
+		// tags are according to ID3v2
+	std::map<eString, eString> tags;
+};
+
+class eServiceMP3: public eService
+{
+	eServiceID3 id3tags;
+public:
+	eServiceMP3(const char *filename);
+	eServiceMP3(const eServiceMP3 &c);
 };
 
 #endif
