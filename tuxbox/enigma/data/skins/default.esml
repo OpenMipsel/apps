@@ -70,6 +70,10 @@
 		<map name="partitionCheck.status" font="Nimbus" size="20" />
 
 		<map name="head" font="Nimbus" size="40" />
+		
+		<map name="epg.time" font="Nimbus" size="16" />
+		<map name="epg.title" font="Nimbus" size="18" />
+		<map name="epg.description" font="Nimbus" size="16" />
 	</fontalias>
 
 	<images basepath="" target="fb">
@@ -202,7 +206,7 @@
 		<color name="background" color="#ff000000" />
 		<color name="eWindow.border" color="#000000" />
 		<color name="white_trans" color="#1effffff" />
-		<color name="white_blue" color="#1effffff" end="#1e0003f80" size="8" />
+		<color name="white_blue" color="#1effffff" end="#1e003f80" size="8" />
 
 		<color name="std_red"    color="#ff0000" />
 		<color name="std_green"  color="#00ff00" />
@@ -239,6 +243,8 @@
 		<map name="volume_right" color="volume2" />
 		<map name="std_black" color="std_gray" />
 		<map name="std_white" color="std_gray+7" />
+		<map name="epg.entry.background.selected" color="std_gray+4" />
+		<map name="epg.entry.background" color="volume3" />
 	</colorscheme>
 
 	<object name="eZapMainMenu">

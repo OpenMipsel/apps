@@ -11,6 +11,7 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/gdi/font.h>
 #include <lib/system/init_num.h>
+#include "epgactions.h"
 
 gFont eListBoxEntryEPG::TimeFont;
 gFont eListBoxEntryEPG::DescrFont;
@@ -18,20 +19,6 @@ gPixmap *eListBoxEntryEPG::inTimer=0;
 gPixmap *eListBoxEntryEPG::inTimerRec=0;
 int eListBoxEntryEPG::timeXSize=0;
 int eListBoxEntryEPG::dateXSize=0;
-
-struct epgSelectorActions
-{
-  eActionMap map;
-	eAction addDVRTimerEvent, addNGRABTimerEvent, addSwitchTimerEvent, removeTimerEvent;
-	epgSelectorActions():
-		map("epgSelector", _("EPG selector")),
-		addDVRTimerEvent(map, "addDVRTimerEvent", _("add this event as DVR Event to timer list"), eAction::prioDialog ),
-		addNGRABTimerEvent(map, "addNGRABTimerEvent", _("add this event as NGRAB Event to timer list"), eAction::prioDialog ),
-		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simple Switch Event to timer list"), eAction::prioDialog ),
-		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog )
-	{
-	}
-};
 
 eAutoInitP0<epgSelectorActions> i_epgSelectorActions(eAutoInitNumbers::actions, "epg selector actions");
 

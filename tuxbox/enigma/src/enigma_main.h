@@ -473,7 +473,8 @@ public:
 	void getServiceSelectorPath(eServicePath &path);
 
 	void moveService(const eServiceReference &path, const eServiceReference &ref, const eServiceReference &after);
-
+	void showMultiEPG(const std::list<eServiceReferenceDVB> &list);
+	
 	void loadPlaylist( bool create = false );
 	void savePlaylist( bool destory = false );
 

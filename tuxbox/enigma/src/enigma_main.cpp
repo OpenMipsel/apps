@@ -50,6 +50,7 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/gdi/lcd.h>
 #include <lib/gdi/glcddc.h>
+#include <enigma_epg.h>
 
 		// bis waldi das in nen .h tut
 #define MOVIEDIR "/hdd/movie"
@@ -166,10 +167,12 @@ eAutoInitP0<enigmaStandbyActions> i_enigmaStandbyActions(eAutoInitNumbers::actio
 class eZapStandby: public eWidget
 {
 	static eZapStandby *instance;
+	eServiceReference ref;
+	int rezap;
 protected:
 	int eventHandler(const eWidgetEvent &);
 public:
-	void wakeUp();
+	void wakeUp(int norezap);
 	static eZapStandby *getInstance() { return instance; }
 	eZapStandby();
 	~eZapStandby()
@@ -179,8 +182,10 @@ public:
 };
 eZapStandby* eZapStandby::instance=0;
 
-void eZapStandby::wakeUp()
+void eZapStandby::wakeUp(int norezap)
 {
+	if (norezap)
+		rezap=0;
 	close(0);  
 }
 
@@ -201,10 +206,24 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		eZapLCD *pLCD=eZapLCD::getInstance();
 		pLCD->lcdMain->hide();
 		pLCD->lcdStandby->show();
+		rezap = 0;
 		if (handler)
-			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
+		{
+			ref = eServiceInterface::getInstance()->service;
+			if (handler->getFlags() & eServiceHandler::flagIsSeekable)
+				handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
+			else
+			{
+				rezap=1;
+				eServiceInterface::getInstance()->stop();
+			}
+		}
 		eAVSwitch::getInstance()->setInput(1);
 		eAVSwitch::getInstance()->setTVPin8(0);
+		eFrontend::getInstance()->savePower();
+		eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+		if (sapi)
+			sapi->transponder=0;
 		system("/bin/sync");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target1/lun0/disc");
@@ -217,6 +236,8 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		pLCD->lcdMain->show();
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
+		if (rezap)
+			eServiceInterface::getInstance()->play(ref);
 		eAVSwitch::getInstance()->setInput(0);
 		eStreamWatchdog::getInstance()->reloadSettings();
 		eDBoxLCD::getInstance()->switchLCD(1);
@@ -1423,6 +1444,7 @@ eZapMain::eZapMain()
 	CONNECT_2_1(eZap::getInstance()->getServiceSelector()->setMode, eZapMain::setMode, 0);
 	CONNECT(eZap::getInstance()->getServiceSelector()->rotateRoot, eZapMain::rotateRoot);
 	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
+	CONNECT(eZap::getInstance()->getServiceSelector()->showMultiEPG, eZapMain::showMultiEPG);
 	CONNECT(eZap::getInstance()->getServiceSelector()->showList, eZapMain::showList);
 
 	reloadPaths();
@@ -2593,7 +2615,7 @@ void eZapMain::handleStandby()
 	if (state & stateSleeping)
 	{
 		wasSleeping=1;
-		eZapStandby::getInstance()->wakeUp();
+		eZapStandby::getInstance()->wakeUp(1);
 		// this breakes the eZapStandby mainloop...
 		// and enigma wake up
 	}
@@ -3350,15 +3372,21 @@ void eZapMain::showEPG()
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdMenu->show();
-	actual_eventDisplay->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
-	actual_eventDisplay->show();
-	actual_eventDisplay->exec();
-	actual_eventDisplay->hide();
+	if (actual_eventDisplay)
+	{
+		actual_eventDisplay->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+		actual_eventDisplay->show();
+		actual_eventDisplay->exec();
+		actual_eventDisplay->hide();
+	}
 	events.setAutoDelete(true);
 	pLCD->lcdMenu->hide();
 	pLCD->lcdMain->show();
-	delete actual_eventDisplay;
-	actual_eventDisplay=0;
+	if (actual_eventDisplay)
+	{
+		delete actual_eventDisplay;
+		actual_eventDisplay=0;
+	}
 
 	eServiceInterface::getInstance()->removeRef( ref );
 }
@@ -4694,6 +4722,22 @@ void eZapMain::moveService(const eServiceReference &path, const eServiceReferenc
 		after=currentSelectedUserBouquet->getList().end();
 
 	currentSelectedUserBouquet->moveService(it, after);
+}
+
+void eZapMain::showMultiEPG(const std::list<eServiceReferenceDVB> &list)
+{
+	eZapEPG epg(list);
+	
+	time_t now=time(0)+eDVB::getInstance()->time_difference;
+	
+	epg.move(ePoint(50, 50));
+	epg.resize(eSize(620, 470));
+	
+	epg.buildPage(now, now + 4 * 3600);
+	
+	epg.show();
+	epg.exec();
+	epg.hide();
 }
 
 #ifndef DISABLE_FILE

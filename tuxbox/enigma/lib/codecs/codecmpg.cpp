@@ -4,13 +4,14 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <lib/base/eerror.h>
 
 unsigned long eMPEGDemux::getLong()
 {
 	unsigned long c;
 	if (input.read(&c, 4) != 4)
 	{
-		printf("read error ! :))\n");
+		eDebug("read error ! :))");
 		return 0x1b9;		// simulate end of program stream.
 	}
 	c=htonl(c);
@@ -73,7 +74,7 @@ int eMPEGDemux::decodeMore(int last, int maxsamples)
 				break;
 			}
 			if (scerr++)
-				printf("startcode search!\n");
+				eDebug("startcode search!");
 			syncBits();
 			if (getBits(8))
 				continue;
@@ -90,7 +91,7 @@ a:
 		if (!maxsamples)
 			break;
 		unsigned int code=getBits(8);
-//		printf("startcode: %08x\n", code|0x100);
+//		eDebug("startcode: %08x\n", code|0x100);
 		if (code == 0xb9) // MPEG_program_end_code
 			break;
 		else if (code == 0xba) // pack_start_code
@@ -122,10 +123,10 @@ a:
 					break;
 			if (pack_stuffing_length >= 0)
 				continue;
-//			printf("scr: %08x:%02d\n", scr_base, scr_ext);
+//			eDebug("scr: %08x:%02d\n", scr_base, scr_ext);
 		} else if (code == 0xbb) // system_header_start_code
 		{
-			printf("system_header\n");
+//			eDebug("system_header");
 			int header_length=getBits(16);
 			while (header_length--)
 				getBits(8);
@@ -133,7 +134,7 @@ a:
 		} else if (code == 0xbc) // program_stream_map
 		{
 			int program_stream_map_length=getBits(16);
-			printf("program stream map!\n");
+			eDebug("program stream map!\n");
 			int current_next_indicator=getBits(1);
 			getBits(2);
 			int program_stream_map_version=getBits(5);
@@ -145,10 +146,10 @@ a:
 			{
 				int tag=getBits(8);
 				int length=getBits(8);
-				printf("tag: %02x %02x ", tag, length);
+				eDebug("tag: %02x %02x ", tag, length);
 				while (length--)
-					printf("%02lx ", getBits(8));
-				printf("\n");
+					eDebug("%02lx ", getBits(8));
+				eDebug("\n");
 				r+=length+2;
 			}
 			int elementary_stream_map_length=getBits(16);
@@ -161,10 +162,10 @@ a:
 				{
 					int tag=getBits(8);
 					int length=getBits(8);
-					printf("elementary: %02x %02x ", tag, length);
+					eDebug("elementary: %02x %02x ", tag, length);
 					while (length--)
-						printf("%02x ", getBits(8));
-					printf("\n");
+						eDebugNoNewLine("%02x ", getBits(8));
+					eDebug("\n");
 				}
 				
 				r+=elementary_stream_info_length+4;
@@ -173,9 +174,9 @@ a:
 #endif
 		} else  // if (((code & 0xE0) == 0xC0) || ((code & 0xF0)==0xE0))
 		{
-//			printf("PES: %x\n", code);
+//			eDebug("PES: %x", code);
 			int length=getBits(16);
-//			printf("%d bytes!\n", length);
+//			eDebug("%d bytes!", length);
 			unsigned char buffer[65536+6];
 			int p=0;
 			

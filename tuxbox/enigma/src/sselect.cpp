@@ -1,3 +1,4 @@
+#undef USE_MULTI_EPG
 #include <algorithm>
 #include <list>
 
@@ -779,6 +780,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->showEPGSelector && !movemode && !editMode)
 			{
+#ifdef USE_MULTI_EPG
 				const eventMap* e=0;
 				if (selected.type == eServiceReference::idDVB)
 				 	e = eEPGCache::getInstance()->getEventMap((eServiceReferenceDVB&)selected);
@@ -795,6 +797,26 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					wnd.hide();
 					show();
 				}
+#else
+				hide();
+				std::list<eServiceReferenceDVB> s;
+				int n=5;
+				eServiceReference o=services->getCurrent()->service;
+				s.push_back((eServiceReferenceDVB&)o);
+				while (--n)
+				{
+					eListBoxEntryService *p = services->goNext();
+					if (!p)
+						break;
+					
+					if ((p->service.flags&eListBoxEntryService::flagIsReturn) || (p->service.type != eServiceReference::idDVB))
+						continue;
+					s.push_back((eServiceReferenceDVB&)p->service);
+				}
+				selectService(o);
+				showMultiEPG(s);
+				show();
+#endif
 			}
 			else if (event.action == &i_serviceSelectorActions->pathUp)
 				pathUp();

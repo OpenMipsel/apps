@@ -121,6 +121,10 @@ public:
 		const eServiceReference &			// service AFTER moved service
 		> moveEntry;
 
+	Signal1<void,
+		const std::list<eServiceReferenceDVB> &>
+			showMultiEPG;
+
 	const eServicePath &getPath()	{	return path; }
 	void setPath(const eServicePath &path, const eServiceReference &select=eServiceReference());
 

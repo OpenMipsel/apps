@@ -481,6 +481,14 @@ int eHTTPConnection::processRemoteState()
 			}
 			if (!line.length())
 			{
+				content_length=0;
+				content_length_remaining=-1;
+				if (remote_header.count("Content-Length"))
+				{
+					content_length=atoi(remote_header["Content-Length"].c_str());
+					content_length_remaining=content_length;
+				}
+
 				if (parent)
 				{
 					for (ePtrList<eHTTPPathResolver>::iterator i(parent->resolver); i != parent->resolver.end(); ++i)
@@ -499,13 +507,6 @@ int eHTTPConnection::processRemoteState()
 					data=new eHTTPError(this, 404);
 				}
 
-				content_length=0;
-				content_length_remaining=-1;
-				if (remote_header.count("Content-Length"))
-				{
-					content_length=atoi(remote_header["Content-Length"].c_str());
-					content_length_remaining=content_length;
-				}
 				if (content_length || 		// if content-length is set, we have content
 						remote_header.count("Content-Type") || 		// content-type - the same
 						(localstate != stateResponse))	// however, if we are NOT in response-state, so we are NOT server, there's ALWAYS more data to come. (exception: http/1.1 persistent)

@@ -65,15 +65,9 @@ eFrontend::eFrontend(int type, const char *demod, const char *sec)
 			perror(sec);
 			return;
 		}
-
-		ioctl(fd, FE_SET_POWER_STATE, FE_POWER_ON);
-
-		// reset all diseqc devices
-
-		InitDiSEqC();
-
 	} else
 		secfd=-1;
+	needreset = 1;
 }
 
 void eFrontend::InitDiSEqC()
@@ -670,6 +664,14 @@ int eFrontend::tune(eTransponder *trans,
 	if (state==stateTuning)
 		return -EBUSY;
 
+	if (needreset)
+	{
+		ioctl(fd, FE_SET_POWER_STATE, FE_POWER_ON);
+
+		// reset all diseqc devices
+		if (type==feSatellite)
+			InitDiSEqC();
+	}
 	transponder=trans;
 
 	if ( sat)   // then we must do Satellite Stuff
@@ -1049,4 +1051,27 @@ int eFrontend::tune_qam(eTransponder *transponder,
 		int QAM)					// Modulation, QAM_xx
 {
 	return tune(transponder, Frequency, 0, SymbolRate, getFEC(FEC_inner), Inversion==2?INVERSION_AUTO:Inversion?INVERSION_ON:INVERSION_OFF, 0, getModulation(QAM));
+}
+
+int eFrontend::savePower()
+{
+	ioctl(fd, FE_SET_POWER_STATE, FE_POWER_OFF);
+	
+	if (secfd != -1)
+	{
+		secCmdSequence seq;
+		seq.commands=0;
+		seq.numCommands=0;
+		seq.voltage=SEC_VOLTAGE_OFF;
+		seq.continuousTone = SEC_TONE_OFF;
+		seq.miniCommand = SEC_MINI_NONE;
+		if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
+		{
+			perror("SEC_SEND_SEQUENCE");
+			return -1;
+		}
+	}
+	
+	needreset = 1;
+	return 0;
 }

@@ -29,6 +29,7 @@ class eFrontend: public Object
 {
 	int type;
 	int fd, secfd;
+	int needreset;
 
 	int lastcsw,
 			lastucsw,
@@ -78,7 +79,7 @@ public:
 	int Locked() { return Status()&FE_HAS_LOCK; }
 	void InitDiSEqC();
 	void readInputPower();
-     	
+  
 	uint32_t BER();
 	/**
 	 * \brief Returns the signal strength (or AGC).
@@ -114,6 +115,9 @@ public:
 			int inversion,					// spectral inversion on(1)/off(0)
 			int QAM);								// Modulation according to etsi (1=QAM16, ...)
 
+		// switches of as much as possible.
+	int savePower();
+	
 	int freq_offset;
 };
 
