@@ -48,7 +48,6 @@ template <class T>
 class eListBox: public eListBoxBase
 {
 	typedef typename ePtrList<T>::iterator ePtrList_T_iterator;
-
 	ePtrList<T> childs;
 	ePtrList_T_iterator top, bottom, current;
 	int recalced;
@@ -76,6 +75,7 @@ public:
 	T* goPrev();
 
 	void sort();
+	void renumberEntrys();
 
 	template <class Z>
 	int forEachEntry(Z ob)
@@ -117,6 +117,7 @@ class eListBoxEntry: public Object
 {
 	friend class eListBox<eListBoxEntry>;
 protected:
+	int num;
 	eListBox<eListBoxEntry>* listbox;
 	eString helptext;
 public:
@@ -134,6 +135,7 @@ public:
 
 	void drawEntryRect( gPainter* rc, const eRect& where, const gColor& coActiveB, const gColor& coActiveF, const gColor& coNormalB, const gColor& coNormalF, int state );
 	const eString &getHelpText() const { return helptext; }
+	int getNum() const { return num; }
 };
 
 class eListBoxEntryText: public eListBoxEntry
@@ -232,7 +234,7 @@ inline void eListBox<T>::append(T* entry, bool holdCurrent)
 
 	childs.push_back(entry);
 	init();
-
+	
 	if (cur)
 		setCurrent(cur);
 }
@@ -274,7 +276,9 @@ inline void eListBox<T>::sort()
 {
 	T* cur = current;
 	childs.sort();
+
 	init();
+
 	if (cur)
 		setCurrent(cur);
 }
@@ -303,7 +307,6 @@ inline eListBox<T>::eListBox(eWidget *parent, const eWidget* descr)
 	addActionMap(&i_cursorActions->map);
 	addActionMap(&i_listActions->map);
 	item_height = T::getEntryHeight();
-
 }
 
 template <class T>
@@ -735,6 +738,14 @@ void eListBox<T>::endAtomic()
 			else
 				selchanged(*current);
 	}
+}
+
+template <class T>
+void eListBox<T>::renumberEntrys()
+{
+	int i = 1;
+	for (ePtrList_T_iterator it(childs); it != childs.end(); it++)
+		it->num = i++;
 }
 
 template <class T>
