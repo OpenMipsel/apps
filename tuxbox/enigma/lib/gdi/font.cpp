@@ -234,23 +234,33 @@ void Font::unlock()
 		delete this;
 }
 
-int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags)
+int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags, int rflags)
 {
 	FTC_SBit glyph;
 	if (current_font->getGlyphBitmap(glyphIndex, &glyph))
-	{
 		return 1;
-	}
+
 	int nx=cursor.x();
-	if (! (flags & RS_RTL))
+
+	if (! (rflags & RS_RTL))
 		nx+=glyph->xadvance;
 	else
 	{
 		eDebug("RTL: glyph->xadvance: %d", glyph->xadvance);
 		nx-=glyph->xadvance;
 	}
-	if ((flags&GS_MYWRAP) && ((flags & RS_RTL) ? nx >= area.right() : nx < area.left()))
+	
+	if (
+			(rflags&RS_WRAP) && 
+			(
+				(!(rflags & RS_RTL)) 
+					? 
+					(nx >= area.right()) : 
+					(nx < area.left())
+				)
+			)
 	{
+		eDebug("wrap!\n");
 		int cnt = 0;
 		glyphString::iterator i(glyphs.end());
 		--i;
@@ -267,7 +277,7 @@ int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags)
 				// RTL: linelength is negative
 			i->flags|=GS_ISFIRST;
 			ePoint offset=ePoint(i->x, i->y);
-			newLine(flags);
+			newLine(rflags);
 			offset-=cursor;
 			while (i != glyphs.end())		// rearrange them into the next line
 			{
@@ -281,12 +291,14 @@ int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags)
 		{
 	    if (cnt)
 			{
-				newLine(flags);
+				newLine(rflags);
 				flags|=GS_ISFIRST;
 			}
 		}
 	}
+
 	int xadvance=glyph->xadvance, kern=0;
+	
 	if (previous && use_kerning)
 	{
 		FT_Vector delta;
@@ -301,8 +313,14 @@ int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags)
 	bbox->setHeight( glyph->height );
 
 	pGlyph ng;
-	ng.x=cursor.x()+kern;
+
 	xadvance+=kern;
+
+	if (!(rflags & RS_RTL))
+		ng.x=cursor.x()+kern;
+	else
+		ng.x=cursor.x()-xadvance;
+
 	ng.y=cursor.y();
 	ng.w=xadvance;
 	ng.font=current_font;
@@ -312,7 +330,7 @@ int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags)
 	ng.bbox=bbox;
 	glyphs.push_back(ng);
 
-	if (!(flags & RS_RTL))
+	if (!(rflags & RS_RTL))
 		cursor+=ePoint(xadvance, 0);
 	else
 		cursor-=ePoint(xadvance, 0);
@@ -414,24 +432,31 @@ void eTextPara::setFont(Font *fnt)
 	}
 	cache_current_font=&current_font->font.font;
 	previous=0;
-	if (cursor.y()==-1)
-	{
-		cursor=ePoint(area.x(), area.y()+(current_face->size->metrics.ascender>>6));
-		left=cursor.x();
-	}
 	use_kerning=FT_HAS_KERNING(current_face);
 }
 
 int eTextPara::renderString(const eString &string, int rflags)
 {
 	eLocker lock(ftlock);
-
+	
 	if (refcnt)
 		eFatal("mod. after lock");
 
 	if (!current_font)
 		return -1;
 
+	if (cursor.y()==-1)
+	{
+		if (!(rflags & RS_RTL))
+		{
+			cursor=ePoint(area.x(), area.y()+(current_face->size->metrics.ascender>>6));
+		} else
+		{
+			cursor=ePoint(area.right(), area.y()+(current_face->size->metrics.ascender>>6));
+		}
+		left=cursor.x();
+	}
+		
 	glyphs.reserve(glyphs.size()+string.length());
 
 	if (&current_font->font.font != cache_current_font)
@@ -451,9 +476,6 @@ int eTextPara::renderString(const eString &string, int rflags)
 		int isprintable=1;
 		int flags=0;
 	
-		if (rflags&RS_WRAP)
-			 flags|=GS_MYWRAP;
-		
 		if (!(rflags&RS_DIRECT))
 		{
 			switch (*p)
@@ -494,7 +516,7 @@ int eTextPara::renderString(const eString &string, int rflags)
 			if (!index)
 				eDebug("unicode %d ('%c') not present", *p, *p);
 			else
-				appendGlyph(index, flags);
+				appendGlyph(index, flags, rflags);
 		}
 		p++;
 	}

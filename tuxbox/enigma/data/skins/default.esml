@@ -237,9 +237,9 @@
 			<eLabel text="LNB" name="lLnb" position="300:10" size="60:30" align="center"/>
 			<eLabel text="22Khz" name="l22khz" position="370:10" size="90:30" align="center"/>
 			<eLabel text="Voltage" name="lVoltage" position="470:10" size="90:30" align="center"/>
-			<eWidget name="buttons" position="100:50" size="e-10:e-34" />
+			<eWidget name="buttons" position="100:50" size="e-10:e-80" />
 			<eButton name="new" position="10:e-114" size="80:30" text="new" helptext="add a new Satellite" loadDeco="" shortcut="green" />
-			<eButton name="close" position="10:e-74" size="80:30" text="close" helptext="close Satelliteconfiguration" loadDeco="" />
+			<eButton name="close" position="10:e-74" size="120:30" text="close" helptext="close Satelliteconfiguration" loadDeco="" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eSatelliteConfigurationManager>
 	</object>
