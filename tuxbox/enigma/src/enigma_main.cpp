@@ -439,18 +439,18 @@ void eServiceNumberWidget::timeout()
 eServiceNumberWidget::eServiceNumberWidget(int initial)
 										:eWindow(0)
 {
-	setText("Channel");
+	setText(_("Channel"));
 	move(ePoint(200, 140));
 	resize(eSize(280, 120));
 	eLabel *label;
 	label=new eLabel(this);
-	label->setText("Channel:");
+	label->setText(_("Channel:"));
 	label->move(ePoint(50, 15));
 	label->resize(eSize(110, eSkin::getActive()->queryValue("fontsize", 20)+4));
 	
-	number=new eNumber(this, 1, 1, 999, 3, 0, 1, label);
+	number=new eNumber(this, 1, 1, 9999, 4, 0, 1, label);
 	number->move(ePoint(160, 15));
-	number->resize(eSize(50, eSkin::getActive()->queryValue("fontsize", 20)+4));
+	number->resize(eSize(60, eSkin::getActive()->queryValue("fontsize", 20)+4));
 	number->setNumber(initial);
 	CONNECT(number->selected, eServiceNumberWidget::selected);
 	
@@ -554,9 +554,7 @@ eZapMain::eZapMain()
 		DVRSpaceLeft->getPosition().x(), DVRSpaceLeft->getPosition().y(),
 		DVRSpaceLeft->height(), DVRSpaceLeft->width() );
 
-	eDebug("[PROFILE] eZapMain");
 	lcdmain.show();
-	eDebug("<-- show lcd.");
 
 	ASSIGN(ChannelNumber, eLabel, "ch_number");
 	ASSIGN(ChannelName, eLabel, "ch_name");
@@ -670,6 +668,8 @@ eZapMain::eZapMain()
 		favourite[i]->load(eString().sprintf( CONFIGDIR "/enigma/favourite.%d.epl", i).c_str());
 		int modemap[]={eServiceStructureHandler::modeTV, eServiceStructureHandler::modeRadio, eServiceStructureHandler::modeFile};
 		eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(modemap[i]), favouriteref[i]);
+		if (i != modeFile)
+			eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio), favouriteref[i]);
 		eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFavourite), favouriteref[i]);
 	}
 
@@ -1129,7 +1129,6 @@ void eZapMain::prevService()
 
 void eZapMain::playlistPrevService()
 {
-	eDebug("playlist prev");
 	getPlaylistPosition();
 	if (curlist->current != curlist->list.begin())
 	{
@@ -1142,7 +1141,6 @@ void eZapMain::playlistPrevService()
 
 void eZapMain::playlistNextService()
 {
-	eDebug("playlist next");
 	getPlaylistPosition();
 	if (curlist->current != curlist->list.end())
 	{
@@ -1392,7 +1390,6 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			filename+=".ts";
 		} while (!stat(filename.c_str(), &s));
 
-		eDebug("start recording... to %s", filename.c_str());
 		if (handler->serviceCommand(
 			eServiceCommand(
 				eServiceCommand::cmdRecordOpen, 
@@ -1419,7 +1416,6 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			recordings->list.push_back(en); // add to playlist
 			recordings->save(MOVIEDIR "/recordings.epl");
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStart));
-			eDebug("ok, recording...");
 			state |= (stateRecording|recDVR);
 			recstatus->show();
 
@@ -1494,7 +1490,6 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 void eZapMain::startSkip(int dir)
 {
 	skipcounter=0;
-	eDebug("startSkip: %d", dir);
 	{
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 		if (handler)
@@ -1507,7 +1502,6 @@ void eZapMain::startSkip(int dir)
 
 void eZapMain::repeatSkip(int dir)
 {
-	eDebug("repeatSkip: %d", dir);
 	if (!skipping)
 	{
 		skipcounter++;
@@ -1520,7 +1514,6 @@ void eZapMain::repeatSkip(int dir)
 
 void eZapMain::stopSkip(int dir)
 {
-	eDebug("stopSkip: %d", dir);
 #if 0
 	if (!skipcounter)
 	{
@@ -1542,7 +1535,6 @@ void eZapMain::stopSkip(int dir)
 		else
 			speed=1<<skipping;
 
-		eDebug("speed: %d", speed);
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, speed));
@@ -1588,9 +1580,14 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			break;
 		}
 		bool removeEntry=true;
-		if ( ref.type & ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile )
+
+		std::list<ePlaylistEntry>::iterator it=std::find(pl->list.begin(), pl->list.end(), ref);
+		if (it == pl->list.end())
+			break;
+		
+		if ( (it->type & (ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile))==(ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile) )
 		{
-			eMessageBox box(_("This is a recorded stream!\nRealy delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+			eMessageBox box(_("This is a recorded stream!\nReally delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
 			box.show();
 			int r=box.exec();
 			box.hide();
@@ -1600,7 +1597,6 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 
 		if (removeEntry)	
 		{
-			std::list<ePlaylistEntry>::iterator it=std::find(pl->list.begin(), pl->list.end(), ref);
 			pl->deleteService(it);
 			pl->save();
 			sel->actualize();
@@ -1860,7 +1856,7 @@ void eZapMain::runVTXT()
 			{
 				eString aneedvtxtpid=getInfo(FileName.c_str(), "needvtxtpid");
 				eString aneedlcd=getInfo(FileName.c_str(), "needlcd");
-				// we search tuxtxt... this use lcd and vtxtpid... not perfekt... but i havo no other idea
+				// we search tuxtxt... this use lcd and vtxtpid... not perfect... but i havo no other idea
 				if ((aneedvtxtpid.isNull() ? false : atoi(aneedvtxtpid.c_str())) &&
             (aneedlcd.isNull() ? false : atoi(aneedlcd.c_str())) )
 				{
@@ -2242,7 +2238,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_enigmaMainActions->showFavourites)
 		{
 			if ( handleState() )
-				showFavourites();
+				showFavourites(1);
 		}
 		else if (event.action == &i_enigmaMainActions->modeRadio)
 		{
@@ -2281,13 +2277,21 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			num = s.exec();
 			if (num != -1)
 			{
-				if ( eZap::getInstance()->getServiceSelector()->selectService( num ) )
+				if (num < 200)	// <200 is in favourite list
 				{
 					getServiceSelectorPath(modeLast[mode]);
-					playService(modeLast[mode].current(), psDontAdd);
+					showFavourites(0);
+					if ( eZap::getInstance()->getServiceSelector()->selectService( num ) )
+					{
+						playService(eZap::getInstance()->getServiceSelector()->getSelected(), 0);
+					} else
+						setServiceSelectorPath(modeLast[mode]);
+				} else
+				{
+					eServiceReferenceDVB s=eDVB::getInstance()->settings->getTransponders()->searchServiceByNumber(num);
+					if (s)
+						playService(s, 0);
 				}
-				else
-					setServiceSelectorPath(modeLast[mode]);
 			}
 			num = 0;
   	}
@@ -2312,12 +2316,10 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		set16_9Logo(0);
 		if (serviceFlags & eServiceHandler::flagSupportPosition)
 		{
-			eDebug("support position query..");
 			progresstimer.start(1000);
 			updateProgress();
 		} else
 		{	
-			eDebug("doesn't support position query");
 			progresstimer.stop();
 		}
 		showDVRFunctions(serviceFlags & eServiceHandler::flagIsSeekable);
@@ -2363,7 +2365,6 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		break;
 	case eServiceEvent::evtEnd:
 	{
-		eDebug("evtEnd - next entry!");
 		if (curlist->current != curlist->list.end())
 		{
 			curlist->current->current_position=-1;
@@ -2400,7 +2401,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		setVTButton(isVT);
 
 			// es wird nur dann versucht einen service als referenz-service zu uebernehmen, wenns den ueberhaupt
-	// gibt.
+			// gibt.
 
 		if (service)
 			switch (serviceref.getServiceType())
@@ -2455,7 +2456,6 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		case -ENOENT:
 			Description->setText(_("Service could not be found !"));
 			postMessage(eZapMessage(0, _("switch"), _("Service could not be found !")), 1);
-			eDebug("Sender konnte nicht gefunden werden.");
 			break;
 		case -ENOCASYS:
 		{
@@ -2491,12 +2491,15 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		}
 
 		int num=-1;
-	
+
+/*	 old code (but buggy, anyway?)
 		if (rservice)
 			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
 		else if (service)
 			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-
+*/
+		if (service)
+			num=service->service_number;
 		if (num != -1)
 			ChannelNumber->setText(eString().sprintf("%d", num));
 		else
@@ -2616,7 +2619,6 @@ void eZapMain::gotPMT()
 		return;
 
 	bool isAc3 = false;
-	eDebug("got pmt");
 	int numaudio=0;
 	audiosel.clear();
 	for (ePtrList<PMTEntry>::iterator i(pmt->streams); i != pmt->streams.end(); ++i)
@@ -2661,8 +2663,6 @@ void eZapMain::timeOut()
 
 void eZapMain::leaveService()
 {
-	eDebug("leaving service");
-
 //	flags=0;
 	
 	ChannelName->setText("");
@@ -2753,7 +2753,6 @@ void eZapMain::gotMessage(const int &c)
 	}
 	else if ( c == eZapMain::messageShutdown )
 	{
-		eDebug("Shutdown");
 		eZap::getInstance()->quit();
 		return;
 	}
@@ -2764,7 +2763,6 @@ void eZapMain::gotMessage(const int &c)
 	}
 	if ((!isVisible()) && eZap::getInstance()->focus)
 	{
-		eDebug("message will be delivered later.");
 		pauseMessages();
 		message_notifier.send(c);
 		return;
@@ -2935,7 +2933,7 @@ void eZapMain::showDVRFunctions(int show)
 	}
 }
 
-void eZapMain::showFavourites()
+void eZapMain::showFavourites(int user)
 {
 	eServicePath b=eServiceStructureHandler::getRoot(mode+1);
 	if (mode > modeFile)
@@ -2943,7 +2941,8 @@ void eZapMain::showFavourites()
 	b.down( favouriteref[mode] );
 	b.down( eServiceReference() );
 	setServiceSelectorPath(b);
-	showServiceSelector(-1, 1);
+	if (user)
+		showServiceSelector(-1, 1);
 }
 
 void eZapMain::moveService(const eServiceReference &path, const eServiceReference &ref, const eServiceReference &afterref)

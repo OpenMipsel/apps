@@ -29,7 +29,12 @@ void eDVBScanController::handleEvent(const eDVBEvent &event)
 		eDebug("[SCAN] eventScanBegin");
 		
 		if (flags & flagClearList)
-			dvb.settings->clearList();
+		{
+			if (knownTransponder.front().satellite.isValid())
+				dvb.settings->removeOrbitalPosition(knownTransponder.front().satellite.orbital_position);
+			else
+				dvb.settings->clearList();
+		}
 
 		if (flags & flagUseBAT)
 			dvb.settings->removeDVBBouquets();

@@ -733,7 +733,7 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 			{
 				int flags=eServiceReference::mustDescent|eServiceReference::canDescent|eServiceReference::isDirectory;
 
-				if (ref.data[1] >= 0) 		// sort only automatic generated services
+				if (i->bouquet_id >= 0) 		// sort only automatic generated services
 					flags|=eServiceReference::shouldSort;
 
 				int found = 0;
@@ -786,7 +786,9 @@ eService *eServiceHandlerDVB::addRef(const eServiceReference &service)
 void eServiceHandlerDVB::removeRef(const eServiceReference &service)
 {
 	if ((service.data[0] < 0) || (service.path.length()))
+	{
 		cache.removeRef(service);
+	}
 }
 
 void eServiceHandlerDVB::gotMessage(const eDVRPlayerThreadMessage &message)

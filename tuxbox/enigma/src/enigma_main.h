@@ -275,7 +275,7 @@ private:
 	void addServiceToFavourite(eServiceSelector *s, int dontask=0);
 	void removeServiceFromFavourite( const eServiceReference &service );
 
-	void showFavourites();
+	void showFavourites(int user);
 	void showBouquetList(int sellast);
 
 	void showDVRFunctions(int show);

@@ -7,6 +7,7 @@
 #include <lib/gui/echeckbox.h>
 #include <lib/dvb/frontend.h>
 #include <lib/dvb/dvbwidgets.h>
+#include <lib/dvb/edvb.h>
 //#include <lib/driver/rc.h>
 
 eSatelliteConfigurationManager::eSatelliteConfigurationManager()
@@ -166,6 +167,7 @@ void eSatelliteConfigurationManager::satChanged(eComboBox* who, eListBoxEntryTex
 	else  // *delete* selected -->> satellite and empty lnbs were now deleted
 	{
 		eLNB* lnb = s->getLNB();
+		eDVB::getInstance()->settings->removeOrbitalPosition(s->getOrbitalPosition());
 		lnb->deleteSatellite( s );
 		eDebug("Satellite is now removed");
 		if ( !lnb->getSatelliteList().size() )   // the lnb that have no more satellites must be deleted

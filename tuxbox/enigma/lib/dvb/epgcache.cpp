@@ -97,10 +97,17 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 				// oder eine durch [] erzeugte
 				eventMap &servicemap = eventDB[service];
 				
+/* alt: vorhandene items haben vorrang vor neuen.
 				eventMap::iterator It = servicemap.find(TM);
 
 				if (It == servicemap.end())   // event still not cached
+*/
+
+// neu: erst alte events killen...
+				servicemap.erase(TM);
+// ... dann neuen einfuegen.				
 					eventDB[service][TM] = new eventData(eit_event, eit_event_size, source );
+
 			}
 			ptr += eit_event_size;
 			((__u8*)eit_event)+=eit_event_size;
