@@ -14,6 +14,7 @@
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/epgcache.h>
+#include <lib/dvb/frontend.h>
 #include <lib/driver/rc.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -361,7 +362,10 @@ void eServiceSelector::setKeyDescriptions( bool editMode )
 			case eZapMain::modeTV:
 			case eZapMain::modeRadio:
 				key[0]->setText(_("All Services"));
-				key[1]->setText(_("Satellites"));
+				if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+					key[1]->setText(_("Satellites"));
+				else
+					key[1]->setText("");
 				key[2]->setText(_("Providers"));
 				key[3]->setText(_("Bouquets"));
 				break;
@@ -1102,9 +1106,12 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->showSatellites && !movemode)
 			{
-				enterPath = /*emit*/ getRoot(listSatellites);
-				if ( style == styleCombiColumn && eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-					enterPath.down(eServiceReference());
+				if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+				{
+					enterPath = /*emit*/ getRoot(listSatellites);
+					if ( style == styleCombiColumn && eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+						enterPath.down(eServiceReference());
+				}
 			}
 			else if (event.action == &i_serviceSelectorActions->showProvider && !movemode)
 			{
@@ -1451,7 +1458,8 @@ eServiceSelector::eServiceSelector()
 	addActionToHelpList(&i_serviceSelectorActions->markPressed);
 	addActionToHelpList(&i_serviceSelectorActions->renamePressed);
 	addActionToHelpList(&i_serviceSelectorActions->showAll);
-	addActionToHelpList(&i_serviceSelectorActions->showSatellites);
+	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+		addActionToHelpList(&i_serviceSelectorActions->showSatellites);
 	addActionToHelpList(&i_serviceSelectorActions->showProvider);
 	addActionToHelpList(&i_serviceSelectorActions->showBouquets);
 	addActionToHelpList(&i_serviceSelectorActions->showMenu);
