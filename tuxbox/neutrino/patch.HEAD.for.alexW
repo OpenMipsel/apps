@@ -1,6 +1,6 @@
 diff -Naur apps/tuxbox/neutrino/src/driver/rcinput.cpp apps/tuxbox/neutrino.rel_alexW/src/driver/rcinput.cpp
 --- apps/tuxbox/neutrino/src/driver/rcinput.cpp	2003-02-20 18:01:56.000000000 +0100
-+++ apps.rel_alexW/tuxbox/neutrino/src/driver/rcinput.cpp	2003-02-20 18:02:35.000000000 +0100
++++ apps/tuxbox/neutrino.rel_alexW/src/driver/rcinput.cpp	2003-02-20 18:02:35.000000000 +0100
 @@ -59,6 +59,8 @@
  #include <global.h>
  #include <neutrino.h>
@@ -12,7 +12,7 @@ diff -Naur apps/tuxbox/neutrino/src/driver/rcinput.cpp apps/tuxbox/neutrino.rel_
  #define RC_standby_release (KEY_MAX + 1)
 diff -Naur apps/tuxbox/neutrino/src/gui/gamelist.cpp apps/tuxbox/neutrino.rel_alexW/src/gui/gamelist.cpp
 --- apps/tuxbox/neutrino/src/gui/gamelist.cpp	2003-02-20 12:20:07.000000000 +0100
-+++ apps/tuxbox/neutrino/src/gui/gamelist.cpp	2003-02-20 12:22:27.000000000 +0100
++++ apps/tuxbox/neutrino.rel_alexW/src/gui/gamelist.cpp	2003-02-20 12:22:27.000000000 +0100
 @@ -47,9 +47,9 @@
  
  #include "gamelist.h"
