@@ -244,7 +244,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	service_name[1]=new eLabel(this);
 	service_name[1]->setText(cservice?(cservice->service_name.c_str()):"--");
 	service_name[1]->setFont(fontfixed);
-	service_name[1]->move(ePoint(280, yOffs+2));
+	service_name[1]->move(ePoint(240, yOffs+2));
 	service_name[1]->resize(eSize(260, fs+5));
 	yOffs+=fs+5;
 
@@ -256,7 +256,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	service_provider[1]=new eLabel(this);
 	service_provider[1]->setText((cservice && cservice->dvb)?cservice->dvb->service_provider.c_str():"--");
 	service_provider[1]->setFont(fontfixed);
-	service_provider[1]->move(ePoint(280, yOffs+2));
+	service_provider[1]->move(ePoint(240, yOffs+2));
 	service_provider[1]->resize(eSize(260, fs+5));
 	yOffs+=fs+5;
 
@@ -268,7 +268,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	vpid[1]=new eLabel(this);
 	vpid[1]->setFont(fontfixed);
 	vpid[1]->setText((parms.vpid==-1)?eString(_("none")):eString().sprintf("%04xh  (%dd)", parms.vpid, parms.vpid));
-	vpid[1]->move(ePoint(280, yOffs+2));
+	vpid[1]->move(ePoint(240, yOffs+2));
 	vpid[1]->resize(eSize(260, fs+5));
 	yOffs+=fs+5;
 
@@ -279,7 +279,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	
 	apid[1]=new eLabel(this);
 	apid[1]->setText((parms.apid==-1)?eString(_("none")):eString().sprintf("%04xh  (%dd)", parms.apid, parms.apid));
-	apid[1]->move(ePoint(280, yOffs+2));
+	apid[1]->move(ePoint(240, yOffs+2));
 	apid[1]->resize(eSize(260, fs+5));
 	apid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -291,7 +291,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	
 	pcrpid[1]=new eLabel(this);
 	pcrpid[1]->setText((parms.pcrpid==-1)?eString(_("none")):eString().sprintf("%04xh  (%dd)", parms.pcrpid, parms.pcrpid));
-	pcrpid[1]->move(ePoint(280, yOffs+2));
+	pcrpid[1]->move(ePoint(240, yOffs+2));
 	pcrpid[1]->resize(eSize(260, fs+5));
 	pcrpid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -303,7 +303,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 
 	pmtpid[1]=new eLabel(this);
 	pmtpid[1]->setText((parms.pmtpid==-1)?eString(_("none")):eString().sprintf("%04xh  (%dd)", parms.pmtpid, parms.pmtpid));
-	pmtpid[1]->move(ePoint(280, yOffs+2));
+	pmtpid[1]->move(ePoint(240, yOffs+2));
 	pmtpid[1]->resize(eSize(260, fs+5));
 	pmtpid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -315,7 +315,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	
 	tpid[1]=new eLabel(this);
 	tpid[1]->setText((parms.tpid==-1)?eString(_("none")):eString().sprintf("%04xh  (%dd)", parms.tpid, parms.tpid));
-	tpid[1]->move(ePoint(280, yOffs+2));
+	tpid[1]->move(ePoint(240, yOffs+2));
 	tpid[1]->resize(eSize(260, fs+5));
 	tpid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -388,7 +388,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	
 	vform[1]=new eLabel(this);
 	vform[1]->setText(vformat);
-	vform[1]->move(ePoint(280, yOffs));
+	vform[1]->move(ePoint(240, yOffs));
 	vform[1]->resize(eSize(260, fs));
 	vform[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -400,7 +400,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 
 	tsid[1]=new eLabel(this);
 	tsid[1]->setText(eString().sprintf("%04xh", sapi->service.getTransportStreamID().get()));
-	tsid[1]->move(ePoint(280, yOffs));
+	tsid[1]->move(ePoint(240, yOffs));
 	tsid[1]->resize(eSize(130, fs+5));
 	tsid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -412,7 +412,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 
 	onid[1]=new eLabel(this);
 	onid[1]->setText(eString().sprintf("%04xh", sapi->service.getOriginalNetworkID().get()));
-	onid[1]->move(ePoint(280, yOffs));
+	onid[1]->move(ePoint(240, yOffs));
 	onid[1]->resize(eSize(130, fs+5));
 	onid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -424,7 +424,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 
 	sid[1]=new eLabel(this);
 	sid[1]->setText(eString().sprintf("%04xh", sapi->service.getServiceID().get()));
-	sid[1]->move(ePoint(280, yOffs));
+	sid[1]->move(ePoint(240, yOffs));
 	sid[1]->resize(eSize(130, fs+5));
 	sid[1]->setFont(fontfixed);
 	yOffs+=fs+5;
@@ -436,7 +436,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	
 	l=new eLabel(this);
 	l->setText(eString().sprintf("%04xh", sapi->service.getDVBNamespace().get()));
-	l->move(ePoint(280, yOffs));
+	l->move(ePoint(240, yOffs));
 	l->resize(eSize(130, fs+5));
 	l->setFont(fontfixed);
 }

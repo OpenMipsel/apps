@@ -264,7 +264,7 @@ int eTransponderEditWindow::eventHandler( const eWidgetEvent & event )
 					return 0;
 				if ( eTransponderList::getInstance()->saveNetworks() )
 				{
-					eMessageBox mb(_("Transponders couldnt written to file!"),
+					eMessageBox mb(_("Transponders couldn't be written to file!"),
 						_("Write Error"),
 						eMessageBox::btOK|eMessageBox::iconWarning);
 					mb.show();

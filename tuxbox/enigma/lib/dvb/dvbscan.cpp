@@ -359,7 +359,7 @@ int eDVBScanController::handleSDT(const SDT *sdt)
 	// set transponder to stateOK
 	transponder->state=eTransponder::stateOK;
 
-	if (old) // scan for dupe TPs after TSID / ONID Update
+	if (old) // scan for duplicate TPs after TSID / ONID Update
 		for (std::list<eTransponder>::iterator it(current); it != knownTransponder.end(); it++)
 			if ( *transponder == *it && old != &(*it) )
 			{
@@ -432,7 +432,7 @@ bool eDVBScanController::addTransponder(const eTransponder &transponder)
 		n->satellite.orbital_position, transponder.original_network_id.get(),
 		n->transport_stream_id.get() );                                      */
 #endif
-		if (*n == transponder)  // no dupe Transponders
+		if (*n == transponder)  // no duplicate Transponders
 		{
 #if DEBUG_TO_FILE
 			fprintf(out, "Don't add %d, %d, %c, %s, %s, %s, %d onid = %d, tsid = %d\n",
