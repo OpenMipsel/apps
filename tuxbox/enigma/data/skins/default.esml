@@ -342,8 +342,8 @@
 			<eCheckbox text="use BAT" name="usebat" position="230:e-110" size="200:30" helptext="enable/disable use BAT for scan (if exist)" />
 			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="200:30" helptext="remove all services before scan" />
 			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="200:30" helptext="enable/disable initiate network search" />
-			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponderscan" loadDeco="" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" />
+			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponderscan" loadDeco="" vcenter="on" />
+			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" vcenter="on" />
 		</tsManual>
 	</object>
 
@@ -490,8 +490,8 @@
 			<eButtons name="select_service" position="270:e-120" size="e-10:35" helptext="to change service press ok" loadDeco="" />
 			<eButton name="close" text="close" position="10:e-75" size="150:35" helptext="close timer menu (ok)" loadDeco="" />
 			<eButton name="update" text="update" position="170:e-75" size="150:35" helptext="update the current selected timer (ok)" loadDeco="" />
-			<eButton name="add" text="add" position="e-260:e-75" size="90:35" helptext="add new Timer (ok)" loadDeco="" />
-			<eButton name="remove" text="remove" position="e-160:e-75" size="150:35" helptext="delete the current selected timer (ok)" loadDeco="" />
+			<eButton name="add" text="add" position="e-260:e-75" size="115:35" helptext="add new Timer (ok)" loadDeco="" />
+			<eButton name="remove" text="remove" position="e-135:e-75" size="125:35" helptext="delete the current selected timer (ok)" loadDeco="" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eTimerView>
 	</object>

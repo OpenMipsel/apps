@@ -10,7 +10,7 @@ EXTRA_DIST = \
 	green-button.png info-bg.png lbarrow_down.png lbarrow_left.png lbarrow.png\
 	lbarrow_right.png lbarrow_up.png lcdmenu.png logo.png l.png no-button.png\
 	png.png red-button.png r.png speaker.png tl.png t.png tr.png unchecked.png\
-	yellow-button.png mainmenu/background-fs8.png folder.png
+	yellow-button.png mainmenu/background-fs8.png folder.png rec_symbol-fs8.png
 
 install-data-local:
 	install -d $(DATADIR)/enigma/pictures/chk_stone

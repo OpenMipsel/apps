@@ -35,7 +35,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 {
 	setText(_("Remotecontrol Setup"));
 	move(ePoint(150, 136));
-	resize(eSize(450, 350));
+	resize(eSize(470, 330));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
@@ -48,23 +48,23 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	lrrate=new eLabel(this);
 	lrrate->setText(_("Repeat Rate:"));
 	lrrate->move(ePoint(20, 20));
-	lrrate->resize(eSize(160, fd+4));
+	lrrate->resize(eSize(170, fd+4));
 
 	lrdelay=new eLabel(this);
 	lrdelay->setText(_("Repeat Delay:"));
 	lrdelay->move(ePoint(20, 60));
-	lrdelay->resize(eSize(160, fd+4));
+	lrdelay->resize(eSize(170, fd+4));
 
 	srrate=new eSlider(this, lrrate, 0, 250 );
 	srrate->setName("rrate");
-	srrate->move(ePoint(180, 20));
+	srrate->move(ePoint(200, 20));
 	srrate->resize(eSize(220, fd+4));
 	srrate->setHelpText(_("set RC repeat rate ( left / right )"));
 	CONNECT( srrate->changed, eZapRCSetup::repeatChanged );
 
 	srdelay=new eSlider(this, lrdelay, 0, 1000 );
 	srdelay->setName("contrast");
-	srdelay->move(ePoint(180, 60));
+	srdelay->move(ePoint(200, 60));
 	srdelay->resize(eSize(220, fd+4));
 	srdelay->setHelpText(_("set RC repeat delay ( left / right )"));
 	CONNECT( srdelay->changed, eZapRCSetup::delayChanged );
@@ -79,7 +79,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	rcStyle->setHelpText(_("select your favourite rc style (ok)"));
 	rcStyle->loadDeco();
 	CONNECT( rcStyle->selchanged, eZapRCSetup::styleChanged );
-  eListBoxEntryText *current=0;
+	eListBoxEntryText *current=0;
 	for (std::map<eString, eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin()); it != eActionMapList::getInstance()->getExistingStyles().end(); ++it)
 	{
 		if ( it->first == eActionMapList::getInstance()->getCurrentStyle() )
@@ -136,10 +136,11 @@ void eZapRCSetup::okPressed()
 
 void eZapRCSetup::abortPressed()
 {
-// restore old style
 	char *style;
-	eConfig::getInstance()->getKey("/ezap/rc/style", style);
-	eActionMapList::getInstance()->setCurrentStyle( style );
+	if (eConfig::getInstance()->getKey("/ezap/rc/style", style) )
+		eActionMapList::getInstance()->setCurrentStyle("default");
+	else
+		eActionMapList::getInstance()->setCurrentStyle( style );
 
 	eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);

@@ -47,7 +47,7 @@ eZapLCDSetup::eZapLCDSetup(): eWindow(0)
 {
 	setText(_("LC-Display Setup"));
 	move(ePoint(150, 136));
-	resize(eSize(400, 340));
+	cresize(eSize(400, 280));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 

@@ -65,8 +65,8 @@ enigmaCImmi::enigmaCImmi(): eWindow(0)
 	
 	abort=new eButton(this);
 	abort->setText(_("abort"));
-	abort->move(ePoint(350, 250));
-	abort->resize(eSize(90, fd+4));
+	abort->move(ePoint(310, 280));
+	abort->resize(eSize(150, 30));
 	abort->setHelpText(_("leave ci mmi"));
 	abort->loadDeco();
 
@@ -228,7 +228,7 @@ enigmaCI::enigmaCI(): eWindow(0)
 
 	setText(_("Common Interface Module"));
 	move(ePoint(150, 136));
-	resize(eSize(350, 300));
+	cresize(eSize(350, 220));
 
 	reset=new eButton(this);
 	reset->setText(_("Reset"));

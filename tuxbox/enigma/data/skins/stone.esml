@@ -237,7 +237,6 @@
 		<color name="pal197" color="#22738c99" />
 		<color name="pal198" color="#66bac5d0" />
 		<color name="pal199" color="#00bac5d0" />
-		<color name="eSlider.activated.right" color="#00ff0303" />
 	</colors>
 
 	<colorscheme>
@@ -260,6 +259,7 @@
 		<map name="eProgress.left" color="progressBar" />
 		<map name="eProgress.right" color="content" />
 		<map name="eSlider.activated.left" color="progressBar" />
+		<map name="eSlider.activated.right" color="selected" />
 
 		<map name="eServiceSelector.highlight.background" color="selected" />   <!-- used for all Selectors ... EPG, Service, Bouquet-->
 		<map name="eServiceSelector.highlight.foreground" color="white" />
@@ -288,6 +288,7 @@
 		<img name="button_yellow" src="yellow-button.png" />
 		<img name="button_blue" src="blue-button.png" />
 		<img name="button_gray" src="no-button.png" />
+		<img name="rec_symbol" src="rec_symbol-fs8.png" />
 		<img name="osd_crypt_on" src="crypt_on.png" />
 		<img name="osd_format_on" src="format_on.png" />
 		<img name="osd_dolby_on" src="dolby_on.png" />
@@ -296,8 +297,6 @@
 		<img name="dvrtable" src="dvr-fs8.png" />
 		<img name="osd_crypt_off" src="crypt_off.png" />
 		<img name="osd_format_off" src="format_off.png" />
-		<img name="br" src="br2.png" />
-		<img name="bl" src="bl2.png" />
 		<img name="lcd_enigma_logo" src="logo.png" nomerge="yes" />
 		<img name="lcd_menu" src="lcdmenu.png" nomerge="yes" />
 		<img name="lcd_scart" src="../video.png" nomerge="yes" />
@@ -433,7 +432,7 @@
 			<eLabel position="69:2" size="83:22" font="Blue.Regular;30" name="ch_number"  backgroundColor="dark" foregroundColor="white" />
 
 			<eLabel position="69:30" size="427:26" font="Blue.Regular;32" name="ch_name" backgroundColor="dark" foregroundColor="white" vcenter="on" />
-                                                      
+
 			<eLabel position="575:10" size="66:30" font="Blue.Bold;34" name="time" align="center"  backgroundColor="content" foregroundColor="white" />
 
 			<eProgress position="304:60" size="121:8" name="progress_bar" foregroundColor="whiteHalf" border="0" />
@@ -464,18 +463,10 @@
 			<eLabel text="Tonwahl" position="462:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
 			<eLabel text="Videotext" position="569:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
 
-			<eLabel name="recStatus" position="7:42" size="27:12" pixmap="button_red" alphatest="on" />
+			<eLabel name="recStatus" position="476:34" size="18:18" pixmap="rec_symbol" alphatest="on" />
 
 			<eLabel name="dvrFunctions" position="210:68" size="433:62" pixmap="dvrtable">
-				<!--
-				<eLabel text="FR " position="54:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Play " position="175:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Pause " position="280:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="FF " position="405:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Stop " position="54:35" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Record " position="180:35" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel name="TimeLeft" position="280:35" size="200:30" backgroundColor="light" foregroundColor="light+15" />
-			-->
+				<eLabel name="TimeLeft" position="316:0" size="150:57" backgroundColor="content" foregroundColor="white" wrap="on" />
 			</eLabel>
 			
 			<eWidget name="nonDVRfunctions" position="210:68" size="433:57">
