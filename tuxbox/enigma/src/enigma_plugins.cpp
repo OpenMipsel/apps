@@ -386,8 +386,9 @@ void eZapPlugins::selected(ePlugin *plugin)
 		close(0);
 		return;
 	}
-	execPlugin(plugin);
-
+	int wasVisible = isVisible();
 	hide();
-	show();
+	execPlugin(plugin);
+	if ( wasVisible )
+		show();
 }
