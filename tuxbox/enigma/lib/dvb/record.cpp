@@ -105,7 +105,7 @@ void eDVBRecorder::s_open(const char *_filename)
 	filename=eString(_filename);
 	delete[] _filename;
 	
-	splitsize=1024*1024*20; // 1G
+	splitsize=1024*1024*1024; // 1G
 	outfd=-1;
 	openFile(splits=0);
 
