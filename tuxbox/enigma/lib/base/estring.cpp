@@ -316,7 +316,7 @@ eString convertDVBUTF8(unsigned char *data, int len)
 	while (i < len)
 	{
 		unsigned long code=0;
-		if ((table == 5) && ((data[i] == 0xC2) || (data[i] == 0xCF)) && (i+1 < len))
+		if ((table == 5) && ((data[i] == 0xC2) || (data[i] == 0xC8) || (data[i] == 0xCA) || (data[i] == 0xCD) || (data[i] == 0xCF)) && (i+1 < len))
 				// braindead czech encoding...
 			if ((code=doCzech(data[i], data[i+1])))
 				i+=2;
