@@ -426,7 +426,7 @@ private:
 	void removeServiceFromUserBouquet( eServiceSelector *s );
 
 	enum { listAll, listSatellites, listProvider, listBouquets };
-	void showList(int list);
+	eServicePath getRoot(int list);
 
 	void showServiceInfobar(int show);
 

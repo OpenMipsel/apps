@@ -1529,7 +1529,7 @@ eZapMain::eZapMain()
 	CONNECT(eZap::getInstance()->getServiceSelector()->rotateRoot, eZapMain::rotateRoot);
 	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
 	CONNECT(eZap::getInstance()->getServiceSelector()->showMultiEPG, eZapMain::showMultiEPG);
-	CONNECT(eZap::getInstance()->getServiceSelector()->showList, eZapMain::showList);
+	CONNECT(eZap::getInstance()->getServiceSelector()->getRoot, eZapMain::getRoot);
 
 	reloadPaths();
 
@@ -3021,12 +3021,10 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		Signal1<void,const eServiceReference&> signal;
 		CONNECT(signal, eZapMain::addServiceToCurUserBouquet);
 
-		eServiceSelector *ssel = eZap::getInstance()->getServiceSelector();
-		eServicePath safe = ssel->getPath();
-		eServiceReference _ref = ssel->getSelected();
-		ssel->enterDirectory(ref);
-		ssel->forEachServiceRef(signal, true);
-		ssel->setPath( safe, _ref );
+		eServicePath safe = sel->getPath();
+		sel->enterDirectory(ref);
+		sel->forEachServiceRef(signal, true);
+		sel->setPath( safe, ref );
 
 		currentSelectedUserBouquet->save();
 		currentSelectedUserBouquet=0;
@@ -3119,6 +3117,8 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 				eServiceInterface::getInstance()->stop();
 		}
 	}
+	case 13:
+		sel->toggleButtons();
 	}
 	sel->show();
 }
@@ -4800,6 +4800,7 @@ void eZapMain::setMode(int newmode, int user)
 //			eDebug("setServiceSelectorPath");
 			setServiceSelectorPath(modeLast[mode][0]);
 		}
+		eZap::getInstance()->getServiceSelector()->setKeyDescriptions();
 	}
 }
 
@@ -4821,7 +4822,7 @@ void eZapMain::getServiceSelectorPath(eServicePath &path)
 //	eDebug("stored path for mode %d: %s", mode, eServicePath(path).toString().c_str());
 }
 
-void eZapMain::showList(int list)
+eServicePath eZapMain::getRoot(int list)
 {
 	eServicePath b; // =eServiceStructureHandler::getRoot(mode+1);
 	switch (mode)
@@ -4870,23 +4871,21 @@ void eZapMain::showList(int list)
 			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
 			break;
 		case listSatellites:
-			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
+			b.down(recordingsref);
 			break;
 		case listProvider:
-			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
+			b.down(playlistref);
 			break;
 		case listBouquets:
-			b.down(recordingsref);
+			b.down(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile));
 			break;
 		}
 		break;
 #endif
 	default:
-		return;
+		return eServicePath();
 	}
-	b.down( eServiceReference() );
-	setServiceSelectorPath(b);
-//	showServiceSelector(-1, !last);
+	return b;
 }
 
 void eZapMain::showServiceInfobar(int show)
@@ -5115,7 +5114,12 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		else
 			new eListBoxEntryText(&list, _("enable parental lock"), (void*)12 );
 	}
-
+	int showButtons=0;
+	eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", showButtons );
+	if ( showButtons )
+		new eListBoxEntryText(&list, _("hide help buttons"), (void*)13 );
+	else
+		new eListBoxEntryText(&list, _("show help buttons"), (void*)13 );
 	CONNECT(list.selected, eServiceContextMenu::entrySelected);
 }
 
@@ -5520,7 +5524,7 @@ int eTimeCorrectionEditWindow::eventHandler( const eWidgetEvent &event )
 	{
 		case eWidgetEvent::execBegin:
 			updateTimer.start(1000);
-			setFocus(nTime);
+			setFocus(bSet);
 			break;
 		case eWidgetEvent::execDone:
 		{

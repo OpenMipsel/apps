@@ -62,9 +62,9 @@ class eServiceSelector: public eWindow
 	eServiceReference selected;
 	eServiceReference *result;
 	eListBox<eListBoxEntryService> *services, *bouquets;
-	
+
 	eLabel *key[4];
-	void setKeyDescriptions();
+	const eWidget *rfocus;
 
 	eChannelInfo* ci;
 
@@ -95,7 +95,9 @@ private:
 	void EPGUpdated( const tmpMap* );
 	void updateCi();
 	void doSPFlags(const eServiceReference &ref);
+	void focusChanged( const eWidget* focus );
 public:
+	void setKeyDescriptions();
 	void forEachServiceRef( Signal1<void,const eServiceReference&>, bool );
 	int movemode;
 	int editMode;
@@ -108,7 +110,7 @@ public:
 	Signal0<void> rotateRoot;
 
 	enum { listAll, listSatellites, listProvider, listBouquets };
-	Signal1<void,int> showList;
+	Signal1<eServicePath,int> getRoot;
 
 	Signal1<void,const eServiceReference &> addServiceToPlaylist; // add service to the Playlist
 	Signal2<void,eServiceReference*,int> addServiceToUserBouquet;  // add current service to selected User Bouquet
@@ -127,14 +129,15 @@ public:
 
 	Signal0<void>showMultiEPG;
 
-	const eServicePath &getPath()	{	return path; }
+	const eServicePath &getPath() { return path; }
 	void setPath(const eServicePath &path, const eServiceReference &select=eServiceReference());
 
 	int getStyle()	{ return style; }
-	void setStyle(int newStyle=-1);
+	void setStyle(int newStyle=-1, bool force=false);
 	void actualize();
+	void toggleButtons();
 	bool selectService(const eServiceReference &ref);
-	bool selectService(int num);	
+	bool selectService(int num);
 	bool selectServiceRecursive( eServiceReference &ref );
 	bool selServiceRec( eServiceReference &ref );
 	int getServiceNum( const eServiceReference &ref);

@@ -24,7 +24,7 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 	ltimeZone->resize(eSize(220, fd+4));
 	ltimeZone->setText(_("Time Zone:"));
 		
-	timeZone=new eComboBox(this, 4, ltimeZone);
+	timeZone=new eComboBox(this, 8, ltimeZone);
 	timeZone->move(ePoint(20, 70));
 	timeZone->resize(eSize(clientrect.width()-40, 35));
 	timeZone->setHelpText(_("select your time zone (ok)"));
@@ -165,7 +165,7 @@ int eZapTimeZoneSetup::loadTimeZones()
 			eFatal("error in a file timezone.xml, unknown timezone");	
 
 	if ( timeZone->setCurrent(cur) == eComboBox::E_INVALID_ENTRY )
-		timeZone->moveSelection( eListBoxBase::dirFirst );
+		timeZone->setCurrent(27);  // GMT+1
 
 	free(ctimeZone);
 

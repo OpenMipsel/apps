@@ -12,6 +12,7 @@
 #include <lib/base/i18n.h>
 #include <lib/dvb/dvbwidgets.h>
 #include <lib/driver/rc.h>
+#include <enigma.h>
 #include <enigma_main.h>
 
 void eZapRCSetup::repeatChanged( int i )
@@ -172,6 +173,7 @@ void eZapRCSetup::okPressed()
 		sselect_style->isChecked() ? "sselect_classic" : "sselect_default");
 	if ((sselect_style_val) && !sselect_style->isChecked())
 		eZapMain::getInstance()->reloadPaths(1);	// reset paths
+	eZap::getInstance()->getServiceSelector()->setKeyDescriptions();
 	setStyle();
 
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);
