@@ -192,8 +192,8 @@ private:
 	uniqueEPGKey current_service;
 	uniqueEvent firstScheduleEvent,
 							firstNowNextEvent;
-	int isRunning;
 	int paused;
+	__u8 isRunning, firstStart;
 	int sectionRead(__u8 *data, int source);
 	static eEPGCache *instance;
 
@@ -225,6 +225,7 @@ public:
 
 	Signal1<void, bool> EPGAvail;
 	Signal1<void, const tmpMap*> EPGUpdated;
+	Signal1<void, tsref> timeNotValid;
 };
 
 inline const std::list<NVODReferenceEntry>* eEPGCache::getNVODRefList(const eServiceReferenceDVB &service)

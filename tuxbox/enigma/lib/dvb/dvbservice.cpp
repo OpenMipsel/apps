@@ -351,8 +351,66 @@ void eDVBServiceController::TDTready(int error)
 	eDebug("TDTready %d", error);
 	if (!error)
 	{
-		eDebug("[TIME] time update to %s", ctime(&tdt->UTC_time));
-		dvb.time_difference=tdt->UTC_time-time(0);
+		std::map<tsref,int> &tOffsMap = eTransponderList::getInstance()->TimeOffsetMap;
+		std::map< tsref, int >::iterator it( tOffsMap.find( *transponder ) );
+
+		int enigma_diff = tdt->UTC_time-time(0);
+
+		if ( dvb.time_difference )  // ref time ready?
+		{
+			// curTime is our current reference time....
+			time_t curTime = time(0);
+			time_t TPTime = curTime+enigma_diff;
+			curTime += dvb.time_difference;
+
+			// difference between reference time and
+			// the transponder time
+			int diff = curTime-TPTime;
+
+			if ( abs(diff) < 120 )
+			{
+				eDebug("diff < 120 .. use Transponder Time");
+				tOffsMap[*transponder] = 0;
+				dvb.time_difference = enigma_diff;
+			}
+			else if ( it != tOffsMap.end() ) // correction saved?
+			{
+				eDebug("we have correction");
+				time_t CorrectedTpTime = TPTime+it->second;
+				int ddiff = curTime-CorrectedTpTime;
+				if ( abs(ddiff) < 120 )
+				{
+					eDebug("diff < 120 sek.. update time");
+					eDebug("update stored correction");
+					tOffsMap[*transponder] = diff;
+					dvb.time_difference = enigma_diff + diff;
+				}
+			}
+			else
+			{
+				eDebug("no correction found... store calced correction");
+				tOffsMap[*transponder] = diff;
+			}
+		}
+		else  // no time setted yet
+		{
+			if ( it != tOffsMap.end() )
+			{
+				enigma_diff += it->second;
+				eDebug("we have correction (%d)... use", it->second );
+			}
+			else
+				eDebug("dont have correction.. set Transponder Diff");
+			dvb.time_difference=enigma_diff;
+		}
+		time_t t = time(0)+dvb.time_difference;
+		tm now = *localtime(&t);
+
+		eDebug("[TIME] time update to %02d:%02d:%02d",
+			now.tm_hour,
+			now.tm_min,
+			now.tm_sec);
+
 		/*emit*/ dvb.timeUpdated();
 	}
 }

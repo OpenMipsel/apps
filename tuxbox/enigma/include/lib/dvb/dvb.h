@@ -233,7 +233,15 @@ public:
 		stateToScan, stateError, stateOK
 	};
 	int state;
-	
+
+	operator tsref()
+	{
+		return tsref(
+			dvb_namespace,
+			transport_stream_id,
+			original_network_id );
+	}
+
 	bool operator==(const eTransponder &c) const
 	{
 //		eDebug("onid = %i, c.onid = %i, tsid = %i, c.tsid = %i", original_network_id.get(), transport_stream_id.get(), c.original_network_id.get(), c.transport_stream_id.get() );
@@ -310,15 +318,15 @@ public:
 	eServiceDVB(const eServiceDVB &c);
 
 	void update(const SDTEntry *sdtentry);
-	
+
 	eDVBNamespace dvb_namespace;
 	eTransportStreamID transport_stream_id;
 	eOriginalNetworkID original_network_id;
 	eServiceID service_id;
 	int service_type;
-	
+
 	eString service_provider;
-	
+
 	int service_number;		// nur fuer dvb, gleichzeitig sortierkriterium...
 
 	enum
@@ -328,25 +336,25 @@ public:
 		dxNoPMT=4
 	};
 	int dxflags;
-	
+
 	int cache[cacheMax];
-	
+
 	void set(cacheID c, int v)
 	{
 		cache[c]=v;
 	}
-	
+
 	int get(cacheID c)
 	{
 		return cache[c];
 	}
-	
+
 	void clearCache()
 	{
 		for (int i=0; i<cacheMax; i++)
 			cache[i]=-1;
 	}
-	
+
 	bool operator<(const eServiceDVB &c) const
 	{
 		if (original_network_id < c.original_network_id)
@@ -724,13 +732,16 @@ class eTransponderList: public existNetworks
 	static eTransponderList* instance;
 	std::map<tsref,eTransponder> transponders;
 	std::map<eServiceReferenceDVB,eServiceDVB> services;
-	
 	std::multimap<int,eSatellite*> satellites;
 	std::list<eLNB> lnbs;
 	std::map<int,eServiceReferenceDVB> channel_number;
 	friend class eLNB;
 	friend class eSatellite;
 public:
+	std::map<tsref,int> TimeOffsetMap;
+	void readTimeOffsetData( const char* filename );
+	void writeTimeOffsetData( const char* filename );
+
 	void clearAllServices()	{	services.clear(); }
 	void clearAllTransponders()	{	transponders.clear(); }
 	

@@ -231,7 +231,6 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		else  // we parse the eit...
 		{
 			cname.setText(_("no data for this service avail"));
-			copos.setText("");
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 			if (!sapi)
 				return;
@@ -246,6 +245,7 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		}
 	} else
 	{
+		copos.setText("");
 		cdescr.hide();
 		cname.setFlags(RS_WRAP);
 		cname.resize( eSize( clientrect.width()/8*7-4, clientrect.height() ));

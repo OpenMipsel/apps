@@ -347,12 +347,12 @@ int existNetworks::saveNetworks()
 		"8\t->\tskip NITs of known networks\n"
 		"and combinations of this.-->\n\n"
 		"<satellites>\n";
-	for (std::list<tpPacket>::iterator p( networks.begin() ); p != networks.end(); p++ )
+	for (std::list<tpPacket>::iterator p( networks.begin() ); p != networks.end(); ++p )
 	{
 		FileText << '\t' << "<sat name=\"" << p->name
 						 << "\" flags=\"" << p->scanflags
 						 << "\" position=\"" << p->orbital_position << "\">\n";
-		for (std::list<eTransponder>::iterator t( p->possibleTransponders.begin() ); t != p->possibleTransponders.end() ; t++ )
+		for (std::list<eTransponder>::iterator t( p->possibleTransponders.begin() ); t != p->possibleTransponders.end() ; ++t )
 			FileText << "\t\t<transponder frequency=\"" << t->satellite.frequency
 							 << "\" symbol_rate=\"" << t->satellite.symbol_rate
 							 << "\" polarization=\"" << t->satellite.polarisation
@@ -531,6 +531,41 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 	return 0;
 }
 
+void eTransponderList::readTimeOffsetData( const char* filename )
+{
+	TimeOffsetMap.clear();
+	FILE *f=fopen(filename, "r");
+	if (!f)
+		return;
+	char line[256];
+	fgets(line, 256, f);
+	while (true)
+	{
+		if (!fgets( line, 256, f ))
+			break;
+		if (strstr(line, "Transponder UTC Time Offsets\n"))
+			continue;
+		int dvbnamespace,tsid,onid,offs;
+		if ( sscanf( line, "%08x,%04x,%04x:%d\n",&dvbnamespace,&tsid,&onid,&offs ) == 4 )
+			TimeOffsetMap[tsref(dvbnamespace,tsid,onid)]=offs;
+	}
+	fclose(f);
+}
+
+void eTransponderList::writeTimeOffsetData( const char* filename )
+{
+	FILE *f=fopen(filename, "w+");
+	if ( f )
+	{
+		fprintf(f, "Transponder UTC Time Offsets\n");
+		for ( std::map<tsref,int>::iterator it ( TimeOffsetMap.begin() ); it != TimeOffsetMap.end(); ++it )
+			fprintf(f, "%08x,%04x,%04x:%d\n",
+				it->first.dvbnamespace.get(),
+				it->first.tsid.get(), it->first.onid.get(), it->second );
+		fclose(f);
+	}
+}
+
 eTransponderList::eTransponderList()
 {
 	if (!instance)
@@ -547,14 +582,14 @@ void eTransponderList::removeOrbitalPosition(int orbital_position)
 	{
 		eTransponder &t=it->second;
 				// is this transponder on the removed orbital_position ?
-		eDebug("transponder on %d, remove %d", t.satellite.orbital_position, orbital_position);
+//		eDebug("transponder on %d, remove %d", t.satellite.orbital_position, orbital_position);
 		if (t.satellite.isValid() && t.satellite.orbital_position == orbital_position)
 		{
-			eDebug("found transponder to remove");
+//			eDebug("found transponder to remove");
 			t.satellite.valid=0;
 			if (!t.cable.isValid())
 			{
-				eDebug("removing transponder");
+//				eDebug("removing transponder");
 				// delete this transponder (including services)
 				eTransportStreamID tsid=it->first.tsid;
 				eOriginalNetworkID onid=it->first.onid;
@@ -572,7 +607,7 @@ void eTransponderList::removeOrbitalPosition(int orbital_position)
 							(ref.getTransportStreamID() == tsid) &&
 							(ref.getDVBNamespace() == dvbnamespace))
 					{
-						eDebug("removing service");
+//						eDebug("removing service");
 						std::map<eServiceReferenceDVB,eServiceDVB>::iterator i=sit;
 						++sit;
 								// if yes, get rid of it.
@@ -632,7 +667,7 @@ eServiceDVB &eTransponderList::createService(const eServiceReferenceDVB &service
 			chnum=200;
 
 		while (channel_number.find(chnum)!=channel_number.end())
-			chnum++;
+			++chnum;
 	
 		eServiceDVB *n=&services.insert(
 					std::pair<eServiceReferenceDVB,eServiceDVB>
@@ -875,9 +910,9 @@ void eTransponderList::readLNBData()
 			eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/satellites/"+eString().setNum(satread)+"/HiLoSignal").c_str(), tmpint);
 			sParams.HiLoSignal = (eSwitchParameter::SIG22)tmpint;
 
-			satread++;
+			++satread;
 		}
-		lnbread++;
+		++lnbread;
 	}
 
 	if (lnbread<1)
@@ -930,7 +965,7 @@ void eTransponderList::writeLNBData()
 	eString basepath="/elitedvb/DVB/config/lnbs/";
 
 	int lnbwrite=0;
-	for ( std::list<eLNB>::iterator it( lnbs.begin() ); it != lnbs.end(); it++)
+	for ( std::list<eLNB>::iterator it( lnbs.begin() ); it != lnbs.end(); ++it)
 	{
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/lofH").c_str(), it->getLOFHi() );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/lofL").c_str(), it->getLOFLo() );
@@ -952,7 +987,7 @@ void eTransponderList::writeLNBData()
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLatitude").c_str(), it->getDiSEqC().gotoXXLatitude );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLongitude").c_str(), it->getDiSEqC().gotoXXLongitude );
 		eString tmpStr;
-		for ( std::map<int,int>::iterator i( it->getDiSEqC().RotorTable.begin() ); i != it->getDiSEqC().RotorTable.end(); i++ )
+		for ( std::map<int,int>::iterator i( it->getDiSEqC().RotorTable.begin() ); i != it->getDiSEqC().RotorTable.end(); ++i )
 		{
 			if ( i->first > 0 )
 				tmpStr+=eString().sprintf("+%03d%03d", i->first, i->second );
@@ -964,14 +999,14 @@ void eTransponderList::writeLNBData()
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/RotorTable").c_str(), tmpStr.c_str() );
         
 		int satwrite=0;
-		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
+		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); ++s)
 		{
 			eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/satellites/"+eString().setNum(satwrite)+"/OrbitalPosition").c_str(), s->getOrbitalPosition() );
 			eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/satellites/"+eString().setNum(satwrite)+"/description").c_str(), s->getDescription().c_str() );
 			eSwitchParameter &sParams = s->getSwitchParams();
 			eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/satellites/"+eString().setNum(satwrite)+"/VoltageMode").c_str(), (int) sParams.VoltageMode );
 			eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/satellites/"+eString().setNum(satwrite)+"/HiLoSignal").c_str(), (int) sParams.HiLoSignal );
-			satwrite++;
+			++satwrite;
 		}
 		// we must delete no more exist Satellites from registry...
 		int tmp;
@@ -981,7 +1016,7 @@ void eTransponderList::writeLNBData()
 			eDebug("delete satellite");
 		}
 		///////////////////////
-		lnbwrite++;
+		++lnbwrite;
 	}
 	eDebug("%i LNBs written", lnbwrite);
 	// we must delete no more exist lnbs from registry
@@ -1032,7 +1067,7 @@ void eServicePath::setString( const eString& str )
 		eServiceReference e(str.mid( i, i2-i ));
 		path.push( e );
 		i=i2;
-		i++;
+		++i;
 	}
 }
 
@@ -1065,7 +1100,7 @@ void eServiceReference::saveLockedList( const char* filename )
 	if (!f)
 		return;
 	fprintf(f, "Parentallocked Services\n");
-	for ( std::set<eServiceReference>::iterator it = locked.begin(); it != locked.end(); it++ )
+	for ( std::set<eServiceReference>::iterator it = locked.begin(); it != locked.end(); ++it )
 		fprintf( f, "%s\n", it->toString().c_str() );
 	fclose(f);
 }

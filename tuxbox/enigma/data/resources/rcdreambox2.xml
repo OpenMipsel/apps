@@ -242,8 +242,11 @@
 			<action name="addSwitchTimerEvent" key="blue" flags="m" />
 			<action name="removeTimerEvent" key="red" flags="m" />
 		</actionmap>
-		<actionmap name="timerView">
-			<action name="removeTimerEntry" key="red" flags="m" />
+		<actionmap name="timerEdit">
+			<action name="incBegTime" key="volup" flags="mr" />
+			<action name="decBegTime" key="voldown" flags="mr" />
+			<action name="incEndTime" key="bouqup" flags="mr" />
+			<action name="decEndTime" key="bouqdown" flags="mr" />
 		</actionmap>
 		<actionmap name="enigmaEventView">
 			<action name="addDVRTimerEvent" key="green" flags="m" />

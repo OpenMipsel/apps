@@ -207,8 +207,8 @@ eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, 
 	cursorF(eSkin::getActive()->queryScheme("global.selected.foreground")),	
 	normalB(eSkin::getActive()->queryScheme("global.normal.background")),	
 	normalF(eSkin::getActive()->queryScheme("global.normal.foreground")),	
-	have_focus(0), digit(isactive), isactive(isactive), flags(0), descr(descr), tmpDescr(0),
-  neg(false)
+	have_focus(0), digit(0), isactive(isactive), flags(0), descr(descr), tmpDescr(0),
+	neg(false)
 {
 	setNumberOfFields(_len);
 	setLimits(_min, _max);
@@ -249,6 +249,7 @@ int eNumber::keyDown(int key)
 			else
 				max=oldmax;
 		}
+		eDebug("active=%d, digit=%d, min = %d, max = %d", active, digit, min, max);
 		if (nn>=min && nn<=max)
 		{
 			number[active]=nn;
@@ -296,8 +297,8 @@ int eNumber::keyDown(int key)
 void eNumber::gotFocus()
 {
 	have_focus++;
-	digit=isactive;
-	
+	digit=0;
+
   if (deco && deco_selected)
 		invalidate();
 	else

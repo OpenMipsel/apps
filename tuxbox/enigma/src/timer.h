@@ -139,13 +139,15 @@ private:
 	void applyPressed();
 	void showServiceSelector();
 	void comboBoxClosed( eComboBox *combo,  eListBoxEntryText* );
-	void updateDateTime( const tm& beginTime, const tm& endTime );
+	void updateDateTime( const tm& beginTime, const tm& endTime, int what );
 	void updateDay( eComboBox* dayCombo, int year, int month, int day );
 	void focusNext(int*)
 	{
 		eWidget::focusNext(eWidget::focusDirNext);
 	}
 	bool getData( time_t& beginTime, int& duration );
+	int eventHandler( const eWidgetEvent &e );
+	void changeTime( int dir );
 public:
 	eTimerEditView(ePlaylistEntry* e=0);
 	eTimerEditView( const EITEvent &e, int type, eServiceReference ref );

@@ -79,7 +79,7 @@ void eWidget::takeFocus()
 		} */
 		addActionMap(&i_focusActions->map);
 	}
-	have_focus++;
+	++have_focus;
 }
 
 void eWidget::releaseFocus()
@@ -92,7 +92,7 @@ void eWidget::releaseFocus()
 
 	if (have_focus)
 	{
-	 	have_focus--;
+	 	--have_focus;
 		if (!have_focus)
 		{
 			removeActionMap(&i_focusActions->map);
@@ -150,7 +150,7 @@ void eWidget::resize(const eSize& nsize)
 void eWidget::recalcAbsolutePosition()
 {
 	absPosition = (parent?(parent->getAbsolutePosition()+parent->clientrect.topLeft()+position):position);
-	for (ePtrList<eWidget>::iterator it( childlist ); it != childlist.end(); it++ )
+	for (ePtrList<eWidget>::iterator it( childlist ); it != childlist.end(); ++it )
 		it->recalcAbsolutePosition();
 }
 
@@ -205,7 +205,7 @@ void eWidget::redraw(eRect area)		// area bezieht sich nicht auf die clientarea
 					cr.moveBy(-It->position.x(), -It->position.y());
 					It->redraw(cr);
 				}
-				It++;
+				++It;
 			}
 		}
 	}
@@ -312,11 +312,11 @@ void eWidget::show()
 	
 	if (!parent || (parent->state&stateVisible))
 	{
-		getTLW()->just_showing++;
+		++getTLW()->just_showing;
 		willShowChildren();
 
 		checkFocus();
-		getTLW()->just_showing--;
+		--getTLW()->just_showing;
 		redraw();
 	}
 }
@@ -343,7 +343,7 @@ void eWidget::willShowChildren()
 		while(It != childlist.end())
 		{
 			It->willShowChildren();
-			It++;
+			++It;
 		}
 	}
 }
@@ -373,7 +373,7 @@ void eWidget::willHideChildren()
 		while(It != childlist.end())
 		{
 			It->willHideChildren();
-			It++;
+			++It;
 		}
 	}
 }
@@ -619,14 +619,14 @@ void eWidget::focusNext(int dir)
 				if (!_focusList.current())
 				{
 					_focusList.first();
-					tries--;
+					--tries;
 				}
 			} else if (dir == focusDirPrev)
 			{
 				if (_focusList.current() == _focusList.begin())
 				{
 					_focusList.last();
-					tries--;
+					--tries;
 				} else
 					_focusList.prev();
 			}
@@ -883,7 +883,7 @@ static int parse(const char* p, int *v, int *e, int max)
 
 		if (*p=='e')
 		{
-			p++;
+			++p;
 			ea=1;
 		}
 
@@ -895,12 +895,12 @@ static int parse(const char* p, int *v, int *e, int max)
 			 return -3;
 
 		if (*p==':')
-			p++;
+			++p;
 
 		if (ea)
 			v[i]+=e[i];
 
-		i++;
+		++i;
 	}
 
 	if (*p)
@@ -1047,7 +1047,7 @@ eWidget *eWidget::search(const eString &sname)
 			eWidget* p = (*It)->search(sname);
 			if (p)
 				return p;
-			It++;
+			++It;
 		}
 	}
 	return 0;

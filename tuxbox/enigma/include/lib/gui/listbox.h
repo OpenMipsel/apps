@@ -77,7 +77,7 @@ public:
 	void invalidateCurrent()
 	{
 		int n=0;
-		for (ePtrList<eListBoxEntry>::iterator i(top); i != bottom; ++i, n++)
+		for (ePtrList<eListBoxEntry>::iterator i(top); i != bottom; ++i, ++n)
 			if ( i == current )
 				invalidate(getEntryRect(n));
 	}

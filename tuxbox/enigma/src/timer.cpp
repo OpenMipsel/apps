@@ -1284,6 +1284,22 @@ void eTimerListView::fillTimerList()
 	events->endAtomic();
 }
 
+struct TimerEditActions
+{
+	eActionMap map;
+	eAction incBegTime, decBegTime, incEndTime, decEndTime;
+	TimerEditActions():
+		map("timerEdit", _("Timer Edit View")),
+		incBegTime(map, "incBegTime", _("increase the event begin time in 1 minute steps"), eAction::prioDialog ),
+		decBegTime(map, "decBegTime", _("decrease the event begin time in 1 minute steps"), eAction::prioDialog ),
+		incEndTime(map, "incEndTime", _("increase the event end time in 1 minute steps"), eAction::prioDialog ),
+		decEndTime(map, "decEndTime", _("decrease the event end time in 1 minute steps"), eAction::prioDialog )
+	{
+	}
+};
+
+eAutoInitP0<TimerEditActions> i_TimerEditActions(eAutoInitNumbers::actions, "timer edit actions");
+
 void eTimerEditView::createWidgets()
 {
 	event_name = new eTextInputField(this);
@@ -1397,6 +1413,7 @@ void eTimerEditView::createWidgets()
 	new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
 #endif
 //		new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );
+	addActionMap( &i_TimerEditActions->map );
 }
 
 eTimerEditView::eTimerEditView( ePlaylistEntry* e)
@@ -1450,7 +1467,7 @@ void eTimerEditView::fillInData( time_t begin_time, int duration, int ttype, eSe
 	beginTime = *localtime( &begin_time );
 	time_t tmp = begin_time + duration;
 	endTime = *localtime( &tmp );
-	updateDateTime( beginTime, endTime );
+	updateDateTime( beginTime, endTime, 3 );
 	type->setCurrent( (void*) ( ttype & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::recVCR|ePlaylistEntry::recNgrab ) ) );
 	tmpService = ref;
 
@@ -1643,22 +1660,28 @@ bool eTimerEditView::getData( time_t &bTime, int &duration )
 	return duration > 0;
 }
 
-void eTimerEditView::updateDateTime( const tm& beginTime, const tm& endTime )
+void eTimerEditView::updateDateTime( const tm& beginTime, const tm& endTime, int what )
 {
-	updateDay( bday, beginTime.tm_year+1900, beginTime.tm_mon+1, beginTime.tm_mday );
-	updateDay( eday, endTime.tm_year+1900, endTime.tm_mon+1, endTime.tm_mday );
+	if ( what & 1 )
+	{
+		updateDay( bday, beginTime.tm_year+1900, beginTime.tm_mon+1, beginTime.tm_mday );
 
-	btime->setNumber( 0, beginTime.tm_hour );
-	btime->setNumber( 1, beginTime.tm_min );
+		btime->setNumber( 0, beginTime.tm_hour );
+		btime->setNumber( 1, beginTime.tm_min );
 
-	byear->setCurrent( (void*) beginTime.tm_year );
-	bmonth->setCurrent( (void*) beginTime.tm_mon );
+		byear->setCurrent( (void*) beginTime.tm_year );
+		bmonth->setCurrent( (void*) beginTime.tm_mon );
+	}
+	if ( what & 2 )
+	{
+		updateDay( eday, endTime.tm_year+1900, endTime.tm_mon+1, endTime.tm_mday );
 
-	etime->setNumber( 0, endTime.tm_hour );
-	etime->setNumber( 1, endTime.tm_min );
+		etime->setNumber( 0, endTime.tm_hour );
+		etime->setNumber( 1, endTime.tm_min );
 
-	eyear->setCurrent( (void*) endTime.tm_year );
-	emonth->setCurrent( (void*) endTime.tm_mon );
+		eyear->setCurrent( (void*) endTime.tm_year );
+		emonth->setCurrent( (void*) endTime.tm_mon );
+	}
 }
 
 void eTimerEditView::multipleChanged( int i )
@@ -1793,5 +1816,60 @@ void eTimerEditView::scanEPGPressed()
 		}
 		if ( !event_name->getText() )
 			event_name->setText(_("no description found"));
+	}
+}
+
+int eTimerEditView::eventHandler( const eWidgetEvent &event )
+{
+	switch ( event.type )
+	{
+		case eWidgetEvent::evtAction:
+			if (event.action == &i_TimerEditActions->incBegTime )
+				changeTime(-1);
+			else if (event.action == &i_TimerEditActions->decBegTime )
+				changeTime(-2);
+			else if (event.action == &i_TimerEditActions->incEndTime )
+				changeTime(+2);
+			else if ( event.action == &i_TimerEditActions->decEndTime )
+				changeTime(+1);
+			else
+				return eWindow::eventHandler( event );
+			break;
+		default:
+			return eWindow::eventHandler( event );
+	};
+	return 1;
+}
+
+void eTimerEditView::changeTime( int dir )
+{
+	time_t curBegin;
+	int duration;
+	getData( curBegin, duration );
+	switch( dir )
+	{
+		case -2:  // dec begTime
+			curBegin-=60;
+		break;
+		case -1:  // inc begTime
+			curBegin+=60;
+		break;
+		case +1:  // dec duration
+			duration-=60;
+		break;
+		case +2:  // inc duration
+			duration+=60;
+		break;
+	}
+	if ( dir > 0 )
+	{
+		curBegin+=duration;
+		endTime = *localtime( &curBegin );
+		updateDateTime( beginTime, endTime, 2 );
+	}
+	else
+	{
+		beginTime = *localtime( &curBegin );
+		updateDateTime( beginTime, endTime, 1 );
 	}
 }

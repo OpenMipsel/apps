@@ -36,7 +36,6 @@
 #include <enigma_dyn.h>
 #include <enigma_xmlrpc.h>
 #include <enigma_main.h>
-#include <setup_timezone.h>
 
 // #include <mcheck.h>
 
@@ -239,9 +238,6 @@ eZap::eZap(int argc, char **argv)
 	httpd->addResolver(fileresolver);
 
 	eDebug("[ENIGMA] ok, beginning mainloop");
-
-	eZapTimeZoneSetup settimezone;
-	settimezone.setTimeZone();
 
 	if (eConfig::getInstance()->getKey("/elitedvb/system/bootCount", bootcount))
 	{

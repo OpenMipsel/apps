@@ -6,6 +6,7 @@
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/edvb.h>
+#include <lib/gui/combobox.h>
 #include <lib/gui/ewindow.h>
 #include <lib/gui/listbox.h>
 #include <lib/gui/multipage.h>
@@ -424,6 +425,7 @@ private:
 protected:
 	int eventHandler(const eWidgetEvent &event);
 private:
+	void ShowTimeCorrectionWindow( tsref ref );
 	bool CheckService(const eServiceReference &ref );
 	void handleServiceEvent(const eServiceEvent &event);
 	void startService(const eServiceReference &, int);
@@ -578,6 +580,25 @@ class eTimerInput: public eShutdownStandbySelWindow
 	void setPressed();
 public:
 	eTimerInput();
+};
+
+class eTimeCorrectionEditWindow: public eWindow
+{
+	eTimer updateTimer;
+	eLabel *lCurTransponderTime, *lCurTransponderDate;
+	eComboBox *cday, *cmonth, *cyear;
+	eButton *bSet, *bReject;
+	eNumber *nTime;
+	eStatusBar *sbar;
+	tsref transponder;
+	int eventHandler( const eWidgetEvent &e );
+	void savePressed();
+	void updateTPTimeDate();
+	void monthChanged( eListBoxEntryText* );
+	void yearChanged( eListBoxEntryText* );
+	void fieldSelected(int *){focusNext(eWidget::focusDirNext);}
+public:
+	eTimeCorrectionEditWindow( tsref tp );
 };
 
 #endif //DISABLE_FILE

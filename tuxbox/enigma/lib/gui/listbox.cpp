@@ -56,7 +56,7 @@ eRect eListBoxBase::getEntryRect(int pos)
 			// we increase MaxEntries by one since we don't want the last line
 			// one the next (invisible) column
 	if ( (columns == 1) && (flags & flagShowPartial))
-		lme++;
+		++lme;
 	if ( deco_selected && have_focus )
 		return eRect( ePoint( deco_selected.borderLeft + ( ( pos / lme) * ( crect_selected.width() / columns ) ) , deco_selected.borderTop + ( pos % lme) * item_height ), eSize( crect_selected.width() / columns , item_height ) );
 	else if (deco)
@@ -191,7 +191,7 @@ int eListBoxBase::setCurrent(const eListBoxEntry *c, bool sendSelected )
 
 	ePtrList<eListBoxEntry>::iterator item(childs.begin()), it(childs.begin());
 
-	for ( ; item != childs.end(); item++)
+	for ( ; item != childs.end(); ++item)
 		if ( *item == c )
 			break;
 
@@ -249,7 +249,7 @@ int eListBoxBase::setCurrent(const eListBoxEntry *c, bool sendSelected )
 				if (bottom == item)
 				{
 					current = bottom;  // we have found
-					newCurPos++;
+					++newCurPos;
 				}
       }
 		}
@@ -387,7 +387,7 @@ void eListBoxBase::redrawWidget(gPainter *target, const eRect &where)
 			if (entry == bottom)
 				break;
 
-		i++;
+		++i;
 	}
 }
 
@@ -412,7 +412,7 @@ void eListBoxBase::gotFocus()
 			tmpDescr->show();
 		}
 #endif
-	have_focus++;
+	++have_focus;
 
 	if (!childs.empty())
 	{
@@ -447,7 +447,7 @@ void eListBoxBase::lostFocus()
 		tmpDescr=0;
 	}
 #endif
-	have_focus--;
+	--have_focus;
 
 	if (!childs.empty())
 		if ( newFocus() ) //recalced ?
@@ -459,7 +459,7 @@ void eListBoxBase::lostFocus()
 		else if ( isVisible() )
 		{
 			int i = 0;
-			for (ePtrList<eListBoxEntry>::iterator entry(top); entry != bottom; i++, ++entry)
+			for (ePtrList<eListBoxEntry>::iterator entry(top); entry != bottom; ++i, ++entry)
 				if (entry == current)
 					invalidateEntry(i);
 		}
@@ -498,7 +498,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 	{
 		case dirPageDown:
 			direction=+1;
-			for (int i = 0; i < MaxEntries; i++)
+			for (int i = 0; i < MaxEntries; ++i)
 			{
 				if (++current == bottom) // unten (rechts) angekommen? page down
 				{
@@ -550,7 +550,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 				current = childs.end();					// select last
 				--current;
 				top = bottom = childs.end();
-				for (int i = 0; i < MaxEntries*columns; i++, top--)
+				for (int i = 0; i < MaxEntries*columns; ++i, --top)
 					if (top == childs.begin())
 						break;
 			} else
@@ -558,7 +558,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 				direction=-1;
 				if (current-- == top) // new top must set
 				{
-					for (int i = 0; i < MaxEntries*columns; i++, top--)
+					for (int i = 0; i < MaxEntries*columns; ++i, --top)
 						if (top == childs.begin())
 							break;
 					bottom=top;
@@ -596,7 +596,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 		case dirFirst:
 			direction=-1;
 			top = current = bottom = childs.begin(); 	// goto first;
-			for (int i = 0; i < MaxEntries * columns; i++, bottom++)
+			for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
 				if ( bottom == childs.end() )
 					break;
 			break;
@@ -635,14 +635,14 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 				while (o != c)
 				{
 					*oldi++=*o++;
-					count++;
+					++count;
 				}
 			} else
 			{
 				while (o != curi)
 				{
 					*oldi--=*--o;
-					count++;
+					++count;
 				}
 			}
 
@@ -684,7 +684,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 			int i=0;
 			int old=-1, cur=-1;
 
-			for (ePtrList<eListBoxEntry>::iterator entry(top); entry != bottom; i++, ++entry)
+			for (ePtrList<eListBoxEntry>::iterator entry(top); entry != bottom; ++i, ++entry)
 				if ( entry == oldptr)
 					old=i;
 				else if ( entry == current )
@@ -719,7 +719,7 @@ void eListBoxBase::setActiveColor(gColor back, gColor front)
 	if (current != childs.end())
 	{
 		int i = 0;
-		for (ePtrList<eListBoxEntry>::iterator it(top); it != bottom; i++, it++)
+		for (ePtrList<eListBoxEntry>::iterator it(top); it != bottom; ++i, ++it)
 		{
 			if (it == current)
 			{

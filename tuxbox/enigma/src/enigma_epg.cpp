@@ -314,7 +314,10 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 			while ( descr[0] == ' ' )
 				descr.erase(0);
 			if ( descr != e->title )
-				descr = " - "+descr;
+			{
+				if ( descr )
+					descr = " - "+descr;
+			}
 			else
 				descr="";
 			e->setHelpText( eString().sprintf("%02d.%02d. %02d:%02d %s%s",
@@ -403,13 +406,13 @@ void eZapEPG::selEntry(int dir)
 			offs -= hours*3600;
 			close(2);
 		}
-		else
-			eDebug("invalid service");
+/*		else
+			eDebug("invalid service");*/
 		return;
 	}
 	if (current_service->entries.begin() == current_service->entries.end())
 	{
-		eDebug("empty service");
+//		eDebug("empty service");
 		return;
 	}
 	ePtrList<entry>::iterator l = current_service->current_entry;
@@ -512,7 +515,7 @@ void eZapEPG::buildPage(int direction)
 	int width = clientrect.width();
 	int serviceheight = clientrect.height() / numservices;
 #endif
-
+	
 	int p = 0;
 	do
 	{
@@ -565,7 +568,6 @@ void eZapEPG::buildPage(int direction)
 			curE = services.begin();
 	}
 	while( serviceentries.size() < numservices && curE != curS );
-
 	if (!p)
 	{
 		sbar->setText("");
@@ -574,12 +576,15 @@ void eZapEPG::buildPage(int direction)
 
 	eventWidget->show();
 
+	if ( !serviceentries.size() )
+		return;
+
  // set column focus
 	current_service = serviceentries.begin();
 	for (unsigned int i=0; i < focusColumn; i++ )
 	{
-		if (current_service == serviceentries.end())
-			return;
+		if (current_service == --serviceentries.end())
+			break;
 		current_service++;
 	}
 	if (current_service->current_entry != current_service->entries.end())

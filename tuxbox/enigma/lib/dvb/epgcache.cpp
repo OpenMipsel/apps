@@ -7,13 +7,14 @@
 #include <lib/dvb/lowlevel/dvb.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/service.h>
+#include <lib/dvb/dvbservice.h>
 
 int eventData::CacheSize=0;
 
 eEPGCache *eEPGCache::instance;
 
 eEPGCache::eEPGCache()
-	:paused(0), CleanTimer(eApp), zapTimer(eApp)
+	:paused(0), firstStart(1), CleanTimer(eApp), zapTimer(eApp)
 {
 	eDebug("[EPGC] Initialized EPGCache");
 	isRunning=0;
@@ -362,6 +363,12 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 
 void eEPGCache::enterService(const eServiceReferenceDVB &service, int err)
 {
+	if ( service.path )
+	{
+		eDebug("[EPGC] dont start ... its a replay");
+		return;
+	}
+
 	current_service = service;
 
 	updateMap::iterator It = serviceLastUpdated.find( current_service );
@@ -430,6 +437,17 @@ void eEPGCache::startEPG()
 
 	if (eDVB::getInstance()->time_difference)
 	{
+		if ( firstStart )
+		{
+			std::map<tsref,int>::iterator it = eTransponderList::getInstance()->TimeOffsetMap.find(*eDVB::getInstance()->getServiceAPI()->transponder);
+			if ( it == eTransponderList::getInstance()->TimeOffsetMap.end() )
+			{
+//				eDebug("TRANSPONDER NOT IN TIMEOFFSETMAP");
+				/* emit */ timeNotValid( *eDVB::getInstance()->getServiceAPI()->transponder );
+			}
+			firstStart=0;
+		}
+
 		temp.clear();
 		eDebug("[EPGC] start caching events");
 		firstScheduleEvent.invalidate();

@@ -991,7 +991,10 @@ send:
 		{
 			// faster zap workaround... send only diseqc when satpos changed
 			if ( lnb->getDiSEqC().FastDiSEqC && csw && (csw / 4) == (lastcsw / 4) )
+			{
+				eDebug("FAST DISEQC... DONT SEND DISEQC COMMAND !!! ");
 				seq.numCommands=0;
+			}
 			goto send; // jump above...
 		}
 
