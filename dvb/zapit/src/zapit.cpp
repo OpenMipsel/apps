@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.24 2003/03/30 13:23:05 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.25 2003/05/01 20:35:12 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -928,7 +928,8 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				    msgAddSubService.transport_stream_id,
 				    original_network_id,
 				    1,
-				    channel->getDiSEqC()
+				    channel->getDiSEqC(),
+				    channel->getSatelliteName()
 				)
 			    )
 			);
@@ -1076,6 +1077,7 @@ void internalSendChannels(int connfd, ChannelList* channels, const unsigned int 
 
 		CZapitClient::responseGetBouquetChannels response;
 		strncpy(response.name, ((*channels)[i]->getName()).c_str(), 30);
+		strncpy(response.satellite, ((*channels)[i]->getSatelliteName()).c_str(), 30);
 		response.channel_id = (*channels)[i]->getChannelID();
 		response.nr = first_channel_nr + i;
 
@@ -1451,7 +1453,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.24 2003/03/30 13:23:05 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.25 2003/05/01 20:35:12 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {

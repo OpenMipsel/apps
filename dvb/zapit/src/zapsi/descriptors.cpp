@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.2 2003/03/26 17:03:20 thegoodguy Exp $
+ * $Id: descriptors.cpp,v 1.55.2.3 2003/05/01 20:38:38 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -381,6 +381,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 
 	std::string providerName((const char*)&(buffer[4]), service_provider_name_length);
 	std::string serviceName;
+	std::string satelliteName = "unknown";
 
 	bool in_blacklist = false;
 
@@ -435,7 +436,8 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 				transport_stream_id,
 				original_network_id,
 				service_type,
-				DiSEqC
+				DiSEqC, 
+				satelliteName
 			)
 		)
 	);
@@ -467,7 +469,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		else
 			bouquet = scanBouquetManager->Bouquets[bouquetId];
 
-		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0));
+		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, satelliteName));
 		break;
 	}
 	default:
