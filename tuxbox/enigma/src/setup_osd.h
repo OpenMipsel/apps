@@ -14,6 +14,7 @@ class eZapOsdSetup: public eWindow
 	eCheckbox* showOSDOnEITUpdate;
 	eCheckbox* showConsoleOnFB;
 	eCheckbox* showCurrentRemaining;
+	eCheckbox* anableAutohideOSDOn;
 	eStatusBar* statusbar;
 
 	eButton *ok, *pluginoffs;
