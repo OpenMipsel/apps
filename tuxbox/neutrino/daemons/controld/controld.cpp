@@ -571,8 +571,9 @@ void disableVideoOutput(bool disable)
 		setvideooutput(0, false);
 		setVideoFormat(-1, false);
 		//zapit.setStandby(true);
-		zapit.muteAudio(true);
-		audioControl::setMute(true);
+		// audio out in standby (kerlimann branch only - hopefully)
+		zapit.muteAudio(false);
+		audioControl::setMute(false);
 	}
 }
 
@@ -834,7 +835,7 @@ int main(int argc, char **argv)
 
 	CBasicServer controld_server;
 
-	printf("$Id: controld.cpp,v 1.111 2003/11/20 18:33:08 zwen Exp $\n\n");
+	printf("$Id: controld.cpp,v 1.110.2.1 2003/11/27 07:05:29 kerlimann Exp $\n\n");
 
 	for (int i = 1; i < argc; i++)
 	{
