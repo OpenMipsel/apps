@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.29 2003/07/17 11:23:52 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.30 2003/07/22 22:59:42 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -262,7 +262,9 @@ void eZapSetup::sel_setup_av()
 
 void eZapSetup::sel_language()
 {
+	hide();
 	eWizardLanguage::run();
+	show();
 }
 
 void eZapSetup::sel_timezone()
