@@ -170,8 +170,8 @@ PluginOffsetScreen::PluginOffsetScreen()
 eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 {
 	setText("OSD Setup");
-	cmove(ePoint(150, 125));
-	cresize(eSize(440, 435));
+	cmove(ePoint(150, 105));
+	cresize(eSize(440, 405));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
@@ -202,7 +202,6 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 
 	if ( eDVB::getInstance()->getmID() > 4 )
 		showConsoleOnFB->hide();
-
 
 	alpha = gFBDC::getInstance()->getAlpha();
 	eLabel* l = new eLabel(this);
@@ -249,7 +248,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 
 	pluginoffs->setShortcut("yellow");
 	pluginoffs->setShortcutPixmap("yellow");
-	pluginoffs->move(ePoint(20, 280));
+	pluginoffs->move(ePoint(20, 265));
 	pluginoffs->resize(eSize(250, 40));
 	pluginoffs->loadDeco();
 	CONNECT( pluginoffs->selected, eZapOsdSetup::PluginOffsetPressed );
@@ -258,7 +257,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 350));
+	ok->move(ePoint(20, 320));
 	ok->resize(eSize(170, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -267,7 +266,7 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 
 	abort=new eButton(this);
 	abort->setText(_("abort"));
-	abort->move(ePoint(210, 350));
+	abort->move(ePoint(210, 320));
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
