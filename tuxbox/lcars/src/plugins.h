@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: plugins.h,v $
+Revision 1.9.2.1  2004/06/21 07:24:59  coronas
+Compilefix rel-branch, untested
+
+Revision 1.9  2003/01/05 19:52:47  TheDOC
+forgot include
+
 Revision 1.8  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -59,6 +65,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <plugin.h>
 
 #include <config.h>
+#include "devices.h"
 
 class plugins
 {
@@ -97,7 +104,7 @@ public:
 
 	void setPluginDir(std::string dir) { plugin_dir = dir; }
 
-	PluginParam* makeParam(std::string id, PluginParam *next);
+	PluginParam* makeParam(const char * const id, PluginParam *next);
 
 	void addParm(std::string cmd, int value);
 	void addParm(std::string cmd, std::string value);

@@ -92,7 +92,7 @@ class CPlugins
 
 		void setPluginDir(std::string dir) { plugin_dir = dir; }
 
-		PluginParam* makeParam(std::string id, PluginParam *next);
+		PluginParam* makeParam(const char * const id, PluginParam *next);
 
 		void addParm(std::string cmd, int value);
 		void addParm(std::string cmd, std::string value);
