@@ -518,8 +518,12 @@ ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr): Descriptor(DESCR
 		ptr++;
 		len--;
 	}
+	
+	int table=5;
+	if (!memcmp(language_code, "gre", 3))
+		table=3;
 
-	event_name=convertDVBUTF8((unsigned char*)data+ptr, len);
+	event_name=convertDVBUTF8((unsigned char*)data+ptr, len, table);
 	ptr+=len;
 
 	len=data[ptr++];
@@ -530,7 +534,7 @@ ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr): Descriptor(DESCR
 		len--;
 	}
 
-	text=convertDVBUTF8((unsigned char*) data+ptr, len);
+	text=convertDVBUTF8((unsigned char*) data+ptr, len, table);
 }
 
 eString ShortEventDescriptor::toString()
@@ -621,9 +625,13 @@ ExtendedEventDescriptor::ExtendedEventDescriptor(descr_gen_t *descr): Descriptor
 	language_code[1]=evt->iso_639_2_language_code_2;
 	language_code[2]=evt->iso_639_2_language_code_3;
 
+	int table=5;
+	if (!memcmp(language_code, "gre", 3))
+		table=3;
+
 	int ptr = sizeof(struct eit_extended_descriptor_struct);
 	__u8* data = (__u8*) descr;
-	item_description=convertDVBUTF8((unsigned char*)data+ptr, item_description_length);
+	item_description=convertDVBUTF8((unsigned char*)data+ptr, item_description_length, table);
 }
 
 eString ExtendedEventDescriptor::toString()
