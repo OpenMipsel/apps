@@ -77,7 +77,7 @@ public:
 
 	enum
 	{
-		feSatellite=0, feCable, feTerrestrical
+		feSatellite=0, feCable, feTerrestrial
 	};
 
 	static int open(int type) { if (!frontend) frontend=new eFrontend(type); if (frontend->fd<0) { close(); return frontend->fd; } return 0; }

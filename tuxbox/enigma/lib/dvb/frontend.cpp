@@ -1082,7 +1082,7 @@ send:
 				front.u.qpsk.SymbolRate=SymbolRate;
 				front.u.qpsk.FEC_inner=FEC_inner;
 				break;
-			case feTerrestrical:
+			case feTerrestrial:
 				eDebug("DVB-T Frontend detected");
 				break;
 		}

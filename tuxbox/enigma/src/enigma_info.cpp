@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.25 2003/07/22 22:48:48 ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.26 2003/07/29 23:04:31 ghostrider Exp $
  */
 
 #include <enigma_info.h>
@@ -253,21 +253,20 @@ public:
 			break;
 		}
 		
-		int fe=atoi(eDVB::getInstance()->getInfo("fe").c_str());
-		switch (fe)
+		switch (eFrontend::getInstance()->Type())
 		{
-		case 1:
+		case eFrontend::feSatellite:
 			frontend->setText(_("Frontend: Satellite"));
 			break;
-		case 2:
+		case eFrontend::feCable:
 			frontend->setText(_("Frontend: Cable"));
 			break;
-		case 3:
+		case eFrontend::feTerrestrial:
 			frontend->setText(_("Frontend: Terrestrial"));
 			break;
-		case 4:
+/*		case 4:
 			frontend->setText(_("Frontend: Simulator"));
-			break;
+			break;*/
 		}
 		
 		eString sharddisks;
