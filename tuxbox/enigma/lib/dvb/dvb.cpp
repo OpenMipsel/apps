@@ -316,29 +316,11 @@ int existNetworks::saveNetworks()
 	switch (fetype)
 	{
 	case eFrontend::feSatellite:
-	{
-		FILE *f = fopen("/etc/satellites.xml", "w+");
-		if (f)
-		{
-			filename="/etc/satellites.xml";
-			fclose(f);
-		}
-		else
-			filename="/var/etc/satellites.xml";
+		filename="/etc/satellites.xml";
 		break;
-	}
 	case eFrontend::feCable:
-	{
-		FILE *f = fopen("/etc/cables.xml", "w+");
-		if (f)
-		{
-			filename="/etc/cables.xml";
-			fclose(f);
-		}
-		else
-			filename="/var/etc/cables.xml";
+		filename="/etc/cables.xml";
 		break;
-	}
 	default:
 		break;
 	}
@@ -399,29 +381,11 @@ int existNetworks::reloadNetworks()
 	switch (fetype)
 	{
 	case eFrontend::feSatellite:
-	{
-		FILE *f = fopen("/var/etc/satellites.xml", "rt");
-		if (f)
-		{
-			filename="/var/etc/satellites.xml";
-			fclose(f);
-		}
-		else
-			filename="/etc/satellites.xml";
+		filename="/etc/satellites.xml";
 		break;
-	}
 	case eFrontend::feCable:
-	{
-		FILE *f = fopen("/var/etc/cables.xml", "rt");
-		if (f)
-		{
-			filename="/var/etc/cables.xml";
-			fclose(f);
-		}
-		else
-			filename="/etc/cables.xml";
+		filename="/etc/cables.xml";
 		break;
-	}
 	default:
 		break;
 	}
