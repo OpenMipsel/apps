@@ -64,6 +64,7 @@
 
 #include "rcinput.h"
 
+#define RC_standby_release (KEY_MAX + 1)
 
 #ifdef KEYBOARD_INSTEAD_OF_REMOTE_CONTROL
 static struct termio orig_termio;
@@ -1045,25 +1046,13 @@ void CRCInput::getMsg_us(uint *msg, uint *data, unsigned long long Timeout, bool
 							//printf("--!!!!!  translated key: %04x\n", trkey );
 							if (trkey!=RC_nokey)
 							{
-								*msg = trkey;
-								*data = 0; /* <- button pressed */
+								*msg  = (trkey == RC_standby_release) ? RC_standby : trkey;
+								*data = (trkey == RC_standby_release) ? 1 : 0; /* <- button released / pressed */
 								return;
 							}
 						}
 					}
 
-				}
-				else
-				{	
-					// clear rc_last_key on keyup event
-					//printf("got keyup native key: %04x %04x, translate: %04x -%s-\n", ev.code, ev.code&0x1f, translate(ev.code), getKeyName(translate(ev.code)).c_str() );
-					rc_last_key = 0;
-					if (translate(rc_key) == RC_standby)
-					{
-						*msg = RC_standby;
-						*data = 1; /* <- button released */
-						return;
-					}
 				}
 			}
 		}
