@@ -648,7 +648,7 @@ struct eServiceHandlerDVB_addService
 {
 	Signal1<void,const eServiceReference&> &callback;
 	int type;
-	unsigned int DVBNamespace;
+	int DVBNamespace;
 	eServiceHandlerDVB_addService(Signal1<void,const eServiceReference&> &callback, int type, int DVBNamespace)
 	: callback(callback), type(type), DVBNamespace(DVBNamespace)
 	{
@@ -656,7 +656,7 @@ struct eServiceHandlerDVB_addService
 	void operator()(const eServiceReference &service)
 	{
 		int t = ((eServiceReferenceDVB&)service).getServiceType();
-		unsigned int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;
+		int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;
 		if (t < 0)
 			t=0;
 		if (t >= 31)
@@ -688,7 +688,7 @@ void eServiceHandlerDVB::enterDirectory(const eServiceReference &ref, Signal1<vo
 			for (std::list<eServiceReferenceDVB>::iterator i(b->list.begin());  i != b->list.end(); ++i)
 			{
 				int t = i->getServiceType();
-				unsigned int nspace = ((eServiceReferenceDVB&)*i).getDVBNamespace().get()&0xFFFF0000;
+				int nspace = ((eServiceReferenceDVB&)*i).getDVBNamespace().get()&0xFFFF0000;
 				if (t < 0)
 					t=0;
 				if (t >= 31)
@@ -863,7 +863,7 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 				for ( std::list<eServiceReferenceDVB>::iterator s(i->list.begin()); s != i->list.end(); ++s)
 				{
 					int t = s->getServiceType();
-					unsigned int nspace = ((eServiceReferenceDVB&)*s).getDVBNamespace().get()&0xFFFF0000;
+					int nspace = ((eServiceReferenceDVB&)*s).getDVBNamespace().get()&0xFFFF0000;
 					if (t < 0)
 						t=0;
 					if (t >= 31)
