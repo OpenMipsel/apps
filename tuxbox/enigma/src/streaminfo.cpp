@@ -425,14 +425,14 @@ eStreaminfo::eStreaminfo(int mode, decoderParameters *parms): eWindow(1), status
 	statusbar.resize( eSize(clientrect.width(), 40) );
 	eRect rect = statusbar.getClientRect();
 
-	lb = new eListBox<eListBoxEntryMenu>( &statusbar.getLabel() );
+	lb = new eListBox<eListBoxEntryMenu>( &statusbar );
 	lb->move( ePoint(rect.width()-50, 2) );
 	lb->resize( eSize(45, rect.height()-5) );
 	lb->setFlags( eListBoxBase::flagNoPageMovement | eListBoxBase::flagNoUpDownMovement );
 	new eListBoxEntryMenu( lb, "1/3", _("Service information (right)"), eTextPara::dirCenter );
 	new eListBoxEntryMenu( lb, "2/3", _("Scramble system information (left, right)"), eTextPara::dirCenter );
 	new eListBoxEntryMenu( lb, "3/3", _("Transponder information (left)"), eTextPara::dirCenter );
-	descr = new eLabel( &statusbar.getLabel() );
+	descr = new eLabel( &statusbar );
 	descr->move( ePoint(0,0) );
 	descr->resize( eSize(rect.width() - 50, rect.height()) );
 	descr->setText( lb->getCurrent()->getHelpText() );

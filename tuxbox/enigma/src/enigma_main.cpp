@@ -550,10 +550,6 @@ eZapMain::eZapMain()
 	if (skin->build(this, "ezap_main"))
 		eFatal("skin load of \"ezap_main\" failed");
 
-	eDebug("DVRSpaceLeft position x = %d, y = %d, height = %d, width = %d",
-		DVRSpaceLeft->getPosition().x(), DVRSpaceLeft->getPosition().y(),
-		DVRSpaceLeft->height(), DVRSpaceLeft->width() );
-
 	lcdmain.show();
 
 	ASSIGN(ChannelNumber, eLabel, "ch_number");

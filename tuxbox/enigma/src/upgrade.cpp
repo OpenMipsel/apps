@@ -283,7 +283,7 @@ void eUpgrade::imageSelected(eListBoxEntryImage *img)
 
 void eUpgrade::setStatus(const eString &string)
 {
-	status->getLabel().setText(string);
+	status->setText(string);
 }
 
 void eUpgrade::setError(int err)

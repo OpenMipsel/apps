@@ -49,7 +49,10 @@ class eFrontend: public Object
 	void timeout();
 	int RotorUseTimeout(secCmdSequence& seq, int newPos );
 	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat );
+	int noRotorCmd;
 public:
+	void disableRotor() { noRotorCmd = 1; }  // no more rotor cmd is sent when tune
+	void enableRotor() { noRotorCmd = 0; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
 
 	Signal0<void> rotorRunning, rotorStopped, rotorTimeout;

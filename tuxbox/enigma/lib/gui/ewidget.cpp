@@ -443,7 +443,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 	case eWidgetEvent::changedForegroundColor:
 	case eWidgetEvent::changedBackgroundColor:
 	case eWidgetEvent::changedPosition:
-  case eWidgetEvent::changedPixmap:
+	case eWidgetEvent::changedPixmap:
 		invalidate();
 		break;
 	default:

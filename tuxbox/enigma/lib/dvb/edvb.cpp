@@ -66,8 +66,6 @@ eDVB::eDVB(): state(eDVBState::stateIdle)
 	DVBCI=new eDVBCI();
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::start));
 
-
-
 		// initialize frontend (koennte auch nochmal raus)
 	eString frontend=getInfo("fe");
 	int fe;

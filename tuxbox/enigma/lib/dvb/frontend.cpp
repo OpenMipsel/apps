@@ -21,7 +21,7 @@
 eFrontend* eFrontend::frontend;
 
 eFrontend::eFrontend(int type, const char *demod, const char *sec)
-:type(type), curRotorPos( 1000 ), timer2(eApp)
+:type(type), curRotorPos( 1000 ), timer2(eApp), noRotorCmd(0)
 {
 	state=stateIdle;
 	timer=new eTimer(eApp);
@@ -143,8 +143,6 @@ int eFrontend::SNR()
 		snr=0;
 	}
 #endif
-	eDebug("SNR:%d",snr);
-
 	return snr;
 }
 
@@ -233,8 +231,8 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	secCommand cmd;
 
 	int cnt=0;
-	for ( unsigned int i=0; i < params.length() && i < 16; i+=4 )
-		cmd.u.diseqc.params[++cnt] = strtol( params.mid(i, 2).c_str(), 0, 16 );
+	for ( unsigned int i=0; i < params.length() && i < 12; i+=4 )
+		cmd.u.diseqc.params[cnt++] = strtol( params.mid(i, 2).c_str(), 0, 16 );
     
 	cmd.type = SEC_CMDTYPE_DISEQC_RAW;
 	cmd.u.diseqc.cmdtype = frame;
@@ -246,7 +244,7 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	for (int i=0; i < cnt; i++)
 		parms+=eString().sprintf("0x%02x ",cmd.u.diseqc.params[i]);
   
-//  eDebug("cmdtype = %02x, addr = %02x, cmd = %02x, numParams = %02x, params=%s", frame, addr, Cmd, cnt, parms.c_str() );
+  eDebug("cmdtype = %02x, addr = %02x, cmd = %02x, numParams = %02x, params=%s", frame, addr, Cmd, cnt, parms.c_str() );
 
 	seq.miniCommand = SEC_MINI_NONE;
 	seq.continuousTone = SEC_TONE_OFF;
@@ -440,7 +438,7 @@ int eFrontend::tune(eTransponder *trans,
 
 	transponder=trans;
 
-	if (sat)   // then we must do Satellite Stuff
+	if ( sat)   // then we must do Satellite Stuff
 	{
 		eSwitchParameter &swParams = sat->getSwitchParams();
 		eLNB *lnb = sat->getLNB();
@@ -475,7 +473,7 @@ int eFrontend::tune(eTransponder *trans,
 		eDebug("DiSEqC Switch cmd = %04x", csw);
 
 		// Rotor Support
-		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
+		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && !noRotorCmd )
 		{           
 			if ( lnb->getDiSEqC().uncommitted_gap ) // the we add 2 * repeats + 1 + 1;
 				cmdCount = ( lnb->getDiSEqC().DiSEqCRepeats << 1 ) + 2;
@@ -559,138 +557,137 @@ int eFrontend::tune(eTransponder *trans,
 					if ( lnb->getDiSEqC().uncommitted_gap ) // then we add 2 * repeats + 1;
 						loops = cmdCount = ( lnb->getDiSEqC().DiSEqCRepeats << 1 ) + 1;
 					else // then we add repeats + 1
-				loops = cmdCount = lnb->getDiSEqC().DiSEqCRepeats + 1;
-			}
-			else // send only one DiSEqC Command
-			{
-				loops = cmdCount = 1;
-			}
+						loops = cmdCount = lnb->getDiSEqC().DiSEqCRepeats + 1;
+				}
+				else // send only one DiSEqC Command
+				{
+					loops = cmdCount = 1;
+				}
           
 				// allocate memory for all DiSEqC commands
-			commands = new secCommand[cmdCount];
-		}
+				commands = new secCommand[cmdCount];
+			}
 
-		for ( int i = 0; i < loops;)  // fill commands...
-		{
-			commands[i].type = SEC_CMDTYPE_DISEQC_RAW;
-			commands[i].u.diseqc.addr=0x10;
+			for ( int i = 0; i < loops;)  // fill commands...
+			{
+				commands[i].type = SEC_CMDTYPE_DISEQC_RAW;
+				commands[i].u.diseqc.addr=0x10;
 
-			// when DiSEqC V1.0 is avail then loops is always 1 .. see above
+				// when DiSEqC V1.0 is avail then loops is always 1 .. see above
         
-			if ( loops > 1 && lnb->getDiSEqC().uncommitted_switch )
-			{
-				commands[i].u.diseqc.cmd=0x39;          // uncomitted switch
-				eDebug("0x39");
-			}
-			else // DiSEqC < V1.1 do not support repeats
-			{
-				commands[i].u.diseqc.cmd=0x38;          // comitted switch
-				eDebug("0x38");          
-			}
+				if ( loops > 1 && lnb->getDiSEqC().uncommitted_switch )
+				{
+					commands[i].u.diseqc.cmd=0x39;          // uncomitted switch
+					eDebug("0x39");
+				}
+				else // DiSEqC < V1.1 do not support repeats
+				{
+					commands[i].u.diseqc.cmd=0x38;          // comitted switch
+					eDebug("0x38");          
+				}
           
-			commands[i].u.diseqc.cmdtype= i ? 0xE1 : 0xE0; // repeated or not repeated transm.
-			eDebug("0x%02x", commands[i].u.diseqc.cmdtype);
-			commands[i].u.diseqc.numParams=1;
-			commands[i].u.diseqc.params[0]=csw;
+				commands[i].u.diseqc.cmdtype= i ? 0xE1 : 0xE0; // repeated or not repeated transm.
+				eDebug("0x%02x", commands[i].u.diseqc.cmdtype);
+				commands[i].u.diseqc.numParams=1;
+				commands[i].u.diseqc.params[0]=csw;
 
-			i++;        
-			if ( i < loops && lnb->getDiSEqC().uncommitted_gap )
-			{
-				commands[i]=commands[i-1];
-				commands[i].u.diseqc.cmdtype=0xE1;
-				i++;                
+				i++;        
+				if ( i < loops && lnb->getDiSEqC().uncommitted_gap )
+				{
+					commands[i]=commands[i-1];
+					commands[i].u.diseqc.cmdtype=0xE1;
+					i++;                
+				}
 			}
+			seq.numCommands=cmdCount;
+			eDebug("Commands to send = %d", cmdCount);
 		}
-		seq.numCommands=cmdCount;
-	}
-	else // no DiSEqC
-	{
-		eDebug("no DiSEqC");
-		seq.commands=0;
-		sendSeq |= 2;
-	}
+		else // no DiSEqC
+		{
+			eDebug("no DiSEqC");
+			seq.commands=0;
+			sendSeq |= 2;
+		}
 
-	if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::A )
-	{
-		eDebug("MiniDiSEqC A");
-		seq.miniCommand=SEC_MINI_A;
-	}
-	else if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::B )
-	{
-		eDebug("MiniDiSEqC B");
-		seq.miniCommand=SEC_MINI_B;
-	}
-	else
-	{
-		eDebug("no Toneburst (MiniDiSEqC)");
-		seq.miniCommand = SEC_MINI_NONE;
-	}
+		if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::A )
+		{
+			eDebug("MiniDiSEqC A");
+			seq.miniCommand=SEC_MINI_A;
+		}
+		else if ( lnb->getDiSEqC().MiniDiSEqCParam == eDiSEqC::B )
+		{
+			eDebug("MiniDiSEqC B");
+			seq.miniCommand=SEC_MINI_B;
+		}
+		else
+		{
+			eDebug("no Toneburst (MiniDiSEqC)");
+			seq.miniCommand = SEC_MINI_NONE;
+		}
 
-	eDebug("Commands to send = %d", cmdCount);
+		if ( csw != lastcsw )
+		{
+			lastcsw = csw;
+			sendSeq = -1;
+		}
 
-	if ( csw != lastcsw )
-	{
-		lastcsw = csw;
-		 sendSeq = -1;
-	}
+		/*	if ( lastSmatvFreq != SmatvFreq )
+		{
+			lastSmatvFreq = SmatvFreq;
+			sendSeq = -2;
+		}*/
 
-/*	if ( lastSmatvFreq != SmatvFreq )
-	{
-		lastSmatvFreq = SmatvFreq;
-		sendSeq = -2;
-	}*/
-
-	if (lastRotorCmd != RotorCmd )
-	{
-		lastRotorCmd = RotorCmd;
-		sendSeq = -3;
-	}
+		if (lastRotorCmd != RotorCmd )
+		{
+			lastRotorCmd = RotorCmd;
+			sendSeq = -3;
+		}
     
-	if ( sendSeq > 0 )
-		sendSeq &= ~1;
+		if ( sendSeq > 0 )
+			sendSeq &= ~1;
       
-	// no DiSEqC related Stuff
+			// no DiSEqC related Stuff
 
-	// calc Frequency
-	int local = Frequency - ( Frequency > lnb->getLOFThreshold() ? lnb->getLOFHi() : lnb->getLOFLo() );
-	front.Frequency = local > 0 ? local : -local;
+		// calc Frequency
+		int local = Frequency - ( Frequency > lnb->getLOFThreshold() ? lnb->getLOFHi() : lnb->getLOFLo() );
+		front.Frequency = local > 0 ? local : -local;
     
-	// set Continuous Tone ( 22 Khz... low - high band )
-	if ( (swParams.HiLoSignal == eSwitchParameter::ON) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency > lnb->getLOFThreshold()) ) )
-	{
-		seq.continuousTone = SEC_TONE_ON;
-	}
-	else if ( (swParams.HiLoSignal == eSwitchParameter::OFF) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency <= lnb->getLOFThreshold()) ) )
-	{
-		seq.continuousTone = SEC_TONE_OFF;
-	}
+		// set Continuous Tone ( 22 Khz... low - high band )
+		if ( (swParams.HiLoSignal == eSwitchParameter::ON) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency > lnb->getLOFThreshold()) ) )
+		{
+			seq.continuousTone = SEC_TONE_ON;
+		}
+		else if ( (swParams.HiLoSignal == eSwitchParameter::OFF) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency <= lnb->getLOFThreshold()) ) )
+		{
+			seq.continuousTone = SEC_TONE_OFF;
+		}
 
-	// Voltage( 0/14/18V  vertical/horizontal )
-	int voltage = SEC_VOLTAGE_OFF;
-	if ( swParams.VoltageMode == eSwitchParameter::_14V || ( polarisation == polVert && swParams.VoltageMode == eSwitchParameter::HV )  )
-	{
-		voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_13_5 : SEC_VOLTAGE_13;
-	}
-	else if ( swParams.VoltageMode == eSwitchParameter::_18V || ( polarisation==polHor && swParams.VoltageMode == eSwitchParameter::HV)  )
-	{
-		voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_18_5 : SEC_VOLTAGE_18;
-	}
+		// Voltage( 0/14/18V  vertical/horizontal )
+		int voltage = SEC_VOLTAGE_OFF;
+		if ( swParams.VoltageMode == eSwitchParameter::_14V || ( polarisation == polVert && swParams.VoltageMode == eSwitchParameter::HV )  )
+		{
+			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_13_5 : SEC_VOLTAGE_13;
+		}
+		else if ( swParams.VoltageMode == eSwitchParameter::_18V || ( polarisation==polHor && swParams.VoltageMode == eSwitchParameter::HV)  )
+		{
+			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_18_5 : SEC_VOLTAGE_18;
+		}
     
-	// set cmd ptr in sequence..
-	seq.commands=commands;
+		// set cmd ptr in sequence..
+		seq.commands=commands;
     
-	// handle DiSEqC Rotor
-	if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && sendSeq == -3 )
-	{
-		// drive rotor always with 18V ( is faster )
-		seq.voltage = SEC_VOLTAGE_18;
+		// handle DiSEqC Rotor
+		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && sendSeq == -3 && !noRotorCmd )
+		{
+			// drive rotor always with 18V ( is faster )
+			seq.voltage = SEC_VOLTAGE_18;
 
-		RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
+			RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
 //		RotorUseTimeout(seq, sat->getOrbitalPosition() );
 
 		// set the right voltage
-		if ( voltage != SEC_VOLTAGE_18 )
-			ioctl(secfd, SEC_SET_VOLTAGE, &voltage);
+			if ( voltage != SEC_VOLTAGE_18 )
+				ioctl(secfd, SEC_SET_VOLTAGE, &voltage);
 		}
 		else  // no Rotor avail... we send the complete cmd...
 		{
@@ -712,8 +709,6 @@ int eFrontend::tune(eTransponder *trans,
 		if (cmdCount)
 			delete [] commands;
 	}
-	else  // we have only a cable box
-		eDebug("no valid LNB... Cable Box ?");
 
 	front.Inversion=Inversion;
 	switch (type)

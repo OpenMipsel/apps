@@ -64,13 +64,13 @@ void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 
 void eNumber::redrawWidget(gPainter *p, const eRect &area)
 {
+	for (int i=0; i<len; i++)
+		redrawNumber(p, i, area);
+
 	if (deco_selected && have_focus)
 		deco_selected.drawDecoration(p, ePoint(width(), height()));
 	else if (deco)
 		deco.drawDecoration(p, ePoint(width(), height()));
-
-	for (int i=0; i<len; i++)
-		redrawNumber(p, i, area);
 }
 
 void eNumber::invalidateNum()
@@ -92,11 +92,11 @@ int eNumber::eventHandler(const eWidgetEvent &event)
 	{
 	case eWidgetEvent::changedSize:
 		if (deco)
-			dspace = (crect.width()-2) / len;
+			dspace = (crect.width()) / len;
 		else
-			dspace = (size.width()-2) / len;	
+			dspace = (size.width()) / len;	
 		if (deco_selected)
-			space_selected = (crect_selected.width()-2) / len;
+			space_selected = (crect_selected.width()) / len;
 		break;
 	case eWidgetEvent::evtAction:
 		if ( len > 1 && event.action == &i_cursorActions->left)
@@ -320,12 +320,23 @@ void eNumber::setBase(int _base)
 
 void eNumber::setNumber(int n)
 {
-	for (int i=len-1; i>=0; --i)
-	{
-		number[i]=n%base;
-		n/=base;
+  if (len == 1)
+  {
+		if ( flags&flagPosNeg && n < 0 )
+		{
+			neg=1;
+			n = abs(n);
+		}
+		number[0]=n;
 	}
-	invalidate();
+	else
+		for (int i=len-1; i>=0; --i)
+		{
+			number[i]=n%base;
+			n/=base;
+		}
+
+	invalidateNum();
 }
 
 int eNumber::getNumber()

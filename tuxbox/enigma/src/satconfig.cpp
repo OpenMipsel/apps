@@ -5,6 +5,8 @@
 #include <lib/gui/ebutton.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/echeckbox.h>
+#include <lib/dvb/edvb.h>
+#include <lib/dvb/dvbservice.h>
 #include <lib/dvb/frontend.h>
 #include <lib/dvb/dvbwidgets.h>
 #include <lib/dvb/edvb.h>
@@ -13,6 +15,9 @@
 eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	:refresh(0), deleteThisEntry( 0 )
 {
+	// send no more DiSEqC Commands on transponder::tune to Rotor
+	eFrontend::getInstance()->disableRotor();
+	
 	button_close=new eButton(this);
 	button_close->setName("close");
 	CONNECT(button_close->selected, eSatelliteConfigurationManager::closePressed);
@@ -21,22 +26,54 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	button_new->setName("new");
 	CONNECT(button_new->selected, eSatelliteConfigurationManager::newPressed);
 
-	w_buttons=new eWidget(this);
-	w_buttons->setName("buttons");
+	buttonWidget=new eWidget(this);
+	buttonWidget->setName("buttons");
 
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eSatelliteConfigurationManager"))
 		eFatal("skin load of \"eSatelliteConfigurationManager\" failed");
 
+	eSize s = buttonWidget->getSize();
+	s.setHeight( s.height()*8 );
+
+	w_buttons = new eWidget(buttonWidget);
+	w_buttons->resize( s );
+	w_buttons->move( ePoint(0,0) );
+
 	parseNetworks();  // load all networks from satellite.xml or cable.xml
 	createControlElements();
 	repositionWidgets();
+
+	CONNECT( eWidget::focusChanged, eSatelliteConfigurationManager::focusChanged );
+}
+
+void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
+{
+	if ( focus && focus->getName() == "satWidget" )
+	{
+// get Current Sat Widget Position
+		const ePoint &wPosition = w_buttons->getPosition();
+
+// get Visible Rect
+		eRect rcVisible( wPosition, buttonWidget->getSize() );
+
+		ePoint relFocusPos(focus->getPosition() );
+		relFocusPos+=ePoint( 0, wPosition.y()*2 );
+    
+		if ( relFocusPos.y()+40 > rcVisible.bottom() )
+			w_buttons->move( ePoint( wPosition.x(), wPosition.y()-40 ) );
+		else if ( relFocusPos.y() < rcVisible.top() ) // we must scroll down
+			w_buttons->move( ePoint( wPosition.x(), wPosition.y()+40 ) );
+	}
 }
 
 eSatelliteConfigurationManager::~eSatelliteConfigurationManager()
 {
 	if (refresh)
 		delete refresh;
+
+// enable send DiSEqC Commands to Rotor on eTransponder::tune
+	eFrontend::getInstance()->enableRotor();
 }
 
 eSatellite *eSatelliteConfigurationManager::getSat4SatCombo( const eComboBox *c )
@@ -210,6 +247,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 	eLabel *l = new eLabel(this);
 	l->setName("lSatPos");
 	eComboBox* c = new eComboBox(w_buttons, 6, l);
+	c->setName("satWidget");
 	sat.sat=c;
 	c->loadDeco();
 //			c->move(ePoint(sx,y));
@@ -231,6 +269,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 	l->setName("lLnb");
 	eButton* b = new eButton(w_buttons, l);
 	sat.lnb=b;
+	b->setName("satWidget");
 	b->loadDeco();
 //			b->move(ePoint(lx, y));
 	b->resize(eSize(60, 30));
@@ -240,6 +279,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 	l = new eLabel(this);
 	l->setName("l22khz");
 	c = new eComboBox(w_buttons, 3, l);
+	c->setName("satWidget");
 	sat.hilo=c;
 	c->loadDeco();
 //			c->move( ePoint( hx, y ) );
@@ -254,6 +294,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 	l = new eLabel(this);
 	l->setName("lVoltage");
 	c = new eComboBox(w_buttons, 3, l	);
+	c->setName("satWidget");
 	sat.voltage=c;
 	c->loadDeco();
 //			c->move( ePoint( vx, y ) );
@@ -343,13 +384,14 @@ int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_focusActions->down)
 			focusNext(eWidget::focusDirS);
 		else
-			break;
-	 return 1;
+			return eWindow::eventHandler(event);
+	break;
 
 	default:
+		return eWindow::eventHandler(event);
 		break;
 	}
-	return eWindow::eventHandler(event);
+  return 1;
 }
 
 eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
@@ -365,12 +407,16 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	LNBPage->setLCD( lcdTitle, lcdElement );
 	RotorPage = new eRotorPage( this, sat );
 	RotorPage->setLCD( lcdTitle, lcdElement );
-  
+//	ManuallyRotorPage = new eManuallyRotorPage( this );
+	RotorPage->setLCD( lcdTitle, lcdElement );
+    
 	DiSEqCPage->hide();
 	LNBPage->hide();
 	RotorPage->hide();
+//	ManuallyRotorPage->hide();
 	mp.addPage( LNBPage );    
 	mp.addPage( DiSEqCPage );
+//	mp.addPage( ManuallyRotorPage );
 	mp.addPage( RotorPage );
 
 // here we can not use the Makro CONNECT ... slot (*this, .... is here not okay..
@@ -388,6 +434,7 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	CONNECT( RotorPage->prev->selected, eLNBSetup::onPrev );
 	CONNECT( RotorPage->save->selected, eLNBSetup::onSave );
 	CONNECT( RotorPage->cancel->selected, eLNBSetup::reject);
+//	CONNECT( ManuallyRotorPage->prev->selected, eLNBSetup::onPrev );
 } 
 
 struct savePosition: public std::unary_function< eListBoxEntryText&, void>
@@ -578,12 +625,9 @@ void eLNBPage::lnbChanged( eListBoxEntryText *lnb )
 		incVoltage = ((eLNB*)lnb->getKey())->getIncreasedVoltage();
 	}
 	lofL->setNumber( l1 / 1000 );
-	lofL->invalidateNum();
 	lofH->setNumber( l2 / 1000 );
-	lofH->invalidateNum();
 	increased_voltage->setCheck( incVoltage );
 	threshold->setNumber( l3 / 1000 );
-	threshold->invalidateNum();
 }
 
 void eLNBPage::numSelected(int*)
@@ -827,6 +871,7 @@ void eRotorPage::lnbChanged( eListBoxEntryText *lnb )
 			new eListBoxEntryText( positions, eString().sprintf(" %d / %03d %c", it->second, abs(it->first), it->first > 0 ? 'E' : 'W'), (void*) it->first );
 
 		useGotoXX->setCheck( (int) ((eLNB*)lnb->getKey())->getDiSEqC().useGotoXX );
+		eDebug("lnbChanged....rotorOffset = %d", ((eLNB*)lnb->getKey())->getDiSEqC().rotorOffset );
 		RotorOffset->setNumber( (int) ((eLNB*)lnb->getKey())->getDiSEqC().rotorOffset );
 	}
 	else
@@ -851,11 +896,10 @@ void eRotorPage::lnbChanged( eListBoxEntryText *lnb )
 
 void eRotorPage::posChanged( eListBoxEntryText *e )
 {
-	if ( e )
+	if ( e && (int)e->getKey() != 0xFFFF )
 	{
 		direction->setCurrent( e->getText().right( 1 ) == "E" ? 0 : 1 );
-		int bla = abs ( (int) e->getKey() );
-		orbital_position->setNumber( bla );
+		orbital_position->setNumber( (int) e->getKey() );
 		number->setNumber( atoi( e->getText().mid( 1 , e->getText().find('/')-1 ).c_str()) );
 	}
 	else
@@ -864,8 +908,6 @@ void eRotorPage::posChanged( eListBoxEntryText *e )
 		number->setNumber( 0 );
 		direction->setCurrent( 0 );
 	}
-	orbital_position->invalidateNum();
-	number->invalidateNum();
 }
 
 void eRotorPage::numSelected(int*)
@@ -899,7 +941,84 @@ void eRotorPage::onRemove()
 	if (positions->getCurrent())
 		positions->remove( positions->getCurrent() );
 
+	if (!positions->getCount())
+	{
+		new eListBoxEntryText( positions, _("delete me"), (void*) 0xFFFF );
+		posChanged(0);
+	}
+
 	positions->invalidate();
 	positions->endAtomic();
 }
 
+eManuallyRotorPage::eManuallyRotorPage( eWidget *parent )
+	:eWidget(parent), transponder(*eDVB::getInstance()->settings->getTransponders())
+{
+	int ft=0;
+ 
+	switch (eFrontend::getInstance()->Type())
+	{
+	case eFrontend::feSatellite:
+		ft=eTransponderWidget::deliverySatellite;
+		break;
+	case eFrontend::feCable:
+		ft=eTransponderWidget::deliveryCable;
+		break;
+	default:
+		ft=eTransponderWidget::deliverySatellite;
+		break;
+	}
+
+	transponder_widget=new eTransponderWidget(this, 1, ft);
+	transponder_widget->load();
+	transponder_widget->setName("transponder");
+
+	festatus_widget=new eFEStatusWidget(this, eFrontend::getInstance());
+	festatus_widget->setName("festatus");
+
+	prev = new eButton(this);
+	prev->setName("prev");
+
+	if ( eSkin::getActive()->build(this, "eRotorPageManual"))
+		eFatal("skin load of \"eRotorPageManual\" failed");
+
+	CONNECT(transponder_widget->updated, eManuallyRotorPage::retune );
+}
+
+void eManuallyRotorPage::retune()
+{
+	if (!transponder_widget->getTransponder(&transponder))
+		transponder.tune();
+}
+
+int eManuallyRotorPage::eventHandler( const eWidgetEvent &event )
+{
+	eDebug("eventHandler");
+	switch (event.type)
+	{
+		case eWidgetEvent::willShow:
+		{
+			eDebug("eventHandler->willShow()");
+			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+
+			if (sapi && sapi->transponder)
+				transponder=*sapi->transponder;
+			else
+				switch (eFrontend::getInstance()->Type())
+				{
+				case eFrontend::feCable:
+					transponder.setCable(402000, 6900000, 0);	// some cable transponder
+					break;
+				case eFrontend::feSatellite:
+					transponder.setSatellite(12551500, 22000000, eFrontend::polVert, 4, 0, 0);	// some astra transponder
+					break;
+				default:
+					break;
+				}
+			transponder_widget->setTransponder(&transponder);
+		}
+		default:
+			return eWidget::eventHandler(event);
+	}
+	return 1;
+}

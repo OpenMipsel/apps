@@ -53,7 +53,8 @@ struct tempPMT_t
 #define PMT_ENTRYS	256	
 struct tempPMT_t tempPMT[PMT_ENTRYS];
 
-eDVBCI::eDVBCI(): pollTimer(this), messages(this, 1)
+eDVBCI::eDVBCI()
+	:pollTimer(this), messages(this, 1), caidcount(0), ml_bufferlen(0)
 {
 	state=stateInit;
 
@@ -334,7 +335,7 @@ void eDVBCI::pushCAIDs()
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 	if(!sapi)
 		return;
-		
+
 	std::list<int>& availCA = sapi->availableCASystems;
 
 #if 1	
@@ -342,6 +343,7 @@ void eDVBCI::pushCAIDs()
 	eDebug("count for caids: %d",caidcount);
 	for(unsigned int i=0;i<caidcount;i++)
 		availCA.push_back(caids[i]);
+
 	lock.unlock();
 #endif	
 }
