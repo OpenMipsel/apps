@@ -41,11 +41,11 @@ void enigmaCImmi::answokPressed()
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_answ,0));
 }
 
-enigmaCImmi::enigmaCImmi(): eWindow(0), mmi(0)
+enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0)
 {
 	int fd=eSkin::getActive()->queryValue("fontsize", 8); //20
 
-	DVBCI=eDVB::getInstance()->DVBCI;
+	//DVBCI=eDVB::getInstance()->DVBCI;
 
 	setText(_("Common Interface Module - mmi"));
 	move(ePoint(50, 70));
@@ -396,11 +396,21 @@ enigmaCI::enigmaCI(): eWindow(0)
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	DVBCI=eDVB::getInstance()->DVBCI;
-
-	setText(_("Common Interface Module"));
-	move(ePoint(150, 136));
-	cresize(eSize(350, 220));
-
+	
+	if(atoi(eDVB::getInstance()->getInfo("mID").c_str()) == 6)
+	{
+		setText(_("Common Interface Modules"));
+		move(ePoint(150, 80));
+		cresize(eSize(350, 340));
+		DVBCI2=eDVB::getInstance()->DVBCI2;
+	}
+	else
+	{	
+		setText(_("Common Interface Module"));
+		move(ePoint(150, 136));
+		cresize(eSize(350, 220));
+	}
+	
 	reset=new eButton(this);
 	reset->setText(_("Reset"));
 	reset->move(ePoint(10, 13));
@@ -428,13 +438,52 @@ enigmaCI::enigmaCI(): eWindow(0)
 
 	CONNECT(app->selected, enigmaCI::appPressed);		
 
-	ok=new eButton(this);
-	ok->setText(_("ok"));
-	ok->move(ePoint(20, 150));
-	ok->resize(eSize(90, fd+4));
-	ok->setHelpText(_("leave common interface menu"));
-	ok->loadDeco();
+	if(atoi(eDVB::getInstance()->getInfo("mID").c_str()) == 6)
+	{
+		reset2=new eButton(this);
+		reset2->setText(_("Reset"));
+		reset2->move(ePoint(10, 143));
+		reset2->resize(eSize(330, fd+10));
+		reset2->setHelpText(_("reset the common interface module"));
+		reset2->loadDeco();
 
+		CONNECT(reset2->selected, enigmaCI::reset2Pressed);		
+
+		init2=new eButton(this);
+		init2->setText(_("Init"));
+		init2->move(ePoint(10, 183));
+		init2->resize(eSize(330, fd+10));
+		init2->setHelpText(_("send the ca-pmt to ci"));
+		init2->loadDeco();
+
+		CONNECT(init2->selected, enigmaCI::init2Pressed);		
+
+		app2=new eButton(this);
+		app2->setText(_("waiting for module"));
+		app2->move(ePoint(10, 223));
+		app2->resize(eSize(330, fd+10));
+		app2->setHelpText(_("enter ci menu (mmi)"));
+		app2->loadDeco();
+
+		CONNECT(app2->selected, enigmaCI::app2Pressed);		
+
+		ok=new eButton(this);
+		ok->setText(_("ok"));
+		ok->move(ePoint(20, 273));
+		ok->resize(eSize(90, fd+4));
+		ok->setHelpText(_("leave common interface menu"));
+		ok->loadDeco();
+	}
+	else
+	{
+		ok=new eButton(this);
+		ok->setText(_("ok"));
+		ok->move(ePoint(20, 150));
+		ok->resize(eSize(90, fd+4));
+		ok->setHelpText(_("leave common interface menu"));
+		ok->loadDeco();
+	}
+	
 	CONNECT(ok->selected, enigmaCI::okPressed);		
 
 	status = new eStatusBar(this);	
@@ -443,8 +492,14 @@ enigmaCI::enigmaCI(): eWindow(0)
 	status->loadDeco();
 	
 	CONNECT(DVBCI->ci_progress, enigmaCI::updateCIinfo);		
-
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));
+
+	if(atoi(eDVB::getInstance()->getInfo("mID").c_str()) == 6)
+	{
+		CONNECT(DVBCI2->ci_progress, enigmaCI::updateCI2info);		
+		DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));
+	}	
+
 }
 
 enigmaCI::~enigmaCI()
@@ -459,6 +514,12 @@ void enigmaCI::updateCIinfo(const char *buffer)
 	app->setText(_(buffer));
 }
 
+void enigmaCI::updateCI2info(const char *buffer)
+{
+	eDebug("new info %s",buffer);
+	app2->setText(_(buffer));
+}
+
 void enigmaCI::okPressed()
 {
 	close(1);
@@ -470,15 +531,36 @@ void enigmaCI::resetPressed()
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::reset));
 }
 
+void enigmaCI::reset2Pressed()
+{
+	app->setText(_("resetting....please wait"));
+	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::reset));
+}
+
 void enigmaCI::initPressed()
 {
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));
 }
 
+void enigmaCI::init2Pressed()
+{
+	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));
+}
+
 void enigmaCI::appPressed()
 {
 	hide();
-	enigmaCImmi mmi;
+	enigmaCImmi mmi(DVBCI);
+	mmi.show();
+	mmi.exec();
+	mmi.hide();
+	show();
+}
+
+void enigmaCI::app2Pressed()
+{
+	hide();
+	enigmaCImmi mmi(DVBCI2);
 	mmi.show();
 	mmi.exec();
 	mmi.hide();

@@ -106,6 +106,7 @@ public:
 	
 	eDVBRecorder *recorder;
 	eDVBCI *DVBCI;
+	eDVBCI *DVBCI2;
 
 public:
 	enum

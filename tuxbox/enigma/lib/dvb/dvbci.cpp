@@ -3,8 +3,6 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/si.h>
 
-//#include <enigma_main.h>
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -21,40 +19,6 @@
 #define STATE_FREE				0
 #define STATE_OPEN				1
 
-/*
-This is the fast development of an ci-driver it isn't nice
-but it works (sometimes ;).
-
-->  a easy driver for good documented interfaces..of course if 
-every manufacturer of modules will use this documentation too.. *grrr*
-
-oh i forgot...there is only ONE manufacturer ... 
-	-> is it ok that this one is able to work its own way...
-
-wtf is the sense of a standard???	
-	
-What is the meaning of "COMMON" Interface ???
-*/
-
-struct session_struct
-{
-	unsigned int tc_id;
-	unsigned long service_class;
-	unsigned int state;
-	unsigned int internal_state;
-};
-struct session_struct sessions[32];
-
-struct tempPMT_t
-{
-	int type;			//0=prg-nr 1=pid 2=descriptor
-	unsigned char *descriptor;
-	unsigned short pid;
-	unsigned short streamtype;
-};	
-#define PMT_ENTRYS	256	
-struct tempPMT_t tempPMT[PMT_ENTRYS];
-
 eDVBCI::eDVBCI()
 	:pollTimer(this), caidcount(0), ml_bufferlen(0), messages(this, 1)
 {
@@ -66,9 +30,16 @@ eDVBCI::eDVBCI()
 	if (fd<0)
 	{
 		eDebug("[DVBCI] error opening /dev/ci");
-		state=stateError;
+
+		fd=::open("/dev/ci1",O_RDWR|O_NONBLOCK);
+		if (fd<0)
+		{
+			eDebug("[DVBCI] error opening /dev/ci1");
+			state=stateError;
+		}
 	}
-  else
+	
+  if(state!=stateError)
   {
   	ci=new eSocketNotifier(this, fd, eSocketNotifier::Read, 0);
   	CONNECT(ci->activated, eDVBCI::dataAvailable);
@@ -1002,81 +973,3 @@ void eDVBCI::poll()
 	}	
 }
 
-//rewrite
-ptrlpduQueueElem AllocLpduQueueElem(unsigned char t_c_id)
-{
-	ptrlpduQueueElem curElem;
-	
-	curElem = (ptrlpduQueueElem) malloc(sizeof(_lpduQueueElem));
-	curElem->lpduLen=0;
-	(curElem->lpdu)[0] = t_c_id;
-	curElem->nextElem = NULL;
-	
-	return curElem;
-}
-
-
-void lpduQueueElemSetMore(ptrlpduQueueElem curElem, int more)
-{
-	if(more)
-		(curElem->lpdu)[1] = 0x80;
-	else
-		(curElem->lpdu)[1] = 0x00;
-}			
-
-void SendLPDU(unsigned char *lpdu,unsigned char length)
-{
-	printf("<-");
-	for(int i=0;i<length;i++)
-		printf("%02x ",lpdu[i]);
-	printf("\n");
-}
-
-void LinkSendData(unsigned char t_c_id, unsigned char *toSend, long numBytes)
-{
-	ptrlpduQueueElem curElem;
-	
-	int index;
-	unsigned char *dataptr;
-	long lengthLeft;
-	
-	curElem = AllocLpduQueueElem(t_c_id);
-
-	lengthLeft = numBytes;
-	dataptr = toSend;
-	
-	//LOCK!
-	while(lengthLeft)
-	{
-#define PAYLOADLEN		254		//bufsize (256) - Header (2)
-		if(lengthLeft > PAYLOADLEN)
-		{
-			//fragment
-			lpduQueueElemSetMore(curElem,1);
-			for(index = 0;index < PAYLOADLEN;index++)
-			{
-				(curElem->lpdu)[2+index] = *dataptr;
-				dataptr++;
-			}
-			lengthLeft -= PAYLOADLEN;
-			
-			SendLPDU(curElem->lpdu,(unsigned char)256);
-		}
-		else
-		{
-			//last
-			lpduQueueElemSetMore(curElem,0);
-					
-			for(index = 0;index < lengthLeft;index++)
-			{
-				(curElem->lpdu)[2+index] = *dataptr;
-				dataptr++;
-			}
-		
-			SendLPDU(curElem->lpdu, lengthLeft + 2);
-			lengthLeft = 0;
-		}
-	}	
-	//UNLOCK!
-	free(curElem);
-}

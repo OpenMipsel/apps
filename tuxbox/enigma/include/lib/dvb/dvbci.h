@@ -2,15 +2,33 @@
 #define __core_dvb_ci_h
 
 #include <lib/dvb/service.h>
-//#include <lib/base/buffer.h>
-
 #include <lib/base/ebase.h>
 #include <lib/base/thread.h>
 #include <lib/base/message.h>
 #include <lib/system/elock.h>
 
+#define PMT_ENTRYS  256
+
+struct session_struct
+{
+  unsigned int tc_id;
+  unsigned long service_class;
+  unsigned int state;
+  unsigned int internal_state;
+};
+				
+struct tempPMT_t
+{
+  int type;     //0=prg-nr 1=pid 2=descriptor
+  unsigned char *descriptor;
+  unsigned short pid;
+  unsigned short streamtype;
+};
+
+
 class eDVBCI: private eThread, public eMainloop, public Object
 {
+protected:
 	enum
 	{
 		stateInit, stateError, statePlaying, statePause
@@ -26,6 +44,9 @@ class eDVBCI: private eThread, public eMainloop, public Object
 	eLock lock;
 
 	int tempPMTentrys;
+
+	struct session_struct sessions[32];
+	struct tempPMT_t tempPMT[PMT_ENTRYS];
 
 	char appName[256];
 	unsigned short caids[256];
@@ -113,19 +134,4 @@ public:
 	Signal1<void, const char*> ci_mmi_progress;
 
 };
-
-//rewrite starts here
-struct _lpduQueueElem
-{
-	unsigned char lpduLen;
-	unsigned char lpdu[256];		//fixed buffer-size (pcmcia)
-	_lpduQueueElem *nextElem;
-};
-
-typedef struct _lpduQueueElem * ptrlpduQueueElem;	
-
-ptrlpduQueueElem AllocLpduQueueElem(unsigned char t_c_id);	
-void SendLPDU(unsigned char lpdu,unsigned char length);
-void LinkSendData(unsigned char t_c_id, unsigned char *toSend, long numBytes);
-void lpduQueueElemSetMore(ptrlpduQueueElem curElem, int more);
 #endif
