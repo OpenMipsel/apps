@@ -278,8 +278,10 @@ inline void eListBox<T>::clearList()
 		invalidateContent();
 	} else
 	{
-		atomic_selchanged=1;
+		atomic_selchanged=0;
 		atomic_redraw=arAll;
+		atomic_new=0;
+		atomic_old=0;
 	}
 }
 

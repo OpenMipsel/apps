@@ -316,7 +316,6 @@ void eDVBServiceController::EITready(int error)
 		EIT *eit=dvb.getEIT();
 		if ( service.getServiceType() == 4 ) // NVOD Service
 		{
-			eDebug("save nvodEIT");
 			delete dvb.nvodEIT;
 			dvb.nvodEIT = new EIT( eit );
 			dvb.nvodEIT->events.setAutoDelete(true);

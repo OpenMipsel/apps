@@ -2638,7 +2638,6 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 void eZapMain::gotEIT()
 {
-	eDebug("gotEIT");
 	eServiceHandler *sapi=eServiceInterface::getInstance()->getService();
 	if (!sapi)
 	{
