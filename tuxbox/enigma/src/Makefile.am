@@ -7,7 +7,7 @@ enigma_SOURCES = \
 	enigma.cpp enigma_dyn.cpp enigma_event.cpp enigma_lcd.cpp parentallock.cpp \
 	enigma_main.cpp enigma_plugins.cpp enigma_setup.cpp enigma_xmlrpc.cpp scan.cpp \
 	setupnetwork.cpp setup_audio.cpp setupvideo.cpp showbnversion.cpp sselect.cpp streaminfo.cpp \
-	enigma_mainmenu.cpp satconfig.cpp epgwindow.cpp setup_language.cpp enigma_info.cpp \
+	enigma_mainmenu.cpp satconfig.cpp epgwindow.cpp setup_language.cpp setup_timezone.cpp enigma_info.cpp \
 	enigma_scan.cpp setupskin.cpp setup_osd.cpp timer.cpp setup_lcd.cpp enigma_vcr.cpp \
 	setup_rc.cpp channelinfo.cpp setup_harddisk.cpp enigma_ci.cpp upgrade.cpp satfind.cpp setup_extra.cpp \
 	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp wizard_scan.cpp engrab.cpp setupengrab.cpp \
