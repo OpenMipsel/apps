@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
 "POT-Creation-Date: 2003-01-16 00:41+0100\n"
-"PO-Revision-Date: Thu Jan 16 1:36:47 CET 2003\n"
+"PO-Revision-Date: Thu Jan 16 1:36:48 CET 2003\n"
 "Last-Translator: unknown\n"
-"Language-Team: Turkish / Osman Nadiroglu, funsat@funsat.nl\n"
+"Language-Team: Hungarian / lbalogh@mediavox.hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: default.esml:259
 msgid "enter lnb lowband offset frequency (0..9, ok)"
-msgstr "alcakband lnb offset frakansini yazin (0..9, ok) "
+msgstr "Add meg az LNB alsó frekijét (0..9, OK)"
 
 #: chk_blue2.esml:309 stone.esml:490
 msgid "FF "
@@ -25,73 +25,70 @@ msgstr "FF"
 
 #: default.esml:606
 msgid "cancel partition check"
-msgstr ""
+msgstr "Partíció ellenörzés megszakítása"
 
 #: default.esml:525
 msgid "press ok to edit the selected event"
-msgstr "press ok to edit the selected event"
+msgstr "OK-val javíthatod amit kijelöltél"
 
 #: default.esml:398
 msgid "choose satelite/cable provider (ok)"
-msgstr "uydu secenegi/kablo  provider (ok)"
+msgstr "Válassz mûhold/kábel rendszert (OK)"
 
 #: chk_blue2.esml:308 stone.esml:489
 msgid "Pause "
-msgstr "Pause"
+msgstr "Szünet"
 
 #: default.esml:368
 msgid "save in rotor"
-msgstr ""
+msgstr "Mentés a rotorba"
 
 #: default.esml:266 default.esml:287 default.esml:343 default.esml:426
 #: src/setup_language.cpp:82 src/setup_lcd.cpp:106 src/setup_osd.cpp:78
 #: src/setup_rc.cpp:93 src/setupnetwork.cpp:110 src/setupvideo.cpp:70
 #: src/setup_rfmod.cpp:121
 msgid "save"
-msgstr "hafizaya all"
+msgstr "Mentés"
 
 #: default.esml:354 default.esml:434 src/rotorconfig.cpp:614
 msgid "Satellite:"
-msgstr "uydu:"
+msgstr "Mûhold"
 
 #: chk_blue2.esml:307 stone.esml:488
 msgid "Play "
-msgstr "Play"
+msgstr "Lejátszás"
 
 #: default.esml:355
-#, fuzzy
 msgid "choose the Satellite you wish to find"
-msgstr "choose the LNB you wish to apply or edit"
+msgstr "Válassz mûholdat amit meg szeretnél keresni"
 
 #: default.esml:595
-#, fuzzy
 msgid "close harddisk menu"
-msgstr "harddisk:"
+msgstr "HDD menü bezárása"
 
 #: default.esml:362
 msgid "calc param 1 (see your rotor manual or let it 00)"
-msgstr ""
+msgstr "Param 1 számítás (ellenörizd a rotor könyvét, vagy hagyd 0-án)"
 
 #: default.esml:548
 msgid "processor: "
-msgstr "processor: "
+msgstr "Proci:"
 
 #: default.esml:329
 msgid "choose entry to edit or remove"
-msgstr ""
+msgstr "Válaszd ki mit szeretnél javítani vagy törölni"
 
 #: stone.esml:464 silver.esml:468
 msgid "Tonwahl"
-msgstr ""
+msgstr "Hang"
 
 #: default.esml:345
-#, fuzzy
 msgid "goto advanced rotor setup"
-msgstr "Ag ayarlari ac"
+msgstr "Ugrás a részletes rotor beállításokhoz"
 
 #: default.esml:549
 msgid "frontend: "
-msgstr "frontend: "
+msgstr "Vas:"
 
 #: default.esml:481
 msgid "SNR"
@@ -99,7 +96,7 @@ msgstr "SNR"
 
 #: default.esml:401
 msgid "erase bouquets and services before scan"
-msgstr "bouqeti silin   servisi taramadan once"
+msgstr "Csomagok és csatornák törlése keresés elött"
 
 #: default.esml:298
 msgid "AGC:"
@@ -107,11 +104,11 @@ msgstr "AGC:"
 
 #: default.esml:441
 msgid "enable/disable inversion here (ok)"
-msgstr "enable/disable inversion here (ok)"
+msgstr "Invertálás engedélyezése/tiltása (OK)"
 
 #: default.esml:286
 msgid "prev. page"
-msgstr "sayfa ,geri"
+msgstr "Elözö oldal"
 
 #: default.esml:260
 msgid "LOF/L:"
@@ -119,71 +116,68 @@ msgstr "LOF/L:"
 
 #: default.esml:565 default.esml:578
 msgid "standby  "
-msgstr "Standby:"
+msgstr "Készenléti állapot"
 
 #: default.esml:603
 msgid "Partition Check"
-msgstr ""
+msgstr "Partíció ellenörzése"
 
 #: default.esml:562 default.esml:575
-#, fuzzy
 msgid "enter recording end time (0..9, left, right, ok)"
-msgstr "saat cekiminin sonunu tuslayin(0..9, left, right, ok)"
+msgstr "Add meg a felvétel végének az idöpontját (0..9 < > OK)"
 
 #: default.esml:526 default.esml:530
 msgid "select year (ok)"
-msgstr "Yil seciniz (ok)"
+msgstr "Add meg az évet (OK)"
 
 #: default.esml:536
 msgid "close timer menu (ok)"
-msgstr "saat munusunu kapat (ok)"
+msgstr "Idözítö menü bezárása (ok)"
 
 #: default.esml:314
 msgid "Use rotor input power for running detection.. else use timeout"
-msgstr ""
+msgstr "Add meg a rotor bemeneti teljesítményét... amúgy meg idöt kell megadni"
 
 #: default.esml:265
 msgid "increased voltage"
-msgstr "increased voltage"
+msgstr "Emelt fejfeszültség"
 
 #: default.esml:446
 msgid "FEC:"
 msgstr "FEC:"
 
 #: default.esml:369
-#, fuzzy
 msgid "open Transponderscan"
-msgstr "Transponder tarama"
+msgstr "Transzponder keresés megnyitása"
 
 #: default.esml:307 default.esml:484
 msgid "LOCK"
-msgstr "KITLEN"
+msgstr "ZÁROLT"
 
 #: default.esml:325
-#, fuzzy
 msgid "Latitude:"
-msgstr "uydu:"
+msgstr "Szélességi fok:"
 
 #: default.esml:308 default.esml:485
 msgid "SYNC"
-msgstr ""
+msgstr "SZINKRON"
 
 #: default.esml:360
 msgid "press left or right to move rotor"
-msgstr ""
+msgstr "A balra jobbra gombokkal tekerheted az antennádat"
 
 #: default.esml:424
 msgid "Skins:"
-msgstr "Gorunumler:"
+msgstr "Skin-ek:"
 
 #: default.esml:306 default.esml:554 src/enigma_ci.cpp:471
 #: src/enigma_ci.cpp:480
 msgid "ok"
-msgstr "ok"
+msgstr "oké"
 
 #: default.esml:444
 msgid "choose polarity (left, right)"
-msgstr "polarasyon secenegi (sol, sag)"
+msgstr "Válassz polaritást (balra, jobbra)"
 
 #: default.esml:441
 msgid "Inv:"
@@ -191,43 +185,43 @@ msgstr "Inv:"
 
 #: default.esml:423
 msgid "Skin Setup"
-msgstr "Gorunum ayari"
+msgstr "Skin beállítás"
 
 #: default.esml:283
 msgid "send to an uncommitted DiSEqC switch"
-msgstr "send to an uncommitted DiSEqC switch"
+msgstr "Nem meghatározott DiSEqC kapcsolóra küldés"
 
 #: chk_blue2.esml:311 stone.esml:492
 msgid "Record "
-msgstr "Cekim"
+msgstr "Felvétel"
 
 #: default.esml:426
 msgid "close skin setup and save changes"
-msgstr "skin ayarini kapat ve degisikligi hafizaya al"
+msgstr "Skin beállítások menüjét becsukni és változásokat elmenteni"
 
 #: default.esml:411
 msgid "transponder scanned:"
-msgstr "Transponder tarandi"
+msgstr "Lekeresett transzponderek:"
 
 #: default.esml:574
 msgid "recording end time:"
-msgstr "cekimin sure sonu:"
+msgstr "Felvétel végének idöpontja:"
 
 #: default.esml:332
 msgid "enter where this orbital position is (to) stored in Rotor"
-msgstr "enter where this orbital position is (to) stored in Rotor"
+msgstr "Add meg hogy ezt a hold pozíciót hová mentsem a Rotor-ban"
 
 #: default.esml:337 default.esml:359
 msgid "Direction:"
-msgstr ""
+msgstr "Irány:"
 
 #: default.esml:284
 msgid "Uncommitted gap"
-msgstr "Uncommitted gap"
+msgstr "Meghatározhatatlan rés ('gap')"
 
 #: default.esml:282
 msgid "send the complete DiSEqC sequence dupe"
-msgstr "send the complete DiSEqC sequence dupe"
+msgstr "Kétszer küld el a teljes DiSEqC parancsot"
 
 #: default.esml:439 default.esml:459
 msgid "MHz"
@@ -235,78 +229,75 @@ msgstr "MHz"
 
 #: default.esml:410
 msgid "services scanned     :"
-msgstr "servis tarandi:"
+msgstr "Lekeresett csatornák:"
 
 #: default.esml:367
-#, fuzzy
 msgid "close rotor setup"
-msgstr "Ag ayarlari ac"
+msgstr "Rotor beállítások menü becsukása"
 
 #: default.esml:537
 msgid "update"
-msgstr "update"
+msgstr "frissítés"
 
 #: default.esml:315
 msgid "rotor drive speed, in degrees per second"
-msgstr ""
+msgstr "Rotor forg. sebessége (fok/mp)"
 
 #: default.esml:334
 msgid "Orbital Position:"
-msgstr "uydu posusyonu:"
+msgstr "Orbit. pozíció:"
 
 #: default.esml:341 default.esml:539
 msgid "remove"
-msgstr "yerini degistir"
+msgstr "eltávolítás"
 
 #: default.esml:402
 msgid "starts the transponderscan"
-msgstr "transponder taramasini baslat"
+msgstr "Transzponder keresés elindítása"
 
 #: default.esml:281
 msgid "DiSEqC Repeats:"
-msgstr "DiSEqC  tekrarlama:"
+msgstr "DiSEqC ismétlés:"
 
 #: default.esml:458
 msgid "enter frequency (0..9, left, right)"
-msgstr "frekans yazin (0..9,sol,sag)"
+msgstr "Add meg a frekit (0..9, balra, jobbra)"
 
 #: default.esml:341
-#, fuzzy
 msgid "remove selected entry"
-msgstr "press ok to edit the selected event"
+msgstr "Kijelölt adat törlése"
 
 #: default.esml:564 default.esml:577
 msgid "shutdown the box after recording (ok)"
-msgstr "cekimden sonra tamami ilenkapan (ok)"
+msgstr "Felvétel végén a Box kikapcsolása (ok)"
 
 #: default.esml:276
 msgid "select DiSEqC mode (ok)"
-msgstr "DiSEqC modu secenegi (ok)"
+msgstr "Válassz DiSEqC üzemmódot (ok)"
 
 #: default.esml:560 default.esml:573
 msgid "Stop Record"
-msgstr "Cekimi durdur"
+msgstr "Felvétel megállítása"
 
 #: default.esml:390
 msgid "start the transponderscan"
-msgstr "transponder taramasini baslat"
+msgstr "Transzponder keresés elindítása"
 
 #: default.esml:552
 msgid "software version:"
-msgstr "Software versiyonu:"
+msgstr "Szoftver verzió:"
 
 #: default.esml:529
 msgid "edit the begin time (0..9, left, right)"
-msgstr "zamanin baslangicini editle (0..9, sol, sag)"
+msgstr "Kezdési idöpont módosítása (0..9. balra, jobbra)"
 
 #: default.esml:451 default.esml:463
 msgid "KSymb/s"
 msgstr "KSymb/s"
 
 #: default.esml:352
-#, fuzzy
 msgid "Mode:"
-msgstr "model:"
+msgstr "Mód:"
 
 #: default.esml:391 default.esml:403 default.esml:427 default.esml:567
 #: default.esml:580 src/enigma_ci.cpp:79 src/scan.cpp:37
@@ -314,65 +305,63 @@ msgstr "model:"
 #: src/setup_rc.cpp:103 src/setupnetwork.cpp:122 src/setupvideo.cpp:81
 #: src/upgrade.cpp:134 src/setup_rfmod.cpp:132
 msgid "abort"
-msgstr "iptalet"
+msgstr "megszakítás"
 
 #: default.esml:414
 msgid "Progress:"
-msgstr "Programlama:"
+msgstr "Folyamat:"
 
 #: default.esml:294
 msgid "SNR:"
-msgstr "SNR"
+msgstr "SNR:"
 
 #: default.esml:607
-#, fuzzy
 msgid "close window"
-msgstr "pencereyi kapat ve tarama yapma"
+msgstr "Ablak becsukása"
 
 #: default.esml:302 default.esml:483
 msgid "BER"
-msgstr ""
+msgstr "BER"
 
 #: default.esml:266
 msgid "save changes and use current selected lnb for the choosen satellite"
-msgstr ""
-"guncel sectiginiz lnb ayrini sectiginiz uydu icin  degisikligi hafizaya al  "
+msgstr "Módosítások mentése, majd a jelenlegi LNB használata a kijelölt holdon"
 
 #: default.esml:263
 msgid "Threshold:"
-msgstr "kuvetlendirici:"
+msgstr "Threshold:"
 
 #: default.esml:331
 msgid "Number in Rotor:"
-msgstr ""
+msgstr "Sorszám a Rotor-ban:"
 
 #: default.esml:363
 msgid "calc param 2 (see your rotor manual or let it 00)"
-msgstr ""
+msgstr "Param 2 számítása (nézd meg a rotor könyvét, vagy hagy 00-án)"
 
 #: default.esml:361
 msgid "Recalc Params:"
-msgstr ""
+msgstr "Paraméterek újraszámolása:"
 
 #: default.esml:267 default.esml:288 default.esml:344
 msgid "leave lnb-setup (no changes are saved)"
-msgstr "lnb-modundan cik (degisiklik hafizaya alinmadi)"
+msgstr "Kilépés az LNB beállításokból (nem fogok menteni!)"
 
 #: default.esml:387
 msgid "enable/disable use BAT for scan (if exist)"
-msgstr "enable/disable use BAT for scan (if exist)"
+msgstr "BAT használatának engedélyezése/tiltása (ha egyáltalán van)"
 
 #: default.esml:438
 msgid "enter transponder frequeny (0..9, left, right)"
-msgstr "transpondrer frekansini yazin (0..9,sol, sag)"
+msgstr "Add meg a TP frekijét (0..9, balra, jobbra)"
 
 #: default.esml:443
 msgid "Polarity:"
-msgstr "polarizasyon:"
+msgstr "Polaritás:"
 
 #: default.esml:340 default.esml:538
 msgid "add"
-msgstr "hafiza"
+msgstr "hozzáadás"
 
 #: default.esml:238
 msgid "LNB"
@@ -380,151 +369,152 @@ msgstr "LNB"
 
 #: default.esml:283
 msgid "Uncommitted switch"
-msgstr "Uncommitted switch"
+msgstr "Nem meghatározott kapcsoló"
 
 #: default.esml:390 default.esml:402
 msgid "start scan"
-msgstr "Taramayi baslat"
+msgstr "Keresés elindítása"
 
 #: default.esml:388
 msgid "remove all services before scan"
-msgstr "butun servisleri sil tarama yapmadan once"
+msgstr "Keresés elött a csatornák törlése"
 
 #: default.esml:278
 msgid "select DiSEqC parameter (ok)"
-msgstr "DiSEqC secim icin parmemetresi (ok)"
+msgstr "Válassz DiSEqC paramétert (ok)"
 
 #: default.esml:391 default.esml:403
 msgid "close window and do not scan"
-msgstr "pencereyi kapat ve tarama yapma"
+msgstr "Csukd be az ablakot és felejtsük el a keresést.."
 
 #: default.esml:401
 msgid "erase all"
-msgstr "Herseyi sil"
+msgstr "Töröld mind"
 
 #: default.esml:245 default.esml:536 default.esml:595 default.esml:607
 msgid "close"
-msgstr "kapat"
+msgstr "bezárás"
 
 #: default.esml:597
 msgid "check"
-msgstr ""
+msgstr "ellenörzés"
 
 #: default.esml:437 default.esml:457
 msgid "Frequency:"
-msgstr "Frekans"
+msgstr "Freki:"
 
 #: default.esml:490 default.esml:497 default.esml:504
 msgid "Services"
-msgstr "Servis"
+msgstr "Csatorna"
 
 #: default.esml:366
 msgid "0"
-msgstr ""
+msgstr "nem létezik"
 
 #: default.esml:364
 msgid "calc param 3 (see your rotor manual or let it 00)"
-msgstr ""
+msgstr "Param 3 kiszámítása (nézd meg a rotor könyvét, vagy hagy 00-án)"
 
 #: default.esml:285
 msgid "opens the Rotor Setup"
-msgstr "Rotor ayarin acin"
+msgstr "Rotor beéllítások megnyitása"
 
 #: default.esml:469
 msgid "enable/disable inversion (ok)"
-msgstr "Acik/Kapali inversion(ok)"
+msgstr "Invertálás engedélyezése/tiltása (ok)"
 
 #: default.esml:313 default.esml:351
 msgid "Rotor Config"
-msgstr ""
+msgstr "Rotor beállítások"
 
 #: default.esml:287 default.esml:343
 msgid ""
 "save changes and use the selected lnb (in first page) for the choosen "
 "satellite"
 msgstr ""
-"sectigin lnb yi hafizaya al (bir onceki sayfa daki ) sectiginiz uydu icin"
+"Ments el a változásokat és használd a kiválasztott LNB-t (az elsö oldalon) a "
+"kijelölt holdon"
 
 #: default.esml:316
 msgid "/sec"
-msgstr ""
+msgstr "/mp"
 
 #: default.esml:539
 msgid "delete the current selected timer (ok)"
-msgstr "delete the current selected timer (ok)"
+msgstr "Kiválasztott program törlése (ok)"
 
 #: default.esml:274
 msgid "select MiniDiSEqC parameter (ok)"
-msgstr "MiniDiSEqC secim icin parmemetresi (ok)"
+msgstr "Válassz MiniDiSEqC paramétert (ok)"
 
 #: default.esml:340
 msgid "add to table/existing is overwritten"
-msgstr ""
+msgstr "hozzáadás a táblához (a meglevö felülírásával)"
 
 #: default.esml:397
 msgid "Network:"
-msgstr "Ag"
+msgstr "Hálózat:"
 
 #: default.esml:323
 msgid "enter your longitude (0..9, +, -, ok)"
-msgstr "enter your longitude (0..9, +, -, ok)"
+msgstr "Add meg a hosszúsági fokot (0..9, +, -, ok)"
 
 #: default.esml:244
 msgid "remove the selected Satellite"
-msgstr "isaretledgin uyduyu kaydir"
+msgstr "Kiválasztott mühód törlése"
 
 #: default.esml:435
 msgid "choose wished satellite (ok)"
-msgstr "choose wished satellite (ok)"
+msgstr "Válaszd ki a keresett müholdat (ok)"
 
 #: default.esml:527 default.esml:531
 msgid "select month (ok)"
-msgstr "Ay secenegi (ok)"
+msgstr "Válassz mount-ot (ok)"
 
 #: default.esml:567 default.esml:580
 msgid "close window and use no record timer (ok)"
-msgstr "pencereyi kapat ve  cekme saatini kulanma (ok)"
+msgstr "Ablak becsukása és felejtsük el felvételi idözítést (ok)"
 
 #: default.esml:326
 msgid "enter your latitude (0..9, +, -, ok)"
-msgstr "enter your latitude (0..9, +, -, ok)"
+msgstr "Add meg a szélességi fokot (0..9, +, -, ok)"
 
 #: default.esml:277
 msgid "DiSEqC Mode:"
-msgstr "DiSEqC modu:"
+msgstr "DiSEqC mód:"
 
 #: default.esml:353
-#, fuzzy
 msgid "choose what you want to do"
-msgstr "choose wished satellite (ok)"
+msgstr "na mit szeretnél csinálni velem?"
 
 #: default.esml:251
 msgid "LNB Configuration"
-msgstr "LNB kurulumu"
+msgstr "LNB beállítások"
 
 #: default.esml:409
 msgid "scanning..."
-msgstr "taraniyor..."
+msgstr "szörcsölök... keresek.. várj"
 
 #: default.esml:587
 msgid "model:"
-msgstr "model:"
+msgstr "Modell:"
 
 #: default.esml:244
 msgid "erase"
-msgstr "Sil"
+msgstr "törlés"
 
 #: default.esml:237
 msgid "Sat/Position"
-msgstr "uydu/posusyonu"
+msgstr "Mühold pozíció"
 
 #: default.esml:537
 msgid "update the current selected timer (ok)"
-msgstr "update the current selected timer (ok)"
+msgstr "Kiválasztott program módosítása (ok)"
 
 #: default.esml:317
 msgid "rotor power input difference between running and not running"
 msgstr ""
+"valami rotor teljesítmény differencia forgás és állás között, vagy mi a tök"
 
 #: default.esml:482
 msgid "AGC"
@@ -532,51 +522,52 @@ msgstr "AGC"
 
 #: default.esml:279
 msgid "DiSEqC Parameter:"
-msgstr "DiSEqC Parmametresi:"
+msgstr "DiSEqC paraméter:"
 
 #: default.esml:465
 msgid "Modulation:"
-msgstr "Modulation:"
+msgstr "Moduláció:"
 
 #: default.esml:265
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
-msgstr "0,5 v  voltaj yukselme lnbf icin (uzun kablo icin) (ok)"
+msgstr ""
+"0,5V-al megemeli az LNB fejtápját (hosszú koax kábel esetén hasznos) (ok)"
 
 #: default.esml:386
 msgid "enable/disable check ONIT on any transponder"
-msgstr "enable/disable check ONIT on any transponder"
+msgstr "TP-ken az ONIT ellenörzésének engedélyezése/tiltása"
 
 #: default.esml:550
 msgid "harddisk: "
-msgstr "harddisk:"
+msgstr "Vinyó (HDD):"
 
 #: default.esml:593
 msgid "status:"
-msgstr "statusu:"
+msgstr "állapot:"
 
 #: default.esml:387
 msgid "use BAT"
-msgstr "use BAT"
+msgstr "BAT használata"
 
 #: default.esml:449 default.esml:461
 msgid "Symbolrate:"
-msgstr "Symbolhizi"
+msgstr "Symbolrate:"
 
 #: default.esml:235
 msgid "Satelliteconfiguration"
-msgstr "uydu kurulumu"
+msgstr "Mühold konfiguráció"
 
 #: default.esml:229
 msgid "HTTP Download"
-msgstr "HTTP Download"
+msgstr "HTTP letöltés"
 
 #: default.esml:286
 msgid "goto prev page (LNB)"
-msgstr "bir sayfa geri (LNB)"
+msgstr "Pattanjunk az elözö oldalra (LNB-hez)"
 
 #: default.esml:466
 msgid "choose wished modulation (ok)"
-msgstr "choose wished satellite (ok)"
+msgstr "Válaszd ki a kívánt modulációt (ok)"
 
 #: chk_blue2.esml:306 stone.esml:487
 msgid "FR "
@@ -584,31 +575,31 @@ msgstr "FR"
 
 #: default.esml:285
 msgid "Rotor Setup"
-msgstr "motor ayari"
+msgstr "Rotor beállítások"
 
 #: default.esml:335
 msgid "enter orbital position without dot (19.2 = 192)"
-msgstr ""
+msgstr "Add meg az orbitális pozíciót pont nélkül (19.2 = 192)"
 
 #: default.esml:566 default.esml:579
 msgid "set recording end time and close window (ok)"
-msgstr "cekme  ayarini saatini sonla ve pencereyi kapat (ok)"
+msgstr "Add meg a felvétel végének az idejét aztán ablakot becsukni (ok)"
 
 #: default.esml:320
 msgid "Use gotoXX Function"
-msgstr ""
+msgstr "GotoXX funkció használata"
 
 #: default.esml:377
 msgid "transponder scan"
-msgstr "transponder taranmasi"
+msgstr "Transzponder keresés"
 
 #: default.esml:258
 msgid "choose the LNB you wish to apply or edit"
-msgstr "choose the LNB you wish to apply or edit"
+msgstr "Válaszd ki azt az LNB-t, melyet hozzá akarsz adni, vagy módosítani"
 
 #: default.esml:388
 msgid "clear list before"
-msgstr "listeyi ilk once silin"
+msgstr "elötte lista törlése"
 
 #: default.esml:518 default.esml:524 stone.esml:462 silver.esml:466
 msgid "EPG"
@@ -616,68 +607,67 @@ msgstr "EPG"
 
 #: default.esml:591
 msgid "connected:"
-msgstr "baglandi"
+msgstr "Csatlakozva:"
 
 #: default.esml:268 default.esml:345
 msgid "next page"
-msgstr "bir dahaki sayfa"
+msgstr "következö oldal"
 
 #: default.esml:597
 msgid "do a filsystem check"
-msgstr ""
+msgstr "Fájlrendszert ellenörizzük le"
 
 #: default.esml:564 default.esml:577
 msgid "shutdown  "
-msgstr "Tam kapatma"
+msgstr "Kikapcsolás"
 
 #: default.esml:264
 msgid "enter lnb threshold frequency (0..9, ok)"
-msgstr "lnb kuvetlendirici frakansini yaziniz (0..9, ok)"
+msgstr "Add meg az LNB threshold frekijét (0..9, ok)"
 
 #: default.esml:357
-#, fuzzy
 msgid "Transponder:"
-msgstr "Transponder taramasi"
+msgstr "Transzponder:"
 
 #: default.esml:566 default.esml:579
 msgid "set"
-msgstr "Ayar"
+msgstr "beállítás"
 
 #: default.esml:314
 msgid "Use Rotor Input Power"
-msgstr ""
+msgstr "Adjuk meg a Rotor áramát"
 
 #: stone.esml:465 silver.esml:469
 msgid "Videotext"
-msgstr "Videoyazlim"
+msgstr "Teletext"
 
 #: stone.esml:463 silver.esml:467
 msgid "Bildregie"
-msgstr ""
+msgstr "Kamera"
 
 #: default.esml:261
 msgid "enter lnb highband offset frequency (0..9, ok)"
-msgstr "lnb yuksekbandini secin  ve offset frakansi (0..9, ok"
+msgstr "Add meg az LNB felsösávi offszet frekijét (0..9, ok)"
 
 #: default.esml:534
 msgid "select the timer type (ok)"
-msgstr "saat cesidi secenegi secin (ok)"
+msgstr "Válaszd ki az idözítö típusát (ok)"
 
 #: default.esml:239
 msgid "22Khz"
-msgstr "22Khz"
+msgstr "22kHz"
 
 #: default.esml:275
 msgid "MiniDiSEqC Parameter:"
-msgstr "MiniDiSEqC parmametresi"
+msgstr "MiniDiSEqC paraméter:"
 
 #: default.esml:320
 msgid "when the rotor support this, then use"
-msgstr "Eyer motor bunu destekliyorsa ,bunu kulanin"
+msgstr "ha a rotor engedi, akkor használd is"
 
 #: default.esml:576
 msgid "o'clock"
-msgstr ""
+msgstr "óra"
 
 #: default.esml:262
 msgid "LOF/H:"
@@ -685,177 +675,172 @@ msgstr "LOF/H:"
 
 #: default.esml:545 src/enigma_info.cpp:48
 msgid "About..."
-msgstr "Bilgi"
+msgstr "Névjegy:"
 
 #: default.esml:538
 msgid "add new Timer (ok)"
-msgstr "yeni zamani hafizaya al (ok)"
+msgstr "Új program hozzáadása (ok)"
 
 #: default.esml:535
 msgid "to change service press ok"
-msgstr "servis  degistir ve ok le (ok)"
+msgstr "Csatornaváltáshoz nyomd meg az OK-t"
 
 #: default.esml:365
 msgid "Counter(Movement)"
-msgstr ""
+msgstr "Számláló (mozgás)"
 
 #: default.esml:369
-#, fuzzy
 msgid "search"
-msgstr "Mart"
+msgstr "keresés"
 
 #: default.esml:386
 msgid "use ONIT"
-msgstr "ONIT kulan"
+msgstr "ONIT használata"
 
 #: default.esml:389
 msgid "enable/disable initiate network search"
-msgstr "enable/disable initiate network search"
+msgstr "Els? hálózat keresésének engedélyezése/tiltása"
 
 #: default.esml:596
 msgid "initialize the disc for use with the dreambox"
-msgstr ""
+msgstr "HDD beállítása hogy a DreamBox azt használni is tudja"
 
 #: default.esml:243
 msgid "new"
-msgstr "Yeni"
+msgstr "új"
 
 #: chk_blue2.esml:310 stone.esml:491
 msgid "Stop "
-msgstr "Dur"
+msgstr "Állj"
 
 #: default.esml:447
 msgid "choose the FEC (left, right)"
-msgstr "FEC secenegi (sol, sag)"
+msgstr "Válassz FEC-et (<, >)"
 
 #: default.esml:280
 msgid "select DiSEqC repeats (ok)"
-msgstr "DiSEqC seceneginin tekrari (ok)"
+msgstr "Válassz DiSEqC ismétlést (ok)"
 
 #: default.esml:322
 msgid "Longitude:"
-msgstr "Longitude:"
+msgstr "Hosszúsági fok:"
 
 #: default.esml:324 default.esml:327 default.esml:338
 msgid "choose direction"
-msgstr ""
+msgstr "Válassz irányt"
 
 #: default.esml:589
 msgid "capacity:"
-msgstr "kapasitesi"
+msgstr "Kapacitás:"
 
 #: default.esml:367
-#, fuzzy
 msgid "prev page"
-msgstr "sayfa ,geri"
+msgstr "elözö oldal"
 
 #: default.esml:425
 msgid "select skin and press ok or choose save"
-msgstr "select skin and press ok or choose save"
+msgstr "Válassz skin-t, myomd meg az OK-t, vagy ments el amit csináltál"
 
 #: default.esml:528 default.esml:532
 msgid "select day (ok)"
-msgstr "gunu sec (ok)"
+msgstr "válassz napot (ok)"
 
 #: default.esml:267 default.esml:288 default.esml:344 default.esml:606
 msgid "cancel"
-msgstr "cik"
+msgstr "mégsem"
 
 #: default.esml:268
 msgid "goto next page (DiSEqC)"
-msgstr "bir dahaki sayfaya gec (DiSEqC)"
+msgstr "menj a köv. oldalra (DiSEqC)"
 
 #: default.esml:284
 msgid "fill DiSEqC repeat gap with uncommitted command"
-msgstr "fill DiSEqC repeat gap with uncommitted command"
+msgstr "DiSEqC ismétlési rés feltöltése nem meghatározott paranccsal"
 
 #: default.esml:533
 msgid "edit the end time (0..9, left, right)"
-msgstr "edit the end time (0..9, left, right)"
+msgstr "add meg a vége idöpontot (0..9, <, >)"
 
 #: default.esml:561
 msgid "recording duration:"
-msgstr "cekim duration:"
+msgstr "Felvétel hossza:"
 
 #: default.esml:450 default.esml:462
 msgid "enter symbolrate (0..9, left, right)"
-msgstr "Sembol hizini yazin (0..9,sol,sag)"
+msgstr "Add meg a symbolrate-et (0..9, <, >)"
 
 #: default.esml:427
 msgid "abort skin setup ( no changes are saved )"
-msgstr "abort skin setup ( no changes are saved )"
+msgstr "Skin beállítások megszakítása (0..9, <, >)"
 
 #: default.esml:358
-#, fuzzy
 msgid "choose the Transponder you wish to find"
-msgstr "choose the LNB you wish to apply or edit"
+msgstr "Válaszd ki azt a TP-t amit meg szeretnél találni"
 
 #: default.esml:245
 msgid "close Satelliteconfiguration"
-msgstr "Uydu ayar bolgesini kapat"
+msgstr "Mühold konfiguráció bezárása"
 
 #: default.esml:604
-#, fuzzy
 msgid "status output:"
-msgstr "statusu:"
+msgstr "Küldési állapot:"
 
 #: default.esml:282
 msgid "Sequence repeat"
-msgstr "Sequence repeat"
+msgstr "Sorozat ismétlés"
 
 #: default.esml:243
 msgid "add a new Satellite"
-msgstr "Yeni uydu ekle"
+msgstr "Új mühód hozzáadása"
 
 #: default.esml:356
-#, fuzzy
 msgid "enter stored satellite pos"
-msgstr "one single satellite"
+msgstr "Add meg a mentett mühold pozícióját"
 
 #: default.esml:586
 msgid "Harddisk"
-msgstr "Harddisk"
+msgstr "Vinyó (HDD)"
 
 #: default.esml:563
 msgid "min"
-msgstr ""
+msgstr "perc"
 
 #: default.esml:318
 msgid "mA"
-msgstr ""
+msgstr "mA"
 
 #: default.esml:565 default.esml:578
 msgid "goto standby after recording (ok)"
-msgstr ""
+msgstr "Kapcsolj készenléti állapotba a felvétel végén (ok)"
 
 #: default.esml:468
 msgid "Inversion:"
-msgstr "Inversion:"
+msgstr "Invertálás:"
 
 #: default.esml:596
 msgid "format"
-msgstr "Format"
+msgstr "formátum"
 
 #: default.esml:240
 msgid "Voltage"
-msgstr "Voltaj"
+msgstr "feszültség"
 
 #: default.esml:389
 msgid "network search"
-msgstr "Ag tarama"
+msgstr "hálózat keresés"
 
 #: lib/dvb/dvbwidgets.cpp:51
 msgid "vertical"
-msgstr "Dikey (V)"
+msgstr "vertikális"
 
 #: lib/dvb/dvbwidgets.cpp:52
 msgid "horizontal"
-msgstr "Yatay (H)"
+msgstr "horizontális"
 
 #: lib/dvb/serviceplaylist.cpp:110
 #, c-format
 msgid " (%d entries)"
-msgstr "(%d entries)"
+msgstr "(%d adat)"
 
 #: lib/dvb/servicestructure.cpp:9
 msgid "root node"
@@ -863,31 +848,31 @@ msgstr "root node"
 
 #: lib/dvb/servicestructure.cpp:10 src/enigma_mainmenu.cpp:32
 msgid "TV mode"
-msgstr "TV modu"
+msgstr "TV mód"
 
 #: lib/dvb/servicestructure.cpp:11
 msgid "Radio Mode"
-msgstr "Radio modu"
+msgstr "Rádió mód"
 
 #: lib/dvb/servicestructure.cpp:12
 msgid "File Mode"
-msgstr "Dosya modu"
+msgstr "Fájl mód"
 
 #: lib/dvb/servicestructure.cpp:13
 msgid "Favourites"
-msgstr "Favoriler"
+msgstr "Zsáner"
 
 #: lib/dvb/servicestructure.cpp:14
 msgid "TV/Radio"
-msgstr "TV/Radio"
+msgstr "TV/Rádió"
 
 #: lib/dvb/servicemp3.cpp:142
 msgid "Connecting..."
-msgstr "baglaniyor..."
+msgstr "Kapcsolódás..."
 
 #: lib/dvb/servicemp3.cpp:273
 msgid "playing..."
-msgstr "uynuyor..."
+msgstr "lejátszás..."
 
 #: lib/gui/emessage.cpp:97 src/enigma_ci.cpp:223
 msgid "OK"
@@ -895,143 +880,143 @@ msgstr "OK"
 
 #: lib/gui/emessage.cpp:98
 msgid "Cancel"
-msgstr "Cik"
+msgstr "Mégsem"
 
 #: lib/gui/emessage.cpp:99
 msgid "Yes"
-msgstr "Evet"
+msgstr "Igen"
 
 #: lib/gui/emessage.cpp:100
 msgid "No"
-msgstr "Hayir"
+msgstr "Nem"
 
 #: src/channelinfo.cpp:69
 msgid "Movie"
-msgstr ""
+msgstr "Mozi"
 
 #: src/channelinfo.cpp:69
 msgid "Adventure"
-msgstr ""
+msgstr "Kaland"
 
 #: src/channelinfo.cpp:69
 msgid "SciFi"
-msgstr ""
+msgstr "Sci-Fi"
 
 #: src/channelinfo.cpp:69
 msgid "Comedy"
-msgstr ""
+msgstr "Vígjáték"
 
 #: src/channelinfo.cpp:70
 msgid "Soap"
-msgstr ""
+msgstr "Szappanopera"
 
 #: src/channelinfo.cpp:70
 msgid "Romance"
-msgstr "Roman"
+msgstr "Romantikus"
 
 #: src/channelinfo.cpp:70
 msgid "Serious"
-msgstr "dizi"
+msgstr "Sorozat"
 
 #: src/channelinfo.cpp:70
 msgid "Adult"
-msgstr ""
+msgstr "Felnött"
 
 #: src/channelinfo.cpp:73
 msgid "News"
-msgstr "Haber"
+msgstr "Hírek"
 
 #: src/channelinfo.cpp:73
 msgid "Weather"
-msgstr ""
+msgstr "Idöjárás"
 
 #: src/channelinfo.cpp:73
 msgid "Magazine"
-msgstr "magazin"
+msgstr "Magazin"
 
 #: src/channelinfo.cpp:73
 msgid "Documentary"
-msgstr ""
+msgstr "Dokumentum"
 
 #: src/channelinfo.cpp:73
 msgid "Discussion"
-msgstr ""
+msgstr "Beszélgetés"
 
 #: src/channelinfo.cpp:77
 msgid "Show"
-msgstr ""
+msgstr "Show"
 
 #: src/channelinfo.cpp:77
 msgid "Game Show"
-msgstr ""
+msgstr "Játék Show"
 
 #: src/channelinfo.cpp:77
 msgid "Variety"
-msgstr "Variety"
+msgstr "Változó"
 
 #: src/channelinfo.cpp:77
 msgid "Talk"
-msgstr ""
+msgstr "Duma"
 
 #: src/channelinfo.cpp:81
 msgid "Sports"
-msgstr "spor"
+msgstr "Sport"
 
 #: src/channelinfo.cpp:82
 msgid "Athletics"
-msgstr "atletik"
+msgstr "Atlétika"
 
 #: src/channelinfo.cpp:83
 msgid "Martial Sports"
-msgstr ""
+msgstr "Egyéb sport"
 
 #: src/channelinfo.cpp:86
 msgid "Children"
-msgstr "cocuklaricin"
+msgstr "Gyerek"
 
 #: src/channelinfo.cpp:87
 msgid "Cartoons"
-msgstr "cizgifilim"
+msgstr "Rajzfilmek"
 
 #: src/channelinfo.cpp:95
 msgid "Culture"
-msgstr "kultur"
+msgstr "Kultúra"
 
 #: src/channelinfo.cpp:96
 msgid "Film"
-msgstr "Filim"
+msgstr "Film"
 
 #: src/channelinfo.cpp:99
 msgid "Social"
-msgstr "sosyal"
+msgstr "Szociális"
 
 #: src/channelinfo.cpp:103
 msgid "Education"
-msgstr "ogrenim"
+msgstr "Oktatás"
 
 #: src/channelinfo.cpp:104
 msgid "Further Ed."
-msgstr ""
+msgstr "Egyéb oktató"
 
 #: src/channelinfo.cpp:107
 msgid "Hobbies"
-msgstr "Hobbies"
+msgstr "Hobbi"
 
 #: src/channelinfo.cpp:108
 msgid "Shopping"
-msgstr ""
+msgstr "Pénzköltés"
 
 #: src/channelinfo.cpp:111
 msgid "Orig. Lang."
-msgstr ""
+msgstr "Eredeti hang"
 
 #: src/channelinfo.cpp:222
 msgid "no data for this service avail"
-msgstr "bu servis icin data gosterilemiyor"
+msgstr "ehhez a csatihoz nincs adatom"
 
 #: src/channelinfo.cpp:249
 msgid "Filesize: "
-msgstr ""
+msgstr "Fájl méret:"
 
 #: src/enigma.cpp:221
 msgid ""
@@ -1040,19 +1025,19 @@ msgid ""
 "Please do a transponderscan first.\n"
 "(mainmenu > setup > channels > transponder scan)"
 msgstr ""
-"Enigma'ya hos geldiniz.\n"
+"Üdv! Enigm volnék.\n"
 "\n"
-" lutfen once kanal taratmasi yapin.\n"
-"(Anakurulum>kurulum>kanallar>Ag taratma)"
+"Mindenekel?tt csinálj egy transzponder keresést.\n"
+"(fömenü > beállítások > csatornák > Transzponder keresés)"
 
 #: src/enigma.cpp:223
 msgid "First start of enigma"
-msgstr "Enigma'nin ilk baslangici"
+msgstr "Az Enigma elsö indítása!"
 
 #: src/enigma_ci.cpp:50
 #, fuzzy
 msgid "Common Interface Module - mmi"
-msgstr "Ci modul girisi"
+msgstr "Common Interface..."
 
 #: src/enigma_ci.cpp:84
 msgid "leave ci mmi"
@@ -1069,17 +1054,17 @@ msgstr ""
 #: src/enigma_ci.cpp:402
 #, fuzzy
 msgid "Common Interface Modules"
-msgstr "Ci modul girisi"
+msgstr "Common Interface..."
 
 #: src/enigma_ci.cpp:409
 #, fuzzy
 msgid "Common Interface Module"
-msgstr "Ci modul girisi"
+msgstr "Common Interface..."
 
 #: src/enigma_ci.cpp:415 src/enigma_ci.cpp:444
 #, fuzzy
 msgid "Reset"
-msgstr "Ayar"
+msgstr "beállítás"
 
 #: src/enigma_ci.cpp:418 src/enigma_ci.cpp:447
 msgid "reset the common interface module"
@@ -1100,295 +1085,294 @@ msgstr ""
 #: src/enigma_ci.cpp:436 src/enigma_ci.cpp:465
 #, fuzzy
 msgid "enter ci menu (mmi)"
-msgstr "saat munusunu kapat (ok)"
+msgstr "Idözítö menü bezárása (ok)"
 
 #: src/enigma_ci.cpp:474 src/enigma_ci.cpp:483
 #, fuzzy
 msgid "leave common interface menu"
-msgstr "Ci modul girisi"
+msgstr "Common Interface..."
 
 #: src/enigma_ci.cpp:530 src/enigma_ci.cpp:536
 #, fuzzy
 msgid "resetting....please wait"
-msgstr "Uydu taramasi yapiliyor ... lutfen biraz bekleyin"
+msgstr "Nyugi, keresek... türelem."
 
 #: src/enigma_info.cpp:40
 msgid "Infos"
-msgstr "Informatsiyon"
+msgstr "Infók"
 
 #: src/enigma_info.cpp:43 src/enigma_scan.cpp:40 src/enigma_scan.cpp:158
 #: src/enigma_setup.cpp:82
 msgid "[back]"
-msgstr "Geri"
+msgstr "[vissza]"
 
 #: src/enigma_info.cpp:43
 msgid "go back to mainmenu"
-msgstr "Ana menuye geri don"
+msgstr "vissza a fömenübe"
 
 #: src/enigma_info.cpp:44
 msgid "Streaminfo"
-msgstr "Streaminformatsiyonu"
+msgstr "TP adat infók"
 
 #: src/enigma_info.cpp:44
 msgid "open the Streaminfo"
-msgstr "Streaminformatsiyonu ac"
+msgstr "Stream infó megnyitása"
 
 #: src/enigma_info.cpp:46
 msgid "Show BN version"
-msgstr "BN versiyonunu goster"
+msgstr "Mutasd a BN verziót"
 
 #: src/enigma_info.cpp:46
 msgid "show the Current Version of the Betanova FW"
-msgstr ""
+msgstr "Mutasd az aktuális Betanova Fw verzióját"
 
 #: src/enigma_info.cpp:48
 msgid "open the about dialog"
-msgstr ""
+msgstr "Névjegy ablak megnyitása"
 
 #: src/enigma_info.cpp:49
 msgid "Satfind"
-msgstr "uydu arama"
+msgstr "Mühód keresö"
 
 #: src/enigma_info.cpp:49
 msgid "shows the satfinder"
-msgstr ""
+msgstr "megnyitja a mühold keresöt"
 
 #: src/enigma_info.cpp:175
 msgid "Unknown"
-msgstr "Taninmamis"
+msgstr "Ismeretlen"
 
 #: src/enigma_info.cpp:183
 msgid "my"
-msgstr "Benim"
+msgstr "én"
 
 #: src/enigma_info.cpp:192
 msgid "Processor: XPC823, 66MHz"
-msgstr "Processor: XPC823, 66MHz"
+msgstr "Proci: XPC823, 66MHz"
 
 #: src/enigma_info.cpp:195
 msgid "Processor: XPC823, 80MHz"
-msgstr "Processor: XPC823, 80MHz"
+msgstr "Proci: XPC823, 80MHz"
 
 #: src/enigma_info.cpp:198
 msgid "Processor: STB04500, 252MHz"
-msgstr "Processor: STB04500, 252MHz"
+msgstr "Proci: STB04500, 252MHz"
 
 #: src/enigma_info.cpp:201
 msgid "Processor: STB25xxx, 252MHz"
-msgstr "Processor: STB25xxx, 252MHz"
+msgstr "Proci: STB25xxx, 252MHz"
 
 #: src/enigma_info.cpp:227
 msgid "Frontend: Satellite"
-msgstr "Frontend:uydu"
+msgstr "Vas: Müholdas"
 
 #: src/enigma_info.cpp:230
 msgid "Frontend: Cable"
-msgstr "Frontend: kablo"
+msgstr "Vas: Kábeles"
 
 #: src/enigma_info.cpp:233
 msgid "Frontend: Terrestric"
-msgstr "Frontend: Terrestric"
+msgstr "Vas: Földi"
 
 #: src/enigma_info.cpp:236
 msgid "Frontend: Simulator"
-msgstr "On Taraf: Simulator"
+msgstr "Vas: Szimulátor"
 
 #: src/enigma_info.cpp:282
 msgid "keine"
-msgstr "Yok"
+msgstr "nincs"
 
 #: src/enigma_info.cpp:288 src/upgrade.cpp:235
 msgid "unknown"
-msgstr "Bilinmeyen"
+msgstr "ismeretlen"
 
 #: src/enigma_info.cpp:293
 msgid "release"
-msgstr "Serbest birak"
+msgstr "release"
 
 #: src/enigma_info.cpp:294
 msgid "beta"
-msgstr "Beta"
+msgstr "beta"
 
 #: src/enigma_info.cpp:295
 msgid "internal"
-msgstr "internal"
+msgstr "belsö"
 
 #: src/enigma_main.cpp:66
 msgid "enigma Zapp"
-msgstr "enigma zapping"
+msgstr "Enigma Zapp"
 
 #: src/enigma_main.cpp:67
 msgid "show main menu"
-msgstr "ana munuyu goster"
+msgstr "Fömenü-t fogom megmutatni"
 
 #: src/enigma_main.cpp:68
 msgid "go to standby (press)"
-msgstr "standby gecmek icin (basin)"
+msgstr "lekapcsolás készenléti állapotba"
 
 #: src/enigma_main.cpp:69
 msgid "go to standby (repeat)"
-msgstr "standby gecmek icin (tekrarla)"
+msgstr "Teljes kikapcsolás"
 
 #: src/enigma_main.cpp:70
 msgid "go to standby (release)"
-msgstr "standby gecin (release)"
+msgstr "lekapcsolás készenléti állapotba"
 
 #: src/enigma_main.cpp:72
 msgid "show infobar"
-msgstr "infarmasyonkolomu goster"
+msgstr "Infósor feldobása"
 
 #: src/enigma_main.cpp:73
 msgid "hide infobar"
-msgstr "ana infarmasyonkolomu"
+msgstr "Infósor elrejtése"
 
 #: src/enigma_main.cpp:74
 msgid "show infobar or EPG"
-msgstr ""
+msgstr "Infósor vagy EPG feldobása"
 
 #: src/enigma_main.cpp:75
 msgid "show service selector"
-msgstr "servis secenegini goster"
+msgstr "Csatorna választó feldobása"
 
 #: src/enigma_main.cpp:76
 msgid "show subservices/NVOD"
-msgstr "subservices/NVOD goster"
+msgstr "egyéb szolgáltatás/NVOD feldobása"
 
 #: src/enigma_main.cpp:77
 msgid "show audio selector"
-msgstr "ses secenegini goster"
+msgstr "hangsáv választó feldobása"
 
 #: src/enigma_main.cpp:78
 msgid "show Videotext"
-msgstr "Videotext goster"
+msgstr "VideoText megmutatása"
 
 #: src/enigma_main.cpp:79
 msgid "show epg schedule list"
-msgstr "schedule epg listesini goster"
+msgstr "EPG program lista megmutatása"
 
 #: src/enigma_main.cpp:80
 msgid "show extended info"
-msgstr "extended informasyonu goster"
+msgstr "Bövebb infó feldobása"
 
 #: src/enigma_main.cpp:81
 msgid "quickzap next"
-msgstr "birdahaki acelezapping"
+msgstr "Gyors ugrás a következöre"
 
 #: src/enigma_main.cpp:82
 msgid "quickzap prev"
-msgstr "hizlizapping geri"
+msgstr "Gyors ugrás az elözöre"
 
 #: src/enigma_main.cpp:84
 msgid "history next"
-msgstr "birdahaki gecmisi"
+msgstr "Történet következö"
 
 #: src/enigma_main.cpp:85
 msgid "history prev"
-msgstr "gecmise geri"
+msgstr "Történet elözö"
 
 #: src/enigma_main.cpp:87
 msgid "service list and down"
-msgstr "servis listesi ve indirme"
+msgstr "csatorna lista és lefelé"
 
 #: src/enigma_main.cpp:88
 msgid "service list and up"
-msgstr "servis listesi yukari"
+msgstr "csatorna lista és fel"
 
 #: src/enigma_main.cpp:90
 msgid "volume up"
-msgstr "ses acin"
+msgstr "hangerö növelés"
 
 #: src/enigma_main.cpp:91
 msgid "volume down"
-msgstr "sesini kapatin"
+msgstr "hangerö csökkentés"
 
 #: src/enigma_main.cpp:92
 msgid "toggle mute flag"
-msgstr "toggle mute flag"
+msgstr "némítás jelzö kikapcsolása"
 
 #: src/enigma_main.cpp:94
 msgid "stop playback"
-msgstr "playback durdur"
+msgstr "lejátszás megállítása"
 
 #: src/enigma_main.cpp:95
 msgid "pause playback"
-msgstr "playback durdur "
+msgstr "lejátszás szüneteltetése"
 
 #: src/enigma_main.cpp:96
 msgid "resume playback"
-msgstr "resume playback"
+msgstr "lejátszás folytatása"
 
 #: src/enigma_main.cpp:97 src/enigma_main.cpp:1464
 msgid "record"
-msgstr "cekim"
+msgstr "felvétel"
 
 #: src/enigma_main.cpp:99
 msgid "start skipping forward"
-msgstr "start skipping forward"
+msgstr "elöre való átlépés indítása"
 
 #: src/enigma_main.cpp:100
 msgid "repeat skipping forward"
-msgstr "repeat skipping forward"
+msgstr "elöre való átlépés ismétlése"
 
 #: src/enigma_main.cpp:101
 msgid "stop skipping forward"
-msgstr "stop skipping forward"
+msgstr "elöre való átlépés leállítása"
 
 #: src/enigma_main.cpp:103
 msgid "start skipping reverse"
-msgstr "start skipping reverse"
+msgstr "hátra való átlépés indítása"
 
 #: src/enigma_main.cpp:104
 msgid "repeat skipping reverse"
-msgstr "repeat skipping reverse"
+msgstr "hátra való átlépés ismétlése"
 
 #: src/enigma_main.cpp:105
 msgid "stop skipping reverse"
-msgstr "stop skipping reverse"
+msgstr "hátra való átlépés leállítása"
 
 #: src/enigma_main.cpp:107
 msgid "show bouquet list"
-msgstr " bouquet listesini goster"
+msgstr "csomag lista feldobása"
 
 #: src/enigma_main.cpp:108
 msgid "show favourites"
-msgstr "faforitleri goster"
+msgstr "zsánerek feldobása"
 
 #: src/enigma_main.cpp:110 src/sselect.cpp:46
 msgid "switch to TV mode"
-msgstr "TV moduna gec"
+msgstr "átkapcsolás TV módra"
 
 #: src/enigma_main.cpp:111 src/sselect.cpp:47
 msgid "switch to Radio mode"
-msgstr "Radio moduna gec"
+msgstr "átkapcsolás Rádió módra"
 
 #: src/enigma_main.cpp:112 src/sselect.cpp:48
 msgid "switch to File mode"
-msgstr "Dosya moduna gec"
+msgstr "átkapcsolás fájl módra"
 
 #: src/enigma_main.cpp:114
 msgid "toggle DVR panel"
-msgstr ""
+msgstr "DVR panel elrejtése"
 
 #: src/enigma_main.cpp:115
-#, fuzzy
 msgid "toggle index mark"
-msgstr "toggle mute flag"
+msgstr "index jelzés elrejtése"
 
 #: src/enigma_main.cpp:126
 msgid "enigma standby"
-msgstr "enigma standby"
+msgstr "Enigma készenléti állapot"
 
 #: src/enigma_main.cpp:127
 msgid "wake up enigma"
-msgstr "enigma uyan'dir"
+msgstr "Ébreszd fel az Enigmát"
 
 #: src/enigma_main.cpp:310
 msgid " to "
-msgstr "git"
+msgstr "to"
 
 #: src/enigma_main.cpp:316
 msgid " Euro lost)"
-msgstr "Euro lost)"
+msgstr "hátralévö lóvé)"
 
 #: src/enigma_main.cpp:344 src/enigma_main.cpp:351
 msgid "NVOD"
@@ -1396,28 +1380,28 @@ msgstr "NVOD"
 
 #: src/enigma_main.cpp:455
 msgid "Audio"
-msgstr "Audio"
+msgstr "Hangsáv"
 
 #: src/enigma_main.cpp:481
 msgid "multiple Services"
-msgstr "multiple Servisi"
+msgstr "többszintü szolgáltatások"
 
 #: src/enigma_main.cpp:526
 msgid "Channel"
-msgstr "Kanalar"
+msgstr "Csatorna"
 
 #: src/enigma_main.cpp:531
 msgid "Channel:"
-msgstr "Kanalar"
+msgstr "Csatorna:"
 
 #: src/enigma_main.cpp:558
 #, c-format
 msgid "Please wait while the rotor is driving to %d.%d%c ...."
-msgstr ""
+msgstr "Kérlek várj, míg tekerem az antennádat a %d.%d%c -re...."
 
 #: src/enigma_main.cpp:558
 msgid "Message"
-msgstr ""
+msgstr "Üzenet"
 
 #: src/enigma_main.cpp:766
 msgid "TV"
@@ -1425,205 +1409,210 @@ msgstr "TV"
 
 #: src/enigma_main.cpp:767
 msgid "Radio"
-msgstr "Radio"
+msgstr "Rádió"
 
 #: src/enigma_main.cpp:768
 msgid "File"
-msgstr "DOSYA"
+msgstr "Fájl"
 
 #: src/enigma_main.cpp:770
 msgid "Favourites ("
-msgstr "Faforiler ("
+msgstr "Zsánerek ("
 
 #: src/enigma_main.cpp:783
 msgid "recorded movies"
-msgstr "cekilmis filimler"
+msgstr "Felvett mozik"
 
 #: src/enigma_main.cpp:1050
 msgid "no EPG available"
-msgstr "EPG goruntulenemiyor"
+msgstr "sajna, de nincs elérhetö EPG"
 
 #: src/enigma_main.cpp:1464
 msgid "Sorry, you cannot record this service."
-msgstr "ozurdileriz bu servisi cekemesiniz."
+msgstr "Diéta van, ezt a csatit nem veheted fel"
 
 #: src/enigma_main.cpp:1694
 msgid "Sorry, you cannot delete this service."
-msgstr "ozurdileriz bu servisi silemesiniz"
+msgstr "Sajnos nem engedhetem meg hogy ezt a csatit kitöröld"
 
 #: src/enigma_main.cpp:1694 src/enigma_main.cpp:3201
 msgid "delete service"
-msgstr "servisi sil"
+msgstr "csatorna törlése"
 
 #: src/enigma_main.cpp:1708
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
 msgstr ""
+"Ez egy felvett anyag!\n"
+"Biztos törölni akarod? (nekem mind1)"
 
 #: src/enigma_main.cpp:1708
 msgid "Delete recorded stream"
-msgstr ""
+msgstr "Felvett anyag törlése :("
 
 #: src/enigma_main.cpp:1802 src/enigma_main.cpp:1803
 msgid "This directory doesn't contain anything playable!"
-msgstr "This directory doesn't contain anything playable!"
+msgstr "Ebben a könyvtárban semmi nincs amivel tudnék valamit is kezdeni!"
 
 #: src/enigma_main.cpp:1803
 msgid "Play"
-msgstr "Play"
+msgstr "Lejátszás"
 
 #: src/enigma_main.cpp:1857
 msgid "This service is already in your favourite list."
-msgstr "Bu servis su an sizin fafori listenizde mevcut."
+msgstr "Ez a csati már benne vagyon a Zsáner listádban!"
 
 #: src/enigma_main.cpp:1857 src/enigma_main.cpp:1866
 msgid "Add Channel to Favourite"
-msgstr "bu kanali faforiye al"
+msgstr "Csati bedobása a Zsánerek közé"
 
 #: src/enigma_main.cpp:1866
 msgid "Really add this channel to your favourite list?"
-msgstr "gercektenmi bu kanali fafori listesine almak istiyorsunuz?"
+msgstr "Biztosan hozzá akarod adni ezt a csatit a Zsáner listádhoz?"
 
 #: src/enigma_main.cpp:1961 src/enigma_plugins.cpp:143
 msgid "Couldn't read plugin directory"
-msgstr "Couldn't read plugin directory"
+msgstr "Sajna, de nem látom a plugin könyvtárat!"
 
 #: src/enigma_main.cpp:1961 src/enigma_plugins.cpp:143
 msgid "Error"
-msgstr "hata"
+msgstr "HIBA"
 
 #: src/enigma_main.cpp:2089
-#, fuzzy
 msgid ""
 "Currently an timer based digital recording is in progress!\n"
 "This stops the timer, and digital recording!"
-msgstr "Currently an timer based digital recording is in progress!"
+msgstr ""
+"Éppen fut egy az idözítö által indított felvétel!\n"
+"Megállítsam az idözítöt és a felvételt?"
 
 #: src/enigma_main.cpp:2099
-#, fuzzy
 msgid ""
 "Currently an digital recording is in progress!\n"
 "This stops the digital recording!"
-msgstr "Currently an digital recording is in progress!"
+msgstr ""
+"Éppen fut egy digitális felvétel!\n"
+"Megállítsam a felvételt?"
 
 #: src/enigma_main.cpp:2109
-#, fuzzy
 msgid ""
 "Currently an timer event is in progress!\n"
 "This stops the timer event!"
-msgstr "Currently an timer based event is in progress!"
+msgstr ""
+"Éppen fut egy idözítés!\n"
+"Leállítsam?"
 
 #: src/enigma_main.cpp:2115
 msgid "Really do this?"
-msgstr "gercekten yapmak istiyormusunuz?"
+msgstr "Tutira ezt akarod?"
 
 #: src/enigma_main.cpp:2600 src/enigma_main.cpp:2601
 msgid "One moment please..."
-msgstr "bir saniye bekleyin lutfen..."
+msgstr "Picike türelmet kérek, dolgom van..."
 
 #: src/enigma_main.cpp:2601 src/enigma_main.cpp:2605 src/enigma_main.cpp:2613
 #: src/enigma_main.cpp:2620 src/enigma_main.cpp:2626 src/enigma_main.cpp:2631
 #: src/enigma_main.cpp:2636 src/timer.cpp:921
 msgid "switch"
-msgstr "Degistir"
+msgstr "kapcsolás"
 
 #: src/enigma_main.cpp:2604 src/enigma_main.cpp:2605
 msgid "Service could not be found !"
-msgstr "aradiginiz servis bulunamadi !"
+msgstr "Ajjaj! Nem találom a csatornát!"
 
 #: src/enigma_main.cpp:2612 src/enigma_main.cpp:2613
 msgid "This service could not be descrambled"
-msgstr "Bu servis sifreli degil"
+msgstr "Ezt a csatit nem tudom dekódolni"
 
 #: src/enigma_main.cpp:2619 src/enigma_main.cpp:2620
 msgid "This service sends (currently) no signal"
-msgstr "Bu servis yayin  (dogru)  sinyal yok"
+msgstr "A csati pillanatnyilag ki van kapcsolva. Nincs jel."
 
 #: src/enigma_main.cpp:2624 src/enigma_main.cpp:2626
 msgid "This content could not be displayed"
-msgstr "Bu content ekranda gosterilemiyor"
+msgstr "A tartalmat nem tudom megmutatni"
 
 #: src/enigma_main.cpp:2629 src/enigma_main.cpp:2631
 msgid "NVOD Service - select a starttime, please"
-msgstr "NVOD Service - select a starttime, please"
+msgstr "NVOD csati - kérlek válassz egy idöpontot"
 
 #: src/enigma_main.cpp:2634 src/enigma_main.cpp:2636
 msgid "Unknown error!!"
-msgstr "Taninmayan bir yanlis!!"
+msgstr "Waffankúló! Ismeretlen hiba!!"
 
 #: src/enigma_main.cpp:3189
 msgid "Service Menu"
-msgstr "servis munusu"
+msgstr "Csatorna menü"
 
 #: src/enigma_main.cpp:3192 src/enigma_main.cpp:3230
 #: src/setup_harddisk.cpp:177
 msgid "back"
-msgstr "geri"
+msgstr "vissza"
 
 #: src/enigma_main.cpp:3197
 msgid "disable move mode"
-msgstr "kaydirma modunu kapat"
+msgstr "mozgatás mód kikapcsolása"
 
 #: src/enigma_main.cpp:3199
 msgid "enable move mode"
-msgstr ""
+msgstr "mozgatás mód bekapcsolása"
 
 #: src/enigma_main.cpp:3207
 msgid "disable edit favourite mode"
-msgstr ""
+msgstr "Zsáner módosítás mód kikapcsolása"
 
 #: src/enigma_main.cpp:3209
 msgid "enable edit favourite mode"
-msgstr ""
+msgstr "Zsáner módosítás mód bekapcsolása"
 
 #: src/enigma_main.cpp:3211
 msgid "add service to favourites"
-msgstr "bu servisi fafori listesine al"
+msgstr "csatorna hozzáadása a Zsánerekhez"
 
 #: src/enigma_main.cpp:3214
 msgid "add service to playlist"
-msgstr "bu servisi playlistesine al"
+msgstr "szolgáltatás hozzáadása a playlistához"
 
 #: src/enigma_main.cpp:3227
 msgid "Record Menu"
-msgstr "cekim munusu"
+msgstr "Felvételi menü"
 
 #: src/enigma_main.cpp:3231
 msgid "stop record now"
-msgstr "Bu cekimi durdurur"
+msgstr "Felvétel azonnali megállítása"
 
 #: src/enigma_main.cpp:3232
 msgid "set record duration"
-msgstr ""
+msgstr "add meg a felvétel hosszát"
 
 #: src/enigma_main.cpp:3233
 msgid "set record stop time"
-msgstr ""
+msgstr "add meg a felvétel végének az idöpontját"
 
 #: src/enigma_mainmenu.cpp:35
 msgid "Radio mode"
-msgstr "Radio modu"
+msgstr "Rádió mód"
 
 #: src/enigma_mainmenu.cpp:38
 msgid "File mode"
-msgstr "Dosya modu"
+msgstr "Fájl mód"
 
 #: src/enigma_mainmenu.cpp:41
 msgid "information"
-msgstr "Bilgiler"
+msgstr "információ"
 
 #: src/enigma_mainmenu.cpp:44
 msgid "shutdown"
-msgstr "Tam kapatma"
+msgstr "kikapcsolás"
 
 #: src/enigma_mainmenu.cpp:47
 msgid "setup"
-msgstr "Ayarlar"
+msgstr "beállítások"
 
 #: src/enigma_mainmenu.cpp:50
 msgid "games"
-msgstr "Oyunlar"
+msgstr "játékok"
 
 #: src/enigma_mainmenu.cpp:53
 msgid "VCR"
@@ -1631,507 +1620,505 @@ msgstr "VCR"
 
 #: src/enigma_mainmenu.cpp:56
 msgid "Timer"
-msgstr "zaman"
+msgstr "Idözítö"
 
 #: src/enigma_mainmenu.cpp:60 src/enigma_mainmenu.cpp:202
 msgid "Mainmenu"
-msgstr "Ana menu"
+msgstr "Fö menü"
 
 #: src/enigma_plugins.cpp:123
 msgid "Plugins"
-msgstr "Girisler "
+msgstr "Plugin-ek"
 
 #: src/enigma_plugins.cpp:125
 msgid "select plugin and press ok"
-msgstr "girisi secin ve ok basin"
+msgstr "Válassz plugin-t és taposs az OK-ra"
 
 #: src/enigma_scan.cpp:37
 msgid "Channels"
-msgstr "Kanalar"
+msgstr "Csatornák"
 
 #: src/enigma_scan.cpp:40
 msgid "back to mainmenu"
-msgstr "Ana menuye geri don"
+msgstr "vissza a fömenübe"
 
 #: src/enigma_scan.cpp:41
 msgid "Transponder scan"
-msgstr "Transponder tarama"
+msgstr "Transzponder keresés"
 
 #: src/enigma_scan.cpp:41
 msgid "goto transponder scan"
-msgstr "transponder taranmasina git"
+msgstr "keressünk le egy transzponder-t"
 
 #: src/enigma_scan.cpp:44
 msgid "Satellites..."
-msgstr "uydular..."
+msgstr "Müholdak..."
 
 #: src/enigma_scan.cpp:44
 msgid "goto satellite config"
-msgstr "Uydu ayar bolgesine git"
+msgstr "irány a müholdak beállítása menü"
 
 #: src/enigma_scan.cpp:45
-#, fuzzy
 msgid "Rotor Setup..."
-msgstr "motor ayari"
+msgstr "Rotor beállítások..."
 
 #: src/enigma_scan.cpp:45
-#, fuzzy
 msgid "goto Rotor Setup"
-msgstr "motor ayari"
+msgstr "irány a Rotor beállítások menü"
 
 #: src/enigma_scan.cpp:47
-#, fuzzy
 msgid "SID..."
-msgstr "OSD "
+msgstr "SID..."
 
 #: src/enigma_scan.cpp:114
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
+"Több mint egy LNB-nél kapcsoltad be a DiSEqC 1.2 módot. Kérlek válaszd ki "
+"CSAK azt az egy LNB-t ami a Rotorhoz van kapcsolva"
 
 #: src/enigma_scan.cpp:114
-#, fuzzy
 msgid "Info"
-msgstr "Informatsiyon"
+msgstr "Infó"
 
 #: src/enigma_scan.cpp:128
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
+"Nem állítottál be egy LNB-t sem aminél be lenne kapcsolva a DiSEqC 1.2 mód.\n"
+"Menj be a mühold beállítások menübe, és kapcsold be a DiSEqC 1.2 módot"
 
 #: src/enigma_scan.cpp:128 src/rotorconfig.cpp:695 src/rotorconfig.cpp:896
 msgid "Warning"
-msgstr ""
+msgstr "Figyelmeztetés"
 
 #: src/enigma_scan.cpp:155
 msgid "Select LNB"
-msgstr ""
+msgstr "Válassz LNB-t"
 
 #: src/enigma_scan.cpp:158
-#, fuzzy
 msgid "go to prev menu"
-msgstr "bir sayfa geri "
+msgstr "vissza az elözö menübe"
 
 #: src/enigma_scan.cpp:163
 #, c-format
 msgid "use LNB %d for Rotor"
-msgstr ""
+msgstr "A Rotor-hoz az LNB %d -t használom"
 
 #: src/enigma_setup.cpp:45
 msgid "Setup"
-msgstr "Menu"
+msgstr "Beállítások"
 
 #: src/enigma_setup.cpp:82
 msgid "back to Mainmenu"
-msgstr "Ana menuye geri don"
+msgstr "vissza a Fö menübe"
 
 #: src/enigma_setup.cpp:83
 msgid "Channels..."
-msgstr "Kanal"
+msgstr "Csatornák..."
 
 #: src/enigma_setup.cpp:83
 msgid "open channel setup"
-msgstr "Kanal ayari ac"
+msgstr "Csatorna beállítások megnyitása"
 
 #: src/enigma_setup.cpp:85
 msgid "Network..."
-msgstr "Ag"
+msgstr "Hálózat..."
 
 #: src/enigma_setup.cpp:85
 msgid "open network setup"
-msgstr "Ag ayarlari ac"
+msgstr "Nyetwork beállítások megnyitása"
 
 #: src/enigma_setup.cpp:86
 msgid "OSD..."
-msgstr "OSD "
+msgstr "OSD..."
 
 #: src/enigma_setup.cpp:86
 msgid "open osd setup"
-msgstr "OSD ayarlari ac"
+msgstr "OSD beállítások megnyitása"
 
 #: src/enigma_setup.cpp:88
 msgid "LCD..."
-msgstr "LCD"
+msgstr "LCD..."
 
 #: src/enigma_setup.cpp:88
 msgid "open lcd setup"
-msgstr "LCD ayari ac"
+msgstr "LCD beállítások megnyitása"
 
 #: src/enigma_setup.cpp:89
 msgid "Remote Control..."
-msgstr "Uzaktan kumanda"
+msgstr "Távirányító..."
 
 #: src/enigma_setup.cpp:89
 msgid "open remotecontrol setup"
-msgstr "Uzaktan kumanda ayarlari ac"
+msgstr "TK beállítások megnyitása"
 
 #: src/enigma_setup.cpp:90
 msgid "Video..."
-msgstr "Video"
+msgstr "Kép..."
 
 #: src/enigma_setup.cpp:90
 msgid "open video setup"
-msgstr "Video ayarlari ac"
+msgstr "Kép beállítások megnyitása"
 
 #: src/enigma_setup.cpp:91
 msgid "Skin..."
-msgstr "Gorunum"
+msgstr "Stílusok..."
 
 #: src/enigma_setup.cpp:91
 msgid "open skin selector"
-msgstr "Gorunum modu degistir"
+msgstr "Stílus (Skin) beállítások megnyitása"
 
 #: src/enigma_setup.cpp:92
 msgid "Language..."
-msgstr "Dil secim"
+msgstr "Nyelvek..."
 
 #: src/enigma_setup.cpp:92
 msgid "open language selector"
-msgstr "Dil secimini yapiniz"
+msgstr "Nyelv kiválasztó menü megnyitása"
 
 #: src/enigma_setup.cpp:94
 msgid "Harddisk..."
-msgstr "Harddisk"
+msgstr "Merevlemez..."
 
 #: src/enigma_setup.cpp:94
 msgid "initialize harddisc"
-msgstr "Harddisk ayarlaniyor"
+msgstr "HDD beállítása"
 
 #: src/enigma_setup.cpp:96
 msgid "Common Interface..."
-msgstr "Ci modul girisi"
+msgstr "Common Interface..."
 
 #: src/enigma_setup.cpp:96
 msgid "show CI Menu"
-msgstr "CI munusunu goster"
+msgstr "CI menü megnyitása"
 
 #: src/enigma_setup.cpp:98
 msgid "Upgrade..."
-msgstr ""
+msgstr "SW frissítés..."
 
 #: src/enigma_setup.cpp:98
 msgid "upgrade firmware"
-msgstr ""
+msgstr "firmware frissítése"
 
 #: src/enigma_setup.cpp:100
-#, fuzzy
 msgid "RF-Modulator..."
-msgstr "Modulation:"
+msgstr "RF-Modulátor"
 
 #: src/enigma_setup.cpp:100
 msgid "setup modulator"
-msgstr ""
+msgstr "RF modulátor beállítása"
 
 #: src/enigma_setup.cpp:182
 msgid "You have to reboot to apply the new skin"
-msgstr ""
-"Yeni skin ayarlarini hafizaya almasi icin cihazinizi yeniden calistiriniz"
+msgstr "Újra kell indítani a Box-ot, hogy lásd az új stílust"
 
 #: src/enigma_setup.cpp:182
 msgid "Skin changed"
-msgstr "Gorunumu degistir"
+msgstr "Stílus megváltoztatva"
 
 #: src/enigma_setup.cpp:219
 msgid "sorry, no harddisks found!"
-msgstr "Ozurdilerim , harddisk bulunamadi!"
+msgstr "Sajnos nem látok a Box-ban sehol egy árva HDD-t sem!"
 
 #: src/enigma_setup.cpp:219
 msgid "Harddisk setup..."
-msgstr "Harddisk kurulum"
+msgstr "HDD beállítások..."
 
 #: src/epgwindow.cpp:26
 msgid "epg selector"
-msgstr "Epg secenegi"
+msgstr "EPG kiválasztó"
 
 #: src/epgwindow.cpp:27
 msgid "add this event to timer list"
-msgstr "add this event to timer list"
+msgstr "müsor hozzáadása a Timer listához"
 
 #: src/epgwindow.cpp:28
 msgid "remove this event from timer list"
-msgstr "Saat listesinden ayari sil"
+msgstr "müsor törlése a Timer listából"
 
 #: src/satconfig.cpp:59
 msgid "one single satellite"
-msgstr "one single satellite"
+msgstr "Egy árva mühold"
 
 #: src/satconfig.cpp:59
 msgid "one directly connected LNB"
-msgstr ""
+msgstr "Egy LNB mely közvetlenül csatlakozik"
 
 #: src/satconfig.cpp:60
 msgid "2 satellites via DiSEqC A/B"
-msgstr ""
+msgstr "2 mühold DiSEqC A/B kapcsolón keresztül"
 
 #: src/satconfig.cpp:60
 msgid "2 LNBs via Diseqc"
-msgstr ""
+msgstr "2 LNB DiSEqC-n keresztül"
 
 #: src/satconfig.cpp:61
 msgid "4 satellites via DiSEqC OPT A/B"
-msgstr ""
+msgstr "4 mühold DiSEqC OPT A/B kapcsolón keresztül"
 
 #: src/satconfig.cpp:61
 msgid "3 LNBs via Diseqc"
-msgstr ""
+msgstr "3 LNB DiSEqC-n keresztül"
 
 #: src/satconfig.cpp:62
 msgid "non-standard user defined configuration..."
-msgstr ""
+msgstr "Telepítöi felhasználói beállítások"
 
 #: src/satconfig.cpp:62
 msgid "special"
-msgstr "ozel"
+msgstr "spciális"
 
 #: src/satconfig.cpp:119
 msgid ""
 "Configuration contains some elements\n"
 "which don't fit into new DiSEqC-Type. Drop these items?"
 msgstr ""
+"A konfigurációban találtam néhány olyan adatot\n"
+"mely nem fér be a DiSEqC típusba. Elhajítsam ezeket?"
 
 #: src/satconfig.cpp:119
 msgid "Change DiSEqC-Type..."
-msgstr ""
+msgstr "DiSEqC típus váltása"
 
 #: src/satconfig.cpp:252
 msgid "direct connection"
-msgstr ""
+msgstr "közvetlen kapcsolat"
 
 #: src/satconfig.cpp:586
 msgid "press ok to select another satellite, or delete this satellite"
-msgstr " Baska uydu veya uyduyu silmek icin OK tusuna basiniz"
+msgstr "Ok-val választhatsz egy másik müholdat, vagy akár törölheted is"
 
 #: src/satconfig.cpp:606
 msgid "press ok to goto LNB config"
-msgstr " LNB ayarlarina girmek icin OK tusuna basiniz"
+msgstr "Nyomd meg az OK-t ha be akarsz lépni az LNB beállításokba"
 
 #: src/satconfig.cpp:624
 msgid "press ok to select another 22kHz mode"
-msgstr " Baska bir 22khz ayari icin OK tusuna basin"
+msgstr "Nyomd meg az OK-t ha másik 22kHz-es módot akarsz választani"
 
 #: src/satconfig.cpp:625
 msgid "22kHz signal is automaticaly switched"
-msgstr "22khz sinyal otomatik degisir"
+msgstr "A 22kHz-es jel automatikusan kapcsolódik"
 
 #: src/satconfig.cpp:626
 msgid "22kHz is always enabled (high band)"
-msgstr "22khz herzaman acik (Yuksek band)"
+msgstr "A 22kHz-es jel mindíg be van kapcsolva (felsö sáv)"
 
 #: src/satconfig.cpp:627
 msgid "22kHz is always disabled (low band)"
-msgstr "22khz herzaman kapali (Alcak Band)"
+msgstr "A 22kHz-es jel mindíg ki van kapcsolva (alsó sáv)"
 
 #: src/satconfig.cpp:637
 msgid "press ok to select another LNB Voltage mode"
-msgstr "LNB turunu ve guc kaynagi degistirmek icin  OK tusuna basin "
+msgstr "Ok-val választhatsz más LNB feszültség típust"
 
 #: src/satconfig.cpp:638
 msgid "Voltage is automaticaly changed"
-msgstr "Guc kaynagi otomatik degisir"
+msgstr "A feszültséget automatikusan kapcsolgatom"
 
 #: src/satconfig.cpp:639
 msgid "Voltage is always 14V (vertical)"
-msgstr "LNB guc kaynagi cikis voltaji herzaman sabitdir  14V ( Dikey )"
+msgstr "A feszültség mindíg 14V (vertikális)"
 
 #: src/satconfig.cpp:640
 msgid "Voltage is always 18V (horizontal"
-msgstr "LNB güç kaynagi cikis voltaji herzaman sabitdir  18V ( Yatay )"
+msgstr "A feszültség mindíg 18V (horizontális)"
 
 #: src/satconfig.cpp:641
 msgid "Voltage is always off"
-msgstr "voltaj herzaman kapali"
+msgstr "A feszültség mindíg ki van kapcsolva"
 
 #: src/satconfig.cpp:918
 msgid "New"
-msgstr "Yeni"
+msgstr "Új"
 
 #: src/satconfig.cpp:968 src/satconfig.cpp:1013
 msgid "None"
-msgstr "yok"
+msgstr "Nincs"
 
 #: src/satconfig.cpp:968
 msgid "sends no tone burst"
-msgstr "tone burst gonderme"
+msgstr "nem küldök ki tone burst jelet"
 
 #: src/satconfig.cpp:969
 msgid "sends modulated tone burst"
-msgstr "ayarli ton burst gonder "
+msgstr "modulált tone burst jelet küldök ki"
 
 #: src/satconfig.cpp:970
 msgid "sends unmodulated tone burst"
-msgstr "ayarsiz ton burst gonder"
+msgstr "modulálatlan tone burst jelet küldök ki"
 
 #: src/satconfig.cpp:977
 msgid "Disable DiSEqC"
-msgstr "DiSEqC kapali"
+msgstr "DiSEqC kikapcsolása"
 
 #: src/satconfig.cpp:978
 msgid "Use DiSEqC Version 1.0"
-msgstr "1.0 DiSEqC vesiyonunu kulan"
+msgstr "DiSEqC 1.0 használata"
 
 #: src/satconfig.cpp:979
 msgid "Use DiSEqC Version 1.1"
-msgstr "1.1 DiSEqC vesiyonunu kulan"
+msgstr "DiSEqC 1.1 használata"
 
 #: src/satconfig.cpp:980
 msgid "Use DiSEqC Version 1.2"
-msgstr "1.2 DiSEqC vesiyonunu kulan"
+msgstr "DiSEqC 1.2 használata"
 
 #: src/satconfig.cpp:988
 msgid "sends DiSEqC cmd A/A"
-msgstr "cmd A/A DiSEqC gonder"
+msgstr "DiSEqC A/A parancs kiküldése"
 
 #: src/satconfig.cpp:989
 msgid "sends DiSEqC cmd A/B"
-msgstr "cmd A/B DiSEqC gonder"
+msgstr "DiSEqC A/B parancs kiküldése"
 
 #: src/satconfig.cpp:990
 msgid "sends DiSEqC cmd B/A"
-msgstr "cmd B/A DiSEqC gonder"
+msgstr "DiSEqC B/A parancs kiküldése"
 
 #: src/satconfig.cpp:991
 msgid "sends DiSEqC cmd B/B"
-msgstr "cmd b/B DiSEqC gonder"
+msgstr "DiSEqC B/B parancs kiküldése"
 
 #: src/satconfig.cpp:992
 msgid "sends switch cmd 1"
-msgstr "cmd 1 degistiriciyi gonder"
+msgstr "kapcsoló parancs 1 elküldése"
 
 #: src/satconfig.cpp:993
 msgid "sends switch cmd 2"
-msgstr "cmd 2 degistiriciyi gonder"
+msgstr "kapcsoló parancs 2 elküldése"
 
 #: src/satconfig.cpp:994
 msgid "sends switch cmd 3"
-msgstr "cmd 3 degistiriciyi gonder"
+msgstr "kapcsoló parancs 3 elküldése"
 
 #: src/satconfig.cpp:995
 msgid "sends switch cmd 4"
-msgstr "cmd 4 degistiriciyi gonder"
+msgstr "kapcsoló parancs 4 elküldése"
 
 #: src/satconfig.cpp:996
 msgid "sends switch cmd 5"
-msgstr "cmd 5 degistiriciyi gonder"
+msgstr "kapcsoló parancs 5 elküldése"
 
 #: src/satconfig.cpp:997
 msgid "sends switch cmd 6"
-msgstr "cmd 6 degistiriciyi gonder"
+msgstr "kapcsoló parancs 6 elküldése"
 
 #: src/satconfig.cpp:998
 msgid "sends switch cmd 7"
-msgstr "cmd 7 degistiriciyi gonder"
+msgstr "kapcsoló parancs 7 elküldése"
 
 #: src/satconfig.cpp:999
 msgid "sends switch cmd 8"
-msgstr "cmd 8 degistiriciyi gonder"
+msgstr "kapcsoló parancs 8 elküldése"
 
 #: src/satconfig.cpp:1000
 msgid "sends switch cmd 9"
-msgstr "cmd 9 degistiriciyi gonder"
+msgstr "kapcsoló parancs 9 elküldése"
 
 #: src/satconfig.cpp:1001
 msgid "sends switch cmd 10"
-msgstr "cmd 10 degistiriciyi gonder"
+msgstr "kapcsoló parancs 10 elküldése"
 
 #: src/satconfig.cpp:1002
 msgid "sends switch cmd 11"
-msgstr "cmd 11 degistiriciyi gonder"
+msgstr "kapcsoló parancs 11 elküldése"
 
 #: src/satconfig.cpp:1003
 msgid "sends switch cmd 12"
-msgstr "cmd 12 degistiriciyi gonder"
+msgstr "kapcsoló parancs 12 elküldése"
 
 #: src/satconfig.cpp:1004
 msgid "sends switch cmd 13"
-msgstr "cmd 13 degistiriciyi gonder"
+msgstr "kapcsoló parancs 13 elküldése"
 
 #: src/satconfig.cpp:1005
 msgid "sends switch cmd 14"
-msgstr "cmd 14 degistiriciyi gonder"
+msgstr "kapcsoló parancs 14 elküldése"
 
 #: src/satconfig.cpp:1006
 msgid "sends switch cmd 15"
-msgstr "cmd 15 degistiriciyi gonder"
+msgstr "kapcsoló parancs 15 elküldése"
 
 #: src/satconfig.cpp:1007
 msgid "sends switch cmd 16"
-msgstr "cmd 16 degistiriciyi gonder"
+msgstr "kapcsoló parancs 16 elküldése"
 
 #: src/satconfig.cpp:1013
 msgid "sends no DiSEqC repeats"
-msgstr "DiSEqC tekrarlamasi gonderme"
+msgstr "nem küldök ki DiSEqC ismétlést"
 
 #: src/satconfig.cpp:1014
 msgid "One"
-msgstr "Biri"
+msgstr "Egy"
 
 #: src/satconfig.cpp:1014
 msgid "sends one repeat"
-msgstr "tekrarlamanin birini gonder"
+msgstr "egy ismétlést küldök ki"
 
 #: src/satconfig.cpp:1015
 msgid "Two"
-msgstr "iki"
+msgstr "Kettö"
 
 #: src/satconfig.cpp:1015
 msgid "sends two repeats"
-msgstr "ikin ci tekrarlamayi gonder"
+msgstr "két ismétlést küldök ki"
 
 #: src/satconfig.cpp:1016
 msgid "Three"
-msgstr ""
+msgstr "Három"
 
 #: src/satconfig.cpp:1016
 msgid "sends three repeats"
-msgstr "uctane tekrarlama gonder"
+msgstr "három ismétlést küldök ki"
 
 #: src/scan.cpp:35
 msgid "auto scan"
-msgstr "Otomatik tarama"
+msgstr "automata keresés"
 
 #: src/scan.cpp:35
 msgid "open automatic transponder scan"
-msgstr "otamatik  transponder taranmasini ac"
+msgstr "automata TP keresö megnyitása"
 
 #: src/scan.cpp:36
 msgid "manual scan.."
-msgstr "Kendi  seceneginize gore tarama"
+msgstr "kézi keresés.."
 
 #: src/scan.cpp:36
 msgid "open manual transponder scan"
-msgstr " manual transponder taranmasi"
+msgstr "kézi keresö megnyitása"
 
 #: src/scan.cpp:37
 msgid "leave transponder scan"
-msgstr "transponder taranmasni terket"
+msgstr "TP keresö elhagyása"
 
 #: src/scan.cpp:214
 msgid "automatic"
-msgstr "Otomatik"
+msgstr "automatikus"
 
 #: src/scan.cpp:239
 msgid ""
 "To begin searching for a valid satellite press OK, or choose your wished "
 "satellite manually and press OK"
 msgstr ""
-"To begin searching for a valid satellite press OK, or choose your wished "
-"satellite manually and press OK"
+"Egy üzemelö hold kereséséhez nyomd meg az OK, vagy válaszd ki Te magad a "
+"kívánt müholdat, melyet meg kéne keressek, majd nyomi az OK-i!"
 
 #: src/scan.cpp:242
 msgid ""
 "To begin searching for a valid cable provider press OK, or choose your "
 "wished cable provider manually and press OK"
 msgstr ""
-"To begin searching for a valid cable provider press OK, or choose your "
-"wished cable provider manually and press OK"
+"Egy üzemelö kábel-szolgáltató kereséséhez nyomd meg az OK, vagy válaszd ki "
+"Te magad a amit meg kéne keressek, majd nyomi az OK-i!"
 
 #: src/scan.cpp:308
 msgid ""
 "A valid transponder has been found. Verify that the right network is selected"
-msgstr ""
-"A valid transponder has been found. Verify that the right network is selected"
+msgstr "Találtam egy müködö TP-t! Azért nézd meg hogy valóban ez kell-e neked!"
 
 #: src/scan.cpp:529
 msgid ""
@@ -2139,40 +2126,41 @@ msgid ""
 "antenna-/cable-setup or try manual search if its some obscure satellite/"
 "network."
 msgstr ""
-"Butun taninan transponder tarandi , ve hic bir transpondr'a kitlenemedi , "
-"uydu antninizi /kablonuzu-kontrol edin ve ya tek frakan ayrai yapip arayin  "
-"ve ya baska uydu/ag aramasi yaptirin"
+"Gáz van. Mindent megtettem, minden lehetséges TP-t leellenöriztem, de sajna "
+"semmit sem találtam. :( Nézd meg hogy az antenna/kábel beállítások jók-e, "
+"vagy ha nem hiszel nekem, akkor próbáld meg a kézi keresést is, hátha az "
+"segít (bár nem hiszem)."
 
 #: src/scan.cpp:536
 msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try another satellite/network."
 msgstr ""
-"Butun taninan transponder tarandi , ve hic bir transpondr'a kitlenemedi , "
-"uydu anteninizi /kablonuzu-kontrol edin ve ya baska uydu ve ya baska ag "
-"seciniz."
+"Gáz van. Mindent megtettem, minden lehetséges TP-t leellenöriztem, de sajna "
+"semmit sem találtam. :( Nézd meg hogy az antenna/kábel beállítások jók-e, "
+"vagy próbálkozz egy másik müholdal."
 
 #: src/scan.cpp:545
 msgid "Search in progress "
-msgstr "Tarama yapiyor"
+msgstr "Keresek, szörcsölök, türelem"
 
 #: src/scan.cpp:657
 #, c-format
 msgid "%02i minutes and %02i seconds left"
-msgstr "%02i dakika ve %02i saniye kaldi"
+msgstr "Már csak %02i perc és %02i mp-ig légy türelemmel."
 
 #: src/scan.cpp:659
 #, c-format
 msgid "%02i seconds left"
-msgstr "%02i saniye kaldi"
+msgstr "Már csak %02i mp van hátra! Mindjárt kész!"
 
 #: src/scan.cpp:750
 msgid "Transponder Scan"
-msgstr "Transponder taramasi"
+msgstr "Transzponder keresés"
 
 #: src/scan.cpp:875
 msgid "Scan is in progress... please wait"
-msgstr "Uydu taramasi yapiliyor ... lutfen biraz bekleyin"
+msgstr "Nyugi, keresek... türelem."
 
 #: src/scan.cpp:879
 #, c-format
@@ -2181,177 +2169,180 @@ msgid ""
 "Services, %i new Radio Services and %i new Data Services. %i Transponders "
 "within %i Services scanned."
 msgstr ""
-"Uydu taramasi biti ve  buldu %i yeni Transponder,  %i  ve yeni TV servisi, %"
-"i yeni Radio servisi ve %i yeni data servisi, %i transponder beklemede %i "
-"servis tarandi"
+"Na végre! A TP keresést befejeztem, és képzeld miket következöket találtam: %"
+"i db új TP-t; %i új TV csatornát; %i új Rádió csatit; %i új adat csatornát "
+"(de minek?). Ha tudni akarod, összesen %i TP-t néztem át, azokban pedig %i "
+"csatornát ellenöriztem."
 
 #: src/scan.cpp:886
 msgid "Done."
-msgstr "indirdi"
+msgstr "Kész!"
 
 #: src/scan.cpp:891
 msgid "Scan is in finished, press ok to close window"
-msgstr "Tarama tamamlandi   pencereyi kapatmak icin OK tusuna basin"
+msgstr "Részemröl ennyi lenne, végeztem, OK-val csukd be az ablakot."
 
 #: src/setup_harddisk.cpp:171
 msgid "harddisk setup..."
-msgstr "harddisk krulumu..."
+msgstr "HDD beállítások..."
 
 #: src/setup_harddisk.cpp:260
 msgid "Are you SURE that you want to format this disk?\n"
-msgstr "eminmisiniz  diski format cekmek icin?\n"
+msgstr "Biztos hogy le akarod formatálni ezt a lemezt?\n"
 
 #: src/setup_harddisk.cpp:261 src/setup_harddisk.cpp:274
 #: src/setup_harddisk.cpp:295 src/setup_harddisk.cpp:305
 #: src/setup_harddisk.cpp:343 src/setup_harddisk.cpp:354
 msgid "formatting harddisk..."
-msgstr "diski formatlaniyor..."
+msgstr "formázom a merevlemezt... türelem..."
 
 #: src/setup_harddisk.cpp:272
 msgid ""
 "There's data on this harddisk.\n"
 "You will loose that data. Proceed?"
 msgstr ""
-"su an harddiskte data var .\n"
-"devam ederseniz data yi kaybedersiniz.devami?"
+"A HDD-n adatokat találtam.\n"
+"Ha folytatjuk ezek az adatok elvesznek. Mehet?"
 
 #: src/setup_harddisk.cpp:294
 msgid ""
 "please wait while initializing harddisk.\n"
 "This might take some minutes.\n"
 msgstr ""
-"lutfen bekleyin harddisk tanilinyor.\n"
-" bu bir kac dakika zaman alir\n"
+"várj egy kicsit, elökészítem a HDD-t.\n"
+"Ez akár pár percig is eltarthat.\n"
 
 #: src/setup_harddisk.cpp:304
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
-msgstr "sorry, couldn't find sfdisk utility to partition harddisk."
+msgstr ""
+"sajnos nem talállom az sfdisk proggit amivel meg tudnám partíciónálni a HDD-"
+"t."
 
 #: src/setup_harddisk.cpp:342
 msgid "creating filesystem failed."
-msgstr "yeni dosyasistemi yapilamadi."
+msgstr "nem sikerült létrehoznom a fájlrendszert. :("
 
 #: src/setup_harddisk.cpp:353
 msgid "successfully formated your disk!"
-msgstr "diskiniz basarili format cekildi !"
+msgstr "a HDD-et sikeresen megformáztam!"
 
 #: src/setup_harddisk.cpp:386
 msgid "(error reading information)"
-msgstr "(infarmatsiyo okunurken hata oldu)"
+msgstr "(hiba az infó beolvasásakor)"
 
 #: src/setup_harddisk.cpp:388
 msgid "uninitialized - format it to use!"
-msgstr "uninitialized - format it to use!"
+msgstr "nincs inicializálva - használat elött le kell formatálni!"
 
 #: src/setup_harddisk.cpp:390
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
-msgstr "su an kulanilan, %d.%03d GB (~%d dakika) yer kaldi"
+msgstr "Összesen %d.%03d GB (~%d perc) szabad hely van a HDD-n."
 
 #: src/setup_harddisk.cpp:392
 msgid "initialized, but unknown filesystem"
-msgstr "duseniyor, ama taninmayan dosyasistemi"
+msgstr "inicializálva van, azonban ismeretlen a fájlrendszer"
 
 #: src/setup_harddisk.cpp:455
 msgid "could not unmount the filesystem... "
-msgstr ""
+msgstr "nem bírom leszedni a fájlrendszert..."
 
 #: src/setup_harddisk.cpp:456 src/setup_harddisk.cpp:468
 #: src/setup_harddisk.cpp:490
-#, fuzzy
 msgid "check filesystem..."
-msgstr "yeni dosyasistemi yapilamadi."
+msgstr "ellenörzöm a fájlrendszert..."
 
 #: src/setup_harddisk.cpp:467
-#, fuzzy
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
-msgstr "sorry, couldn't find sfdisk utility to partition harddisk."
+msgstr ""
+"sajnos nem találom az fsck.ext3 proggit, így nem tudom leellenörizni az ext3 "
+"fájlrendszert."
 
 #: src/setup_harddisk.cpp:489
 msgid "not supportet filesystem for check."
-msgstr ""
+msgstr "nem támogatott fájlrendszer"
 
 #: src/setup_language.cpp:31
 msgid "Language Setup"
-msgstr "Dil secimi ayari"
+msgstr "Nyelv beállítások"
 
 #: src/setup_language.cpp:36
 msgid "Language:"
-msgstr "Dil secimi"
+msgstr "Nyelv:"
 
 #: src/setup_language.cpp:46
 msgid "select your language (left, right)"
-msgstr "Dil seciminizi yapin (sola , sag)"
+msgstr "válaszd ki a kívánt nyelvet (< / >)"
 
 #: src/setup_language.cpp:87
 msgid "save changes and close window"
-msgstr "Degisikligi hafizaya al ve pencereyi kapat"
+msgstr "változások mentése és ablak becsukása"
 
 #: src/setup_language.cpp:95
 msgid "leave language setup (no changes are saved)"
-msgstr "Dil secimi ayarindan cik (hafizada bir degisiklik yok)"
+msgstr "Nyelv menü elhagyása (nem fogok menteni semmit)"
 
 #: src/setup_lcd.cpp:48
 msgid "LC-Display Setup"
-msgstr "LC-Ekran ayari"
+msgstr "LCD kijelzö beállítása"
 
 #: src/setup_lcd.cpp:62 src/setup_osd.cpp:53
 msgid "Brightness:"
-msgstr "sefafligi:"
+msgstr "Fényerö:"
 
 #: src/setup_lcd.cpp:67 src/setup_osd.cpp:66
 msgid "Contrast:"
-msgstr "contrast"
+msgstr "Kontraszt:"
 
 #: src/setup_lcd.cpp:72
 msgid "Standby:"
-msgstr "Standby:"
+msgstr "Készenlét:"
 
 #: src/setup_lcd.cpp:80
 msgid "set LCD brightness ( left / right )"
-msgstr "LCD ekraninin sefafligi (sol/sag )"
+msgstr "LCD fényerö beállítása (< / >)"
 
 #: src/setup_lcd.cpp:87
 msgid "set LCD contrast ( left / right )"
-msgstr "LCD ekraninin kontrasi (sol/sag )"
+msgstr "LCD kontraszt beállítása (< / >)"
 
 #: src/setup_lcd.cpp:94
 msgid "set LCD brightness for Standby Mode ( left / right )"
-msgstr "LCD ekrani Standby de sefafligi modu (sol/ sag )"
+msgstr "LCD fényerö beállítása Készenléti módban (< / >)"
 
 #: src/setup_lcd.cpp:100
 msgid "Inverted: "
-msgstr "Inversion:"
+msgstr "Invertálás:"
 
 #: src/setup_lcd.cpp:102
 msgid "enable/disable inverted lcd (ok)"
-msgstr "Acik/Kapali inversion lcd (ok)"
+msgstr "LCD invertálásának engedélyezése/letiltása (OK)"
 
 #: src/setup_lcd.cpp:111 src/setup_osd.cpp:83 src/setup_rc.cpp:98
 #: src/setupnetwork.cpp:115
 msgid "close window and save changes"
-msgstr "Pencereyi kapat (degisilikler hafizaya alindi)"
+msgstr "változások mentése és ablak bezárása"
 
 #: src/setup_lcd.cpp:119 src/setup_osd.cpp:92 src/setup_rc.cpp:106
 #: src/setupnetwork.cpp:125
 msgid "close window (no changes are saved)"
-msgstr "Pencereyi kapat (degisklikler hafizaya alinmadi)"
+msgstr "ablak becsukása (nem fogok semmit menteni)"
 
 #: src/setup_osd.cpp:22
 msgid "Show OSD on EIT Update"
-msgstr "OSD icinde EIT Update goster"
+msgstr "EIT változáskor mutassam az OSD-t?"
 
 #: src/setup_osd.cpp:25
 msgid "shows OSD when now/next info is changed"
-msgstr "OSD degistigi zaman simdi/sonra degisikligi goster"
+msgstr "feldobom az OSD-t ha változik a most/köv infó tartalma"
 
 #: src/setup_osd.cpp:30
 msgid "Show Console on Framebuffer"
-msgstr "Show Console on Framebuffer"
+msgstr "Konzol megnyitása a Framebuffer-en"
 
 #: src/setup_osd.cpp:33
 msgid "shows the linux console on TV"
-msgstr "Linux consulunu TV de goster"
+msgstr "Linux konzol megnyitása a TV-n"
 
 #: src/setup_osd.cpp:40
 msgid "Alpha:"
@@ -2359,67 +2350,67 @@ msgstr "Alpha:"
 
 #: src/setup_osd.cpp:47
 msgid "change the transparency correction"
-msgstr "transprant degistirme yeri"
+msgstr "áttettszöség megváltoztatása"
 
 #: src/setup_osd.cpp:60
 msgid "change the brightness correction"
-msgstr "parlakligi ayarlama"
+msgstr "fényerö megváltoztatása"
 
 #: src/setup_osd.cpp:73
 msgid "change the contrast"
-msgstr "kontrasini degistir"
+msgstr "Kontraszt megváltoztatása"
 
 #: src/setup_rc.cpp:36
 msgid "Remotecontrol Setup"
-msgstr "Uzaktan kumanda ayarlari "
+msgstr "Távirányító beállítások"
 
 #: src/setup_rc.cpp:49
 msgid "Repeat Rate:"
-msgstr "Rate tekrarla:"
+msgstr "Ismétlési sebesség:"
 
 #: src/setup_rc.cpp:54
 msgid "Repeat Delay:"
-msgstr "Tekrarlama bekletiliyor"
+msgstr "Ismétlési késleltetés:"
 
 #: src/setup_rc.cpp:62
 msgid "set RC repeat rate ( left / right )"
-msgstr "Set RC repeat rate ( left / right )"
+msgstr "állítsd be a TK ismétlési sebességét ( < / >)"
 
 #: src/setup_rc.cpp:69
 msgid "set RC repeat delay ( left / right )"
-msgstr "Set RC repeat delay ( left / right )"
+msgstr "állítsd be a TK ismétlési késleltetését ( < / >)"
 
 #: src/setup_rc.cpp:79
 msgid "select your favourite rc style (ok)"
-msgstr "sizin favori seciminizin rc  tipi (ok)"
+msgstr "válaszd ki a kedvenc TK stílust (ok)"
 
 #: src/setupnetwork.cpp:32
 msgid "Network setup"
-msgstr "ag ayar yeri"
+msgstr "Hálózati beállítások"
 
 #: src/setupnetwork.cpp:57
 msgid "enter IP Adress of the box (0..9, left, right)"
-msgstr "cihazin IP adresini yazin (0..9,sol,sag)"
+msgstr "add meg a DreamBox IP számát (0..9, <, >)"
 
 #: src/setupnetwork.cpp:71
 msgid "enter netmask of your network (0..9, left, right)"
-msgstr "ag ayarinin netmask numarasini yazin (0..9, sol, sag)"
+msgstr "add meg a DreamBox hálózati maszk számát (0..9, <, >)"
 
 #: src/setupnetwork.cpp:85
 msgid "enter your domain name server (0..9, left, right)"
-msgstr "sizin sorverin domain ismini yazin (0..9, sol, sag)"
+msgstr "add meg a hálózatod domain név szerverének számát (0..9, <, >)"
 
 #: src/setupnetwork.cpp:99
 msgid "enter ip of your gateway (0..9, left, right)"
-msgstr "ip ve ya gateway numarasini yazin (0..9, sol, sag)"
+msgstr "add meg az átjáród IP számát (0..9, <, >)"
 
 #: src/setupnetwork.cpp:107
 msgid "enable/disable network config (ok)"
-msgstr "ag ayralarini  ac/kapat (ok)"
+msgstr "hálózati beállítások engedélyezése/letiltása (OK)"
 
 #: src/setupvideo.cpp:31
 msgid "Video Setup"
-msgstr "Video ayarlari "
+msgstr "Kép beállítások"
 
 #: src/setupvideo.cpp:46
 msgid "FBAS"
@@ -2431,185 +2422,185 @@ msgstr "RGB"
 
 #: src/setupvideo.cpp:48
 msgid "SVideo"
-msgstr "S Video"
+msgstr "Svideo"
 
 #: src/setupvideo.cpp:50
 msgid "choose colorformat ( left, right )"
-msgstr "Renk ayari icin (sol, sag  )"
+msgstr "válassz színformátumot (< / >)"
 
 #: src/setupvideo.cpp:63
 msgid "choose aspect ratio ( left, right )"
-msgstr "Choose aspect ratio ( left, right )"
+msgstr "válassz képarányt (< / >)"
 
 #: src/setupvideo.cpp:64
 msgid "4:3 letterbox"
-msgstr "4:3 Letterbox"
+msgstr "4:3 ablakos"
 
 #: src/setupvideo.cpp:65
 msgid "4:3 panscan"
-msgstr "4:3 Panscan"
+msgstr "4:3 nagyított"
 
 #: src/setupvideo.cpp:66
 msgid "16:9 (PIN8)"
-msgstr "16:9 (pin8)"
+msgstr "16:9 (Pin8)"
 
 #: src/setupvideo.cpp:75
 msgid "save settings and leave video setup"
-msgstr "Havizaya al ve video ayarlarindan cik"
+msgstr "változások mentése, majd kép beállítások elhagyása"
 
 #: src/setupvideo.cpp:84
 msgid "leave video setup (no changes are saved)"
-msgstr "Video ayarlari cik (Yaptiginiz degisikler islenmedi)"
+msgstr "Kép beállítások elhagyása (nem mentek semmit)"
 
 #: src/sselect.cpp:37
 msgid "service selector"
-msgstr "Servis secimi"
+msgstr "szolgáltatás kiválasztó"
 
 #: src/sselect.cpp:38
 msgid "switch to next bouquet"
-msgstr "Baska bouqet gecmek icin"
+msgstr "Ugrás a következö csomaghoz"
 
 #: src/sselect.cpp:39
 msgid "switch to previous bouquet"
-msgstr "switch to previous bouquet"
+msgstr "Ugrás vissza az elözö csomaghoz"
 
 #: src/sselect.cpp:40
 msgid "go one dir path up"
-msgstr "go one dir path up"
+msgstr "nézzük meg a következö könyvtárat"
 
 #: src/sselect.cpp:41
 msgid "shows the EPG selector for the highlighted channel"
-msgstr "Kanal bilgilerini (EPG) goster "
+msgstr "megmutatja a kiválasztott csati EPG listáját"
 
 #: src/sselect.cpp:42
 msgid "show service selector menu"
-msgstr "Menu secimi icin servisi goster"
+msgstr "megmutatja a szolgáltatás kiválasztó menüt"
 
 #: src/sselect.cpp:43
 msgid "showFavourite"
-msgstr "Favori'leri goster"
+msgstr "Zsánerek megmutatása"
 
 #: src/sselect.cpp:44
 msgid "add Service"
-msgstr "Servisi hafizaya al"
+msgstr "új csatorna"
 
 #: src/sselect.cpp:45
 msgid "add Service to Favourite"
-msgstr "bu servisi  fafori listesine al"
+msgstr "csatorna felvitele a Zsánerek közé"
 
 #: src/sselect.cpp:49
 msgid "toggle between classic and multi column style"
-msgstr "toggle between classic and multi column style"
+msgstr "váltás a klasszikus és a több oszlopos stílus között"
 
 #: src/sselect.cpp:50
 msgid "toggle focus between service and bouquet list"
-msgstr "toggle focus between service and bouquet list"
+msgstr "váltás szolgáltatás és csomag nézet között"
 
 #: src/streaminfo.cpp:122
 msgid "album"
-msgstr ""
+msgstr "album"
 
 #: src/streaminfo.cpp:124
 msgid "title"
-msgstr "title"
+msgstr "cím"
 
 #: src/streaminfo.cpp:126
 msgid "artist"
-msgstr "artist"
+msgstr "elöadó"
 
 #: src/streaminfo.cpp:128
 msgid "genre"
-msgstr "genre"
+msgstr "korosztály"
 
 #: src/streaminfo.cpp:130
 msgid "year"
-msgstr ""
+msgstr "év"
 
 #: src/streaminfo.cpp:195 src/streaminfo.cpp:206 src/streaminfo.cpp:218
 #: src/streaminfo.cpp:230 src/streaminfo.cpp:242 src/streaminfo.cpp:354
 #: src/streaminfo.cpp:385
 msgid "none"
-msgstr "yok"
+msgstr "nincs"
 
 #: src/streaminfo.cpp:282
 msgid "Video format:"
-msgstr "Video format"
+msgstr "Kép formátum:"
 
 #: src/streaminfo.cpp:349
 msgid "supported coding systems:"
-msgstr "Bu kodlamayi destekliyor"
+msgstr "támogatott kódolási rendszerek:"
 
 #: src/streaminfo.cpp:381
 msgid "in use:"
-msgstr "su an kulanliyor :"
+msgstr "használatban:"
 
 #: src/streaminfo.cpp:439 src/streaminfo.cpp:477
 msgid "no information available"
-msgstr "Su an bilgi gosterilemiyor"
+msgstr "nincs elérhetõ információm"
 
 #: src/streaminfo.cpp:497
 msgid "Service information (right)"
-msgstr "servis infarmasyonu (sag)"
+msgstr "Csatorna infó (>)"
 
 #: src/streaminfo.cpp:498
 msgid "Scramble system information (left, right)"
-msgstr "kodalma informasyon sistemi (sol, sag)"
+msgstr "Kódolási rendszer infók (< / >)"
 
 #: src/streaminfo.cpp:499
 msgid "Transponder information (left)"
-msgstr "transponder  infarmasyonu (sol)"
+msgstr "Transzponder infók (<)"
 
 #: src/timer.cpp:21
 msgid "Timerlist"
-msgstr "Saat listesi"
+msgstr "Idözítések listája"
 
 #: src/timer.cpp:452
 msgid ""
 "You would to delete the running event..\n"
 "this stops the timer mode (recording)!"
-msgstr ""
-"Yaptiginiz ayari silmek mi istiyorsunuz..  yaparsaniz saat ayarini durdurur "
-"ve (cekimide)!"
+msgstr "Törölni akarod a futó felvételt? (akkor minek dolgoztam eddig?)"
 
 #: src/timer.cpp:453
 msgid "Delete event from timerlist"
-msgstr "Bu ayari listeden sil"
+msgstr "Program törlése a Timer listából"
 
 #: src/timer.cpp:454
 msgid "Really delete this event?"
-msgstr "Yaptiginiz ayari silmek mi istiyorsunuz?"
+msgstr "Biztos hogy ezt törölni akarod??"
 
 #: src/timer.cpp:458
 msgid ""
 "You would to update the running event.. \n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"You would to update the running event.. this stops the timer mode "
-"(recording)!"
+"Biztos hogy módosítani akarod a futó programot?\n"
+"(Ha igen, akkor meg kell állítsam a felvételt!)"
 
 #: src/timer.cpp:459 src/timer.cpp:974
 msgid "Update event in timerlist"
-msgstr "saat listesini guncelestirin"
+msgstr "Program módosítása a listában"
 
 #: src/timer.cpp:460
 msgid "Really update this event?"
-msgstr "Really update this event?"
+msgstr "Biztosan módosítani szeretnéd a programot?"
 
 #: src/timer.cpp:516
 msgid "This event is already in the timerlist."
-msgstr "Bu saat ayari su an listede var"
+msgstr "Hékás! Ez a müsor már benne van a Timer listában!"
 
 #: src/timer.cpp:516 src/timer.cpp:537 src/timer.cpp:1047
 msgid "Add event to timerlist"
-msgstr "Saat ayarIarini hafiza listesine al"
+msgstr "Müsor felvétele a Timer listába"
 
 #: src/timer.cpp:528
 msgid "The Endtime overlaps with an event in the timerlist"
-msgstr "The Endtime overlaps with an event in the timerlist"
+msgstr ""
+"Ez így nem lesz jó! A müsor vége belelóg egy másik programozott felvételbe. "
+"Így nem tudom felvenni."
 
 #: src/timer.cpp:528
 msgid "Set Stop Time"
-msgstr ""
+msgstr "Add meg a müsor végének az idejét"
 
 #: src/timer.cpp:537
 msgid ""
@@ -2617,258 +2608,268 @@ msgid ""
 "The event overlaps with another event in the timerlist\n"
 "Please check manually the timerlist."
 msgstr ""
-"bu servis saat listesine alinamiyor.\n"
-"lutfen baska saat ayarini  saat listesine doldurun\n"
-"lutfen manual saat listesini kontroledin"
+"Sajna, de ezt a müsort nem tudom felvenni a timer listába.\n"
+"A program belecsúszik egy másik programba.\n"
+"Nézd meg a listát és Te is fogod látni."
 
 #: src/timer.cpp:561
 msgid "no description avail"
-msgstr "Yazilim yok veya hazir degil"
+msgstr "sajna nincs adatom ehhez"
 
 #: src/timer.cpp:591
 msgid "timerView"
-msgstr "Saat'a bakma"
+msgstr "Timer nézet"
 
 #: src/timer.cpp:592
 msgid "remove this entry from timer list"
-msgstr "Yaptiginiz saat ayarini listeden silin"
+msgstr "Program törlése a timer listából"
 
 #: src/timer.cpp:777
 msgid "January"
-msgstr "Ocak"
+msgstr "Január"
 
 #: src/timer.cpp:777
 msgid "February"
-msgstr "Subat"
+msgstr "Február"
 
 #: src/timer.cpp:777
 msgid "March"
-msgstr "Mart"
+msgstr "Március"
 
 #: src/timer.cpp:778
 msgid "April"
-msgstr "Nisan"
+msgstr "Április"
 
 #: src/timer.cpp:778
 msgid "May"
-msgstr "Mayis"
+msgstr "Május"
 
 #: src/timer.cpp:778
 msgid "June"
-msgstr "Haziran"
+msgstr "Június"
 
 #: src/timer.cpp:778
 msgid "July"
-msgstr "Temmuz"
+msgstr "Július"
 
 #: src/timer.cpp:779
 msgid "August"
-msgstr "Agustos"
+msgstr "Augusztus"
 
 #: src/timer.cpp:779
 msgid "September"
-msgstr "Eylul"
+msgstr "Szeptember"
 
 #: src/timer.cpp:779
 msgid "October"
-msgstr "Ekim"
+msgstr "Október"
 
 #: src/timer.cpp:780
 msgid "November"
-msgstr "Kasim"
+msgstr "November"
 
 #: src/timer.cpp:780
 msgid "December"
-msgstr "Aralik"
+msgstr "December"
 
 #: src/timer.cpp:781
 msgid "Sunday"
-msgstr "Pazar"
+msgstr "Vasárnap"
 
 #: src/timer.cpp:781
 msgid "Monday"
-msgstr "Pazartesi"
+msgstr "Hétfö"
 
 #: src/timer.cpp:781
 msgid "Tuesday"
-msgstr "Sali"
+msgstr "Kedd"
 
 #: src/timer.cpp:781
 msgid "Wednesday"
-msgstr "Carsamba"
+msgstr "Szerda"
 
 #: src/timer.cpp:782
 msgid "Thursday"
-msgstr "persembe"
+msgstr "Csütörtök"
 
 #: src/timer.cpp:782
 msgid "Friday"
-msgstr "Cuma"
+msgstr "Péntek"
 
 #: src/timer.cpp:782
 msgid "Saturday"
-msgstr "Cumartesi"
+msgstr "Szombat"
 
 #: src/timer.cpp:783
 msgid "Sun"
-msgstr "Paz"
+msgstr "Vas"
 
 #: src/timer.cpp:783
 msgid "Mon"
-msgstr "Pazt"
+msgstr "Hét"
 
 #: src/timer.cpp:783
 msgid "Tue"
-msgstr "Sali"
+msgstr "Ke"
 
 #: src/timer.cpp:783
 msgid "Wed"
-msgstr "cars"
+msgstr "Sze"
 
 #: src/timer.cpp:784
 msgid "Thu"
-msgstr "pers"
+msgstr "Csüt"
 
 #: src/timer.cpp:784
 msgid "Fri"
-msgstr "Cum"
+msgstr "Pént"
 
 #: src/timer.cpp:784
 msgid "Sat"
-msgstr "uydu"
+msgstr "Szo"
 
 #: src/timer.cpp:884
 msgid "Timer list"
-msgstr "Saat listesi"
+msgstr "Timer lista"
 
 #: src/timer.cpp:923
 msgid "record DVR"
-msgstr "DVR cekimi"
+msgstr "PVR felvétel"
 
 #: src/timer.cpp:974
 msgid ""
 "Invalid begin or end time.!\n"
 "Please check time and date"
 msgstr ""
-"Saat 'in ilk ve ya son yerleri doldurulmamis.!\n"
-"Lutfen saati ve tarihi kontrol edin"
+"Valami nem stimmel a kezdési vagy a vége idöpontokkal!\n"
+"Nézd át az adatokat!"
 
 #: src/timer.cpp:1047
 msgid ""
 "Invalid begin or end time.!\n"
 "You can not add this to timerlist"
 msgstr ""
-"Saat 'in ilk veya sonyerleri doldurulmamis.!\n"
-"bu ayari zaman listesine alamasiniz"
+"Valami nem stimmel a kezdési vagy a vége idöpontokkal!\n"
+"Nem tudom a listához adni a programot!"
 
 #: src/timer.cpp:1098
 msgid "choose service"
-msgstr "servisi secenegi"
+msgstr "válassz csatornát"
 
 #: src/timer.cpp:1217
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
 msgstr ""
+"Nana! Sajna de nem lehet kézzel a listához adni egy idöeltolásos anyagot.\n"
+"Zárd be a Timer-t és az EPG listából válaszd ki azt a müsort amit fel akarsz "
+"venni!"
 
 #: src/timer.cpp:1217 src/rotorconfig.cpp:918
 msgid "Information"
-msgstr "Bilgiler"
+msgstr "Információ"
 
 #: src/upgrade.cpp:102
 msgid "Software upgrade.."
-msgstr "Softwere yukleme.."
+msgstr "Szoftver frissítése.."
 
 #: src/upgrade.cpp:119
 msgid "Please select software version to upgrade to:"
-msgstr ""
+msgstr "Kérlek válaszd ki azt a szoftit amire frissíteni szeretnél:"
 
 #: src/upgrade.cpp:146
 msgid "manual upload"
-msgstr "Kendi  seceneginize upload yap"
+msgstr "kézi feltöltés"
 
 #: src/upgrade.cpp:162
 msgid "downloading catalog..."
-msgstr ""
+msgstr "lista letöltése..."
 
 #: src/upgrade.cpp:182
+#, fuzzy
 msgid "downloading changelog..."
-msgstr ""
+msgstr "lista letöltése..."
 
 #: src/upgrade.cpp:207
 msgid "downloading image..."
-msgstr ""
+msgstr "image fájl letöltése..."
 
 #: src/upgrade.cpp:370 src/upgrade.cpp:442 src/upgrade.cpp:456
 msgid "Error!"
-msgstr "Hata!"
+msgstr "Waffankúló! HIBA!"
 
 #: src/upgrade.cpp:435
 msgid "checking consistency of file..."
-msgstr ""
+msgstr "fájl konzisztencia ellenörzése..."
 
 #: src/upgrade.cpp:439 src/upgrade.cpp:441
 msgid "write error while downloading..."
-msgstr ""
+msgstr "letöltés közben írási hibát észleltem..."
 
 #: src/upgrade.cpp:453 src/upgrade.cpp:455
 msgid "Data error. The checksum didn't match."
-msgstr ""
+msgstr "Adat hiba. Az ellenörzö szám nem stimmol."
 
 #: src/upgrade.cpp:465
 msgid "Checksum OK. Ready to upgrade."
-msgstr ""
+msgstr "Letöltés OK. Készen állok a frissítésre."
 
 #: src/upgrade.cpp:467
 msgid "Do you really want to upgrade to the new version?"
-msgstr ""
+msgstr "Biztos hogy fel akarod a DreamBox-ot frissíteni az új szoftival?"
 
 #: src/upgrade.cpp:468
 msgid "Ready to upgrade"
-msgstr ""
+msgstr "Készen állok a frissítésre"
 
 #: src/upgrade.cpp:477
 msgid ""
 "Erasing...\n"
 "Please do not switch off box now!"
 msgstr ""
+"Frissítem magam...\n"
+"NEHOGY MOST KIKAPCSOLJ!!"
 
 #: src/upgrade.cpp:478 src/upgrade.cpp:521
 msgid "upgrade in progress"
-msgstr "upgrade (guncelestir) progress icinde"
+msgstr "frissítés folyamatban"
 
 #: src/upgrade.cpp:504
 msgid "upgrade failed with errorcode UD0"
-msgstr ""
+msgstr "Hopp! Nem sikerült a frissítés. UD0-ás hibám van!"
 
 #: src/upgrade.cpp:505 src/upgrade.cpp:543
 msgid "upgrade failed"
-msgstr ""
+msgstr "A frissítés sajna de nem sikerült"
 
 #: src/upgrade.cpp:520
 msgid ""
 "Writing software to flash...\n"
 "Please do not switch off box now!"
 msgstr ""
+"Most írom a szoftit a flash-be...\n"
+"NEHOGY MOST KIKAPCSOLJ!!"
 
 #: src/upgrade.cpp:528
 msgid ""
 "upgrade successful!\n"
 "restarting..."
 msgstr ""
+"A frissítés sikerült! HURRÁ!\n"
+"Újraindítom magamat..."
 
 #: src/upgrade.cpp:529
 msgid "upgrade ok"
-msgstr ""
+msgstr "frissítés rendben"
 
 #: src/upgrade.cpp:542
 msgid "upgrade failed with errorcode UA15"
-msgstr ""
+msgstr "Sajnos nem sikerült a frissítés. UA15-ös hibát érzékelek."
 
 #: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99
 #, fuzzy
 msgid "East"
-msgstr "artist"
+msgstr "elöadó"
 
 #: src/rotorconfig.cpp:56 src/rotorconfig.cpp:100
 msgid "West"
@@ -2877,7 +2878,7 @@ msgstr ""
 #: src/rotorconfig.cpp:70
 #, fuzzy
 msgid "North"
-msgstr "iptalet"
+msgstr "megszakítás"
 
 #: src/rotorconfig.cpp:71
 msgid "South"
@@ -2886,7 +2887,7 @@ msgstr ""
 #: src/rotorconfig.cpp:311 src/rotorconfig.cpp:367
 #, fuzzy
 msgid "delete me"
-msgstr "servisi sil"
+msgstr "csatorna törlése"
 
 #: src/rotorconfig.cpp:402 src/rotorconfig.cpp:405
 msgid "drive Motor East"
@@ -2911,7 +2912,7 @@ msgstr ""
 #: src/rotorconfig.cpp:496
 #, fuzzy
 msgid "position"
-msgstr "uydu/posusyonu"
+msgstr "Mühold pozíció"
 
 #: src/rotorconfig.cpp:496
 msgid "store new sat positions"
@@ -2928,12 +2929,12 @@ msgstr ""
 #: src/rotorconfig.cpp:498
 #, fuzzy
 msgid "drive to satellite"
-msgstr "isaretledgin uyduyu kaydir"
+msgstr "Kiválasztott mühód törlése"
 
 #: src/rotorconfig.cpp:498
 #, fuzzy
 msgid "drive to stored satellite"
-msgstr "one single satellite"
+msgstr "Add meg a mentett mühold pozícióját"
 
 #: src/rotorconfig.cpp:499
 msgid "drive to 0"
@@ -2974,7 +2975,7 @@ msgstr ""
 #: src/rotorconfig.cpp:503 src/rotorconfig.cpp:548
 #, fuzzy
 msgid "disable soft limits"
-msgstr "kaydirma modunu kapat"
+msgstr "mozgatás mód kikapcsolása"
 
 #: src/rotorconfig.cpp:504
 msgid "enable limits"
@@ -3012,7 +3013,7 @@ msgstr ""
 #: src/rotorconfig.cpp:537
 #, fuzzy
 msgid "recalc"
-msgstr "ozel"
+msgstr "spciális"
 
 #: src/rotorconfig.cpp:540
 msgid "store current pos as east soft limit"
@@ -3029,7 +3030,7 @@ msgstr ""
 #: src/rotorconfig.cpp:556
 #, fuzzy
 msgid "drive rotor to satellite"
-msgstr "one single satellite"
+msgstr "Add meg a mentett mühold pozícióját"
 
 #: src/rotorconfig.cpp:695
 msgid ""
@@ -3064,7 +3065,7 @@ msgstr ""
 #: src/rotorconfig.cpp:846
 #, fuzzy
 msgid "change storage Location or store"
-msgstr "kontrasini degistir"
+msgstr "Kontraszt megváltoztatása"
 
 #: src/rotorconfig.cpp:896
 #, c-format
@@ -3085,7 +3086,7 @@ msgstr ""
 #: src/setup_rfmod.cpp:19
 #, fuzzy
 msgid "RF-Modulator Setup"
-msgstr "motor ayari"
+msgstr "Rotor beállítások"
 
 #: src/setup_rfmod.cpp:24 src/setup_rfmod.cpp:165
 msgid "Test Pattern"
@@ -3100,8 +3101,9 @@ msgid "Sound enable"
 msgstr ""
 
 #: src/setup_rfmod.cpp:37
+#, fuzzy
 msgid "enable Sound"
-msgstr ""
+msgstr "mozgatás mód bekapcsolása"
 
 #: src/setup_rfmod.cpp:56
 #, fuzzy
@@ -3130,7 +3132,7 @@ msgstr ""
 #: src/setup_rfmod.cpp:93
 #, fuzzy
 msgid "change channel"
-msgstr "cik"
+msgstr "mégsem"
 
 #: src/setup_rfmod.cpp:117
 msgid "250Khz steps"
@@ -3139,12 +3141,12 @@ msgstr ""
 #: src/setup_rfmod.cpp:127
 #, fuzzy
 msgid "save settings and leave rf setup"
-msgstr "Havizaya al ve video ayarlarindan cik"
+msgstr "változások mentése, majd kép beállítások elhagyása"
 
 #: src/setup_rfmod.cpp:135
 #, fuzzy
 msgid "leave rf setup (no changes are saved)"
-msgstr "Video ayarlari cik (Yaptiginiz degisikler islenmedi)"
+msgstr "Kép beállítások elhagyása (nem mentek semmit)"
 
 #: src/setup_rfmod.cpp:165
 msgid "if you can read this your rfmod will not work."
@@ -3152,16 +3154,16 @@ msgstr ""
 
 #: src/enigma_event.cpp:17
 msgid "enigma event view"
-msgstr "enigma event view"
+msgstr "Enigma program nézet"
 
 #: src/enigma_event.cpp:18
 msgid "closes the Event View"
-msgstr ""
+msgstr "Program nézöke bezárása"
 
 #: src/enigma_event.cpp:227
 msgid "no info available"
-msgstr "Su an ulasilamiyor"
+msgstr "nincs róla infóm"
 
 #: src/enigma_event.cpp:235 src/enigma_event.cpp:244
 msgid "no description available"
-msgstr "Yazilim su an hazir degil"
+msgstr "nincs adatom"
