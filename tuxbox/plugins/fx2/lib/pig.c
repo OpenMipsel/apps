@@ -10,12 +10,15 @@
 #ifndef i386
 #include <dbox/avia_gt_pig.h>
 
+
 static	int			fd = -1;
 static	int			l_x = 0;
 static	int			l_y = 0;
 static	int			l_width = 0;
 static	int			l_height = 0;
-		int			fx2_use_pig = 1;
+	int			fx2_use_pig = 1;
+
+extern FBFillRect( int x, int y, int dx, int dy, unsigned char col );
 
 void	Fx2SetPig( int x, int y, int width, int height )
 {
@@ -29,6 +32,8 @@ void	Fx2SetPig( int x, int y, int width, int height )
 		avia_pig_set_pos(fd,x,y);
 	if (( width != l_height ) || ( height != l_height ))
 		avia_pig_set_size(fd,width,height);
+	
+	FBFillRect( x, y, width, height, 0 ); // Fill transp.. for dreambox
 	l_x=x;
 	l_y=y;
 	l_width=width;
@@ -48,6 +53,7 @@ void	Fx2ShowPig( int x, int y, int width, int height )
 	if ( fd == -1 )
 		return;
 
+	FBFillRect( x, y, width, height, 0x0 ); // fill transp for dreambox
 	l_x=x;
 	l_y=y;
 	l_width=width;
