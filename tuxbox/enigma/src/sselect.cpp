@@ -229,7 +229,11 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 
 void eServiceSelector::addService(const eServiceReference &ref)
 {
-	new eListBoxEntryService(services, ref, serviceentryflags);
+	int flags=serviceentryflags;
+	if ( ref.flags & eServiceReference::isDirectory)
+		flags &= ~ eListBoxEntryService::flagShowNumber;
+	
+	new eListBoxEntryService(services, ref, flags);
 }
 
 void eServiceSelector::addBouquet(const eServiceReference &ref)
