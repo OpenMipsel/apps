@@ -1,4 +1,6 @@
 // #define TIMESHIFT
+		// intial time to lag behind live
+#define TIMESHIFT_GUARD (1024*1024)
 #include <lib/dvb/servicedvb.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
@@ -51,6 +53,17 @@ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *ha
 		state=stateError;
 		eDebug("error opening %s (%m)", filename.c_str());
 	}
+	
+	if (livemode)
+	{
+		int fileend;
+		if (filelength > (TIMESHIFT_GUARD/1880))
+			fileend = filelength - (TIMESHIFT_GUARD/1880);
+		else
+			fileend = 0;
+		messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::seekreal, fileend));
+	}
+	
 
 	CONNECT(messages.recv_msg, eDVRPlayerThread::gotMessage);
 	
@@ -120,15 +133,22 @@ void eDVRPlayerThread::outputReady(int what)
 	if (buffer.empty())
 	{
 		eDebug("buffer empty, state %d", state);
-		outputsn->stop();
+ 		outputsn->stop();
 		if (state != stateFileEnd)
+		{
+			if (inputsn)
+				inputsn->start();
 			state=stateBuffering;
-		else
+		} else
 		{
 			if (!livemode)
 			{
 				eDebug("ok, everything played..");
 				handler->messages.send(eServiceHandlerDVB::eDVRPlayerThreadMessage(eServiceHandlerDVB::eDVRPlayerThreadMessage::done));
+			} else
+			{
+				eDebug("liveeof");
+				handler->messages.send(eServiceHandlerDVB::eDVRPlayerThreadMessage(eServiceHandlerDVB::eDVRPlayerThreadMessage::liveeof));
 			}
 		}
 	}
@@ -163,7 +183,8 @@ void eDVRPlayerThread::readMore(int what)
 				
 				if (::stat(tfilename.c_str(), &s) < 0)
 				{
-					state=stateFileEnd;
+					eDebug("no next file, stateFileEnd");
+					flushbuffer=1;
 					if (inputsn)
 						inputsn->stop();
 					next=0;
@@ -175,7 +196,7 @@ void eDVRPlayerThread::readMore(int what)
 		}
 	}
 	
-	if ((state == stateBuffering) && (buffer.size()>16384))
+	if (((state == stateBuffering) && (buffer.size()>16384)) || flushbuffer)
 	{
 		state=statePlaying;
 		outputsn->start();
@@ -212,6 +233,18 @@ eDVRPlayerThread::~eDVRPlayerThread()
 
 void eDVRPlayerThread::updatePosition()
 {
+	{
+		eLocker l(poslock);
+		int slice=0;
+		struct stat s;
+		filelength=0;
+		while (!stat((filename + (slice ? eString().sprintf(".%03d", slice) : eString(""))).c_str(), &s))
+		{
+			filelength+=s.st_size/1880;
+			slice++;
+		}
+	}
+	
 	if (state == stateFileEnd)
 	{
 		printf("file end reached, retrying..\n");
@@ -219,7 +252,6 @@ void eDVRPlayerThread::updatePosition()
 		if (inputsn)
 			inputsn->start();
 	}
-	printf("position update! hihi\n");
 }
 
 int eDVRPlayerThread::getPosition(int real)
@@ -335,7 +367,10 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 		{
 			slice=offset/slicesize;
 			if (openFile(slice))
+			{
+				printf("open slice %d failed\n", slice);
 				state=stateError;
+			}
 		}
 		
 		if (state != stateError)
@@ -391,6 +426,7 @@ void eServiceHandlerDVB::startPlayback(const eString &filename, int livemode)
 	decoder=new eDVRPlayerThread(filename.c_str(), this);
 	decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start, livemode));
 	flags=flagIsSeekable|flagSupportPosition;
+	state=statePlaying;
 	pcrpid = Decoder::parms.pcrpid;
 		// stop pcrpid
 	Decoder::parms.pcrpid = -1;
@@ -546,11 +582,9 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 		if (!recording)
 		{
 			char *filename=reinterpret_cast<char*>(cmd.parm);
+			current_filename=filename;
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 			eDVB::getInstance()->recBegin(filename, sapi ? sapi->service : eServiceReferenceDVB());
-#ifdef TIMESHIFT 
-			startPlayback(filename, 1);
-#endif
 			delete[] (filename);
 			recording=1;
 		} else
@@ -586,7 +620,14 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 		break;
 	case eServiceCommand::cmdSetSpeed:
 		if (!decoder)
-			return -1;
+		{
+#ifdef TIMESHIFT
+			if (recording)
+				startPlayback(current_filename, 1);
+			else
+#endif
+				return -1;
+		}
 		if ((state == statePlaying) || (state == statePause) || (state == stateSkipping))
 		{
 			if (cmd.parm < 0)
@@ -605,7 +646,14 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 		break;
 	case eServiceCommand::cmdSkip:
 		if (!decoder)
-			return -1;
+		{
+#ifdef TIMESHIFT
+			if (recording)
+				startPlayback(current_filename, 1);
+			else
+#endif
+				return -1;
+		}
 		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::skip, cmd.parm));
 		break;
 	case eServiceCommand::cmdSeekAbsolute:
@@ -992,6 +1040,9 @@ void eServiceHandlerDVB::gotMessage(const eDVRPlayerThreadMessage &message)
 	{
 		state=stateStopped;
 		serviceEvent(eServiceEvent(eServiceEvent::evtEnd));
+	} else if (message.type == eDVRPlayerThreadMessage::liveeof)
+	{
+		stopPlayback();
 	}
 }
 

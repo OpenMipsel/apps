@@ -86,6 +86,7 @@ class eServiceHandlerDVB: public eServiceHandler
 		enum
 		{
 			done,
+			liveeof,
 			status
 		};
 		int type;
@@ -96,6 +97,7 @@ class eServiceHandlerDVB: public eServiceHandler
 	};
 	eFixedMessagePump<eDVRPlayerThreadMessage> messages;
 	eDVRPlayerThread *decoder;
+	eString current_filename;
 	
 	void gotMessage(const eDVRPlayerThreadMessage &message);
 
