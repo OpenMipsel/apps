@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.4 2003/05/11 11:36:18 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.5 2003/05/11 15:24:26 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -48,9 +48,9 @@ extern tallchans allchans;   //  defined in zapit.cpp
 extern int found_transponders;
 extern int found_channels;
 extern std::map <t_channel_id, uint8_t> service_types;
-//extern uint32_t found_tv_chans;
-//extern uint32_t found_radio_chans;
-//extern uint32_t found_data_chans;
+extern uint32_t found_tv_chans;
+extern uint32_t found_radio_chans;
+extern uint32_t found_data_chans;
 
 /* zapit.cpp */
 extern CFrontend *frontend;
@@ -435,9 +435,9 @@ void *start_scanthread(void *)
 
 	scanBouquetManager = new CBouquetManager();
 	processed_transponders = 0;
- //	found_tv_chans = 0;
- //	found_radio_chans = 0;
- //	found_data_chans = 0;
+ 	found_tv_chans = 0;
+ 	found_radio_chans = 0;
+ 	found_data_chans = 0;
  	int32_t currentSatellitePosition = 0;
  	int32_t satellitePosition = 0;
 

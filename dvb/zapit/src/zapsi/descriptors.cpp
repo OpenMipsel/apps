@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.5 2003/05/09 11:09:14 digi_casi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.6 2003/05/11 15:24:26 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -40,6 +40,10 @@ std::string curr_chan_name;
 uint32_t found_transponders;
 uint32_t found_channels;
 std::string lastProviderName;
+uint32_t found_tv_chans;
+uint32_t found_radio_chans;
+uint32_t found_data_chans;
+std::string lastServiceName;
 std::map <t_channel_id, uint8_t> service_types;
 
 extern CFrontend *frontend;
@@ -454,13 +458,19 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		lastProviderName = providerName;
 		eventServer->sendEvent(CZapitClient::EVT_SCAN_PROVIDER, CEventServer::INITID_ZAPIT, (void *) lastProviderName.c_str(), lastProviderName.length() + 1);
 	}
-
+	
 	switch (service_type) {
 	case ST_DIGITAL_TELEVISION_SERVICE:
-	case ST_DIGITAL_RADIO_SOUND_SERVICE:
-	case ST_NVOD_REFERENCE_SERVICE:
-	case ST_NVOD_TIME_SHIFTED_SERVICE:
-	{
+ 		found_tv_chans++;
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_TV_CHAN, CEventServer::INITID_ZAPIT, &found_tv_chans, sizeof(found_tv_chans));
+ 		break;
+ 	case ST_DIGITAL_RADIO_SOUND_SERVICE:
+ 		found_radio_chans++;
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_RADIO_CHAN, CEventServer::INITID_ZAPIT, &found_radio_chans, sizeof(found_radio_chans));
+ 		break;
+ 	case ST_NVOD_REFERENCE_SERVICE:
+ 	case ST_NVOD_TIME_SHIFTED_SERVICE:
+ 	{
 		CBouquet* bouquet;
 		int bouquetId;
 
@@ -471,12 +481,20 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		else
 			bouquet = scanBouquetManager->Bouquets[bouquetId];
 
+ 		lastServiceName = serviceName;
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_SERVICENAME, CEventServer::INITID_ZAPIT, (void *) lastServiceName.c_str(), lastServiceName.length() + 1);
+
 		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, satelliteName, satellitePosition));
 		break;
 	}
-	default:
-		break;
-	}
+ 	case ST_DATA_BROADCAST_SERVICE:
+ 	case ST_RCS_MAP:
+ 	case ST_RCS_FLS:
+ 	default:
+ 		found_data_chans++;
+ 		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_DATA_CHAN, CEventServer::INITID_ZAPIT, &found_data_chans, sizeof(found_data_chans));
+ 		break;
+ 	}
 }
 
 /* 0x49 */
