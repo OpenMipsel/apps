@@ -33,7 +33,7 @@ eStreamWatchdog::eStreamWatchdog()
 	}
 	else
 	{
-		if ( ioctl(handle, EVENT_SET_FILTER, EVENT_ARATIO_CHANGE | EVENT_VCR_CHANGED ) < 0 )
+		if ( ioctl(handle, EVENT_SET_FILTER, EVENT_ARATIO_CHANGE | EVENT_VCR_CHANGED | EVENT_FRATE_CHANGE ) < 0 )
 		{
 			perror("ioctl");
 			close(handle);
@@ -62,18 +62,12 @@ void eStreamWatchdog::check(int)
 	int status;
 	while ( (status = read(handle, &event, eventSize)) == eventSize )
 	{
-		switch(event.event)
-		{
-			case EVENT_ARATIO_CHANGE:
-				reloadSettings();
-				break;
-			case EVENT_VCR_CHANGED:
-				if ( eDVB::getInstance()->getmID() < 5 ) // @ moment only dbox2
-					/*emit*/VCRActivityChanged( getVCRActivity() );
-				break;
-			default: 
-				eDebug("unspecified event %d from Event Device", event.event);
-		}
+		if (event.event & (EVENT_ARATIO_CHANGE|EVENT_FRATE_CHANGE))
+			reloadSettings();
+		
+		if (event.event & EVENT_VCR_CHANGED)
+			if ( eDVB::getInstance()->getmID() < 5 ) // @ moment only dbox2
+				/*emit*/VCRActivityChanged( getVCRActivity() );
 	}
 }
 
@@ -94,6 +88,7 @@ int eStreamWatchdog::getVCRActivity()
 void eStreamWatchdog::reloadSettings()
 {
 	FILE *bitstream=fopen("/proc/bus/bitstream", "rt");
+	int frate=0;
 	if (bitstream)
 	{
 		char buffer[100];
@@ -102,6 +97,8 @@ void eStreamWatchdog::reloadSettings()
 		{
 			if (!strncmp(buffer, "A_RATIO: ", 9))
 				aspect=atoi(buffer+9);
+			if (!strncmp(buffer, "F_RATE: ", 8))
+				frate=atoi(buffer+8);
 		}
 		fclose(bitstream);
 		switch (aspect)
@@ -116,8 +113,7 @@ void eStreamWatchdog::reloadSettings()
 		}
 	}
 	
-	eDebug("Aratio changed");			
-		/*emit*/ AspectRatioChanged(isanamorph);
+	/*emit*/ AspectRatioChanged(isanamorph);
 
 	int videoDisplayFormat=VIDEO_LETTER_BOX;
 	int doanamorph=0;
@@ -142,6 +138,22 @@ void eStreamWatchdog::reloadSettings()
 	eAVSwitch::getInstance()->setVideoFormat( videoDisplayFormat );
 
 	eAVSwitch::getInstance()->setAspectRatio(doanamorph?r169:r43);
+	
+	switch (frate)
+	{
+	case 1:
+	case 2:
+	case 3:
+	case 6:
+		eAVSwitch::getInstance()->setVSystem(vsPAL);
+		break;
+	case 4:
+	case 5:
+	case 7:
+	case 8:
+		eAVSwitch::getInstance()->setVSystem(vsNTSC);
+		break;
+	}
 }
 
 int eStreamWatchdog::isAnamorph()

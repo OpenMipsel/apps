@@ -328,7 +328,7 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	if (bitstream)
 	{
 		char buffer[100];
-		int xres=0, yres=0, aspect=0;
+		int xres=0, yres=0, aspect=0, framerate=0;
 		while (fgets(buffer, 100, bitstream))
 		{
 			if (!strncmp(buffer, "H_SIZE:  ", 9))
@@ -337,6 +337,8 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 				yres=atoi(buffer+9);
 			if (!strncmp(buffer, "A_RATIO: ", 9))
 				aspect=atoi(buffer+9);
+			if (!strncmp(buffer, "F_RATE: ", 8))
+				framerate=atoi(buffer+8);
 		}
 		fclose(bitstream);
 		vformat.sprintf("%dx%d ", xres, yres);
@@ -350,6 +352,32 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 			vformat+="16:9"; break;
 		case 4:
 			vformat+="20:9"; break;
+		}
+		switch(framerate)
+		{
+		case 1:
+			vformat+=", 23.976 fps";
+			break;
+		case 2:
+			vformat+=", 24 fps";
+			break;
+		case 3:
+			vformat+=", 25 fps";
+			break;
+		case 4:
+			vformat+=", 29.97 fps";
+			break;
+		case 5:
+			vformat+=", 30 fps";
+			break;
+		case 6:
+			vformat+=", 50 fps";
+			break;
+		case 7:
+			vformat+=", 59.94 fps";
+			break;
+		case 8:
+			vformat+=", 80 fps";
 		}
 	}
 	

@@ -54,6 +54,8 @@ eAVSwitch::eAVSwitch()
 	avsfd=open("/dev/dbox/avs0", O_RDWR);
 
 	saafd=open("/dev/dbox/saa0", O_RDWR);
+	
+	system = vsPAL;
 }
 
 void eAVSwitch::init()
@@ -374,6 +376,16 @@ int eAVSwitch::setAspectRatio(eAVAspectRatio as)
 	ioctl(saafd,SAAIOSWSS,&saa);
 
 	return setTVPin8((active && (!input))?((aspect==r169)?6:12):0);
+}
+
+void eAVSwitch::setVSystem(eVSystem _system)
+{
+	if (system != _system)
+	{
+		int saa = (_system == vsNTSC) ? SAA_NTSC : SAA_PAL;
+		::ioctl(saafd, SAAIOSENC, &saa);
+	}
+	system = _system;
 }
 
 int eAVSwitch::setActive(int a)

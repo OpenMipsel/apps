@@ -17,12 +17,19 @@ enum eAVColorFormat
 	cfYPbPr		// "Component"
 };
 
+enum eVSystem
+{
+	vsPAL,
+	vsNTSC,
+};
+
 class eAVSwitch
 {
 	static eAVSwitch *instance;
 	int volume, VCRVolume, mute;
 
 	int avsfd, saafd;
+	eVSystem system;
 	eAVAspectRatio aspect;
 	eAVColorFormat colorformat;
 
@@ -61,6 +68,7 @@ public:
 	int setTVPin8(int vol);
 	int setColorFormat(eAVColorFormat cf);
 	int setAspectRatio(eAVAspectRatio as);
+	void setVSystem(eVSystem system);
 	int setActive(int active);
 	int setInput(int v);	// 0: dbox, 1: vcr
 	void changeVCRVolume(int abs, int vol);
