@@ -55,6 +55,7 @@ eZapEPG::eZapEPG():
 	eZap::getInstance()->getServiceSelector()->forEachServiceRef( callback, false );
 	curS = curE = services.begin();
 	sbar = new eStatusBar(this);
+	sbar->setFlags( eStatusBar::flagOwnerDraw );
 }
 
 void eZapEPG::addToList( const eServiceReference& ref )
@@ -131,7 +132,7 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 	case eWidgetEvent::evtAction:
 	{
 		int addtype=-1;
-		int servicevalid = serviceentries.size() && current_service != serviceentries.end();
+		int servicevalid = current_service != serviceentries.end();
 		int eventvalid = 0;
 		if (servicevalid)
 			if ( current_service->current_entry != current_service->entries.end())
@@ -303,14 +304,20 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 					break;
 				}
 			tm *begin=ev->start_time!=-1?localtime(&ev->start_time):0;
-			e->setHelpText( eString().sprintf("%02d.%02d. %02d:%02d %s - %s",
+			eString descr = e->description;
+			while ( descr[0] == ' ' )
+				descr.erase(0);
+			if ( descr != e->title )
+				descr = " - "+descr;
+			else
+				descr="";
+			e->setHelpText( eString().sprintf("%02d.%02d. %02d:%02d %s%s",
 				begin->tm_mday,
 				begin->tm_mon+1,
 				begin->tm_hour,
 				begin->tm_min,
 				e->title.c_str(),
-				e->description.c_str() ) );
-
+				descr.c_str() ));
 			e->event = ev;
 		} else
 			delete ev;
@@ -329,7 +336,6 @@ void eZapEPG::selService(int dir)
 		++current_service;
 		if (current_service == serviceentries.end())
 		{
-			--current_service;
 			focusColumn=0;
 			close(1);
 			return;
@@ -386,7 +392,13 @@ void eZapEPG::selEntry(int dir)
 {
 	if (current_service == serviceentries.end())
 	{
-		eDebug("invalid service");
+		if ( dir == -1 && offs >= hours*3600 )
+		{
+			offs -= hours*3600;
+			close(2);
+		}
+		else
+			eDebug("invalid service");
 		return;
 	}
 	if (current_service->entries.begin() == current_service->entries.end())
@@ -397,14 +409,16 @@ void eZapEPG::selEntry(int dir)
 	ePtrList<entry>::iterator l = current_service->current_entry;
 	if ( dir == +1)
 	{
-		if ( !serviceentries.size() )
-			return;
 		++current_service->current_entry;
 		if (current_service->current_entry == current_service->entries.end())
 		{
-			--current_service->current_entry;
-			offs += hours*3600;
-			close(3);
+			if ( eventWidget->isVisible() )
+			{
+				offs += hours*3600;
+				close(3);
+			}
+			else
+				--current_service->current_entry;
 			return;
 		}
 	} else
@@ -435,6 +449,7 @@ void eZapEPG::buildPage(int direction)
 	if ( eventWidget )
 		eventWidget->hide();
 	serviceentries.clear();
+	current_service = serviceentries.end();
 	delete eventWidget;
 	eventWidget = new eWidget( this );
 	eventWidget->move(ePoint(0,0));
@@ -539,20 +554,22 @@ void eZapEPG::buildPage(int direction)
 	}
 	while( serviceentries.size() < numservices && curE != curS );
 
-	eventWidget->show();
-
 	if (!p)
 	{
 		sbar->setText("");
 		return;
 	}
 
+	eventWidget->show();
+
  // set column focus
 	current_service = serviceentries.begin();
 	for (unsigned int i=0; i < focusColumn; i++ )
+	{
+		if (current_service == serviceentries.end())
+			return;
 		current_service++;
-	if (current_service == serviceentries.end())
-		return;
+	}
 	if (current_service->current_entry != current_service->entries.end())
 		current_service->current_entry->gotFocus();
 }
