@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.cpp,v 1.67.2.10 2003/06/10 11:21:07 digi_casi Exp $
+ * $Id: getservices.cpp,v 1.67.2.11 2003/06/10 12:37:04 digi_casi Exp $
  *
  * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -250,7 +250,7 @@ int LoadSatellitePositions(void)
 	return 0;
 }
 
-int LoadServices(fe_type_t frontendType, diseqc_t diseqcType)
+int LoadServices(FrontendType frontendType, diseqc_t diseqcType)
 {
 	if (frontendType == FE_QPSK)
 	{
