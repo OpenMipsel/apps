@@ -600,10 +600,11 @@
 	</object>
 
 	<object name="ePartitionCheck">
-		<ePartitionCheck text="Partition Check" cposition="80:100" csize="550:250" >
+		<ePartitionCheck text="Partition Check" cposition="80:100" csize="550:400" >
 			<eLabel text="status output:" position="10:10" size="e-10:30" />
-			<eLabel name="state" position="10:50" size="e-10:e-100" loadDeco="eNumber" />
-			<eButton name="cancel" text="cancel" position="e-180:e-80" size="170:40" loadDeco="" />
+			<eLabel name="state" position="10:50" size="e-10:e-100" loadDeco="eNumber" wrap="on" />
+			<eButton name="cancel" text="cancel" position="e-180:e-80" size="170:40" helptext="cancel partition check" loadDeco="" />
+			<eButton name="close" text="close" position="e-360:e-80" size="170:40" helptext="close window" loadDeco="" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</ePartitionCheck>
 	</object>

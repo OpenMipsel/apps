@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.7 2002/12/31 14:37:21 Ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.8 2003/01/02 19:24:05 Ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -27,41 +27,6 @@
 #include <signal.h>
 
 // #define EXT3
-
-int bidirpipe(int pfd[], char *cmd , char *argv[])
-{
-	int pfdin[2];  /* from child to parent */
-	int pfdout[2]; /* from parent to child */
-	int pid;       /* child's pid */
-
-	if ( pipe(pfdin) == -1 || pipe(pfdout) == -1)
-		return(-1);
-
-	if ( ( pid = fork() ) == -1 )
-		return(-1);
-	else if (pid == 0) /* child process */
-	{
-		if ( close(0) == -1 || close(1) == -1 )
-			_exit(0);
-
-		if (dup(pfdout[0]) != 0 || dup(pfdin[1]) != 1)
-			_exit(0);
-
-		if (close(pfdout[0]) == -1 || close(pfdout[1]) == -1 ||
-				close(pfdin[0]) == -1 || close(pfdin[1]) == -1)
-			_exit(0);
-
-		execv(cmd,argv);
-		_exit(0);
-	}
-	if (close(pfdout[0]) == -1 || close(pfdin[1]) == -1)
-			return(-1);
-
-	pfd[0] = pfdin[0];
-	pfd[1] = pfdout[1];
-
-	return(pid);
-}
 
 static int getCapacity(int dev)
 {
@@ -448,16 +413,19 @@ eHarddiskMenu::eHarddiskMenu(int dev): dev(dev)
 }
 
 ePartitionCheck::ePartitionCheck( int dev )
-:dev(dev), outbuf(0)
+:dev(dev), fsck(0)
 {
-	memset(fd, 0, sizeof(fd) );
 	lState = new eLabel(this);
 	lState->setName("state");
 	bCancel = new eButton(this);
 	bCancel->setName("cancel");
+	bClose = new eButton(this);
+	bClose->setName("close");
 	CONNECT( bCancel->selected, ePartitionCheck::onCancel );
+	CONNECT( bClose->selected, ePartitionCheck::accept );
 	if (eSkin::getActive()->build(this, "ePartitionCheck"))
 		eFatal("skin load of \"ePartitionCheck\" failed");
+	bClose->hide();
 }
 
 int ePartitionCheck::eventHandler( const eWidgetEvent &e )
@@ -480,9 +448,7 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 			// kill samba server... (exporting /hdd)
 			system("killall -9 smbd");
 
-			if ( system(
-					eString().sprintf(
-					"/bin/umount /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()).c_str()) >> 8)
+			if ( system("/bin/umount /hdd") >> 8)
 			{
 				eMessageBox msg(
 				_("could not unmount the filesystem... "),
@@ -492,16 +458,9 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 			}
 			if ( fs == "ext3" )
 			{
-				eString str;
-				str.sprintf("/dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str());
-				char *bla0 = "/sbin/fsck.ext3";
-				char *bla1 = new char[str.length()+1];
-				char *bla2 = "-f";
-				strcpy( bla1, str.c_str() );
-				char *argv[4] = { bla0, bla1, bla2, 0 };
-				bidirpipe(fd, bla0, argv);
-				eDebug("pipe in = %d, out = %d", fd[0], fd[1]);
-				if (!fd[0] || !fd[1])
+				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/fsck.ext3 -f /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
+
+				if ( !fsck->running() )
 				{
 					eMessageBox msg(
 						_("sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."),
@@ -513,7 +472,15 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 					close(-1);
 				}
 				else
+				{
 					eDebug("fsck.ext3 opened");
+					CONNECT( fsck->dataAvail, ePartitionCheck::getData );
+					CONNECT( fsck->appClosed, ePartitionCheck::fsckClosed );
+				}
+			}
+			else if ( fs == "reiserfs" )
+			{
+				
 			}
 			else
 			{
@@ -526,17 +493,12 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 				msg.hide();
 				close(-1);
 			}
-			in = new eSocketNotifier(eApp, fd[0], 17 );
-			out = new eSocketNotifier(eApp, fd[1], eSocketNotifier::Write);
-			CONNECT(in->activated, ePartitionCheck::msgAvail);
-			CONNECT(out->activated, ePartitionCheck::strWritten);
-			signal(SIGCHLD, SIG_IGN);
 		}
 		break;
 
 		case eWidgetEvent::execDone:
-			if (fd[0])
-				::close(fd[0]);
+			if (fsck)
+				delete fsck;
 		break;
 
 		default:
@@ -547,50 +509,35 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 
 void ePartitionCheck::onCancel()
 {
-	in->stop();
-	out->stop();
-	::close(fd[0]);
-	fd[0]=0;
-	::close(fd[1]);
-	fd[1]=0;
-	close(-1);
+	if (fsck)
+		fsck->kill();
 }
 
-void ePartitionCheck::msgAvail(int what)
+void ePartitionCheck::fsckClosed(int state)
 {
-	if (what & POLLPRI|POLLIN)
+	int host=dev/4;
+	int bus=!!(dev&2);
+	int target=!!(dev&1);
+
+	if ( system( eString().sprintf("/bin/mount /dev/ide/host%d/bus%d/target%d/lun0/part1 /hdd", host, bus, target).c_str() ) >> 8 )
+		eDebug("mount hdd after check failed");
+
+	system("/bin/smbd -D");
+	eDebug("smbd restarted");
+
+	if (fsck)
 	{
-		eDebug("what = %d");
-		char buf[2048];
-		int readed = read(fd[0], buf, 2048);
-		eDebug("%d bytes read", readed);
-		if ( readed != -1 && readed )
-			lState->setText(buf);
-		else if (readed == -1)
-			eDebug("readerror %d", errno);
-		if ( strstr( buf, "<y>") )
-		{
-			outbuf = new char[2];
-			strcpy(outbuf, "y");
-		}
+		delete fsck;
+		fsck=0;
 	}
-	if (what & eSocketNotifier::Hungup)
-	{
-		eDebug("child has terminated");
-		onCancel();
-	}
+
+	bClose->show();
 }
 
-void ePartitionCheck::strWritten(int what)
+void ePartitionCheck::getData( eString str )
 {
-	if (what == 4 && outbuf)
-	{
-		if ( write( fd[1], outbuf, strlen(outbuf) ) != strlen(outbuf) )
-			eDebug("writeError");
-		else
-			eDebug("write ok");
-			
-		delete outbuf;
-		outbuf=0;
-	}
+	lState->setText(str);
+	
+	if ( str.find("<y>") != eString::npos )
+		fsck->write("y");
 }

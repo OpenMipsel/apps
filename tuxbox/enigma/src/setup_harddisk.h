@@ -3,6 +3,7 @@
 
 #include <lib/gui/listbox.h>
 #include <lib/gui/ebutton.h>
+#include <lib/base/console.h>
 
 class eHarddiskSetup: public eListBoxWindow<eListBoxEntryText>
 {
@@ -29,15 +30,13 @@ public:
 class ePartitionCheck: public eWindow
 {
 	eLabel *lState;
-	eButton *bCancel;
+	eButton *bCancel, *bClose;
 	int dev;
-	char *outbuf;
-	int fd[2];
-	eSocketNotifier *in, *out;
-	void msgAvail(int what);
-	void strWritten(int what);
 	void onCancel();
+	void fsckClosed(int);
 	int eventHandler( const eWidgetEvent &e );
+	void getData( eString );
+	eConsoleAppContainer *fsck;
 public:
 	ePartitionCheck( int dev );
 };

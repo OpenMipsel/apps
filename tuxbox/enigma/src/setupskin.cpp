@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.3 2002/12/31 17:01:17 Ghostrider Exp $
+ * $Id: setupskin.cpp,v 1.11.2.4 2003/01/02 19:24:05 Ghostrider Exp $
  */
 
 #include <setupskin.h>
@@ -45,16 +45,13 @@ void eSkinSetup::loadSkins()
 	{
 		int n = scandir(skinPaths[i], &namelist, 0, alphasort);
 
-		if (n<0)
+		if ( n < 0 && i)
 		{
-			if (!i)
-			{
-				eDebug("error reading skin directory");
-				eMessageBox msg("error reading skin directory", "error");
-				msg.show();
-				msg.exec();
-				msg.hide();
-			}
+			eDebug("error reading skin directory");
+			eMessageBox msg("error reading skin directory", "error");
+			msg.show();
+			msg.exec();
+			msg.hide();
 			continue;
 		}
 
