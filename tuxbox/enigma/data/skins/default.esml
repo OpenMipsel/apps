@@ -670,11 +670,11 @@
 	</object>
 	
 	<object name="eWizardDiseqc">
-		<eWizardDiseqc cposition="120:100" csize="500:400" text="DiSEqC...">
+		<eWizardDiseqc cposition="120:100" csize="500:350" text="DiSEqC...">
 			<eLabel text="Please choose your DiSEqC-Configuration:" position="10:10" 
-				size="e:100" font="head" wrap="on" />
-			<eListbox name="choices" position="25:110" size="450:150" />
-			<eLabel name="description" position="10:280" size="e-10:60" />
+				size="e:150" font="head" wrap="on" />
+			<eListbox name="choices" position="25:160" size="450:150" />
+			<eLabel name="description" position="10:320" size="e-10:30" />
 		</eWizardDiseqc>
 	</object>
 </eskin>
