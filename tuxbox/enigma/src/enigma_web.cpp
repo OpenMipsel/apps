@@ -1,6 +1,7 @@
 #include <lib/system/http_dyn.h>
 #include <lib/dvb/service.h>
 #include <lib/dvb/dvb.h>
+#include <lib/dvb/servicemp3.h>
 
 extern eString httpUnescape(const eString &string);
 extern eString httpEscape(const eString &string);
@@ -60,7 +61,35 @@ public:
 		result+="<reference>" + ref2string(e) + "</reference>\n";
 		eService *service=iface.addRef(e);
 		if (service)
-			result+="<name>" + xmlEscape(service->service_name) + "</name>";
+		{
+			result+="<name>" + xmlEscape(service->service_name) + "</name>\n";
+			if (service->dvb)
+			{
+				result+="<dvb><namespace>";
+				result+=eString().setNum(service->dvb->dvb_namespace.get(), 0x10);
+				result+="</namespace><tsid>";
+				result+=eString().setNum(service->dvb->transport_stream_id.get(), 0x10);
+				result+="</tsid><onid>";
+				result+=eString().setNum(service->dvb->original_network_id.get(), 0x10);
+				result+="</onid><sid>";
+				result+=eString().setNum(service->dvb->service_id.get(), 0x10);
+				result+="</sid><type>";
+				result+=eString().setNum(service->dvb->service_type, 0x10);
+				result+="</type><provider>";
+				result+=xmlEscape(service->dvb->service_provider);
+				result+="</provider><number>";
+				result+=eString().setNum(service->dvb->service_number, 10);
+				result+="</number></dvb>\n";
+			}
+			if (service->id3)
+			{	
+				std::map<eString, eString> & tags = service->id3->getID3Tags();
+				result+="<id3>";
+				for (std::map<eString, eString>::iterator i(tags.begin()); i != tags.end(); ++i)
+					result+="<tag id=\"" + i->first + "\"><" + i->second + "<tag/>\n";
+				result+="</id3>";
+			}
+		}
 		iface.removeRef(e);
 		result+="</service>\n";
 	}
@@ -70,7 +99,7 @@ static eString xml_services(eString request, eString dirpath, eString opt, eHTTP
 {
 	std::map<eString,eString> opts=getRequestOptions(opt);
 	eString spath=opts["path"];
-
+	
 	eServiceInterface *iface=eServiceInterface::getInstance();
 
 	if (!iface)
@@ -90,6 +119,10 @@ static eString xml_services(eString request, eString dirpath, eString opt, eHTTP
 	}
 	
 	eServiceReference current_service=string2ref(current);
+	
+	if (!opts["path"])
+		current_service=eServiceReference(eServiceReference::idStructure,
+			eServiceReference::isDirectory, 0);
 	
 	eDebug("current_service: %s", current_service.path.c_str());
 
