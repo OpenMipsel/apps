@@ -17,3 +17,4 @@ localedef -i sr_YU -c -f UTF-8 sr_YU
 localedef -i ar_AR -c -f UTF-8 ar_AR
 localedef -i pt_PT -c -f UTF-8 pt_PT
 localedef -i ru_RU -c -f UTF-8 ru_RU
+localedef -i fi_FI -c -f UTF-8 fi_FI
