@@ -1495,9 +1495,9 @@ eZapMain::eZapMain()
 
 	CONNECT(delayedStandbyTimer.timeout, eZapMain::delayedStandby);
 
-//fixme	CONNECT( eFrontend::getInstance()->s_RotorRunning, eZapMain::onRotorStart );
-//	CONNECT( eFrontend::getInstance()->s_RotorStopped, eZapMain::onRotorStop );
-//	CONNECT( eFrontend::getInstance()->s_RotorTimeout, eZapMain::onRotorTimeout );
+	CONNECT( eFrontend::getInstance()->s_RotorRunning, eZapMain::onRotorStart );
+	CONNECT( eFrontend::getInstance()->s_RotorStopped, eZapMain::onRotorStop );
+	CONNECT( eFrontend::getInstance()->s_RotorTimeout, eZapMain::onRotorTimeout );
 
 	CONNECT( eWidget::showHelp, eZapMain::showHelp );
 

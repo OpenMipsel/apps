@@ -44,23 +44,34 @@ class eFrontend: public Object
 	eTransponder *transponder;
 	eFrontend(int type, const char *demod="/dev/dvb/card0/frontend0", const char *sec="/dev/dvb/card0/sec0");
 	static eFrontend *frontend;
-	eTimer *timer, timer2;
+	eTimer *timer, timer2, rotorTimer1, rotorTimer2;
 	int tries, noRotorCmd;
 	int tune(eTransponder *transponder, 
 			uint32_t Frequency, int polarisation,
 			uint32_t SymbolRate, CodeRate FEC_inner,
 			SpectralInversion Inversion, eSatellite* sat, Modulation QAM);
 	Signal1<void, eTransponder*> tpChanged;
+// ROTOR INPUTPOWER
+	timeval rotorTimeout;
+	int idlePowerInput;
+	int runningPowerInput;
+	int newPos;
+	__u8 DeltaA;
+	__u8 voltage;
+///////////////////
 	void timeout();
 	int RotorUseTimeout(secCmdSequence& seq, void *commands, int newPos, double DegPerSec, int SeqRepeat, eLNB *lnb);
-	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA, int newPos, eLNB *lnb);
+	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, eLNB *lnb);
+	void RotorStartLoop();
+	void RotorRunningLoop();
+	void RotorFinish();
 public:
 	void disableRotor() { noRotorCmd = 1, lastRotorCmd=-1; } // no more rotor cmd is sent when tune
 	void enableRotor() { noRotorCmd = 0, lastRotorCmd=-1; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
 
-	Signal1<void, int> rotorRunning;
-	Signal0<void> rotorStopped, rotorTimeout;
+	Signal1<void, int> s_RotorRunning;
+	Signal0<void> s_RotorStopped, s_RotorTimeout;
 	Signal2<void, eTransponder*, int> tunedIn;
 	~eFrontend();
 

@@ -596,6 +596,18 @@ TransponderScan::~TransponderScan()
 {
 }
 
+void showPic()
+{
+        FILE *f = fopen(CONFIGDIR "/enigma/pictures/scan.mvi", "r");
+	if ( f )
+        {
+		fclose(f);
+		Decoder::displayIFrameFromFile(CONFIGDIR "/enigma/pictures/scan.mvi" );
+	}
+	else
+		Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/scan.mvi" );
+}
+
 int TransponderScan::exec(int initial)
 {
 	eSize size=getClientSize()-eSize(0,30);
@@ -620,19 +632,11 @@ int TransponderScan::exec(int initial)
 
 	show();
 
-	FILE *f = fopen(CONFIGDIR "/enigma/pictures/scan.mvi", "r");
-	if ( f )
-	{
-		fclose(f);
-		Decoder::displayIFrameFromFile(CONFIGDIR "/enigma/pictures/scan.mvi");
-	}
-	else
-		Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/scan.mvi");	
-
 	eTransponder oldTp(*eDVB::getInstance()->settings->getTransponders());
 
 	while (state != stateEnd)
 	{
+		showPic();
 		int total=stateEnd;
 		
 		if (total<2)
@@ -688,6 +692,8 @@ int TransponderScan::exec(int initial)
 				}
 
 			eDVB::getInstance()->setMode(eDVB::controllerScan);        
+
+			showPic();
 #ifndef DISABLE_LCD
 			tsManual manual_scan(this, transponder, LCDTitle, LCDElement);
 #else
@@ -713,6 +719,9 @@ int TransponderScan::exec(int initial)
 		case stateAutomatic:
 		{
 			eDVB::getInstance()->setMode(eDVB::controllerScan);
+
+			showPic();
+
 			tsAutomatic automatic_scan(this);
 #ifndef DISABLE_LCD
 			automatic_scan.setLCD( LCDTitle, LCDElement);
@@ -751,11 +760,11 @@ int TransponderScan::exec(int initial)
 			scanok=1;
 			
 			state=stateDone;
+			eDVB::getInstance()->setMode(eDVB::controllerService);
 			break;
 		}
 		case stateDone:
 		{
-			eDVB::getInstance()->setMode(eDVB::controllerService);  
 			tsText finish(_("Done."), text, this);
 #ifndef DISABLE_LCD
 			finish.setLCD( LCDTitle, LCDElement);
