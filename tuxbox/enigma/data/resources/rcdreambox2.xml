@@ -40,7 +40,7 @@
 			<key name="green" code="41" picture="key.18" />
 			<key name="yellow" code="42" picture="key.19" />
 			<key name="blue" code="43" picture="key.20" />
-			<key name="mute" code="44" />
+			<key name="mute" code="44" picture="key.31" />
 			<key name="text" code="45" picture="key.22" />
 			<key name="next" code="50" picture="key.25" />
 			<key name="prev" code="51" picture="key.24" />
