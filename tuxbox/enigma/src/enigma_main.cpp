@@ -1728,7 +1728,9 @@ void eZapMain::getPlaylistPosition()
 		time=handler->getPosition(eServiceHandler::posQueryRealCurrent);
 
 		if ( playlist->current != playlist->getConstList().end() && playlist->current->service == eServiceInterface::getInstance()->service )
+		{
 			playlist->current->current_position=time;
+		}
 	}
 }
 
@@ -1878,34 +1880,54 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 
 void eZapMain::nextService(int add)
 {
-	const eServiceReference *service=eZap::getInstance()->getServiceSelector()->next();
-
-	if (!service)
-		return;
-	else
-		getServiceSelectorPath( modeLast[mode][0] );
-
-	if (service->flags & eServiceReference::mustDescent)
-		return;
-
 	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
-	playService(*service, playlistmode?psDontAdd:p.current()==playlistref?psDontAdd|psSeekPos:0 );
+
+	if ( p.size() && p.current() == playlistref )
+	{
+		if ( !playlistmode )
+			getPlaylistPosition();
+		playlistNextService();
+	}
+	else
+	{
+		const eServiceReference *service=eZap::getInstance()->getServiceSelector()->next();
+
+		if (!service)
+			return;
+		else
+			getServiceSelectorPath( modeLast[mode][0] );
+
+		if (service->flags & eServiceReference::mustDescent)
+			return;
+
+		playService(*service, 0 );
+	}
 }
 
 void eZapMain::prevService()
 {
-	const eServiceReference *service=eZap::getInstance()->getServiceSelector()->prev();
-
-	if (!service)
-		return;
-	else
-		getServiceSelectorPath( modeLast[mode][0] );
-
-	if (service->flags & eServiceReference::mustDescent)
-		return;
-
 	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
-	playService(*service, playlistmode?psDontAdd:p.current()==playlistref?psDontAdd|psSeekPos:0 );
+
+	if ( p.size() && p.current() == playlistref )
+	{
+		if ( !playlistmode )
+			getPlaylistPosition();
+		playlistPrevService();
+	}
+	else
+	{
+		const eServiceReference *service=eZap::getInstance()->getServiceSelector()->prev();
+
+		if (!service)
+			return;
+		else
+			getServiceSelectorPath( modeLast[mode][0] );
+
+		if (service->flags & eServiceReference::mustDescent)
+			return;
+
+		playService(*service, 0 );
+	}
 }
 
 void eZapMain::playlistPrevService()
@@ -1916,9 +1938,8 @@ void eZapMain::playlistPrevService()
 	while ( playlist->current != playlist->getConstList().begin())
 	{
 		playlist->current--;
-		if ( extZap || ModeTypeEqual(ref, playlist->current->service) )
+		if ( playlist->current->service != ref && (extZap || ModeTypeEqual(ref, playlist->current->service) ) )
 		{
-			getPlaylistPosition();
 			playService(*playlist->current, playlistmode?psDontAdd:psDontAdd|psSeekPos);
 			return;
 		}
@@ -1930,7 +1951,7 @@ void eZapMain::playlistNextService()
 	int extZap=0;
 	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
 	eServiceReference ref = eServiceInterface::getInstance()->service;
-	while (playlist->current != playlist->getConstList().end() && playlist->current->service != ref )
+	while (playlist->current != playlist->getConstList().end())
 	{
 		playlist->current++;
 		if (playlist->current == playlist->getConstList().end())
@@ -1938,9 +1959,8 @@ void eZapMain::playlistNextService()
 			playlist->current--;
 			return;
 		}
-		if ( extZap || ModeTypeEqual(ref,playlist->current->service) )
+		if ( playlist->current->service != ref && (extZap || ModeTypeEqual(ref,playlist->current->service)) )
 		{
-			getPlaylistPosition();
 			playService(*playlist->current, playlistmode?psDontAdd:psDontAdd|psSeekPos);
 			return;
 		}
@@ -2768,7 +2788,7 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 	{
 //		eDebug("psDontAdd");
 
-		if ((playlist->current != playlist->getConstList().end() ) && (playlist->current->service != service))
+		if ( (playlist->current != playlist->getConstList().end()) && (playlist->current->service != service) )
 		{
 //			eDebug("new service is played... getPlaylistPosition");
 			getPlaylistPosition();
@@ -2797,7 +2817,7 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 		if (!playlistmode)		// dem user liebgewonnene playlists nicht einfach killen
 		{
 //			eDebug("not playlistmode.. shrink playlist");
-			while (playlist->getConstList().size() > 14)
+			while (playlist->getConstList().size() > 19)
 				playlist->getList().pop_front();
 		}
 /*		else
