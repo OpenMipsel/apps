@@ -1,3 +1,14 @@
+/******************************************************************************
+ *                      <<< TuxTxt - Teletext Plugin >>>                      *
+ *                                                                            *
+ *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
+ ******************************************************************************
+ * $Log: tuxtxt.h,v $
+ * Revision 1.27.2.3  2003/02/14 19:45:59  lazyt
+ * fix languages
+ *
+ ******************************************************************************/
+
 #include <fcntl.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -240,18 +251,18 @@ struct _pid_table
 
 //national subsets
 
-char countrystring[] =	"  CZ/SK  (#$@[\\]^_`{|}~)  "	/* czech, slovak */
-						"    GB (#$@[\\]^_`{|}~)    "	/* english */
-						"    EE (#$@[\\]^_`{|}~)    "	/* estonian */
+char countrystring[] =	"  CS/SK  (#$@[\\]^_`{|}~)  "	/* czech, slovak */
+						"    EN (#$@[\\]^_`{|}~)    "	/* english */
+						"    ET (#$@[\\]^_`{|}~)    "	/* estonian */
 						"    FR (#$@[\\]^_`{|}~)    "	/* french */
 						"    DE (#$@[\\]^_`{|}~)    "	/* german */
 						"    IT (#$@[\\]^_`{|}~)    "	/* italian */
 						"  LV/LT  (#$@[\\]^_`{|}~)  "	/* latvian, lithuanian */
 						"    PL (#$@[\\]^_`{|}~)    "	/* polish */
 						"  PT/ES  (#$@[\\]^_`{|}~)  "	/* portuguese, spanish */
-						"    RO (#$@[\\]^_`{|}~)    "	/* rumanian */
-						" SR/HR/SI (#$@[\\]^_`{|}~) "	/* serbian, croatian, slovenian */
-						" SE/FI/HU (#$@[\\]^_`{|}~) "	/* swedish, finnish, hungarian */
+						"    RO (#$@[\\]^_`{|}~)    "	/* romanian */
+						" SR/HR/SL (#$@[\\]^_`{|}~) "	/* serbian, croatian, slovenian */
+						" SV/FI/HU (#$@[\\]^_`{|}~) "	/* swedish, finnish, hungarian */
 						"    TR (#$@[\\]^_`{|}~)    ";	/* turkish */
 //buffers
 
