@@ -84,6 +84,8 @@
 			<action name="startSkipF" key="blue" flags="m" />
 			<action name="repeatSkipF" key="blue" flags="r" />
 			<action name="stopSkipF" key="blue" flags="b" />
+			<action name="nextSubService" key="right" flags="mr" />
+			<action name="prevSubService" key="left" flags="mr" />
 		</actionmap>
 
 		<actionmap name="enigmaMain" style="default">
