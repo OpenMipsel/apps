@@ -163,7 +163,7 @@ public:
 	
 			// recording
 		/// starts a new recording
-	void recBegin(const char *filename); 
+	void recBegin(const char *filename, eServiceReferenceDVB service);
 		/// pauses a recording
 	void recPause();
 		/// resumes a recording

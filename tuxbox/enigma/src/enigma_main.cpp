@@ -61,7 +61,7 @@ struct enigmaMainActions
 		startSkipReverse, repeatSkipReverse, stopSkipReverse,
 		showBouquets, showFavourites,
 		modeTV, modeRadio, modeFile,
-		toggleDVRFunctions;
+		toggleDVRFunctions, toggleIndexmark;
 	enigmaMainActions(): 
 		map("enigmaMain", _("enigma Zapp")),
 		showMainMenu(map, "showMainMenu", _("show main menu"), eAction::prioDialog),
@@ -111,7 +111,8 @@ struct enigmaMainActions
 		modeRadio(map, "modeRadio", _("switch to Radio mode"), eAction::prioDialog),
 		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog),
 
-		toggleDVRFunctions(map, "toggleDVRFunctions", _("toggle DVR panel"), eAction::prioDialog)
+		toggleDVRFunctions(map, "toggleDVRFunctions", _("toggle DVR panel"), eAction::prioDialog),
+		toggleIndexmark(map, "toggleIndexmark", _("toggle index mark"), eAction::prioDialog)
 	{
 	}
 };
@@ -214,6 +215,79 @@ eString getISO639Description(char *iso)
 			return iso639[i].description1;
 	}
 	return eString()+iso[0]+iso[1]+iso[2];
+}
+
+void eZapSeekIndices::load(const eString &filename)
+{
+	this->filename=filename;
+	FILE *f=fopen(filename.c_str(), "rt");
+	if (!f)
+		return;
+	
+	while (1)
+	{
+		int real, time;
+		if (fscanf(f, "%d %d\n", &real, &time) != 2)
+			break;
+		add(real, time);
+	}
+	fclose(f);
+	changed=0;
+}
+
+void eZapSeekIndices::save()
+{
+	FILE *f=fopen(filename.c_str(), "wt");
+	if (!f)
+		return;
+		
+	for (std::map<int,int>::const_iterator i(index.begin()); i != index.end(); ++i)
+		fprintf(f, "%d %d", i->first, i->second);
+	fclose(f);
+	changed=0;
+}
+
+void eZapSeekIndices::add(int real, int time)
+{
+	index.insert(std::pair<int,int>(real,time));
+}
+
+void eZapSeekIndices::remove(int real)
+{
+	index.erase(real);
+}
+
+int eZapSeekIndices::getNext(int real, int dir)
+{
+	int diff=-1, r=-1;
+	for (std::map<int,int>::const_iterator i(index.begin()); i != index.end(); ++i)
+	{
+		if ((dir > 0) && (i->first <= real))
+			continue;
+		if ((dir < 0) && (i->first >= real))
+			break;
+		int d=abs(i->first-real);
+		if (d < diff)
+		{
+			diff=d;
+			r=i->first;
+		} else
+			break;
+	}
+	return r;
+}
+
+int eZapSeekIndices::getTime(int real)
+{
+	std::map<int,int>::const_iterator i=index.find(real);
+	if (i != index.end())
+		return i->second;
+	return -1;
+}
+
+std::map<int,int> &eZapSeekIndices::getIndices()
+{
+	return index;
 }
 
 void NVODStream::EITready(int error)
@@ -1538,6 +1612,8 @@ void eZapMain::repeatSkip(int dir)
 			time=20000;
 		else if (skipcounter > 30)
 			time=120000;
+		else if (skipcounter > 60)
+			time=600000;
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip, (dir == skipForward)?time:-time));
@@ -2301,6 +2377,10 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showDVRFunctions(!dvrfunctions);
 			showInfobar();
 		}
+		else if (event.action == &i_enigmaMainActions->toggleIndexmark)
+		{
+			toggleIndexmark();
+		}
 		else
 		{
 			startMessages();
@@ -2399,6 +2479,10 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		break;
 	case eServiceEvent::evtEnd:
 	{
+		int serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
+		if(! (serviceFlags & eServiceHandler::flagIsTrack) )
+			break;
+			
 		if (curlist->current != curlist->list.end())
 		{
 			curlist->current->current_position=-1;
@@ -3054,6 +3138,41 @@ void eZapMain::moveService(const eServiceReference &path, const eServiceReferenc
 	pl->save();
 
 	eServiceInterface::getInstance()->removeRef(path);
+}
+
+
+void eZapMain::toggleIndexmark()
+{
+	if (!(serviceFlags & eServiceHandler::flagIsSeekable))
+		return;
+
+	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
+	if (!handler)
+		return;
+
+	int real=handler->getPosition(eServiceHandler::posQueryRealCurrent), time=handler->getPosition(eServiceHandler::posQueryCurrent);
+
+	int nearest=indices.getNext(real, 0);
+	if ((nearest == -1) || abs(indices.getTime(nearest)-real) > 5000)
+	{
+		eDebug("added indexmark");
+		indices.add(real, time);
+	} else
+	{
+		eDebug("removed indexmark.");
+		indices.remove(nearest);
+	}
+	redrawIndexmarks();
+}
+
+void eZapMain::redrawIndexmarks()
+{
+	indexmarks.clear();
+	for (int i=indices.getNext(-1, 1); i != -1; i=indices.getNext(i, 1))
+	{
+		int time=indices.getTime(i);
+		eDebug("adding indexmark at %d (%d)", time, i);
+	}
 }
 
 eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path): eListBoxWindow<eListBoxEntryText>(_("Service Menu"), 5), ref(ref)

@@ -690,7 +690,7 @@ void eServiceHandlerMP3::removeRef(const eServiceReference &service)
 
 int eServiceHandlerMP3::getFlags()
 {
-	return flagIsSeekable|flagSupportPosition;
+	return flagIsSeekable|flagSupportPosition|flagIsTrack;
 }
 
 int eServiceHandlerMP3::getState()

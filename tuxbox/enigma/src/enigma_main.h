@@ -69,6 +69,27 @@ public:
 	}
 };
 
+class eZapSeekIndices
+{
+private:
+	eString filename;
+	std::map<int,int> index;
+	int changed;
+public:
+	void load(const eString &filename);
+	void save();
+	void add(int real, int time);
+	void remove(int real);
+	/**
+	 * \brief retrieves next index.
+	 * \param dir 0 for nearest, <0 for prev or >0 for next. returns -1 if nothing found.
+	 */
+	int getNext(int, int dir); 
+	int getTime(int real);
+		// you don't need that.
+	std::map<int,int> &getIndices();
+};
+
 class NVODStream: public eListBoxEntryTextStream
 {
 	friend class eListBox<NVODStream>;
@@ -309,6 +330,11 @@ private:
 	void setPlaylistPosition();
 	bool handleState(int justask=0);
 	void blinkRecord();
+
+	void toggleIndexmark();
+	eZapSeekIndices indices;
+	ePtrList<eLabel> indexmarks;
+	void redrawIndexmarks();
 public:
 	void postMessage(const eZapMessage &message, int clear=0);
 	void gotMessage(const int &);

@@ -422,6 +422,9 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2 ), 	// radio
 			new eService("DVB - Radio services")
 		);
+
+
+	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
 		
 	recording=0;
 	CONNECT(messages.recv_msg, eServiceHandlerDVB::gotMessage);
@@ -472,7 +475,8 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 		if (!recording)
 		{
 			char *filename=reinterpret_cast<char*>(cmd.parm);
-			eDVB::getInstance()->recBegin(filename);
+			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+			eDVB::getInstance()->recBegin(filename, sapi ? sapi->service : eServiceReferenceDVB());
 			delete[] (filename);
 			recording=1;
 		} else
@@ -622,6 +626,18 @@ int eServiceHandlerDVB::stop()
 	return 0;
 }
 
+void eServiceHandlerDVB::addFile(void *node, const eString &filename)
+{
+	if (filename.right(3).upper()==".TS")
+	{
+		struct stat s;
+		if (::stat(filename.c_str(), &s))
+			return;
+		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
+	}
+}
+
+
 struct eServiceHandlerDVB_addService
 {
 	Signal1<void,const eServiceReference&> &callback;
@@ -681,14 +697,58 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 {
 	if (node.data[0]>=0)
 	{
-		eString path=node.path.mid(node.path.rfind('/')+1);
-		path=path.left(path.rfind('.'));
+		eString l=node.path.mid(node.path.rfind('/')+1);
+		if (!isUTF8(l))
+			l=convertLatin1UTF8(l);
 		if (node.descr)
-			path=node.descr;
-		if (!path)
-			path="movie";
-
-		return new eService(path.c_str());
+			l=node.descr;
+		int fd=open(node.path.c_str(), O_RDONLY);
+		if (fd < 0)
+			return 0;
+		__u8 packet[188];
+		eServiceDVB *dvb=0;
+		do
+		{
+			if (::read(fd, packet, 188) != 188)
+				break;
+				// i know that THIS is not really a SIT parser :)
+			if ((packet[0] != 0x47) || (packet[1] != 0x40) || (packet[2] != 0x1f) || (packet[3] != 0x10))
+				break;
+			if (memcmp(packet+0x15, "ENIGMA", 6))
+				break;
+			// we found our private descriptor:
+			__u8 *descriptor=packet+0x13;
+			int len=descriptor[1];
+			dvb=new eServiceDVB(eServiceID((packet[0xf]<<8)|packet[0x10]), l.c_str());
+			len-=6;
+			descriptor+=2+6; // skip tag, len, ENIGMA
+			for (int i=0; i<len; i+=descriptor[i+1]+2)
+			{
+				int tag=descriptor[i];
+				switch (tag)
+				{
+				case eServiceDVB::cVPID:
+					dvb->set(eServiceDVB::cVPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
+					break;
+				case eServiceDVB::cAPID:
+					if (descriptor[i+4] == 0)
+						dvb->set(eServiceDVB::cAPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
+					else
+						dvb->set(eServiceDVB::cAC3PID, (descriptor[i+2]<<8)|(descriptor[i+3]));
+					break;
+				case eServiceDVB::cTPID:
+					dvb->set(eServiceDVB::cVPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
+					break;
+				case eServiceDVB::cPCRPID:
+					dvb->set(eServiceDVB::cPCRPID, (descriptor[i+2]<<8)|(descriptor[i+3]));
+					break;
+				}
+			}
+		} while (0);
+		close(fd);
+		if (!dvb)
+			return new eService(l);
+		return dvb;
 	}
 	switch (node.data[0])
 	{
