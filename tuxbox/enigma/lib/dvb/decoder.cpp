@@ -82,8 +82,8 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 		close(2);
 #endif
 
-/*		if (execlp("camd", "camd", buffer[0], buffer[1], buffer[4], descriptor, 0)<0)
-			eDebug("camd");*/
+		if (execlp("camd", "camd", buffer[0], buffer[1], buffer[4], descriptor, 0)<0)
+			eDebug("camd");
 
 		_exit(0);
 		break;

@@ -267,17 +267,24 @@ int eSkin::parseImages(XMLTreeNode *inode)
 			eDebug("Image with name %s already loaded, skip %s", name, src);
 			continue;
 		}
+		gPixmap *image=0;
 		eString filename=basepath + eString(src);
-		gPixmap *image=loadPNG((eString(CONFIGDIR)+filename).c_str());
+		if (abasepath[0] != '/')
+		{
+			// search first in CONFIGDIR
+			image=loadPNG((eString(CONFIGDIR)+filename).c_str());
+			if (!image)
+				image=loadPNG((eString(DATADIR)+filename).c_str());
+		}
+		else // abs path
+			image=loadPNG(filename.c_str());
+
 		if (!image)
 		{
-			image=loadPNG((eString(DATADIR)+filename).c_str());
-			if (!image)
-			{
-				eDebug("image/img=\"%s\" - %s: file not found", name, filename.c_str());
-				continue;
-			}
+			eDebug("image/img=\"%s\" - %s: file not found", name, filename.c_str());
+			continue;
 		}
+
 		if (paldummy && !node->GetAttributeValue("nomerge"))
 		{
 			gPixmapDC mydc(image);
