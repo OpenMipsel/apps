@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.11 2003/03/03 11:05:01 alexw Exp $
+ * $Id: zapit.cpp,v 1.290.2.12 2003/03/03 11:18:41 alexw Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -583,7 +583,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 	case CZapitMessages::CMD_GET_CURRENT_SERVICEID:
 	{
 		CZapitMessages::responseGetCurrentServiceID msgCurrentSID;
-		msgCurrentSID.channel_id = tuned_transponder_id ? channel->getChannelID() : 0;
+		msgCurrentSID.channel_id = channel->getChannelID();
 		CBasicServer::send_data(connfd, &msgCurrentSID, sizeof(msgCurrentSID));
 		break;
 	}
@@ -1489,7 +1489,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.11 2003/03/03 11:05:01 alexw Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.12 2003/03/03 11:18:41 alexw Exp $\n");
 
 	if (argc > 1)
 	{
