@@ -235,7 +235,7 @@ int eSkin::parseImages(XMLTreeNode *inode)
 	char *abasepath=inode->GetAttributeValue("basepath");
 	if (!abasepath)
 		abasepath="";
-	eString basepath=eString(DATADIR) + eString("/enigma/pictures/");
+	eString basepath=eString("/enigma/pictures/");
 	if (abasepath[0] == '/') // allow absolute paths
 		basepath="";
 	basepath+=abasepath;
@@ -268,11 +268,15 @@ int eSkin::parseImages(XMLTreeNode *inode)
 			continue;
 		}
 		eString filename=basepath + eString(src);
-		gPixmap *image=loadPNG(filename.c_str());
+		gPixmap *image=loadPNG((eString(CONFIGDIR)+filename).c_str());
 		if (!image)
 		{
-			eDebug("image/img=\"%s\" - %s: file not found", name, filename.c_str());
-			continue;
+			gPixmap *image=loadPNG((eString(DATADIR)+filename).c_str());
+			if (!image)
+			{
+				eDebug("image/img=\"%s\" - %s: file not found", name, filename.c_str());
+				continue;
+			}
 		}
 		if (paldummy && !node->GetAttributeValue("nomerge"))
 		{
@@ -280,7 +284,7 @@ int eSkin::parseImages(XMLTreeNode *inode)
 			gPainter p(mydc);
 			p.mergePalette(*paldummy);
 		}
-		images[name] = image; 		
+		images[name] = image;
 	}
 	return 0;
 }

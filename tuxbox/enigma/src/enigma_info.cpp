@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.6 2002/12/31 14:37:21 Ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.7 2002/12/31 17:01:17 Ghostrider Exp $
  */
 
 #include <enigma_info.h>
@@ -296,9 +296,18 @@ public:
 				eString ver=verid.mid(1, 3);
 				eString date=verid.mid(4, 8);
 //				eString time=verid.mid(12, 4);
-				version->setText(
-					eString(typea[type%3]) + eString(" ") + ver[0] + "." + ver[1] + "." + ver[2]
-						+ ", " + date.mid(6, 2) + "." + date.mid(4,2) + "." + date.left(4));
+				if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) < 5 )
+					version->setText(
+														eString().sprintf
+															("%s %c.%d. %s", typea[type%3], ver[0],
+															atoi( eString().sprintf("%c%c",ver[1],ver[2]).c_str()	),
+															(date.mid(6, 2) + "." + date.mid(4,2) + "." + date.left(4)).c_str()
+															)
+													);
+				else
+					version->setText(
+						eString(typea[type%3]) + eString(" ") + ver[0] + "." + ver[1] + "." + ver[2]
+							+ ", " + date.mid(6, 2) + "." + date.mid(4,2) + "." + date.left(4));
 			}
 		}
 

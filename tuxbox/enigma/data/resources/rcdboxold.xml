@@ -126,6 +126,35 @@
 			<action name="9" key="9" flags="mr" />
 		</actionmap>
 
+				<!-- globale shortcuts. sollten auf jeder FB zu finden sein. -->
+				<!-- generell ohne repeat. -->
+		<actionmap name="shortcut">
+			<action name="0" key="0" flags="m" />
+			<action name="1" key="1" flags="m" />
+			<action name="2" key="2" flags="m" />
+			<action name="3" key="3" flags="m" />
+			<action name="4" key="4" flags="m" />
+			<action name="5" key="5" flags="m" />
+			<action name="6" key="6" flags="m" />
+			<action name="7" key="7" flags="m" />
+			<action name="8" key="8" flags="m" />
+			<action name="9" key="9" flags="m" />
+			<action name="red" key="red" flags="m" />
+			<action name="green" key="green" flags="m" />
+			<action name="yellow" key="yellow" flags="m" />
+			<action name="blue" key="blue" flags="m" />
+			<action name="escape" key="LAME" flags="m" />
+		</actionmap>
+
+		<actionmap name="rotorMenu" >
+			<action name="driveEastStep" key="right" flags="m" />
+			<action name="driveEast" key="right" flags="r" />
+			<action name="driveEastStop" key="right" flags="b" />
+			<action name="driveWestStep" key="left" flags="m" />
+			<action name="driveWest" key="left" flags="r" />
+			<action name="driveWestStop" key="left" flags="b" />
+		</actionmap>
+
 		<actionmap name="enigmaStandby">
 			<action name="wakeUp" key="power" flags="m" />
 		</actionmap>
