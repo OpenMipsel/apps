@@ -3,6 +3,10 @@ versions of the following directories/files:
 
 apps/dvb/zapit/include/zapit/client        \
 apps/dvb/zapit/include/zapit/bat.h         \
+apps/dvb/zapit/include/zapit/bouquets.h    \
+apps/dvb/zapit/include/zapit/cam.h         \
+apps/dvb/zapit/include/zapit/channel.h     \
+apps/dvb/zapit/include/zapit/ci.h          \
 apps/dvb/zapit/include/zapit/debug.h       \
 apps/dvb/zapit/include/zapit/descriptors.h \
 apps/dvb/zapit/include/zapit/dmx.h         \
