@@ -130,6 +130,7 @@ public:
 	inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service);
 
 	Signal1<void, bool> EPGAvail;
+	Signal0<void> EPGUpdated;
 };
 
 inline int eScheduleCurrentTS::sectionRead( __u8 *data )

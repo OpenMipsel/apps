@@ -27,9 +27,10 @@ protected:
 	bool atomic_selchanged;
 public:
 	enum	{		flagNoUpDownMovement=1,		flagNoPageMovement=2,		flagShowEntryHelp=4	};
-	enum	{		OK = 0,		ERROR=1,		E_ALLREADY_SELECTED = 2,		E_COULDNT_FIND = 4,		E_INVALID_ENTRY = 8	};
+	enum	{		OK = 0,		ERROR=1,		E_ALLREADY_SELECTED = 2,		E_COULDNT_FIND = 4,		E_INVALID_ENTRY = 8,	 E_NOT_VISIBLE = 16		};
 	void setFlags(int);
 	void removeFlags(int);
+	void invalidateEntry(int n){	invalidate(getEntryRect(n));}
 protected:
 	eListBoxBase(eWidget* parent, const eWidget* descr=0, const char *deco="eListBox" );
 	eRect getEntryRect(int n);
@@ -38,7 +39,6 @@ protected:
 	void recalcMaxEntries();
 	void recalcClientRect();
 	void redrawBorder(gPainter *target, eRect &area);
-	void invalidateEntry(int n){	invalidate(getEntryRect(n));}
 	int newFocus();
 	void gotFocus();
 	void lostFocus();
@@ -86,6 +86,20 @@ public:
 
 		return ERROR;
 	}
+
+	template <class Z>
+	int forEachVisibleEntry(Z ob)
+	{
+		if (!isVisible())
+			return E_NOT_VISIBLE;
+
+		for (ePtrList_T_iterator i(top); i!=bottom; ++i)
+			if ( ob(**i) )
+				return OK;
+
+		return ERROR;
+	}
+
 
 	enum
 	{
