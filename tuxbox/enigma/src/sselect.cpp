@@ -708,7 +708,7 @@ void eServiceSelector::pathUp()
 {
 	if (!movemode)
 	{
-		if (path.size() > ( (style == styleCombiColumn) ? 2 : 1) )
+		if (path.size() > ( (style == styleCombiColumn) ? focus==bouquets? 2 : 3 : 1) )
 		{
 			services->beginAtomic();
 			eServiceReference last=path.current();
