@@ -345,7 +345,8 @@ private:
 	void addServiceToCurUserBouquet(const eServiceReference &ref);
 	void removeServiceFromUserBouquet( eServiceSelector *s );
 
-	void showBouquetList(int sellast);
+	enum { listAll, listSatellites, listProvider, listBouquets };
+	void showList(int list);
 
 	void showDVRFunctions(int show);
 

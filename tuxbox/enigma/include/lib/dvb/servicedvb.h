@@ -106,6 +106,10 @@ class eServiceHandlerDVB: public eServiceHandler
 
 	eServiceCache<eServiceHandlerDVB> cache;
 	void handleDVBEvent( const eDVBEvent& );
+	
+			// (u.a.) timeshift:
+	void startPlayback(const eString &file);
+	void stopPlayback();
 public:
 	int getID() const;
 	eServiceHandlerDVB();

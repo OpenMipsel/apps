@@ -966,6 +966,7 @@ eZapMain::eZapMain()
 	CONNECT_2_1(eZap::getInstance()->getServiceSelector()->setMode, eZapMain::setMode, 0);
 	CONNECT(eZap::getInstance()->getServiceSelector()->rotateRoot, eZapMain::rotateRoot);
 	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
+	CONNECT(eZap::getInstance()->getServiceSelector()->showList, eZapMain::showList);
 
 	// read for all modes last servicePaths from registry
 	for (mode=modeTV; mode < modeEnd; mode++)
@@ -973,7 +974,7 @@ eZapMain::eZapMain()
 		char* str;
 		// normale dvb bouquet pathes...
 		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path0", mode).c_str(), str)
-				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/&d/path2", mode).c_str(), str) )
+				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode).c_str(), str) )
 		{                                                        
 			modeLast[mode][0].setString(str);
 			//			eDebug(str);
@@ -3802,18 +3803,44 @@ void eZapMain::getServiceSelectorPath(eServicePath &path)
 //	eDebug("stored path for mode %d: %s", mode, eServicePath(path).toString().c_str());
 }
 
-#if 0
-void eZapMain::showBouquetList(int last)
+void eZapMain::showList(int list)
 {
-	eServicePath b=eServiceStructureHandler::getRoot(mode+1);
+	eServicePath b; // =eServiceStructureHandler::getRoot(mode+1);
 	switch (mode)
 	{
 	case modeTV:
-		
-		b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));
+		switch (list)
+		{
+		case listAll:
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1) ));
+			break;
+		case listSatellites:
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
+			break;
+		case listProvider:
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));
+			break;
+		case listBouquets:
+			b.down(userTVBouquetsRef);
+			break;
+		}
 		break;
 	case modeRadio:
-		b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1 << 2 ));
+		switch (list)
+		{
+		case listAll:
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2 ));
+			break;
+		case listSatellites:
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));
+			break;
+		case listProvider:
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2 ));
+			break;
+		case listBouquets:
+			b.down(userRadioBouquetsRef);
+			break;
+		}
 		break;
 	case modeFile:
 		b.down(recordingsref);
@@ -3821,14 +3848,10 @@ void eZapMain::showBouquetList(int last)
 	default:
 		return;
 	}
-	if ((!last) || (!recordings->getConstList().size()))
-		b.down( eServiceReference() );
-	else
-		b.down( recordings->getConstList().back().service);
+	b.down( eServiceReference() );
 	setServiceSelectorPath(b);
-	showServiceSelector(-1, !last);
+//	showServiceSelector(-1, !last);
 }
-#endif
 
 void eZapMain::showDVRFunctions(int show)
 {

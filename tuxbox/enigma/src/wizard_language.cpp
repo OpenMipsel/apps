@@ -76,6 +76,7 @@ static struct
 	char *language, *country;
 } language2country[]={
 		{"C", "en"},
+		{"ar", "ae"},
 		{"hu", "missing"},
 		{"sk", "missing"},
 		{"cs", "cz"},

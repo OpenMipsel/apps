@@ -344,6 +344,23 @@ void eServiceHandlerDVB::handleDVBEvent( const eDVBEvent & e )
 	}
 }
 
+void eServiceHandlerDVB::startPlayback(const eString &filename)
+{
+	stopPlayback();
+	decoder=new eDVRPlayerThread(filename.c_str(), this);
+	decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start));
+	flags|=flagIsSeekable|flagSupportPosition;
+}
+
+void eServiceHandlerDVB::stopPlayback()
+{
+	if (decoder)
+	{
+		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::exit));
+		delete decoder;
+	}
+}
+
 void eServiceHandlerDVB::switchedService(const eServiceReferenceDVB &, int err)
 {
 	int oldstate=state;
@@ -453,16 +470,12 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	if (service.type != eServiceReference::idDVB)
 		return -1;
 //	int oldflags=flags;
+	decoder=0;
+
 	if (service.path.length())
-	{
-		decoder=new eDVRPlayerThread(service.path.c_str(), this);
-		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start));
-		flags|=flagIsSeekable|flagSupportPosition;
-	} else
-	{
-		decoder=0;
-		flags &= ~(flagIsSeekable|flagSupportPosition);
-	}
+		startPlayback(service.path);
+	flags &= ~(flagIsSeekable|flagSupportPosition);
+
 //	if (oldflags != flags)
 		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 	if (sapi)
@@ -484,6 +497,7 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			char *filename=reinterpret_cast<char*>(cmd.parm);
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 			eDVB::getInstance()->recBegin(filename, sapi ? sapi->service : eServiceReferenceDVB());
+//			startPlayback(filename);
 			delete[] (filename);
 			recording=1;
 		} else
@@ -623,12 +637,7 @@ int eServiceHandlerDVB::stop()
 	if (sapi)
 		sapi->switchService(eServiceReferenceDVB());
 		
-	if (decoder)
-	{
-		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::exit));
-		delete decoder;
-		decoder=0;
-	}
+	stopPlayback();
 
 	return 0;
 }

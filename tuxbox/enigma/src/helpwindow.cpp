@@ -227,7 +227,7 @@ int eHelpWindow::eventHandler(const eWidgetEvent &event)
 		else if (event.action == &i_helpwindowActions->close)
 			close(0);
 		else
-			return eWindow::eventHandler(event);
+			break;
 		return 1;
 	default:
 		break;

@@ -185,13 +185,24 @@
 			<action name="gotoFirstService" key="prev" flags="m" />
 			<action name="gotoLastService" key="next" flags="m" />
 			<action name="showEPGSelector" key="info" flags="m" />
+			<action name="modeTV" key="tv" flags="m" />
+			<action name="modeRadio" key="radio" flags="m" />
+			<action name="modeFile" key="text" flags="m" />
+		</actionmap>
+
+		<actionmap name="serviceSelector"> <!-- style="sselect_default"> -->
 			<action name="showMenu" key="red" flags="m" />
 			<action name="toggleStyle" key="green" flags="m" />
 			<action name="toggleFocus" key="yellow" flags="m" />
 			<action name="toggleRoot" key="blue" flags="m" />
-			<action name="modeTV" key="tv" flags="m" />
-			<action name="modeRadio" key="radio" flags="m" />
-			<action name="modeFile" key="text" flags="m" />
+		</actionmap>
+
+		<actionmap name="serviceSelector" style="sselect_classic">
+			<action name="showAll" key="red" flags="m" />
+			<action name="showSatellites" key="green" flags="m" />
+			<action name="showProvider" key="yellow" flags="m" />
+			<action name="showBouquets" key="blue" flags="m" />
+			<action name="showMenu" key="info" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">

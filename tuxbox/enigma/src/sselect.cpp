@@ -35,7 +35,8 @@ struct serviceSelectorActions
 	eActionMap map;
 	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
 			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio, 
-			modeFile, toggleStyle, toggleFocus, gotoFirstService, gotoLastService;
+			modeFile, toggleStyle, toggleFocus, gotoFirstService, gotoLastService,
+			showAll, showSatellites, showProvider, showBouquets;
 	serviceSelectorActions():
 		map("serviceSelector", _("service selector")),
 		nextBouquet(map, "nextBouquet", _("switch to next bouquet"), eAction::prioDialogHi),
@@ -52,7 +53,12 @@ struct serviceSelectorActions
 		toggleStyle(map, "toggleStyle", _("toggle between classic and multi column style"), eAction::prioDialog),
 		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list"), eAction::prioDialog),
 		gotoFirstService(map, "gotoFirstService", _("go to first service"), eAction::prioDialogHi),
-		gotoLastService(map, "gotoLastService", _("go to last service"), eAction::prioDialogHi)
+		gotoLastService(map, "gotoLastService", _("go to last service"), eAction::prioDialogHi),
+		
+		showAll(map, "showAll", _("show all services"), eAction::prioDialog),
+		showSatellites(map, "showSatellites", _("show satellites"), eAction::prioDialog),
+		showProvider(map, "showProvider", _("show providers"), eAction::prioDialog),
+		showBouquets(map, "showBouquets", _("show user bouquets"), eAction::prioDialog)
 	{
 	}
 };
@@ -834,6 +840,14 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				services->moveSelection(services->dirFirst);
 			else if (event.action == &i_serviceSelectorActions->gotoLastService)
 				services->moveSelection(services->dirLast);
+			else if (event.action == &i_serviceSelectorActions->showAll && !movemode)
+				showList(listAll);
+			else if (event.action == &i_serviceSelectorActions->showSatellites && !movemode)
+				showList(listSatellites);
+			else if (event.action == &i_serviceSelectorActions->showProvider && !movemode)
+				showList(listProvider);
+			else if (event.action == &i_serviceSelectorActions->showBouquets && !movemode)
+				showList(listBouquets);
 			else if (event.action == &i_cursorActions->cancel)
 			{
 				if (movemode)

@@ -102,6 +102,9 @@ public:
 
 	Signal0<void> rotateRoot;
 
+	enum { listAll, listSatellites, listProvider, listBouquets };
+	Signal1<void,int> showList;
+
 	Signal1<void,const eServiceReference &> addServiceToPlaylist; // add service to the Playlist
 	Signal2<void,eServiceReference*,int> addServiceToUserBouquet;  // add current service to selected User Bouquet
 

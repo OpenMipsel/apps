@@ -906,8 +906,6 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 			if (utf8 == 0)
 				break;
 			
-			eDebug("****** %s", (char*)utf8);
-
 			id3tags.tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
 			free(utf8);
 		}
