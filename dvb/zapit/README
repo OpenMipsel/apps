@@ -31,12 +31,14 @@ apps/dvb/zapit/NEWS                         \
 apps/dvb/zapit/src/bouquets.cpp             \
 apps/dvb/zapit/src/channel.cpp              \
 apps/dvb/zapit/src/dvbstring.cpp            \
+apps/dvb/zapit/src/Makefile.am              \
 apps/dvb/zapit/src/pzapit.cpp               \
 apps/dvb/zapit/src/transponder.cpp          \
 apps/dvb/zapit/src/xmlinterface.cpp         \
 apps/dvb/zapit/src/zapci                    \
 apps/dvb/zapit/src/zapost/dmx.cpp           \
 apps/dvb/zapit/src/zapsi/bat.cpp            \
+apps/dvb/zapit/src/zapsi/Makefile.am        \
 apps/dvb/zapit/src/zapsi/nit.cpp            \
 apps/dvb/zapit/src/zapsi/pat.cpp            \
 apps/dvb/zapit/src/zapsi/pmt.cpp            \
