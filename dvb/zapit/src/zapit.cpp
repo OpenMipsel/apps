@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.42 2003/05/29 07:06:28 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.43 2003/06/04 08:30:02 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -84,8 +84,14 @@ CDemux *videoDemux = NULL;
 /* the map which stores the wanted cable/satellites */
 std::map<uint8_t, std::string> scanProviders;
 /* the map which stores the diseqc 1.2 motor positions */
-extern std::map <string, uint8_t> motorPositions;
-extern std::map <string, int32_t> satellitePositions;
+extern std::map<t_satellite_position, uint8_t> motorPositions;
+extern std::map<t_satellite_position, uint8_t>::iterator mpos_it;
+
+extern std::map<string, t_satellite_position> satellitePositions;
+extern std::map<string, t_satellite_position>::iterator spos_it;
+
+extern std::map<string, int> satelliteDiseqcs; //diseqcs per satellite
+extern std::map<string, int>::iterator satdiseqc_it;
 
 /* current zapit mode */
 enum {
@@ -218,13 +224,13 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 		channel = &(cit->second);
 	
 	/* have motor move satellite dish to satellite's position if necessary */
-	if ((diseqcType == DISEQC_1_2) && (motorPositions[channel->getSatelliteName()] != 0))
+	if ((diseqcType == DISEQC_1_2) && (motorPositions[channel->getSatellitePosition()] != 0))
 	{
 		if ((frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
 		{
 			printf("[zapit] currentSatellitePosition = %d, satellitePosition = %d\n", frontend->getCurrentSatellitePosition(), channel->getSatellitePosition());
-			printf("[zapit] motorPosition = %d\n", motorPositions[channel->getSatelliteName()]);
-			frontend->positionMotor(motorPositions[channel->getSatelliteName()]);
+			printf("[zapit] motorPosition = %d\n", motorPositions[channel->getSatellitePosition()]);
+			frontend->positionMotor(motorPositions[channel->getSatellitePosition()]);
 		
 			waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / motorRotationSpeed; //assuming 1.8 degrees/second motor rotation speed for the time being...
 			printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
@@ -718,6 +724,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				strncpy(sat.satName, satname, 29);
 				sat.satPosition = satellitePositions[satname];
 				satlength = sizeof(sat);
+				printf("[zapit] sending %s, %d\n", sat.satName, sat.satPosition);
 				CBasicServer::send_data(connfd, &satlength, sizeof(satlength));
 				CBasicServer::send_data(connfd, (char *)&sat, satlength);
 				search = search->xmlNextNode;
@@ -746,9 +753,9 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		
 		while (CBasicServer::receive_data(connfd, &pos, sizeof(pos))) 
 		{
-			DBG("adding %s (motorPos %d)", pos.satName, pos.motorPos);
-			changed |= (motorPositions[pos.satName] != pos.motorPos);
-			motorPositions[pos.satName] = pos.motorPos;
+			printf("adding %d (motorPos %d)\n", pos.satPosition, pos.motorPos);
+			changed |= (motorPositions[pos.satPosition] != pos.motorPos);
+			motorPositions[pos.satPosition] = pos.motorPos;
 		}
 		
 		if (changed)
@@ -756,11 +763,10 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 			// save to motor.conf
 			printf("[zapit] saving motor.conf\n");
 			fd = fopen(MOTORCONFIGFILE, "w");
-			std::map<std::string, uint8_t>::iterator it;
-			for (it = motorPositions.begin(); it != motorPositions.end(); it++)
+			for (mpos_it = motorPositions.begin(); mpos_it != motorPositions.end(); mpos_it++)
 			{
-				printf("[zapit] saving %s: %d\n", it->first.c_str(), it->second);
-				fprintf(fd, "%s:%d\n", it->first.c_str(), it->second);
+				printf("[zapit] saving %d %d\n", mpos_it->first, mpos_it->second);
+				fprintf(fd, "%d %d\n", mpos_it->first, mpos_it->second);
 			}
 			fclose(fd);
 		}
@@ -769,6 +775,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 	
 	case CZapitMessages::CMD_SCANSETDISEQCTYPE:
 	{
+		//diseqcType is global
 		CBasicServer::receive_data(connfd, &diseqcType, sizeof(diseqcType));
 		frontend->setDiseqcType(diseqcType);
 		DBG("set diseqc type %d", diseqcType);
@@ -992,8 +999,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				    msgAddSubService.transport_stream_id,
 				    original_network_id,
 				    1,
-				    channel->getDiSEqC(),
-				    channel->getSatelliteName(), 
+				    channel->getDiSEqC(), 
 				    channel->getSatellitePosition()
 				)
 			    )
@@ -1151,7 +1157,7 @@ void internalSendChannels(int connfd, ChannelList* channels, const unsigned int 
 
 		CZapitClient::responseGetBouquetChannels response;
 		strncpy(response.name, ((*channels)[i]->getName()).c_str(), 30);
-		strncpy(response.satellite, ((*channels)[i]->getSatelliteName()).c_str(), 30);
+		response.satellitePosition = (*channels)[i]->getSatellitePosition();
 		response.channel_id = (*channels)[i]->getChannelID();
 		response.nr = first_channel_nr + i;
 
@@ -1530,7 +1536,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.42 2003/05/29 07:06:28 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.43 2003/06/04 08:30:02 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {

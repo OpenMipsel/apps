@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.8 2003/05/21 12:54:45 digi_casi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.9 2003/06/04 08:30:02 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -45,20 +45,8 @@ uint32_t found_radio_chans;
 uint32_t found_data_chans;
 std::string lastServiceName;
 std::map <t_channel_id, uint8_t> service_types;
-extern std::map <string, int32_t> satellitePositions; // defined in getservices.cpp
 extern CFrontend *frontend;
 extern CEventServer *eventServer;
-
-char * satelliteName(int32_t satellitePosition)
-{
-	std::map <string, int32_t>::iterator spI;
-	for (spI = satellitePositions.begin(); spI != satellitePositions.end(); spI++)
-	{
-		if (spI->second == satellitePosition)
-			return (char *)spI->first.c_str();
-	}
-	return "Unknown Satellite";
-}
 
 void generic_descriptor(const unsigned char * const)
 {
@@ -451,7 +439,6 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 				original_network_id,
 				service_type,
 				DiSEqC, 
-				satelliteName(frontend->getCurrentSatellitePosition()), 
 				frontend->getCurrentSatellitePosition()
 			)
 		)
@@ -507,7 +494,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
  		lastServiceName = serviceName;
  		eventServer->sendEvent(CZapitClient::EVT_SCAN_SERVICENAME, CEventServer::INITID_ZAPIT, (void *) lastServiceName.c_str(), lastServiceName.length() + 1);
 
-		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, satelliteName(frontend->getCurrentSatellitePosition()), frontend->getCurrentSatellitePosition()));
+		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, frontend->getCurrentSatellitePosition()));
 		break;
 	}
 	default:
