@@ -8,4 +8,5 @@ streamts_SOURCES = streamts.c
 streamsec_SOURCES = streamsec.c
 
 streamts_LDADD = @MPEGTOOLS_LIBS@
+streampes_LDADD = -lpthread
 
