@@ -226,7 +226,7 @@
 	</object>
 
 	<object name="ezap_main">
-		<eZapMain position="70:382" size="580:134">
+		<eZapMain position="70:382" size="580:134" >
                         
 			<eLabel position="89:113" size="15:21" pixmap="bl" name="bl" />
 			<eLabel position="565:113" size="15:21" pixmap="br" name="br" />
