@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.8 2003/03/02 11:37:40 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.9 2003/03/02 11:41:11 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -1054,9 +1054,9 @@ void sendBouquets(int connfd, const bool emptyBouquetsToo)
 		{
 // ATTENTION: in RECORD_MODE empty bouquets are not send!
 			if ((!(currentMode & RECORD_MODE)) ||
-			    ((channel != NULL) &&
-			     (((currentMode & RADIO_MODE) && (bouquetManager->Bouquets[i]->recModeRadioSize(channel->getTsidOnid()) > 0)) ||
-			      ((currentMode & TV_MODE)    && (bouquetManager->Bouquets[i]->recModeTVSize(channel->getTsidOnid()) > 0)))))
+			    ((frontend != NULL) &&
+			     (((currentMode & RADIO_MODE) && (bouquetManager->Bouquets[i]->recModeRadioSize(frontend->getTsidOnid()) > 0)) ||
+			      ((currentMode & TV_MODE)    && (bouquetManager->Bouquets[i]->recModeTVSize(frontend->getTsidOnid()) > 0)))))
 			{
 				msgBouquet.bouquet_nr = i;
 				strncpy(msgBouquet.name, bouquetManager->Bouquets[i]->Name.c_str(), 30);
@@ -1486,7 +1486,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.8 2003/03/02 11:37:40 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.9 2003/03/02 11:41:11 thegoodguy Exp $\n");
 
 	if (argc > 1)
 	{
