@@ -3006,11 +3006,13 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			else
 				flags&=~ENIGMA_NVOD;
 		}
-
-		if (serviceref.getServiceType()==4) // nvod ref service
-			flags|=ENIGMA_NVOD;
 		else
-			flags&=~ENIGMA_NVOD;
+		{
+			if (serviceref.getServiceType()==4) // nvod ref service
+				flags|=ENIGMA_NVOD;
+			else
+				flags&=~ENIGMA_NVOD;
+		}
 
 		if (serviceref.getServiceType()==6)  // linkage service
 			flags|=ENIGMA_SUBSERVICES;
