@@ -85,8 +85,8 @@ int eButton::eventHandler(const eWidgetEvent &event)
     case eWidgetEvent::evtAction:
 			if (event.action == &i_cursorActions->ok)
 			{
-				/*emit*/ selected();
 				/*emit*/ selected_id(this);
+				/*emit*/ selected();
 		
 /*#ifndef DISABLE_LCD
 				if (parent && parent->LCDElement)

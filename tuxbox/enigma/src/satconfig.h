@@ -43,7 +43,7 @@ class eSatelliteConfigurationManager: public eWindow
 	eSatellite *getSat4VoltageCombo( const eComboBox* );
 	eSatellite *getSat4LnbButton( const eButton* );
 	void createControlElements();
-	void createSatWidgets(eSatellite* sat);
+	eComboBox *createSatWidgets(eSatellite* sat);
 	eSatellite *createSatellite();
 	void updateButtons(int comp);
 	void cleanupWidgets();
@@ -54,12 +54,12 @@ class eSatelliteConfigurationManager: public eWindow
 	void newPressed();
 	void updateScrollbar(int show);
 	void lnbSelected(eButton *who);
-	void delSatellite( eSatellite* sat, bool redraw=true );
+	void delSatellite( eSatellite* sat, bool redraw=true, bool atomic=false );
 	void satChanged(eComboBox *who, eListBoxEntryText *le);
 	void hiloChanged(eComboBox *who, eListBoxEntryText *le);
 	void voltageChanged(eComboBox *who, eListBoxEntryText *le);
 	void focusChanged( const eWidget* focus );
-	
+	void addSatellitesToCombo( eButton*);
 	void deleteSatellite(eSatellite *s);
 	
 	void typeChanged(eListBoxEntryText* newtype);

@@ -1,7 +1,8 @@
 #include <lib/dvb/dvbci.h>
-#include <lib/system/init.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/si.h>
+#include <lib/base/i18n.h>
+#include <lib/system/init.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -92,7 +93,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 	case eDVBCIMessage::reset:
 //		eDebug("[DVBCI] got reset message..");
 		if(!ci_state)
-			ci_progress("no module");	
+			ci_progress(_("no module"));	
 		ci_state=0;
 		clearCAIDs();
 		::ioctl(fd,CI_RESET);
@@ -103,7 +104,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 		if(ci_state)
 			newService();
 		else
-			ci_progress("no module");	
+			ci_progress(_("no module"));	
 		break;
 	case eDVBCIMessage::go:
 		newService();
@@ -1061,7 +1062,7 @@ void eDVBCI::dataAvailable(int what)
 	{	
 		eDebug("[DVBCI] module removed");	
 		memset(appName,0,sizeof(appName));
-		ci_progress("no module");
+		ci_progress(_("no module"));
 
 		for(int i=0;i<MAX_SESSIONS;i++)
 			sessions[i].state=STATE_FREE;

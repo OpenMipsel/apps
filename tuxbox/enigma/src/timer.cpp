@@ -195,9 +195,11 @@ eTimerManager::eTimerManager()
 	struct stat tmp;
 	if ( stat( TIMER_LOGFILE, &tmp ) != -1 )
 	{
-		eDebug("timer logfile is bigger than 100Kbyte.. shrink to 32kByte");
 		if ( tmp.st_size > 102400 )
+		{
+			eDebug("timer logfile is bigger than 100Kbyte.. shrink to 32kByte");
 			rename(TIMER_LOGFILE, "/var/timer.old");
+		}
 	}
 	logfile = fopen(TIMER_LOGFILE, "a" );
 

@@ -274,7 +274,7 @@ struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, vo
 int eComboBox::setCurrent( void* key, bool sendSelChanged )
 {
 	if (!listbox.getCount())
-		return E_INVALID_ENTRY;
+		return E_COULDNT_FIND;
 
 	eListBoxEntryText* cur = listbox.getCurrent();
 

@@ -284,6 +284,7 @@ void eDVBScanController::handleEvent(const eDVBEvent &event)
 		dvb.settings->saveServices();
 		dvb.settings->sortInChannels();
 		/*emit*/ dvb.serviceListChanged();
+		dvb.settings->saveBouquets();
 
 		dvb.setState(eDVBState(eDVBState::stateIdle));
 		break;

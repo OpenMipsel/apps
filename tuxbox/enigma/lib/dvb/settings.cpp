@@ -213,7 +213,6 @@ void eDVBSettings::sortInChannels()
 	removeDVBBouquets();
 	getTransponders()->forEachService(sortinChannel(*this));
 	revalidateBouquets();
-	saveBouquets();
 }
 
 struct saveService: public std::unary_function<const eServiceDVB&, void>
