@@ -1,5 +1,5 @@
-#ifndef __ss_listbox_h
-#define __ss_listbox_h
+#ifndef __listbox_h
+#define __listbox_h
 
 #include <sstream>
 
@@ -325,27 +325,17 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 	eListBoxBase::redrawBorder(target, rc);
 
 	// rc wird in eListBoxBase ggf auf den neuen Client Bereich ohne Rand verkleinert
-	if ( columns > 1 )
-	{
-		eDebug("where left = %i, top = %i, width = %i, height = %i", where.left(), where.top(), where.width(), where.height() );
-		eDebug("rc    left = %i, top = %i, width = %i, height = %i", rc.left(), rc.top(), rc.width(), rc.height() );
-	}
 	
 	int i=0;
 	for (ePtrList_T_iterator entry(top); (entry != bottom) && (entry != childs.end()); ++entry)
 	{
 		eRect rect = getEntryRect(i);
 
-		if ( columns > 1 )
-			eDebug("entry %i rect left = %i, top = %i, width = %i, height = %i", i, rect.left(), rect.top(), rect.width(), rect.height() );
-
 		eString s;
 
 		if ( rc.contains(rect) )
 			if ( entry == current )
 			{
-				if ( columns > 1 )
-					eDebug("redraw entry");
 				if ( LCDTmp ) // LCDTmp is only valid, when we have the focus
 					LCDTmp->setText( entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), 1 ) );				
 				else if ( parent->LCDElement && have_focus )
@@ -354,11 +344,7 @@ inline void eListBox<T>::redrawWidget(gPainter *target, const eRect &where)
 					entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 1 : ( MaxEntries > 1 ? 2 : 0 ) )	);		
 			}
 			else
-			{
 				entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 0 : ( MaxEntries > 1 ? 2 : 0 ) )	);
-				if ( columns > 1 )
-					eDebug("redraw entry");
-			}
 
 		i++;
 	}
@@ -421,10 +407,9 @@ inline void eListBox<T>::init()
 {
 	current = top = bottom = childs.begin();
 
-	for (int i = 0; i < (MaxEntries*columns); i++, bottom++)
+	for (int i = 0; i < (MaxEntries*columns); ++i, ++bottom)
 		if (bottom == childs.end() )
 			break;	
-	eDebug("Init->MaxEntries = %i, columns = %i", MaxEntries, columns);
 	if (!in_atomic)
 		invalidate();
 	else
@@ -442,55 +427,68 @@ inline int eListBox<T>::moveSelection(int dir)
 	switch (dir)
 	{
 		case dirPageDown:
-			if (bottom == childs.end())
+			for (int i = 0; i < MaxEntries; i++)
 			{
-				current = bottom;		// --bottom always valid because !childs.empty()
-				--current;
-			} else
-				for (int i = 0; i < (MaxEntries/columns); i++)
+				if (++current == bottom) // unten (rechts) angekommen? page down
 				{
-					if (bottom == childs.end())
+					if (bottom == childs.end()) // einzige ausnahme: unten (rechts) angekommen
+					{
+						--current;
 						break;
-					bottom++;
-					top++;
-					current++;
+					}
+					for (int i = 0; i < MaxEntries * columns; ++i)
+					{
+						if (bottom != childs.end())
+							++bottom;
+						if (top != childs.end())
+							++top;
+					}
 				}
+			}
 		break;
 
 		case dirPageUp:
-			if (top == childs.begin())
-				current = top;
-			else
-				for (int i = 0; i < (MaxEntries / columns); ++i)
-				{	
+			if (current == childs.begin())		// schon ganz am anfang? nichts tun.
+				break;
+			for (int i = 0; i < MaxEntries; ++i)
+			{
+				if (current-- == top)	// oben (links) angekommen? page up
+				{
+					for (int i = 0; i < MaxEntries * columns; ++i)
+					{
+						if (top == childs.begin()) 		// einzige ausnahme: oben (links) angekommen
+							break;
+						--top;
+					}
+					
 					if (top == childs.begin())
 						break;
-					top--;
-					current--;
+					
+						// uund einmal bottom neuberechnen :)
+					bottom=top;
+					for (int i = 0; i < MaxEntries*columns; ++i)
+						if (bottom != childs.end())
+							++bottom;
 				}
-				bottom=top;
-				for (int i = 0; i < ( MaxEntries / columns); ++i, ++bottom)
-					if (bottom == childs.end())
-						break;
-		break;
+			}
+			break;
 		
 		case dirUp:
 			if ( current == childs.begin() )				// wrap around?
 			{
 				current = --childs.end();					// select last
 				top = bottom = childs.end();
-				for (int i = 0; i < MaxEntries; i++, top--)
+				for (int i = 0; i < MaxEntries*columns; i++, top--)
 					if (top == childs.begin())
 						break;
-			}
-			else
+			} else
 				if (current-- == top) // new top must set
 				{
-					for (int i = 0;i < MaxEntries; i++, top--)
+					for (int i = 0; i < MaxEntries*columns; i++, top--)
 						if (top == childs.begin())
 							break;
 					bottom=top;
-					for (int i = 0; i < MaxEntries; ++i, ++bottom)
+					for (int i = 0; i < MaxEntries*columns; ++i, ++bottom)
 						if (bottom == childs.end())
 							break;
 				}
@@ -499,8 +497,8 @@ inline int eListBox<T>::moveSelection(int dir)
 		case dirDown:
 			if ( current == --childs.end() )				// wrap around?
 			{
-				top = current = bottom = childs.begin(); 	// goto first;
-				for (int i = 0; i < MaxEntries; i++, bottom++)
+				top = current = bottom = childs.begin(); 	// goto first
+				for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
 					if ( bottom == childs.end() )
 						break;
 			}
@@ -508,15 +506,19 @@ inline int eListBox<T>::moveSelection(int dir)
 			{
 				if (++current == bottom)   // ++current ??
 				{
-					for (int i = 0; i<MaxEntries; i++, top++, bottom++)
-						if ( bottom == childs.end() )
-							break;
+					for (int i = 0; i<MaxEntries * columns; ++i)
+					{
+						if (bottom != childs.end() )
+							++bottom;
+						if (top != childs.end() )
+							++top;
+					}
 				}
 			}
 			break;
 		case dirFirst:
 			top = current = bottom = childs.begin(); 	// goto first;
-			for (int i = 0; i < MaxEntries; i++, bottom++)
+			for (int i = 0; i < MaxEntries * columns; i++, bottom++)
 				if ( bottom == childs.end() )
 					break;
 			break;
@@ -533,7 +535,7 @@ inline int eListBox<T>::moveSelection(int dir)
 	}
 
 	if (flags & flagShowEntryHelp)
-		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description avail")));
+		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
 
 	if (isVisible())
 	{
