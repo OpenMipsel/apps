@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.4 2003/01/02 19:24:05 Ghostrider Exp $
+ * $Id: setupskin.cpp,v 1.11.2.5 2003/01/07 05:22:17 Ghostrider Exp $
  */
 
 #include <setupskin.h>
@@ -35,7 +35,6 @@ void eSkinSetup::loadSkins()
 
 	const char *skinPaths[] = { CONFIGDIR "/enigma/skins/", DATADIR "/enigma/skins/", 0 };
 
-	struct dirent **namelist;
 	char *current_skin=0;
 	eConfig::getInstance()->getKey("/ezap/ui/skin", current_skin);
 
@@ -43,6 +42,7 @@ void eSkinSetup::loadSkins()
 
 	for (int i=0; skinPaths[i]; ++i)
 	{
+		struct dirent **namelist=0;
 		int n = scandir(skinPaths[i], &namelist, 0, alphasort);
 
 		if ( n < 0 && i)
@@ -78,7 +78,9 @@ void eSkinSetup::loadSkins()
 			}
 			free(namelist[count]);
 		}
-		free(namelist);
+
+		if (namelist)
+			free(namelist);
 	}
 
 	if (selection)
