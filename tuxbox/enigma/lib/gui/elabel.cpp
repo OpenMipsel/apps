@@ -120,7 +120,9 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 			target->setBackgroundColor(w->getBackgroundColor());
 		}
 		target->setFont(font);
+		target->clip( area );
 		target->renderPara(*para, ePoint( area.left(), area.top()+yOffs) );
+		target->clippop();
 	}
 	if (pixmap)
 	{

@@ -534,7 +534,7 @@ public:
 	{
 		return orbital_position == sat.orbital_position;
 	}
-};
+};                     
 
 struct eDiSEqC
 {
@@ -553,7 +553,9 @@ struct eDiSEqC
 	int uncommitted_switch; // send to uncommited switch
 	int uncommitted_gap;    // send uncommitted switch in DiSEqC Repeat gap
 	int useGotoXX;          // Rotor Support gotoXX Position ?
-	double gotoXXOffset;    // Offset for gotoXX° Function
+	enum { NORTH, SOUTH, EAST, WEST };
+	int gotoXXLoDirection;  // EAST, WEST
+	int gotoXXLaDirection;  // NORT, SOUTH
 	double gotoXXLongitude; // Longitude for gotoXX° Function
 	double gotoXXLatitude;  // Latitude for gotoXX° Function
 };

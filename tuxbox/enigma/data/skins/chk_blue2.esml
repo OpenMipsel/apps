@@ -87,6 +87,7 @@
 	</colorscheme>
 
 	<values>
+		<value name="eComboBox.smallButton.decoWidth" value="25" />
 		<value name="eWindow.titleFontSize" value="24" />
 		<value name="eWindow.borderTop" value="50" />
 		<!--value name="eWindow.borderLeft" value="4" />

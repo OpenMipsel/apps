@@ -534,8 +534,11 @@ void eTransponderList::readLNBData()
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/useGotoXX").c_str(), tmpint );
 		lnb.getDiSEqC().useGotoXX = tmpint;
 
-		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/gotoXXOffset").c_str(), tmpdouble );
-		lnb.getDiSEqC().gotoXXOffset = tmpdouble;
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/gotoXXLoDirection").c_str(), tmpint );
+		lnb.getDiSEqC().gotoXXLoDirection = tmpint;
+
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/gotoXXLaDirection").c_str(), tmpint );
+		lnb.getDiSEqC().gotoXXLaDirection = tmpint;
 
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/gotoXXLatitude").c_str(), tmpdouble );
 		lnb.getDiSEqC().gotoXXLatitude = tmpdouble;
@@ -601,9 +604,10 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().uncommitted_switch=0;
 			lnb.getDiSEqC().uncommitted_gap=0;
 			lnb.getDiSEqC().useGotoXX=1;
-			lnb.getDiSEqC().gotoXXOffset=180.0;  // this is exakt south
 			lnb.getDiSEqC().gotoXXLatitude=0.0;
 			lnb.getDiSEqC().gotoXXLongitude=0.0;
+			lnb.getDiSEqC().gotoXXLoDirection=eDiSEqC::EAST;
+			lnb.getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
 			eSatellite *sat = lnb.addSatellite(192);
 			sat->setDescription("Astra 19.2E");
 			eSwitchParameter &sParams = sat->getSwitchParams();
@@ -625,9 +629,10 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().uncommitted_switch=0;
 			lnb.getDiSEqC().uncommitted_gap=0;
 			lnb.getDiSEqC().useGotoXX=1;
-			lnb.getDiSEqC().gotoXXOffset=180.0;
-			lnb.getDiSEqC().gotoXXLatitude=0.0;
 			lnb.getDiSEqC().gotoXXLongitude=0.0;
+			lnb.getDiSEqC().gotoXXLatitude=0.0;
+			lnb.getDiSEqC().gotoXXLoDirection=eDiSEqC::EAST;
+			lnb.getDiSEqC().gotoXXLaDirection=eDiSEqC::NORTH;
 			eSatellite *sat = lnb.addSatellite(130);
 			sat->setDescription("Eutelsat 13.0E");
 			eSwitchParameter &sParams = sat->getSwitchParams();
@@ -657,7 +662,8 @@ void eTransponderList::writeLNBData()
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_switch").c_str(), (int) it->getDiSEqC().uncommitted_switch );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_gap").c_str(), (int) it->getDiSEqC().uncommitted_gap );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/useGotoXX").c_str(), (int) it->getDiSEqC().useGotoXX );
-		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXOffset").c_str(), it->getDiSEqC().gotoXXOffset );    
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLaDirection").c_str(), it->getDiSEqC().gotoXXLaDirection );
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLoDirection").c_str(), it->getDiSEqC().gotoXXLoDirection );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLatitude").c_str(), it->getDiSEqC().gotoXXLatitude );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLongitude").c_str(), it->getDiSEqC().gotoXXLongitude );
 		eString tmpStr;

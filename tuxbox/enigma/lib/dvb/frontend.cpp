@@ -438,30 +438,135 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	return 0;
 }
 
-/*double calcAzimuth( double satlong, double eslat, double eslong)
+double Radians( double number )
 {
-	double longdiffr = (eslong-satlong) / 57.29578;
-	double esazimuth = 180 + 57.29578 * std::atan( std::tan(longdiffr) / std::sin( (eslat / 57.29578) ) );
-	eDebug("Longitude=%lf, Latitude=%lf, OrbitalPos=%lf", eslong, eslat, satlong);
-	if (eslat<0)
-		esazimuth=esazimuth-180;
-	if (esazimuth<0)
-		esazimuth=esazimuth+360.0;
-		
-	return esazimuth;
-}*/
-
-double eFrontend::calcAzimuth( double Longitude, double Latitude, int OrbitalPos )
-{
-	double a, p = (double)OrbitalPos/10;
-	eDebug("Longitude=%lf, Latitude=%lf, OrbitalPos=%lf", Longitude, Latitude, p);
-	// Berechnung Azimuth
-	a = 180 / M_PI * std::atan ( std::tan ( ( p - Longitude ) * M_PI / 180 ) / std::sin ( Latitude * M_PI / 180 ) );
-	a = (( 180 - a ) * 100 + 0.5 ) / 100;
-	eDebug("Azimuth=%lf",a);
-	return a;
+	return number*M_PI/180;
 }
-     
+
+double Deg( double number )
+{
+	return number*180/M_PI;
+}
+
+double Rev( double number )
+{
+	return number - std::floor( number / 360.0 ) * 360;
+}
+
+double calcElevation( double SatLon, double SiteLat, double SiteLon, int Height_over_ocean = 0 )
+{
+	double  a0=0.58804392,
+					a1=-0.17941557,
+					a2=0.29906946E-1,
+					a3=-0.25187400E-2,
+					a4=0.82622101E-4,
+
+					f = 1.00 / 298.257, // Earth flattning factor
+
+					r_sat=42164.57, // Distance from earth centre to satellite
+
+					r_eq=6378.14,  // Earth radius
+
+					Rstation = r_eq / ( std::sqrt( 1.00 - f*(2.00-f)*std::sin(Radians(SiteLat))*std::sin(Radians(SiteLat)) ) ),
+
+					Ra = (Rstation+Height_over_ocean)*std::cos(Radians(SiteLat)),
+					Rz= Rstation*(1.00-f)*(1.00-f)*std::sin(Radians(SiteLat)),
+//			alfa_r = r_sat - Rstation,
+
+					alfa_rx=r_sat*std::cos(Radians(SatLon-SiteLon)) - Ra,
+					alfa_ry=r_sat*std::sin(Radians(SatLon-SiteLon)),
+					alfa_rz=-Rz,
+
+					alfa_r_north=-alfa_rx*std::sin(Radians(SiteLat)) + alfa_rz*std::cos(Radians(SiteLat)),
+					alfa_r_zenith=alfa_rx*std::cos(Radians(SiteLat)) + alfa_rz*std::sin(Radians(SiteLat)),
+
+					El_geometric=Deg(std::atan2( alfa_r_zenith , std::sqrt(alfa_r_north*alfa_r_north+alfa_ry*alfa_ry))),
+
+
+					x = std::fabs(El_geometric+0.589),
+					refraction=std::fabs(a0+a1*x+a2*x*x+a3*x*x*x+a4*x*x*x*x),
+          El_observed = 0.00;
+					
+	if (El_geometric > 10.2)
+		El_observed = El_geometric+0.01617*(std::cos(Radians(std::abs(El_geometric)))/std::sin(Radians(std::abs(El_geometric))) );
+	else
+	{
+		El_observed = El_geometric+refraction ;
+	}
+
+	if (alfa_r_zenith < -3000)
+		El_observed=-99;
+
+	return El_observed;
+}
+
+double calcAzimuth(double SatLon, double SiteLat, double SiteLon, int Height_over_ocean=0)
+{
+	double	f = 1.00 / 298.257, // Earth flattning factor
+
+					r_sat=42164.57, // Distance from earth centre to satellite
+
+					r_eq=6378.14,  // Earth radius
+
+					Rstation = r_eq / ( std::sqrt( 1 - f*(2-f)*std::sin(Radians(SiteLat))*std::sin(Radians(SiteLat)) ) ),
+					Ra = (Rstation+Height_over_ocean)*std::cos(Radians(SiteLat)),
+					Rz = Rstation*(1-f)*(1-f)*std::sin(Radians(SiteLat)),
+//					alfa_r = r_sat-Rstation,
+
+					alfa_rx = r_sat*std::cos(Radians(SatLon-SiteLon)) - Ra,
+					alfa_ry = r_sat*std::sin(Radians(SatLon-SiteLon)),
+					alfa_rz = -Rz,
+
+					alfa_r_north = -alfa_rx*std::sin(Radians(SiteLat)) + alfa_rz*std::cos(Radians(SiteLat)),
+//					alfa_r_zenith = alfa_rx*std::cos(Radians(SiteLat)) + alfa_rz*std::sin(Radians(SiteLat)),
+					Azimuth = 0.00;
+
+					if (alfa_r_north < 0)
+						Azimuth = 180+Deg(std::atan(alfa_ry/alfa_r_north));
+					else
+						Azimuth = Rev(360+Deg(std::atan(alfa_ry/alfa_r_north)));
+
+	return Azimuth;
+}
+
+double calcDeclination( double SiteLat, double Azimuth, double Elevation)
+{
+	return Deg( std::asin(std::sin(Radians(Elevation)) *
+												std::sin(Radians(SiteLat)) +
+												std::cos(Radians(Elevation)) *
+												std::cos(Radians(SiteLat)) *
+												std::cos(Radians(Azimuth))
+												)
+						);
+}
+
+double calcSatHourangle( double Azimuth, double Elevation, double Declination, double Lat )
+{
+	double a = - std::cos(Radians(Elevation)) *
+							 std::sin(Radians(Azimuth)),
+
+				 b = std::sin(Radians(Elevation)) *
+						 std::cos(Radians(Lat)) -
+						 std::cos(Radians(Elevation)) *
+						 std::sin(Radians(Lat)) *
+						 std::cos(Radians(Azimuth)),
+
+// Works for all azimuths (northern & sourhern hemisphere)
+						 returnvalue = 180 + Deg(std::atan2(a,b));
+
+	if ( Azimuth > 270 )
+	{
+		returnvalue = ( (returnvalue-180) + 360 );
+		if (returnvalue>360)
+			returnvalue = 360 - (returnvalue-360);
+  }
+
+	if ( Azimuth < 90 )
+		returnvalue = ( 180 - returnvalue );
+
+	return returnvalue;
+}
+
 int eFrontend::tune(eTransponder *trans,
 		uint32_t Frequency, 		// absolute frequency in kHz
 		int polarisation, 			// polarisation (polHor, polVert, ...)
@@ -537,9 +642,29 @@ int eFrontend::tune(eTransponder *trans,
 			if ( lnb->getDiSEqC().useGotoXX )
 			{
 				int pos = sat->getOrbitalPosition();
-				double azimuth=calcAzimuth(lnb->getDiSEqC().gotoXXLongitude, lnb->getDiSEqC().gotoXXLatitude, pos);
-				int east = azimuth < lnb->getDiSEqC().gotoXXOffset;
-				int tmp = (int)round( fabs( lnb->getDiSEqC().gotoXXOffset - azimuth ) * 10.0 );
+				int satDir = pos < 0 ? eDiSEqC::WEST : eDiSEqC::EAST;
+
+				double SatLon = abs(pos)/10.00,
+							 SiteLat = lnb->getDiSEqC().gotoXXLatitude,
+							 SiteLon = lnb->getDiSEqC().gotoXXLongitude;
+
+				if ( lnb->getDiSEqC().gotoXXLaDirection == eDiSEqC::SOUTH )
+					SiteLat = -SiteLat;
+
+				if ( lnb->getDiSEqC().gotoXXLoDirection == eDiSEqC::WEST )
+					SiteLon = 360 - SiteLon;
+
+				if (satDir == eDiSEqC::WEST )
+					SatLon = 360 - SatLon;
+
+				eDebug("siteLatitude = %lf, siteLongitude = %lf, %lf degrees", SiteLat, SiteLon, SatLon );
+				double azimuth=calcAzimuth(SatLon, SiteLat, SiteLon );
+				double elevation=calcElevation( SatLon, SiteLat, SiteLon );
+				double declination=calcDeclination( SiteLat, azimuth, elevation );
+				double satHourAngle=calcSatHourangle( azimuth, elevation, declination, SiteLat );
+				eDebug("azimuth=%lf, elevation=%lf, declination=%lf, PolarmountHourAngle=%lf", azimuth, elevation, declination, satHourAngle );
+				int east = satHourAngle < 180;
+				int tmp = (int)round( fabs( 180 - satHourAngle ) * 10.0 );
 				RotorCmd = (tmp/10)*0x10 + gotoXTable[ tmp % 10 ];
 				if (east)
 					RotorCmd |= 0xE000;
@@ -662,8 +787,6 @@ int eFrontend::tune(eTransponder *trans,
 						i++;
 					}
 				}
-				seq.numCommands=cmdCount;
-				eDebug("Commands to send = %d", cmdCount);
 			}
 		}
 		else // no DiSEqC
@@ -671,6 +794,8 @@ int eFrontend::tune(eTransponder *trans,
 			eDebug("no DiSEqC");
 			seq.commands=0;
 		}
+		seq.numCommands=cmdCount;
+		eDebug("Commands to send = %d", cmdCount);
 
 		seq.miniCommand = SEC_MINI_NONE;
 		if ( csw != lastcsw || (ToneBurst && ToneBurst != lastToneBurst) )
