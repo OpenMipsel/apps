@@ -7,7 +7,6 @@
 #include <lib/gui/multipage.h>
 
 class eService;
-class eDVBEvent;
 class eZapLCDMain;
 class eZapLCDMenu;
 class eZapLCDScart;
