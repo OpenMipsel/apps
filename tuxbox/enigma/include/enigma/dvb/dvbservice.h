@@ -3,6 +3,8 @@
 
 #include <core/dvb/edvb.h>
 
+class eDVBCI;
+
 class eDVBServiceEvent: public eDVBEvent
 {
 public:
@@ -59,6 +61,8 @@ public:
 	ePtrList<CA> calist;		/** currently used ca-systems */
 	
 	int checkCA(ePtrList<CA> &list, const ePtrList<Descriptor> &descriptors);
+	
+	eDVBCI *DVBCI;
 
 	void scanPMT();
 
