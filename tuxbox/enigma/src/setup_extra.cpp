@@ -15,30 +15,36 @@ eZapExtraSetup::eZapExtraSetup():
 	eWindow(0)
 {
 	setText(_("Extra setup"));
-	cmove(ePoint(140, 166));
-	cresize(eSize(390, 200));
+	cmove(ePoint(140, 186));
+	cresize(eSize(390, 230));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	loadSettings();
 
 	profimode=new eCheckbox(this, sprofimode, 1);
-	profimode->setText("Advanced mode");
+	profimode->setText(_("Not ask anything"));
 	profimode->move(ePoint(20, 20));
 	profimode->resize(eSize(fd+4+240, fd+4));
-	profimode->setHelpText(_("enable/disable advanced (profi) mode (ok)"));
+	profimode->setHelpText(_("enable/disable safety asking (ok)"));
 
 	hideerror=new eCheckbox(this, shideerror, 1);
-	hideerror->setText("Hide error windows");
+	hideerror->setText(_("Hide error windows"));
 	hideerror->move(ePoint(20, 60));
 	hideerror->resize(eSize(fd+4+240, fd+4));
-	hideerror->setHelpText(_("hide/show error windows (ok)"));
+	hideerror->setHelpText(_("enable/disable showing the zap error messages(ok)"));
+
+	extZap=new eCheckbox(this, sextzap, 1);
+	extZap->setText(_("Advanced zap mode"));
+	extZap->move(ePoint(20, 100));
+	extZap->resize(eSize(fd+4+240, fd+4));
+	extZap->setHelpText(_("enable/disable advanced zap mode"));
 
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 120));
+	ok->move(ePoint(20, 140));
 	ok->resize(eSize(170, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -48,7 +54,7 @@ eZapExtraSetup::eZapExtraSetup():
 	abort=new eButton(this);
 	abort->loadDeco();
 	abort->setText(_("abort"));
-	abort->move(ePoint(210, 120));
+	abort->move(ePoint(210, 140));
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 
@@ -69,15 +75,20 @@ void eZapExtraSetup::loadSettings()
 
 	if (eConfig::getInstance()->getKey("/elitedvb/extra/hideerror", shideerror))
 		shideerror=0;
+
+	if (eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", sextzap))
+		sextzap=0;	
 }
 
 void eZapExtraSetup::saveSettings()
 {
 	sprofimode=profimode->isChecked();
 	shideerror=hideerror->isChecked();
+	sextzap=extZap->isChecked();
 
 	eConfig::getInstance()->setKey("/elitedvb/extra/profimode", sprofimode);
 	eConfig::getInstance()->setKey("/elitedvb/extra/hideerror", shideerror);
+	eConfig::getInstance()->setKey("/elitedvb/extra/extzapping", sextzap);
 }
 
 eZapExtraSetup::~eZapExtraSetup()

@@ -26,6 +26,13 @@ ePlaylist::~ePlaylist()
 	eDebug("destroy %s", filename.c_str() );
 }
 
+void ePlaylist::clear()
+{
+	changed=1;
+	list.clear();
+	current = list.end();
+}
+
 int ePlaylist::load(const char *filename)
 {
 	eDebug("loading playlist... %s", filename);
@@ -196,7 +203,10 @@ int ePlaylist::moveService(std::list<ePlaylistEntry>::iterator it, std::list<ePl
 void eServicePlaylistHandler::addFile(void *node, const eString &filename)
 {
 	if (filename.right(4).upper()==".M3U")
-		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, eServiceReference::mustDescent|eServiceReference::canDescent|eServiceReference::sort1, filename));
+		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id,
+			eServiceReference::mustDescent|
+			eServiceReference::canDescent|
+			eServiceReference::sort1, filename));
 }
 
 eService *eServicePlaylistHandler::createService(const eServiceReference &node)

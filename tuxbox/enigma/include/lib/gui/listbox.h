@@ -66,7 +66,7 @@ public:
 
 	void init();
 
-	void append(T* e, bool holdCurrent=false);
+	void append(T* e, bool holdCurrent=false, bool front=false);
 	void remove(T* e, bool holdCurrent=false);
 	void clearList();
 	int getCount() { return childs.size(); }
@@ -238,13 +238,16 @@ public:
 
 
 template <class T>
-inline void eListBox<T>::append(T* entry, bool holdCurrent)
+inline void eListBox<T>::append(T* entry, bool holdCurrent, bool front)
 {
 	T* cur = 0;
 	if (holdCurrent)
 		cur = current;
 
-	childs.push_back(entry);
+	if ( front )
+		childs.push_front(entry);
+	else
+		childs.push_back(entry);
 	init();
 	
 	if (cur)

@@ -402,8 +402,6 @@
 		</eWidget>
 	</object>
 	
-	
-	
 	<object name="enigma_lcd_main">
 		<eZapLCDMain position="0:0" size="120:64">
 			<eLabel position="0:0" size="120:45" font="lcd.main.service_name" wrap="on" name="service_name" />

@@ -243,12 +243,22 @@
 
 	<object name="enigma_lcd_main">
 		<eZapLCDMain position="0:0" size="120:64">
-			<eLabel position="0:0" size="120:17" pixmap="lcd_enigma_logo" />
-			<eLabel position="0:17" size="120:34" font="lcd.main.service_name" wrap="on" name="service_name" />
-			<eLabel position="74:51" size="46:13" font="lcd.main.clock" name="clock" align="right" />
-			<eProgress position="0:56" size="70:6" name="volume_bar" foregroundColor="255" leftColor="255" rightColor="0" border="1" />
+			<eLabel position="0:0" size="120:45" font="lcd.main.service_name" wrap="on" name="service_name" />
+			<eLabel position="74:44" size="46:23" font="lcd.main.clock" name="clock" align="right" />
+			<eLabel position="0:53" size="9:13" pixmap="speaker" />
+			<eLabel position="0:46" size="7:7" pixmap="lcd-clock" />
+			<eProgress position="9:56" size="64:8" name="volume_bar" foregroundColor="255" leftColor="255" rightColor="0" border="1" />
+			<eProgress position="9:46" size="64:9" name="progress_bar" foregroundColor="255" leftColor="255" rightColor="0" border="1" />
 		</eZapLCDMain>
-	</object> 
+	</object>
+
+	<object name="enigma_lcd_scart">
+		<eZapLCDScart position="0:0" size="120:64">
+			<eProgress position="7:2" size="65:6" name="volume_bar" foregroundColor="0" leftColor="0" rightColor="255" border="1" />
+			<eLabel position="0:0" size="120:17" pixmap="lcd_enigma_logo" />
+		  <eLabel position="4:20" size="112:38" pixmap="lcd_scart" />
+		</eZapLCDScart>
+	</object>
 
 	<object name="enigma_lcd_menu">
 		<eZapLCDMenu position="0:0" size="120:64">
@@ -258,20 +268,6 @@
 		</eZapLCDMenu>
 	</object>
 
-	<object name="enigma_lcd_scart">
-		<eZapLCDScart position="0:0" size="120:64">
-			<eLabel position="0:0" size="120:17" pixmap="lcd_enigma_logo" />
-			<eLabel position="4:24" size="112:38" pixmap="lcd_scart" />	
-		</eZapLCDScart>
-	</object>
-
-<!--
-	<object name="enigma_lcd_standby">
-		<eZapLCDScart position="0:0" size="120:64">
-		  <eLabel position="0:0" size="e:e" pixmap="lcd_standby" />	
-		</eZapLCDScart>
-	</object>
--->
 	<object name="enigma_lcd_standby">
 		<eZapLCDStandby position="0:0" size="120:64">
 			<eLabel position="25:15" size="e:e" font="lcd.standby.clock" name="clock" />	

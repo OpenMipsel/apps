@@ -19,7 +19,7 @@ class eHelpWindow: public eWindow
 	int eventHandler(const eWidgetEvent &event);
 	void updateScrollbar();
 public:
-	eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID);
+	eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID=0);
 	~eHelpWindow();
 };
 

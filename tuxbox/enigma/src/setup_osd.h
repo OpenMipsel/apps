@@ -15,7 +15,7 @@ class eZapOsdSetup: public eWindow
 	eCheckbox* showConsoleOnFB;
 	eStatusBar* statusbar;
 
-	eButton *ok, *abort;
+	eButton *ok, *abort, *pluginoffs;
 	int alpha, brightness, gamma;
 private:
 	void consoleStateChanged( int );
@@ -24,6 +24,7 @@ private:
 	void gammaChanged( int );
 	void fieldSelected(int *number);
 	void okPressed();
+	void PluginOffsetPressed();
 	void abortPressed();
 public:
 	eZapOsdSetup();

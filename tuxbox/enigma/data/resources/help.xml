@@ -5,15 +5,15 @@
 	</author>
 
 	<help>
-			<helptext id="1" text="This is the service selector. Here you can select the service you may want to view. Bla, bla, bla...." />
-			<helptext id="2" text="The advanced mode doesn't ask you if you really want to do something. It just does what you wanted to do :) The option 'Hide error windows' permits you to switch off the annoying error messages when you zap." />
-			<helptext id="3" text="Test 3" />
-			<helptext id="4" text="Test 4" />
-			<helptext id="5" text="Test 5" />
-			<helptext id="6" text="Test 6" />
-			<helptext id="7" text="Test 7" />
-			<helptext id="8" text="Test 8" />	
-			<helptext id="9" text="Test 9" />
+		<helptext id="1" text="" />
+		<helptext id="2" text="When 'dont ask anything' is checked, you will never been asked yes/no to any action.\n\nWhen 'Hide error windows' is checked no more error messages appear on service zapping\n\nWhen 'Advanced Zap mode' is checked you can switch with the next-/ prevPlaylistService button to services which are not in the currently selected mode." />
+		<helptext id="3" text="" />
+		<helptext id="4" text="" />
+		<helptext id="5" text="" />
+		<helptext id="6" text="" />
+		<helptext id="7" text="" />
+		<helptext id="8" text="" />	
+		<helptext id="9" text="" />
 	</help>
 
 </enigmahelp>

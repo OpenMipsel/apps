@@ -427,24 +427,27 @@ public:
 	void nextMessage();
 	static eZapMain *getInstance() { return instance; }
 
-// methods used from the timer
 	enum {
 		psAdd=1,      // just add, to not change current
 		psRemove=2,   // remove before add
 		psActivate=4, // use existing entry if available
 		psDontAdd=8,  // just play
+		psSeekPos=16
 	};
+
 	void playService(const eServiceReference &service, int flags);
 	int recordDVR(int onoff, int user, const char* event_name=0 ); // starts recording
-//////////////////////////////
 
 	void setMode(int mode, int user=0); // user made change?
 	int getMode() { return mode; }
 	const eServiceReference& getRecordingsref() { return recordingsref; }
 	void rotateRoot();
 	void toggleTimerMode();
+	void toggleEditMode(eServiceSelector *);
+	void toggleMoveMode(eServiceSelector *);
 	void handleStandby();
 
+	void setNewServiceSelectorRoot( eServiceReference root=eServiceReference(), eServiceReference path=eServiceReference() );
 	void setServiceSelectorPath(eServicePath path);
 	void getServiceSelectorPath(eServicePath &path);
 

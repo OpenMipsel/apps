@@ -14,10 +14,12 @@
 struct enigmaEventViewActions
 {
 	eActionMap map;
-	eAction addTimerEvent, removeTimerEvent, close;
+	eAction addDVRTimerEvent, addNGRABTimerEvent, addSwitchTimerEvent, removeTimerEvent, close;
 	enigmaEventViewActions():
 		map("enigmaEventView", _("enigma event view")),
-		addTimerEvent(map, "addTimerEvent", _("add this event to timer list"), eAction::prioDialog ),
+		addDVRTimerEvent(map, "addDVRTimerEvent", _("add this event as DVR Event to timer list"), eAction::prioDialog ),
+		addNGRABTimerEvent(map, "addNGRABTimerEvent", _("add this event as NGRAB Event to timer list"), eAction::prioDialog ),
+		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simpel Switch Event to timer list"), eAction::prioDialog ),
 		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog ),
 		close(map, "close", _("closes the Event View"), eAction::prioDialog)
 	{
@@ -54,6 +56,7 @@ void eEventDisplay::prevEvent()
 
 int eEventDisplay::eventHandler(const eWidgetEvent &event)
 {
+	int addtype=-1;
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
@@ -91,20 +94,17 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_enigmaEventViewActions->close)
 				close(0);
-			else if (event.action == &i_enigmaEventViewActions->addTimerEvent)
-			{
-				if ((evt || events) && eTimerManager::getInstance()->addEventToTimerList( this, &ref, evt?evt:*events ) )
-				{
-					hide();
-					eTimerView v( eTimerManager::getInstance()->findEvent( &ref, *events ) );
-					v.show();
-					v.exec();
-					v.hide();
-//					invalidate();
-					checkTimerIcon(evt?evt:*events);
-					show();
-				}
-			}
+			else if (event.action == &i_enigmaEventViewActions->addDVRTimerEvent)
+				addtype = ePlaylistEntry::RecTimerEntry |
+									ePlaylistEntry::recDVR|
+									ePlaylistEntry::stateWaiting;
+			else if (event.action == &i_enigmaEventViewActions->addNGRABTimerEvent)
+				addtype = ePlaylistEntry::RecTimerEntry|
+									ePlaylistEntry::recNgrab|
+									ePlaylistEntry::stateWaiting;
+			else if (event.action == &i_enigmaEventViewActions->addSwitchTimerEvent)
+				addtype = ePlaylistEntry::SwitchTimerEntry|
+									ePlaylistEntry::stateWaiting;
 			else if ( event.action == &i_enigmaEventViewActions->removeTimerEvent)
 			{
 				if ((evt || events) && eTimerManager::getInstance()->removeEventFromTimerList( this, &ref, evt?evt:*events ) )
@@ -112,6 +112,16 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 			}
 			else
 				break;
+			if (addtype != -1 && (evt || events) && eTimerManager::getInstance()->addEventToTimerList( this, &ref, evt?evt:*events, addtype ) )
+			{
+				hide();
+				eTimerView v( eTimerManager::getInstance()->findEvent( &ref, *events ) );
+				v.show();
+				v.exec();
+				v.hide();
+				checkTimerIcon(evt?evt:*events);
+				show();
+			}
 		return 1;
 		default:
 			break;
@@ -173,7 +183,9 @@ eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const e
 	descr->resize( eSize( descr->getSize().width(), newheight + (int)lineheight/6 ) );
 	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
 
-	addActionToHelpList( &i_enigmaEventViewActions->addTimerEvent );
+	addActionToHelpList( &i_enigmaEventViewActions->addDVRTimerEvent );
+	addActionToHelpList( &i_enigmaEventViewActions->addNGRABTimerEvent );
+	addActionToHelpList( &i_enigmaEventViewActions->addSwitchTimerEvent );
 	addActionToHelpList( &i_enigmaEventViewActions->removeTimerEvent );
 	addActionToHelpList( &i_enigmaEventViewActions->close );
 

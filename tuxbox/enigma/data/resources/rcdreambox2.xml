@@ -234,16 +234,25 @@
 			<action name="volumeDown" key="voldown" flags="mr" />
 		</actionmap>
 		<actionmap name="epgSelector">
-			<action name="addTimerEvent" key="green" flags="m" />
+			<action name="addDVRTimerEvent" key="green" flags="m" />
+			<action name="addNGRABTimerEvent" key="yellow" flags="m" />
+			<action name="addSwitchTimerEvent" key="blue" flags="m" />
 			<action name="removeTimerEvent" key="red" flags="m" />
 		</actionmap>
 		<actionmap name="timerView">
 			<action name="removeTimerEntry" key="red" flags="m" />
 		</actionmap>
 		<actionmap name="enigmaEventView">
-			<action name="addTimerEvent" key="green" flags="m" />
+			<action name="addDVRTimerEvent" key="green" flags="m" />
+			<action name="addNGRABTimerEvent" key="yellow" flags="m" />
+			<action name="addSwitchTimerEvent" key="blue" flags="m" />
 			<action name="removeTimerEvent" key="red" flags="m" />
 			<action name="close" key="info" flags="m" />
+		</actionmap>
+		<actionmap name="PluginOffsetActions">
+			<action name="store" key="ok" flags="m" />
+			<action name="leftTop" key="red" flags="m" />
+			<action name="rightBottom" key="green" flags="m" />
 		</actionmap>
 	</device>
 

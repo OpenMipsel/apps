@@ -59,6 +59,7 @@ public:
 
 	std::list<ePlaylistEntry>::iterator current;
 
+	void clear();
 	const std::list<ePlaylistEntry>& getConstList() const { return list; }
 	std::list<ePlaylistEntry>& getList() { changed=1;return list; }
 

@@ -108,7 +108,9 @@
 		</actionmap>
 
 		<actionmap name="epgSelector">
-			<action name="addTimerEvent" key="green" flags="m" />
+			<action name="addDVRTimerEvent" key="green" flags="m" />
+			<action name="addNGRABTimerEvent" key="yellow" flags="m" />
+			<action name="addSwitchTimerEvent" key="blue" flags="m" />
 			<action name="removeTimerEvent" key="red" flags="m" />
 		</actionmap>
 
@@ -170,12 +172,22 @@
 		</actionmap>
 
 		<actionmap name="enigmaEventView">
-			<action name="close" key="?" flags="m" />
+			<action name="addDVRTimerEvent" key="green" flags="m" />
+			<action name="addNGRABTimerEvent" key="yellow" flags="m" />
+			<action name="addSwitchTimerEvent" key="blue" flags="m" />
+			<action name="removeTimerEvent" key="red" flags="m" />
+			<action name="close" key="info" flags="?" />
 		</actionmap>
 
 		<actionmap name="enigmaVCR">
 			<action name="volumeUp" key="+" flags="mr" />
 			<action name="volumeDown" key="-" flags="mr" />
+		</actionmap>
+
+		<actionmap name="PluginOffsetActions">
+			<action name="store" key="ok" flags="m" />
+			<action name="leftTop" key="red" flags="m" />
+			<action name="rightBottom" key="green" flags="m" />
 		</actionmap>
 	</device>
 </rcdefaults>

@@ -555,22 +555,41 @@ int eTextPara::renderString(const eString &string, int rflags)
 		{
 			switch (*i)
 			{
+			case '\\':
+			{
+				unsigned long c = *(i+1);
+				switch (c)
+				{
+					case 'n':
+						i++;
+						goto newline;
+					case 't':
+						i++;
+						goto tab;
+					case 'r':
+						i++;
+						goto nprint;
+					default:
+					;
+				}
+				break;
+			}
 			case '\t':
-				isprintable=0;
+tab:		isprintable=0;
 				cursor+=ePoint(current_font->tabwidth, 0);
 				cursor-=ePoint(cursor.x()%current_font->tabwidth, 0);
 				break;
 			case 0x8A:
 			case 0xE08A:
 			case '\n':
-				isprintable=0;
+newline:isprintable=0;
 				newLine(rflags);
 				flags|=GS_ISFIRST;
 				break;
 			case '\r':
 			case 0x86: case 0xE086:
 			case 0x87: case 0xE087:
-				isprintable=0;
+nprint:	isprintable=0;
 				break;
 			case ' ':
 				flags|=GS_ISSPACE;

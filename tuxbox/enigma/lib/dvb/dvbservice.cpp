@@ -192,17 +192,15 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		case 2:	// digital radio service
 		case 3:	// teletext service
 			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
-		case 5:	// NVOD time shifted service
+		case 5:	// NVOD time shifted service ( faked )
+		case 6:	// mosaic service
+		case 7: // linkage ( faked )
 			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetPAT));
 			dvb.tPAT.get();
 			break;
 		case 4:	// NVOD reference service
 			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetSDT));
 			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
-			break;
-		case 6:	// mosaic service
-			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetPAT));
-			dvb.tPAT.get();
 			break;
 		case -1: // data
 			dvb.setState(eDVBServiceState(eDVBServiceState::stateServiceGetPAT));
@@ -405,7 +403,7 @@ int eDVBServiceController::switchService(const eServiceReferenceDVB &newservice)
 			dvb.parentEIT = 0;
 		break;
 		case 5:  // nvod ref service
-		case 6:  // linkage ref service
+		case 7:  // linkage ref service
 			// send Parent EIT .. for osd text..
 			dvb.gotEIT(0,0); 
 		break;
@@ -529,10 +527,10 @@ void eDVBServiceController::scanPMT()
 							delete tMHWEIT;
 							tMHWEIT=0;
 						}
-						eDebug("starting MHWEIT on pid %x, sid %x", pe->elementary_PID, service.getServiceID().get());
+/*						eDebug("starting MHWEIT on pid %x, sid %x", pe->elementary_PID, service.getServiceID().get());
 						tMHWEIT=new MHWEIT(pe->elementary_PID, service.getServiceID().get());
 						CONNECT(tMHWEIT->ready, eDVBServiceController::MHWEITready);
-						tMHWEIT->start();
+						tMHWEIT->start();*/
 						break;
 					}
 				}

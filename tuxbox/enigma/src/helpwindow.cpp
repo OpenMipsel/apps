@@ -118,7 +118,7 @@ eHelpWindow::eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID):
 		label->setFlags(RS_WRAP);
 		label->move(ePoint(0, ypos));
 		label->resize(eSize(visible->width(), 200));
-		label->setText(helptext.c_str());
+		label->setText(helptext);
 		labelheight = label->getExtend().height();
 		label->resize(eSize(visible->width(), labelheight));
 		ypos+=labelheight;

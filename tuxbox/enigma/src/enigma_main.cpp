@@ -88,8 +88,8 @@ struct enigmaMainActions
 		nextService(map, "nextService", _("quickzap next"), eAction::prioDialog),
 		prevService(map, "prevService", _("quickzap prev"), eAction::prioDialog),
 
-		playlistNextService(map, "playlistNextService", _("history next"), eAction::prioDialog),
-		playlistPrevService(map, "playlistPrevService", _("history prev"), eAction::prioDialog),
+		playlistNextService(map, "playlistNextService", _("playlist/history next"), eAction::prioDialog),
+		playlistPrevService(map, "playlistPrevService", _("playlist/history prev"), eAction::prioDialog),
 		
 		serviceListDown(map, "serviceListDown", _("service list and down"), eAction::prioDialog),
 		serviceListUp(map, "serviceListUp", _("service list and up"), eAction::prioDialog),
@@ -97,7 +97,7 @@ struct enigmaMainActions
 		volumeUp(map, "volumeUp", _("volume up"), eAction::prioDialog),
 		volumeDown(map, "volumeDown", _("volume down"), eAction::prioDialog),
 		toggleMute(map, "toggleMute", _("toggle mute flag"), eAction::prioDialog),
-		
+
 		stop(map, "stop", _("stop playback"), eAction::prioWidget),
 		pause(map, "pause", _("pause playback"), eAction::prioWidget),
 		play(map, "play", _("resume playback"), eAction::prioWidget),
@@ -669,7 +669,7 @@ SubService::SubService(eListBox<SubService> *listbox, eDVBNamespace dvb_namespac
 		service(dvb_namespace, 
 			eTransportStreamID(descr->transport_stream_id), 
 			eOriginalNetworkID(descr->original_network_id),
-			eServiceID(descr->service_id), 6)
+			eServiceID(descr->service_id), 7)
 {
 	text=(const char*)descr->private_data;
 	service.descr = text;
@@ -710,7 +710,7 @@ void eSubServiceSelector::addPressed()
 		hide();
 		list.getCurrent()->service.setServiceType(1);
 		/* emit */ addToUserBouquet( &list.getCurrent()->service, 0 );
-		list.getCurrent()->service.setServiceType(6);
+		list.getCurrent()->service.setServiceType(7);
 		show();
 	}
 }
@@ -834,6 +834,31 @@ void eServiceNumberWidget::numberChanged()
 
 eZapMain *eZapMain::instance;
 
+static bool ModeTypeEqual( const eServiceReference& ref1, const eServiceReference& ref2 )
+{
+	if ( (ref1.path.length()>0) == (ref2.path.length()>0) )
+	{
+		if ( ref1.path.length() )
+			return true;   // booth are mp3 or rec ts
+		else if ( ref1.type == eServiceReference::idDVB && ref2.type == eServiceReference::idDVB )
+		{
+			if ( ref1.data[0] == ref2.data[0] )
+				return true;  // self have self types..
+			else if ( ref1.data[0] & 1 && ref2.data[0] & 1 )
+				return true;  // nvod, linkage, tv, nvodref
+			else if ( ref1.data[0] == 4 && ref2.data[0] & 1 )
+				return true;  // nvod, linkage, tv, nvodref
+			else if ( ref1.data[0] & 1 && ref2.data[0] == 4 )
+				return true;  // nvod, linkage, tv, nvodref
+			else if ( ref1.data[0] == 6 && ref2.data[0] & 1 )
+				return true;  // mosaic
+			else if ( ref1.data[0] & 1 && ref2.data[0] == 6 )
+				return true;  //  mosaic
+		}
+	}
+	return false; 
+}
+
 void eZapMain::onRotorStart( int newPos )
 {
 	if (!pRotorMsg)
@@ -904,7 +929,8 @@ void eZapMain::loadPlaylist( bool create )
 	if (create)
 	{
 		eServicePlaylistHandler::getInstance()->addNum( 0 );
-		playlistref=eServiceReference( eServicePlaylistHandler::ID, eServiceReference::flagDirectory, 0, 0 );
+		playlistref=eServiceReference( eServicePlaylistHandler::ID,
+			eServiceReference::isDirectory, 0, 0 );
 		playlist=(ePlaylist*)eServiceInterface::getInstance()->addRef(playlistref);
 		ASSERT(playlist);
 		eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot), playlistref);
@@ -1341,17 +1367,18 @@ eZapMain::eZapMain()
 
 	setMode(curMode);  // do it..
 
-#if 1  // temporary reenable this...
-	if (playlist->current != playlist->getConstList().end())  // we was in playlist mode??
-		playService(*playlist->current, psDontAdd);  // then play the last service
+	if ( eConfig::getInstance()->getKey("/ezap/ui/playlistmode", playlistmode ) )
+		playlistmode = 0;  // default TV Mode
+
+	if ( playlist->current != playlist->getConstList().end() )
+		playService( playlist->current->service, psDontAdd|psSeekPos);  // then play the last service
+	else if ( modeLast[mode][0].current() )
+		playService( modeLast[mode][0].current() ,0 );  // then play the last service
 
 	startMessages();
-#endif
 
 	dvrInfoBar->zOrderRaise();
 	dvbInfoBar->zOrderRaise();
-
-	prepareNonDVRHelp();
 }
 
 eZapMain::~eZapMain()
@@ -1400,6 +1427,7 @@ eZapMain::~eZapMain()
 		eDBoxLCD::getInstance()->switchLCD(0);
 
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
+	eConfig::getInstance()->setKey("/ezap/ui/playlistmode", playlistmode);
 }
 
 void eZapMain::prepareDVRHelp()
@@ -1412,13 +1440,17 @@ void eZapMain::prepareDVRHelp()
 	addActionToHelpList(&i_enigmaMainActions->stop);
 	addActionToHelpList(&i_enigmaMainActions->record);
 
+	addActionToHelpList(&i_enigmaMainActions->showEPG);
+	addActionToHelpList(&i_enigmaMainActions->showInfobarEPG);
+
+	addActionToHelpList(&i_enigmaMainActions->playlistNextService);
+	addActionToHelpList(&i_enigmaMainActions->playlistPrevService);
+
 /*	addActionToHelpList(&i_enigmaMainActions->standby_press);
 	addActionToHelpList(&i_enigmaMainActions->showInfobar);
 	addActionToHelpList(&i_enigmaMainActions->hideInfobar);
-	addActionToHelpList(&i_enigmaMainActions->showInfobarEPG);
+
 	addActionToHelpList(&i_enigmaMainActions->showServiceSelector);
-	addActionToHelpList(&i_enigmaMainActions->playlistNextService);
-	addActionToHelpList(&i_enigmaMainActions->playlistPrevService);
 	addActionToHelpList(&i_enigmaMainActions->serviceListDown);
 	addActionToHelpList(&i_enigmaMainActions->serviceListUp);
 	addActionToHelpList(&i_enigmaMainActions->toggleIndexmark);*/
@@ -1433,6 +1465,8 @@ void eZapMain::prepareNonDVRHelp()
 	addActionToHelpList(&i_enigmaMainActions->modeTV);
 	addActionToHelpList(&i_enigmaMainActions->modeRadio);
 	addActionToHelpList(&i_enigmaMainActions->modeFile);
+	addActionToHelpList(&i_enigmaMainActions->playlistNextService);
+	addActionToHelpList(&i_enigmaMainActions->playlistPrevService);
 
 	addActionToHelpList(&i_enigmaMainActions->showEPGList);
 	addActionToHelpList(&i_enigmaMainActions->showSubservices);
@@ -1523,7 +1557,7 @@ void eZapMain::setEIT(EIT *eit)
 		{
 			EITEvent *event=*i;
 			eServiceReferenceDVB &ref=(eServiceReferenceDVB&)eServiceInterface::getInstance()->service;
-			if ( ref.getServiceType() != 6 )
+			if ( ref.getServiceType() != 7 )
 			{
 				eDebug("event->running_status=%d, p=%d", event->running_status, p );
 				if ((event->running_status>=2) || ((!p) && (!event->running_status)))
@@ -1716,6 +1750,35 @@ void eZapMain::handleNVODService(SDTEntry *sdtentry)
 	eServiceInterface::getInstance()->removeRef(eServiceInterface::getInstance()->service);
 }
 
+void eZapMain::setNewServiceSelectorRoot( eServiceReference root, eServiceReference path )
+{
+	if ( root )
+	{
+		int changed=0;
+		eServicePath p=modeLast[mode][0];
+		eServiceReference ref = p.current();
+		p.up();
+		while ( p.current() != root )
+		{
+			while (p.size() > 1 )
+				p.up();
+
+			if( p.current() == root )
+			{
+				changed=1;
+				break;
+			}
+
+			rotateRoot();
+			p=modeLast[mode][0];
+		}
+		if ( path )
+			p.down( path );
+		p.down( changed?eServiceReference():ref );
+		setServiceSelectorPath(p);
+	}
+}
+
 void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceReference path, int newmode )
 {
 	hide();
@@ -1740,28 +1803,8 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 	if ( newmode != -1 && newmode != mode )
 		setMode(newmode);
 
-	if ( root )
-	{
-		do
-		{
-			eServicePath p;
-			getServiceSelectorPath(p);
-
-			while (p.size() > 1 )
-				p.up();
-
-			if( p.current() == root )
-			{ // found file mode :) enter into recordings
-				if ( path )
-					p.down( path );
-				p.down( eServiceReference() );
-				setServiceSelectorPath(p);
-				break;
-			}
-			rotateRoot();
-		}
-		while( true );
-	}
+	// this only have a effect, wher root is != eServiceReference()
+	setNewServiceSelectorRoot( root, path );
 
 	e->selectService(eServiceInterface::getInstance()->service);
 	const eServiceReference *service = e->choose(dir); // reset path only when NOT showing specific list
@@ -1769,17 +1812,35 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 	pLCD->lcdMain->show();
 	pLCD->lcdMenu->hide();
 
-	if (!service)
+	int extZap=0;
+	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
+	eServiceReference ref = eServiceInterface::getInstance()->service;
+	if ( !service ||    // cancel pressed
+			( !extZap && ref &&
+				!(service->path.length() && mode == modeFile) &&
+				!ModeTypeEqual(*service, ref) ) )
 	{
-		for ( int m=modeTV; m < modeEnd; m++ )
-			for ( int i=0; i < 2; i++ )
-				modeLast[m][i]=savedmode[m][i];
+		if ( !entered_playlistmode )
+		{
+			for ( int m=modeTV; m < modeEnd; m++ )
+				for ( int i=0; i < 2; i++ )
+					modeLast[m][i]=savedmode[m][i];
 
-		if ( mode != oldmode )
-			setMode(oldmode);
-		else
-			setServiceSelectorPath(modeLast[mode][0]);
-
+			if ( mode != oldmode ) // restore mode..
+				setMode(oldmode);
+			else // restore old path
+				setServiceSelectorPath(modeLast[mode][0]);  
+		}
+		else // push playlistref to top of current path
+		{
+			eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
+			if ( p.current() != playlistref )
+			{
+				p.down( playlistref );
+				p.down( eZap::getInstance()->getServiceSelector()->getSelected() );
+				setServiceSelectorPath(p);
+			}
+		}
 		return;
 	}
 
@@ -1789,28 +1850,14 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 	if ( handleState() )
 	{
 		getServiceSelectorPath(modeLast[mode][0]);
-/*
+
 		if (eZap::getInstance()->getServiceSelector()->getPath().current() != playlistref)
 		{
-			if (!entered_playlistmode)
-				playlistmode=0;
-
-			playService(*service, playlistmode?psAdd:0);
-		}
-		else
-			playService(*service, psDontAdd);*/
-
-		if ( mode == modeFile )
-			playService(*service, psDontAdd);
-		else
+			playlistmode=0;
 			playService(*service, 0);
-
-		if ( mode != oldmode)
-		{
-			playlist->getList().clear();
-			if ( mode != modeFile )
-				playlist->getList().push_back( modeLast[mode][0].current() );
 		}
+		else
+			playService(*service, playlistmode?psDontAdd:psDontAdd|psSeekPos);
 	}
 }
 
@@ -1826,10 +1873,8 @@ void eZapMain::nextService(int add)
 	if (service->flags & eServiceReference::mustDescent)
 		return;
 
-	if (service->type & eServiceReference::idDVB)
-		add = 1;
-
-	playService(*service, add?0:psDontAdd);
+	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
+	playService(*service, playlistmode?psDontAdd:p.current()==playlistref?psDontAdd|psSeekPos:0 );
 }
 
 void eZapMain::prevService()
@@ -1844,38 +1889,46 @@ void eZapMain::prevService()
 	if (service->flags & eServiceReference::mustDescent)
 		return;
 
-	if (service->type & eServiceReference::idDVB)
-		playService(*service, 0);
-	else
-		playService(*service, psDontAdd);
+	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
+	playService(*service, playlistmode?psDontAdd:p.current()==playlistref?psDontAdd|psSeekPos:0 );
 }
 
 void eZapMain::playlistPrevService()
 {
-	getPlaylistPosition();
-	if ( playlist->current != playlist->getConstList().begin())
+	int extZap=0;
+	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
+	eServiceReference ref = eServiceInterface::getInstance()->service;
+	while ( playlist->current != playlist->getConstList().begin())
 	{
-		if (playlistmode)
-			playlist->current->current_position=-1;
 		playlist->current--;
-		playService(*playlist->current, psDontAdd);
+		if ( extZap || ModeTypeEqual(ref, playlist->current->service) )
+		{
+			getPlaylistPosition();
+			playService(*playlist->current, playlistmode?psDontAdd:psDontAdd|psSeekPos);
+			return;
+		}
 	}
 }
 
 void eZapMain::playlistNextService()
 {
-	getPlaylistPosition();
-	if (playlist->current != playlist->getConstList().end())
+	int extZap=0;
+	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
+	eServiceReference ref = eServiceInterface::getInstance()->service;
+	while (playlist->current != playlist->getConstList().end() && playlist->current->service != ref )
 	{
-		if (playlistmode)
-			playlist->current->current_position=-1;
 		playlist->current++;
 		if (playlist->current == playlist->getConstList().end())
 		{
 			playlist->current--;
 			return;
 		}
-		playService(*playlist->current, psDontAdd);
+		if ( extZap || ModeTypeEqual(ref,playlist->current->service) )
+		{
+			getPlaylistPosition();
+			playService(*playlist->current, playlistmode?psDontAdd:psDontAdd|psSeekPos);
+			return;
+		}
 	}
 }
 
@@ -1924,8 +1977,10 @@ void eZapMain::showMainMenu()
 	eMainMenu mm;
 	mm.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 	mm.show();
-	if (mm.exec() == 1)
+
+	if (mm.exec() == 1 && handleState())
 		eZap::getInstance()->quit();
+
 	mm.hide();
 
 	pLCD->lcdMenu->hide();
@@ -1981,11 +2036,17 @@ void eZapMain::standbyRelease()
 
 void eZapMain::showInfobar()
 {
-	if ( !isVisible() )
+	if ((!isVisible()) &&
+			(eApp->looplevel() == 1) &&
+			(
+				(!eZap::getInstance()->focus) ||
+				(eZap::getInstance()->focus == this)
+			)
+		 )
 		show();
 
 	if (eServiceInterface::getInstance()->service.type == eServiceReference::idDVB)
-		timeout.start(10000, 1);
+		timeout.start(6000, 1);
 }
 
 void eZapMain::hideInfobar()
@@ -2289,11 +2350,7 @@ void eZapMain::startSkip(int dir)
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekBegin));
 	}
-	if (!isVisible())
-	{
-		eDebug("startskip->show()");
-		show();
-	}
+	showInfobar();
 	timeout.stop();
 }
 
@@ -2460,23 +2517,13 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		break;
 	}
 	case 2: // enable/disable movemode
-	{
-		if ( sel->toggleMoveMode() )
-		{
-			currentSelectedUserBouquetRef=sel->getPath().current();
-			currentSelectedUserBouquet=(ePlaylist*)eServiceInterface::getInstance()->addRef( currentSelectedUserBouquetRef );
-		}
-		else
-		{
-			currentSelectedUserBouquet->save();
-			currentSelectedUserBouquet=0;
-			eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
-			currentSelectedUserBouquetRef=eServiceReference();
-		}
+		toggleMoveMode(sel);
 		break;
-	}
 	case 3: // add service to playlist
-		doPlaylistAdd(ref);
+		if (ref.flags & eServiceReference::mustDescent)
+			playService(ref, playlistmode?psAdd:0);  // M3U File
+		else
+			doPlaylistAdd(ref);
 		break;
 	case 4: // add service to UserBouquet
 		sel->hide();
@@ -2484,28 +2531,8 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		sel->show();
 	break;
 	case 5: // toggle edit User Bouquet Mode
-		if ( sel->toggleEditMode() ) // toggleMode.. and get new state !!!
-		{
-			UserBouquetSelector s( mode == modeTV?userTVBouquets->getList():mode==modeRadio?userRadioBouquets->getList():userFileBouquets->getList() );
-			s.show();
-			s.exec();
-			s.hide();
-			if (s.curSel)
-			{
-				currentSelectedUserBouquetRef = s.curSel;
-				currentSelectedUserBouquet = (ePlaylist*)eServiceInterface::getInstance()->addRef( s.curSel );
-				for (std::list<ePlaylistEntry>::const_iterator i(currentSelectedUserBouquet->getConstList().begin()); i != currentSelectedUserBouquet->getConstList().end(); ++i)
-					eListBoxEntryService::hilitedEntrys.insert(*i);
-			}
-		}
-		else
-		{
-			currentSelectedUserBouquet->save();
-			currentSelectedUserBouquet=0;
-			eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
-			currentSelectedUserBouquetRef=eServiceReference();
-		}
-	break;
+		toggleEditMode(sel);
+		break;
 	case 6: // add new user bouquet
 	{
 		TextEditWindow wnd(_("Enter name for the new bouquet:"));
@@ -2535,12 +2562,6 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 					actualize = (path.current() == userRadioBouquetsRef);
 				}
 				break;
-/*				case modeFile:
-				{
-					addUserBouquet( userFileBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.file",newList.data[1]), wnd.getEditText(), newList, true );
-					actualize = (path.current() == userRadioBouquetsRef);
-				}
-				break;*/
 			}
 			if (actualize)
 				sel->actualize();
@@ -2669,6 +2690,47 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	sel->show();
 }
 
+void eZapMain::toggleMoveMode( eServiceSelector* sel )
+{   
+	if ( sel->toggleMoveMode() )
+	{
+		currentSelectedUserBouquetRef=sel->getPath().current();
+		currentSelectedUserBouquet=(ePlaylist*)eServiceInterface::getInstance()->addRef( currentSelectedUserBouquetRef );
+	}
+	else
+	{
+		currentSelectedUserBouquet->save();
+		currentSelectedUserBouquet=0;
+		eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
+		currentSelectedUserBouquetRef=eServiceReference();
+	}
+}
+
+void eZapMain::toggleEditMode( eServiceSelector *sel )
+{
+	if ( sel->toggleEditMode() ) // toggleMode.. and get new state !!!
+	{
+		UserBouquetSelector s( mode == modeTV?userTVBouquets->getList():mode==modeRadio?userRadioBouquets->getList():userFileBouquets->getList() );
+		s.show();
+		s.exec();
+		s.hide();
+		if (s.curSel)
+		{
+			currentSelectedUserBouquetRef = s.curSel;
+			currentSelectedUserBouquet = (ePlaylist*)eServiceInterface::getInstance()->addRef( s.curSel );
+			for (std::list<ePlaylistEntry>::const_iterator i(currentSelectedUserBouquet->getConstList().begin()); i != currentSelectedUserBouquet->getConstList().end(); ++i)
+				eListBoxEntryService::hilitedEntrys.insert(*i);
+		}
+	}
+	else
+	{
+		currentSelectedUserBouquet->save();
+		currentSelectedUserBouquet=0;
+		eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
+		currentSelectedUserBouquetRef=eServiceReference();
+	}
+}
+
 void eZapMain::addServiceToCurUserBouquet(const eServiceReference& service)
 {
 	currentSelectedUserBouquet->getList().push_back(service);
@@ -2677,40 +2739,64 @@ void eZapMain::addServiceToCurUserBouquet(const eServiceReference& service)
 void eZapMain::playService(const eServiceReference &service, int flags)
 {
 	int first=0;
-	if (flags & psDontAdd)
+
+	if (flags&psDontAdd)
 	{
+//		eDebug("psDontAdd");
+
 		if ((playlist->current != playlist->getConstList().end() ) && (playlist->current->service != service))
+		{
+//			eDebug("new service is played... getPlaylistPosition");
 			getPlaylistPosition();
+		}
+
+//		eDebug("play");
 		eServiceInterface::getInstance()->play(service);
 
-		std::list<ePlaylistEntry>::iterator i=std::find(playlist->getList().begin(), playlist->getList().end(), service);
-		if (i != playlist->getList().end())
+		if ( flags&psSeekPos )
 		{
-			playlist->current=i;
-			setPlaylistPosition();
+			std::list<ePlaylistEntry>::iterator i=std::find(playlist->getList().begin(), playlist->getList().end(), service);
+			if (i != playlist->getList().end())
+			{
+//			eDebug("we have stored PlaylistPosition.. get this... and set..");
+				playlist->current=i;
+				setPlaylistPosition();
+			}
+			else
+				addService(service);
 		}
 		return;
 	}
 		// we assume that no "isDirectory" is set - we won't open the service selector again.
-	if (!(flags & psAdd))
+	if (!(flags&psAdd))
 	{
 		if (!playlistmode)		// dem user liebgewonnene playlists nicht einfach killen
-			while (playlist->getConstList().size() > 10)
+		{
+//			eDebug("not playlistmode.. shrink playlist");
+			while (playlist->getConstList().size() > 14)
 				playlist->getList().pop_front();
-		if ((!playlistmode) && (service.flags & eServiceReference::mustDescent)) // a playlist/complete directory..
+		}
+/*		else
+			eDebug("playlistmode.. do not shrink playlist");*/
+
+		// a M3U File is selected...
+		if ((!playlistmode) && (service.flags & eServiceReference::mustDescent))
 		{
 			playlist->getList().clear();
 			first=1;
 			playlistmode=1;
-		} else
+		}
+		else
 		{
 			playlist->current=playlist->getList().end();
 			if (playlist->current == playlist->getList().begin())
 				first=1;
 		}
 	}
+
 	addService(service);
-	if (! (flags & psAdd))
+
+	if (!(flags&psAdd))
 	{
 		if (first)
 			playlist->current = playlist->getList().begin();
@@ -2722,6 +2808,7 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 			postMessage(eZapMessage(0, _("Play"), _("This directory doesn't contain anything playable!")), 1);
 		}
 	}
+
 	if (eZap::getInstance()->getServiceSelector()->getPath().current() == playlistref)
 		eZap::getInstance()->getServiceSelector()->actualize();
 }
@@ -2739,12 +2826,15 @@ void eZapMain::addService(const eServiceReference &service)
 {
 	if (service.flags & eServiceReference::mustDescent) // recursive add services..
 	{
+//		eDebug("recursive add");
+		entered_playlistmode=1;
 		Signal1<void,const eServiceReference&> signal;
 		CONNECT( signal, eZapMain::addService);
 		eServiceInterface::getInstance()->enterDirectory(service, signal);
 		eServiceInterface::getInstance()->leaveDirectory(service);
 	} else
 	{
+//		eDebug("addService");
 		int last=0;
 		if (playlist->current != playlist->getConstList().end() && *playlist->current == service)
 		{
@@ -2760,6 +2850,7 @@ void eZapMain::addService(const eServiceReference &service)
 
 void eZapMain::doPlaylistAdd(const eServiceReference &service)
 {
+//	eDebug("playlistmode=%d", playlistmode);
 	entered_playlistmode=1;
 	if (!playlistmode)
 	{
@@ -2767,13 +2858,17 @@ void eZapMain::doPlaylistAdd(const eServiceReference &service)
 		playlist->getList().clear();
 		playlist->current=playlist->getList().begin();
 		playService(service, 0);
-	} else
+	}
+	else
+	{
+//		eDebug("call playService(service,psAdd)");
 		playService(service, psAdd);
+	}
 }
 
 void eZapMain::addServiceToUserBouquet(eServiceReference *service, int dontask)
 {
-	if (!service || (mode > modeFile) || (mode < 0))
+	if (!service || (mode > modeRadio) || (mode < 0))
 		return;
 
 	if (!dontask)
@@ -2811,7 +2906,7 @@ void eZapMain::addServiceToUserBouquet(eServiceReference *service, int dontask)
 void eZapMain::removeServiceFromUserBouquet(eServiceSelector *sel )
 {
 	const eServiceReference &service=sel->getSelected();
-	if ((mode > modeFile) || (mode < 0))
+	if ((mode > modeRadio) || (mode < 0))
 		return;
 
 	if (currentSelectedUserBouquet)
@@ -3320,18 +3415,24 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showEPG_Streaminfo();
 		else if (event.action == &i_numberActions->key0)
 		{
-			if ( playlist->getConstList().size() > 1 )
+			if ( !playlistmode && playlist->getConstList().size() > 1 )
 			{
 				std::list<ePlaylistEntry>::iterator prev,last;
 				last = playlist->getList().end();
-				last--;
-				prev=last;
+				prev = --last;
 				prev--;
-				playService( prev->service, 0 );
-				playlist->getList().push_back( *prev );
-				playlist->current = playlist->getList().end();
-				playlist->current--;
-				playlist->getList().erase(prev);
+				eServiceReference ref = eServiceInterface::getInstance()->service;
+				if ( !ref || last->service != ref )
+					break;
+		// do not zap with the 0 to a service with another type
+				int extZap=0;
+				eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
+				if ( extZap || ModeTypeEqual( prev->service ,last->service ) )
+				{
+					std::iter_swap( prev, last );
+					playlist->current=last;
+					playService( playlist->current->service, psDontAdd|psSeekPos );
+				}
 			}
 		}
 		else if (event.action == &i_numberActions->key1)
@@ -3623,7 +3724,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			case 4:
 				flags|=ENIGMA_NVOD;
 				break;
-			case 6:
+			case 7:
 				flags|=ENIGMA_SUBSERVICES;
 				break;
 			default:
@@ -3649,7 +3750,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		if (!name.length())
 			name="unknown service";
 
-		if (serviceref.getServiceType() == 6)  // linkage service..
+		if (serviceref.getServiceType() == 7)  // linkage service..
 			name+=" - " + serviceref.descr;
 
 		eZapLCD::getInstance()->lcdMain->setServiceName(name);
@@ -3802,12 +3903,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		}
 	}
 
-	if (!eZap::getInstance()->focus)
-	{
-		eDebug("!eZap::getInstance()->focus");
-//		showServiceInfobar(0);
-		show();
-	}
+	showInfobar();
 
 	eServiceInterface::getInstance()->removeRef(_serviceref);
 
@@ -3841,10 +3937,9 @@ void eZapMain::gotEIT()
 		{
 			eConfig::getInstance()->getKey("/ezap/osd/showOSDOnEITUpdate", state);
 
-			if (!eZap::getInstance()->focus && state)
+			if (state)
 			{
-				if (!isVisible())
-					show();
+				showInfobar();
 				if (eServiceInterface::getInstance()->service.type == eServiceReference::idDVB)
 					timeout.start((sapi->getState() == eServiceHandler::statePlaying)?10000:2000, 1);
 			}
@@ -4181,16 +4276,13 @@ void eZapMain::setMode(int newmode, int user)
 
 		if (user)
 		{
-			eDebug("playservice");
-			playlist->getList().clear();
-			playService(modeLast[mode][0].current(), psDontAdd);
-			if ( mode != modeFile )
-				playlist->getList().push_back( modeLast[mode][0].current() );
+//			eDebug("playservice");
+			playService(modeLast[mode][0].current(), psDontAdd|psSeekPos);
 		}
 
 		if (mode != -1)
 		{
-			eDebug("setServiceSelectorPath");
+//			eDebug("setServiceSelectorPath");
 			setServiceSelectorPath(modeLast[mode][0]);
 		}
 	}
@@ -4284,7 +4376,7 @@ void eZapMain::showServiceInfobar(int show)
 {
 	if ( show == dvrfunctions )
 		return;
-	eDebug("showServiceInfoBar(%d)", show);
+//	eDebug("showServiceInfoBar(%d)", show);
 	dvrfunctions=show;
 	clearHelpList();
 
@@ -4296,7 +4388,7 @@ void eZapMain::showServiceInfobar(int show)
 		prepareDVRHelp();
 	} else
 	{
-		eDebug("bla");
+//		eDebug("bla");
 		dvrInfoBar->hide();
 		switch( eServiceInterface::getInstance()->getService()->getID() )
 		{
@@ -4366,8 +4458,9 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 	move(ePoint(150, 170));
 	new eListBoxEntryText(&list, _("back"), (void*)0);
 
-	if ( !(ref.flags & eServiceReference::flagDirectory)
+	if ( !(ref.flags & eServiceReference::isDirectory)
 		&& ( ref.type == 0x1000 // mp3
+		|| ( ref.flags & eServiceReference::mustDescent )
 		|| ( ref.type == eServiceReference::idDVB && ref.path ) ) )
 			new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
 
@@ -4376,7 +4469,7 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		new eListBoxEntryText(&list, _("delete"), (void*)1);
 		if (ref.type == eServicePlaylistHandler::ID)
 			new eListBoxEntryText(&list, _("rename"), (void*)7);
-		else if ( ref.type == eServiceReference::idDVB /*&& ref.path.size()*/ )
+		else if ( ref.type == eServiceReference::idDVB )
 			new eListBoxEntryText(&list, _("rename"), (void*)9);
 
 		// move Mode ( only in Favourite lists... )

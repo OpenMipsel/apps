@@ -132,7 +132,7 @@ eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 int eZapPlugins::exec()
 {
 	const eString PluginPath = PLUGINDIR "/";
-	const eString PluginPath2 = GAMESDIR "/";	
+	const eString PluginPath2 = "/var/tuxbox/plugins/";
 	struct dirent **namelist;
 
 	int n = scandir(PLUGINDIR "/", &namelist, 0, alphasort);
@@ -229,14 +229,6 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 	if (plugin->needlcd)
     MakeParam(P_ID_LCD,	eDBoxLCD::getInstance()->lock() );
 
-	if (plugin->needoffsets)
-	{
-		MakeParam(P_ID_OFF_X, 0);
-		MakeParam(P_ID_OFF_Y, 0);
-		MakeParam(P_ID_END_X, 720);
-		MakeParam(P_ID_END_Y, 576);
-	}
-
 	int tpid = -1;
  	if (plugin->needvtxtpid)
  	{
@@ -257,6 +249,19 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 			Decoder::Set();
 		}
 	}
+	if (plugin->needoffsets)
+	{
+		int left=20, top=20, right=699, bottom=555;
+		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/left", left);
+		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/pos/top", top);
+		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/right", right);
+		eConfig::getInstance()->getKey("/enigma/plugins/needoffsets/bottom", bottom);
+		MakeParam(P_ID_OFF_X, left);
+		MakeParam(P_ID_OFF_Y, top);
+		MakeParam(P_ID_END_X, right);
+		MakeParam(P_ID_END_Y, bottom);
+	}
+
 /*	for(PluginParam *par = first; par; par=par->next )
 	{
 		printf ("id: %s - val: %s\n", par->id, par->val);

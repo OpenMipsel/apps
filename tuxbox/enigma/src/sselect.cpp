@@ -843,26 +843,19 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_serviceSelectorActions->gotoLastService)
 				services->moveSelection(services->dirLast);
 			else if (event.action == &i_serviceSelectorActions->showAll && !movemode)
-				showList(listAll);
+				/*emit*/showList(listAll);
 			else if (event.action == &i_serviceSelectorActions->showSatellites && !movemode)
-				showList(listSatellites);
+				/*emit*/showList(listSatellites);
 			else if (event.action == &i_serviceSelectorActions->showProvider && !movemode)
-				showList(listProvider);
+				/*emit*/showList(listProvider);
 			else if (event.action == &i_serviceSelectorActions->showBouquets && !movemode)
-				showList(listBouquets);
+				/*emit*/showList(listBouquets);
 			else if (event.action == &i_cursorActions->cancel)
 			{
 				if (movemode)
-				{
-					toggleMoveMode();
-					services->beginAtomic();
-					actualize();
-					selectService(selected);
-					
-					services->endAtomic();
-				}
-				if (editMode) // only when a playlist is showed...
-					toggleEditMode();
+					eZapMain::getInstance()->toggleMoveMode(this);
+				if (editMode)
+					eZapMain::getInstance()->toggleEditMode(this);
 				break;
 			}
 			else
@@ -1277,7 +1270,7 @@ int eServiceSelector::toggleMoveMode()
 		eListBoxEntryService::selectedToMove=0;
 		services->setMoveMode(0);
 		if ( goUpEntry )
-			services->append( goUpEntry, true );
+			services->append( goUpEntry, true, true );
 	}
 	else if ( goUpEntry )
 		services->remove(goUpEntry, true);

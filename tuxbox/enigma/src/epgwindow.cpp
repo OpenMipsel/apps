@@ -22,10 +22,12 @@ int eListBoxEntryEPG::dateXSize=0;
 struct epgSelectorActions
 {
   eActionMap map;
-	eAction addTimerEvent, removeTimerEvent;
+	eAction addDVRTimerEvent, addNGRABTimerEvent, addSwitchTimerEvent, removeTimerEvent;
 	epgSelectorActions():
 		map("epgSelector", _("EPG selector")),
-		addTimerEvent(map, "addTimerEvent", _("add this event to timer list"), eAction::prioDialog ),
+		addDVRTimerEvent(map, "addDVRTimerEvent", _("add this event as DVR Event to timer list"), eAction::prioDialog ),
+		addNGRABTimerEvent(map, "addNGRABTimerEvent", _("add this event as NGRAB Event to timer list"), eAction::prioDialog ),
+		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simpel Switch Event to timer list"), eAction::prioDialog ),
 		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog )
 	{
 	}
@@ -330,18 +332,41 @@ eEPGSelector::eEPGSelector(const eServiceReferenceDVB &service)
 	CONNECT(events->selected, eEPGSelector::entrySelected);
 	fillEPGList();
 	addActionMap( &i_epgSelectorActions->map );
-	addActionToHelpList( &i_epgSelectorActions->addTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->addDVRTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->addNGRABTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->addSwitchTimerEvent );
 	addActionToHelpList( &i_epgSelectorActions->removeTimerEvent );
 }
 
 int eEPGSelector::eventHandler(const eWidgetEvent &event)
 {
+	int addtype=-1;
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
-			if (event.action == &i_epgSelectorActions->addTimerEvent)
+			if (event.action == &i_epgSelectorActions->addDVRTimerEvent)
+				addtype = ePlaylistEntry::RecTimerEntry |
+									ePlaylistEntry::recDVR|
+									ePlaylistEntry::stateWaiting;
+			else if (event.action == &i_epgSelectorActions->addNGRABTimerEvent)
+				addtype = ePlaylistEntry::RecTimerEntry|
+									ePlaylistEntry::recNgrab|
+									ePlaylistEntry::stateWaiting;
+			else if (event.action == &i_epgSelectorActions->addSwitchTimerEvent)
+				addtype = ePlaylistEntry::SwitchTimerEntry|
+									ePlaylistEntry::stateWaiting;
+			else if (event.action == &i_epgSelectorActions->removeTimerEvent)
 			{
-				if ( eTimerManager::getInstance()->addEventToTimerList( this, &events->getCurrent()->service, &events->getCurrent()->event ) )
+				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &current, &events->getCurrent()->event ) )
+					invalidateEntry( events->getCurrent() );
+			}
+			else
+				break;
+			if (addtype != -1)
+			{
+				if ( eTimerManager::getInstance()->addEventToTimerList(
+					this, &events->getCurrent()->service,
+					&events->getCurrent()->event, addtype ))
 				{
 					hide();
 					eTimerView v( eTimerManager::getInstance()->findEvent( &events->getCurrent()->service, &events->getCurrent()->event ) );
@@ -352,13 +377,6 @@ int eEPGSelector::eventHandler(const eWidgetEvent &event)
 					show();
 				}
 			}
-			else if (event.action == &i_epgSelectorActions->removeTimerEvent)
-			{
-				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &current, &events->getCurrent()->event ) )
-					invalidateEntry( events->getCurrent() );
-			}
-			else
-				break;
 			return 1;
 		default:
 			break;

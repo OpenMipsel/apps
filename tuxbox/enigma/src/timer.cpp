@@ -87,7 +87,7 @@ void eTimerManager::actionHandler()
 				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
 				eString save = nextStartingEvent->service.descr;
 				nextStartingEvent->service.descr = getLeft( nextStartingEvent->service.descr, '/' );
-				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psDontAdd );
+				eZapMain::getInstance()->playService( nextStartingEvent->service, 0 );
 				nextStartingEvent->service.descr=save;
 			}
 			else
