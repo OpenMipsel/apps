@@ -12,7 +12,7 @@ struct epgSelectorActions
 		addNGRABTimerEvent(map, "addNGRABTimerEvent", _("add this event as NGRAB Event to timer list"), eAction::prioDialog ),
 		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simple Switch Event to timer list"), eAction::prioDialog ),
 		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog ),
-		showExtendedInfo(map, "showExtendedInfo", _("showExtInfo"), eAction::prioDialog )
+		showExtendedInfo(map, "showExtendedInfo", _("show extended event information"), eAction::prioDialog )
 	{
 	}
 };

@@ -136,12 +136,12 @@ int eZapPlugins::exec()
 	for ( int i = 0; i < 2; i++ )
 	{
 		DIR *d=opendir(PluginPath[i].c_str());
-		if (!d && !i)
+		if (!d)
 		{
 			eString err;
 			err.sprintf(_("Couldn't read plugin directory %s"), PluginPath[i].c_str() );
 			eDebug(err.c_str());
-			if ( !i )
+			if ( i )
 			{
 				eMessageBox msg(err, _("Error"), eMessageBox::iconError|eMessageBox::btOK );
 				msg.show();
