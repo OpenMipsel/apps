@@ -1,5 +1,5 @@
 /*
- * $Id: scan.cpp,v 1.96.2.14 2003/06/07 20:06:41 digi_casi Exp $
+ * $Id: scan.cpp,v 1.96.2.15 2003/06/10 17:48:12 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -88,6 +88,7 @@ t_satellite_position driveMotorToSatellitePosition(char * providerName)
 		frontend->positionMotor(motorPositions[satellitePosition]);
 		waitForMotor = abs(satellitePosition - currentSatellitePosition) / motorRotationSpeed;
 		printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
+		eventServer->sendEvent(CZapitClient::EVT_ZAP_MOTOR, CEventServer::INITID_ZAPIT, &waitForMotor, sizeof(waitForMotor));
 		sleep(waitForMotor);
 		frontend->setCurrentSatellitePosition(satellitePosition);
 	}
