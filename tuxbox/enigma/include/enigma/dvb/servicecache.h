@@ -86,10 +86,10 @@ public:
 
 	eService *addRef(const eServiceReference &serviceref)
 	{
-		if (services.find(serviceref) == services.end())
+		if (services.find(serviceref) == services.end())  // service not exist in cache ?
 		{
-			eCachedService c;
-			c.refcnt=1;
+			eCachedService c;   // create new Cache Entry
+			c.refcnt=1;					// currently on Object holds a reference of the new cache entry
 			c.service=factory.createService(serviceref);
 			if (!c.service)
 			{
