@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.33 2003/05/15 20:37:15 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.34 2003/05/18 14:53:25 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -98,6 +98,8 @@ bool playbackStopForced = false;
 int debug = 0;
 int waitForMotor = 0;
 int motorRotationSpeed = 0; //in 0.1 degrees per second
+bool firstZapAfterBoot = true;
+diseqc_t diseqcType;
 
 /* near video on demand */
 tallchans nvodchannels;         //  tallchans defined in "bouquets.h"
@@ -129,10 +131,11 @@ void saveSettings(bool write)
 
 		if (c >= 0)
 			config.setInt32((currentMode & RADIO_MODE) ? "lastChannelRadio" : "lastChannelTV", c);
+			
+		config.setInt32("lastSatellitePosition", frontend->getCurrentSatellitePosition());
 	}
 
 	if (write) {
-		config.setInt32("lastSatellitePosition", frontend->getCurrentSatellitePosition());
 		config.setInt32("diseqcRepeats", frontend->getDiseqcRepeats());
 		config.setInt32("diseqcType", frontend->getDiseqcType());
 		config.saveConfig(CONFIGFILE);
@@ -213,6 +216,24 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 	/* store the new channel */
 	if ((!channel) || (channel_id != channel->getChannelID()))
 		channel = &(cit->second);
+	
+	/* have motor move satellite dish to satellite's position if necessary */
+	if (diseqcType == DISEQC_1_2)
+	{
+		if (firstZapAfterBoot || (frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
+		{
+			firstZapAfterBoot = false; //just send motor positioning command the first time after a boot to make sure motor is in right position
+			printf("[zapit] currentSatellitePosition = %d, satellitePosition = %d\n", frontend->getCurrentSatellitePosition(), channel->getSatellitePosition());
+			printf("[zapit] motorPosition = %d\n", motorPositions[channel->getSatelliteName()]);
+			frontend->positionMotor(motorPositions[channel->getSatelliteName()]);
+		
+			waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / motorRotationSpeed; //assuming 1.8 degrees/second motor rotation speed for the time being...
+			printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
+			sleep(waitForMotor);
+		
+			frontend->setCurrentSatellitePosition(channel->getSatellitePosition());
+		}
+	}
 
 	/* if channel's transponder does not match frontend's tuned transponder ... */
 	if (channel->getTsidOnid() != frontend->getTsidOnid())
@@ -421,7 +442,7 @@ int prepare_channels(void)
 	transponders.clear();
 	bouquetManager->clearAll();
 	allchans.clear();  // <- this invalidates all bouquets, too!
-	if (LoadServices(config.getInt32("diseqcType", NO_DISEQC)) < 0)
+	if (LoadServices(diseqcType) < 0)
 		return -1;
 
 	INFO("LoadServices: success");
@@ -1020,8 +1041,8 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 	{
 		CZapitMessages::commandMotor msgMotor;
 		CBasicServer::receive_data(connfd, &msgMotor, sizeof(msgMotor));
-		printf("[zapit] received motor command: %x %x %x %x %x %x\n", msgMotor.cmdtype, msgMotor.cmd, msgMotor.address, msgMotor.num_parameters, msgMotor.param1, msgMotor.param2);
-		frontend->sendMotorCommand(msgMotor.cmdtype, msgMotor.cmd, msgMotor.address, msgMotor.num_parameters, msgMotor.param1, msgMotor.param2);
+		printf("[zapit] received motor command: %x %x %x %x %x %x\n", msgMotor.cmdtype, msgMotor.address, msgMotor.cmd, msgMotor.num_parameters, msgMotor.param1, msgMotor.param2);
+		frontend->sendMotorCommand(msgMotor.cmdtype, msgMotor.address, msgMotor.cmd, msgMotor.num_parameters, msgMotor.param1, msgMotor.param2);
 		break;
 	}
 	
@@ -1396,10 +1417,11 @@ void leaveStandby(void)
 		videoDecoder = new CVideo();
 	}
 
-	frontend->setDiseqcType((diseqc_t) config.getInt32("diseqcType", NO_DISEQC));
 	frontend->setDiseqcRepeats(config.getInt32("diseqcRepeats", 0));
 	frontend->setCurrentSatellitePosition(config.getInt32("lastSatellitePosition", 192));
 	motorRotationSpeed = config.getInt32("motorRotationSpeed", 18); // default: 1.8 degrees per second
+	diseqcType = (diseqc_t)config.getInt32("diseqcType", NO_DISEQC);
+	frontend->setDiseqcType(diseqcType);
 
 	for (unsigned int i = 0; i < MAX_LNBS; i++) {
 		char tmp[16];
@@ -1497,7 +1519,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.33 2003/05/15 20:37:15 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.34 2003/05/18 14:53:25 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
