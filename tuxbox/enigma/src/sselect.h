@@ -98,12 +98,12 @@ public:
 	Signal0<void> rotateRoot;
 
 	Signal1<void,const eServiceReference &> addServiceToPlaylist; // add service to the Playlist
-	Signal2<void,eServiceSelector*,int> addServiceToUserBouquet,  // add current service to selected User Bouquet
-																			removeServiceFromUserBouquet; // remove service from selected User Bouquet
+	Signal2<void,eServiceSelector*,int> addServiceToUserBouquet;  // add current service to selected User Bouquet
 
 	Signal1<void,int> setMode;        // set TV, Radio or File
 
-	Signal1<void,eServiceSelector*> showMenu, // shows the contextmenu
+	Signal1<void,eServiceSelector*>	removeServiceFromUserBouquet, // remove service from selected User Bouquet
+																	showMenu, // shows the contextmenu
 																	toggleStyle; // switch service selector style
 
 	Signal3<void,
@@ -116,7 +116,7 @@ public:
 	void setPath(const eServicePath &path, const eServiceReference &select=eServiceReference());
 
 	int getStyle()	{ return style; }
-	void setStyle(int newStyle=-1);	
+	void setStyle(int newStyle=-1);
 	void actualize();
 	bool selectService(const eServiceReference &ref);
 	bool selectService(int num);	

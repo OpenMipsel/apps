@@ -41,7 +41,7 @@ enigma_LDADD = \
 	@XMLTREE_LIBS@ \
 	@FREETYPE_LIBS@ \
 	@PNG_LIBS@ \
-	-ldl -lz -lpthread -lcrypt -lresolv -lmd5sum -lid3tag -lmad
+	-ldl -lpthread -lcrypt -lresolv -lmd5sum -lid3tag -lmad
 
 #\
 #	/dbox2/cdkroot/lib/libmpatrolmt.a -lbfd -liberty

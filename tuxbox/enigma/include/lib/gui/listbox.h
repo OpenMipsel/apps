@@ -587,12 +587,12 @@ inline int eListBox<T>::moveSelection(int dir)
 			
 			*curi=old;
 		}
-
-		if (!in_atomic)
-			selchanged(*current);
-		else
-			atomic_selchanged=1;
 	}
+
+	if (!in_atomic)
+		selchanged(*current);
+	else
+		atomic_selchanged=1;
 
 	if (flags & flagShowEntryHelp)
 	{
@@ -680,8 +680,11 @@ inline int eListBox<T>::eventHandler(const eWidgetEvent &event)
 template <class T>
 inline int eListBox<T>::setCurrent(const T *c)
 {
-	if (childs.empty() || ((current != childs.end()) && (*current == c)))  // no entries or current is equal the entry to search
-		return E_ALLREADY_SELECTED;	// do nothing
+/*	if (childs.empty() || ((current != childs.end()) && (*current == c)))  // no entries or current is equal the entry to search
+		return E_ALLREADY_SELECTED;	// do nothing*/
+
+	if ( childs.empty() )
+		return E_COULDNT_FIND;
 
 	ePtrList_T_iterator item(childs.begin()), it(childs.begin());
 

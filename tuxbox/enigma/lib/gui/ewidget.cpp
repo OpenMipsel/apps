@@ -711,7 +711,10 @@ void eWidget::setFocus(eWidget *newfocus)
 		return getTLW()->setFocus(newfocus);
 
 	if (focus == newfocus)
+	{
+		/* emit */ focusChanged(focus);
 		return;
+	}
 
 	if (focus)
 		focus->event(eWidgetEvent(eWidgetEvent::lostFocus));

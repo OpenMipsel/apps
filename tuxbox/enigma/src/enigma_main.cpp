@@ -2193,7 +2193,7 @@ ret:
 	}
 }
 
-void eZapMain::removeServiceFromUserBouquet(eServiceSelector *sel, int save )
+void eZapMain::removeServiceFromUserBouquet(eServiceSelector *sel )
 {
 	const eServiceReference &service=sel->getSelected();
 	if ((mode > modeFile) || (mode < 0))
@@ -2201,14 +2201,6 @@ void eZapMain::removeServiceFromUserBouquet(eServiceSelector *sel, int save )
 
 	if (currentSelectedUserBouquet)
 		currentSelectedUserBouquet->getList().remove(service);
-
-	if (save)
-	{
-		currentSelectedUserBouquet->save();
-		currentSelectedUserBouquet=0;
-		eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
-		currentSelectedUserBouquetRef = eServiceReference();
-	}
 }
 
 void eZapMain::showSubserviceMenu()

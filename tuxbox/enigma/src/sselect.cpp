@@ -327,8 +327,8 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	else */
 		eListBoxEntryService::maxNumSize=45;
 
-	if ( services->getCount() == 1 )
-		selected = services->getCurrent()->service;
+/*	if ( services->getCount() == 1 )
+		selected = services->getCurrent()->service;*/
 		
 	services->endAtomic();
 }
@@ -568,7 +568,7 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 			}
 			else
 			{
-				/*emit*/ removeServiceFromUserBouquet( this, 1 );
+				/*emit*/ removeServiceFromUserBouquet( this );
 				eListBoxEntryService::hilitedEntrys.erase(ref);
 			}
 			services->invalidateCurrent();
@@ -592,7 +592,7 @@ void eServiceSelector::serviceSelChanged(eListBoxEntryService *entry)
 	if (entry)
 	{
 		selected = (((eListBoxEntryService*)entry)->service);
-		if (ci->isVisible())
+//		if (ci->isVisible())
 		{
 			ci->clear();
 			if ( selected.type == eServiceReference::idDVB &&
@@ -628,7 +628,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				gotoChar(8);
 			else if (event.action == &i_numberActions->key9 && !movemode)
 				gotoChar(9);
-			else if (event.action == &i_serviceSelectorActions->prevBouquet && !movemode)
+			else if (event.action == &i_serviceSelectorActions->prevBouquet && !movemode && path.size() > 1)
 			{
 				services->beginAtomic();
 				if (style == styleCombiColumn)
@@ -711,7 +711,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					newStyle++;
 				setStyle(newStyle);
 			}
-			else if (event.action == &i_serviceSelectorActions->toggleFocus && !movemode)
+			else if (event.action == &i_serviceSelectorActions->toggleFocus && !movemode && path.size() > 1)
 			{
 				if ( style == styleCombiColumn )
 					if (focus == services)
@@ -842,78 +842,78 @@ bool eServiceSelector::selectService(const eServiceReference &ref)
 
 void eServiceSelector::setStyle(int newStyle)
 {
-	ci->hide();
 	eServicePath p = path;
 	eServiceReference currentService;
 	if (style != newStyle)
 	{
-			if ( services )
-			{
-				// safe currentSelected Service
-				if ( services->getCount() )
-					currentService = services->getCurrent()->service;
+		ci->hide();
+		if ( services )
+		{
+			// safe currentSelected Service
+			if ( services->getCount() )
+				currentService = services->getCurrent()->service;
 
-				services->hide();
-				delete services;
-			}
-			if ( bouquets )
-			{
-				bouquets->hide();
-				delete bouquets;
-			}
-			if (newStyle == styleSingleColumn)
-			{
-				eListBoxEntryService::folder = eSkin::getActive()->queryImage("sselect_folder");
-				eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Number");
-				eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Name");
-			}
-			else if (style == styleMultiColumn)
-			{
-				eListBoxEntryService::folder = 0;
-				eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Number");
-				eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Name");
-			}
-			else
-			{
-				eListBoxEntryService::folder = 0;
-				eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Number");
-				eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Name");
-			}
-			services = new eListBox<eListBoxEntryService>(this);
-			services->setName("services");
-			services->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
 			services->hide();
-
-			bouquets = new eListBox<eListBoxEntryService>(this);
-			bouquets->setName("bouquets");
-			bouquets->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
+			delete services;
+		}
+		if ( bouquets )
+		{
 			bouquets->hide();
+			delete bouquets;
+		}
+		if (newStyle == styleSingleColumn)
+		{
+			eListBoxEntryService::folder = eSkin::getActive()->queryImage("sselect_folder");
+			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Number");
+			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Name");
+		}
+		else if (style == styleMultiColumn)
+		{
+			eListBoxEntryService::folder = 0;
+			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Number");
+			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Name");
+		}
+		else
+		{
+			eListBoxEntryService::folder = 0;
+			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Number");
+			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Name");
+		}
+		services = new eListBox<eListBoxEntryService>(this);
+		services->setName("services");
+		services->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
+		services->hide();
 
-			if ( newStyle == styleSingleColumn )
-			{
-				if (eSkin::getActive()->build(this, "eServiceSelector_singleColumn"))
-					eFatal("Service selector widget build failed!");
-			}
-			else if ( newStyle == styleMultiColumn )
-			{
-				if (eSkin::getActive()->build(this, "eServiceSelector_multiColumn"))
-					eFatal("Service selector widget build failed!");
-			}
-			else
-			{
-				if (eSkin::getActive()->build(this, "eServiceSelector_combiColumn"))
-					eFatal("Service selector widget build failed!");
-				CONNECT( bouquets->selchanged, eServiceSelector::bouquetSelChanged );
-				CONNECT( bouquets->selected, eServiceSelector::bouquetSelected );
-				bouquets->show();
-			}
-			style = newStyle;
-			actualize();
-			selectService( currentService );  // select the old service
-			CONNECT(services->selected, eServiceSelector::serviceSelected);
-			CONNECT(services->selchanged, eServiceSelector::serviceSelChanged);
-			services->show();
-			setFocus(services);
+		bouquets = new eListBox<eListBoxEntryService>(this);
+		bouquets->setName("bouquets");
+		bouquets->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
+		bouquets->hide();
+
+		if ( newStyle == styleSingleColumn )
+		{
+			if (eSkin::getActive()->build(this, "eServiceSelector_singleColumn"))
+				eFatal("Service selector widget build failed!");
+		}
+		else if ( newStyle == styleMultiColumn )
+		{
+			if (eSkin::getActive()->build(this, "eServiceSelector_multiColumn"))
+				eFatal("Service selector widget build failed!");
+		}
+		else
+		{
+			if (eSkin::getActive()->build(this, "eServiceSelector_combiColumn"))
+				eFatal("Service selector widget build failed!");
+			CONNECT( bouquets->selchanged, eServiceSelector::bouquetSelChanged );
+			CONNECT( bouquets->selected, eServiceSelector::bouquetSelected );
+			bouquets->show();
+		}
+		style = newStyle;
+		CONNECT(services->selected, eServiceSelector::serviceSelected);
+		CONNECT(services->selchanged, eServiceSelector::serviceSelChanged);
+		actualize();
+		selectService( currentService );  // select the old service
+		services->show();
+		setFocus(services);
 	}
 	ci->show();
 }
@@ -936,17 +936,25 @@ void eServiceSelector::actualize()
 {
 	if (style == styleCombiColumn)
 	{
-		eServiceReference currentBouquet = path.current();
-		path.up();
-		eServiceReference allBouquets = path.current();
-		path.down( currentBouquet );
-		bouquets->beginAtomic();
-		fillBouquetList( allBouquets );
-
-		if ( bouquets->forEachEntry( _selectService( currentBouquet ) ) )
-			bouquets->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
-
-		bouquets->endAtomic();
+		if ( path.size() > 1 )
+		{
+			eServiceReference currentBouquet = path.current();
+			path.up();
+			eServiceReference allBouquets = path.current();
+			path.down( currentBouquet );
+			bouquets->beginAtomic();
+			fillBouquetList( allBouquets );
+			
+			if ( bouquets->forEachEntry( _selectService( currentBouquet ) ) )
+				bouquets->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
+			
+			bouquets->endAtomic();
+		}
+		else
+		{
+			bouquets->clearList();
+			fillServiceList(path.current());
+		}
 	}
 	else
 		fillServiceList(path.current());

@@ -331,7 +331,7 @@ private:
 	void doPlaylistAdd(const eServiceReference &service);
 	void addServiceToUserBouquet(eServiceSelector *s, int dontask=0);
 	void addServiceToCurUserBouquet(const eServiceReference &ref);
-	void removeServiceFromUserBouquet( eServiceSelector *s, int dontask=0 );
+	void removeServiceFromUserBouquet( eServiceSelector *s );
 
 	void showBouquetList(int sellast);
 
