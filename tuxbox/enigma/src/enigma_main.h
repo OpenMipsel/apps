@@ -487,6 +487,7 @@ public:
 	void deleteService(eServiceSelector *);
 	void renameBouquet(eServiceSelector *);
 	void renameService(eServiceSelector *);
+	void createMarker(eServiceSelector *);
 	void createEmptyBouquet(int mode);
 	void copyProviderToBouquets(eServiceSelector *);
 	void toggleScart( int state );

@@ -25,6 +25,7 @@ gFont eListBoxEntryService::serviceFont;
 gFont eListBoxEntryService::descrFont;
 gFont eListBoxEntryService::numberFont;
 gPixmap *eListBoxEntryService::folder=0;
+gPixmap *eListBoxEntryService::marker=0;
 int eListBoxEntryService::maxNumSize=0;
 std::set<eServiceReference> eListBoxEntryService::hilitedEntrys;
 eListBoxEntryService *eListBoxEntryService::selectedToMove=0;
@@ -93,9 +94,9 @@ struct serviceSelectorActions
 	eActionMap map;
 	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
 			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio,
-			modeFile, toggleStyle, toggleFocus, gotoFirstService, gotoLastService,
+			modeFile, toggleStyle, toggleFocus, gotoPrevMarker, gotoNextMarker,
 			showAll, showSatellites, showProvider, showBouquets, deletePressed,
-			markPressed, renamePressed;
+			markPressed, renamePressed, newMarkerPressed;
 	serviceSelectorActions():
 		map("serviceSelector", _("service selector")),
 		nextBouquet(map, "nextBouquet", _("switch to next bouquet"), eAction::prioDialogHi),
@@ -111,8 +112,8 @@ struct serviceSelectorActions
 		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog),
 		toggleStyle(map, "toggleStyle", _("toggle between classic and multi column style"), eAction::prioDialog),
 		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list (in combi column style)"), eAction::prioDialog),
-		gotoFirstService(map, "gotoFirstService", _("go to first service"), eAction::prioDialogHi),
-		gotoLastService(map, "gotoLastService", _("go to last service"), eAction::prioDialogHi),
+		gotoPrevMarker(map, "gotoPrevMarker", _("go to the prev Marker if exist.. else goto first service"), eAction::prioDialogHi),
+		gotoNextMarker(map, "gotoNextMarker", _("go to the next Marker if exist.. else goto last service"), eAction::prioDialogHi),
 		
 		showAll(map, "showAll", _("show all services"), eAction::prioDialog),
 		showSatellites(map, "showSatellites", _("show satellite list"), eAction::prioDialog),
@@ -121,7 +122,8 @@ struct serviceSelectorActions
 
 		deletePressed(map, "delete", _("delete selected entry"), eAction::prioDialog),
 		markPressed(map, "mark", _("mark selected entry for move"), eAction::prioDialog),
-		renamePressed(map, "rename", _("rename selected entry"), eAction::prioDialog)
+		renamePressed(map, "rename", _("rename selected entry"), eAction::prioDialog),
+		newMarkerPressed(map, "marker", _("create new marker entry"), eAction::prioDialog)
 	{
 	}
 };
@@ -224,6 +226,12 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 		nameXOffs = folder->x + 20;
 		int ypos = (rect.height() - folder->y) / 2;
 		rc->blit( *folder, ePoint(10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
+	}
+	else if ( service.flags & eServiceReference::isMarker && marker )
+	{
+		nameXOffs = marker->x + 20;
+		int ypos = (rect.height() - marker->y) / 2;
+		rc->blit( *marker, ePoint(10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
 	}
 	else if (flags & flagShowNumber && listbox->getColumns() == 1)
 	{
@@ -332,7 +340,7 @@ void eServiceSelector::setKeyDescriptions( bool editMode )
 		key[0]->setText(_("delete"));
 		key[1]->setText(_("mark"));
 		key[2]->setText(_("rename"));
-		key[3]->setText(_(""));
+		key[3]->setText(_("marker"));
 		return;
 	}
 
@@ -408,7 +416,7 @@ struct renumber: public std::unary_function<const eListBoxEntryService&, void>
 
 	bool operator()(eListBoxEntryService& s)
 	{
-		if (!s.service)
+		if (!s.service || s.service.flags == eServiceReference::isMarker )
 			return 0;
 		if ( !(s.service.flags & (eServiceReference::isDirectory)) )
 		{
@@ -774,6 +782,9 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 			}
 		}
 
+		if (entry->service.flags & eServiceReference::isMarker )
+			return;
+
 		if (ref.flags & eServiceReference::isDirectory)
 			enterDirectory(ref);
 		else if (editMode) // edit user bouquet mode
@@ -1037,10 +1048,52 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_serviceSelectorActions->modeFile && !movemode && !editMode)
 				/*emit*/ setMode(eZapMain::modeFile);
 #endif
-			else if (event.action == &i_serviceSelectorActions->gotoFirstService)
-				services->moveSelection(services->dirFirst);
-			else if (event.action == &i_serviceSelectorActions->gotoLastService)
-				services->moveSelection(services->dirLast);
+			else if (event.action == &i_serviceSelectorActions->gotoPrevMarker)
+			{
+				ePlaylist *p = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef(path.current());
+				std::list<ePlaylistEntry>::const_iterator it=
+					p->getConstList().end();
+				if ( p )
+				{
+					it = std::find( p->getConstList().begin(), p->getConstList().end(), selected );
+					if ( it != p->getConstList().end() )
+					{
+						for (--it ; it != p->getConstList().end(); --it )
+							if ( it->service.flags & eServiceReference::isMarker )
+							{
+								selectService( it->service );
+								break;
+							}
+					}
+				}
+				if ( it == p->getConstList().end() )
+					services->moveSelection(services->dirFirst);
+			}
+			else if (event.action == &i_serviceSelectorActions->gotoNextMarker)
+			{
+				ePlaylist *p = (ePlaylist*) eServicePlaylistHandler::getInstance()->addRef(path.current());
+				std::list<ePlaylistEntry>::const_iterator it=
+					p->getConstList().end();
+				if ( p )
+				{
+					eListBoxEntryService *cur = services->getCurrent();
+					if ( cur && cur->flags & eListBoxEntryService::flagIsReturn )
+						it = p->getConstList().begin();
+					else
+						it = std::find( p->getConstList().begin(), p->getConstList().end(), selected );
+					if ( it != p->getConstList().end() )
+					{
+						for ( ++it ; it != p->getConstList().end(); ++it )
+							if ( it->service.flags & eServiceReference::isMarker )
+							{
+								selectService( it->service );
+								break;
+							}
+					}
+				}
+				if ( it == p->getConstList().end() )
+					services->moveSelection(services->dirLast);
+			}
 			else if (event.action == &i_serviceSelectorActions->showAll && !movemode)
 			{
 				enterPath = /*emit*/ getRoot(listAll);
@@ -1075,19 +1128,20 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if ( event.action == &i_serviceSelectorActions->markPressed )
 			{
-				if ( !services->getCurrent() || services->getCurrent()->flags & eListBoxEntryService::flagIsReturn )
-					break;
-				if (path.current().type == eServicePlaylistHandler::ID)
+				if ( services->getCurrent() && !(services->getCurrent()->flags & eListBoxEntryService::flagIsReturn) )
 				{
-					if ( movemode )
+					if (path.current().type == eServicePlaylistHandler::ID)
 					{
-						eZapMain::getInstance()->toggleMoveMode(this);
-						updateNumbers();
-					}
-					else
-					{
-						eZapMain::getInstance()->toggleMoveMode(this);
-						serviceSelected( services->getCurrent() );
+						if ( movemode )
+						{
+							eZapMain::getInstance()->toggleMoveMode(this);
+							updateNumbers();
+						}
+						else
+						{
+							eZapMain::getInstance()->toggleMoveMode(this);
+							serviceSelected( services->getCurrent() );
+						}
 					}
 				}
 			}
@@ -1101,6 +1155,11 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				else
 					/*emit*/ renameService( this );
 				show();
+			}
+			else if ( event.action == &i_serviceSelectorActions->newMarkerPressed )
+			{
+				if ( path.current().type == eServicePlaylistHandler::ID )
+					/*emit*/ newMarkerPressed( this );
 			}
 			else
 				break;
@@ -1256,18 +1315,21 @@ void eServiceSelector::setStyle(int newStyle, bool force)
 		if (newStyle == styleSingleColumn)
 		{
 			eListBoxEntryService::folder = eSkin::getActive()->queryImage("sselect_folder");
+			eListBoxEntryService::marker = eSkin::getActive()->queryImage("sselect_marker");
 			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Number");
 			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Name");
 		}
 		else if (newStyle == styleMultiColumn)
 		{
 			eListBoxEntryService::folder = 0;
+			eListBoxEntryService::marker = 0;
 			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Number");
 			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Name");
 		}
 		else
 		{
 			eListBoxEntryService::folder = 0;
+			eListBoxEntryService::marker = 0;
 			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Number");
 			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Name");
 		}
@@ -1396,8 +1458,8 @@ eServiceSelector::eServiceSelector()
 	addActionToHelpList(&i_serviceSelectorActions->toggleStyle);
 	addActionToHelpList(&i_serviceSelectorActions->toggleFocus);
 	addActionToHelpList(&i_serviceSelectorActions->toggleRoot);
-	addActionToHelpList(&i_serviceSelectorActions->gotoFirstService);
-	addActionToHelpList(&i_serviceSelectorActions->gotoLastService);
+	addActionToHelpList(&i_serviceSelectorActions->gotoPrevMarker);
+	addActionToHelpList(&i_serviceSelectorActions->gotoNextMarker);
 	addActionToHelpList(&i_serviceSelectorActions->showEPGSelector);
 	addActionToHelpList(&i_serviceSelectorActions->pathUp);
 	addActionToHelpList(&i_serviceSelectorActions->modeTV);
@@ -1510,7 +1572,8 @@ const eServiceReference *eServiceSelector::next()
 	do
 		s=services->goNext();
 	while ( s != cur && s &&
-			s->flags & eListBoxEntryService::flagIsReturn );
+			( s->flags & eListBoxEntryService::flagIsReturn ||
+				s->service.flags == eServiceReference::isMarker ) );
 
 	services->endAtomic();
 	if (s)
@@ -1527,7 +1590,8 @@ const eServiceReference *eServiceSelector::prev()
 	do
 		s=services->goPrev();
 	while ( s != cur && s &&
-			s->flags & eListBoxEntryService::flagIsReturn );
+			( s->flags & eListBoxEntryService::flagIsReturn ||
+				s->service.flags & eServiceReference::isMarker ) );
 
 	services->endAtomic();
 	if (s)

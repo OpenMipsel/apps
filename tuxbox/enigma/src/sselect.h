@@ -24,7 +24,7 @@ class eListBoxEntryService: public eListBoxEntry
 	eString sort;
 	static gFont serviceFont, descrFont, numberFont;
 	static int maxNumSize;
-	static gPixmap *folder;
+	static gPixmap *folder, *marker;
 	eTextPara *numPara, *namePara, *descrPara;
 	int nameXOffs, descrXOffs, numYOffs, nameYOffs, descrYOffs;
 	int flags;
@@ -120,7 +120,7 @@ public:
 																	showMenu, // shows the contextmenu
 																	toggleStyle, // switch service selector style
 																	renameService, renameBouquet,
-																	deletePressed;
+																	deletePressed, newMarkerPressed;
 
 	Signal3<void,
 		const eServiceReference &, 		// path

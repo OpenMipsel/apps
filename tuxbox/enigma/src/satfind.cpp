@@ -35,11 +35,15 @@ eSatfind::eSatfind(eFrontend *fe)
 	lber_num=new eLabel(this);
 	lber_num->setName("ber_num");
 
+	ok=new eButton(this);
+	ok->setName("ok");
+	CONNECT(ok->selected, eWidget::accept);
+
 	CONNECT(updateTimer.timeout, eSatfind::update);
 
 	if (eSkin::getActive()->build(this, "eSatfind"))
 		return;
-		
+
 	setHelpID(44);
 }
 

@@ -120,7 +120,7 @@ ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* des
 }
 
 eZapPlugins::eZapPlugins(int type, eWidget* lcdTitle, eWidget* lcdElement)
-	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400), type(type)
+	:eListBoxWindow<ePlugin>(type==2?_("Plugins"):_("Games"), 10, 400), type(type)
 {
 	PluginPath[0] = PLUGINDIR "/";
 	PluginPath[1] = "/var/tuxbox/plugins/";

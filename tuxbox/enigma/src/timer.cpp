@@ -653,6 +653,11 @@ void eTimerManager::actionHandler()
 					actionTimer.start( t * 1000, true );
 				}
 			}
+			else
+			{
+				writeToLogfile("no more waiting events...");
+				actionTimer.stop();
+			}
 			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d setNextEvent", calldepth--));
 		}
 		break;

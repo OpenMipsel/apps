@@ -1547,6 +1547,7 @@ eZapMain::eZapMain()
 	CONNECT(sel->deletePressed, eZapMain::deleteService );
 	CONNECT(sel->renameService, eZapMain::renameService );
 	CONNECT(sel->renameBouquet, eZapMain::renameBouquet );
+	CONNECT(sel->newMarkerPressed, eZapMain::createMarker );
 
 	reloadPaths();
 
@@ -2899,9 +2900,7 @@ void eZapMain::deleteService( eServiceSelector *sel )
 			break;
 		}*/
 
-	ePlaylist *pl=0;
-	if (path.type == eServicePlaylistHandler::ID)
-		pl=(ePlaylist*)eServiceInterface::getInstance()->addRef(path);
+	ePlaylist *pl=(ePlaylist*)eServicePlaylistHandler::getInstance()->addRef(path);
 	if (!pl)
 	{
 		eMessageBox box(_("Sorry, you cannot delete this service."), _("delete service"), eMessageBox::iconWarning|eMessageBox::btOK );
@@ -3041,6 +3040,47 @@ void eZapMain::createEmptyBouquet(int mode)
 	}
 }
 
+void eZapMain::createMarker(eServiceSelector *sel)
+{
+	eServiceReference ref=sel->getSelected();
+	eServiceReference path=sel->getPath().current();
+	ePlaylist *pl = (ePlaylist*)eServicePlaylistHandler::getInstance()->addRef( path );
+	if ( pl )
+	{
+		std::set<int> markerNums;
+		std::list<ePlaylistEntry>::iterator it=pl->getList().end();
+		for (std::list<ePlaylistEntry>::iterator i(pl->getList().begin()); i != pl->getList().end(); ++i )
+		{
+			if ( i->service.flags & eServiceReference::isMarker )
+				markerNums.insert( i->service.data[0] );
+			if ( i->service == ref )
+				it = i;
+		}
+		eServiceReference mark( eServiceReference::idDVB, eServiceReference::isMarker, markerNums.size() ? (*markerNums.end())+1 : 1 );
+		mark.descr=_("unnamed");
+		TextEditWindow wnd(_("Enter marker name:"));
+		wnd.setText(_("create marker"));
+		sel->hide();
+		wnd.show();
+		wnd.setMaxChars(50);
+		int ret = wnd.exec();
+		wnd.hide();
+		if ( !ret )
+		{
+			if ( mark.descr != wnd.getEditText() )
+				mark.descr = wnd.getEditText();
+			if ( it != pl->getList().end() )
+				pl->getList().insert( it, mark );
+			else
+				pl->getList().push_back( mark );
+			sel->actualize();
+			sel->selectService(mark);
+		}
+		sel->show();
+		eServicePlaylistHandler::getInstance()->removeRef( path );
+	}
+}
+
 void eZapMain::copyProviderToBouquets(eServiceSelector *sel)
 {
 	eServiceReference ref=sel->getSelected();
@@ -3170,6 +3210,10 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 				eServiceInterface::getInstance()->stop();
 		}
 	}
+	case 13:
+		createMarker(sel);
+	default:
+		break;
 	}
 }
 
@@ -5175,7 +5219,11 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 			if ( ref.flags & eServiceReference::flagDirectory )
 				prev = new eListBoxEntryText(&list, _("duplicate bouquet"), (void*)8);
 			else // add dvb service to specific bouquet
+			{
 				prev = new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
+				if ( path.type == eServicePlaylistHandler::ID )
+					prev = new eListBoxEntryText(&list, _("add marker"), (void*)13);
+			}
 			prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 		}
 
@@ -5213,7 +5261,7 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 			else if (ref.data[0] == -2 || ref.data[0] == -3 )
 			{
 				prev = new eListBoxEntryText(&list, _("copy to bouquet list"), (void*)8);
-				prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );				
+				prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 			}
 		}
 	}
