@@ -1,5 +1,5 @@
 DOMAIN = $(PACKAGE)
-XGETTEXT_OPTIONS = --keyword=_ --keyword=N_
+XGETTEXT_OPTIONS = --keyword=_ --keyword=N_ --from-code=utf-8
 COPYRIGHT_HOLDER = tuxbox project
 EXTRA_LOCALE_CATEGORIES =
 
