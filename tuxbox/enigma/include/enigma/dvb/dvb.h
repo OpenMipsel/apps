@@ -450,8 +450,8 @@ class eSatellite
 	eString description;
 	eSwitchParameter switchParams;
 	eLNB *lnb;
+	std::map<int, eSatellite*>::iterator tpiterator;
 	friend class eLNB;
-	std::map<int,eSatellite*>::iterator tpiterator;
 public:
 	eSatellite(eTransponderList &tplist, int orbital_position, eLNB &lnb);
 	~eSatellite();
@@ -486,11 +486,8 @@ public:
 		lnb = _lnb;
 	}
 	
-	void setOrbitalPosition(int orbital_position)
-	{
-		this->orbital_position=orbital_position;
-	}
-	
+	void setOrbitalPosition(int orbital_position);
+
 	bool operator<(const eSatellite &sat) const
 	{
 		return orbital_position < sat.orbital_position;
@@ -545,8 +542,8 @@ class eTransponderList
 	std::map<eServiceReferenceDVB,eService> services;
 	std::map<int,eService*> channel_number;
 	
-	std::list<eLNB> lnbs;
 	std::map<int,eSatellite*> satellites;
+	std::list<eLNB> lnbs;
 	friend class eLNB;
 	friend class eSatellite;
 public:
