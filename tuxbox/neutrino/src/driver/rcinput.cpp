@@ -1314,8 +1314,22 @@ int CRCInput::translate(int code)
 	}
 	else if (!(code&0x00))
 	{
-		//printf("-!!!!!!  before not-translated key: %04x\n", code );
-		return code&0x3F;
+/* FIXME: the following keys exist but are not defined in rcinput.h (they are unused in neutrino) */
+
+#define RC_top_left     RC_nokey
+#define RC_top_right    RC_nokey
+#define RC_bottom_left  RC_nokey
+#define RC_bottom_right RC_nokey
+
+		static const uint translation[0x21 + 1] = 
+			{ RC_0           , RC_1   , RC_2      , RC_3        , RC_4    , RC_5    , RC_6      , RC_7       , RC_8        , RC_9          ,
+			  RC_right       , RC_left, RC_up     , RC_down     , RC_ok   , RC_spkr , RC_standby, RC_green   , RC_yellow   , RC_red        ,
+			  RC_blue        , RC_plus, RC_minus  , RC_help     , RC_setup, RC_nokey, RC_nokey  , RC_top_left, RC_top_right, RC_bottom_left,
+			  RC_bottom_right, RC_home, RC_page_up, RC_page_down};
+		if ((code & 0x3F) <= 0x21)
+			return translation[code & 0x3F];
+		else
+			return RC_nokey;
 	}
 	//else
 	//perror("unknown rc code");
