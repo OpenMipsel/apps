@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.10 2003/02/13 14:32:02 tmbinc Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.11 2003/02/13 14:33:38 tmbinc Exp $
  */
 
 #include <enigma_info.h>
@@ -123,7 +123,9 @@ public:
 	{
 		int mID=atoi( eDVB::getInstance()->getInfo("mID").c_str());
 		
-		eString translation_info=gettext("");
+		const char *magic="";
+		
+		eString translation_info=gettext(magic);
 		unsigned int i;
 		i=translation_info.find("Language-Team:");
 		if (i != eString::npos)
