@@ -25,6 +25,7 @@
 #include <lib/dvb/esection.h>
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/iso639.h>
+#include <lib/dvb/servicemp3.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/eprogress.h>
@@ -2548,6 +2549,26 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		ChannelName->setText(name);	
 		eZapLCD* pLCD = eZapLCD::getInstance();
 		pLCD->lcdMain->setServiceName(name);
+		
+		if (service && service->id3)
+		{
+			eString artist="unknown artist", album="unknown album", title="", num="";
+			eString line2;
+			if (service->id3->tags.count("TALB"))
+				album=service->id3->tags.find("TALB")->second;
+			if (service->id3->tags.count("TIT2"))
+				title=service->id3->tags.find("TIT2")->second;
+			if (service->id3->tags.count("TPE1"))
+				artist=service->id3->tags.find("TPE1")->second;
+			if (service->id3->tags.count("TRCK"))
+				num=service->id3->tags.find("TRCK")->second;
+			EINow->setText(artist + ": " + album);
+			line2="";
+			if (num)
+				line2+="[" + num + "] ";
+			line2+=title;
+			EINext->setText(line2);
+		}
 	}
 	
 	if (!eZap::getInstance()->focus)

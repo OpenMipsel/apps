@@ -498,101 +498,8 @@ void eServiceHandlerMP3::gotMessage(const eMP3DecoderMessage &message)
 
 eService *eServiceHandlerMP3::createService(const eServiceReference &service)
 {
-#if 0
-	id3_file *file;
-	
-	file=::id3_file_open(service.path.c_str(), ID3_FILE_MODE_READONLY);
-	if (!file)
-		return new eService(eServiceID(0), (eString("MP3: ") + service.path).c_str());
-		
-	id3_tag *tag=id3_file_tag(file);
-	if (!tag)
-	{
-		id3_file_close(file);
-		return new eService(eServiceID(0), (eString("MP3: ") + service.path).c_str());
-	}
 
-	eString description="";
-
-  struct id3_frame const *frame;
-  id3_ucs4_t const *ucs4;
-  id3_latin1_t *latin1;
-
-	struct
-	{
-		char const *id;
-		char c;
-	} const info[] = {
-		{ ID3_FRAME_TITLE,  '2'},
-		{ "TIT3",           's'}, 
-		{ "TCOP",           'd'},
-		{ "TPRO",           'p'},
-		{ "TCOM",           'b'},
-		{ ID3_FRAME_ARTIST, '1'},
-		{ "TPE2",           'f'},
-		{ "TPE3",           'c'},
- 		{ "TEXT",           'l'},
-		{ ID3_FRAME_ALBUM,  '3'},
-		{ ID3_FRAME_YEAR,   '4'},
-		{ ID3_FRAME_TRACK,  'a'},
-		{ "TPUB",           'P'},
-		{ ID3_FRAME_GENRE,  '6'},
- 		{ "TRSN",           'S'},
-		{ "TENC",           'e'}
-	};
-	
-	const char *naming="[%a] [%1 - %3] %2";
-	
-	for (const char *c=naming; *c; ++c)
-	{
-		if ((*c != '%') || (*++c=='%') || !*c)
-		{
-			description+=*c;
-			continue;
-		}
-		
-		unsigned int i;
-		
-		for (i=0; i<sizeof(info)/sizeof(*info); ++i)
-			if (info[i].c == *c)
-				break;
-		if (i == sizeof(info)/sizeof(*info))
-			continue;
-
-		union id3_field const *field;
-		unsigned int nstrings, j;
-
-		frame = id3_tag_findframe(tag, info[i].id, 0);
-		if (frame == 0)
-			continue;
-
-		field    = &frame->fields[1];
-		nstrings = id3_field_getnstrings(field);
-	
-		for (j = 0; j < nstrings; ++j) 
-		{
-			ucs4 = id3_field_getstrings(field, j);
-			assert(ucs4);
-
-			if (strcmp(info[i].id, ID3_FRAME_GENRE) == 0)
-				ucs4 = id3_genre_name(ucs4);
-
-			latin1 = id3_ucs4_latin1duplicate(ucs4);
-			if (latin1 == 0)
-				break;
-
-			description+=eString((const char*)latin1);
-			free(latin1);
-		}
-	}
-	
-	id3_file_close(file);
-
-	return new eService(eServiceID(0), description.c_str());
-#else
-	eString l=service.path.mid(service.path.rfind('/')+1);
-	return new eService(l.c_str());
-#endif
+	return new eServiceMP3(service.path.c_str());
 }
 
 int eServiceHandlerMP3::play(const eServiceReference &service)
@@ -727,6 +634,139 @@ int eServiceHandlerMP3::getPosition(int what)
 	default:
 		return -1;
 	}
+}
+
+eServiceMP3::eServiceMP3(const char *filename): eService("")
+{
+	id3_file *file;
+	eString f=filename;
+	eString l=f.mid(f.rfind('/')+1);
+	service_name=l;
+
+	file=::id3_file_open(filename, ID3_FILE_MODE_READONLY);
+	if (!file)
+		return;
+		
+	id3=&id3tags;
+	
+	id3_tag *tag=id3_file_tag(file);
+	if (!tag)
+	{
+		id3_file_close(file);
+		return;
+	}
+
+	eString description="";
+
+  struct id3_frame const *frame;
+  id3_ucs4_t const *ucs4;
+  id3_utf8_t *utf8;
+
+#if 0
+	struct
+	{
+		char const *id;
+		char c;
+	} const info[] = {
+		{ ID3_FRAME_TITLE,  '2'},
+		{ "TIT3",           's'}, 
+		{ "TCOP",           'd'},
+		{ "TPRO",           'p'},
+		{ "TCOM",           'b'},
+		{ ID3_FRAME_ARTIST, '1'},
+		{ "TPE2",           'f'},
+		{ "TPE3",           'c'},
+ 		{ "TEXT",           'l'},
+		{ ID3_FRAME_ALBUM,  '3'},
+		{ ID3_FRAME_YEAR,   '4'},
+		{ ID3_FRAME_TRACK,  'a'},
+		{ "TPUB",           'P'},
+		{ ID3_FRAME_GENRE,  '6'},
+ 		{ "TRSN",           'S'},
+		{ "TENC",           'e'}
+	};
+
+	const char *naming="[%a] [%1 - %3] %2";
+	
+	for (const char *c=naming; *c; ++c)
+	{
+		if ((*c != '%') || (*++c=='%') || !*c)
+		{
+			description+=*c;
+			continue;
+		}
+		
+		unsigned int i;
+		
+		for (i=0; i<sizeof(info)/sizeof(*info); ++i)
+			if (info[i].c == *c)
+				break;
+		if (i == sizeof(info)/sizeof(*info))
+			continue;
+
+		union id3_field const *field;
+		unsigned int nstrings, j;
+
+		frame = id3_tag_findframe(tag, info[i].id, 0);
+		if (frame == 0)
+			continue;
+		
+		field    = &frame->fields[1];
+		nstrings = id3_field_getnstrings(field);
+	
+		for (j = 0; j < nstrings; ++j) 
+		{
+			ucs4 = id3_field_getstrings(field, j);
+			assert(ucs4);
+
+			if (strcmp(info[i].id, ID3_FRAME_GENRE) == 0)
+				ucs4 = id3_genre_name(ucs4);
+
+
+			utf8 = id3_ucs4_utf8duplicate(ucs4);
+			description+=eString((const char*)utf8);
+			if (utf8 == 0)
+				break;
+			id3tags.tags.insert(std::pair<eString,eString>(info[i].id, eString((char*)utf8)));
+			free(utf8);
+		}
+	}
+	service_name=description;
+#endif
+
+	for (int i=0; i<tag->nframes; ++i)
+	{
+		union id3_field const *field;
+		unsigned int nstrings, j;
+		frame=tag->frames[i];
+		
+		field    = &frame->fields[1];
+		nstrings = id3_field_getnstrings(field);
+	
+		for (j = 0; j < nstrings; ++j) 
+		{
+			ucs4 = id3_field_getstrings(field, j);
+			assert(ucs4);
+
+			if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
+				ucs4 = id3_genre_name(ucs4);
+
+			utf8 = id3_ucs4_utf8duplicate(ucs4);
+			description+=eString((const char*)utf8);
+			if (utf8 == 0)
+				break;
+			id3tags.tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
+			free(utf8);
+		}
+	}
+	
+	id3_file_close(file);
+}
+
+eServiceMP3::eServiceMP3(const eServiceMP3 &c): eService(c)
+{
+	id3tags=c.id3tags;
+	id3=&id3tags;
 }
 
 eAutoInitP0<eServiceHandlerMP3> i_eServiceHandlerMP3(7, "eServiceHandlerMP3");

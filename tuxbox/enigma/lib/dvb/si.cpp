@@ -130,11 +130,11 @@ unsigned int recode(unsigned char d, int cp)
 
 static eString convertDVBUTF8(unsigned char *data, int len)
 {
-	int table=0;
+	int table=5;
 	int i;
 	if (!len)
 		return "";
-
+		
 	i=0;
 	if (data[0] <= 5)
 		table=data[i++];

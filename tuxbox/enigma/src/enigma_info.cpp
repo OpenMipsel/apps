@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.3 2002/12/05 00:22:11 Ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.4 2002/12/16 21:58:45 tmbinc Exp $
  */
 
 #include <enigma_info.h>
@@ -28,6 +28,7 @@
 
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/frontend.h>
+#include <lib/dvb/service.h>
 #include <lib/gui/ewindow.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
@@ -70,7 +71,7 @@ void eZapInfo::sel_satfind()
 void eZapInfo::sel_streaminfo()
 {
 	hide();	
-	eStreaminfo si;
+	eStreaminfo si(0, eServiceInterface::getInstance()->service);
 	si.setLCD(LCDTitle, LCDElement);
 	si.show();
 	si.exec();
