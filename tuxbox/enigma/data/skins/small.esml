@@ -322,36 +322,38 @@
 
 			<!-- <eProgress position="428:142" size="156:13" name="progress_bar" foregroundColor="content" border="0" /> -->
 
-			<eLabel position="514:451" size="12:15" pixmap="osd_crypt_on" name="osd_crypt_on" />
-			<eLabel position="514:451" size="12:15" pixmap="osd_crypt_off" name="osd_crypt_off"/>
+			<eLabel position="574:451" size="12:15" pixmap="osd_crypt_on" name="osd_crypt_on" />
+			<eLabel position="574:451" size="12:15" pixmap="osd_crypt_off" name="osd_crypt_off"/>
 
-			<eLabel position="530:451" size="28:15" pixmap="osd_format_on" name="osd_format_on"/>
-			<eLabel position="530:451" size="28:15" pixmap="osd_format_off" name="osd_format_off"/>
+			<eLabel position="590:451" size="28:15" pixmap="osd_format_on" name="osd_format_on"/>
+			<eLabel position="590:451" size="28:15" pixmap="osd_format_off" name="osd_format_off"/>
 			
-			<eLabel position="562:451" size="25:15" pixmap="osd_dolby_on" name="osd_dolby_on"/>
-			<eLabel position="562:451" size="25:15" pixmap="osd_dolby_off" name="osd_dolby_off"/>
+			<eLabel position="622:451" size="25:15" pixmap="osd_dolby_on" name="osd_dolby_on"/>
+			<eLabel position="622:451" size="25:15" pixmap="osd_dolby_off" name="osd_dolby_off"/>
 
 			<eLabel name="description" />
 		<!--	 -->
-			<eLabel position="90:451" size="8:16" pixmap="button_red" name="button_red_enabled" />
-			<eLabel position="152:451" size="8:16" pixmap="button_green" name="button_green_enabled" />
-			<eLabel position="234:451" size="8:16" pixmap="button_yellow" name="button_yellow_enabled" />
-			<eLabel position="316:451" size="8:16" pixmap="button_blue" name="button_blue_enabled" />
+			<eLabel position="70:451" size="8:16" pixmap="button_red" name="button_red_enabled" />
+			<eLabel position="132:451" size="8:16" pixmap="button_green" name="button_green_enabled" />
+			<eLabel position="214:451" size="8:16" pixmap="button_yellow" name="button_yellow_enabled" />
+			<eLabel position="296:451" size="8:16" pixmap="button_blue" name="button_blue_enabled" />
 
-			<eLabel position="90:451" size="8:16" pixmap="button_gray" name="button_red_disabled" />
-			<eLabel position="152:451" size="8:16" pixmap="button_gray" name="button_green_disabled" />
-			<eLabel position="234:451" size="8:16" pixmap="button_gray" name="button_yellow_disabled" />
-			<eLabel position="316:451" size="8:16" pixmap="button_gray" name="button_blue_disabled" />
+			<eLabel position="70:451" size="8:16" pixmap="button_gray" name="button_red_disabled" />
+			<eLabel position="132:451" size="8:16" pixmap="button_gray" name="button_green_disabled" />
+			<eLabel position="214:451" size="8:16" pixmap="button_gray" name="button_yellow_disabled" />
+			<eLabel position="296:451" size="8:16" pixmap="button_gray" name="button_blue_disabled" />
 
-			<eLabel text="EPG" position="102:452" font="Nimbus;12" size="50:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
-			<eLabel text="Bildregie" position="164:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
-			<eLabel text="Tonwahl" position="246:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
-			<eLabel text="Videotext" position="328:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel text="EPG" position="82:452" font="Nimbus;12" size="50:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel text="Bildregie" position="144:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel text="Tonwahl" position="226:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel text="Videotext" position="308:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			
+			<eProgress position="388:454" size="150:11" name="progress_bar" foregroundColor="mittel" border="1" />
+			
+			<eLabel name="recStatus" position="515:377" size="18:18" pixmap="rec_symbol" />
 
-			<eLabel name="recStatus" position="460:44" size="18:18" pixmap="rec_symbol" alphatest="on" />
-
-			<eLabel name="dvrInfoBar" position="94:79" size="484:53" pixmap="dvrtable" alphatest="on">
-				<eLabel name="TimeLeft" position="316:0" size="150:53" backgroundColor="content" foregroundColor="white" wrap="on" />
+			<eLabel name="dvrInfoBar" position="94:402" size="484:53" pixmap="dvrtable" alphatest="on">
+				<eLabel name="TimeLeft" position="316:0" size="150:47" backgroundColor="mittel" foregroundColor="mittel+15" wrap="on" />
 			</eLabel>
 
 			<eWidget name="dvbInfoBar" position="70:402" size="720:48">
@@ -366,8 +368,8 @@
 				<eLabel position="498:23" size="80:23" font="Nimbus;19" name="e_next_duration" align="right" backgroundColor="mittel" foregroundColor="mittel+15" />
 			</eWidget>
 
-			<eWidget name="fileInfoBar" position="94:79" size="484:57">
-				<eLabel position="0:0" size="e:e" font="Nimbus;29" name="fileinfos" backgroundColor="content" foregroundColor="white" alphatest="on" wrap="on" />
+			<eWidget name="fileInfoBar" position="94:402" size="484:57">
+				<eLabel position="0:0" size="e:e" font="Nimbus;19" name="fileinfos" backgroundColor="mittel" foregroundColor="mittel+15" alphatest="on" wrap="on" />
 			</eWidget>
 
 		</eZapMain>
