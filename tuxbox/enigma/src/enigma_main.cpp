@@ -4626,7 +4626,7 @@ void eZapMain::timeOut()
 		pRotorMsg=0;
 	}
 	else if ((eZap::getInstance()->focus==this) && ((state == 1) || (stateOSD == 0)))
-			hide();
+		hide();
 }
 
 void eZapMain::leaveService()

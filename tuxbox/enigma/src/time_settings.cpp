@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: time_settings.cpp,v 1.1.2.1 2003/07/31 17:21:32 ghostrider Exp $
+ * $Id: time_settings.cpp,v 1.1.2.2 2003/08/29 21:25:21 ghostrider Exp $
  */
 
 #include <time_settings.h>
@@ -28,9 +28,9 @@
 #include <lib/dvb/dvbservice.h>
 
 eTimeSettings::eTimeSettings()
-	:eSetupWindow(_("Time Settings"), 6, 350)
+	:eSetupWindow(_("Time Settings"), 5, 350)
 {
-	move(ePoint(130, 120));
+	move(ePoint(130, 135));
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Timezone Configuration"), eString().sprintf("(%d) %s", ++entry, _("open timezone selector")) ))->selected, eTimeSettings::time_zone);
 	CONNECT((new eListBoxEntryMenu(&list, _("Time Correction"), eString().sprintf("(%d) %s", ++entry, _("open time correction window")) ))->selected, eTimeSettings::time_correction);

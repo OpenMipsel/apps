@@ -1,6 +1,7 @@
 #include <setup_osd.h>
 
-#include <wizard_language.h>
+#include <setupskin.h>
+#include <enigma.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
 #include <lib/gdi/gfbdc.h>
@@ -10,6 +11,7 @@
 #include <lib/gui/guiactions.h>
 #include <lib/gui/slider.h>
 #include <lib/gui/statusbar.h>
+#include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -225,15 +227,15 @@ eZapOsdSetup::eZapOsdSetup()
 	sGamma->setValue( gamma);
 	CONNECT( sGamma->changed, eZapOsdSetup::gammaChanged );
 
-	menu_language=new eButton(this);
-	menu_language->setText(_("Menu language"));
-	menu_language->setShortcut("blue");
-	menu_language->setShortcutPixmap("blue");
-	menu_language->move(ePoint(20, 140));
-	menu_language->resize(eSize(205, 40));
-	menu_language->loadDeco();
-	menu_language->setHelpText(_("press ok to select your menu language"));
-	CONNECT( menu_language->selected, eZapOsdSetup::menuLanguagePressed );
+	skin=new eButton(this);
+	skin->setText(_("Change skin"));
+	skin->setShortcut("blue");
+	skin->setShortcutPixmap("blue");
+	skin->move(ePoint(20, 140));
+	skin->resize(eSize(205, 40));
+	skin->loadDeco();
+	skin->setHelpText(_("press ok to open skin selector"));
+	CONNECT( skin->selected, eZapOsdSetup::skinPressed );
 
 	pluginoffs=new eButton(this);
 	pluginoffs->setText(_("TuxText position"));
@@ -304,11 +306,26 @@ void eZapOsdSetup::okPressed()
 	close(1);
 }
 
-void eZapOsdSetup::menuLanguagePressed()
+void eZapOsdSetup::skinPressed()
 {
 	eWidget *oldfocus=focus;
 	hide();
-	eWizardLanguage::run();
+	eSkinSetup setup;
+	int res;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	res=setup.exec();
+	setup.hide();
+	if (!res)
+	{
+		eMessageBox msg(_("You have to restart enigma to apply the new skin\nRestart now?"), _("Skin changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
+		msg.show();
+		if ( msg.exec() == eMessageBox::btYes )
+			eZap::getInstance()->quit(2);
+		msg.hide();
+	}
 	show();
 	setFocus(oldfocus);
 }

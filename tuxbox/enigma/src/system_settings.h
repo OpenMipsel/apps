@@ -7,6 +7,7 @@ class eSystemSettings: public eSetupWindow
 {
 private:
 	void osd_settings();
+	void osd_language();
 	void time_settings();
 	void av_settings();
 	void harddisc_setup();

@@ -31,9 +31,9 @@ void eModeSelector::entrySelected( eListBoxEntryText *e )
 }
 
 eZapBouquetSetup::eZapBouquetSetup()
-	:eSetupWindow(_("Service Organising"), 8, 430)
+	:eSetupWindow(_("Service Organising"), 6, 430)
 {                                        
-	move(ePoint(150, 136));
+	move(ePoint(150, 166));
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Create new bouquet"), eString().sprintf("(%d) %s", ++entry, _("create new empty bouquet"))))->selected, eZapBouquetSetup::createNewEmptyBouquet );
 	CONNECT((new eListBoxEntryMenu(&list, _("Add services to bouquet"), eString().sprintf("(%d) %s", ++entry, _("add multiple services to a specific bouquet"))))->selected, eZapBouquetSetup::editModeSelected );

@@ -11,14 +11,13 @@ class eSlider;
 class eZapOsdSetup: public eWindow
 {
 	eSlider *sAlpha, *sBrightness, *sGamma;
-	eCheckbox *export_mode, *hide_error_windows;
 	eStatusBar *statusbar;
 
-	eButton *pluginoffs, *menu_language, *ok;
+	eButton *pluginoffs, *skin, *ok;
 	int alpha, brightness, gamma;
 private:
 	int eventHandler(const eWidgetEvent&);
-	void menuLanguagePressed();
+	void skinPressed();
 	void alphaChanged( int );
 	void brightnessChanged( int );
 	void gammaChanged( int );

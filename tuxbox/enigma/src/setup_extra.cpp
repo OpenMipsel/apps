@@ -17,35 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_extra.cpp,v 1.1.2.12 2003/08/25 22:10:28 ghostrider Exp $
+ * $Id: setup_extra.cpp,v 1.1.2.13 2003/08/29 21:25:21 ghostrider Exp $
  */
-
-#include <setup_extra.h>
 #include <enigma.h>
+#include <setup_extra.h>
 #include <setupengrab.h>
 #include <setupnetwork.h>
 #include <software_update.h>
-#include <setupskin.h>
 #include <setup_rc.h>
 #include <lib/gui/emessage.h>
 
 eExpertSetup::eExpertSetup()
-	:eSetupWindow(_("Expert Setup"), 10, 400)
+	:eSetupWindow(_("Expert Setup"), 11, 400)
 {
 	cmove(ePoint(170, 145));
 
 	int entry=0;
 #ifndef DISABLE_NETWORK
-	CONNECT((new eListBoxEntryMenu(&list, _("Communication Setup"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eExpertSetup::communication_setup);
+	CONNECT((new eListBoxEntryMenu(&list, _("Communication Setup"), eString().sprintf("(%d) %s", ++entry, _("open communication setup")) ))->selected, eExpertSetup::communication_setup);
 	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab Streaming Setup"), eString().sprintf("(%d) %s", ++entry, _("open ngrab server setup")) ))->selected, eExpertSetup::ngrab_setup);
 	CONNECT((new eListBoxEntryMenu(&list, _("Software Update"), eString().sprintf("(%d) %s", ++entry, _("open software update")) ))->selected, eExpertSetup::software_update);
 #endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control"), eString().sprintf("(%d) %s", ++entry, _("open remote control setup")) ))->selected, eExpertSetup::rc_setup);
-	CONNECT((new eListBoxEntryMenu(&list, _("Skin Setup"), eString().sprintf("(%d) %s", ++entry, _("open skin setup")) ))->selected, eExpertSetup::skin_setup);
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Skip confirmations"), "/elitedvb/extra/profimode", _("enable/disable confirmations"));
-	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Hide error windows"), "/elitedvb/extra/hideerror", _("enable/disable showing the zap error messages"));
-	CONNECT((new eListBoxEntryCheck((eListBox<eListBoxEntry>*)&list,_("Serviceselector help buttons"),"/ezap/serviceselector/showButtons",	_("show/hide service selector (color) help buttons")))->selected, eExpertSetup::colorbuttonsChanged );
+	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Hide error windows"), "/elitedvb/extra/hideerror", _("show no zap error messages"));
+	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Auto show Infobar"), "/ezap/osd/showOSDOnEITUpdate", _("show infobar when event info changed"));
+	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Show remaining Time"), "/ezap/osd/showCurrentRemaining", _("show event remaining time in the infobar"));
+	CONNECT((new eListBoxEntryCheck((eListBox<eListBoxEntry>*)&list,_("Serviceselector help buttons"),"/ezap/serviceselector/showButtons",_("show colored help buttons in service selector")))->selected, eExpertSetup::colorbuttonsChanged );
 	setHelpID(92);
 }
 
@@ -107,27 +106,5 @@ void eExpertSetup::rc_setup()
 	setup.show();
 	setup.exec();
 	setup.hide();
-	show();
-}
-
-void eExpertSetup::skin_setup()
-{
-	hide();
-	eSkinSetup setup;
-	int res;
-#ifndef DISABLE_LCD
-	setup.setLCD(LCDTitle, LCDElement);
-#endif
-	setup.show();
-	res=setup.exec();
-	setup.hide();
-	if (!res)
-	{
-		eMessageBox msg(_("You have to restart enigma to apply the new skin\nRestart now?"), _("Skin changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
-		msg.show();
-		if ( msg.exec() == eMessageBox::btYes )
-			eZap::getInstance()->quit(2);
-		msg.hide();
-	}
 	show();
 }
