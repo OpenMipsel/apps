@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.20 2003/03/30 11:55:27 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.21 2003/03/30 12:25:03 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -319,28 +319,28 @@ int change_audio_pid(uint8_t index)
 	if ((!audioDemux) || (!audioDecoder) || (!channel))
 		return -1;
 
-        /* stop demux filter */
-        if (audioDemux->stop() < 0)
-                return -1;
+	/* stop demux filter */
+	if (audioDemux->stop() < 0)
+		return -1;
 
-        /* stop audio playback */
-        if (audioDecoder->stop() < 0)
-                return -1;
+	/* stop audio playback */
+	if (audioDecoder->stop() < 0)
+		return -1;
 
-        /* update current channel */
-        channel->setAudioChannel(index);
+	/* update current channel */
+	channel->setAudioChannel(index);
 
-        /* set bypass mode */
-        CZapitAudioChannel *currentAudioChannel = channel->getAudioChannel();
+	/* set bypass mode */
+	CZapitAudioChannel *currentAudioChannel = channel->getAudioChannel();
 
-        if (!currentAudioChannel) {
-                WARN("No current audio channel");
-                return -1;
-        }
-
+	if (!currentAudioChannel) {
+		WARN("No current audio channel");
+		return -1;
+	}
+	
 	if (currentAudioChannel->isAc3)
 		audioDecoder->enableBypass();
-        else
+	else
 	{
 		audioDecoder->enableBypass(); // workaround for actual used drivers (alexw 5-feb-2003)
 		audioDecoder->disableBypass();
@@ -350,13 +350,13 @@ int change_audio_pid(uint8_t index)
 	if (audioDemux->pesFilter(channel->getAudioPid(), DMX_OUT_DECODER, DMX_PES_AUDIO) < 0)
 		return -1;
 
-        /* start audio playback */
-        if (audioDecoder->start() < 0)
-                return -1;
+	/* start audio playback */
+	if (audioDecoder->start() < 0)
+		return -1;
 
-        /* start demux filter */
-        if (audioDemux->start() < 0)
-                return -1;
+	/* start demux filter */
+	if (audioDemux->start() < 0)
+		return -1;
 
 	return 0;
 }
@@ -975,8 +975,13 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 			leaveStandby();
 		break;
 	}
-	
+
 	case CZapitMessages::CMD_NVOD_SUBSERVICE_NUM:
+	{
+		CZapitMessages::commandInt msg;
+		CBasicServer::receive_data(connfd, &msg, sizeof(msg));
+	}
+	
 	default:
 		WARN("unknown command %d (version %d)", rmsg.cmd, CZapitMessages::ACTVERSION);
 		break;
@@ -1133,13 +1138,13 @@ void sendChannels(int connfd, const CZapitClient::channelsMode mode, const CZapi
 		if (((currentMode & RADIO_MODE) && (mode == CZapitClient::MODE_CURRENT)) || (mode==CZapitClient::MODE_RADIO))
 		{
 			for (tallchans_iterator it = allchans.begin(); it != allchans.end(); it++)
-				if (it->second.getServiceType() == ST_DIGITAL_RADIO_SOUND_SERVICE) 
+				if (it->second.getServiceType() == ST_DIGITAL_RADIO_SOUND_SERVICE)
 					channels.push_back(&(it->second));
 		}
 		else
 		{
 			for (tallchans_iterator it = allchans.begin(); it != allchans.end(); it++)
-				if (it->second.getServiceType() != ST_DIGITAL_RADIO_SOUND_SERVICE) 
+				if (it->second.getServiceType() != ST_DIGITAL_RADIO_SOUND_SERVICE)
 					channels.push_back(&(it->second));
 		}
 		sort(channels.begin(), channels.end(), CmpChannelByChName());
@@ -1155,7 +1160,7 @@ int startPlayBack(CZapitChannel *thisChannel)
 	bool have_video = false;
 	bool have_teletext = false;
 
-	if (playbackStopForced == true)
+	if ((playbackStopForced == true) || (!thisChannel))
 		return -1;
 
 #ifndef TELETEXT_DEMUX
@@ -1174,7 +1179,7 @@ int startPlayBack(CZapitChannel *thisChannel)
 	if (thisChannel->getTeletextPid() != 0)
 		have_teletext = true;
 
-	if ((!have_audio) && (!have_video))
+	if ((!have_audio) && (!have_video) && (!have_teletext))
 		return -1;
 
 	/* set demux filters */
@@ -1203,7 +1208,7 @@ int startPlayBack(CZapitChannel *thisChannel)
 		if (teletextDemux->pesFilter(thisChannel->getTeletextPid(), DMX_OUT_DECODER, DMX_PES_TELETEXT) < 0)
 			return -1;
 	}
-#endif	//TELETEXT_DEMUX
+#endif
 
 	/* start video */
 	if (have_video) {
@@ -1253,21 +1258,22 @@ int stopPlayBack(void)
 	if (playbackStopForced)
 		return -1;
 
-        if (videoDemux)
-                videoDemux->stop();
-        if (audioDemux)
-                audioDemux->stop();
-        if (pcrDemux)
-                pcrDemux->stop();
-	audioDecoder->stop();
-	videoDecoder->stop();
-
 #ifdef TELETEXT_DEMUX
-        if (teletextDemux)
-                teletextDemux->stop();
+	if (teletextDemux)
+		teletextDemux->stop();
 #else
 	ioctl(dmx_teletext_fd, 2, 0);
-#endif	//TELETEXT_DEMUX
+#endif
+	if (videoDemux)
+		videoDemux->stop();
+	if (audioDemux)
+		audioDemux->stop();
+	if (pcrDemux)
+		pcrDemux->stop();
+	if (audioDecoder)
+		audioDecoder->stop();
+	if (videoDecoder)
+		videoDecoder->stop();
 
 	return 0;
 }
@@ -1284,29 +1290,29 @@ void enterStandby(void)
 	saveSettings(true);
 	stopPlayBack();
 
-        if (audioDemux) {
-                delete audioDemux;
-                audioDemux = NULL;
-        }
-        if (pcrDemux) {
-                delete pcrDemux;
-                pcrDemux = NULL;
-        }
+	if (audioDemux) {
+		delete audioDemux;
+		audioDemux = NULL;
+	}
+	if (pcrDemux) {
+		delete pcrDemux;
+		pcrDemux = NULL;
+	}
 #ifdef TELETEXT_DEMUX
-        if (teletextDemux) {
-                delete teletextDemux;
-                teletextDemux = NULL;
-        }
+	if (teletextDemux) {
+		delete teletextDemux;
+		teletextDemux = NULL;
+	}
 #else
- 	if (dmx_teletext_fd != -1) {
+	if (dmx_teletext_fd != -1) {
 		close(dmx_teletext_fd);
 		dmx_teletext_fd = -1;
 	}
 #endif
-       if (videoDemux) {
-                delete videoDemux;
-                videoDemux = NULL;
-        }
+	if (videoDemux) {
+		delete videoDemux;
+		videoDemux = NULL;
+	}
 	if (audioDecoder) {
 		delete audioDecoder;
 		audioDecoder = NULL;
@@ -1440,7 +1446,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.20 2003/03/30 11:55:27 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.21 2003/03/30 12:25:03 thegoodguy Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
