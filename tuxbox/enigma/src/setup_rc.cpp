@@ -63,7 +63,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	CONNECT( srrate->changed, eZapRCSetup::repeatChanged );
 
 	srdelay=new eSlider(this, lrdelay, 0, 1000 );
-	srdelay->setName("contrast");
+	srdelay->setName("rdelay");
 	srdelay->move(ePoint(200, 60));
 	srdelay->resize(eSize(220, fd+4));
 	srdelay->setHelpText(_("set RC repeat delay ( left / right )"));
