@@ -260,7 +260,6 @@ int eTextPara::appendGlyph(FT_UInt glyphIndex, int flags, int rflags)
 				)
 			)
 	{
-		eDebug("wrap!\n");
 		int cnt = 0;
 		glyphString::iterator i(glyphs.end());
 		--i;
