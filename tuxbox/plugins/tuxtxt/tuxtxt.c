@@ -4,6 +4,9 @@
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
  ******************************************************************************
  * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.5  2003/02/15 09:30:55  lazyt
+ * ups, what's going on with the configmenu?
+ *
  * Revision 1.37.2.4  2003/02/14 20:14:39  lazyt
  * remove history
  *
@@ -19,7 +22,7 @@ void plugin_exec(PluginParam *par)
 {
 	//show versioninfo
 
-		printf("TuxTxt $Revision: 1.37.2.4 $\n");
+		printf("TuxTxt $Revision: 1.37.2.5 $\n");
 
 	//get params
 
@@ -816,29 +819,29 @@ void ConfigMenu(int Init)
 	int val, byte, line, menuitem = 1;
 	int current_pid = 0;
 
-	char menu[] =	"…ßßßßßßßßßßßßßßßßßßßßßßßßßßßßƒŠ½½½½½½½½½½½½½½½½½½½½½½½½½½½½½½¢"
-					"ã     Konfigurationsmenu     „‚½ññññññññññññññññññññññññññññ½¢"
-					"†µµµµµµµµµµµµµµµµµµµµµµµµµµµµ‡‚½½½½½½½½½½½½½½½½½½½½½½½½½½½½½½¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã      Teletext-Auswahl      „‚Ë€€€€€€€€€€€€€€€€€€€€€€€€€€€€Ë¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã­                          Œ„‚ZXXXXXXXXXXXXXXXXXXXXXXXXXXXXZ¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã      Bildschirmformat      „‚Ë€€€€€€€€€€€€€€€€€€€€€€€€€€€€Ë¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã16:9 im Standard-Modus = aus„‚ËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã16:9 im TextBild-Modus = ein„‚ËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã         Helligkeit         „‚Ë€€€€€€€€€€€€€€€€€€€€€€€€€€€€Ë¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ãAnzeige 1/3 reduzieren = aus„‚ËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã   nationaler Zeichensatz   „‚Ë€€€€€€€€€€€€€€€€€€€€€€€€€€€€Ë¢"
-					"ã                            „‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"ã­    DE (#$@[\\]^_`{|}~)    Œ„‚ËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË¢"
-					"†µµµµµµµµµµµµµµµµµµµµµµµµµµµµ‡‚ËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË¢"
-					"‰ˆ¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢¢";
+	char menu[] =	"àááááááááááááááááááááááááááááâè««««««««««««««««««««««««««««««›"
+					"ã     Konfigurationsmenu     äé«¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤«›"
+					"åææææææææææææææææææææææææææææçé««««««««««««««««««««««««««««««›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã      Teletext-Auswahl      äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ãí                          îäéZXXXXXXXXXXXXXXXXXXXXXXXXXXXXZ›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã      Bildschirmformat      äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã16:9 im Standard-Modus = ausäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã16:9 im TextBild-Modus = einäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã         Helligkeit         äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ãAnzeige 1/3 reduzieren = ausäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã   nationaler Zeichensatz   äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
+					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ãí    DE (#$@[\\]^_`{|}~)    îäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
+					"åææææææææææææææææææææææææææææçéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ëìììììììììììììììììììììììììììììê›››››››››››››››››››››››››››››››";
 
 	//set current vtxt
 
