@@ -1155,6 +1155,7 @@ void eServiceSelector::enterDirectory(const eServiceReference &ref)
 
 void eServiceSelector::doSPFlags(const eServiceReference &ref)
 {
+#if 0
 	const eService *pservice=eServiceInterface::getInstance()->addRef(ref);
 	if (pservice)
 	{
@@ -1175,6 +1176,7 @@ void eServiceSelector::doSPFlags(const eServiceReference &ref)
 		}
 	}
 	eServiceInterface::getInstance()->removeRef(ref);
+#endif
 }
 
 void eServiceSelector::ResetBrowseChar()
