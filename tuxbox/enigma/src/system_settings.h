@@ -9,6 +9,7 @@ private:
 	void osd_settings();
 	void time_settings();
 	void av_settings();
+	void harddisc_setup();
 #ifdef ENABLE_RFMOD
 	void uhf_modulator();
 #endif

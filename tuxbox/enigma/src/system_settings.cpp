@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: system_settings.cpp,v 1.1.2.1 2003/07/31 17:07:07 ghostrider Exp $
+ * $Id: system_settings.cpp,v 1.1.2.2 2003/08/02 16:58:15 ghostrider Exp $
  */
 
 #include <system_settings.h>
@@ -25,21 +25,30 @@
 #include <time_settings.h>
 #include <setup_rfmod.h>
 #include <setup_lcd.h>
+#include <setup_harddisk.h>
 #include <setupvideo.h>
+#include <lib/dvb/edvb.h>
+#include <lib/gui/emessage.h>
 
 eSystemSettings::eSystemSettings()
-	:eSetupWindow(_("System Settings"), 7, 350)
+	:eSetupWindow(_("System Settings"), 10, 350)
 {
-	move(ePoint(130, 120));
+	move(ePoint(180, 100));
 	int entry=0;
-	CONNECT((new eListBoxEntryMenu(&list, _("OSD Settings"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eSystemSettings::osd_settings);
-	CONNECT((new eListBoxEntryMenu(&list, _("Time Settings"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eSystemSettings::time_settings);
+	CONNECT((new eListBoxEntryMenu(&list, _("Time Settings"), eString().sprintf("(%d) %s", ++entry, _("open time settings")) ))->selected, eSystemSettings::time_settings);
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	CONNECT((new eListBoxEntryMenu(&list, _("A/V Settings"), eString().sprintf("(%d) %s", ++entry, _("open A/V settings")) ))->selected, eSystemSettings::av_settings);
 #ifdef ENABLE_RFMOD
-	CONNECT((new eListBoxEntryMenu(&list, _("UHF Modulator"), eString().sprintf("(%d) %s", ++entry, _("open on audio/video settings")) ))->selected, eSystemSettings::uhf_modulator);
+	CONNECT((new eListBoxEntryMenu(&list, _("UHF Modulator"), eString().sprintf("(%d) %s", ++entry, _("open UHF-Modulator setup")) ))->selected, eSystemSettings::uhf_modulator);
 #endif
-	CONNECT((new eListBoxEntryMenu(&list, _("A/V Settings"), eString().sprintf("(%d) %s", ++entry, _("open on audio/video settings")) ))->selected, eSystemSettings::av_settings);
+#ifndef DISABLE_FILE
+	if (eDVB::getInstance()->getmID() == 5 )
+		CONNECT((new eListBoxEntryMenu(&list, _("Harddisc Setup"), eString().sprintf("(%d) %s", ++entry, _("open harddisc setup")) ))->selected, eSystemSettings::harddisc_setup);
+#endif
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	CONNECT((new eListBoxEntryMenu(&list, _("OSD Settings"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eSystemSettings::osd_settings);
 #ifndef DISABLE_LCD
-	CONNECT((new eListBoxEntryMenu(&list, _("LCD Settings"), eString().sprintf("(%d) %s", ++entry, _("open on audio/video settings")) ))->selected, eSystemSettings::lcd_settings);
+	CONNECT((new eListBoxEntryMenu(&list, _("LCD Settings"), eString().sprintf("(%d) %s", ++entry, _("open LCD settings")) ))->selected, eSystemSettings::lcd_settings);
 #endif
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Expert Mode"), "/ezap/extra/expertmode", _("enable/disable expert setup") );
@@ -83,6 +92,30 @@ void eSystemSettings::av_settings()
 	setup.hide();
 	show();
 }
+
+#ifndef DISABLE_FILE
+void eSystemSettings::harddisc_setup()
+{
+	hide();
+	eHarddiskSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	if (!setup.getNr())
+	{
+		eMessageBox msg(_("sorry, no harddisks found!"), _("Harddisk setup..."));
+		msg.show();
+		msg.exec();
+		msg.hide();
+	} else
+	{
+		setup.show();
+		setup.exec();
+		setup.hide();
+	}
+	show();
+}
+#endif
 
 #ifdef ENABLE_RFMOD
 void eSystemSettings::uhf_modulator()

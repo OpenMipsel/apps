@@ -1,7 +1,8 @@
 #include "upgrade.h"
-#include <lib/gui/ebutton.h>
 #include <unistd.h>
 #include <xmltree.h>
+#include <enigma.h>
+#include <lib/gui/ebutton.h>
 #include <lib/gui/statusbar.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/eprogress.h>
@@ -630,9 +631,10 @@ void eUpgrade::flashImage(int checkmd5)
 				mbend.show();
 				mbend.exec();
 				mbend.hide();
+//				eZap::getInstance()->quit(1);
 				system("/sbin/reboot");
 				system("/bin/reboot");
-				exit(0);
+//				exit(0);
 			} else
 				close(0);
 		}

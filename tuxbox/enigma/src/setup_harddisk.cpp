@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.23 2003/07/22 19:43:00 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.24 2003/08/02 16:58:15 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -172,7 +172,7 @@ eString getPartFS(int dev, eString mp="")
 }
 
 eHarddiskSetup::eHarddiskSetup()
-: eListBoxWindow<eListBoxEntryText>(_("harddisk setup..."), 5, 420)
+: eListBoxWindow<eListBoxEntryText>(_("Harddisk Setup"), 5, 420)
 {
 	nr=0;
 	

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_extra.cpp,v 1.1.2.9 2003/07/31 16:44:53 ghostrider Exp $
+ * $Id: setup_extra.cpp,v 1.1.2.10 2003/08/02 16:58:15 ghostrider Exp $
  */
 
 #include <setup_extra.h>
@@ -32,7 +32,7 @@
 eExpertSetup::eExpertSetup()
 	:eSetupWindow(_("Expert Setup"), 10, 400)
 {
-	cmove(ePoint(170, 166));
+	cmove(ePoint(170, 145));
 
 	int entry=0;
 #ifndef DISABLE_NETWORK

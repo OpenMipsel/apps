@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.32 2003/07/31 17:13:14 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.33 2003/08/02 16:58:15 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -35,7 +35,7 @@
 eZapSetup::eZapSetup()
 	:eSetupWindow(_("Setup"), 10, 400)
 {
-	move(ePoint(140, 100));
+	move(ePoint(160, 100));
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Service Organising"), eString().sprintf("(%d) %s", ++entry, _("open service organising")) ))->selected, eZapSetup::service_organising);
 	CONNECT((new eListBoxEntryMenu(&list, _("Service Searching"), eString().sprintf("(%d) %s", ++entry, _("open service organising")) ))->selected, eZapSetup::service_searching);

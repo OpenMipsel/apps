@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.19 2003/07/31 16:44:53 ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.20 2003/08/02 16:58:15 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -38,7 +38,7 @@ eZapScan::eZapScan()
 	:eSetupWindow(_("Service Searching"), 7, 400)
 {
 	int entry=0;
-	move(ePoint(180, 100));
+	move(ePoint(160, 140));
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )  // only when a sat box is avail we shows a satellite config
 	{
 		CONNECT((new eListBoxEntryMenu(&list, _("Satellite Configuration"), eString().sprintf("(%d) %s", ++entry, _("open satellite config"))))->selected, eZapScan::sel_satconfig);
