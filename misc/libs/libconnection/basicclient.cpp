@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/misc/libs/libconnection/basicclient.cpp,v 1.5 2002/10/12 19:52:46 obi Exp $
+ * $Header: /cvs/tuxbox/apps/misc/libs/libconnection/basicclient.cpp,v 1.5.2.1 2003/02/06 19:54:58 thegoodguy Exp $
  *
  * Basic Client Class (Neutrino) - DBoxII-Project
  *
@@ -30,14 +30,15 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include <zapit/client/basicclient.h>
+#include "basicclient.h"
+#include "basicmessage.h"
 
 CBasicClient::CBasicClient()
 {
 	sock_fd = -1;
 }
 
-bool CBasicClient::open_connection(const char* socketname)
+bool CBasicClient::open_connection()
 {
 	close_connection();
 
@@ -46,13 +47,13 @@ bool CBasicClient::open_connection(const char* socketname)
 
 	memset(&servaddr, 0, sizeof(struct sockaddr_un));
 	servaddr.sun_family = AF_UNIX;
-	strcpy(servaddr.sun_path, socketname);              // no length check !!!
+	strcpy(servaddr.sun_path, getSocketName());              // no length check !!!
 	clilen = sizeof(servaddr.sun_family) + strlen(servaddr.sun_path);
 
 	if ((sock_fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 	{
 		printf("[CBasicClient] socket failed.\n");
-		perror(socketname);
+		perror(getSocketName());
 		sock_fd = -1;
 		return false;
 	}
@@ -60,7 +61,7 @@ bool CBasicClient::open_connection(const char* socketname)
 	if (connect(sock_fd, (struct sockaddr*) &servaddr, clilen) < 0)
 	{
 		printf("[CBasicClient] connect failed.\n");
-		perror(socketname);
+		perror(getSocketName());
 		close_connection();
 		return false;
 	}
@@ -69,21 +70,22 @@ bool CBasicClient::open_connection(const char* socketname)
 
 void CBasicClient::close_connection()
 {
-	if(sock_fd != -1)
+	if (sock_fd != -1)
 	{
 		close(sock_fd);
 		sock_fd = -1;
 	}
 }
 
-bool CBasicClient::send_data(char* data, const size_t size)
+bool CBasicClient::send_data(const char* data, const size_t size)
 {
 	if (sock_fd == -1)
 	    return false;
 
-	if (write(sock_fd, data, size) < 0) // better: == -1
+	if (::send(sock_fd, data, size, MSG_NOSIGNAL) < 0) // better: == -1
 	{
-		perror("[CBasicClient] send failed.\n");
+		printf("[CBasicClient] send failed.\n");
+		perror(getSocketName());
 		return false;
 	}
 	
@@ -97,3 +99,21 @@ bool CBasicClient::receive_data(char* data, const size_t size)
 	else
 		return (read(sock_fd, data, size) > 0);  // case size == 0 uncorrect handled ?
 }
+
+bool CBasicClient::send(const unsigned char command, const char* data, const unsigned int size)
+{
+	CBasicMessage::Header msgHead;
+	msgHead.version = getVersion();
+	msgHead.cmd     = command;
+
+	open_connection(); // if the return value is false, the next send_data call will return false, too
+
+	if (!send_data((char*)&msgHead, sizeof(msgHead)))
+	    return false;
+	
+	if (size != 0)
+	    return send_data(data, size);
+
+	return true;
+}
+
