@@ -26,6 +26,7 @@ public:
 	void removeEntry( eListBoxEntryText* );
 	void removeEntry( int );
 	void removeEntry( void* );
+	void sort() { listbox.sort(); }
 	int setCurrent( eListBoxEntryText* );
 	int setCurrent( int );
 	int setCurrent( void* );
@@ -33,6 +34,12 @@ public:
 	void clear() { listbox.clearList(); }
 	eListBoxEntryText* getCurrent();
 	operator eListBox<eListBoxEntryText>*()	{	return &listbox; }
+
+	template <class Z>
+	int forEachEntry(Z ob)
+	{
+		return listbox.forEachEntry(ob);
+	}
 };
 
 

@@ -150,18 +150,20 @@ protected:
 	eTextPara *para;
 	int yOffs;
 	static gFont font;
+	int keytype;
 public:
+	enum { value, ptr };
 	static int getEntryHeight();
 
-	eListBoxEntryText(eListBox<eListBoxEntryText>* lb, const char* txt=0, void *key=0, int align=0, const char* hlptxt=0 )
+	eListBoxEntryText(eListBox<eListBoxEntryText>* lb, const char* txt=0, void *key=0, int align=0, const char* hlptxt=0, int keytype = value )
 		:eListBoxEntry( (eListBox<eListBoxEntry>*)lb, hlptxt ), text(txt),
-		 key(key), align(align), para(0)
+		 key(key), align(align), para(0), keytype(keytype)
 	{
 	}
 
-	eListBoxEntryText(eListBox<eListBoxEntryText>* lb, const eString& txt, void* key=0, int align=0, const char* hlptxt=0 )
+	eListBoxEntryText(eListBox<eListBoxEntryText>* lb, const eString& txt, void* key=0, int align=0, const char* hlptxt=0, int keytype = value )
 		:eListBoxEntry( (eListBox<eListBoxEntry>*)lb, hlptxt ), text(txt),
-		 key(key), align(align), para(0)
+		 key(key), align(align), para(0), keytype(keytype)
 	{
 	}
 
@@ -169,7 +171,7 @@ public:
 	
 	bool operator < ( const eListBoxEntryText& e) const
 	{
-		if (key == e.key)
+		if (key == e.key || keytype == ptr)
 			return text < e.text;	
 		else
 			return key < e.key;
