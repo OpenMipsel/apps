@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.7 2003/05/16 19:04:12 digi_casi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.8 2003/05/21 12:54:45 digi_casi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -34,7 +34,7 @@
 #include <zapit/scan.h>
 #include <zapit/sdt.h>
 
-extern tallchans allchans;   //  defined in zapit.cpp
+extern tallchans allchans; // defined in zapit.cpp
 std::map <uint32_t, transpondermap> scantransponders;
 std::string curr_chan_name;
 uint32_t found_transponders;
@@ -45,9 +45,20 @@ uint32_t found_radio_chans;
 uint32_t found_data_chans;
 std::string lastServiceName;
 std::map <t_channel_id, uint8_t> service_types;
-
+extern std::map <string, int32_t> satellitePositions; // defined in getservices.cpp
 extern CFrontend *frontend;
 extern CEventServer *eventServer;
+
+char * satelliteName(int32_t satellitePosition)
+{
+	std::map <string, int32_t>::iterator spI;
+	for (spI = satellitePositions.begin(); spI != satellitePositions.end(); spI++)
+	{
+		if (spI->second == satellitePosition)
+			return (char *)spI->first.c_str();
+	}
+	return "Unknown Satellite";
+}
 
 void generic_descriptor(const unsigned char * const)
 {
@@ -385,9 +396,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 
 	std::string providerName((const char*)&(buffer[4]), service_provider_name_length);
 	std::string serviceName;
-	std::string satelliteName = "unknown";
-	int32_t satellitePosition = 0;
-
+	
 	bool in_blacklist = false;
 
 	if (providerName == "CanalSat\xE9lite")
@@ -442,15 +451,13 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 				original_network_id,
 				service_type,
 				DiSEqC, 
-				satelliteName, 
-				satellitePosition
+				satelliteName(frontend->getCurrentSatellitePosition()), 
+				frontend->getCurrentSatellitePosition()
 			)
 		)
 	);
 
 #define UNKNOWN_PROVIDER_NAME "Unknown Provider"
-
- //scanifostruct scaninfo;
 
 	if (providerName == "")
 		providerName = CDVBString(UNKNOWN_PROVIDER_NAME, strlen(UNKNOWN_PROVIDER_NAME)).getContent();
@@ -480,6 +487,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
  		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_DATA_CHAN, CEventServer::INITID_ZAPIT, &found_data_chans, sizeof(found_data_chans));
  		break;
  	}
+ 	
  	switch (service_type) {
  	case ST_DIGITAL_TELEVISION_SERVICE:
 	case ST_DIGITAL_RADIO_SOUND_SERVICE:
@@ -499,18 +507,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
  		lastServiceName = serviceName;
  		eventServer->sendEvent(CZapitClient::EVT_SCAN_SERVICENAME, CEventServer::INITID_ZAPIT, (void *) lastServiceName.c_str(), lastServiceName.length() + 1);
 
-		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, satelliteName, satellitePosition));
-
- // thegoodguy schau dir das hier mal an
- //		scaninfo  test;
- //		test.found_tv_chans = found_tv_chans;
- //		test.found_radio_chans = found_radio_chans;
- //		test.found_data_chans = found_data_chans;
- //		strncpy(test.ServiceName,serviceName.c_str(),30);
- //		test.ServiceName = serviceName;
- //		INFO ( " Sendername : %s ! " , test.ServiceName);
- //		eventServer->sendEvent(CZapitClient::EVT_SCAN_FOUND_A_CHAN, CEventServer::INITID_ZAPIT, &test, sizeof(test));
-
+		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0, satelliteName(frontend->getCurrentSatellitePosition()), frontend->getCurrentSatellitePosition()));
 		break;
 	}
 	default:
