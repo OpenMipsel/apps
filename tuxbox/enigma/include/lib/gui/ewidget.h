@@ -420,6 +420,7 @@ public:
 	void setForegroundColor(const gColor& color);
 	void setPixmap(gPixmap *pmap);
 	void setTarget(gDC *target);
+	gDC *getTarget() { return target; }
 	void setLCD(eWidget *lcdtitle, eWidget *lcdelement);
 	void setName(const char *name);
 	const eString& getName() const { return name; }

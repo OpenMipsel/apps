@@ -10,7 +10,8 @@ libenigma_dvb_la_SOURCES = \
 	esection.cpp frontend.cpp si.cpp record.cpp \
 	dvbwidgets.cpp dvbservice.cpp settings.cpp \
 	dvbscan.cpp service.cpp servicedvb.cpp servicestructure.cpp \
-	servicefile.cpp servicemp3.cpp serviceplaylist.cpp dvbci.cpp
+	servicefile.cpp servicemp3.cpp serviceplaylist.cpp dvbci.cpp \
+	servicepicture.cpp
 
 AM_CPPFLAGS = -DPROFILE
 

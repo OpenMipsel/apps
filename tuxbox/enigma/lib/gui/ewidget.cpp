@@ -174,9 +174,12 @@ void eWidget::redraw(eRect area)		// area bezieht sich nicht auf die clientarea
 		if (area.width()>0)
 		{
 			gPainter *p=getPainter(area);
-			eraseBackground(p, area);
-			redrawWidget(p, area);
-			delete p;
+			if (p)
+			{
+				eraseBackground(p, area);
+				redrawWidget(p, area);
+				delete p;
+			}
 		}
 		if(!childlist.empty())
 		{
@@ -778,11 +781,13 @@ gPainter *eWidget::getPainter(eRect area)
 		myclip&=parent->clientclip;
 
 	eWidget *r=this;
-	while (r && !r->target)
+	while (r && r->parent && !r->target)
 		r = r->parent;
 
 	ASSERT(r);
-	ASSERT(r->target);
+//	ASSERT(r->target);
+	if (!r->target)	// if target is 0, device is locked.
+		return 0;
 
 	gPainter *p=new gPainter(*r->target, myclip);
 	if (!area.isNull())

@@ -238,8 +238,19 @@ void eMP3Decoder::streamingDone(int err)
 	{
 		eLocker locker(poslock);
 		if (err)
-			http_status.sprintf("error %d while connecting.", err);
-		else if (http->code)
+		{
+			switch (err)
+			{
+			case -2:
+				http_status="Can't resolve hostname!";
+				break;
+			case -3:
+				http_status="Can't connect!";
+				break;
+			default:
+				http_status.sprintf("unknown error %d", err);
+			}
+		} else if (http && (http->code!=200))
 			http_status.sprintf("error: %d (%s)", http->code, http->code_descr.c_str());
 		else	
 			http_status="unknown";

@@ -298,6 +298,9 @@ void eUpgrade::setError(int err)
 	case -2:
 		errmsg="Can't resolve hostname!";
 		break;
+	case -3:
+		errmsg="Can't connect! (check network settings)";
+		break;
 	default:
 		errmsg.sprintf("unknown error %d", err);
 	}
