@@ -840,14 +840,14 @@ const eString& eListBoxEntryText::redraw(gPainter *rc, const eRect& rect, gColor
 
 	if (!para)
 	{
-		para = new eTextPara( eRect( rect.left(), 0, rect.width(), rect.height() ) );
+		para = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
 		para->setFont( font );
 		para->renderString(text);
 		para->realign(align);
 //		yOffs = ((rect.height() - para->getBoundBox().height()) / 2 + 0) - para->getBoundBox().top() ;
-	}		
-	yOffs=0;
-	rc->renderPara(*para, ePoint(0, rect.top() + yOffs ) );
+		yOffs=0;
+	}
+	rc->renderPara(*para, ePoint( rect.left(), rect.top()+yOffs ) );
 
 	if (b)
 	{
