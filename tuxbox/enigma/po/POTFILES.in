@@ -30,7 +30,6 @@ lib/dvb/serviceplaylist.cpp
 lib/dvb/servicestructure.cpp
 lib/dvb/settings.cpp
 lib/dvb/si.cpp
-lib/dvb/servicepicture.cpp
 lib/dvb/servicemp3.cpp
 lib/codecs/pic.cpp
 lib/codecs/picjpeg.cpp
@@ -116,5 +115,4 @@ src/timer.cpp
 src/upgrade.cpp
 src/rotorconfig.cpp
 src/setup_rfmod.cpp
-src/mountmanager.cpp
 src/enigma_event.cpp
