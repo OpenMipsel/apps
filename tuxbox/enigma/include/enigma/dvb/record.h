@@ -53,6 +53,8 @@ class eDVBRecorder: private eThread, eMainloop, public Object
 	
 	eSocketNotifier *sn;
 	
+	eLock lock;
+	
 	void dataAvailable(int what);
 
 	eFixedMessagePump<eDVBRecorderMessage> messagepump;
