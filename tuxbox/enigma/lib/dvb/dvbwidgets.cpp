@@ -40,11 +40,11 @@ eTransponderWidget::eTransponderWidget(eWidget *parent, int edit, int type)
 	frequency=new eNumber(this, 5, 0, 9, 1, init, 0, l, edit);
 	frequency->setName("frequency");
 
-	inversion=new eCheckbox(this);
-	inversion->setName("inversion");
-
 	if ( type & deliverySatellite )
 	{
+		inversion=new eCheckbox(this);
+		inversion->setName("inversion");
+
 		l = new eLabel(this);
 		l->setName( "lPol" );
 
@@ -73,6 +73,12 @@ eTransponderWidget::eTransponderWidget(eWidget *parent, int edit, int type)
 	l->setName( "lSymb" );
 	symbolrate=new eNumber(this, 5, 0, 9, 1, init, 0, l, edit);
 	symbolrate->setName("symbolrate");
+
+	if ( !(type & deliverySatellite) )
+	{
+		inversion=new eCheckbox(this);
+		inversion->setName("inversion");
+	}
 
 	CONNECT_1_0(frequency->numberChanged, eTransponderWidget::updated2, 0);
 	CONNECT_1_0(symbolrate->numberChanged, eTransponderWidget::updated2, 0);
