@@ -619,7 +619,15 @@ int TransponderScan::exec(int initial)
 		state=stateAutomatic;
 
 	show();
-	Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/scan.mvi");
+
+	FILE *f = fopen(CONFIGDIR "/enigma/pictures/scan.mvi", "r");
+	if ( f )
+	{
+		fclose(f);
+		Decoder::displayIFrameFromFile(CONFIGDIR "/enigma/pictures/scan.mvi");
+	}
+	else
+		Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/scan.mvi");	
 
 	eTransponder oldTp(*eDVB::getInstance()->settings->getTransponders());
 

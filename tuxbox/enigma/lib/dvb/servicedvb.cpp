@@ -537,27 +537,27 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 0xFFFFFFFF, 0xFFFFFFFF),
-			new eService( _("DVB - bouquets"), eService::spfColCombi)
+			new eService( _("Providers"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF),
-			new eService( _("DVB - bouquets (TV)"), eService::spfColCombi)
+			new eService( _("Providers (TV)"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ),
-			new eService( _("DVB - bouquets (Radio)"), eService::spfColCombi)
+			new eService( _("Providers (Radio)"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 0xFFFFFFFF, 0xFFFFFFFF), 
-			new eService( _("DVB - all services"), eService::spfColMulti)
+			new eService( _("All services"), eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1), 0xFFFFFFFF ), // TV and NVOD
-			new eService( _("DVB - TV services"), eService::spfColMulti)
+			new eService( _("All services (TV)"), eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ), // radio
-			new eService( _("DVB - Radio services"), eService::spfColMulti)
+			new eService( _("All services (Radio)"), eService::spfColMulti)
 		);
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 	{

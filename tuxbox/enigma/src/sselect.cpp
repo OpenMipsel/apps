@@ -102,21 +102,21 @@ struct serviceSelectorActions
 		pathUp(map, "pathUp", _("go up a directory"), eAction::prioDialog),
 		showEPGSelector(map, "showEPGSelector", _("shows the EPG selector for the highlighted channel"), eAction::prioDialog),
 		showMenu(map, "showMenu", _("show service selector menu"), eAction::prioDialog),
-		toggleRoot(map, "toggleRoot", _("toggle between user bouquets, normal dvb bouquets"), eAction::prioDialog),
-		addService(map, "addService", _("add Service"), eAction::prioDialog),
-		addServiceToUserBouquet(map, "addServiceToUserBouquet", _("add Service to a specific user bouquet"), eAction::prioDialog),
+		toggleRoot(map, "toggleRoot", _("toggle between provider and bouquet list"), eAction::prioDialog),
+		addService(map, "addService", _("add service to playlist"), eAction::prioDialog),
+		addServiceToUserBouquet(map, "addServiceToUserBouquet", _("add service to a specific bouquet"), eAction::prioDialog),
 		modeTV(map, "modeTV", _("switch to TV mode"), eAction::prioDialog),
 		modeRadio(map, "modeRadio", _("switch to Radio mode"), eAction::prioDialog),
 		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog),
 		toggleStyle(map, "toggleStyle", _("toggle between classic and multi column style"), eAction::prioDialog),
-		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list"), eAction::prioDialog),
+		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list (in combi column style)"), eAction::prioDialog),
 		gotoFirstService(map, "gotoFirstService", _("go to first service"), eAction::prioDialogHi),
 		gotoLastService(map, "gotoLastService", _("go to last service"), eAction::prioDialogHi),
 		
 		showAll(map, "showAll", _("show all services"), eAction::prioDialog),
-		showSatellites(map, "showSatellites", _("show satellites"), eAction::prioDialog),
-		showProvider(map, "showProvider", _("show providers"), eAction::prioDialog),
-		showBouquets(map, "showBouquets", _("show user bouquets"), eAction::prioDialog)
+		showSatellites(map, "showSatellites", _("show satellite list"), eAction::prioDialog),
+		showProvider(map, "showProvider", _("show provider list"), eAction::prioDialog),
+		showBouquets(map, "showBouquets", _("show bouquet list"), eAction::prioDialog)
 	{
 	}
 };
@@ -338,10 +338,10 @@ void eServiceSelector::setKeyDescriptions()
 		{
 			case eZapMain::modeTV:
 			case eZapMain::modeRadio:
-				key[0]->setText(_("All Service"));
+				key[0]->setText(_("All Services"));
 				key[1]->setText(_("Satellites"));
-				key[2]->setText(_("Provider"));
-				key[3]->setText(_("User Bouquets"));
+				key[2]->setText(_("Providers"));
+				key[3]->setText(_("Bouquets"));
 				break;
 #ifndef DISABLE_FILE
 			case eZapMain::modeFile:
@@ -362,7 +362,7 @@ void eServiceSelector::setKeyDescriptions()
 		else
 			key[2]->setText("");
 		if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-			key[3]->setText(_("User/Bouquets"));
+			key[3]->setText(_("Provider/Bouquets"));
 		else
 			key[3]->setText(_("Root/Playlist"));
 	}

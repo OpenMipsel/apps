@@ -117,8 +117,8 @@ struct enigmaMainActions
 		repeatSkipReverse(map, "repeatSkipR", _("repeat skipping reverse"), eAction::prioWidget),
 		stopSkipReverse(map, "stopSkipR", _("stop skipping reverse"), eAction::prioWidget),
 
-		showUserBouquets(map, "showUserBouquets", _("open the serviceselector and show user bouquets"), eAction::prioWidget),
-		showDVBBouquets(map, "showDVBBouquets", _("open the serviceselector and show DVB bouquets"), eAction::prioWidget),
+		showUserBouquets(map, "showUserBouquets", _("open the serviceselector and show bouquets"), eAction::prioWidget),
+		showDVBBouquets(map, "showDVBBouquets", _("open the serviceselector and show provider"), eAction::prioWidget),
 		showRecMovies(map, "showRecMovies", _("open the serviceselector and show recorded movies"), eAction::prioWidget),
 		showPlaylist(map, "showPlaylist", _("open the serviceselector and shows the playlist"), eAction::prioWidget),
 
@@ -819,7 +819,7 @@ eSubServiceSelector::eSubServiceSelector( bool showbuttons )
 		bAddToUserBouquet = new eButton( this );
 		bAddToUserBouquet->resize( eSize( getClientSize().width()-20, 30 ) );
 		bAddToUserBouquet->move( ePoint( 10, getClientSize().height()-40 ) );
-		bAddToUserBouquet->setText(_("add to user bouquet"));
+		bAddToUserBouquet->setText(_("add to bouquet"));
 		bAddToUserBouquet->setShortcut("yellow");
 		bAddToUserBouquet->setShortcutPixmap("yellow");
 		bAddToUserBouquet->show();
@@ -1196,7 +1196,7 @@ void eZapMain::loadUserBouquets( bool destroy )
 	ASSERT(userTVBouquets);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot), userTVBouquetsRef);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio), userTVBouquetsRef);
-	userTVBouquets->service_name=_("User - bouquets (TV)");
+	userTVBouquets->service_name=_("Bouquets (TV)");
 	userTVBouquets->load((eplPath+"/userbouquets.tv.epl").c_str());
 
 	// create user bouquet radio list
@@ -1206,7 +1206,7 @@ void eZapMain::loadUserBouquets( bool destroy )
 	ASSERT(userRadioBouquets);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot), userRadioBouquetsRef);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio), userRadioBouquetsRef);
-	userRadioBouquets->service_name=_("User - bouquets (Radio)");
+	userRadioBouquets->service_name=_("Bouquets (Radio)");
 	userRadioBouquets->load((eplPath+"/userbouquets.radio.epl").c_str());
 
 	int i=0;
@@ -2942,7 +2942,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	case 6: // add new user bouquet
 	{
 		TextEditWindow wnd(_("Enter name for the new bouquet:"));
-		wnd.setText(_("Add new user bouquet"));
+		wnd.setText(_("Add new bouquet"));
 		wnd.show();
 		wnd.setEditText(eString(""));
 		wnd.setMaxChars(50);
@@ -5111,9 +5111,9 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		// delete Service ( only in Favourite lists... )
 		if ( ref.flags & eServiceReference::flagDirectory &&
 				eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-			new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
+			new eListBoxEntryText(&list, _("copy to bouquet list"), (void*)8);
 		else if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-			new eListBoxEntryText(&list, _("add to user bouquet"), (void*)4);
+			new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
 	}
 	else
 	{
@@ -5121,9 +5121,9 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		{
 			// add current service to favourite
 			if ( !(ref.flags & eServiceReference::flagDirectory) )
-				new eListBoxEntryText(&list, _("add to user bouquet"), (void*)4);
+				new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
 			else if (ref.data[0] == -2 || ref.data[0] == -3 )
-				new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
+				new eListBoxEntryText(&list, _("copy to bouquet list"), (void*)8);
 		}
 	}
 	if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile
@@ -5138,7 +5138,7 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 
 		// add current service to playlist
 	if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-		new eListBoxEntryText(&list, _("create new user bouquet"), (void*)6);
+		new eListBoxEntryText(&list, _("create new bouquet"), (void*)6);
 
 	if ( eConfig::getInstance()->getParentalPin() )
 	{
@@ -5389,7 +5389,7 @@ TextEditWindow::TextEditWindow( const char *InputFieldDescr, const char* useable
 }
 
 UserBouquetSelector::UserBouquetSelector( std::list<ePlaylistEntry>&list )
-	:eListBoxWindow<eListBoxEntryText>(_("User Bouquets"), 8, 400),
+	:eListBoxWindow<eListBoxEntryText>(_("Bouquets"), 8, 400),
 	SourceList(list)
 {
 	move(ePoint(100,80));
