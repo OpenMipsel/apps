@@ -1,7 +1,6 @@
 INCLUDES = \
 	@CURL_CFLAGS@ \
 	@FREETYPE_CFLAGS@ \
-#	@TUXBOX_CFLAGS@ \
 	@PLUGINS_CFLAGS@
 
 bin_PROGRAMS = lcars
@@ -14,14 +13,12 @@ lcars_SOURCES = \
 	tot.cpp checker.cpp tuner.cpp update.cpp control.cpp variables.cpp \
 	ir.cpp cam.cpp
 
-lcars_CFLAGS = \
-#	-DOLD_VBI \
-#	-DDREAMBOX \
-	-Werror
+lcars_CFLAGS = -Werror
+#	-DOLD_VBI
+#	-DDREAMBOX
 
 lcars_LDADD = \
 	@CURL_LIBS@ \
-#	@TUXBOX_LIBS@ \
 	@FREETYPE_LIBS@
 	-lpthread -ldl
 
