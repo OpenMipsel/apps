@@ -949,11 +949,6 @@ eZapMain::eZapMain()
 
 	setMode(curMode);  // do it..
 
-	if (playlist->current != playlist->getConstList().end())  // we was in playlist mode??
-		playService(*playlist->current, psDontAdd);  // then play the last service
-
-	startMessages();
-
 	dvrFunctions->zOrderRaise();
 	nonDVRfunctions->zOrderRaise();
 }
@@ -2483,6 +2478,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
+	case eWidgetEvent::execBegin:
+		if (playlist->current != playlist->getConstList().end())  // we was in playlist mode??
+			playService(*playlist->current, psDontAdd);  // then play the last service
+
+		startMessages();
+		break;
 	case eWidgetEvent::evtAction:
 	{
 		int num=0;

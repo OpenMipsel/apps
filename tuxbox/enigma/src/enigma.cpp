@@ -76,29 +76,6 @@ eZap::eZap(int argc, char **argv)
 
 	init = new eInit();
 	init->setRunlevel(eAutoInitNumbers::osd);
-#if 0
-	if(0)
-	{
-		gDC &dc=*gFBDC::getInstance();
-
-		gPainter p(dc);
-		
-		p.clear();
-		p.flush();
-		p.setForegroundColor(gColor(0x13));
-		p.fill(eRect(0, 0, 720, 576));
-		
-		eRect x(10, 10, 100, 50);
-		p.setFont(eSkin::getActive()->queryFont("global.30"));
-		for (int i=0; i<100; i++)
-		{
-			x.moveBy(5, 5);
-//			gPainter p(dc);
-			p.setForegroundColor(gColor(0x13^i));
-			p.renderText(x, "Hello world dies ist ein ganz langer text der auf den screen gepinselt wird du lieber mensch bla keine ahnung hallo was soll das");
-		}
-	}
-#endif
 
 	focus = 0;
 	CONNECT(eRCInput::getInstance()->keyEvent, eZap::keyEvent);
@@ -205,20 +182,11 @@ eZap::eZap(int argc, char **argv)
 	httpd->addResolver(fileresolver);
 
 	eDebug("[ENIGMA] ok, beginning mainloop");
-	
-/*
-	{
-		eMessageBox msg("Warning:\nThis version of enigma contains incomplete code.\n"
-			"Not working are:\n - Satconfig\n - Cablescan (will be back soon)\n"
-			" - some other stuff", "Enigma *pre*");
-		msg.show();
-		msg.exec();
-		msg.hide();
-	}*/
 
 	if (eConfig::getInstance()->getKey("/elitedvb/system/bootCount", bootcount))
 	{
 		bootcount = 1;
+#if 0
 		eMessageBox msg(_("Welcome to enigma.\n\n"
 											"Please do a transponder scan first.\n(mainmenu > setup > channels > transponder scan)"),
 										_("First start of enigma"),
@@ -226,6 +194,7 @@ eZap::eZap(int argc, char **argv)
 		msg.show();
 		msg.exec();
 		msg.hide();
+#endif
 	}
 	else
 		bootcount++;

@@ -118,6 +118,10 @@
 		<img name="failed_symbol" src="event_failed-fs8.png" />
 		<img name="dreamlogo" src="dreamlogo-fs8.png" />
 		<img name="textinput_white" src="zahlen_w.png" />
+		
+		<img name="diseqc_0" src="diseqc_0-fs8.png" />
+		<img name="diseqc_1" src="diseqc_1-fs8.png" />
+		<img name="diseqc_2" src="diseqc_2-fs8.png" />
 	</images>
 	
 	<images basepath="countries">
@@ -263,9 +267,9 @@
 			<eLabel text="Voltage" name="lVoltage" position="440:55" size="90:30" align="center"/>
 			<eWidget name="buttons" position="10:90" size="e-40:e-80" />
 			<eProgress name="scrollbar" position="e-35:90" size="20:e-90" direction="1" />
-			<eButton name="new" position="10:e-80" size="175:40" text="new" shortcut="green" loadDeco="" />
-			<eButton name="erase" position="195:e-80" size="175:40" text="erase" shortcut="red" loadDeco="" />
-			<eButton name="lnbsetup" position="380:e-80" size="175:40" text="lnb setup" shortcut="yellow" loadDeco="" />
+			<eButton name="new" position="10:e-80" size="175:40" text="new" helptext="add a new Satellite" loadDeco="" shortcut="green" />
+			<eButton name="erase" position="195:e-80" size="175:40" text="erase" helptext="remove the selected Satellite" loadDeco="" shortcut="red" />
+			<eButton name="close" position="380:e-80" size="175:40" text="OK" helptext="close Satellite Configuration" loadDeco="" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eSatelliteConfigurationManager>
 	</object>
@@ -668,6 +672,7 @@
 			<eLabel text="Please choose your DiSEqC-Configuration:" position="10:10" 
 				size="e:100" font="head" wrap="on" />
 			<eListbox name="choices" position="25:110" size="450:150" />
+			<eLabel name="description" position="10:280" size="e-10:60" />
 		</eWizardDiseqc>
 	</object>
 </eskin>

@@ -2,6 +2,9 @@
 #include <lib/gdi/font.h>
 #include <lib/gui/listbox.h>
 #include <lib/system/init_num.h>
+#include <lib/system/econfig.h>
+#include <src/satconfig.h>
+#include <src/scan.h>
 
 class eDiseqcChoice: public eListBoxEntry
 {
@@ -53,7 +56,7 @@ protected:
 		}
 		rc->renderPara(*para, ePoint(0, rect.top() + yOffs ) );
 		if (pixmap)
-			rc->blit(*pixmap, ePoint(rect.left()+20, rect.top()+5));
+			rc->blit(*pixmap, ePoint(rect.left()+15, rect.top()+15));
 
 		return text;
 	}
@@ -66,13 +69,20 @@ eWizardSelectDiseqc::eWizardSelectDiseqc()
 	diseqclist=new eListBox<eDiseqcChoice>(this);
 	diseqclist->setName("choices");
 	diseqclist->setColumns(3);
+	
+	description=new eLabel(this);
+	description->setName("description");
 
 	if (eSkin::getActive()->build(this, "eWizardDiseqc"))
 		eFatal("skin load of \"eWizardDiseqc\" failed");
 		
-	new eDiseqcChoice(diseqclist, eDiseqcChoice::none);
+	eDiseqcChoice *current;
+	current=new eDiseqcChoice(diseqclist, eDiseqcChoice::none);
 	new eDiseqcChoice(diseqclist, eDiseqcChoice::simple);
 	new eDiseqcChoice(diseqclist, eDiseqcChoice::complex);
+	CONNECT(diseqclist->selchanged, eWizardSelectDiseqc::selchanged);
+	CONNECT(diseqclist->selected, eWizardSelectDiseqc::selected);
+	selchanged(current);
 }
 
 int eWizardSelectDiseqc::run()
@@ -84,12 +94,79 @@ int eWizardSelectDiseqc::run()
 	return res;
 }
 
+void eWizardSelectDiseqc::selected(eDiseqcChoice *choice)
+{
+	if (!choice)
+		close(-1);
+	else
+		close(choice->getDiseqcChoice());
+}
+
+void eWizardSelectDiseqc::selchanged(eDiseqcChoice *choice)
+{
+	if (!choice)
+		return;
+	switch(choice->getDiseqcChoice())
+	{
+	case 0:
+		description->setText(_("Direct connection to one LNB"));
+		break;
+	case 1:
+		description->setText(_("Simple DiSEqC (2 LNBs/satellites)"));
+		break;
+	case 2:
+		description->setText(_("Complex configuration (including DiSEqC 1.2)"));
+		break;
+	}
+}
+
 class eWizardScanInit
 {
 public:
 	eWizardScanInit()
 	{
-	//	eWizardSelectDiseqc::run();
+		int diseqc=0;
+again: // gotos considered harmless.. :)
+		eConfig::getInstance()->getKey("/elitedvb/wizards/diseqc", diseqc);
+		if (diseqc < 1)
+		{
+			int res=eWizardSelectDiseqc::run();
+			
+			if (res >= 0)
+			{
+				eSatelliteConfigurationManager satconfig;
+				
+				switch (res)
+				{
+				case 0:
+					satconfig.extSetComplexity(0); // single lnb
+					break;
+				case 1:
+					satconfig.extSetComplexity(1); // diseqc 1.0
+					break;
+				case 2:
+					satconfig.extSetComplexity(3); // diseqc 1.0
+					break;
+				}
+
+again_satconfig:				
+				satconfig.show();
+				res=satconfig.exec();
+				satconfig.hide();
+				
+				if (res != 1)
+					goto again;
+
+				{
+					TransponderScan scan(0, 0);
+					res=scan.exec(TransponderScan::initialAutomatic);
+				}
+				if (!res)
+					goto again_satconfig;
+			}
+			diseqc=1;
+			eConfig::getInstance()->setKey("/elitedvb/wizards/diseqc", diseqc);
+		}
 	}
 };
 

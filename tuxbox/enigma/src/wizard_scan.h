@@ -9,6 +9,9 @@ class eDiseqcChoice;
 class eWizardSelectDiseqc: public eWindow
 {
 	eListBox<eDiseqcChoice> *diseqclist;
+	eLabel *description;
+	void selected(eDiseqcChoice *choice);
+	void selchanged(eDiseqcChoice *choice);
 public:
 	eWizardSelectDiseqc();
 	static int run();

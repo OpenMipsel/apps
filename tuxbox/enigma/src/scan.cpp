@@ -225,16 +225,7 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 	if (skin->build(this, "tsAutomatic"))
 		eFatal("skin load of \"tsAutomatic\" failed");
 
-	l_network->setCurrent(new eListBoxEntryText(*l_network, _("automatic"), (void*)0, eTextPara::dirCenter) );
-
-#if 0
-	new eListBoxEntryText(l_network, "Astra 19.2°E fake", (void*)"astra192");
-	new eListBoxEntryText(l_network, "Astra 19.3°E (bei schiefer Antenne)", (void*)"astra193");
-	new eListBoxEntryText(l_network, "Hotbird 11.0°E fuck", (void*)"hb11");
-	new eListBoxEntryText(l_network, "Hotbird 13.5°E", (void*)"hbemu135");
-	new eListBoxEntryText(l_network, "Hotbird XP", (void*)"hbxp");
-	new eListBoxEntryText(l_network, "Sirius -139.2°N", (void*)"sirius-1395");
-#endif
+//	l_network->setCurrent(new eListBoxEntryText(*l_network, _("automatic"), (void*)0, eTextPara::dirCenter) );
 
 	CONNECT(b_start->selected, tsAutomatic::start);
 	CONNECT(b_abort->selected, tsAutomatic::abort);
@@ -778,9 +769,10 @@ TransponderScan::~TransponderScan()
 	delete window;
 }
 
-int TransponderScan::exec()
+int TransponderScan::exec(int initial)
 {
 	eSize size=eSize(window->getClientSize().width(), window->getClientSize().height()-30);
+	int scanok=0;
 
 	eString text;
 
@@ -792,7 +784,12 @@ int TransponderScan::exec()
 		stateScan,
 		stateDone,
 		stateEnd
-	} state=stateMenu;
+	} state;
+	
+	if (initial == initialMenu)
+		state=stateMenu;
+	else if (initial == initialAutomatic)
+		state=stateAutomatic;
 
 	window->show();
 	Decoder::displayIFrameFromFile(DATADIR "/pictures/scan.mvi");
@@ -894,6 +891,7 @@ int TransponderScan::exec()
 			scan.hide();
 
 			text.sprintf(_("The transponder scan has finished and found %i new Transponders, %i new TV Services, %i new Radio Services and %i new Data Services. %i Transponders within %i Services scanned."), scan.newTransponders, scan.newTVServices, scan.newRadioServices, scan.newDataServices, scan.tpScanned, scan.servicesScanned );
+			scanok=1;
 			
 			state=stateDone;
 			break;
@@ -923,5 +921,5 @@ int TransponderScan::exec()
 	
 	Decoder::Flush();
 
-	return 0;
+	return scanok;
 }

@@ -119,9 +119,10 @@ class TransponderScan
 	eWidget *select_type, *manual_scan, *automatic_scan, *LCDElement, *LCDTitle;
 
 public:
+	enum { initialMenu, initialAutomatic };
 	TransponderScan( eWidget* LCDTitle, eWidget* LCDElement);
 	~TransponderScan();
-	int exec();
+	int exec(int initial=initialMenu);
 };
 
 #endif

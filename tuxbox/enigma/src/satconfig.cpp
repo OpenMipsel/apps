@@ -132,6 +132,16 @@ void eSatelliteConfigurationManager::typeChanged(eListBoxEntryText* newtype)
 	updateButtons(newcomplexity);
 }
 
+void eSatelliteConfigurationManager::extSetComplexity(int complexity)
+{
+	setComplexity(complexity);
+	updateButtons(complexity);
+	combo_type->setCurrent((void*)complexity);
+	checkComplexity(); // oh jee..
+	setComplexity(complexity);
+	updateButtons(complexity);
+}
+
 void eSatelliteConfigurationManager::setComplexity(int complexity)
 {
 	eDebug("setComplexitiy = %d", complexity);
@@ -570,7 +580,7 @@ void eSatelliteConfigurationManager::voltageChanged(eComboBox* who, eListBoxEntr
 
 void eSatelliteConfigurationManager::closePressed()
 {
-	close(0);
+	close(1);
 }
 
 void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
