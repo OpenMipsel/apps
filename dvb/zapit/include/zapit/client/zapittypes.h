@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/client/zapittypes.h,v 1.8.2.1 2003/02/18 15:16:46 alexw Exp $
+ * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/client/zapittypes.h,v 1.8.2.2 2003/02/18 15:50:21 thegoodguy Exp $
  *
  * zapit's types which are used by the clientlib - d-box2 linux project
  *
@@ -34,6 +34,7 @@ typedef uint16_t t_original_network_id;
 #define SCANF_ORIGINAL_NETWORK_ID_TYPE "%hx"
 
 typedef uint16_t t_transport_stream_id;
+typedef uint16_t t_network_id;
 
 /* unique channel identification */
 typedef uint32_t t_channel_id;
@@ -41,14 +42,20 @@ typedef uint32_t t_channel_id;
 #define PRINTF_CHANNEL_ID_TYPE "%08x"
 
 /* diseqc types */
-enum diseqc_t
-{
+typedef enum {
 	NO_DISEQC,
 	MINI_DISEQC,
 	DISEQC_1_0,
 	DISEQC_1_1,
 	SMATV_REMOTE_TUNING
-};
+} diseqc_t;
+
+/* dvb transmission types */
+typedef enum {
+	DVB_C,
+	DVB_S,
+	DVB_T
+} delivery_system_t;
 
 /* video display formats (cf. video_displayformat_t in driver/dvb/include/linux/dvb/video.h): */
 typedef enum {   
