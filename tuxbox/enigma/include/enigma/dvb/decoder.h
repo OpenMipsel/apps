@@ -36,6 +36,8 @@ public:
 	static void addCADescriptor(__u8 *descriptor);
 	static int Set();
 	static void flushBuffer();
+	static void startTrickmode();
+	static void stopTrickmode();
 	static void setVideoFormat( int format );
 };
 

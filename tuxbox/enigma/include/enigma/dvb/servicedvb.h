@@ -28,6 +28,7 @@ class eDVRPlayerThread: public eThread, public eMainloop, public Object
 	void readMore(int what);
 	void outputReady(int what);
 	int maxBufferSize;
+	int seekbusy, seeking;
 	eLock lock;
 	
 	void dvrFlush();
@@ -41,7 +42,8 @@ public:
 			skip,
 			setSpeed, // 0..
 			seek,	// 0..65536
-			seekreal
+			seekreal,
+			seekmode
 		};
 		int type;
 		int parm;
