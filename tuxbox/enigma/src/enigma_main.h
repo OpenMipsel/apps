@@ -1,6 +1,7 @@
 #ifndef __enigma_main_h
 #define __enigma_main_h
 
+#include <sselect.h>
 #include <enigma_lcd.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>
@@ -157,10 +158,14 @@ public:
 	eServiceReferenceDVB service;
 };
 
-class eSubServiceSelector: public eListBoxWindow<SubService>
+class eSubServiceSelector
+: public eListBoxWindow<SubService>
 {
 	void selected(SubService *);
+	eButton *bAddToUserBouquet, *bToggleQuickZap;
 public:
+	Signal2<void, eServiceReference*, int> addToUserBouquet;
+	void addPressed();
 	eSubServiceSelector();
 	void clear();
 	void add(eDVBNamespace dvb_namespace, const LinkageDescriptor *ref);
@@ -336,7 +341,7 @@ private:
 	void addService(const eServiceReference &service);
 
 	void doPlaylistAdd(const eServiceReference &service);
-	void addServiceToUserBouquet(eServiceSelector *s, int dontask=0);
+	void addServiceToUserBouquet(eServiceReference *s, int dontask=0);
 	void addServiceToCurUserBouquet(const eServiceReference &ref);
 	void removeServiceFromUserBouquet( eServiceSelector *s );
 

@@ -14,7 +14,6 @@
 #include <streaminfo.h>
 #include <enigma_mainmenu.h>
 #include <enigma_event.h>
-#include <sselect.h>
 #include <enigma.h>
 #include <enigma_lcd.h>
 #include <enigma_plugins.h>
@@ -360,11 +359,6 @@ void NVODStream::EITready(int error)
 		listbox->append( this );
 		((eListBox<NVODStream>*)listbox)->sort(); // <<< without explicit cast the compiler nervs ;)
 	}
-
-/*
-	if (listbox && listbox->isVisible())
-		listbox->invalidate();
-	*/
 }
 
 NVODStream::NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type)
@@ -530,22 +524,54 @@ SubService::SubService(eListBox<SubService> *listbox, eDVBNamespace dvb_namespac
 			eServiceID(descr->service_id), 6)
 {
 	text=(const char*)descr->private_data;
+	service.descr = text;
 }
 
 eSubServiceSelector::eSubServiceSelector()
-	:eListBoxWindow<SubService>(_("multiple Services"), 10, 330)
+	:eListBoxWindow<SubService>(_("multiple Services"), 6, 330)
 {
 	move(ePoint(100, 100));
+	cresize( eSize( getClientSize().width(), getClientSize().height()+50 ) );
+
+/*	bToggleQuickZap = new eButton( this );
+	bToggleQuickZap->resize( eSize( 310, 30 ) );
+	bToggleQuickZap->move( ePoint( 10, getClientSize().height()-80 ) );
+//	bToggleQuickZap->loadDeco();
+	bToggleQuickZap->setText(_("enable quickzap"));
+	bToggleQuickZap->setShortcut("green");
+	bToggleQuickZap->setShortcutPixmap("green");
+	bToggleQuickZap->show();*/
+
+	bAddToUserBouquet = new eButton( this );
+	bAddToUserBouquet->resize( eSize( 310, 30 ) );
+	bAddToUserBouquet->move( ePoint( 10, getClientSize().height()-40 ) );
+//	bAddToUserBouquet->loadDeco();
+	bAddToUserBouquet->setText(_("add to user bouquet"));
+	bAddToUserBouquet->setShortcut("yellow");
+	bAddToUserBouquet->setShortcutPixmap("yellow");
+	bAddToUserBouquet->show();
+
+	CONNECT(bAddToUserBouquet->selected, eSubServiceSelector::addPressed );
 	CONNECT(list.selected, eSubServiceSelector::selected);
+}
+
+void eSubServiceSelector::addPressed()
+{
+	if ( list.getCount() )
+	{
+		hide();
+		list.getCurrent()->service.setServiceType(1);
+		/* emit */ addToUserBouquet( &list.getCurrent()->service, 0 );
+		list.getCurrent()->service.setServiceType(6);
+		show();
+	}
 }
 
 void eSubServiceSelector::selected(SubService *ss)
 {
 	if (ss)
-	{
-		ss->service.descr = ss->getText();
 		eServiceInterface::getInstance()->play(ss->service);
-	}
+
 	close(0);
 }
 
@@ -935,6 +961,7 @@ eZapMain::eZapMain()
 
 	CONNECT(eZap::getInstance()->getServiceSelector()->addServiceToPlaylist, eZapMain::doPlaylistAdd);
 	CONNECT(eZap::getInstance()->getServiceSelector()->addServiceToUserBouquet, eZapMain::addServiceToUserBouquet);
+	CONNECT(subservicesel.addToUserBouquet, eZapMain::addServiceToUserBouquet );
 	CONNECT(eZap::getInstance()->getServiceSelector()->removeServiceFromUserBouquet, eZapMain::removeServiceFromUserBouquet );
 	CONNECT(eZap::getInstance()->getServiceSelector()->showMenu, eZapMain::showServiceMenu);
 	CONNECT_2_1(eZap::getInstance()->getServiceSelector()->setMode, eZapMain::setMode, 0);
@@ -1868,7 +1895,10 @@ void eZapMain::startSkip(int dir)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekBegin));
 	}
 	if (!isVisible())
+	{
+		eDebug("startskip->show()");
 		show();
+	}
 	timeout.stop();
 }
 
@@ -2027,10 +2057,12 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		break;
 	}
 	case 3: // add service to playlist
-		doPlaylistAdd(sel->getSelected());
+		doPlaylistAdd(ref);
 		break;
 	case 4: // add service to UserBouquet
-		addServiceToUserBouquet(sel);
+		sel->hide();
+		addServiceToUserBouquet(&ref);
+		sel->show();
 	break;
 	case 5: // toggle edit User Bouquet Mode
 		if ( sel->toggleEditMode() ) // toggleMode.. and get new state !!!
@@ -2058,14 +2090,12 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	case 6: // add new user bouquet
 	{
 		TextEditWindow wnd(_("Enter name for the new bouquet:"));
-		hide();
 		wnd.setText(_("Add new user bouquet"));
 		wnd.show();
 		wnd.setEditText(" ");
 		wnd.setMaxChars(50);
 		int ret = wnd.exec();
 		wnd.hide();
-		show();
 		if ( !ret )
 		{
 			int actualize=0;
@@ -2103,14 +2133,12 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	{
 		ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(ref);
 		TextEditWindow wnd(_("Enter new name for the user bouquet:"));
-		hide();
 		wnd.setText(_("Rename user bouquet"));
 		wnd.show();
 		wnd.setEditText(p->service_name);
 		wnd.setMaxChars(50);		
 		int ret = wnd.exec();
 		wnd.hide();
-		show();
 		if ( !ret )
 		{
 			if ( p->service_name != wnd.getEditText() )
@@ -2167,43 +2195,55 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	}
 	break;
 
-	case 9: // rename recorded movie
+	case 9: // rename user bouquet service ... inkl recorded ts
 	{
-		std::list<ePlaylistEntry>::iterator it=std::find(recordings->getList().begin(), recordings->getList().end(), ref);
-		if (it == recordings->getList().end())
+		ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(path);
+		if ( !p )
 			break;
+		
+		std::list<ePlaylistEntry>::iterator it=std::find(p->getList().begin(), p->getList().end(), ref);
+		if (it == p->getList().end())
+		{
+			eServiceInterface::getInstance()->removeRef(path);
+			break;
+		}
 
 		if ( it->service.type == eServiceReference::idDVB )
 		{
-			if ( it->type & ePlaylistEntry::boundFile )
+			TextEditWindow wnd(_("Enter new name:"));
+			wnd.setText(_("Rename entry"));
+			wnd.show();
+			if ( it->service.descr.length() )
+				wnd.setEditText(it->service.descr);
+			else if ( it->type & ePlaylistEntry::boundFile )
 			{
-				TextEditWindow wnd(_("Enter new name for the recorded movie:"));
-				hide();
-				wnd.setText(_("Rename recorded movie"));
-				wnd.show();
-				if ( it->service.descr.length() )
-					wnd.setEditText(it->service.descr);
-				else
+				int i = it->service.path.rfind('/');
+				++i;
+				wnd.setEditText(it->service.path.mid( i, it->service.path.length()-i ));
+			}
+			else
+			{
+				eService* s = eServiceInterface::getInstance()->addRef(it->service);
+				if ( s )
 				{
-					int i = it->service.path.rfind('/');
-					++i;
-					wnd.setEditText(it->service.path.mid( i, it->service.path.length()-i ));
+					wnd.setEditText(s->service_name);
+					eServiceInterface::getInstance()->removeRef( it->service );
 				}
-				wnd.setMaxChars(50);
-				int ret = wnd.exec();
-				wnd.hide();
-				show();
-				if ( !ret )
+			}
+			wnd.setMaxChars(50);
+			int ret = wnd.exec();
+			wnd.hide();
+			if ( !ret )
+			{
+				if ( it->service.descr != wnd.getEditText() )
 				{
-					if ( it->service.descr != wnd.getEditText() )
-					{
-						it->service.descr = wnd.getEditText();
-						recordings->save();
-						sel->actualize();
-					}
+					it->service.descr = wnd.getEditText();
+					p->save();
+					sel->actualize();
 				}
 			}
 		}
+		eServiceInterface::getInstance()->removeRef(path);
 	}
 	break;
 	}
@@ -2303,45 +2343,47 @@ void eZapMain::doPlaylistAdd(const eServiceReference &service)
 		playService(service, psAdd);
 }
 
-void eZapMain::addServiceToUserBouquet(eServiceSelector *sel, int dontask)
+void eZapMain::addServiceToUserBouquet(eServiceReference *service, int dontask)
 {
-	const eServiceReference &service=sel->getSelected();
-	if ((mode > modeFile) || (mode < 0))
+	if (!service || (mode > modeFile) || (mode < 0))
 		return;
 
 	if (!dontask)
 	{
 		UserBouquetSelector s( mode == modeTV?userTVBouquets->getList():mode==modeRadio?userRadioBouquets->getList():userFileBouquets->getList() );
-		sel->hide();
 		s.show();
 		s.exec();
 		s.hide();
 
-		if (s.curSel != eServiceReference() )
+		if ( s.curSel != eServiceReference() )
 		{
 			currentSelectedUserBouquetRef = s.curSel;
 			currentSelectedUserBouquet = (ePlaylist*)eServiceInterface::getInstance()->addRef( currentSelectedUserBouquetRef );
 		}
+		else
+		{
+			currentSelectedUserBouquet=0;
+			currentSelectedUserBouquetRef=eServiceReference();
+		}
 	}
 
 	if (currentSelectedUserBouquet)
-	{
+/*	{
 		if (!dontask)
 		{
 			for (std::list<ePlaylistEntry>::const_iterator i(currentSelectedUserBouquet->getConstList().begin()); i != currentSelectedUserBouquet->getConstList().end(); ++i)
-				if (i->service == service)
+				if (i->service == *service)
 				{
 					eMessageBox box(_("This service is already in this user bouquet."), _("Add channel to user bouquet"), eMessageBox::iconWarning|eMessageBox::btOK);
 					box.show();
 					box.exec();
 					box.hide();
-					sel->show();
 					goto ret;
 				}
-		}
-		currentSelectedUserBouquet->getList().push_back(service);
-	}
-ret:
+		}*/
+		currentSelectedUserBouquet->getList().push_back(*service);
+/*	}
+ret:*/
 	if (!dontask)
 	{
 		currentSelectedUserBouquet->save();
@@ -3116,7 +3158,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			}
 
 		eService *rservice=0;
-		if ( refservice != serviceref && !( refservice.flags & eServiceReference::flagDirectory ) )
+		if ( refservice.getServiceType() != 1 && refservice != serviceref && !( refservice.flags & eServiceReference::flagDirectory ) )
 		{
 			rservice=eDVB::getInstance()->settings->getTransponders()->searchService(refservice);
 
@@ -3136,12 +3178,14 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		eString name="";
 
-		if (rservice)
+		if (rservice && service)
 		{
 			name=rservice->service_name;
 			if (serviceref.getServiceType() == 6)  // linkage service..
 				name+=" - " + serviceref.descr;
 		}
+		else if (serviceref.descr.length())
+			name = serviceref.descr;
 		else if (service)
 			name=service->service_name;
 
@@ -3772,7 +3816,7 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		new eListBoxEntryText(&list, _("delete"), (void*)1);
 		if (ref.type == eServicePlaylistHandler::ID)
 			new eListBoxEntryText(&list, _("rename"), (void*)7);
-		else if ( ref.type == eServiceReference::idDVB && ref.path.size() )
+		else if ( ref.type == eServiceReference::idDVB /*&& ref.path.size()*/ )
 			new eListBoxEntryText(&list, _("rename"), (void*)9);
 
 		// move Mode ( only in Favourite lists... )

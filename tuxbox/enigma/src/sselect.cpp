@@ -173,7 +173,9 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 	{
 		eString sname;
 
-		if (pservice)
+		if (service.descr.length())
+			sname=service.descr;
+		else if (pservice)
 			sname=pservice->service_name;
 		else if (flags & flagIsReturn)
 			sname=_("[GO UP]");
@@ -612,7 +614,7 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 			std::set<eServiceReference>::iterator it = eListBoxEntryService::hilitedEntrys.find( ref );
 			if ( it == eListBoxEntryService::hilitedEntrys.end() )
 			{
-				/*emit*/ addServiceToUserBouquet(this, 1);
+				/*emit*/ addServiceToUserBouquet(&selected, 1);
 				eListBoxEntryService::hilitedEntrys.insert(ref);
 			}
 			else
@@ -818,7 +820,11 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_serviceSelectorActions->addService && !movemode)
 				/*emit*/ addServiceToPlaylist(selected);
 			else if (event.action == &i_serviceSelectorActions->addServiceToUserBouquet && !movemode)
-				/*emit*/ addServiceToUserBouquet(this, 0);
+			{
+				hide();
+				/*emit*/ addServiceToUserBouquet(&selected, 0);
+				show();
+			}
 			else if (event.action == &i_serviceSelectorActions->modeTV && !movemode)
 				/*emit*/ setMode(eZapMain::modeTV);
 			else if (event.action == &i_serviceSelectorActions->modeRadio && !movemode)

@@ -718,8 +718,8 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 		eString l=node.path.mid(node.path.rfind('/')+1);
 		if (!isUTF8(l))
 			l=convertLatin1UTF8(l);
-		if (node.descr)
-			l=node.descr;
+/*		if (node.descr)
+			l=node.descr;*/
 		int fd=open(node.path.c_str(), O_RDONLY);
 		if (fd < 0)
 			return 0;

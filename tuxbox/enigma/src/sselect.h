@@ -103,7 +103,7 @@ public:
 	Signal0<void> rotateRoot;
 
 	Signal1<void,const eServiceReference &> addServiceToPlaylist; // add service to the Playlist
-	Signal2<void,eServiceSelector*,int> addServiceToUserBouquet;  // add current service to selected User Bouquet
+	Signal2<void,eServiceReference*,int> addServiceToUserBouquet;  // add current service to selected User Bouquet
 
 	Signal1<void,int> setMode;        // set TV, Radio or File
 
