@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.267 2002/10/19 01:22:28 Zwen Exp $
+ * $Id: zapit.cpp,v 1.266.2.1 2002/10/23 22:26:07 obi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -1026,7 +1026,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	printf("$Id: zapit.cpp,v 1.267 2002/10/19 01:22:28 Zwen Exp $\n\n");
+	printf("$Id: zapit.cpp,v 1.266.2.1 2002/10/23 22:26:07 obi Exp $\n\n");
 
 	if (argc > 1)
 	{
