@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.25 2003/05/01 20:35:12 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.26 2003/05/07 18:46:03 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -929,7 +929,8 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				    original_network_id,
 				    1,
 				    channel->getDiSEqC(),
-				    channel->getSatelliteName()
+				    channel->getSatelliteName(), 
+				    channel->getSatellitePosition()
 				)
 			    )
 			);
@@ -1453,7 +1454,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.25 2003/05/01 20:35:12 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.26 2003/05/07 18:46:03 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
