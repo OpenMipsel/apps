@@ -285,12 +285,15 @@ int main(int argc, char **argv)
 		eZap ezap(argc, argv);
 		res=ezap.exec();
 	}
-	
+
 	Decoder::Flush();
+
+	if ( res == 1 )
+		system("/sbin/reboot &");
+
 	exit(res);
 //	mcheck_check_all();
 //	muntrace();
-	// system("/sbin/halt &");
 }
 
 extern "C" void mkstemps();

@@ -2295,7 +2295,10 @@ void eZapMain::standbyRelease()
 				t.hide();
 				break;
 			}
-			case 1:
+			case 4: // reboot
+					eZap::getInstance()->quit(1);
+					break;
+			case 1: // shutdown
 /*				if (handleState())*/
 					eZap::getInstance()->quit();
 			default:
@@ -4984,12 +4987,16 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 	setLCD(lcdTitle, lcdElement);
 #endif
 	move(ePoint(150, 200));
+	new eListBoxEntryText(&list, _("[back]"), (void*)0);
 	if ( eDVB::getInstance()->getmID() != 6 )
+	{
 		new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
+		new eListBoxEntryText(&list, _("restart"), (void*)4);
+	}
 	new eListBoxEntryText(&list, _("goto standby"), (void*)2);
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
-	new eListBoxEntryText(&list, _("[back]"), (void*)0);
 	CONNECT(list.selected, eSleepTimerContextMenu::entrySelected);
+	list.moveSelection( eListBoxBase::dirDown );
 }
 
 void eSleepTimerContextMenu::entrySelected( eListBoxEntryText *sel )
