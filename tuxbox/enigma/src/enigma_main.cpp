@@ -2945,9 +2945,6 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			break;
 		}
 
-		eServiceInterface *iface=eServiceInterface::getInstance();
-		ASSERT(iface);
-
 		Signal1<void,const eServiceReference&> signal;
 		CONNECT(signal, eZapMain::addServiceToCurUserBouquet);
 
@@ -4857,14 +4854,14 @@ void eZapMain::showMultiEPG()
 	epg.resize(eSize(620, 470));
 
 	int direction = 1;
+	epg.show();
 	do
 	{
 		epg.buildPage(direction);
-		epg.show();
 		direction = epg.exec();
-		epg.hide();
 	}
 	while ( direction != -1 );
+	epg.hide();
 }
 
 #ifndef DISABLE_FILE
