@@ -1408,7 +1408,7 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 
 		for (unsigned int i=0; i<name.length(); ++i)
 		{
-			if (strchr("abcdefghijklkmnopqrstuvwxyzäüößABCDEFGHIJKLMNOPQRSTUVWXYZÄÜÖ01234567890_- ()", name[i]))
+			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_- ()", name[i]) || (name[i] >= 0x80)) 	// allow UTF-8
 				cname+=name[i];
 			else
 				cname+='_';
