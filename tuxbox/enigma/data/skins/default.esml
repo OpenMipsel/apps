@@ -60,6 +60,7 @@
 		<map name="eventview.channel" font="Nimbus" size="18" />
 		<map name="eFEStatus.values" font="Nimbus" size="20" />
 		<map name="eSatfind" font="Nimbus" size="30" />
+		<map name="eUpgradeChanges" font="Nimbus" size="20" />
 	</fontalias>
 
 	<images basepath="" target="fb">
@@ -608,5 +609,16 @@
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</ePartitionCheck>
 	</object>
-
+	
+	<object name="eUpgrade">
+		<eUpgrade text="Software upgrade..." cposition="120:100" csize="500:400" >
+			<eStatusbar name="status" position="0:e-30" size="e:e" loadDeco="" />
+			<eListBox name="images" position="10:40" size="480:150" loadDeco="" />
+			<eLabel name="imagehelp" position="10:0" size="460:30" />
+			<eProgress name="progress" position="10:160" size="250:30" />
+			<eLabel name="progresstext" position="270:165" size="210:30" />
+			<eButton name="abort" position="40:40" size="150:50" text="abort" loadDeco="" />
+			<eLabel name="changes" position="10:200" size="e-10:e-30" font="eUpgradeChanges" />
+		</eUpgrade>
+	</object>
 </eskin>
