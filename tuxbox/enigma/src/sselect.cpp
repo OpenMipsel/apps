@@ -199,7 +199,7 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 		descrPara->renderString( sdescr );
 		descrXOffs = nameXOffs+namePara->getBoundBox().width();
 		if (numPara)
-			numPara->getBoundBox().height();
+			descrXOffs += numPara->getBoundBox().height();
 		descrYOffs = ((rect.height() - descrPara->getBoundBox().height()) / 2 ) - descrPara->getBoundBox().top();
 	}
 	if (descrPara)  // only render descr Para, when avail...
