@@ -4,6 +4,12 @@
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
  ******************************************************************************
  * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.7  2003/02/22 21:46:40  happydude
+ * implement parallel transmission reception - fixes some channels
+ * improve auto detection of national subset
+ * introduce new option in config menu to disable auto detection of nat subset
+ * fix some bugs, loops, memory leaks
+ *
  * Revision 1.37.2.6  2003/02/15 11:01:47  lazyt
  * grr, not only the configmenu was broken
  *
@@ -25,7 +31,7 @@ void plugin_exec(PluginParam *par)
 {
 	//show versioninfo
 
-		printf("TuxTxt $Revision: 1.37.2.6 $\n");
+		printf("TuxTxt $Revision: 1.37.2.7 $\n");
 
 	//get params
 
@@ -217,11 +223,13 @@ int Init()
 {
 	struct dmxPesFilterParams dmx_flt;
 	int error;
+	unsigned char magazine;
 
 	//init data
 
 		memset(&cachetable, 0, sizeof(cachetable));
 		memset(&subpagetable, 0xFF, sizeof(subpagetable));
+		memset(&countrycontrolbitstable, 0xFF, sizeof(countrycontrolbitstable));
 		memset(&backbuffer, black, sizeof(backbuffer));
 
 		page_atrb[32] = transp<<4 | transp;
@@ -230,8 +238,12 @@ int Init()
 
 		cached_pages = 0;
 
-		current_page	= -1;
-		current_subpage	= -1;
+		for (magazine = 1; magazine < 9; magazine++)
+		{
+			current_page	[magazine] = -1;
+			current_subpage [magazine] = -1;
+		}
+		page_receiving = -1;
 
 		page	 = 0x100;
 		lastpage = 0x100;
@@ -254,6 +266,7 @@ int Init()
 		screen_mode2 = 1;
 		color_mode = 1;
 		national_subset = 4;
+		auto_national = 1;
 
 		if((conf = fopen(CONFIGDIR "/tuxtxt/tuxtxt.conf", "rb+")) == 0)
 		{
@@ -265,11 +278,13 @@ int Init()
 		fread(&screen_mode2, 1, sizeof(screen_mode2), conf);
 		fread(&color_mode, 1, sizeof(color_mode), conf);
 		fread(&national_subset, 1, sizeof(national_subset), conf);
+		fread(&auto_national, 1, sizeof(auto_national), conf);
 
 		screen_old1 = screen_mode1;
 		screen_old2 = screen_mode2;
 		color_old = color_mode;
 		national_subset_old = national_subset;
+		auto_national_old = auto_national;
 
 	//init fontlibrary
 
@@ -416,7 +431,7 @@ int Init()
 			else
 			{
 				vtxtpid = pid_table[0].vtxt_pid;
-				national_subset = GetNationalSubset(pid_table[0].country_code);
+				strcpy(country_code, pid_table[0].country_code);
 
 				current_service = 0;
 				RenderMessage(ShowServiceName);
@@ -514,7 +529,7 @@ void CleanUp()
 
 	//save config
 
-		if(screen_mode1 != screen_old1 || screen_mode2 != screen_old2 || color_mode != color_old || national_subset != national_subset_old)
+		if(screen_mode1 != screen_old1 || screen_mode2 != screen_old2 || color_mode != color_old || national_subset != national_subset_old || auto_national != auto_national_old)
 		{
 			rewind(conf);
 
@@ -522,6 +537,7 @@ void CleanUp()
 			fwrite(&screen_mode2, 1, sizeof(screen_mode2), conf);
 			fwrite(&color_mode, 1, sizeof(color_mode), conf);
 			fwrite(&national_subset, 1, sizeof(national_subset), conf);
+			fwrite(&auto_national, 1, sizeof(auto_national), conf);
 
 			printf("TuxTxt <saving config>\n");
 		}
@@ -609,7 +625,7 @@ int GetTeletextPIDs()
 
 							pid_table[pids_found].vtxt_pid	 = (PMT[pmt_scan + 1]<<8 | PMT[pmt_scan + 2]) & 0x1FFF;
 							pid_table[pids_found].service_id = PMT[0x03]<<8 | PMT[0x04];
-							if (PMT[desc_scan + 1] >= 3)
+							if (PMT[desc_scan + 1] == 5)
 							{
 								pid_table[pids_found].country_code[0] = PMT[desc_scan + 2] | 0x20;
 								pid_table[pids_found].country_code[1] = PMT[desc_scan + 3] | 0x20;
@@ -622,7 +638,6 @@ int GetTeletextPIDs()
 							}
 							if (pid_table[pids_found].vtxt_pid == vtxtpid)
 							{
-								national_subset = GetNationalSubset(pid_table[pids_found].country_code);
 								printf("TuxTxt <Country code \"%s\">\n", pid_table[pids_found].country_code);
 							}
 							pids_found++;
@@ -736,6 +751,7 @@ skip_pid:;
 				current_service++;
 			}
 
+			strcpy(country_code, pid_table[current_service].country_code);
 			RenderMessage(ShowServiceName);
 		}
 
@@ -748,8 +764,6 @@ skip_pid:;
 
 int GetNationalSubset(char *cc)
 {
-	if (cc[0] == 0) return 1;
-
 	if (memcmp(cc, "cze", 3) == 0 || memcmp(cc, "ces", 3) == 0 ||
 	    memcmp(cc, "slo", 3) == 0 || memcmp(cc, "slk", 3) == 0)
 	{
@@ -800,6 +814,8 @@ int GetNationalSubset(char *cc)
 		return 10;
 	}
 	if (memcmp(cc, "swe", 3) == 0 ||
+	    memcmp(cc, "dan", 3) == 0 ||
+	    memcmp(cc, "nor", 3) == 0 ||
 	    memcmp(cc, "fin", 3) == 0 ||
 	    memcmp(cc, "hun", 3) == 0)
 	{
@@ -809,7 +825,8 @@ int GetNationalSubset(char *cc)
 	{
 		return 12;
 	}
-	return 4;
+
+	return countryconverstiontable[countrycontrolbitstable[page][subpage]];
 }
 
 /******************************************************************************
@@ -842,6 +859,7 @@ void ConfigMenu(int Init)
 					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
 					"ã   nationaler Zeichensatz   äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
 					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
+					"ã automatische Auswahl = aus äéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
 					"ãí    DE (#$@[\\]^_`{|}~)    îäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
 					"åææææææææææææææææææææææææææææçéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
 					"ëìììììììììììììììììììììììììììììê›››››››››››››››››››››››››››››››";
@@ -870,13 +888,14 @@ void ConfigMenu(int Init)
 		if(screen_mode1) memcpy(&menu[10*62 + 26], "ein", 3);
 		if(!screen_mode2) memcpy(&menu[12*62 + 26], "aus", 3);
 		if(color_mode) memcpy(&menu[16*62 + 26], "ein", 3);
+		if(auto_national) memcpy(&menu[20*62 + 25], "ein", 3);
 		if(national_subset != 4)
 		{
-			memcpy(&menu[62*20 + 2], &countrystring[national_subset*26], 26);
-
-			if(national_subset == 0) menu[20*62 +  1] = ' ';
-			else if(national_subset == 12) menu[20*62 + 28] = ' ';
+			memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
 		}
+
+		if(national_subset == 0  || auto_national) menu[20*62 +  1] = ' ';
+		if(national_subset == 12 || auto_national) menu[20*62 + 28] = ' ';
 
 	//clear framebuffer
 
@@ -910,7 +929,7 @@ void ConfigMenu(int Init)
 
 		PosY = StartY + fixfontheight*1;
 
-		for(line = 0; line < 23; line++)
+		for(line = 0; line < 24; line++)
 		{
 			PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
 
@@ -997,10 +1016,26 @@ void ConfigMenu(int Init)
 											{
 												RenderCharFB(menu[62*20 + byte], menu[62*20 + byte+31]);
 											}
+											break;
+
+									case 5: PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
+											PosY = StartY + fixfontheight*21;
+											for(byte = 0; byte < 31; byte++)
+											{
+												RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
+											}
+
+											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
+											PosY = StartY + fixfontheight*22;
+											for(byte = 0; byte < 31; byte++)
+											{
+												RenderCharFB(menu[62*21 + byte], menu[62*21 + byte+31]);
+											}
+											break;
 								}
 								break;
 
-				case RC_DOWN:	if(menuitem < 5) menuitem++;
+				case RC_DOWN:	if(menuitem < 6) menuitem++;
 
 								switch(menuitem)
 								{
@@ -1062,6 +1097,29 @@ void ConfigMenu(int Init)
 											{
 												RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
 											}
+											break;
+
+									case 6: if (auto_national)
+										{
+											menuitem--;
+										}
+										else
+										{
+											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
+											PosY = StartY + fixfontheight*21;
+											for(byte = 0; byte < 31; byte++)
+											{
+												RenderCharFB(menu[62*20 + byte], menu[62*20 + byte+31]);
+											}
+
+											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
+											PosY = StartY + fixfontheight*22;
+											for(byte = 0; byte < 31; byte++)
+											{
+												RenderCharFB(menu[62*21 + byte], menu[62*6 + byte+31]);
+											}
+										}
+										break;
 								}
 								break;
 
@@ -1099,30 +1157,31 @@ void ConfigMenu(int Init)
 											}
 											break;
 
-									case 5:	if(national_subset > 0)
+									case 6:	if(national_subset > 0)
 											{
 												national_subset--;
 
 												if(national_subset == 0)
 												{
-													menu[20*62 +  1] = ' ';
-													menu[20*62 + 28] = 'î';
+													menu[21*62 +  1] = ' ';
+													menu[21*62 + 28] = 'î';
 												}
 												else
 												{
-													menu[20*62 +  1] = 'í';
-													menu[20*62 + 28] = 'î';
+													menu[21*62 +  1] = 'í';
+													menu[21*62 + 28] = 'î';
 												}
 
-												memcpy(&menu[62*20 + 2], &countrystring[national_subset*26], 26);
+												memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
 
 												PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-												PosY = StartY + fixfontheight*21;
+												PosY = StartY + fixfontheight*22;
 												for(byte = 0; byte < 31; byte++)
 												{
-													RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
+													RenderCharFB(menu[62*21 + byte], menu[62*6 + byte+31]);
 												}
 											}
+											break;
 								}
 								break;
 								
@@ -1160,30 +1219,31 @@ void ConfigMenu(int Init)
 											}
 											break;
 
-									case 5:	if(national_subset < 12)
+									case 6:	if(national_subset < 12)
 											{
 												national_subset++;
 
 												if(national_subset == 12)
 												{
-													menu[20*62 +  1] = 'í';
-													menu[20*62 + 28] = ' ';
+													menu[21*62 +  1] = 'í';
+													menu[21*62 + 28] = ' ';
 												}
 												else
 												{
-													menu[20*62 +  1] = 'í';
-													menu[20*62 + 28] = 'î';
+													menu[21*62 +  1] = 'í';
+													menu[21*62 + 28] = 'î';
 												}
 
-												memcpy(&menu[62*20 + 2], &countrystring[national_subset*26], 26);
+												memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
 
 												PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-												PosY = StartY + fixfontheight*21;
+												PosY = StartY + fixfontheight*22;
 												for(byte = 0; byte < 31; byte++)
 												{
-													RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
+													RenderCharFB(menu[62*21 + byte], menu[62*6 + byte+31]);
 												}
 											}
+											break;
 								}
 								break;
 
@@ -1197,6 +1257,8 @@ void ConfigMenu(int Init)
 												}
 												else
 												{
+													unsigned char magazine;
+
 													//stop old decode-thread
 
 														if(pthread_cancel(thread_id) != 0)
@@ -1215,8 +1277,8 @@ void ConfigMenu(int Init)
 
 													//reset data
 
-														memset(&cachetable, 0, sizeof(cachetable));
 														memset(&subpagetable, 0xFF, sizeof(subpagetable));
+														memset(&countrycontrolbitstable, 0xFF, sizeof(countrycontrolbitstable));
 														memset(&backbuffer, black, sizeof(backbuffer));
 
 														page_atrb[32] = transp<<4 | transp;
@@ -1225,8 +1287,12 @@ void ConfigMenu(int Init)
 
 														cached_pages = 0;
 
-														current_page	= -1;
-														current_subpage	= -1;
+														for (magazine = 1; magazine < 9; magazine++)
+														{
+															current_page	[magazine] = -1;
+															current_subpage [magazine] = -1;
+														}
+														page_receiving = -1;
 
 														page	 = 0x100;
 														lastpage = 0x100;
@@ -1251,6 +1317,7 @@ void ConfigMenu(int Init)
 																if(cachetable[clear_page][clear_subpage] != 0);
 																{
 																	free(cachetable[clear_page][clear_subpage]);
+																	cachetable[clear_page][clear_subpage] = 0;
 																}
 															}
 														}
@@ -1258,7 +1325,7 @@ void ConfigMenu(int Init)
 													//start demuxer with new vtxtpid
 
 														vtxtpid = pid_table[current_pid].vtxt_pid;
-														national_subset = GetNationalSubset(pid_table[current_pid].country_code);
+														strcpy(country_code, pid_table[current_pid].country_code);
 
 														dmx_flt.pid		= vtxtpid;
 														dmx_flt.input	= DMX_IN_FRONTEND;
@@ -1351,6 +1418,38 @@ void ConfigMenu(int Init)
 													perror("TuxTxt <FBIOPUTCMAP>");
 												}
 											}
+											break;
+
+									case 5:	auto_national++;
+											auto_national &= 1;
+
+											if(auto_national)
+											{
+												memcpy(&menu[62*20 + 25], "ein", 3);
+                										menu[21*62 +  1] = ' ';
+										                menu[21*62 + 28] = ' ';
+											}
+											else
+											{
+												memcpy(&menu[62*20 + 25], "aus", 3);
+												if (national_subset != 0)  menu[21*62 +  1] = 'í';
+												if (national_subset != 12) menu[21*62 + 28] = 'î';
+											}
+
+											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
+											PosY = StartY + fixfontheight*21;
+											for(byte = 0; byte < 31; byte++)
+											{
+												RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
+											}
+
+											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
+											PosY = StartY + fixfontheight*22;
+											for(byte = 0; byte < 31; byte++)
+											{
+												RenderCharFB(menu[62*21 + byte], menu[62*21 + byte+31]);
+											}
+											break;
 								}
 			}
 		}
@@ -1494,15 +1593,18 @@ void GetNextPageOne()
 
 				if(page > 0x899) page = 0x100;
 
-		}while(subpagetable[page] == 0xFF);
+		}while(subpagetable[page] == 0xFF && page != lastpage);
 
 	//update page
 
-		if(zoommode == 2) zoommode = 1;
+		if (page != lastpage)
+		{
+			if(zoommode == 2) zoommode = 1;
 
-		subpage = subpagetable[page];
-		pageupdate = 1;
-		printf("TuxTxt <NextPageOne: %.3X-%.2X>\n", page, subpage);
+			subpage = subpagetable[page];
+			pageupdate = 1;
+			printf("TuxTxt <NextPageOne: %.3X-%.2X>\n", page, subpage);
+		}
 }
 
 /******************************************************************************
@@ -1536,15 +1638,18 @@ void GetPrevPageOne()
 
 				if(page < 0x100) page = 0x899;
 
-		}while(subpagetable[page] == 0xFF);
+		}while(subpagetable[page] == 0xFF && page != lastpage);
 
 	//update page
 
-		if(zoommode == 2) zoommode = 1;
+		if (page != lastpage)
+		{
+			if(zoommode == 2) zoommode = 1;
 
-		subpage = subpagetable[page];
-		pageupdate = 1;
-		printf("TuxTxt <PrevPageOne: %.3X-%.2X>\n", page, subpage);
+			subpage = subpagetable[page];
+			pageupdate = 1;
+			printf("TuxTxt <PrevPageOne: %.3X-%.2X>\n", page, subpage);
+		}
 }
 
 /******************************************************************************
@@ -2595,8 +2700,12 @@ void RenderPage()
 
 	//update page or timestring
 
-		if(transpmode != 2 && pageupdate && current_page != page && inputcounter == 2)
+		if(transpmode != 2 && pageupdate && page_receiving != page && inputcounter == 2)
 		{
+			//get national subset
+
+				if (auto_national) national_subset = GetNationalSubset(country_code);
+
 			//reset update flag
 
 				pageupdate = 0;
@@ -2651,6 +2760,8 @@ void RenderPage()
 void CreateLine25()
 {
 	int byte;
+	int cancel_page;
+
 	char line25_1[] = "   ?00<      ??0<      >??0      >?00   ((((((((((1111111111AAAAAAAAAAXXXXXXXXXX";
 	char line25_2[] = " ïğ w{hlen   ñò anzeigen   óô abbrechen ¤¨¨¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤";
 //	char line25_2[] = " ïğ w{hlen   ñò anzeigen   õö abbrechen ¤¨¨¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤";
@@ -2658,6 +2769,8 @@ void CreateLine25()
 	//get prev 100th
 
 		prev_100 = page & 0xF00;
+		cancel_page = (page & 0xF00) + 0x100;
+		if (cancel_page == 0x900) cancel_page = 0x100;
 
 		if(!(page & 0x0FF) || subpagetable[prev_100] == 0xFF)
 		{
@@ -2667,14 +2780,16 @@ void CreateLine25()
 
 				if(prev_100 == 0x000) prev_100 = 0x800;
 			}
-			while(subpagetable[prev_100] == 0xFF);
+			while(subpagetable[prev_100] == 0xFF && prev_100 != cancel_page);
 		}
+		if (prev_100 == cancel_page) prev_100 = page & 0xF00;
 
 		line25_1[3] = (prev_100 >> 8) | '0';
 
 	//get next 100th
 
 		next_100 = page & 0xF00;
+		cancel_page = next_100;
 
 		do
 		{
@@ -2682,13 +2797,17 @@ void CreateLine25()
 
 			if(next_100 == 0x900) next_100 = 0x100;
 		}
-		while(subpagetable[next_100] == 0xFF);
+		while(subpagetable[next_100] == 0xFF && next_100 != cancel_page);
+		if (next_100 == cancel_page) next_100 = (page & 0xF00) + 0x100;
+		if (next_100 == 0x900) next_100 = 0x100;
 
 		line25_1[34] = (next_100 >> 8) | '0';
 
 	//get prev 10th
 
 		prev_10 = page & 0xFF0;
+		cancel_page = (page & 0xFF0) + (((page & 0x0F0) == 0x90) ? 0x70 : 0x10);
+		if (cancel_page == 0x900) cancel_page = 0x100;
 
 		if(!(page & 0x00F) || subpagetable[prev_10] == 0xFF)
 		{
@@ -2699,8 +2818,9 @@ void CreateLine25()
 
 				if(prev_10 <= 0x090)		   prev_10 = 0x890;
 			}
-			while(subpagetable[prev_10] == 0xFF);
+			while(subpagetable[prev_10] == 0xFF && prev_10 != cancel_page);
 		}
+		if (prev_10 == cancel_page) prev_10 = page & 0xFF0;
 
 		line25_1[13] = (prev_10 >> 8) | '0';
 		line25_1[14] = ((prev_10 & 0x0F0)>>4) | '0';
@@ -2708,6 +2828,7 @@ void CreateLine25()
 	//get next 10th
 
 		next_10 = page & 0xFF0;
+		cancel_page = next_10;
 
 		do
 		{
@@ -2716,7 +2837,9 @@ void CreateLine25()
 
 			if(next_10 >= 0x900)		   next_10 = 0x100;
 		}
-		while(subpagetable[next_10] == 0xFF);
+		while(subpagetable[next_10] == 0xFF && next_10 != cancel_page);
+		if (next_10 == cancel_page) next_10 = (page & 0xFF0) + (((page & 0x0F0) == 0x90) ? 0x70 : 0x10);
+		if (next_10 == 0x900) next_10 = 0x100;
 
 		line25_1[24] = (next_10 >> 8) | '0';
 		line25_1[25] = ((next_10 & 0x0F0)>>4) | '0';
@@ -3299,6 +3422,7 @@ void *CacheThread(void *arg)
 	int line, byte, bit;
 	int b1, b2, b3, b4;
 	int packet_number;
+	unsigned char magazine;
 
 	while(1)
 	{
@@ -3346,6 +3470,11 @@ void *CacheThread(void *arg)
 
 						packet_number = b1>>3 | b2<<1;
 
+					//get magazine number
+
+						magazine = dehamming[vtxt_row[4]] & 7;
+						if (!magazine) magazine = 8;
+
 					//analyze row
 
 						if(packet_number == 0)
@@ -3360,30 +3489,33 @@ void *CacheThread(void *arg)
 
 							//get pagenumber
 
-								b1 = dehamming[vtxt_row[4]] & 7;
+								b1 = dehamming[vtxt_row[4]];
 								b2 = dehamming[vtxt_row[7]];
 								b3 = dehamming[vtxt_row[6]];
 
 								if(b1 == 0xFF || b2 == 0xFF || b3 == 0xFF)
 								{
-									current_page = -1;
+									current_page[magazine] = page_receiving = -1;
 									printf("TuxTxt <Biterror in Page>\n");
 									continue;
 								}
 
+								b1 &= 7;
+
 								if(b2 > 9 || b3 > 9)
 								{
-									current_page = -1;
+									current_page[magazine] = page_receiving = -1;
 									continue;
 								}
 								else
 								{
-									current_page = b1<<8 | b2<<4 | b3;
+									current_page[magazine] = page_receiving = b1<<8 | b2<<4 | b3;
 								}
 
-								if(current_page < 0x100)
+								if(current_page[magazine] < 0x100)
 								{
-									current_page += 0x800;
+									current_page[magazine] += 0x800;
+									page_receiving += 0x800;
 								}
 
 							//get subpagenumber
@@ -3395,33 +3527,47 @@ void *CacheThread(void *arg)
 
 								if(b1 == 0xFF || b2 == 0xFF || b3 == 0xFF || b4 == 0xFF)
 								{
-									current_subpage = -1;
+									current_subpage[magazine] = -1;
 									printf("TuxTxt <Biterror in SubPage>\n");
 									continue;
 								}
 
 								if(b1 != 0 || b2 != 0 || b3 > 7 || b4 > 9)
 								{
-									current_subpage = -1;
+									current_subpage[magazine] = -1;
 									continue;
 								}
 								else
 								{
-									current_subpage = b1<<12 | b2<<8 | b3<<4 | b4;
+									current_subpage[magazine] = b1<<12 | b2<<8 | b3<<4 | b4;
+								}
+
+							//get country control bits
+
+								b1 = dehamming[vtxt_row[13]];
+
+								if (b1 == 0xFF)
+								{
+									countrycontrolbitstable[current_page[magazine]][current_subpage[magazine]] = 0xff;
+									printf("TuxTxt <Biterror in CountryFlags>\n");
+								}
+								else
+								{
+									countrycontrolbitstable[current_page[magazine]][current_subpage[magazine]] = ((b1 >> 3) & 0x01) | (((b1 >> 2) & 0x01) << 1) | (((b1 >> 1) & 0x01) << 2);
 								}
 
 							//check cachetable and allocate memory if needed
 
-								if(cachetable[current_page][current_subpage] == 0)
+								if(cachetable[current_page[magazine]][current_subpage[magazine]] == 0)
 								{
-									cachetable[current_page][current_subpage] = malloc(PAGESIZE);
-									memset(cachetable[current_page][current_subpage], ' ', PAGESIZE);
+									cachetable[current_page[magazine]][current_subpage[magazine]] = malloc(PAGESIZE);
+									memset(cachetable[current_page[magazine]][current_subpage[magazine]], ' ', PAGESIZE);
 									cached_pages++;
 								}
 
 							//store current subpage for this page
 
-								subpagetable[current_page] = current_subpage;
+								subpagetable[current_page[magazine]] = current_subpage[magazine];
 
 							//copy timestring
 
@@ -3429,18 +3575,18 @@ void *CacheThread(void *arg)
 
 							//set update flag
 
-								if(current_page == page)
+								if(current_page[magazine] == page)
 								{
 									pageupdate = 1;
 
-									if(!zap_subpage_manual) subpage = current_subpage;
+									if(!zap_subpage_manual) subpage = current_subpage[magazine];
 								}
 
 							//check controlbits
 
 								if(dehamming[vtxt_row[9]] & 8)	//C4 -> erase page
 								{
-									memset(cachetable[current_page][current_subpage], ' ', PAGESIZE);
+									memset(cachetable[current_page[magazine]][current_subpage[magazine]], ' ', PAGESIZE);
 								}
 						}
 						else if(packet_number < 24)
@@ -3456,9 +3602,19 @@ void *CacheThread(void *arg)
 
 					//copy row to pagebuffer
 
-						if(current_page != -1 && current_subpage != -1 && packet_number < 24)
+						if(current_page[magazine] != -1 && current_subpage[magazine] != -1 && packet_number < 24)
 						{
-							memcpy(cachetable[current_page][current_subpage] + packet_number*40, &vtxt_row[6], 40);
+							memcpy(cachetable[current_page[magazine]][current_subpage[magazine]] + packet_number*40, &vtxt_row[6], 40);
+
+							//set update flag
+
+								if(current_page[magazine] == page)
+								{
+									pageupdate = 1;
+
+									if(!zap_subpage_manual) subpage = current_subpage[magazine];
+								}
+
 						}
 				}
 			}
