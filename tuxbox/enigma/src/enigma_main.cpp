@@ -467,7 +467,7 @@ void eNVODSelector::add(eDVBNamespace dvb_namespace, NVODReferenceEntry *ref)
 }
 
 VideoStream::VideoStream(eListBox<VideoStream> *listbox, PMTEntry *stream)
-	:eListBoxEntryText((eListBox<eListBoxEntryText>*)listbox), isAC3(0), component_tag(-1), stream(stream)
+	:eListBoxEntryText((eListBox<eListBoxEntryText>*)listbox), component_tag(-1), stream(stream)
 {
 	for (ePtrList<Descriptor>::iterator c(stream->ES_info); c != stream->ES_info.end(); ++c)
 	{
@@ -552,13 +552,18 @@ void eVideoSelector::add(PMTEntry *pmt)
 }
 
 AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
-	:eListBoxEntryText((eListBox<eListBoxEntryText>*)listbox), isAC3(0), component_tag(-1), stream(stream)
+	:eListBoxEntryText((eListBox<eListBoxEntryText>*)listbox), isAC3(0), isDTS(0), component_tag(-1), stream(stream)
 {
 	for (ePtrList<Descriptor>::iterator c(stream->ES_info); c != stream->ES_info.end(); ++c)
 	{
 		if (c->Tag()==DESCR_AC3)
 			isAC3=1;
-		else if (c->Tag()==DESCR_ISO639_LANGUAGE)
+		else if (c->Tag() == DESCR_REGISTRATION)
+		{
+			RegistrationDescriptor *reg=(RegistrationDescriptor*)*c;
+			if (!memcmp(reg->format_identifier, "DTS", 3))
+				isDTS=1;
+		} else if (c->Tag()==DESCR_ISO639_LANGUAGE)
 			text=getISO639Description(((ISO639LanguageDescriptor*)*c)->language_code);
 		else if (c->Tag()==DESCR_STREAM_ID)
 			component_tag=((StreamIdentifierDescriptor*)*c)->component_tag;
@@ -572,6 +577,8 @@ AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
 		text.sprintf("PID %04x", stream->elementary_PID);
 	if (isAC3)
 		text+=" (AC3)";
+	if (isDTS)
+		text+=" (DTS)";
 	if (component_tag!=-1)
 	{
 		eServiceHandler *service=eServiceInterface::getInstance()->getService();
@@ -605,6 +612,8 @@ void AudioStream::parseEIT(EIT* eit)
 						text=((ComponentDescriptor*)*d)->text;
 						if (isAC3)
 							text+=" (AC3)";
+						if (isDTS)
+							text+=" (DTS)";
 					}
 				}
 			}
@@ -3777,11 +3786,21 @@ void eZapMain::gotPMT()
 		else if (pe->stream_type==6)
 		{
 			for (ePtrList<Descriptor>::iterator d(pe->ES_info); d != pe->ES_info.end(); ++d)
+			{
 				if (d->Tag()==DESCR_AC3)
 				{
 					isaudio++;
 					isAc3=true;
+				} else if (d->Tag() == DESCR_REGISTRATION)
+				{
+					RegistrationDescriptor *reg=(RegistrationDescriptor*)*d;
+					if (!memcmp(reg->format_identifier, "DTS", 3))
+					{
+						isaudio++;
+						isAc3=true;
+					}
 				}
+			}
 		}
 		if (isaudio)
 		{

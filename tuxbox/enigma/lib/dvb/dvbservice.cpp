@@ -500,9 +500,12 @@ void eDVBServiceController::scanPMT()
 				
 				if (i->Tag()==DESCR_AC3)
 					isac3=1;
-				if (i->Tag() == DESCR_REGISTRATION)
-					if (!memcmp(((RegistrationDescriptor*)&*i)->format_identifier, "DTS", 3))
+				else if (i->Tag() == DESCR_REGISTRATION)
+				{
+					RegistrationDescriptor *reg=(RegistrationDescriptor*)*i;
+					if (!memcmp(reg->format_identifier, "DTS", 3))
 						isac3=1;
+				}
 				
 				if (isac3 && ( (!ac3_audio) || (pe->elementary_PID == audiopid) ) )
 				{
@@ -593,7 +596,15 @@ void eDVBServiceController::setPID(const PMTEntry *entry)
 						isaudio=1;
 						isAC3=1;
 					}
-					if (i->Tag()==DESCR_TELETEXT)
+					else if (i->Tag() == DESCR_REGISTRATION)
+					{
+						RegistrationDescriptor *reg=(RegistrationDescriptor*)*i;
+						if (!memcmp(reg->format_identifier, "DTS", 3))
+						{
+							isaudio=1;
+							isAC3=1;
+						}
+					} else if (i->Tag()==DESCR_TELETEXT)
 						isteletext=1;
 				}
 			}
