@@ -6,6 +6,7 @@
 #include <lib/gdi/font.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/eskin.h>
+#include <lib/gui/eprogress.h>
 #include <lib/gui/guiactions.h>
 
 struct enigmaEventViewActions
@@ -59,11 +60,32 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 					close(1); // this go the prev event and call exec()   (in epgwindow.cpp)
 			}
 			else if (event.action == &i_cursorActions->right)
- 			{
+			{
 				if (events)
 					nextEvent();
 				else
 					close(2);  // this go the next event and call exec()   (in epgwindow.cpp)
+			}
+			else if (event.action == &i_cursorActions->up)
+			{
+				ePoint curPos = long_description->getPosition();
+				if ( curPos.y() < 0 )
+				{
+					long_description->invalidate();
+					long_description->move( ePoint( curPos.x(), curPos.y() + descr->getSize().height() ) );
+					updateScrollbar();
+				}
+			}
+			else if (event.action == &i_cursorActions->down)
+			{
+				ePoint curPos = long_description->getPosition();
+				if ( (total - descr->getSize().height() ) >= abs( curPos.y() - descr->getSize().height() ) )
+				{
+					long_description->move( ePoint( curPos.x(), curPos.y() - descr->getSize().height() ) );
+					long_description->invalidate();
+					eDebug("long_description->getPosition.x = %d, long_description->getPosition().y = %d", long_description->getPosition().x(), long_description->getPosition().y() );
+					updateScrollbar();
+				}
 			}
 			else if (event.action == &i_enigmaEventViewActions->close)
 				close(0);
@@ -96,23 +118,32 @@ eEventDisplay::eEventDisplay(eString service, const ePtrList<EITEvent>* e, EITEv
 	eventlist=0;
 	events=0;
 
+	scrollbar = new eProgress(this);
+	scrollbar->setName("scrollbar");
+	scrollbar->setStart(0);
+	scrollbar->setPerc(100);
+
+	descr = new eWidget(this);
+	descr->setName("epg_description");
+
+	eventTime = new eLabel(this);
+	eventTime->setName("time");
+
+	eventDate = new eLabel(this);
+	eventDate->setName("date");
+
+	channel = new eLabel(this);
+	channel->setName("channel");
+
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eventview"))
 		eFatal("skin load of \"eventview\" failed");
 
-	ASSIGN(long_description, eLabel, "epg_description");
+	long_description=new eLabel(descr);
+// 	long_description->move(ePoint(0,20)); // netter effekt ... vielleicht hilfts beim bug suchen..
+	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
 	long_description->setFlags(RS_WRAP);
-	ASSIGN(title, eLabel, "title");
-	ASSIGN(eventTime, eLabel, "time");
-	ASSIGN(eventDate, eLabel, "date");
-	ASSIGN(channel, eLabel, "channel");
-	
-	title->setText("");
-	long_description->setText("");
-	eventDate->setText("");
-	eventTime->setText("");
-	channel->setText("");
-	
+
 	if (e)
 		setList(*e);
 	else if (evt)
@@ -124,7 +155,29 @@ eEventDisplay::~eEventDisplay()
 {
 	delete events;
 	delete eventlist;
-}                                       	
+}
+
+void eEventDisplay::updateScrollbar(int show)
+{
+	if (!show)
+	{
+		scrollbar->hide();
+		return;
+	}
+	total = descr->getSize().height();
+	while( total < long_description->getExtend().height() )
+		total += descr->getSize().height();
+
+	if (!total)
+		total=1;
+
+	int start=-long_description->getPosition().y()*100/total;
+	int vis=descr->getSize().height()*100/total;
+	scrollbar->setStart(start);
+	scrollbar->setPerc(vis);
+	scrollbar->show();
+}
+
 
 void eEventDisplay::setEvent(EITEvent *event)
 {
@@ -138,7 +191,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 		if (begin)
 		{
 			_eventTime.sprintf("%02d:%02d", begin->tm_hour, begin->tm_min);
-			_eventDate=eString().sprintf("%d.%d.%4d", begin->tm_mday, begin->tm_mon+1, begin->tm_year+1900);
+			_eventDate=eString().sprintf("%02d.%02d.%4d", begin->tm_mday, begin->tm_mon+1, begin->tm_year+1900);
 		}
 		time_t endtime=event->start_time+event->duration;
 		tm *end=event->start_time!=-1?localtime(&endtime):0;
@@ -175,8 +228,8 @@ void eEventDisplay::setEvent(EITEvent *event)
 		eventTime->setText(_eventTime);
 		eventDate->setText(_eventDate);
 
-		title->setText(_title);
-	
+		setText(_title);
+
 		if (!_long_description)
 			long_description->setText(_("no description available"));
 		else
@@ -186,9 +239,14 @@ void eEventDisplay::setEvent(EITEvent *event)
 	} 
 	else
 	{
-		title->setText(service);
+		setText(service);
 		long_description->setText(_("no description available"));
 	}
+	eDebug("visible width = %d, height = %d\ndescr width = %d, height = %d",
+	descr->getSize().width(),
+	descr->getSize().height(),
+	long_description->getExtend().width(), long_description->getExtend().height() );
+	updateScrollbar();
 }
 
 void eEventDisplay::setList(const ePtrList<EITEvent> &e)
