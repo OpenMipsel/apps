@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.cpp,v 1.67.2.12 2003/06/12 09:27:37 digi_casi Exp $
+ * $Id: getservices.cpp,v 1.67.2.13 2003/06/12 09:30:10 digi_casi Exp $
  *
  * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -250,11 +250,8 @@ int LoadSatellitePositions(void)
 	return 0;
 }
 
-int LoadServices(diseqc_t diseqcType)
+int LoadServices(fe_type_t frontendType, diseqc_t diseqcType)
 {
-	FrontendType frontendType = FE_QPSK;
-	
-	printf("[getservices] start...\n");
 	if (frontendType == FE_QPSK)
 	{
 		//satellite only
