@@ -1,13 +1,13 @@
 # created by Enigma Language Editor 0.2
-#       (c) 10/2002 ole <olest@gmx.net>
+# 			 (c) 10/2002 ole <olest@gmx.net>
 # *************************************
-# *   use/modify on your own risk!    *
+# *	 use/modify on your own risk!		*
 # *************************************
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-01-03 15:10+0100\n"
+"POT-Creation-Date: 2003-01-10 12:45+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: Fabrice\n"
 "Language-Team: French <fr@tuxbox.org>\n"
@@ -645,7 +645,7 @@ msgstr "Entrez la fréquence de pas du LNB (0..9,ok)"
 #: default.esml:357
 #, fuzzy
 msgid "Transponder:"
-msgstr "Recherche de transpondeurs"
+msgstr "Scan des transpondeurs"
 
 #: default.esml:566 default.esml:579
 msgid "set"
@@ -659,7 +659,6 @@ msgstr ""
 msgid "Bildregie"
 msgstr "Réglage de l'image"
 
-# 
 #: stone.esml:465
 msgid "Videotext"
 msgstr "Videotext"
@@ -978,7 +977,6 @@ msgstr "Menu principal"
 msgid "auto scan"
 msgstr "recherche automatique"
 
-# 
 #: src/scan.cpp:35
 msgid "open automatic transponder scan"
 msgstr "Recherche des transpondeurs"
@@ -987,12 +985,10 @@ msgstr "Recherche des transpondeurs"
 msgid "manual scan.."
 msgstr "Recherche manuelle"
 
-# 
 #: src/scan.cpp:36
 msgid "open manual transponder scan"
 msgstr "Recherche des transpondeurs"
 
-# 
 #: src/scan.cpp:37
 msgid "leave transponder scan"
 msgstr "Recherche des transpondeurs"
@@ -1143,7 +1139,7 @@ msgstr "basculer vers la liste Bouquet ou services"
 msgid "Timerlist"
 msgstr "Listes horloge"
 
-#: src/timer.cpp:452
+#: src/timer.cpp:446
 #, fuzzy
 msgid ""
 "You would to delete the running event..\n"
@@ -1152,16 +1148,16 @@ msgstr ""
 "Voulez vous effacer l'evenement en cours... Ceci arretera le mode horloge "
 "(enregistrement)!"
 
-#: src/timer.cpp:453
+#: src/timer.cpp:447
 msgid "Delete event from timerlist"
 msgstr "Effacer l'evenement de la liste"
 
-#: src/timer.cpp:454
+#: src/timer.cpp:448
 msgid "Really delete this event?"
 msgstr "Voulez vous vraiment éffacer ?"
 
-#: src/timer.cpp:458
-#, fuzzy
+# 
+#: src/timer.cpp:452
 msgid ""
 "You would to update the running event.. \n"
 "this stops the timer mode (recording)!"
@@ -1169,31 +1165,31 @@ msgstr ""
 "êtes vous sur de vouloir modifier ceci? Cela arretera l'enregistrement en "
 "mode horloge!"
 
-#: src/timer.cpp:459 src/timer.cpp:976
+#: src/timer.cpp:453 src/timer.cpp:968
 msgid "Update event in timerlist"
 msgstr "Actualiser cet évenement dans l'horloge?"
 
-#: src/timer.cpp:460
+#: src/timer.cpp:454
 msgid "Really update this event?"
 msgstr "Actualiser cet évenement?"
 
-#: src/timer.cpp:516
+#: src/timer.cpp:510
 msgid "This event is already in the timerlist."
 msgstr "Cet évenement à déja été ajouté à l'horloge"
 
-#: src/timer.cpp:516 src/timer.cpp:537 src/timer.cpp:1049
+#: src/timer.cpp:510 src/timer.cpp:531 src/timer.cpp:1041
 msgid "Add event to timerlist"
 msgstr "Ajouter l'évenement à l'horloge"
 
-#: src/timer.cpp:528
+#: src/timer.cpp:522
 msgid "The Endtime overlaps with an event in the timerlist"
 msgstr "L'horraire de fin est postérieure à l'horraire programmée."
 
-#: src/timer.cpp:528
+#: src/timer.cpp:522
 msgid "Set Stop Time"
 msgstr "Entrer l'horraire de fin"
 
-#: src/timer.cpp:537
+#: src/timer.cpp:531
 msgid ""
 "This event can not added to the timerlist.\n"
 "The event overlaps with another event in the timerlist\n"
@@ -1203,137 +1199,137 @@ msgstr ""
 "déja programmé \n"
 "  Vérifiez manuellement les horraires."
 
-#: src/timer.cpp:563
+#: src/timer.cpp:555
 msgid "no description avail"
 msgstr "Pas de déscription disponible. "
 
-#: src/timer.cpp:593
+#: src/timer.cpp:585
 msgid "timerView"
 msgstr "Vue horloge"
 
-#: src/timer.cpp:594
+#: src/timer.cpp:586
 msgid "remove this entry from timer list"
 msgstr "Suprimmer cette entrée de l'horloge"
 
-#: src/timer.cpp:779
+#: src/timer.cpp:771
 msgid "January"
 msgstr "Janvier"
 
-#: src/timer.cpp:779
+#: src/timer.cpp:771
 msgid "February"
 msgstr "Février"
 
-#: src/timer.cpp:779
+#: src/timer.cpp:771
 msgid "March"
 msgstr "Mars"
 
-#: src/timer.cpp:780
+#: src/timer.cpp:772
 msgid "April"
 msgstr "Avril"
 
-#: src/timer.cpp:780
+#: src/timer.cpp:772
 msgid "May"
 msgstr "Mai"
 
-#: src/timer.cpp:780
+#: src/timer.cpp:772
 msgid "June"
 msgstr "Juin"
 
-#: src/timer.cpp:780
+#: src/timer.cpp:772
 msgid "July"
 msgstr "Juillet"
 
-#: src/timer.cpp:781
+#: src/timer.cpp:773
 msgid "August"
 msgstr "Août"
 
-#: src/timer.cpp:781
+#: src/timer.cpp:773
 msgid "September"
 msgstr "Septembre"
 
-#: src/timer.cpp:781
+#: src/timer.cpp:773
 msgid "October"
 msgstr "Octobre"
 
-#: src/timer.cpp:782
+#: src/timer.cpp:774
 msgid "November"
 msgstr "Novembre"
 
-#: src/timer.cpp:782
+#: src/timer.cpp:774
 msgid "December"
 msgstr "Decembre"
 
-#: src/timer.cpp:783
+#: src/timer.cpp:775
 msgid "Sunday"
 msgstr "Dimanche"
 
-#: src/timer.cpp:783
+#: src/timer.cpp:775
 msgid "Monday"
 msgstr "Lundi"
 
-#: src/timer.cpp:783
+#: src/timer.cpp:775
 msgid "Tuesday"
 msgstr "Mardi"
 
-#: src/timer.cpp:783
+#: src/timer.cpp:775
 msgid "Wednesday"
 msgstr "Mercredi"
 
-#: src/timer.cpp:784
+#: src/timer.cpp:776
 msgid "Thursday"
 msgstr "Jeudi"
 
-#: src/timer.cpp:784
+#: src/timer.cpp:776
 msgid "Friday"
 msgstr "Vendredi"
 
-#: src/timer.cpp:784
+#: src/timer.cpp:776
 msgid "Saturday"
 msgstr "Samedi"
 
-#: src/timer.cpp:785
+#: src/timer.cpp:777
 msgid "Sun"
 msgstr "Dim."
 
-#: src/timer.cpp:785
+#: src/timer.cpp:777
 msgid "Mon"
 msgstr "Lun."
 
-#: src/timer.cpp:785
+#: src/timer.cpp:777
 msgid "Tue"
 msgstr "Mar."
 
-#: src/timer.cpp:785
+#: src/timer.cpp:777
 msgid "Wed"
 msgstr "Mer."
 
-#: src/timer.cpp:786
+#: src/timer.cpp:778
 msgid "Thu"
 msgstr "Jeu."
 
-#: src/timer.cpp:786
+#: src/timer.cpp:778
 msgid "Fri"
 msgstr "Ven."
 
-#: src/timer.cpp:786
+#: src/timer.cpp:778
 msgid "Sat"
 msgstr "Sam."
 
-#: src/timer.cpp:886
+#: src/timer.cpp:878
 msgid "Timer list"
 msgstr "Listes horloge"
 
-#: src/timer.cpp:923 src/enigma_main.cpp:2513 src/enigma_main.cpp:2517
-#: src/enigma_main.cpp:2525 src/enigma_main.cpp:2532 src/enigma_main.cpp:2538
-#: src/enigma_main.cpp:2543 src/enigma_main.cpp:2548
+#: src/timer.cpp:915 src/enigma_main.cpp:2590 src/enigma_main.cpp:2594
+#: src/enigma_main.cpp:2602 src/enigma_main.cpp:2609 src/enigma_main.cpp:2615
+#: src/enigma_main.cpp:2620 src/enigma_main.cpp:2625
 msgid "switch"
 msgstr "Message"
 
-#: src/timer.cpp:925
+#: src/timer.cpp:917
 msgid "record DVR"
 msgstr "Enregistrement DVR"
 
-#: src/timer.cpp:976
+#: src/timer.cpp:968
 msgid ""
 "Invalid begin or end time.!\n"
 "Please check time and date"
@@ -1341,7 +1337,7 @@ msgstr ""
 "Heure de début ou de fin invalide \n"
 " vérifiez vos règlages"
 
-#: src/timer.cpp:1049
+#: src/timer.cpp:1041
 msgid ""
 "Invalid begin or end time.!\n"
 "You can not add this to timerlist"
@@ -1349,17 +1345,17 @@ msgstr ""
 "Heure de début ou de fin invalide \n"
 " vous ne pouvez ajouter ceci a l'horloge"
 
-#: src/timer.cpp:1100
+#: src/timer.cpp:1092
 msgid "choose service"
 msgstr "Choisir service"
 
-#: src/timer.cpp:1223
+#: src/timer.cpp:1211
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
 msgstr ""
 
-#: src/timer.cpp:1223
+#: src/timer.cpp:1211
 #, fuzzy
 msgid "Information"
 msgstr "Informations "
@@ -1380,12 +1376,11 @@ msgstr "Effacer l'evenement de la liste de l'horloge"
 msgid "Infos"
 msgstr "Infos"
 
-#: src/enigma_info.cpp:43 src/enigma_setup.cpp:72 src/enigma_scan.cpp:40
-#: src/enigma_scan.cpp:154
+#: src/enigma_info.cpp:43 src/enigma_setup.cpp:82 src/enigma_scan.cpp:40
+#: src/enigma_scan.cpp:158
 msgid "[back]"
 msgstr "[retour]"
 
-# 
 #: src/enigma_info.cpp:43
 #, fuzzy
 msgid "go back to mainmenu"
@@ -1395,8 +1390,8 @@ msgstr "Retour au menu principal"
 msgid "Streaminfo"
 msgstr "Infos réseau"
 
+# 
 #: src/enigma_info.cpp:44
-#, fuzzy
 msgid "open the Streaminfo"
 msgstr "Infos réseau"
 
@@ -1501,7 +1496,6 @@ msgstr "Configurer la fréquence de répétition RC (Gauche/Droite)"
 msgid "set RC repeat delay ( left / right )"
 msgstr "Configurer le délais de répétition RC (Gauche/Droite)"
 
-# 
 #: src/setup_rc.cpp:79
 msgid "select your favourite rc style (ok)"
 msgstr "Entrer le type d'horloge (OK)"
@@ -1516,19 +1510,19 @@ msgstr "Fermer et sauvegarder les changements"
 msgid "close window (no changes are saved)"
 msgstr "Fermer sans sauvegarder les changements"
 
-#: src/enigma_event.cpp:16
+#: src/enigma_event.cpp:17
 msgid "enigma event view"
 msgstr "enigma /n journal des évènements"
 
-#: src/enigma_event.cpp:17
+#: src/enigma_event.cpp:18
 msgid "closes the Event View"
 msgstr "Fermer le journal des évènements"
 
-#: src/enigma_event.cpp:173
+#: src/enigma_event.cpp:226
 msgid "no info available"
 msgstr "Pas d'informations disponible"
 
-#: src/enigma_event.cpp:181 src/enigma_event.cpp:190
+#: src/enigma_event.cpp:234 src/enigma_event.cpp:243
 msgid "no description available"
 msgstr "Pas de description disponible"
 
@@ -1576,116 +1570,124 @@ msgstr "Sauvegarder les changements et quitter la configurqtion vidéo"
 msgid "leave video setup (no changes are saved)"
 msgstr "Sauvegarder les changements sans quitter la configuration vidéo"
 
-#: src/enigma_setup.cpp:44
+#: src/enigma_setup.cpp:45
 msgid "Setup"
 msgstr "Réglages"
 
-#: src/enigma_setup.cpp:72
+#: src/enigma_setup.cpp:82
 msgid "back to Mainmenu"
 msgstr "Retour au menu principal"
 
-#: src/enigma_setup.cpp:73
+#: src/enigma_setup.cpp:83
 msgid "Channels..."
 msgstr "Chaines..."
 
-#: src/enigma_setup.cpp:73
+#: src/enigma_setup.cpp:83
 msgid "open channel setup"
 msgstr "Ouvrir configuration chaines"
 
-#: src/enigma_setup.cpp:75
+#: src/enigma_setup.cpp:85
 msgid "Network..."
 msgstr "Réseau..."
 
-#: src/enigma_setup.cpp:75
+#: src/enigma_setup.cpp:85
 msgid "open network setup"
 msgstr "Ouvrir configuration réseau"
 
-#: src/enigma_setup.cpp:76
+#: src/enigma_setup.cpp:86
 msgid "OSD..."
 msgstr "OSD"
 
-#: src/enigma_setup.cpp:76
+#: src/enigma_setup.cpp:86
 msgid "open osd setup"
 msgstr "Ouvrir configuration OSD"
 
-#: src/enigma_setup.cpp:78
+#: src/enigma_setup.cpp:88
 msgid "LCD..."
 msgstr "LCD..."
 
-#: src/enigma_setup.cpp:78
+#: src/enigma_setup.cpp:88
 msgid "open lcd setup"
 msgstr "Ouvrir configuration LCD"
 
-#: src/enigma_setup.cpp:79
+#: src/enigma_setup.cpp:89
 msgid "Remote Control..."
 msgstr "Télécommande"
 
-#: src/enigma_setup.cpp:79
+#: src/enigma_setup.cpp:89
 msgid "open remotecontrol setup"
 msgstr "Ouvrir configuration télécommande"
 
-#: src/enigma_setup.cpp:80
+#: src/enigma_setup.cpp:90
 msgid "Video..."
 msgstr "Vidéo..."
 
-#: src/enigma_setup.cpp:80
+#: src/enigma_setup.cpp:90
 msgid "open video setup"
 msgstr "Ouvrir configuration vidéo"
 
-#: src/enigma_setup.cpp:81
+#: src/enigma_setup.cpp:91
 msgid "Skin..."
 msgstr "Themes..."
 
-#: src/enigma_setup.cpp:81
+#: src/enigma_setup.cpp:91
 msgid "open skin selector"
 msgstr "Ouvrir configuration themes"
 
-#: src/enigma_setup.cpp:82
+#: src/enigma_setup.cpp:92
 msgid "Language..."
 msgstr "Language..."
 
-#: src/enigma_setup.cpp:82
+#: src/enigma_setup.cpp:92
 msgid "open language selector"
 msgstr "Ouvrir configuration language"
 
-#: src/enigma_setup.cpp:84
+#: src/enigma_setup.cpp:94
 msgid "Harddisk..."
 msgstr "Disque Dur..."
 
-#: src/enigma_setup.cpp:84
+#: src/enigma_setup.cpp:94
 msgid "initialize harddisc"
 msgstr "initialiser le disque dur"
 
-#: src/enigma_setup.cpp:86
+#: src/enigma_setup.cpp:96
 msgid "Common Interface..."
 msgstr "Interface commune..."
 
-# 
-#: src/enigma_setup.cpp:86
+#: src/enigma_setup.cpp:96
 msgid "show CI Menu"
 msgstr "Voir menu de /n l'interface commune"
 
-#: src/enigma_setup.cpp:88
+#: src/enigma_setup.cpp:98
 msgid "Upgrade..."
 msgstr "Mise à jour..."
 
-#: src/enigma_setup.cpp:88
+#: src/enigma_setup.cpp:98
 msgid "upgrade firmware"
 msgstr "Mise à jour firmware"
 
-#: src/enigma_setup.cpp:170
+#: src/enigma_setup.cpp:100
+#, fuzzy
+msgid "RF-Modulator..."
+msgstr "Education"
+
+#: src/enigma_setup.cpp:100
+msgid "setup modulator"
+msgstr ""
+
+#: src/enigma_setup.cpp:182
 msgid "You have to reboot to apply the new skin"
 msgstr "Vous devez redémarrer pour appliquer le Theme"
 
-#: src/enigma_setup.cpp:170
+#: src/enigma_setup.cpp:182
 msgid "Skin changed"
 msgstr "Theme changé"
 
-#: src/enigma_setup.cpp:207
+#: src/enigma_setup.cpp:219
 msgid "sorry, no harddisks found!"
 msgstr "Désolé, aucun Disque Dur trouvé !"
 
-#: src/enigma_setup.cpp:207
+#: src/enigma_setup.cpp:219
 msgid "Harddisk setup..."
 msgstr "Configuration du disque dur"
 
@@ -1712,7 +1714,7 @@ msgstr "Tuner: Satellite"
 
 #: src/satconfig.cpp:59
 msgid "one directly connected LNB"
-msgstr ""
+msgstr "Un LNB connecté directement"
 
 #: src/satconfig.cpp:60
 msgid "2 satellites via DiSEqC A/B"
@@ -1728,7 +1730,7 @@ msgstr ""
 
 #: src/satconfig.cpp:61
 msgid "3 LNBs via Diseqc"
-msgstr ""
+msgstr "3 LMB par DiseqC"
 
 #: src/satconfig.cpp:62
 msgid "non-standard user defined configuration..."
@@ -1958,17 +1960,14 @@ msgstr "Science Fiction"
 msgid "Comedy"
 msgstr "Comedie"
 
-# 
 #: src/channelinfo.cpp:70
 msgid "Soap"
 msgstr "Serie B"
 
-# 
 #: src/channelinfo.cpp:70
 msgid "Romance"
 msgstr "Romance"
 
-# 
 #: src/channelinfo.cpp:70
 msgid "Serious"
 msgstr "Sérieux"
@@ -1977,7 +1976,6 @@ msgstr "Sérieux"
 msgid "Adult"
 msgstr "Adulte"
 
-# 
 #: src/channelinfo.cpp:73
 msgid "News"
 msgstr "Informations"
@@ -1986,7 +1984,6 @@ msgstr "Informations"
 msgid "Weather"
 msgstr "Metheo"
 
-# 
 #: src/channelinfo.cpp:73
 msgid "Magazine"
 msgstr "Magasine"
@@ -1995,7 +1992,6 @@ msgstr "Magasine"
 msgid "Documentary"
 msgstr "Documentaire"
 
-# 
 #: src/channelinfo.cpp:73
 msgid "Discussion"
 msgstr "Discution"
@@ -2008,7 +2004,6 @@ msgstr "Emission"
 msgid "Game Show"
 msgstr "Emission de jeux"
 
-# 
 #: src/channelinfo.cpp:77
 msgid "Variety"
 msgstr "Varieté"
@@ -2041,7 +2036,6 @@ msgstr "Dessin Animé"
 msgid "Culture"
 msgstr "Culture"
 
-# 
 #: src/channelinfo.cpp:96
 msgid "Film"
 msgstr "Film"
@@ -2127,7 +2121,6 @@ msgstr ""
 msgid "title"
 msgstr "Fichiers"
 
-# 
 #: src/streaminfo.cpp:126
 #, fuzzy
 msgid "artist"
@@ -2185,11 +2178,11 @@ msgstr "Plugins"
 msgid "select plugin and press ok"
 msgstr "Selectionner un plugin et cliquez OK"
 
-#: src/enigma_plugins.cpp:143 src/enigma_main.cpp:1884
+#: src/enigma_plugins.cpp:143 src/enigma_main.cpp:1956
 msgid "Couldn't read plugin directory"
 msgstr "Impossible de lire le repertoire des plugin"
 
-#: src/enigma_plugins.cpp:143 src/enigma_main.cpp:1884
+#: src/enigma_plugins.cpp:143 src/enigma_main.cpp:1956
 msgid "Error"
 msgstr "Erreur"
 
@@ -2197,7 +2190,6 @@ msgstr "Erreur"
 msgid "Channels"
 msgstr "Chaines"
 
-# 
 #: src/enigma_scan.cpp:40
 msgid "back to mainmenu"
 msgstr "Retour au menu principal"
@@ -2206,7 +2198,6 @@ msgstr "Retour au menu principal"
 msgid "Transponder scan"
 msgstr "Recherche de transpondeurs"
 
-# 
 #: src/enigma_scan.cpp:41
 msgid "goto transponder scan"
 msgstr "Recherche des transpondeurs"
@@ -2215,7 +2206,6 @@ msgstr "Recherche des transpondeurs"
 msgid "Satellites..."
 msgstr "Satellites..."
 
-# 
 #: src/enigma_scan.cpp:44
 msgid "goto satellite config"
 msgstr "Quiter la configuration satellite"
@@ -2235,38 +2225,37 @@ msgstr "Configuration moteur"
 msgid "SID..."
 msgstr "OSD"
 
-#: src/enigma_scan.cpp:110
+#: src/enigma_scan.cpp:114
 msgid ""
 "More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the "
 "rotor is plugged"
 msgstr ""
 
-#: src/enigma_scan.cpp:110
+#: src/enigma_scan.cpp:114
 #, fuzzy
 msgid "Info"
 msgstr "Infos"
 
-#: src/enigma_scan.cpp:124
+#: src/enigma_scan.cpp:128
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
 
-#: src/enigma_scan.cpp:124
+#: src/enigma_scan.cpp:128
 msgid "Warning"
 msgstr ""
 
-#: src/enigma_scan.cpp:151
+#: src/enigma_scan.cpp:155
 msgid "Select LNB"
 msgstr ""
 
-# 
-#: src/enigma_scan.cpp:154
+#: src/enigma_scan.cpp:158
 #, fuzzy
 msgid "go to prev menu"
 msgstr "Retour page précedente"
 
-#: src/enigma_scan.cpp:159
+#: src/enigma_scan.cpp:163
 #, c-format
 msgid "use LNB %d for Rotor"
 msgstr ""
@@ -2291,12 +2280,10 @@ msgstr "Allez en mode pause (repeter)"
 msgid "go to standby (release)"
 msgstr "Aller en mode pause (liberer)"
 
-# 
 #: src/enigma_main.cpp:72
 msgid "show infobar"
 msgstr "Afficher la  barre d'infos"
 
-# 
 #: src/enigma_main.cpp:73
 msgid "hide infobar"
 msgstr "Masquer la barre d'infos"
@@ -2377,7 +2364,7 @@ msgstr "Pause"
 msgid "resume playback"
 msgstr "reprendre la lecture"
 
-#: src/enigma_main.cpp:97 src/enigma_main.cpp:1398
+#: src/enigma_main.cpp:97 src/enigma_main.cpp:1468
 msgid "record"
 msgstr "Enregistrer"
 
@@ -2417,88 +2404,93 @@ msgstr "Voir favoris"
 msgid "toggle DVR panel"
 msgstr "Basculer vers le panneau DVR"
 
-#: src/enigma_main.cpp:125
+#: src/enigma_main.cpp:115
+#, fuzzy
+msgid "toggle index mark"
+msgstr "Silence"
+
+#: src/enigma_main.cpp:126
 msgid "enigma standby"
 msgstr "Pause Enigma"
 
-#: src/enigma_main.cpp:126
+#: src/enigma_main.cpp:127
 msgid "wake up enigma"
 msgstr "Réveil Enigma"
 
-#: src/enigma_main.cpp:236
+#: src/enigma_main.cpp:310
 msgid " to "
 msgstr "vers"
 
-#: src/enigma_main.cpp:242
+#: src/enigma_main.cpp:316
 msgid " Euro lost)"
 msgstr "perdre Euro)"
 
-#: src/enigma_main.cpp:270 src/enigma_main.cpp:277
+#: src/enigma_main.cpp:344 src/enigma_main.cpp:351
 msgid "NVOD"
 msgstr "NVOD"
 
-#: src/enigma_main.cpp:381
+#: src/enigma_main.cpp:455
 msgid "Audio"
 msgstr "Audio"
 
-#: src/enigma_main.cpp:407
+#: src/enigma_main.cpp:481
 msgid "multiple Services"
 msgstr "Services multiples"
 
-#: src/enigma_main.cpp:452
+#: src/enigma_main.cpp:526
 msgid "Channel"
 msgstr "Chaines"
 
-#: src/enigma_main.cpp:457
+#: src/enigma_main.cpp:531
 msgid "Channel:"
 msgstr "Chaines:"
 
-#: src/enigma_main.cpp:484
+#: src/enigma_main.cpp:558
 #, c-format
 msgid "Please wait while the rotor is driving to %d.%d%c ...."
 msgstr ""
 
-#: src/enigma_main.cpp:484
+#: src/enigma_main.cpp:558
 msgid "Message"
 msgstr ""
 
-#: src/enigma_main.cpp:692
+#: src/enigma_main.cpp:766
 msgid "TV"
 msgstr "TV"
 
-#: src/enigma_main.cpp:693
+#: src/enigma_main.cpp:767
 msgid "Radio"
 msgstr "Radio"
 
-#: src/enigma_main.cpp:694
+#: src/enigma_main.cpp:768
 msgid "File"
 msgstr "Fichiers"
 
-#: src/enigma_main.cpp:696
+#: src/enigma_main.cpp:770
 msgid "Favourites ("
 msgstr "Favoris ("
 
-#: src/enigma_main.cpp:709
+#: src/enigma_main.cpp:783
 msgid "recorded movies"
 msgstr "Video enregistrées"
 
-#: src/enigma_main.cpp:976
+#: src/enigma_main.cpp:1050
 msgid "no EPG available"
 msgstr "Pas de EPG disponible"
 
-#: src/enigma_main.cpp:1398
+#: src/enigma_main.cpp:1468
 msgid "Sorry, you cannot record this service."
 msgstr "Désolé, ce service n'est pas enregistrable"
 
-#: src/enigma_main.cpp:1617
+#: src/enigma_main.cpp:1689
 msgid "Sorry, you cannot delete this service."
 msgstr "Désolé, vous ne pouvez supprimer ce service "
 
-#: src/enigma_main.cpp:1617 src/enigma_main.cpp:3072
+#: src/enigma_main.cpp:1689 src/enigma_main.cpp:3186
 msgid "delete service"
 msgstr "Supprimer service"
 
-#: src/enigma_main.cpp:1631
+#: src/enigma_main.cpp:1703
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
@@ -2506,31 +2498,31 @@ msgstr ""
 "C'est une video enregistrée! \n"
 " l'éffacer définitivement?"
 
-#: src/enigma_main.cpp:1631
+#: src/enigma_main.cpp:1703
 msgid "Delete recorded stream"
 msgstr "Effacer l'evennement enregistré"
 
-#: src/enigma_main.cpp:1725 src/enigma_main.cpp:1726
+#: src/enigma_main.cpp:1797 src/enigma_main.cpp:1798
 msgid "This directory doesn't contain anything playable!"
 msgstr "ce dossier ne contient pas de fichiers visuels!"
 
-#: src/enigma_main.cpp:1726
+#: src/enigma_main.cpp:1798
 msgid "Play"
 msgstr "Lecture"
 
-#: src/enigma_main.cpp:1780
+#: src/enigma_main.cpp:1852
 msgid "This service is already in your favourite list."
 msgstr "Ce service est déja dans votre liste favorite"
 
-#: src/enigma_main.cpp:1780 src/enigma_main.cpp:1789
+#: src/enigma_main.cpp:1852 src/enigma_main.cpp:1861
 msgid "Add Channel to Favourite"
 msgstr "Ajouter chaine a vos favoris"
 
-#: src/enigma_main.cpp:1789
+#: src/enigma_main.cpp:1861
 msgid "Really add this channel to your favourite list?"
 msgstr "Vraiment ajouter cette  chaine a vos favoris?"
 
-#: src/enigma_main.cpp:2012
+#: src/enigma_main.cpp:2084
 msgid ""
 "Currently an timer based digital recording is in progress!\n"
 "This stops the timer, and digital recording!"
@@ -2538,7 +2530,7 @@ msgstr ""
 "Un enregistrement programmé est en cours ! \n"
 " Ceci arrete la minuterie et l'enregistrement numérique ! "
 
-#: src/enigma_main.cpp:2022
+#: src/enigma_main.cpp:2094
 msgid ""
 "Currently an digital recording is in progress!\n"
 "This stops the digital recording!"
@@ -2546,7 +2538,7 @@ msgstr ""
 "Un enregistrement est en cours! \n"
 " ceci arrete l'enregistrement digital ! "
 
-#: src/enigma_main.cpp:2032
+#: src/enigma_main.cpp:2104
 msgid ""
 "Currently an timer event is in progress!\n"
 "This stops the timer event!"
@@ -2554,84 +2546,84 @@ msgstr ""
 "Un évenement est en cours d'execution \n"
 " Ceci arrete l'horloge ! "
 
-#: src/enigma_main.cpp:2038
+#: src/enigma_main.cpp:2110
 msgid "Really do this?"
 msgstr "Voulez vous vraiment faire ceci?"
 
-#: src/enigma_main.cpp:2512 src/enigma_main.cpp:2513
+#: src/enigma_main.cpp:2589 src/enigma_main.cpp:2590
 msgid "One moment please..."
 msgstr "Patientez"
 
-#: src/enigma_main.cpp:2516 src/enigma_main.cpp:2517
+#: src/enigma_main.cpp:2593 src/enigma_main.cpp:2594
 msgid "Service could not be found !"
 msgstr "Service introuvable! "
 
-#: src/enigma_main.cpp:2524 src/enigma_main.cpp:2525
+#: src/enigma_main.cpp:2601 src/enigma_main.cpp:2602
 msgid "This service could not be descrambled"
 msgstr "Ce service ne peut être décrypté"
 
-#: src/enigma_main.cpp:2531 src/enigma_main.cpp:2532
+#: src/enigma_main.cpp:2608 src/enigma_main.cpp:2609
 msgid "This service sends (currently) no signal"
 msgstr "Ce service n'envoi actuellement aucun signal"
 
-#: src/enigma_main.cpp:2536 src/enigma_main.cpp:2538
+#: src/enigma_main.cpp:2613 src/enigma_main.cpp:2615
 msgid "This content could not be displayed"
 msgstr "Ce contenu ne peut être affiché"
 
-#: src/enigma_main.cpp:2541 src/enigma_main.cpp:2543
+#: src/enigma_main.cpp:2618 src/enigma_main.cpp:2620
 msgid "NVOD Service - select a starttime, please"
 msgstr "Service NVOD - Selectionnez l'heure de début"
 
-#: src/enigma_main.cpp:2546 src/enigma_main.cpp:2548
+#: src/enigma_main.cpp:2623 src/enigma_main.cpp:2625
 msgid "Unknown error!!"
 msgstr "Erreur inconnue!"
 
-#: src/enigma_main.cpp:3060
+#: src/enigma_main.cpp:3174
 msgid "Service Menu"
 msgstr "menu services"
 
-#: src/enigma_main.cpp:3063 src/enigma_main.cpp:3101
+#: src/enigma_main.cpp:3177 src/enigma_main.cpp:3215
 #: src/setup_harddisk.cpp:177
 msgid "back"
 msgstr "retour"
 
-#: src/enigma_main.cpp:3068
+#: src/enigma_main.cpp:3182
 msgid "disable move mode"
 msgstr "Désactiver mode mobile"
 
-#: src/enigma_main.cpp:3070
+#: src/enigma_main.cpp:3184
 msgid "enable move mode"
 msgstr "Activer mode mobile"
 
-#: src/enigma_main.cpp:3078
+#: src/enigma_main.cpp:3192
 msgid "disable edit favourite mode"
 msgstr "Désactiver mode favoris"
 
-#: src/enigma_main.cpp:3080
+#: src/enigma_main.cpp:3194
 msgid "enable edit favourite mode"
 msgstr "Activer mode d'édition des favoris"
 
-#: src/enigma_main.cpp:3082
+#: src/enigma_main.cpp:3196
 msgid "add service to favourites"
 msgstr "Ajouter un service aux favoris"
 
-#: src/enigma_main.cpp:3085
+#: src/enigma_main.cpp:3199
 msgid "add service to playlist"
 msgstr "Ajouter un service a la Playlist"
 
-#: src/enigma_main.cpp:3098
+#: src/enigma_main.cpp:3212
 msgid "Record Menu"
 msgstr "Menu enregistreur"
 
-#: src/enigma_main.cpp:3102
+#: src/enigma_main.cpp:3216
 msgid "stop record now"
 msgstr "Arreter l'enregistrement"
 
-#: src/enigma_main.cpp:3103
+#: src/enigma_main.cpp:3217
 msgid "set record duration"
 msgstr "Configurer la durée d'enregistrement"
 
-#: src/enigma_main.cpp:3104
+#: src/enigma_main.cpp:3218
 msgid "set record stop time"
 msgstr "Regler l'heure de fin d'enregistrement"
 
@@ -2679,12 +2671,10 @@ msgstr "Régler le contraste LCD (gauche/droite)"
 msgid "set LCD brightness for Standby Mode ( left / right )"
 msgstr "Régler la luminosité LCD pour le mode veille (gauche/droite)"
 
-# 
 #: src/setup_lcd.cpp:100
 msgid "Inverted: "
 msgstr "Inversion:"
 
-# 
 #: src/setup_lcd.cpp:102
 msgid "enable/disable inverted lcd (ok)"
 msgstr "Activez/désactiver l'inversion /n des couleurs du LCD? (ok)"
@@ -2862,57 +2852,21 @@ msgstr "Mise à jour OK"
 msgid "upgrade failed with errorcode UA15"
 msgstr "Mise à jour échouée...Code erreur UA15"
 
-# 
-#~ msgid "go back"
-#~ msgstr "retour"
-
 #~ msgid "*delete*"
 #~ msgstr "*efface*"
+
+#~ msgid "delete me"
+#~ msgstr "Effacez moi"
 
 #~ msgid "East"
 #~ msgstr "Est"
 
-#~ msgid "West"
-#~ msgstr "Ouest"
+#~ msgid "go back"
+#~ msgstr "retour"
 
 #, fuzzy
 #~ msgid "North"
 #~ msgstr "Fermer"
 
-#~ msgid "delete me"
-#~ msgstr "Effacez moi"
-
-#~ msgid "choose scan type or abort"
-#~ msgstr "Choisir le type de recherche ou annuler"
-
-#~ msgid "GotoXX offset"
-#~ msgstr "GotoXX offset"
-
-#~ msgid ""
-#~ "If your rotor doesn't support gotoXX, add all orbital positions with "
-#~ "storage location below."
-#~ msgstr ""
-#~ "Si votre rotor n'a pas de support gotoXX, ajouter toutes les positions "
-#~ "orbitales aux positions ci-dessous."
-
-#~ msgid "Lock"
-#~ msgstr "Bloquer"
-
-#~ msgid "recording... press shift+record to end!"
-#~ msgstr "ENregistrement ... /n Appuyez Schift + Record pour arreter!"
-
-#~ msgid "remaining disk space:"
-#~ msgstr "Rappeler l'espace disque"
-
-#~ msgid "Sync"
-#~ msgstr "Sync"
-
-#~ msgid ""
-#~ "This event already began.\n"
-#~ "You can not add this to timerlist"
-#~ msgstr ""
-#~ "Cet évenement à déja commencé, \n"
-#~ " vous ne pouvez plus l'ajouter à l'horloge"
-
-#~ msgid "toggle infobar"
-#~ msgstr "Selectionner barre d'infos"
+#~ msgid "West"
+#~ msgstr "Ouest"
