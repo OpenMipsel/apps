@@ -2539,7 +2539,7 @@ void eZapMain::blinkRecord()
 			{
 				static int cnt=0;
 				static int swp=0;
-				int fds=freeDiskspace( hddDev );
+				int fds=freeDiskspace( hddDev, "/hdd" );
 				if (!(cnt++ % 7))
 					swp^=1;
 				if (swp)
