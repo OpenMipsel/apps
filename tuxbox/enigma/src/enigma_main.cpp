@@ -1464,8 +1464,8 @@ eZapMain::eZapMain()
 	ButtonGreenDis->show();
 	ButtonYellowEn->hide();
 	ButtonYellowDis->show();
-	ButtonBlueEn->hide();
-	ButtonBlueDis->show();
+	ButtonBlueEn->show();
+	ButtonBlueDis->hide();
 
 	Clock=new eLabel(this);
 	ASSIGN(Clock, eLabel, "time");
@@ -3555,7 +3555,7 @@ extern eString getInfo(const char *file, const char *info);
 void eZapMain::runVTXT()
 {
 	eDebug("runVTXT");
-	if (isVT)
+//	if (isVT)
 	{
 		eZapPlugins plugins(2);
 		if ( plugins.execPluginByName("tuxtxt.cfg") != "OK" )
@@ -3866,7 +3866,6 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			runPluginExt();
 		else if (event.action == &i_enigmaMainActions->showEPGList && isEPG)
 		{
-			
 			showEPGList((eServiceReferenceDVB&)eServiceInterface::getInstance()->service);
 		}
 		else if ( subservicesel.quickzapmode() && event.action == &i_enigmaMainActions->nextSubService )
@@ -4067,7 +4066,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 #ifndef DISABLE_FILE
 		else if (event.action == &i_enigmaMainActions->showRecMovies)
 			showServiceSelector( eServiceSelector::dirLast, eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile), recordingsref, modeFile );
-		else if (event.action == &i_enigmaMainActions->showPlaylist)
+		else if (event.action == &i_enigmaMainActions->showPlaylist && mode == modeFile)
 			showServiceSelector( -1, playlistref );
 #endif
 		else if (event.action == &i_enigmaMainActions->modeRadio)
@@ -4085,6 +4084,15 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			{
 				if ( mode != modeTV )
 					setMode(modeTV, 2);
+				showServiceSelector(-1);
+			}
+		}
+		else if (event.action == &i_enigmaMainActions->modeFile)
+		{
+			if ( handleState() )
+			{
+				if ( mode != modeFile )
+					setMode(modeFile, 2);
 				showServiceSelector(-1);
 			}
 		}
@@ -4308,7 +4316,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		const eServiceReferenceDVB &serviceref=(const eServiceReferenceDVB&)_serviceref;
 
-		setVTButton(isVT);
+//		setVTButton(isVT);
 
 		// es wird nur dann versucht einen service als referenz-service zu uebernehmen, wenns den ueberhaupt
 		// gibt.

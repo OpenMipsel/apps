@@ -315,7 +315,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 					eWindow::globalCancel(eWindow::OFF);
 				}
 			}
-			else if ( editMode && event.action == &i_cursorActions->cancel)
+			else if ( editMode && event.action == &i_cursorActions->cancel )
 			{
 				delete editLabel;
 				editLabel=0;
@@ -406,6 +406,12 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 		break;
 	}
 	return 1;
+}
+
+void eTextInputField::lostFocus()
+{
+	eWindow::globalCancel(eWindow::ON);
+	eButton::lostFocus();
 }
 
 void eTextInputField::redrawWidget( gPainter *target, const eRect &area )

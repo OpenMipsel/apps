@@ -429,28 +429,28 @@ eZapNetworkSetup::eZapNetworkSetup():
 	rejectWWW->setText("WWW");
 	rejectWWW->move(ePoint(10,260));
 	rejectWWW->resize(eSize(90, fd+4));
-	rejectWWW->setHelpText(_("reject incomming connections on port 80"));
+	rejectWWW->setHelpText(_("reject incoming connections on port 80"));
 	rejectWWW->hide();
 
 	rejectTelnet=new eCheckbox(this, flags&2, 1);
 	rejectTelnet->setText("Telnet");
 	rejectTelnet->move(ePoint(120,260));
 	rejectTelnet->resize(eSize(90, fd+4));
-	rejectTelnet->setHelpText(_("reject incomming connections on port 23"));
+	rejectTelnet->setHelpText(_("reject incoming connections on port 23"));
 	rejectTelnet->hide();
 
 	rejectSamba=new eCheckbox(this, flags&4, 1);
 	rejectSamba->setText("Samba");
 	rejectSamba->move(ePoint(230,260));
 	rejectSamba->resize(eSize(100, fd+4));
-	rejectSamba->setHelpText(_("reject incomming connections on ports 137,138,139"));
+	rejectSamba->setHelpText(_("reject incoming connections on ports 137,138,139"));
 	rejectSamba->hide();
 
 	rejectFTP=new eCheckbox(this, flags&8, 1);
 	rejectFTP->setText("FTP");
 	rejectFTP->move(ePoint(350,260));
 	rejectFTP->resize(eSize(70, fd+4));
-	rejectFTP->setHelpText(_("reject incomming connections on ports 21"));
+	rejectFTP->setHelpText(_("reject incoming connections on ports 21"));
 	rejectFTP->hide();
 #endif
 

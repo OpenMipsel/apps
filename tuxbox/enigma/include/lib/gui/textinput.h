@@ -26,6 +26,7 @@ class eTextInputField: public eButton
 	eString isotext;
 	eLabel *editLabel;
 	std::stack< std::pair<int,int> > scroll;
+	void lostFocus();
 public:
 	eTextInputField( eWidget* parent, eLabel *descr=0, const char *deco="eNumber" );
 	void setMaxChars( int i ) { maxChars = i; }

@@ -826,7 +826,7 @@ void eLNBSetup::onSave()
 	if ( !p )  // then we must create new LNB; (New is selected)
 	{
 		eTransponderList::getInstance()->getLNBs().push_back( eLNB( *eTransponderList::getInstance() ) );  // add new LNB
-		p = &eTransponderList::getInstance()->getLNBs().back();   // get adresse from the new lnb
+		p = &eTransponderList::getInstance()->getLNBs().back();   // get address from the new lnb
 		p->getDiSEqC().setRotorDefaultOptions();
 //		eDebug("now we have a new LNB Created = %p", p );
 	}

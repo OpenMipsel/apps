@@ -69,7 +69,7 @@ ENgrabSetup::ENgrabSetup():
 	serverMAC=new eTextInputField(this);
 	serverMAC->move(ePoint(160,100));
 	serverMAC->resize(eSize(200, fd+10));
-	serverMAC->setHelpText(_("enter MAC adress of server (for wake on lan)"));
+	serverMAC->setHelpText(_("enter MAC address of server (for wake on lan)"));
 	serverMAC->setUseableChars("01234567890abcdefABCDEF:");
 	serverMAC->setMaxChars(17);
 	serverMAC->loadDeco();
@@ -89,7 +89,7 @@ ENgrabSetup::ENgrabSetup():
 	bServerMAC->setShortcut("blue");
 	bServerMAC->setShortcutPixmap("blue");
 	bServerMAC->setText(_("detect MAC Adress"));
-	bServerMAC->setHelpText(_("try to autodetect server MAC adress"));
+	bServerMAC->setHelpText(_("try to autodetect server MAC address"));
 	bServerMAC->loadDeco();
 	CONNECT( bServerMAC->selected, ENgrabSetup::detectMAC );
 
