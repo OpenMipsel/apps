@@ -10,9 +10,8 @@ struct decoderParameters
 	int vpid, apid, tpid, pcrpid, ecmpid, emmpid, pmtpid, casystemid;
 	int audio_type;
 
-	int flushbuffer;
-	
 	int recordmode;
+	int flushbuffer;
 	
 	__u8 descriptors[2048];
 	int descriptor_length;

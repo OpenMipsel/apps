@@ -6,6 +6,7 @@
 #include <core/base/message.h>
 #include <core/base/thread.h>
 #include <core/base/eerror.h>
+#include <core/base/estring.h>
 
 #include <set>
 
@@ -54,7 +55,11 @@ class eDVBRecorder: private eThread, eMainloop, public Object
 	eSocketNotifier *sn;
 	
 	eLock lock;
+	eString filename;
+	int splits, splitsize;
+	int size;
 	
+	void openFile(int suffix=0);
 	void dataAvailable(int what);
 
 	eFixedMessagePump<eDVBRecorderMessage> messagepump;

@@ -21,6 +21,9 @@ class eDVRPlayerThread: public eThread, public eMainloop, public Object
 	int dvrfd;
 	int sourcefd;
 	int speed;
+	int slice;
+	off64_t slicesize;
+	eString filename;
 	eSocketNotifier *inputsn, *outputsn;
 	void readMore(int what);
 	void outputReady(int what);
@@ -28,6 +31,7 @@ class eDVRPlayerThread: public eThread, public eMainloop, public Object
 	eLock lock;
 	
 	void dvrFlush();
+	int openFile(int slice=0);
 public:
 	struct eDVRPlayerThreadMessage
 	{
