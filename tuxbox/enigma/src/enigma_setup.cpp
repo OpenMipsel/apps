@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.13 2003/02/18 23:13:27 bernroth Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.14 2003/02/26 05:23:04 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -107,8 +107,6 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), eString().sprintf("(%d) %s", ++entry, _("upgrade firmware")) ))->selected, eZapSetup::sel_upgrade);
 	if (haverfmod)
 		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapSetup::sel_rfmod);
-
-	list.selchanged(list.getCurrent());
 }
 
 eZapSetup::~eZapSetup()

@@ -381,6 +381,7 @@ inline void eListBox<T>::gotFocus()
 	have_focus++;
 
 	if (!childs.empty())
+	{
 		if ( eListBoxBase::newFocus() )   // recalced ?
 		{
 			ePtrList_T_iterator it = current;
@@ -394,6 +395,11 @@ inline void eListBox<T>::gotFocus()
 				if (entry == current)
 					invalidateEntry(i);
 		}
+	}
+	if (flags & flagShowEntryHelp)
+	{
+		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
+	}
 }
 
 template <class T>
@@ -897,10 +903,6 @@ inline int eListBoxWindow<T>::eventHandler( const eWidgetEvent& e)
 {
 	switch(e.type)
 	{
-		case eWidgetEvent::willShow:
-			if (statusbar)
-				statusbar->setText( list.getCurrent()->getHelpText() );
-		break;
 		default:
 			return eWindow::eventHandler( e );
 	}

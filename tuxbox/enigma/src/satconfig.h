@@ -115,13 +115,13 @@ class eDiSEqCPage : public eWidget
 	friend class eLNBSetup;
 	eSatellite *sat;
 	eComboBox *DiSEqCMode, *DiSEqCParam, *MiniDiSEqCParam, *DiSEqCRepeats,
-						*uSwitch1, *uSwitch2, *uSwitch3, *uSwitch4;
+						*ucInput;
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
 	eButton *cancel; // close the window without apply changes
 	eButton *prev; // shows the LNB Configuration Dialog
 //	eButton *next; // shows the Rotor Setup (for non GotoXX Rotors)
 	eCheckbox *SeqRepeat, *SwapCmds;
-	eLabel *lDiSEqCRepeats, *lDiSEqCParam, *luSwitch1, *luSwitch2, *luSwitch3, *luSwitch4;
+	eLabel *lDiSEqCRepeats, *lDiSEqCParam, *lucInput;
 	eStatusBar *statusbar;
          
 	void lnbChanged( eListBoxEntryText* );

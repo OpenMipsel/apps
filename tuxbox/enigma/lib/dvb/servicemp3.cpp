@@ -850,7 +850,6 @@ eString eServiceHandlerMP3::getInfo(int id)
 eServiceMP3::eServiceMP3(const char *filename): eService("")
 {
 	id3_file *file;
-	
 
 //	eDebug("*************** servicemp3.cpp FILENAME: %s", filename);
 
@@ -873,7 +872,7 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 	if (!file)
 		return;
 		
-	//id3=&id3tags;
+	id3=&id3tags;
 	
 	id3_tag *tag=id3_file_tag(file);
 	if (!tag)
@@ -919,6 +918,7 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 
 eServiceMP3::eServiceMP3(const eServiceMP3 &c): eService(c)
 {
+	eDebug("BLA");
 	id3tags=c.id3tags;
 	id3=&id3tags;
 }

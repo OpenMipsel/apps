@@ -43,7 +43,7 @@ struct serviceSelectorActions
 		pathUp(map, "pathUp", _("go up a directory"), eAction::prioDialog),
 		showEPGSelector(map, "showEPGSelector", _("shows the EPG selector for the highlighted channel"), eAction::prioDialog),
 		showMenu(map, "showMenu", _("show service selector menu"), eAction::prioDialog),
-		toggleRoot(map, "toggleRoot", _("toggle between user bouquets, normal bouquets and Playlist"), eAction::prioDialog),
+		toggleRoot(map, "toggleRoot", _("toggle between user bouquets, normal dvb bouquets"), eAction::prioDialog),
 		addService(map, "addService", _("add Service"), eAction::prioDialog),
 		addServiceToUserBouquet(map, "addServiceToUserBouquet", _("add Service to a specific user bouquet"), eAction::prioDialog),
 		modeTV(map, "modeTV", _("switch to TV mode"), eAction::prioDialog),

@@ -494,15 +494,14 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 
 	mp.addPage(w);
 
-	w=new siCA(this);
-	w->move(ePoint(0, 0));
-	w->resize( s );
-	w->hide();
-
-	mp.addPage(w);
-	
 	if ((ref.type == eServiceReference::idDVB) && (!ref.path))
 	{
+		w=new siCA(this);
+		w->move(ePoint(0, 0));
+		w->resize( s );
+		w->hide();
+		mp.addPage(w);
+
 		w=new eWidget(this);
 		w->move(ePoint(0, 0));
 		w->resize( s );
@@ -519,18 +518,23 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 		eWidget *fe=new eFEStatusWidget(w, eFrontend::getInstance());
 		fe->move(ePoint(0, 200));
 		fe->resize(eSize(clientrect.width(), 100));
+		mp.addPage(w);
+		
 	} else
 	{
-		w=new eLabel(this);
-		w->setText(_("no information is available"));
-		((eLabel*)w)->setFlags(eLabel::flagVCenter);
-		((eLabel*)w)->setAlign(eTextPara::dirCenter);
-		w->move(ePoint(0, 0));
-		w->resize( s );
-		w->hide();
+		for ( int i = 0; i < 2; i++ )
+		{
+			w=new eLabel(this);
+			w->setText(_("no information is available"));
+			((eLabel*)w)->setFlags(eLabel::flagVCenter);
+			((eLabel*)w)->setAlign(eTextPara::dirCenter);
+			w->move(ePoint(0, 0));
+			w->resize( s );
+			w->hide();
+			mp.addPage(w);
+		}
 	}
 	
-	mp.addPage(w);
 	mp.first();
 
 	statusbar.loadDeco();

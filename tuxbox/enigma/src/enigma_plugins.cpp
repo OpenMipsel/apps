@@ -120,7 +120,7 @@ ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* des
 }
 
 eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
-	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400, true)
+	:eListBoxWindow<ePlugin>(_("Plugins"), 10, 400)
 {
 	setHelpText(_("select plugin and press ok"));
 	move(ePoint(150, 100));

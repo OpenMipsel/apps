@@ -355,7 +355,6 @@ private:
 	
 	int mode,             // current mode .. TV, Radio, File
 			state;
-	int hddDev;
 	void onRotorStart( int newPos );
 	void onRotorStop();
 	void onRotorTimeout();

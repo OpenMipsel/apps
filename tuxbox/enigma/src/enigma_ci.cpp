@@ -24,7 +24,7 @@ void enigmaCImmi::entrySelected(eListBoxMenuEntry *choice)
 		eDebug("no selection");
 		return;
 	}
-	eDebug("menu_answ: %d",choice->getEntry());	
+	eDebug("menu_answ: %d",choice->getEntry());
 
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_menuansw,choice->getEntry()));
 }
@@ -41,11 +41,9 @@ void enigmaCImmi::answokPressed()
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_answ,0));
 }
 
-enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0)
+enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0), DVBCI(DVBCI)
 {
 	int fd=eSkin::getActive()->queryValue("fontsize", 8); //20
-
-	//DVBCI=eDVB::getInstance()->DVBCI;
 
 	setText(_("Common Interface Module - mmi"));
 	move(ePoint(50, 70));
@@ -84,7 +82,7 @@ enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0)
 	abort->setHelpText(_("leave CI mmi"));
 	abort->loadDeco();
 
-	CONNECT(abort->selected, enigmaCImmi::abortPressed);		
+	CONNECT(abort->selected, enigmaCImmi::abortPressed);
 
 	lentrys=new eListBox<eListBoxMenuEntry>(this);
 	lentrys->setName("MenuEntrys");
@@ -92,21 +90,20 @@ enigmaCImmi::enigmaCImmi(eDVBCI *DVBCI): eWindow(0), mmi(0)
 	lentrys->resize(eSize(getClientSize().width()-40, (fd+4)*6));
 	lentrys->setFlags(eListBoxBase::flagNoPageMovement);
 	lentrys->hide();
-	CONNECT(lentrys->selected, enigmaCImmi::entrySelected);		
+	CONNECT(lentrys->selected, enigmaCImmi::entrySelected);
 
 	status = new eStatusBar(this);	
 	status->move( ePoint(0, clientrect.height()-30) );
 	status->resize( eSize( clientrect.width(), 30) );
 	status->loadDeco();
 	
-	CONNECT(DVBCI->ci_mmi_progress, enigmaCImmi::getmmi);		
+	CONNECT(this->DVBCI->ci_mmi_progress, enigmaCImmi::getmmi);
 
-	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_begin));
+	this->DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_begin));
 }
 
 enigmaCImmi::~enigmaCImmi()
 {
-
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::mmi_end));
 
 	if (status)
@@ -143,7 +140,7 @@ long enigmaCImmi::LengthField(unsigned char *lengthfield,long maxlength,int *fie
 	else
 		*fieldlen = 1;
 	
-	return Length;				
+	return Length;
 }
 
 #if 1
@@ -168,9 +165,9 @@ void enigmaCImmi::getmmi(const char *data)
 		printf("%02x ",data[i]);
 	printf("\n");
 
-	lentrys->clearList();		
+	lentrys->clearList();
 	lentrys->hide();
-	
+
 	if(mmi)
 		delete mmi;
 
@@ -227,7 +224,7 @@ void enigmaCImmi::getmmi(const char *data)
 		ok->loadDeco();
 		ok->show();
 
-		CONNECT(ok->selected, enigmaCImmi::answokPressed);		
+		CONNECT(ok->selected, enigmaCImmi::answokPressed);
 
 		rp+=size;
 	}
@@ -270,16 +267,16 @@ void enigmaCImmi::getmmi(const char *data)
 				currElement++;
 				
 				if(currElement==1)
-					tt->setText(text);					
+					tt->setText(text);
 				if(currElement==2)
-					stt->setText(text);					
+					stt->setText(text);
 				if(currElement==3)
-					bt->setText(text);					
+					bt->setText(text);
 				
 				if(currElement>3)
 				{
 					lentrys->beginAtomic();	
-//					eListBoxMenuEntry *e=new eListBoxMenuEntry(lentrys,text,currElement-3);
+					new eListBoxMenuEntry(lentrys,text,currElement-3);
 					lentrys->endAtomic();	
 				}
 				rp += size;
@@ -310,6 +307,7 @@ void enigmaCImmi::getmmi(const char *data)
 
 	lentrys->clearList();		
 	lentrys->hide();
+
 	answ->hide();
 	answok->hide();
 	headansw->hide();
@@ -382,7 +380,7 @@ void enigmaCImmi::getmmi(const char *data)
 					{
 						lentrys->beginAtomic();	
 						eListBoxMenuEntry *e=new eListBoxMenuEntry(lentrys,buffer,entry++);
-						lentrys->endAtomic();	
+						lentrys->endAtomic();
 					}							
 					menupos++;
 				}	

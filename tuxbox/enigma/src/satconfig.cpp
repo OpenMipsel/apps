@@ -841,11 +841,7 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().DiSEqCRepeats = (int) DiSEqCPage->DiSEqCRepeats->getCurrent()->getKey();
 	p->getDiSEqC().SeqRepeat = DiSEqCPage->SeqRepeat->isChecked();
 	p->getDiSEqC().SwapCmds = DiSEqCPage->SwapCmds->isChecked();	
-	p->getDiSEqC().uncommitted_cmd = 0;
-	p->getDiSEqC().uncommitted_cmd |= (int) DiSEqCPage->uSwitch1->getCurrent()->getKey();
-	p->getDiSEqC().uncommitted_cmd |= (int) DiSEqCPage->uSwitch2->getCurrent()->getKey();
-	p->getDiSEqC().uncommitted_cmd |= (int) DiSEqCPage->uSwitch3->getCurrent()->getKey();
-	p->getDiSEqC().uncommitted_cmd |= (int) DiSEqCPage->uSwitch4->getCurrent()->getKey();
+	p->getDiSEqC().uncommitted_cmd = (int)DiSEqCPage->ucInput->getCurrent()->getKey();
 	if ( p != sat->getLNB() )  // the satellite must removed from the old lnb and inserts in the new
 	{
 		p->addSatellite( sat->getLNB()->takeSatellite( sat ) );
@@ -1054,44 +1050,35 @@ eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
 	new eListBoxEntryText( *DiSEqCRepeats, _("One"), (void*)1, 0, _("sends one repeat") );
 	new eListBoxEntryText( *DiSEqCRepeats, _("Two"), (void*)2, 0, _("sends two repeats") );
 	new eListBoxEntryText( *DiSEqCRepeats, _("Three"), (void*)3, 0, _("sends three repeats") );
-  
+
+	lucInput = new eLabel(this);
+	lucInput->setName("lucInput");
+
+	ucInput = new eComboBox( this, 8, lucInput );
+	ucInput->setName("ucInput");
+	new eListBoxEntryText( *ucInput, _("None"), (void*)0, 0, _("sends no uncommitted switch command") );
+	new eListBoxEntryText( *ucInput, _("Input 1"), (void*)240, 0, _("select uncommitted switch Input 1") );
+	new eListBoxEntryText( *ucInput, _("Input 2"), (void*)241, 0, _("select uncommitted switch Input 2") );
+	new eListBoxEntryText( *ucInput, _("Input 3"), (void*)242, 0, _("select uncommitted switch Input 3") );
+	new eListBoxEntryText( *ucInput, _("Input 4"), (void*)243, 0, _("select uncommitted switch Input 4") );
+	new eListBoxEntryText( *ucInput, _("Input 5"), (void*)244, 0, _("select uncommitted switch Input 5") );
+	new eListBoxEntryText( *ucInput, _("Input 6"), (void*)245, 0, _("select uncommitted switch Input 6") );
+	new eListBoxEntryText( *ucInput, _("Input 7"), (void*)246, 0, _("select uncommitted switch Input 7") );
+	new eListBoxEntryText( *ucInput, _("Input 8"), (void*)247, 0, _("select uncommitted switch Input 8") );
+	new eListBoxEntryText( *ucInput, _("Input 9"), (void*)248, 0, _("select uncommitted switch Input 9") );
+	new eListBoxEntryText( *ucInput, _("Input 10"), (void*)249, 0, _("select uncommitted switch Input 10") );
+	new eListBoxEntryText( *ucInput, _("Input 11"), (void*)250, 0, _("select uncommitted switch Input 11") );
+	new eListBoxEntryText( *ucInput, _("Input 12"), (void*)251, 0, _("select uncommitted switch Input 12") );
+	new eListBoxEntryText( *ucInput, _("Input 13"), (void*)252, 0, _("select uncommitted switch Input 13") );
+	new eListBoxEntryText( *ucInput, _("Input 14"), (void*)253, 0, _("select uncommitted switch Input 14") );
+	new eListBoxEntryText( *ucInput, _("Input 15"), (void*)254, 0, _("select uncommitted switch Input 15") );
+	new eListBoxEntryText( *ucInput, _("Input 16"), (void*)255, 0, _("select uncommitted switch Input 16") );
+    
 	SeqRepeat = new eCheckbox(this);
 	SeqRepeat->setName("SeqRepeat");
 
 	SwapCmds = new eCheckbox(this);
 	SwapCmds->setName("SwapCmds");
-
-	luSwitch1 = new eLabel(this);
-	luSwitch1->setName("luSwitch1");
-	uSwitch1 = new eComboBox( this, 4, luSwitch1 );
-	uSwitch1->setName("uSwitch1");
-	new eListBoxEntryText( *uSwitch1, _("None"), (void*)0, 0, _("sends no cmd for this switch") );
-	new eListBoxEntryText( *uSwitch1, "A", (void*)16, 0, _("sends cmd A for this switch") );
-	new eListBoxEntryText( *uSwitch1, "B", (void*)17, 0, _("sends cmd B for this switch") );
-
-	luSwitch2 = new eLabel(this);
-	luSwitch2->setName("luSwitch2");
-	uSwitch2 = new eComboBox( this, 4, luSwitch2 );
-	uSwitch2->setName("uSwitch2");
-	new eListBoxEntryText( *uSwitch2, _("None"), (void*)0, 0, _("sends no cmd for this switch") );
-	new eListBoxEntryText( *uSwitch2, "A", (void*)32, 0, _("sends cmd A for this switch") );
-	new eListBoxEntryText( *uSwitch2, "B", (void*)34, 0, _("sends cmd B for this switch") );
-
-	luSwitch3 = new eLabel(this);
-	luSwitch3->setName("luSwitch3");
-	uSwitch3 = new eComboBox( this, 4, luSwitch3 );
-	uSwitch3->setName("uSwitch3");
-	new eListBoxEntryText( *uSwitch3, _("None"), (void*)0, 0, _("sends no cmd for this switch") );
-	new eListBoxEntryText( *uSwitch3, "A", (void*)64, 0, _("sends cmd A for this switch") );
-	new eListBoxEntryText( *uSwitch3, "B", (void*)68, 0, _("sends cmd B for this switch") );
-
-	luSwitch4 = new eLabel(this);
-	luSwitch4->setName("luSwitch4");
-	uSwitch4 = new eComboBox( this, 4, luSwitch4 );
-	uSwitch4->setName("uSwitch4");
-	new eListBoxEntryText( *uSwitch4, _("None"), (void*)0, 0, _("sends no cmd for this switch") );
-	new eListBoxEntryText( *uSwitch4, "A", (void*)128, 0, _("sends cmd A for this switch") );
-	new eListBoxEntryText( *uSwitch4, "B", (void*)136, 0, _("sends cmd B for this switch") );
 
 /*	next = new eButton(this);
 	next->setName("next");*/
@@ -1127,14 +1114,8 @@ void eDiSEqCPage::DiSEqCModeChanged( eListBoxEntryText* e )
 		case eDiSEqC::V1_1:
 			lDiSEqCRepeats->show();
 			DiSEqCRepeats->show();
-			luSwitch1->show();
-			uSwitch1->show();
-			luSwitch2->show();
-			uSwitch2->show();
-			luSwitch3->show();
-			uSwitch3->show();
-			luSwitch4->show();
-			uSwitch4->show();
+			lucInput->show();
+			ucInput->show();
 			SwapCmds->show();
 		case eDiSEqC::V1_0:
 			lDiSEqCParam->show();
@@ -1150,14 +1131,8 @@ void eDiSEqCPage::DiSEqCModeChanged( eListBoxEntryText* e )
 			DiSEqCParam->hide();
 			lDiSEqCParam->hide();
 		case eDiSEqC::V1_0:
-			luSwitch1->hide();
-			uSwitch1->hide();
-			luSwitch2->hide();
-			uSwitch2->hide();
-			luSwitch3->hide();
-			uSwitch3->hide();
-			luSwitch4->hide();
-			uSwitch4->hide();
+			lucInput->hide();
+			ucInput->hide();
 			lDiSEqCRepeats->hide();
 			DiSEqCRepeats->hide();
 			SwapCmds->hide();
@@ -1179,10 +1154,7 @@ void eDiSEqCPage::lnbChanged( eListBoxEntryText *lnb )
 		DiSEqCRepeats->setCurrent( (void*) diseqc.DiSEqCRepeats );
 		SeqRepeat->setCheck( (int) diseqc.SeqRepeat );
 		SwapCmds->setCheck( (int) diseqc.SwapCmds );	
-		uSwitch1->setCurrent( (void*) (diseqc.uncommitted_cmd & (1|16)) );
-		uSwitch2->setCurrent( (void*) (diseqc.uncommitted_cmd & (2|32)) );
-		uSwitch3->setCurrent( (void*) (diseqc.uncommitted_cmd & (4|64)) );
-		uSwitch4->setCurrent( (void*) (diseqc.uncommitted_cmd & (8|128)) );
+		ucInput->setCurrent( (void*) diseqc.uncommitted_cmd );
 	}
 	else
 	{
@@ -1192,10 +1164,7 @@ void eDiSEqCPage::lnbChanged( eListBoxEntryText *lnb )
 		DiSEqCRepeats->setCurrent( 0 );
 		SeqRepeat->setCheck( 0 );
 		SwapCmds->setCheck( 0 );
-		uSwitch1->setCurrent( (void*) 0 );
-		uSwitch2->setCurrent( (void*) 0 );
-		uSwitch3->setCurrent( (void*) 0 );
-		uSwitch4->setCurrent( (void*) 0 );
+		ucInput->setCurrent( (void*) 0 );
 	}
 	DiSEqCModeChanged( (eListBoxEntryText*) DiSEqCMode->getCurrent() );
 }

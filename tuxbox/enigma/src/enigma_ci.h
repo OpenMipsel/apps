@@ -37,8 +37,8 @@ class enigmaCImmi: public eWindow
 	eStatusBar *status;
 	eLabel *tt,*stt,*bt,*cistate,*headansw;
 	eNumber *answ;
-	eDVBCI *DVBCI;
 	eCImmi *mmi;
+	eDVBCI *DVBCI;
 
 private:
 	void okPressed();

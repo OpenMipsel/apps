@@ -974,7 +974,7 @@ eZapMain::eZapMain()
 		char* str;
 		// normale dvb bouquet pathes...
 		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path0", mode).c_str(), str)
-				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/2/path0", mode).c_str(), str) )
+				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/&d/path2", mode).c_str(), str) )
 		{                                                        
 			modeLast[mode][0].setString(str);
 			//			eDebug(str);
@@ -982,11 +982,15 @@ eZapMain::eZapMain()
 		}
 		else  // no path in registry... create default..
 		{
+			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
+			// 3 roots rotiert wird ( history ).. kann irgendwann wieder raus..
+			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode ).c_str() );
+			
 			modeLast[mode][0]=eServiceStructureHandler::getRoot(mode+1);
 			modeLast[mode][0].down( eServiceReference() );
 		}
 		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path1", mode).c_str(), str)
-				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/2/path1", mode).c_str(), str) )
+				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode).c_str(), str) )
 		{
 			modeLast[mode][1].setString(str);
 			//			eDebug(str);
@@ -994,6 +998,10 @@ eZapMain::eZapMain()
 		}
 		else  // no path in registry... create default..
 		{
+			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
+			// 3 roots rotiert wird ( history )
+			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode ).c_str());
+			
 			modeLast[mode][1]=(mode==modeTV)?userTVBouquetsRef:(mode==modeRadio)?userRadioBouquetsRef:playlistref;
 			modeLast[mode][1].down( eServiceReference() );
 		}
@@ -1716,10 +1724,7 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 		else
 			servicename="record";
 
-		if (cur_event_text.length())
-			descr = cur_event_text;
-
-		else if ( event )
+		if ( event )
 		{
 			for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
 			{
@@ -1733,6 +1738,8 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 				}
 			}
 		}
+		else if (cur_event_text.length())
+			descr = cur_event_text;
 
 		eString filename = servicename + " - " + descr;
 		eString cname="";
@@ -1799,7 +1806,10 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 				}
 			}
 			if ( ok )
+			{
+				DVRSpaceLeft->show();
 				recStatusBlink.start(500, 1);
+			}
 			else
 				return -3;
 		}
@@ -2021,9 +2031,11 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		else if ( it->service.type == eServicePlaylistHandler::ID )
 			eServicePlaylistHandler::getInstance()->removePlaylist( it->service );
 
-		if (removeEntry)  // handle recorded streams..
+		if (removeEntry) // remove service.. and linked files..
 		{
-			eServiceInterface::getInstance()->removeRef(ref);
+			if (ref.type == eServicePlaylistHandler::ID)
+				eServiceInterface::getInstance()->removeRef(ref);
+
 			std::list<ePlaylistEntry>::iterator i = it;
 			i++;
 			if ( i == pl->getList().end() )
@@ -2692,11 +2704,11 @@ void eZapMain::blinkRecord()
 			else
 				recstatus->show();
 
-			if ( hddDev != 1 )
+			static int cnt=0;
+			static int swp=0;
+			int fds=freeRecordSpace();
+			if (fds)
 			{
-				static int cnt=0;
-				static int swp=0;
-				int fds=freeRecordSpace();
 				if (!(cnt++ % 7))
 					swp^=1;
 				if (swp)
@@ -2709,7 +2721,7 @@ void eZapMain::blinkRecord()
 				else
 				{
 					int min = fds/33;
-					
+
 					if (min<60)
 						DVRSpaceLeft->setText(eString().sprintf("~%d min free", min ));
 					else
@@ -3130,6 +3142,8 @@ void eZapMain::showEPG_Streaminfo()
 	{
 		doubleklickTimer.stop();
 		doubleklickTimerConnection.disconnect();
+		if ( isVisible() )
+			hide();
 		eStreaminfo si(0, eServiceInterface::getInstance()->service);
 		si.setLCD(LCDTitle, LCDElement);
 		si.show();

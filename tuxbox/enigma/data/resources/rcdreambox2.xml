@@ -178,7 +178,7 @@
 		</actionmap>
 
 		<actionmap name="serviceSelector">
-			<action name="nextBouquet" key="bouqup" flags="m" />
+			<action name="nextBouquet" key="bouqup" flags="mr" />
 			<action name="prevBouquet" key="bouqdown" flags="mr" />
 			<action name="pathUp" key="0" flags="m" />
 			<action name="gotoFirstService" key="prev" flags="m" />

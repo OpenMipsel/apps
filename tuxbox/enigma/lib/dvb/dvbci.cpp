@@ -90,7 +90,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 		dataAvailable(0);
 		break;
 	case eDVBCIMessage::reset:
-		//eDebug("[DVBCI] got reset message..");
+//		eDebug("[DVBCI] got reset message..");
 		if(!ci_state)
 			ci_progress("no module");	
 		ci_state=0;
@@ -99,7 +99,7 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 		dataAvailable(0);
 		break;
 	case eDVBCIMessage::init:
-		//eDebug("[DVBCI] got init message..");
+//		eDebug("[DVBCI] got init message..");
 		if(ci_state)
 			newService();
 		else
@@ -109,39 +109,39 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 		newService();
 		break;
 	case eDVBCIMessage::mmi_begin:
-		//eDebug("[DVBCI] got mmi_begin message..");
+//		eDebug("[DVBCI] got mmi_begin message..");
 		mmi_begin();
 		break;
 	case eDVBCIMessage::mmi_end:
-		//eDebug("[DVBCI] got mmi_end message..");
+//		eDebug("[DVBCI] got mmi_end message..");
 		mmi_end();
 		break;
 	case eDVBCIMessage::mmi_answ:
-		//eDebug("[DVBCI] got mmi_answ message..");
+//		eDebug("[DVBCI] got mmi_answ message..");
 		mmi_answ(message.data, 0);
 		break;
 	case eDVBCIMessage::mmi_menuansw:
-		//eDebug("[DVBCI] got mmi_menu_answ message..");
+//		eDebug("[DVBCI] got mmi_menu_answ message..");
 		mmi_menuansw((int)message.pid);
 		break;
 	case eDVBCIMessage::exit:
-		//eDebug("[DVBCI] got exit message..");
+//		eDebug("[DVBCI] got exit message..");
 		quit();
 		break;
 	case eDVBCIMessage::getcaids:
-		//eDebug("[DVBCI] got getcaids message..");
+//		eDebug("[DVBCI] got getcaids message..");
 		pushCAIDs();
 		break;
 	case eDVBCIMessage::PMTflush:
-		//eDebug("[DVBCI] got PMTflush message..");
+//		eDebug("[DVBCI] got PMTflush message..");
 		PMTflush(message.pid);
 		break;
 	case eDVBCIMessage::PMTaddPID:
-		//eDebug("[DVBCI] got PMTaddPID message..");
+//		eDebug("[DVBCI] got PMTaddPID message..");
 		PMTaddPID(message.pid,message.streamtype);
 		break;
 	case eDVBCIMessage::PMTaddDescriptor:
-		//eDebug("[DVBCI] got PMTaddDescriptor message..");
+//		eDebug("[DVBCI] got PMTaddDescriptor message..");
 		PMTaddDescriptor(message.data);
 		delete[] message.data;
 		break;
@@ -152,7 +152,7 @@ void eDVBCI::mmi_begin()
 {
 	unsigned char buffer[10];
 	
-	eDebug("start mmi");
+//	eDebug("start mmi");
 	memcpy(buffer,"\x90\x2\x0\x2\x9f\x80\x22\x0",8);
 	sendTPDU(0xA0,8,1,buffer);
 }
@@ -161,14 +161,14 @@ void eDVBCI::mmi_end()
 {
 	unsigned char buffer[10];
 
-	eDebug("stop mmi");
+//	eDebug("stop mmi");
 	memcpy(buffer,"\x90\x2\x0\x4\x9f\x88\x00\x1\x0",9);
 	sendTPDU(0xA0,9,1,buffer);
 }
 
 void eDVBCI::mmi_answ(unsigned char *buf,int len)
 {
-	eDebug("got mmi_answer");
+//	eDebug("got mmi_answer");
 	unsigned char buffer[13];
 	memcpy(buffer,"\x90\x2\x0\x4\x9f\x88\x08\x05\x1\x0\x0\x0\x0",13);
 	sendTPDU(0xA0,13,1,buffer);
@@ -176,7 +176,7 @@ void eDVBCI::mmi_answ(unsigned char *buf,int len)
 
 void eDVBCI::mmi_menuansw(int val)
 {
-	eDebug("got mmi_menu_answer %d",val);
+//	eDebug("got mmi_menu_answer %d",val);
 	unsigned char buffer[9];
 	memcpy(buffer,"\x90\x2\x0\x4\x9f\x88\x0B\x1",8);
 	buffer[8]=val&0xff;
@@ -231,7 +231,7 @@ void eDVBCI::newService()
 			break;
 	if(i==MAX_SESSIONS)
 	{
-		eDebug("NO SESSION ID for CA-MANAGER");		
+		eDebug("NO SESSION ID for CA-MANAGER");
 		return;
 	}	
 	session=i;
@@ -357,11 +357,9 @@ void eDVBCI::clearCAIDs()
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 	if(!sapi)
 		return;
-		
-	std::set<int>& availCA = sapi->availableCASystems;
 
 	lock.lock();
-	availCA.clear();
+	sapi->availableCASystems.clear();
 	lock.unlock();
 	
 	caidcount=0;
@@ -378,12 +376,11 @@ void eDVBCI::pushCAIDs()
 	if(!sapi)
 		return;
 
-	std::set<int>& availCA = sapi->availableCASystems;
-
 	lock.lock();	
 	eDebug("count for caids: %d",caidcount);
+
 	for(unsigned int i=0;i<caidcount;i++)
-		availCA.insert(caids[i]);
+		sapi->availableCASystems.insert(caids[i]);
 
 	lock.unlock();
 }
