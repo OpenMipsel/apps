@@ -22,7 +22,7 @@ void *gRC::thread_wrapper(void *ptr)
 
 gRC *gRC::instance=0;
 
-gRC::gRC(): queuelock(MAXSIZE), queue(1536)
+gRC::gRC(): queuelock(MAXSIZE), queue(2048)
 {
 	ASSERT(!instance);
 	instance=this;

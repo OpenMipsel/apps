@@ -146,7 +146,7 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 		int ypos = (rect.height() - folder->y) / 2;
 		rc->blit( *folder, ePoint(10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
 	}
-	else if (flags & flagShowNumber)
+	else if (flags & flagShowNumber && listbox->getColumns() == 1)
 	{
 		int n=-1;
 		if (flags & flagOwnNumber)
@@ -658,25 +658,71 @@ void eServiceSelector::updateCi()
 
 int eServiceSelector::eventHandler(const eWidgetEvent &event)
 {
+	int num=0;
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
-			if (event.action == &i_numberActions->key2 && !movemode)
-				gotoChar(2);
+			if (event.action == &i_numberActions->key1 && !movemode)
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=1;
+			}
+			else if (event.action == &i_numberActions->key2 && !movemode)
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=2;
+				else
+					gotoChar(2);
+			}
 			else if (event.action == &i_numberActions->key3 && !movemode)
-				gotoChar(3);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=3;
+				else
+					gotoChar(3);
+			}
 			else if (event.action == &i_numberActions->key4 && !movemode)
-				gotoChar(4);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=4;
+				else
+					gotoChar(4);
+			}
 			else if (event.action == &i_numberActions->key5 && !movemode)
-				gotoChar(5);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=5;
+				else
+					gotoChar(5);
+			}
 			else if (event.action == &i_numberActions->key6 && !movemode)
-				gotoChar(6);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=6;
+				else
+					gotoChar(6);
+			}
 			else if (event.action == &i_numberActions->key7 && !movemode)
-				gotoChar(7);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=7;
+				else
+					gotoChar(7);
+			}
 			else if (event.action == &i_numberActions->key8 && !movemode)
-				gotoChar(8);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=8;
+				else
+					gotoChar(8);
+			}
 			else if (event.action == &i_numberActions->key9 && !movemode)
-				gotoChar(9);
+			{
+				if ( serviceentryflags&eListBoxEntryService::flagOwnNumber )
+					num=9;
+				else
+					gotoChar(9);
+			}
 			else if (event.action == &i_serviceSelectorActions->prevBouquet && !movemode && path.size() > 1)
 			{
 				services->beginAtomic();
@@ -791,6 +837,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					services->beginAtomic();
 					actualize();
 					selectService(selected);
+					
 					services->endAtomic();
 				}
 				if (editMode) // only when a playlist is showed...
@@ -799,7 +846,26 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else
 				break;
-
+			if (num)
+			{
+				hide();
+				eServiceNumberWidget s(num);
+				s.show();
+				num = s.exec();
+				s.hide();
+				if (num != -1)
+				{
+					if (selectService( num ))
+					{
+						result=&services->getCurrent()->service;
+						close(0);
+					}
+					else
+						show();
+				}
+				else
+					show();
+			}
 			return 1;
 		default:
 			break;
