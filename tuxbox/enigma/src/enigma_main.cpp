@@ -2326,7 +2326,6 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 	{
 		serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
 		setSmartcardLogo( serviceFlags & eServiceHandler::flagIsScrambled );
-		set16_9Logo(0);
 		if (serviceFlags & eServiceHandler::flagSupportPosition)
 		{
 			progresstimer.start(1000);
