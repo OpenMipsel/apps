@@ -187,11 +187,16 @@ tsAutomatic::tsAutomatic(eWidget *parent)
 	c_eraseall->setName("eraseall");
 	c_eraseall->hide();
 
-	int snocircular=0;
-	eConfig::getInstance()->getKey("/elitedvb/DVB/config/nocircular",snocircular);
-	c_nocircular=new eCheckbox(this,snocircular);
-	c_nocircular->setName("nocircular");
-	c_nocircular->hide();
+	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+	{
+		int snocircular=0;
+		eConfig::getInstance()->getKey("/elitedvb/DVB/config/nocircular",snocircular);
+		c_nocircular=new eCheckbox(this,snocircular);
+		c_nocircular->setName("nocircular");
+		c_nocircular->hide();
+	}
+	else
+		c_nocircular=0;
 
 	b_start=new eButton(this);
 	b_start->setName("start");
@@ -229,7 +234,7 @@ tsAutomatic::tsAutomatic(eWidget *parent)
 
 void tsAutomatic::start()
 {
-	int snocircular=c_nocircular->isChecked();
+	int snocircular = c_nocircular ? c_nocircular->isChecked() : 0;
 	eConfig::getInstance()->setKey("/elitedvb/DVB/config/nocircular",snocircular);    
 
 	eDVBScanController *sapi=eDVB::getInstance()->getScanAPI();
@@ -288,7 +293,8 @@ void tsAutomatic::dvbEvent(const eDVBEvent &event)
 		} else
 		{
 			c_eraseall->show();
-			c_nocircular->show();
+			if ( c_nocircular )
+				c_nocircular->show();
 			b_start->show();
 			setFocus(c_eraseall);
 			l_status->setText(_("A valid transponder has been found. Verify that the right network is selected"));
@@ -345,7 +351,7 @@ int tsAutomatic::nextTransponder(int next)
 	if (current_tp == last_tp)
 		return 1;
 
-	if(c_nocircular->isChecked())
+	if ( c_nocircular && c_nocircular->isChecked() )
 		current_tp->satellite.polarisation&=1;   // CEDR
 
 	return current_tp->tune();
@@ -775,22 +781,25 @@ int TransponderScan::exec(int initial)
 			statusbar->setText(_("Scan is in finished, press ok to close window"));
 			finish.exec();
 			finish.hide();
-			eMessageBox mb(eString().sprintf(_("Do you want\nto scan another\n%s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
-				_("Scan finished"),
-				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
-				eMessageBox::btYes );
-			mb.show();
-			switch ( mb.exec() )
+			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 			{
-				case -1:
-				case eMessageBox::btNo:
-					state=stateEnd;
-					break;
-				default:
-					state=oldstate;
+				eMessageBox mb(eString().sprintf(_("Do you want\nto scan another\n%s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
+					_("Scan finished"),
+					eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
+					eMessageBox::btYes );
+				mb.show();
+				switch ( mb.exec() )
+				{
+					case -1:
+					case eMessageBox::btNo:
+						state=stateEnd;
+						break;
+					default:
+						state=oldstate;
+				}
+				mb.hide();
+				break;
 			}
-			mb.hide();
-			break;
 		}
 		default:
 			state=stateEnd;
