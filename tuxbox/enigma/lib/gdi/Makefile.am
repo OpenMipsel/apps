@@ -9,5 +9,6 @@ libenigma_gdi_la_SOURCES = \
 
 libenigma_gdi_la_LIBADD = \
 	@FREETYPE_LIBS@ \
-	@PNG_LIBS@
+	@PNG_LIBS@ \
+	-lm
 

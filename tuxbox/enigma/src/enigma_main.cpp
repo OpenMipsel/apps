@@ -1505,11 +1505,7 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			return -3; // couldn't record... warum auch immer.
 		} else
 		{
-			if (state & stateSleeping)
-			{
-				wasSleeping=1;
-				eZapStandby::getInstance()->wakeUp();
-			}
+			handleStandby();
 
 			eServiceReference ref2=ref;
 			ref2.path=filename;
@@ -1575,17 +1571,30 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			setMode(modeFile);
 			showBouquetList(1);
 		}
-		else if (wasSleeping==1) // before record we was in sleep mode...
+		else
 		{
-			wasSleeping=0;
-			message_notifier.send(eZapMain::messageGoSleep);
-		}
-		else if (wasSleeping==2)
-		{
-			wasSleeping=0;
-			message_notifier.send(eZapMain::messageShutdown);
+			handleStandby();
 		}
 		return 0;
+	}
+}
+
+void eZapMain::handleStandby()
+{
+	if (state & stateSleeping)
+	{
+		wasSleeping=1;
+		eZapStandby::getInstance()->wakeUp();
+	}
+	else if (wasSleeping==1) // before record we was in sleep mode...
+	{
+		wasSleeping=0;
+		message_notifier.send(eZapMain::messageGoSleep);
+	}
+	else if (wasSleeping==2)
+	{
+		wasSleeping=0;
+		message_notifier.send(eZapMain::messageShutdown);
 	}
 }
 

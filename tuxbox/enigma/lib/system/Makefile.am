@@ -7,3 +7,5 @@ libenigma_system_la_SOURCES = \
 	init.cpp elock.cpp http_dyn.cpp http_file.cpp httpd.cpp \
 	mktime.c nconfig.cpp nxml.cpp xmlrpc.cpp econfig.cpp
 	
+
+libenigma_system_la_LDFLAGS = -lresolv -lpthread @XMLTREE_LIBS@

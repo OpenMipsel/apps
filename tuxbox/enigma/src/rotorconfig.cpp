@@ -799,6 +799,7 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 				{
 					if (running && timeout_usec(begTime) <= 0 )
 					{
+							eDebug("send stop");
 							eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x60 );
 							running=false;
 							retuneTimer->stop();

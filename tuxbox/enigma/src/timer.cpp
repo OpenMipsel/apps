@@ -115,7 +115,8 @@ void eTimerManager::actionHandler()
 			switch ( nextStartingEvent->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry) )
 			{
 				case ePlaylistEntry::SwitchTimerEntry:
-				// here we must do nothing... we have always zapped...
+						// wakeUp from standby
+						eZapMain::getInstance()->handleStandby();
 				break;	
 
 				case ePlaylistEntry::RecTimerEntry:
@@ -164,6 +165,10 @@ void eTimerManager::actionHandler()
 				{
 					nextAction=stopRecording;
 					actionHandler();
+				}
+				else // SwitchTimer
+				{
+					eZapMain::getInstance()->handleStandby();
 				}
 				eZapMain::getInstance()->toggleTimerMode();
 			}
@@ -251,9 +256,9 @@ void eTimerManager::actionHandler()
 				{
 					eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->service.descr);
 				}
-				else  // insert lirc ( VCR start ) here
+				else
 				{
-					
+					// insert lirc ( VCR start ) here
 				}
 			}
 			else

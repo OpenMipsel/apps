@@ -10,3 +10,4 @@ libenigma_gui_la_SOURCES = \
 	ewidget.cpp ewindow.cpp multipage.cpp actions.cpp guiactions.cpp \
 	decoration.cpp statusbar.cpp combobox.cpp numberactions.cpp slider.cpp
 
+libenigma_gui_la_LDFLAGS = -lm @SIGC_LIBS@

@@ -359,6 +359,7 @@ public:
 	void setModeD(int mode);
 	int getRealMode() { return last_mode==-1 ? mode : last_mode; }
 	void toggleTimerMode();
+	void handleStandby();
 
 	void setServiceSelectorPath(eServicePath path);
 	void getServiceSelectorPath(eServicePath &path);
