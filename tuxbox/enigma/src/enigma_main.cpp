@@ -2819,25 +2819,16 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if ( isVisible() && event.action == &i_enigmaMainActions->showInfobarEPG)
 			showEPG();
 		else if (event.action == &i_enigmaMainActions->showServiceSelector)
-		{
-//			if (handleState())
 			showServiceSelector(-1, 1);
-		}
 		else if (event.action == &i_enigmaMainActions->showSubservices )
 		{
 			if ( handleState() )
 				showSubserviceMenu();
 		}
 		else if (event.action == &i_enigmaMainActions->showAudio)
-		{
-//			if ( handleState() )
-				showAudioMenu();
-		}
+			showAudioMenu();
 		else if (event.action == &i_enigmaMainActions->pluginVTXT)
-		{
-//			if ( handleState() )
-				runVTXT();
-		}
+			runVTXT();
 		else if (event.action == &i_enigmaMainActions->showEPGList)
 			showEPGList();
 		else if (event.action == &i_enigmaMainActions->nextService)
@@ -2860,15 +2851,9 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 				playlistPrevService();
 		}
 		else if (event.action == &i_enigmaMainActions->serviceListDown)
-		{
-//			if ( handleState() )
-				showServiceSelector(eServiceSelector::dirDown, 1);
-		}
+			showServiceSelector(eServiceSelector::dirDown, 1);
 		else if (event.action == &i_enigmaMainActions->serviceListUp)
-		{
-//			if ( handleState() )
-				showServiceSelector(eServiceSelector::dirUp, 1);
-		}
+			showServiceSelector(eServiceSelector::dirUp, 1);
 		else if (event.action == &i_enigmaMainActions->volumeUp)
 			volumeUp();
 		else if (event.action == &i_enigmaMainActions->volumeDown)
@@ -3230,18 +3215,17 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		setVTButton(isVT);
 
-			// es wird nur dann versucht einen service als referenz-service zu uebernehmen, wenns den ueberhaupt
-			// gibt.
+		// es wird nur dann versucht einen service als referenz-service zu uebernehmen, wenns den ueberhaupt
+		// gibt.
 
-		if (service)
-			switch (serviceref.getServiceType())
-			{
+		switch (serviceref.getServiceType())
+		{
 			case 1: // TV
 			case 2: // radio
 			case 4: // nvod ref
 				refservice=serviceref;
 				break;
-			}
+		}
 
 		eService *rservice=0;
 
