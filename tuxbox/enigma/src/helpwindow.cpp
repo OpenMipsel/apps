@@ -47,7 +47,7 @@ eHelpWindow::eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID):
 	scrollbox->move(ePoint(0, 0));
 	scrollbox->resize(eSize(visible->width(), visible->height()*8));
 
-	eString style=eActionMapList::getInstance()->getCurrentStyle();
+	const std::set<eString> styles=eActionMapList::getInstance()->getCurrentStyles();
 
 	const char *hwstr = (eDVB::getInstance()->getmID() < 5)?"d-box":"dreambox";
 
@@ -56,21 +56,17 @@ eHelpWindow::eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID):
 
 	for ( ePtrList<eAction>::iterator it( parseActionHelpList.begin() ); it != parseActionHelpList.end() ; it++ )
 	{
-		std::map< eString, keylist >::iterator b = it->keys.find( style );
-
-		if ( b == it->keys.end() )
-			b = it->keys.find("");
-
-		if ( b != it->keys.end() )
+		std::map< eString, keylist >::iterator b;
+		
+		for (std::set<eString>::const_iterator si(styles.begin()); si != styles.end(); ++si)
 		{
+			b=it->keys.find(*si);
+			if (b == it->keys.end())
+				continue;
+
 			keylist &keys = b->second;
 			for ( keylist::iterator i( keys.begin() ); i != keys.end() ; i++ )
 			{
-/*
-					eDebug("****** ----> %s    %s", i->producer->getDescription(), i->picture.c_str());
-					eDebug("****** ----> %s", it->getDescription());
-					eDebug("Picture: %s",eString((DATADIR)+eString("/enigma/pictures/")+i->picture).c_str());
-*/
 				imgheight=0;
 				if ( strstr( i->producer->getDescription(), hwstr ) )
 				{

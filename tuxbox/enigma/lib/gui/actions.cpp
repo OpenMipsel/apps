@@ -196,20 +196,19 @@ eActionMapList::eActionMapList()
 	if (!instance)
 		instance=this;
 	char * tmp;
+	currentStyles.insert("");
+	
 	if ( eConfig::getInstance()->getKey("/ezap/rc/style", tmp ) )
-		currentStyle="default";
+		currentStyles.insert("default");
 	else
 	{
-		currentStyle=tmp;
+		currentStyles.insert(tmp);
 		delete [] tmp;
 	}
-	eDebug("currentStyle=%s", currentStyle.c_str() );	
 }
 
 eActionMapList::~eActionMapList()
 {
-	eConfig::getInstance()->setKey("/ezap/rc/style", currentStyle.c_str() ) ;
-
 	if (instance==this)
 		instance=0;
 }
@@ -305,16 +304,12 @@ int eActionMapList::loadXML(const char *filename)
 					if (style)
 					{
 						const char *descr=xam->GetAttributeValue("descr");
-						std::map<eString,eString>::iterator it = existingStyles.find(style);
-						if ( it == existingStyles.end() ) // not in map..
+						if (descr)
 						{
-							if (descr)
+							std::map<eString,eString>::iterator it = existingStyles.find(style);
+							if ( it == existingStyles.end() ) // not in map..
 								existingStyles[style]=descr;
-							else
-								existingStyles[style]=style;
 						}
-						else if ( descr && existingStyles[style] == style )
-							existingStyles[style]=descr;
 						am->loadXML(device, keymap, xam, style );
 					}
 					else

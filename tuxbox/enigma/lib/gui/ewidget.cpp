@@ -378,8 +378,9 @@ void eWidget::findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *c
 {
 	for (actionMapList::iterator i = actionmaps.begin(); i != actionmaps.end(); ++i)
 	{
-		(*i)->findAction(prio, key, context, eActionMapList::getInstance()->getCurrentStyle());
-		(*i)->findAction(prio, key, context, "");
+		const std::set<eString> &styles=eActionMapList::getInstance()->getCurrentStyles();
+		for (std::set<eString>::const_iterator si(styles.begin()); si != styles.end(); ++si)
+			(*i)->findAction(prio, key, context, *si);
 	}
 
 	for(ePtrList<eWidget>::iterator w(actionListener.begin()); w != actionListener.end(); ++w)
@@ -450,8 +451,9 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 
 		for (actionMapList::iterator i = globalActions.begin(); i != globalActions.end(); ++i)
 		{
-			(*i)->findAction(prio, *evt.key, 0, eActionMapList::getInstance()->getCurrentStyle());
-			(*i)->findAction(prio, *evt.key, 0, "");
+			const std::set<eString> &styles=eActionMapList::getInstance()->getCurrentStyles();
+			for (std::set<eString>::const_iterator si(styles.begin()); si != styles.end(); ++si)
+				(*i)->findAction(prio, *evt.key, 0, *si);
 		}
 		
 		for (eActionPrioritySet::iterator i(prio.begin()); i != prio.end(); ++i)

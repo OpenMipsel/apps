@@ -313,7 +313,8 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 		eServiceInterface::getInstance()->removeRef(b);
 	}
 	while ( ref != p.current() );
-	windowDescr.erase( windowDescr.rfind(">") );
+	if (windowDescr.rfind(">") != eString::npos)
+		windowDescr.erase( windowDescr.rfind(">") );
 	setText( windowDescr );
 
 	services->beginAtomic();
@@ -803,12 +804,12 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				pathUp();
 			else if (event.action == &i_serviceSelectorActions->toggleStyle && !movemode)
 			{
-				int newStyle = style;
+				int newStyle = lastSelectedStyle;
 				if (newStyle == styleMultiColumn)
 					newStyle = styleCombiColumn;
 				else
 					newStyle++;
-				setStyle(newStyle);
+				setStyle(lastSelectedStyle=newStyle);
 			}
 			else if (event.action == &i_serviceSelectorActions->toggleFocus && !movemode && path.size() > 1)
 			{
@@ -982,6 +983,7 @@ void eServiceSelector::setStyle(int newStyle)
 	if (style != newStyle)
 	{
 		ci->hide();
+		setFocus(0);
 		if ( services )
 		{
 			// safe currentSelected Service
@@ -1096,7 +1098,7 @@ void eServiceSelector::actualize()
 }
 
 eServiceSelector::eServiceSelector()
-	:eWindow(0), result(0), services(0), bouquets(0), style(styleInvalid), BrowseChar(0), BrowseTimer(eApp), ciDelay(eApp), movemode(0), editMode(0)
+	:eWindow(0), result(0), services(0), bouquets(0), style(styleInvalid), lastSelectedStyle(styleSingleColumn), BrowseChar(0), BrowseTimer(eApp), ciDelay(eApp), movemode(0), editMode(0)
 {
 	ci = new eChannelInfo(this);
 	ci->setName("channelinfo");
@@ -1110,6 +1112,10 @@ eServiceSelector::eServiceSelector()
 	addActionMap(&i_numberActions->map);
 
 	setHelpID(1);
+	addActionToHelpList(&i_serviceSelectorActions->showAll);
+	addActionToHelpList(&i_serviceSelectorActions->showSatellites);
+	addActionToHelpList(&i_serviceSelectorActions->showProvider);
+	addActionToHelpList(&i_serviceSelectorActions->showBouquets);
 	addActionToHelpList(&i_serviceSelectorActions->showMenu);
 	addActionToHelpList(&i_serviceSelectorActions->toggleStyle);
 	addActionToHelpList(&i_serviceSelectorActions->toggleFocus);
@@ -1121,6 +1127,15 @@ eServiceSelector::eServiceSelector()
 	addActionToHelpList(&i_serviceSelectorActions->modeTV);
 	addActionToHelpList(&i_serviceSelectorActions->modeRadio);
 	addActionToHelpList(&i_serviceSelectorActions->modeFile);
+
+	char *style=0;
+	if (eConfig::getInstance()->getKey("/ezap/rc/sselect_style", style) )
+		eActionMapList::getInstance()->activateStyle("sselect_default");
+	else
+	{
+		eActionMapList::getInstance()->activateStyle(style);
+		free(style);
+	}
 }
 
 eServiceSelector::~eServiceSelector()
@@ -1131,10 +1146,35 @@ void eServiceSelector::enterDirectory(const eServiceReference &ref)
 {
 	services->beginAtomic();
 	path.down(ref);
+	doSPFlags(ref);
 	actualize();
 	if (! selectService( eServiceInterface::getInstance()->service ))
 		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
 	services->endAtomic();
+}
+
+void eServiceSelector::doSPFlags(const eServiceReference &ref)
+{
+	const eService *pservice=eServiceInterface::getInstance()->addRef(ref);
+	if (pservice)
+	{
+		switch (pservice->spflags & eService::spfColMask)
+		{
+		case eService::spfColSingle:
+			setStyle(styleSingleColumn);
+			break;
+		case eService::spfColMulti:
+			setStyle(styleMultiColumn);
+			break;
+		case eService::spfColCombi:
+			setStyle(styleCombiColumn);
+			break;
+		case eService::spfColDontChange:
+			setStyle(lastSelectedStyle);
+			break;
+		}
+	}
+	eServiceInterface::getInstance()->removeRef(ref);
 }
 
 void eServiceSelector::ResetBrowseChar()
@@ -1206,6 +1246,7 @@ const eServiceReference *eServiceSelector::prev()
 void eServiceSelector::setPath(const eServicePath &newpath, const eServiceReference &select)
 {
 	path=newpath;
+	doSPFlags(path.current());
 	if (services)
 	{
 		services->beginAtomic();

@@ -114,14 +114,15 @@ class eActionMapList
 	actionMapList actionmaps;
 
 	std::map<eString, eString> existingStyles;
-	eString currentStyle;
+	std::set<eString> currentStyles;
 
 	static eActionMapList *instance;
 public:
 	eActionMapList();
 	~eActionMapList();
-	const eString &getCurrentStyle() const { return currentStyle; }
-	void setCurrentStyle( const eString& style ) { currentStyle = style; }
+	const std::set<eString> &getCurrentStyles() const { return currentStyles; }
+	void activateStyle( const eString& style ) { currentStyles.insert(style); }
+	void deactivateStyle( const eString& style ) { currentStyles.erase(style); }
 	eString getStyleDescription(const eString &style) const { std::map<eString, eString>::const_iterator i=existingStyles.find(style); if (i==existingStyles.end()) return ""; else return i->second; }
 	const std::map<eString, eString> &getExistingStyles() const { return existingStyles; }
 	void addActionMap(const char *, eActionMap * );

@@ -69,7 +69,7 @@ class eServiceSelector: public eWindow
 
 	void addService(const eServiceReference &service);
 	void addBouquet(const eServiceReference &service);
-	int style;
+	int style, lastSelectedStyle;
 	int serviceentryflags;
 
 	char BrowseChar;
@@ -91,6 +91,7 @@ private:
 	void gotoChar(char c);
 	void EPGUpdated( const tmpMap* );
 	void updateCi();
+	void doSPFlags(const eServiceReference &ref);
 public:
 	int movemode;
 	int editMode;

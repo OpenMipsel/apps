@@ -190,7 +190,7 @@
 			<action name="modeFile" key="text" flags="m" />
 		</actionmap>
 
-		<actionmap name="serviceSelector"> <!-- style="sselect_default"> -->
+		<actionmap name="serviceSelector" style="sselect_default">
 			<action name="showMenu" key="red" flags="m" />
 			<action name="toggleStyle" key="green" flags="m" />
 			<action name="toggleFocus" key="yellow" flags="m" />
@@ -202,7 +202,7 @@
 			<action name="showSatellites" key="green" flags="m" />
 			<action name="showProvider" key="yellow" flags="m" />
 			<action name="showBouquets" key="blue" flags="m" />
-			<action name="showMenu" key="info" flags="m" />
+			<action name="showMenu" key="dream" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">

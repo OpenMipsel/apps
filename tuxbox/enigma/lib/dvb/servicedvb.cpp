@@ -418,35 +418,35 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 0xFFFFFFFF, 0xFFFFFFFF),
-			new eService("DVB - bouquets")
+			new eService("DVB - bouquets", eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF),
-			new eService("DVB - bouquets (TV)")
+			new eService("DVB - bouquets (TV)", eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ),
-			new eService("DVB - bouquets (Radio)")
+			new eService("DVB - bouquets (Radio)", eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 0xFFFFFFFF, 0xFFFFFFFF), 
-			new eService("DVB - all services")
+			new eService("DVB - all services", eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1), 0xFFFFFFFF ), // TV and NVOD
-			new eService("DVB - TV services")
+			new eService("DVB - TV services", eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ), // radio
-			new eService("DVB - Radio services")
+			new eService("DVB - Radio services", eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1)),
-			new eService("Satellites")
+			new eService("Satellites", eService::spfColSingle)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2),
-			new eService("Satellites")
+			new eService("Satellites", eService::spfColSingle)
 		);
 	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
 		
@@ -786,7 +786,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 		if ( it == eTransponderList::getInstance()->getNetworkNameMap().end() )
 			return 0;
 		else
-			return new eService( it->second.name+" - bouquets" );
+			return new eService( it->second.name+" - bouquets", eService::spfColCombi);
 	}
 	case -2: // for satellites...
 	{
@@ -794,14 +794,14 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 		if ( it == eTransponderList::getInstance()->getNetworkNameMap().end() )
 			return 0;
 		else
-			return new eService( it->second.name+" - services" );
+			return new eService( it->second.name+" - services", eService::spfColMulti);
 	}
 	case -3:
 	{
 		eBouquet *b=eDVB::getInstance()->settings->getBouquet(node.data[2]);
 		if (!b)
 			return 0;
-		return new eService(b->bouquet_name.c_str());
+		return new eService(b->bouquet_name.c_str(), eService::spfColCombi);
 	}
 	}
 	return 0;

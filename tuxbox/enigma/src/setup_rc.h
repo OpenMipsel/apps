@@ -9,13 +9,16 @@ class eButton;
 class eSlider;
 class eComboBox;
 class eListBoxEntryText;
+class eCheckbox;
 
 class eZapRCSetup: public eWindow
 {
 	eSlider *srrate, *srdelay;
 	eLabel *lrrate, *lrdelay, *lrcStyle;
 	eStatusBar* statusbar;
+	eCheckbox* sselect_style;
 	eComboBox* rcStyle;
+	eString curstyle;
 
 	int rdelay;
 	int rrate;
@@ -27,6 +30,7 @@ class eZapRCSetup: public eWindow
 	void delayChanged( int );
 	void styleChanged( eListBoxEntryText* );
 	void update();
+	void setStyle();
 public:
 	eZapRCSetup();
 	~eZapRCSetup();

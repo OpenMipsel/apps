@@ -3812,13 +3812,15 @@ void eZapMain::showList(int list)
 		switch (list)
 		{
 		case listAll:
-			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1) ));
+			b.down(eServiceReference(eServiceReference::idDVB, 
+				eServiceReference::flagDirectory|eServiceReference::shouldSort, 
+				-2, (1<<4)|(1<<1), 0xFFFFFFFF ));
 			break;
 		case listSatellites:
 			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
 			break;
 		case listProvider:
-			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF ));
 			break;
 		case listBouquets:
 			b.down(userTVBouquetsRef);
@@ -3829,13 +3831,13 @@ void eZapMain::showList(int list)
 		switch (list)
 		{
 		case listAll:
-			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2 ));
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ));
 			break;
 		case listSatellites:
 			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));
 			break;
 		case listProvider:
-			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2 ));
+			b.down(eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ));
 			break;
 		case listBouquets:
 			b.down(userRadioBouquetsRef);
