@@ -4,3 +4,4 @@ versions of the following directories/files:
 apps/dvb/zapit/lib
 apps/dvb/zapit/include/zapit/client
 apps/dvb/zapit/src/pzapit.cpp
+apps/dvb/zapit/src/zapci
