@@ -1,5 +1,5 @@
 /*
-        $Header: /cvs/tuxbox/apps/tuxbox/libs/liblcddisplay/fontrenderer.h,v 1.5.2.1 2002/10/30 08:40:39 thegoodguy Exp $
+        $Header: /cvs/tuxbox/apps/tuxbox/libs/liblcddisplay/fontrenderer.h,v 1.5.2.2 2003/02/18 19:32:22 zwen Exp $
 
 	LCD-Daemon  -   DBoxII-Project
 
@@ -26,8 +26,8 @@
 	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __FONTRENDERER__
-#define __FONTRENDERER__
+#ifndef __LCDFONTRENDERER__
+#define __LCDFONTRENDERER__
 
 #include "lcddisplay.h"
 #include <freetype/freetype.h>
@@ -41,12 +41,12 @@
 
 
 
-class fontRenderClass;
-class Font
+class LcdFontRenderClass;
+class LcdFont
 {
         CLCDDisplay             *framebuffer;
         FTC_Image_Desc  font;
-        fontRenderClass *renderer;
+        LcdFontRenderClass *renderer;
         FT_Face                 face;
         FT_Size                 size;
 
@@ -57,12 +57,12 @@ class Font
 
                 int getRenderWidth(const char *text, const bool utf8_encoded = false);
 
-                Font(CLCDDisplay *fb, fontRenderClass *render, FTC_FaceID faceid, int isize);
-                ~Font(){}
+                LcdFont(CLCDDisplay *fb, LcdFontRenderClass *render, FTC_FaceID faceid, int isize);
+                ~LcdFont(){}
 };
 
 
-class fontRenderClass
+class LcdFontRenderClass
 { 
 	CLCDDisplay *framebuffer;
 
@@ -95,12 +95,12 @@ class fontRenderClass
                             FT_Face*    aface);
 
 		//FT_Face getFace(const char *family, const char *style);
-		Font *getFont(const char *family, const char *style, int size);
-		fontRenderClass(CLCDDisplay *fb);
-		~fontRenderClass();
+		LcdFont *getFont(const char *family, const char *style, int size);
+		LcdFontRenderClass(CLCDDisplay *fb);
+		~LcdFontRenderClass();
 
 
-	friend class Font;
+	friend class LcdFont;
 };
 
 #endif /* __FONTRENDERER__ */

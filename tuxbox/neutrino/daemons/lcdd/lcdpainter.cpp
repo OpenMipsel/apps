@@ -48,7 +48,7 @@ CLCDPainter::~CLCDPainter()
 
 bool CLCDPainter::init()
 {
-	fontRenderer = new fontRenderClass( &display );
+	fontRenderer = new LcdFontRenderClass( &display );
 	fontRenderer->AddFont(FONTDIR "/micron.ttf");
 	fontRenderer->InitFontCache();
 

@@ -38,14 +38,14 @@ class CLCDPainter
 		class FontsDef
 		{
 			public:
-				Font *channelname;
-				Font *time; 
-				Font *menutitle;
-				Font *menu;
+				LcdFont *channelname;
+				LcdFont *time; 
+				LcdFont *menutitle;
+				LcdFont *menu;
 		};
 
 		CLCDDisplay			display;
-		fontRenderClass		*fontRenderer;
+		LcdFontRenderClass		*fontRenderer;
 		FontsDef			fonts;
 
 		raw_display_t		icon_lcd;
