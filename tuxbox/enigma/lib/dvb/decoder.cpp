@@ -58,7 +58,6 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 		return;
 
 	char buffer[6][5];
-	eServiceReference &ref = eServiceInterface::getInstance()->service;
 	sprintf(buffer[0], "%x", vpid);
 	sprintf(buffer[1], "%x", apid);
 	sprintf(buffer[2], "%x", ecmpid);
@@ -575,6 +574,7 @@ int Decoder::Set()
 
 void Decoder::startTrickmode()
 {
+	eDebug("stopTrickmode");
 	if (fd.video != -1)
 	{
 		::ioctl(fd.video, VIDEO_FAST_FORWARD);
@@ -586,6 +586,7 @@ void Decoder::startTrickmode()
 
 void Decoder::stopTrickmode()
 {
+	eDebug("startTrickmode");
 	if (fd.video != -1)
 	{
 		::ioctl(fd.video, VIDEO_CONTINUE);
