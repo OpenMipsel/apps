@@ -66,7 +66,9 @@ struct serviceSelectorActions
 eAutoInitP0<serviceSelectorActions> i_serviceSelectorActions(eAutoInitNumbers::actions, "service selector actions");
 
 eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num)
-	:eListBoxEntry((eListBox<eListBoxEntry>*)lb),	numPara(0), namePara(0), descrPara(0), nameXOffs(0), flags(flags), num(num), service(service)
+	:eListBoxEntry((eListBox<eListBoxEntry>*)lb), numPara(0),
+	namePara(0), descrPara(0), nameXOffs(0), flags(flags),
+	num(num), curEventId(-1), service(service)
 {
 	static char strfilter[4] = { 0xC2, 0x87, 0x86, 0x00 };
 	if (!(flags & flagIsReturn))
@@ -230,9 +232,9 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 							break;
 						}
 					}
-					delete e;
 					if (sdescr.length())
 					{
+						curEventId = e->event_id;
 						descrPara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
 						descrPara->setFont( descrFont );
 						descrPara->renderString( sdescr );
@@ -241,6 +243,7 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 							descrXOffs += numPara->getBoundBox().height();
 						descrYOffs = ((rect.height() - descrPara->getBoundBox().height()) / 2 ) - descrPara->getBoundBox().top();
 					}
+					delete e;
 				}
 			}
 		}
@@ -575,7 +578,9 @@ struct updateEPGChangedService: public std::unary_function<eListBoxEntryService&
 	int cnt;
 	eEPGCache* epg;
 	const tmpMap *updatedEntrys;
-	updateEPGChangedService( const tmpMap *u ): cnt(0), epg(eEPGCache::getInstance()), updatedEntrys(u)
+	bool redrawOnly;
+	updateEPGChangedService( const tmpMap *u, bool redrawOnly=false ):
+		cnt(0), epg(eEPGCache::getInstance()), updatedEntrys(u), redrawOnly(redrawOnly)
 	{
 	}
 
@@ -588,8 +593,18 @@ struct updateEPGChangedService: public std::unary_function<eListBoxEntryService&
 			 it = updatedEntrys->find( (const eServiceReferenceDVB&)l.service );
 			if ( (updatedEntrys && it != updatedEntrys->end()) )  // entry is updated
 			{
-				l.invalidateDescr();
-				((eListBox<eListBoxEntryService>*) l.listbox)->invalidateEntry(cnt);
+				EITEvent *e=eEPGCache::getInstance()->lookupEvent((const eServiceReferenceDVB&)l.service );
+				if (e)
+				{
+					if ( e->event_id != l.curEventId )
+					{
+						if ( redrawOnly )
+							((eListBox<eListBoxEntryService>*) l.listbox)->invalidateEntry(cnt);
+						else
+							l.invalidateDescr();
+					}
+					delete e;
+				}
 			}
 			cnt++;
 		}
@@ -600,6 +615,7 @@ struct updateEPGChangedService: public std::unary_function<eListBoxEntryService&
 void eServiceSelector::EPGUpdated( const tmpMap *m)
 {
 	services->forEachEntry( updateEPGChangedService( m ) );
+	services->forEachVisibleEntry( updateEPGChangedService( m, true ) );
 }
 
 void eServiceSelector::pathUp()

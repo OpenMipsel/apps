@@ -6,7 +6,6 @@ gFont eListBoxEntryTextStream::font;
 
 eListBoxBase::eListBoxBase(eWidget* parent, const eWidget* descr, int takefocus, int item_height, const char *deco )
 :   eDecoWidget(parent, takefocus, deco),
-		top(childs.end()), bottom(childs.end()), current(childs.end()),
 		recalced(0), descr(descr),
 #ifndef DISABLE_LCD
 		tmpDescr(0),
@@ -14,7 +13,7 @@ eListBoxBase::eListBoxBase(eWidget* parent, const eWidget* descr, int takefocus,
 		colorActiveB(eSkin::getActive()->queryScheme("global.selected.background")),
 		colorActiveF(eSkin::getActive()->queryScheme("global.selected.foreground")),
 		movemode(0), MaxEntries(0), flags(0), item_height(item_height),
-		columns(1), in_atomic(0)
+		columns(1), in_atomic(0), top(childs.end()), bottom(childs.end()), current(childs.end())
 {
 	childs.setAutoDelete(false);	// machen wir selber
 	addActionMap(&i_cursorActions->map);

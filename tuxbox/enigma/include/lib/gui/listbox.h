@@ -18,7 +18,6 @@ class eListBoxEntry;
 
 class eListBoxBase: public eDecoWidget
 {
-	ePtrList<eListBoxEntry>::iterator top, bottom, current;
 	int recalced;
 	const eWidget* descr;
 #ifndef DISABLE_LCD
@@ -31,6 +30,7 @@ class eListBoxBase: public eDecoWidget
 	bool atomic_selchanged;
 	bool atomic_selected;
 protected:
+	ePtrList<eListBoxEntry>::iterator top, bottom, current;
 	eListBoxBase(eWidget* parent, const eWidget* descr=0, int takefocus=1, int item_height=0, const char *deco="eListBox" );
 	ePtrList<eListBoxEntry> childs;
 	eListBoxEntry* getCurrent()	{ return current != childs.end() ? *current : 0; }

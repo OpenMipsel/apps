@@ -29,6 +29,7 @@ class eListBoxEntryService: public eListBoxEntry
 	int nameXOffs, descrXOffs, numYOffs, nameYOffs, descrYOffs;
 	int flags;
 	int num;
+	int curEventId;
 public:
 	static eListBoxEntryService *selectedToMove;
 	static std::set<eServiceReference> hilitedEntrys;

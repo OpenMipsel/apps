@@ -1,7 +1,8 @@
 #define VIDEO_DEV "/dev/dvb/card0/video0"
 #define AUDIO_DEV "/dev/dvb/card0/audio0"
 #define DEMUX_DEV "/dev/dvb/card0/demux0"
-  	
+
+#include <lib/dvb/service.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -44,6 +45,7 @@ int Decoder::fd::demux_vtxt;
 
 static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int casystemid, int descriptor_length, __u8 *descriptors)
 {
+	eDebug("-------------------Set ECM-----------------");
 	static int lastpid=-1;
 
 	if (lastpid != -1)
@@ -57,7 +59,11 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 		return;
 
 	char buffer[6][5];
-	sprintf(buffer[0], "%x", vpid);
+	eServiceReference &ref = eServiceInterface::getInstance()->service;
+	if ( ref.type == eServiceReference::idDVB )
+		sprintf(buffer[0], "%x", ((eServiceReferenceDVB&)ref).getServiceID().get() );
+	else
+		sprintf(buffer[0], "%x", vpid);
 	sprintf(buffer[1], "%x", apid);
 	sprintf(buffer[2], "%x", ecmpid);
 	sprintf(buffer[3], "%x", emmpid);
