@@ -89,7 +89,7 @@ public:
 		if (services.find(serviceref) == services.end())  // service not exist in cache ?
 		{
 			eCachedService c;   // create new Cache Entry
-			c.refcnt=1;					// currently on Object holds a reference of the new cache entry
+			c.refcnt=1;					// currently one Object holds a reference to the new cache entry
 			c.service=factory.createService(serviceref);
 			if (!c.service)
 			{

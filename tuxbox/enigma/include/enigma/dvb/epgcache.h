@@ -62,16 +62,13 @@ struct hash<uniqueEPGKey>
 
 class eventData
 {
-public:
-	enum TYP {SHORT, FULL};
 private:
 	__u8* EITdata;
 	int ByteSize;
 public:
-	TYP type;
 	static int CacheSize;
-	eventData(const eit_event_struct* e, int size, enum TYP t)
-	:ByteSize(size), type(t)
+	eventData(const eit_event_struct* e, int size)
+	:ByteSize(size)
 	{
 		CacheSize+=size;
 		EITdata = new __u8[size];
@@ -97,28 +94,18 @@ class eEPGCache;
 class eScheduleCurrentTS: public eSection
 {
 	friend class eEPGCache;
-	int sectionRead(__u8 *data);
 	eScheduleCurrentTS();
-};
-
-class eScheduleOtherTS: public eSection
-{
-	friend class eEPGCache;
 	int sectionRead(__u8 *data);
-	eScheduleOtherTS();
 };
 
 class eEPGCache: public Object
 {
 	friend class eScheduleCurrentTS;
-	friend class eScheduleOtherTS;
 private:
 	uniqueEPGKey current_service;
-	int current_sid;
 	int firstCurrentTSEventId;
-	int firstOtherTSEventId;
 	int isRunning;
-	int sectionRead(__u8 *data, int source);
+	int sectionRead(__u8 *data);
 	static eEPGCache *instance;
 
 	eventCache eventDB;
@@ -126,7 +113,6 @@ private:
 	updateMap temp;
 
 	eScheduleCurrentTS scheduleCurrentTS;
-	eScheduleOtherTS scheduleOtherTS;
 	eTimer CleanTimer;
 	eTimer zapTimer;
 public:
@@ -146,6 +132,10 @@ public:
 	Signal1<void, bool> EPGAvail;
 };
 
+inline int eScheduleCurrentTS::sectionRead( __u8 *data )
+{
+	return eEPGCache::getInstance()->sectionRead(data);
+}
 
 inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service)
 {
