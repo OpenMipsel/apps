@@ -16,8 +16,8 @@ struct cursorActions
 		left(map, "left", _("left"), eAction::prioWidget),
 		right(map, "right", _("right"), eAction::prioWidget),
 		ok(map, "ok", _("ok"), eAction::prioWidget),
-		cancel(map, "cancel", _("cancel"), eAction::prioGlobal),
-		help(map, "help", _("show the help window"), eAction::prioGlobal)
+		cancel(map, "cancel", _("cancel"), eAction::prioDialog),
+		help(map, "help", _("show the help window"), eAction::prioWidget)
 	{
 	}
 };
