@@ -866,8 +866,8 @@ eZapMain::eZapMain()
 	,volume( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
 	,VolumeBar( &volume ), pMsg(0), pRotorMsg(0), message_notifier(eApp, 0), timeout(eApp)
 	,clocktimer(eApp), messagetimeout(eApp), progresstimer(eApp)
-	,volumeTimer(eApp), recStatusBlink(eApp), doubleklickTimer(eApp), currentSelectedUserBouquet(0)
-	,wasSleeping(0), state(0)
+	,volumeTimer(eApp), recStatusBlink(eApp), doubleklickTimer(eApp), delayedStandbyTimer(eApp)
+	,currentSelectedUserBouquet(0),wasSleeping(0), state(0)
 {
 	if (!instance)
 		instance=this;
@@ -1014,6 +1014,8 @@ eZapMain::eZapMain()
 
 	CONNECT(volumeTimer.timeout, eZapMain::hideVolumeSlider );
 	CONNECT(recStatusBlink.timeout, eZapMain::blinkRecord);
+
+	CONNECT(delayedStandbyTimer.timeout, eZapMain::delayedStandby);
 
 	CONNECT( eFrontend::getInstance()->rotorRunning, eZapMain::onRotorStart );
 	CONNECT( eFrontend::getInstance()->rotorStopped, eZapMain::onRotorStop );
@@ -1812,8 +1814,11 @@ void eZapMain::standbyRelease()
 			hide();
 		standby.show();
 		state |= stateSleeping;
-		standby.exec();
-		standby.hide();
+		standby.exec();   // this blocks all main actions...
+/*
+	  ...... sleeeeeeeep
+*/
+		standby.hide();   // here we are after wakeup
 		state &= ~stateSleeping;
 	}
 }
@@ -2116,17 +2121,32 @@ void eZapMain::handleStandby()
 	{
 		wasSleeping=1;
 		eZapStandby::getInstance()->wakeUp();
+		// this breakes the eZapStandby mainloop...
+		// and enigma wake up
 	}
 	else if (wasSleeping==1) // before record we was in sleep mode...
 	{
-		wasSleeping=0;
-		message_notifier.send(eZapMain::messageGoSleep);
+		if ( delayedStandbyTimer.isActive() )
+			delayedStandbyTimer.stop();
+		else
+			delayedStandbyTimer.start( 1000 * 60 * 10 );
+			// delayed Standby after 10min
 	}
 	else if (wasSleeping==2)
 	{
+		// we do hardly shutdown the box..
+		// any pending timers are ignored
 		wasSleeping=0;
 		message_notifier.send(eZapMain::messageShutdown);
 	}
+}
+
+void eZapMain::delayedStandby()
+{
+	wasSleeping=0;
+	// use message_notifier to goto sleep...
+	// we will not block the mainloop...
+	message_notifier.send(eZapMain::messageGoSleep);
 }
 
 void eZapMain::startSkip(int dir)
@@ -2986,6 +3006,14 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 	{
 		int num=0;
 		stopMessages();
+
+		// any user action stops pending delayedStandbyTimer
+		if ( delayedStandbyTimer.isActive() )
+		{
+			delayedStandbyTimer.stop();
+			wasSleeping=0;
+		}
+
 		if (event.action == &i_enigmaMainActions->showMainMenu)
 		{
 			int oldmode=mode;

@@ -278,7 +278,9 @@ private:
 	std::list<eZapMessage> messages;
 	eFixedMessagePump<int> message_notifier;
 
-	eTimer timeout, clocktimer, messagetimeout, progresstimer, volumeTimer, recStatusBlink, doubleklickTimer;
+	eTimer timeout, clocktimer, messagetimeout,
+					progresstimer, volumeTimer, recStatusBlink,
+					doubleklickTimer, delayedStandbyTimer;
 
 	Connection doubleklickTimerConnection;
 
@@ -344,6 +346,7 @@ private:
 
 	time_t standbyTime;
 
+	void delayedStandby();
 	void standbyPress();
 	void standbyRepeat();
 	void standbyRelease();

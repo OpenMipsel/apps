@@ -101,6 +101,7 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	sselect_style->setText(_("other bouquet selection keys"));
 	sselect_style->setHelpText(_("use classic enigma bouquet selection keys"));
 	sselect_style->setCheck(activeStyles.find("sselect_classic") != activeStyles.end());
+	sselect_style->hide();
 
 	ok=new eButton(this);
 	ok->setText(_("save"));

@@ -131,10 +131,10 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				if ( text.length() )
 				{
 					text.erase( curPos, 1 );
-					eDebug("curPos=%d, length=%d", curPos, text.length() );
+//					eDebug("curPos=%d, length=%d", curPos, text.length() );
 					if ( text.length() == curPos )
 					{
-						eDebug("curPos--");
+//						eDebug("curPos--");
 						curPos--;
 					}
 					eLabel::invalidate();
