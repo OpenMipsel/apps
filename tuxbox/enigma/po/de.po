@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-30 15:22+0200\n"
-"PO-Revision-Date: Sat Aug 30 15:10:32 CEST 2003\n"
+"POT-Creation-Date: 2003-08-31 23:10+0200\n"
+"PO-Revision-Date: Mon Sep 1 14:59:21 CEST 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: German / Felix Domke <tmbinc@gmx.net>\n"
 "MIME-Version: 1.0\n"
@@ -22,15 +22,15 @@ msgstr "FF"
 
 #: default.esml:707
 msgid "search event name for this beg-/end time in epg"
-msgstr "nach Ereignisnamen für die Start/Endzeit im EPG suchen"
+msgstr "Nach Ereignisnamen für die Start/Endzeit im EPG suchen"
 
 #: default.esml:360
 msgid "here you can change your sat/lnb mapping"
-msgstr ""
+msgstr "Hier können Sie ihr Sat/LNB mapping ändern"
 
 #: default.esml:403 src/enigma_info.cpp:48
 msgid "Satfind"
-msgstr "Satelliten Finder"
+msgstr "Satfinder"
 
 #: chk_blue2.esml:315
 msgid "Pause "
@@ -40,9 +40,9 @@ msgstr "Pause"
 #: default.esml:808 src/parentallock.cpp:96 src/setup_lcd.cpp:107
 #: src/setup_osd.cpp:251 src/setup_rc.cpp:116 src/setup_rfmod.cpp:125
 #: src/setup_timezone.cpp:48 src/setupengrab.cpp:97 src/setupnetwork.cpp:457
-#: src/setupvideo.cpp:98 src/tpeditwindow.cpp:112 src/tpeditwindow.cpp:161
+#: src/setupvideo.cpp:108 src/tpeditwindow.cpp:112 src/tpeditwindow.cpp:161
 msgid "save"
-msgstr "speichern"
+msgstr "Speichern"
 
 #: default.esml:427
 msgid "motor power input difference between running and not running"
@@ -78,7 +78,7 @@ msgstr "Endzeit"
 
 #: default.esml:387
 msgid "send no DiSEqC when only Hi/Lo or H/V changes"
-msgstr "kein DiSEqC senden when nur Hi/Lo oder H/V sich ändert"
+msgstr "Kein DiSEqC senden wenn nur Hi/Lo oder H/V sich ändert"
 
 #: default.esml:717
 msgid "frontend: "
@@ -98,7 +98,7 @@ msgstr "AGC:"
 
 #: default.esml:384
 msgid "Uncommitted Switch:"
-msgstr "\"Uncommited\" Schalter:"
+msgstr "Uncommitted Switch:"
 
 #: default.esml:555
 msgid "enable/disable inversion here (ok)"
@@ -125,9 +125,8 @@ msgid "Wednesday"
 msgstr "Mittwoch"
 
 #: default.esml:376
-#, fuzzy
 msgid "Toneburst:"
-msgstr "Kontrast:"
+msgstr "Toneburst:"
 
 #: default.esml:783
 msgid "Partition Check"
@@ -135,11 +134,11 @@ msgstr "Partition überprüfen"
 
 #: default.esml:731 default.esml:755
 msgid "enter recording end time (0..9, left, right, ok)"
-msgstr "Endzeit ändern (0..9, links, rechts, ok)"
+msgstr "Endzeit ändern (0..9, links, rechts, OK)"
 
 #: default.esml:696 default.esml:700
 msgid "select year (ok)"
-msgstr "Jahr auswählen (ok)"
+msgstr "Jahr auswählen (OK)"
 
 #: default.esml:367
 msgid "increased voltage"
@@ -191,7 +190,7 @@ msgstr "Startzeit ändern (0..9, links, rechts)"
 
 #: default.esml:361
 msgid "enter LNB lowband offset frequency (0..9, ok)"
-msgstr "LNB lowband Ausgleichsfrequenz eingeben (0..9, ok)"
+msgstr "LNB Lowband Offsetfrequenz eingeben (0..9, OK)"
 
 #: chk_blue2.esml:318
 msgid "Record "
@@ -207,7 +206,7 @@ msgstr "Transponder gescanned:"
 
 #: default.esml:685
 msgid "press ok to change event name manually"
-msgstr "OK drücken um den Ereignisnamen manuell zu ändern"
+msgstr "OK drücken um den Eventnamen manuell zu ändern"
 
 #: default.esml:754
 msgid "recording end time:"
@@ -231,7 +230,7 @@ msgstr "Richtung:"
 
 #: default.esml:385
 msgid "send the complete DiSEqC sequence dupe"
-msgstr "die komplette DiSEqC Sequenz zweimal senden"
+msgstr "Die komplette DiSEqC Sequenz zweimal senden"
 
 #: default.esml:554 default.esml:572
 msgid "MHz"
@@ -243,7 +242,7 @@ msgstr "Services gefunden      :"
 
 #: default.esml:542 src/parentallock.cpp:101 src/setup_lcd.cpp:112
 #: src/setup_osd.cpp:256 src/setup_rc.cpp:121 src/setup_timezone.cpp:53
-#: src/setupengrab.cpp:102 src/setupnetwork.cpp:462 src/setupvideo.cpp:103
+#: src/setupengrab.cpp:102 src/setupnetwork.cpp:462 src/setupvideo.cpp:113
 #: src/tpeditwindow.cpp:118 src/tpeditwindow.cpp:164
 msgid "save changes and return"
 msgstr "Änderungen speichern und Fenster schließen"
@@ -254,7 +253,7 @@ msgstr "Orbital Position:"
 
 #: default.esml:451 default.esml:678 default.esml:837
 msgid "remove"
-msgstr "entfernen"
+msgstr "Entfernen"
 
 #: default.esml:423 default.esml:460
 msgid "Motor Config"
@@ -298,7 +297,7 @@ msgstr "Kommandos tauschen"
 
 #: default.esml:396
 msgid "opens the motor setup"
-msgstr "Rotor Einstellungen  öffnen"
+msgstr "Rotor Einstellungen öffnen"
 
 #: default.esml:823
 msgid "Please choose your DiSEqC-Configuration:"
@@ -326,7 +325,7 @@ msgstr "Modus:"
 
 #: default.esml:798
 msgid "abort"
-msgstr "abbrechen"
+msgstr "Abbrechen"
 
 #: default.esml:530
 msgid "Progress:"
@@ -372,14 +371,13 @@ msgstr "Transponderfrequenz eingeben (0..9, links, rechts)"
 msgid "save changes"
 msgstr "Änderungen speichern"
 
-#
 #: stone.esml:465 silver.esml:472
 msgid "plugins"
 msgstr "Plugins"
 
 #: default.esml:836
 msgid "edit selected transponder (ok)"
-msgstr "gewählten Transponder editieren (ok)"
+msgstr "Den gewählten Transponder editieren (OK)"
 
 #: default.esml:477
 msgid "save in motor"
@@ -395,7 +393,7 @@ msgstr "Polarität:"
 
 #: default.esml:450 default.esml:677 default.esml:835
 msgid "add"
-msgstr "neu"
+msgstr "Hinzufügen"
 
 #: default.esml:774
 msgid "initialize the disk for use with the dreambox"
@@ -407,7 +405,7 @@ msgstr "Mo"
 
 #: default.esml:498
 msgid "start the transponder scan"
-msgstr "Kanalsuche starten"
+msgstr "Die Kanalsuche starten"
 
 #: default.esml:339
 msgid "LNB"
@@ -419,7 +417,7 @@ msgstr "Suchlauf starten"
 
 #: default.esml:496
 msgid "remove all services before scan"
-msgstr "alle Services vor dem Suchlauf löschen"
+msgstr "Alle Services vor dem Suchlauf löschen"
 
 #: default.esml:379
 msgid "select DiSEqC parameter (ok)"
@@ -427,11 +425,11 @@ msgstr "DiSEqC Parameter auswählen (ok)"
 
 #: default.esml:786
 msgid "close"
-msgstr "schließen"
+msgstr "Schließen"
 
 #: default.esml:775
 msgid "check"
-msgstr "überprüfen"
+msgstr "Überprüfen"
 
 #: default.esml:552 default.esml:570
 msgid "Frequency:"
@@ -444,7 +442,7 @@ msgstr "Services"
 
 #: default.esml:475
 msgid "0"
-msgstr "nicht vorhanden"
+msgstr "Nicht vorhanden"
 
 #: default.esml:388
 msgid "select Uncommitted Switch 1 option"
@@ -476,7 +474,7 @@ msgstr "Unterkanäle"
 
 #: default.esml:678
 msgid "delete the current selected timer (ok)"
-msgstr "den gewählten Timer löschen (ok)"
+msgstr "Den aktuell gewählten Timer löschen (OK)"
 
 #: default.esml:375
 msgid "select MiniDiSEqC parameter (ok)"
@@ -500,11 +498,11 @@ msgstr "U-Schalter 2:"
 
 #: default.esml:433
 msgid "enter your longitude (0..9, +, -, ok)"
-msgstr "geben Sie Ihre geogr. Länge ein (0..9, +, -, ok)"
+msgstr "Geben Sie Ihre geogr. Länge ein (0..9, +, -, OK)"
 
 #: default.esml:746
 msgid "goto standby (ok)"
-msgstr "in den Standbymodus gehen (ok)"
+msgstr "In den Standby gehen (OK)"
 
 #: default.esml:345
 msgid "remove the selected Satellite"
@@ -512,11 +510,11 @@ msgstr "Ausgewählten Satelliten entfernen"
 
 #: default.esml:550
 msgid "choose wished satellite (ok)"
-msgstr "gewünschten Satelliten auswählen (links, rechts)"
+msgstr "Gewünschten Satelliten auswählen (OK)"
 
 #: default.esml:697 default.esml:701
 msgid "select month (ok)"
-msgstr "Monat auswählen (ok)"
+msgstr "Monat auswählen (OK)"
 
 #: default.esml:776
 msgid "show extended configuration"
@@ -524,7 +522,7 @@ msgstr "Erweiterte Konfiguration anzeigen"
 
 #: default.esml:436
 msgid "enter your latitude (0..9, +, -, ok)"
-msgstr "geben Sie Ihre geogr. Breite ein (0..9, +, -, ok)"
+msgstr "Geben Sie Ihre geogr. Breite ein (0..9, +, -, OK)"
 
 #: default.esml:378
 msgid "DiSEqC Mode:"
@@ -532,7 +530,7 @@ msgstr "DiSEqC-Modus:"
 
 #: default.esml:462
 msgid "choose what you want to do"
-msgstr "Was wollen Sie tun?"
+msgstr "Wählen Sie was sie tun wollen?"
 
 #: default.esml:695 src/timer.cpp:1975
 msgid "Sunday"
@@ -540,7 +538,7 @@ msgstr "Sonntag"
 
 #: default.esml:525
 msgid "scanning..."
-msgstr "Suchlauf"
+msgstr "Suchlauf..."
 
 #: default.esml:352
 msgid "LNB Configuration"
@@ -556,7 +554,7 @@ msgstr "Modell:"
 
 #: default.esml:386
 msgid "swaps normal and opt.Switch DiSEqC Cmds"
-msgstr "tauscht normale und unc. DiSEqC-Befehle"
+msgstr "tauscht normale und opt.Switch DiSEqC-Befehle"
 
 #: default.esml:345
 msgid "erase"
@@ -574,12 +572,12 @@ msgstr ""
 
 #: default.esml:359
 msgid "Sat/LNB mapping:"
-msgstr ""
+msgstr "Sat/LNB Mapping:"
 
 #: default.esml:368
 msgid "save changes and use current selected LNB for the chosen satellite"
 msgstr ""
-"Änderungen speichern und aktuell ausgewählten LNB für gewählten Satelliten "
+"Änderungen speichern und aktuell ausgewähltes LNB für gewählten Satelliten "
 "verwenden"
 
 #: default.esml:592
@@ -595,8 +593,8 @@ msgid ""
 "save changes and use the selected LNB (in first page) for the choosen "
 "satellite"
 msgstr ""
-"Änderungen speichern und vorher ausgewählten LNB für gewählten Satelliten "
-"verwenden"
+"Änderungen speichern und vorher ausgewähltes LNB (auf der ersten Seite) für "
+"gewählten Satelliten verwenden"
 
 #: default.esml:367
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
@@ -652,7 +650,7 @@ msgstr "HTTP Download"
 
 #: default.esml:397
 msgid "goto prev page (LNB)"
-msgstr "zur vorherigen Seite (LNB)"
+msgstr "Zur vorherigen Seite (LNB)"
 
 #: default.esml:831
 msgid "Transponders"
@@ -664,7 +662,7 @@ msgstr "FR"
 
 #: default.esml:735 default.esml:759
 msgid "set recording end time and close window (ok)"
-msgstr "Änderungen speichern und Fenster schließen (ok)"
+msgstr "Aufnahmendzeit setzen und Fenster schließen (OK)"
 
 #: default.esml:430
 msgid "Use gotoXX Function"
@@ -692,15 +690,15 @@ msgstr "Sa"
 
 #: default.esml:688
 msgid "for a multiple event enable this"
-msgstr "diese Option für ein sich wiederholendes Ereignis einschalten"
+msgstr "Diese Option für ein sich wiederholendes Event einschalten"
 
 #: default.esml:770
 msgid "connected:"
-msgstr "verbunden:"
+msgstr "Verbunden:"
 
 #: default.esml:676
 msgid "press ok to select another event"
-msgstr "OK drücken um ein anderes Ereignis zu wählen"
+msgstr "OK drücken um ein anderes Event zu wählen"
 
 #: default.esml:369 default.esml:454
 msgid "next page"
@@ -718,7 +716,7 @@ msgstr "Symbolrate:"
 msgid "Transponder:"
 msgstr "Transponder:"
 
-#: default.esml:735 default.esml:747 default.esml:759 src/enigma_main.cpp:5610
+#: default.esml:735 default.esml:747 default.esml:759 src/enigma_main.cpp:5646
 msgid "set"
 msgstr "setzen"
 
@@ -739,7 +737,7 @@ msgstr ""
 
 #: default.esml:704
 msgid "select the timer type (ok)"
-msgstr "Timerart auswählen (ok)"
+msgstr "Timerart auswählen (OK)"
 
 #: default.esml:340
 msgid "22Khz"
@@ -747,7 +745,7 @@ msgstr "22Khz"
 
 #: default.esml:505 default.esml:516
 msgid "choose satellite/cable provider (ok)"
-msgstr "Satelliten-/Kabelprovider wählen"
+msgstr "Satelliten-/Kabelprovider wählen (OK)"
 
 #: default.esml:756
 msgid "o'clock"
@@ -759,7 +757,7 @@ msgstr "LOF/H"
 
 #: default.esml:392
 msgid "select Uncommitted Switch 3 option"
-msgstr "'Uncommitted' Schalter Eingang 3 auswählen"
+msgstr "'Uncommitted' Switch 3 auswählen"
 
 #: default.esml:425
 msgid "motor drive speed, in degrees per second"
@@ -771,7 +769,7 @@ msgstr "Über..."
 
 #: default.esml:677
 msgid "add new Timer (ok)"
-msgstr "neuen Timer hinzfügen (ok)"
+msgstr "Neuen Timer hinzfügen (OK)"
 
 #: default.esml:705
 msgid "to change service press ok"
@@ -823,7 +821,7 @@ msgstr "Stopp"
 
 #: default.esml:387
 msgid "Fast DiSEqC"
-msgstr "schnelles DiSEqC"
+msgstr "Schnelles DiSEqC"
 
 #: default.esml:691 src/epgwindow.cpp:115 src/timer.cpp:140
 msgid "Wed"
@@ -831,24 +829,23 @@ msgstr "Mi"
 
 #: default.esml:560
 msgid "choose the FEC (left, right)"
-msgstr "Bitte FEC auswählen (links, rechts)"
+msgstr "FEC auswählen (links, rechts)"
 
 #: default.esml:381
 msgid "select DiSEqC repeats (ok)"
 msgstr "DiSEqC-Wiederholungen auswählen (ok)"
 
 #: default.esml:814 src/system_settings.cpp:51
-#, fuzzy
 msgid "OSD Language"
-msgstr "Sprachen"
+msgstr "OSD Sprache"
 
 #: default.esml:792
 msgid "Software upgrade..."
-msgstr "Software Update..."
+msgstr "Software Upgrade..."
 
 #: default.esml:432
 msgid "Longitude:"
-msgstr "geogr. Länge:"
+msgstr "Geogr. Länge:"
 
 #: default.esml:434 default.esml:437 default.esml:448
 msgid "choose direction"
@@ -864,7 +861,7 @@ msgstr "DiSEqC..."
 
 #: default.esml:541
 msgid "select skin and press ok or choose save"
-msgstr "Bitte einen Skin wählen und OK drücken"
+msgstr "Bitte einen Skin wählen und OK drücken oder Speichern wählen"
 
 #: default.esml:471
 msgid "calc param 1 (see your motor manual or let it 00)"
@@ -874,11 +871,11 @@ msgstr ""
 
 #: default.esml:476
 msgid "prev page"
-msgstr "vorherige Seite"
+msgstr "Vorherige Seite"
 
 #: default.esml:698 default.esml:702
 msgid "select day (ok)"
-msgstr "Tag auswählen (ok)"
+msgstr "Tag auswählen (OK)"
 
 #: default.esml:692 src/epgwindow.cpp:115 src/timer.cpp:140
 msgid "Thu"
@@ -886,15 +883,15 @@ msgstr "Do"
 
 #: default.esml:369
 msgid "goto next page (DiSEqC)"
-msgstr "zur nächsten Seite (DiSEqC)"
+msgstr "Zur nächsten Seite (DiSEqC)"
 
 #: default.esml:508
 msgid "change circular to linear polarization"
-msgstr "zirkulare in linare Polarisation ändern"
+msgstr "Zirkulare in linare Polarisation ändern"
 
 #: default.esml:745
 msgid "shutdown the box to deepstandby (ok)"
-msgstr "die Box in den Deep-Standby herunterfahren (ok)"
+msgstr "die Box in den Deepstandby herunterfahren (OK)"
 
 #: default.esml:703
 msgid "edit the end time (0..9, left, right)"
@@ -916,7 +913,7 @@ msgstr "Aufnahmedauer:"
 
 #: default.esml:706
 msgid "apply"
-msgstr "übernehmen"
+msgstr "Übernehmen"
 
 #: default.esml:684
 msgid "Timer Edit"
@@ -936,7 +933,7 @@ msgstr "Wählen Sie den Transponder, welchen Sie finden wollen."
 
 #: default.esml:835
 msgid "add new Transponder to selected sat (ok)"
-msgstr "neuen Transponder zum gewählten Sat hinzufügen (ok)"
+msgstr "Neuen Transponder zum gewählten Sat hinzufügen (OK)"
 
 #: default.esml:692 src/timer.cpp:1976
 msgid "Thursday"
@@ -948,7 +945,7 @@ msgstr "Wiederholender Timer"
 
 #: default.esml:747
 msgid "set sleeptimer and close window (ok)"
-msgstr "Sleeptimer setzen und Fenster schließen (ok)"
+msgstr "Sleeptimer setzen und Fenster schließen (OK)"
 
 #: default.esml:784
 msgid "status output:"
@@ -960,15 +957,15 @@ msgstr "Sequenz wiederholen"
 
 #: default.esml:344
 msgid "add a new Satellite"
-msgstr "Neuen Satelliten hinzufügen"
+msgstr "Einen neuen Satelliten hinzufügen"
 
 #: default.esml:465
 msgid "enter stored satellite pos"
-msgstr "gespeicherte Satelliten Position eigeben"
+msgstr "Gespeicherte Satelliten Position eingeben"
 
 #: default.esml:478
 msgid "open transponder scan"
-msgstr "öffne Kanalsuche"
+msgstr "Öffne die Kanalsuche"
 
 #: default.esml:765
 msgid "Harddisk"
@@ -984,7 +981,7 @@ msgstr "mA"
 
 #: default.esml:734 default.esml:758
 msgid "goto standby after recording (ok)"
-msgstr "Nach Aufnahme in Standby schalten (ok)"
+msgstr "Nach Aufnahme in Standby schalten (OK)"
 
 #: default.esml:578
 msgid "Inversion:"
@@ -992,7 +989,7 @@ msgstr "Inversion:"
 
 #: default.esml:454
 msgid "goto advanced motor setup"
-msgstr "Erweiterte Rotor Einstellungen"
+msgstr "Erweiterte Rotor Einstellungen öffnen"
 
 #: default.esml:689 src/timer.cpp:1975
 msgid "Monday"
@@ -1008,11 +1005,11 @@ msgstr "Format"
 
 #: default.esml:743
 msgid "(0..9, left, right, ok)"
-msgstr "(0..9, links, rechts, ok)"
+msgstr "(0..9, links, rechts, OK)"
 
 #: default.esml:509 default.esml:519
 msgid "starts the transponder scan"
-msgstr "Kanalsuche starten"
+msgstr "Startet die Kanalsuche"
 
 #: default.esml:834
 msgid "sat"
@@ -1035,77 +1032,62 @@ msgid "Help"
 msgstr "Hilfe"
 
 #: lib/dvb/dvbci.cpp:101 lib/dvb/dvbci.cpp:113 lib/dvb/dvbci.cpp:1094
-#, fuzzy
 msgid "no module"
-msgstr "warte auf Modul"
+msgstr "Kein Modul"
 
 #: lib/dvb/dvbwidgets.cpp:53
 msgid "vertical"
-msgstr "vertikal"
+msgstr "Vertikal"
 
 #: lib/dvb/dvbwidgets.cpp:54
 msgid "horizontal"
-msgstr "horizontal"
+msgstr "Horizontal"
 
 #: lib/dvb/service.cpp:192 lib/dvb/service.cpp:222 src/enigma_bouquet.cpp:202
-#: src/enigma_main.cpp:3155 src/enigma_main.cpp:3167 src/parentallock.cpp:123
+#: src/enigma_main.cpp:3160 src/enigma_main.cpp:3172 src/parentallock.cpp:123
 #: src/parentallock.cpp:155 src/timer.cpp:1755
 msgid "parental"
 msgstr ""
 
-#
 #: lib/dvb/servicedvb.cpp:568
 msgid "Providers (TV)"
 msgstr "Provider (TV)"
 
-#
 #: lib/dvb/servicedvb.cpp:572
 msgid "Providers (Radio)"
 msgstr "Provider (Radio)"
 
-#
 #: lib/dvb/servicedvb.cpp:576
-#, fuzzy
 msgid "Providers (Data)"
-msgstr "Provider (TV)"
+msgstr "Provider (Daten)"
 
-#
 #: lib/dvb/servicedvb.cpp:581
 msgid "All services (TV)"
 msgstr "Alle Services (TV)"
 
-#
 #: lib/dvb/servicedvb.cpp:585
 msgid "All services (Radio)"
 msgstr "Alle Services (Radio)"
 
-#
 #: lib/dvb/servicedvb.cpp:589
-#, fuzzy
 msgid "All services (Data)"
-msgstr "Alle Services (TV)"
+msgstr "Alle Services (Daten)"
 
 #: lib/dvb/servicedvb.cpp:596
-#, fuzzy
 msgid "Satellites (TV)"
-msgstr "Satelliten"
+msgstr "Satelliten (TV)"
 
-#
 #: lib/dvb/servicedvb.cpp:600
-#, fuzzy
 msgid "Satellites (Radio)"
-msgstr "Satelliten editieren"
+msgstr "Satelliten (Radio)"
 
 #: lib/dvb/servicedvb.cpp:604
-#, fuzzy
 msgid "Satellites (Data)"
-msgstr "Satelliten"
+msgstr "Satelliten (Daten)"
 
-#
 #: lib/dvb/servicedvb.cpp:976
-#, fuzzy
 msgid " - provider"
-msgstr "Provider"
+msgstr "- Provider"
 
 #: lib/dvb/servicedvb.cpp:984
 msgid " - services"
@@ -1126,7 +1108,7 @@ msgstr "(%d Einträge)"
 
 #: lib/dvb/servicestructure.cpp:10
 msgid "root node"
-msgstr "root"
+msgstr "root node"
 
 #: lib/dvb/servicestructure.cpp:11 src/enigma_mainmenu.cpp:47
 msgid "TV mode"
@@ -1144,9 +1126,8 @@ msgstr "Datei-Modus"
 msgid "TV/Radio"
 msgstr "TV/Radio"
 
-#
-#: lib/dvb/servicestructure.cpp:17 src/enigma_main.cpp:5509
-#: src/sselect.cpp:366
+#: lib/dvb/servicestructure.cpp:17 src/enigma_main.cpp:5545
+#: src/sselect.cpp:367
 msgid "Bouquets"
 msgstr "Bouquets"
 
@@ -1162,7 +1143,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: lib/gui/listbox.cpp:679 src/enigma_main.cpp:2484
+#: lib/gui/listbox.cpp:679 src/enigma_main.cpp:2489
 msgid "no description available"
 msgstr "es ist keine Beschreibung verfügbar"
 
@@ -1200,7 +1181,7 @@ msgstr "Serien"
 
 #: src/channelinfo.cpp:72
 msgid "Adult"
-msgstr "Für Erwachsene"
+msgstr "Erwachsene"
 
 #: src/channelinfo.cpp:75
 msgid "News"
@@ -1232,7 +1213,7 @@ msgstr "Spielshow"
 
 #: src/channelinfo.cpp:79
 msgid "Variety"
-msgstr "Shows"
+msgstr "Variete"
 
 #: src/channelinfo.cpp:79
 msgid "Talk"
@@ -1244,7 +1225,7 @@ msgstr "Sport"
 
 #: src/channelinfo.cpp:83
 msgid "Special Event"
-msgstr "Spezial Ereignis"
+msgstr "Special Event"
 
 #: src/channelinfo.cpp:83
 msgid "Sports Mag."
@@ -1264,7 +1245,7 @@ msgstr "Teamsport"
 
 #: src/channelinfo.cpp:84
 msgid "Athletics"
-msgstr "Leichtathletik"
+msgstr "Athletik"
 
 #: src/channelinfo.cpp:84
 msgid "Motor Sports"
@@ -1280,7 +1261,7 @@ msgstr "Wintersport"
 
 #: src/channelinfo.cpp:84
 msgid "Equestrian"
-msgstr ""
+msgstr "Reiten"
 
 #: src/channelinfo.cpp:85
 msgid "Martial Sports"
@@ -1316,7 +1297,7 @@ msgstr "Musik"
 
 #: src/channelinfo.cpp:93
 msgid "Rock/Pop"
-msgstr ""
+msgstr "Rock/Pop"
 
 #: src/channelinfo.cpp:93
 msgid "Classical"
@@ -1324,15 +1305,15 @@ msgstr "Klassisch"
 
 #: src/channelinfo.cpp:93
 msgid "Folk"
-msgstr ""
+msgstr "Folk"
 
 #: src/channelinfo.cpp:93
 msgid "Jazz"
-msgstr ""
+msgstr "Jazz"
 
 #: src/channelinfo.cpp:93
 msgid "Musical"
-msgstr ""
+msgstr "Musical"
 
 #: src/channelinfo.cpp:93
 msgid "Ballet"
@@ -1348,11 +1329,11 @@ msgstr "Perf. Künste"
 
 #: src/channelinfo.cpp:97
 msgid "Fine Arts"
-msgstr ""
+msgstr "Feine Künste"
 
 #: src/channelinfo.cpp:97
 msgid "Religion"
-msgstr ""
+msgstr "Religion"
 
 #: src/channelinfo.cpp:97
 msgid "Pop. Arts"
@@ -1380,7 +1361,7 @@ msgstr "Neue Medien"
 
 #: src/channelinfo.cpp:98
 msgid "Art Mag."
-msgstr ""
+msgstr "Geschichtsmagazin"
 
 #: src/channelinfo.cpp:98
 msgid "Fashion"
@@ -1392,7 +1373,7 @@ msgstr "Gesellschaft"
 
 #: src/channelinfo.cpp:101
 msgid "Soc. Mag."
-msgstr ""
+msgstr "Fußballmagazin"
 
 #: src/channelinfo.cpp:101
 msgid "Economics"
@@ -1444,15 +1425,15 @@ msgstr "Reisen"
 
 #: src/channelinfo.cpp:109
 msgid "Handicraft"
-msgstr ""
+msgstr "Handwerk"
 
 #: src/channelinfo.cpp:109
 msgid "Motoring"
-msgstr ""
+msgstr "Fahren"
 
 #: src/channelinfo.cpp:109
 msgid "Fitness"
-msgstr ""
+msgstr "Fitness"
 
 #: src/channelinfo.cpp:109
 msgid "Cooking"
@@ -1480,11 +1461,11 @@ msgstr "Unveröffentlichtes"
 
 #: src/channelinfo.cpp:113
 msgid "Live"
-msgstr ""
+msgstr "Live"
 
 #: src/channelinfo.cpp:235
 msgid "no data for this service avail"
-msgstr "keine Daten für diesen Service verfügbar"
+msgstr "Keine Daten für diesen Service verfügbar"
 
 #: src/channelinfo.cpp:267
 #, c-format
@@ -1502,7 +1483,7 @@ msgstr "Dateiname:"
 #: src/engrab.cpp:36 src/enigma_event.cpp:284 src/enigma_event.cpp:295
 #: src/timer.cpp:1699
 msgid "no description is available"
-msgstr "es ist keine Beschreibung verfügbar"
+msgstr "Es ist keine Beschreibung verfügbar"
 
 #: src/enigma.cpp:243
 msgid ""
@@ -1518,70 +1499,55 @@ msgstr ""
 
 #: src/enigma.cpp:245
 msgid "First start of enigma"
-msgstr "Erster Start von Enigma"
+msgstr "Erster Start von enigma"
 
-#
 #: src/enigma_bouquet.cpp:17
-#, fuzzy
 msgid "Bouquet Type"
-msgstr "Bouquets (TV)"
+msgstr "Bouquet Typ"
 
 #: src/enigma_bouquet.cpp:20
 msgid "TV"
-msgstr ""
+msgstr "TV"
 
 #: src/enigma_bouquet.cpp:21
-#, fuzzy
 msgid "Radio"
-msgstr "TV/Radio"
+msgstr "Radio"
 
 #: src/enigma_bouquet.cpp:34 src/enigma_setup.cpp:40
-#, fuzzy
 msgid "Service Organising"
-msgstr "Services"
+msgstr "Serviceverwaltung"
 
-#
 #: src/enigma_bouquet.cpp:38
-#, fuzzy
 msgid "Create new bouquet"
 msgstr "neues Bouquet erstellen"
 
-#
 #: src/enigma_bouquet.cpp:38
-#, fuzzy
 msgid "create new empty bouquet"
-msgstr "neues Bouquet erstellen"
+msgstr "neues, leeres Bouquet erstellen"
 
-#
 #: src/enigma_bouquet.cpp:39
-#, fuzzy
 msgid "Add services to bouquet"
-msgstr "Service zu einem bestimmten Bouquet hinzufügen"
+msgstr "Service zum Bouquet hinzufügen"
 
-#
 #: src/enigma_bouquet.cpp:39
-#, fuzzy
 msgid "add multiple services to a specific bouquet"
-msgstr "Service zu einem bestimmten Bouquet hinzufügen"
+msgstr "mehrere Services zu einem bestimmten Bouquet hinzufügen"
 
 #: src/enigma_bouquet.cpp:40
-#, fuzzy
 msgid "Edit bouquets"
-msgstr "- Bouquets"
+msgstr "Bouquets editieren"
 
 #: src/enigma_bouquet.cpp:40
 msgid "sort,rename,delete services/bouquets "
-msgstr ""
+msgstr "Services/Bouquets sortieren,umbennen,löschen"
 
-#
 #: src/enigma_bouquet.cpp:44
-#, fuzzy
 msgid "Lock/Unlock Services"
-msgstr "Alle Services"
+msgstr "Services sperren/entsperren"
 
 #: src/enigma_bouquet.cpp:44
 msgid "lock,unlock services (parental locking)"
-msgstr ""
+msgstr "Services sperren,entsperren (Jugendschutz)"
 
 #: src/enigma_ci.cpp:59
 msgid "Common Interface Module - mmi"
@@ -1593,11 +1559,11 @@ msgstr "mmi Eingabefeld"
 
 #: src/enigma_ci.cpp:217
 msgid "send data to CI"
-msgstr "Daten ans CI senden"
+msgstr "Daten an das CI senden"
 
 #: src/enigma_ci.cpp:306
 msgid "Common Interface Modules"
-msgstr "Common Interface Modul"
+msgstr "Common Interface Module"
 
 #: src/enigma_ci.cpp:313
 msgid "Common Interface Module"
@@ -1609,7 +1575,7 @@ msgstr "Reset"
 
 #: src/enigma_ci.cpp:322 src/enigma_ci.cpp:351
 msgid "reset the Common Interface module"
-msgstr "Common Interface Modul resetten"
+msgstr "Das Common Interface Modul resetten"
 
 #: src/enigma_ci.cpp:328 src/enigma_ci.cpp:357
 msgid "Init"
@@ -1617,11 +1583,11 @@ msgstr "Initialisiere"
 
 #: src/enigma_ci.cpp:331 src/enigma_ci.cpp:360
 msgid "send the ca-pmt to CI"
-msgstr "ca-pmt an das CI senden"
+msgstr "Sendet das ca-pmt an das CI"
 
 #: src/enigma_ci.cpp:337 src/enigma_ci.cpp:366
 msgid "waiting for module"
-msgstr "warte auf Modul"
+msgstr "Warte auf Modul"
 
 #: src/enigma_ci.cpp:340 src/enigma_ci.cpp:369
 msgid "enter Common Interface menu (mmi)"
@@ -1629,39 +1595,39 @@ msgstr "Common Interface-Menü öffnen (mmi)"
 
 #: src/enigma_ci.cpp:410 src/enigma_ci.cpp:416
 msgid "resetting....please wait"
-msgstr "Suche läuft... bitte warten"
+msgstr "Resette... bitte warten"
 
 #: src/enigma_epg.cpp:42
 msgid "Programm Guide"
-msgstr ""
+msgstr "Programmführer"
 
 #: src/enigma_event.cpp:19
 msgid "enigma event view"
-msgstr "Enigma Ereignis Ansicht"
+msgstr "Enigma Ereignisansicht"
 
 #: src/enigma_event.cpp:20
 msgid "add this event as DVR Event to timer list"
-msgstr "dieses Ereignis als DVR-Timer der Timerliste hinzufügen"
+msgstr "Dieses Event als DVR-Timer der Timerliste hinzufügen"
 
 #: src/enigma_event.cpp:21
 msgid "add this event as NGRAB Event to timer list"
-msgstr "dieses Ereignis als ngrab-Timer der Timerliste hinzufügen"
+msgstr "Dieses Event als NGrab-Timer der Timerliste hinzufügen"
 
 #: src/enigma_event.cpp:22
 msgid "add this event as simple Switch Event to timer list"
-msgstr "dieses Ereignis als Umschalt-Timer der Timerliste hinzufügen"
+msgstr "Dieses Event als Umschalt-Timer der Timerliste hinzufügen"
 
 #: src/enigma_event.cpp:23
 msgid "remove this event from timer list"
-msgstr "entfernt dieses Ereignis aus der Timerliste"
+msgstr "Entfernt dieses Event aus der Timerliste"
 
 #: src/enigma_event.cpp:24
 msgid "closes the Event View"
-msgstr "Ereignis Anzeige schließen"
+msgstr "Schließt die Event Anzeige"
 
 #: src/enigma_event.cpp:276 src/streaminfo.cpp:566 src/streaminfo.cpp:617
 msgid "no information is available"
-msgstr "es ist keine Informationen verfügbar"
+msgstr "Es ist keine Informationen verfügbar"
 
 #: src/enigma_info.cpp:41
 msgid "Infos"
@@ -1669,23 +1635,23 @@ msgstr "Infos"
 
 #: src/enigma_info.cpp:44 src/streaminfo.cpp:535
 msgid "Streaminfo"
-msgstr "Streaminformation"
+msgstr "Streaminfo"
 
 #: src/enigma_info.cpp:44
 msgid "open the Streaminfo"
-msgstr "öffnet die Streaminformation"
+msgstr "Öffnet die Streaminfo"
 
 #: src/enigma_info.cpp:46
 msgid "Show BN version"
-msgstr "BN Version anzeigen..."
+msgstr "BN Version anzeigen"
 
 #: src/enigma_info.cpp:46
 msgid "show the Current Version of the Betanova FW"
-msgstr "zeigt die aktuelle Version der Betanova Software"
+msgstr "Zeigt die aktuelle Version der Betanova FW"
 
 #: src/enigma_info.cpp:48
 msgid "shows the satfinder"
-msgstr "zeigt den Satelliten Finder"
+msgstr "Zeigt den Satellitenfinder"
 
 #: src/enigma_info.cpp:49
 msgid "open the about dialog"
@@ -1693,7 +1659,7 @@ msgstr "Information über das System"
 
 #: src/enigma_info.cpp:206
 msgid "Unknown"
-msgstr "unbekannt"
+msgstr "Unbekannt"
 
 #: src/enigma_info.cpp:214
 msgid "my"
@@ -1731,358 +1697,352 @@ msgstr "Tuner: Terrestrisch"
 #: src/streaminfo.cpp:293 src/streaminfo.cpp:305 src/streaminfo.cpp:317
 #: src/streaminfo.cpp:469 src/streaminfo.cpp:505
 msgid "none"
-msgstr "keine"
+msgstr "Keine"
 
 #: src/enigma_info.cpp:318 src/timer.cpp:2036 src/upgrade.cpp:263
 msgid "unknown"
-msgstr "unbekannt"
+msgstr "Unbekannt"
 
 #: src/enigma_info.cpp:323
 msgid "release"
-msgstr "Version"
+msgstr "Release"
 
 #: src/enigma_info.cpp:324
 msgid "beta"
-msgstr "beta"
+msgstr "Beta"
 
 #: src/enigma_info.cpp:325
 msgid "internal"
-msgstr "intern"
+msgstr "Intern"
 
-#: src/enigma_main.cpp:75
+#: src/enigma_main.cpp:74
 msgid "enigma Zapp"
 msgstr "enigma Zapp"
 
-#: src/enigma_main.cpp:76
+#: src/enigma_main.cpp:75
 msgid "show main menu"
 msgstr "Hauptmenü anzeigen"
 
-#: src/enigma_main.cpp:77
+#: src/enigma_main.cpp:76
 msgid "go to standby (press)"
-msgstr "in den Standbymodus gehen (press)"
+msgstr "In den Standby gehen (drücken)"
+
+#: src/enigma_main.cpp:77
+msgid "go to standby without menu (press)"
+msgstr "Ohne Menü in den Standby gehen (drücken)"
 
 #: src/enigma_main.cpp:78
-msgid "go to standby without menu (press)"
-msgstr "ohne Menü in den Standby gehen (drücken)"
+msgid "go to standby (repeat)"
+msgstr "In den Standby gehen (wiederholen)"
 
 #: src/enigma_main.cpp:79
-msgid "go to standby (repeat)"
-msgstr "in den Standbymodus gehen (repeat)"
-
-#: src/enigma_main.cpp:80
 msgid "go to standby (release)"
-msgstr "in den Standbymodus gehen (release)"
+msgstr "In den Standby gehen (loslassen)"
 
-#: src/enigma_main.cpp:82
+#: src/enigma_main.cpp:81
 msgid "show infobar"
 msgstr "Infobar anzeigen"
 
-#: src/enigma_main.cpp:83
+#: src/enigma_main.cpp:82
 msgid "hide infobar"
 msgstr "Infobar verstecken"
 
-#: src/enigma_main.cpp:84
+#: src/enigma_main.cpp:83
 msgid "show infobar or EPG"
-msgstr "zeige Infobar oder EPG"
+msgstr "Zeige Infobar oder EPG"
+
+#: src/enigma_main.cpp:84
+msgid "show service selector"
+msgstr "Serviceauswahl anzeigen"
 
 #: src/enigma_main.cpp:85
-msgid "show service selector"
-msgstr "Serviceliste anzeigen"
-
-#: src/enigma_main.cpp:86
 msgid "show subservices/NVOD"
 msgstr "Subservice/NVOD Auswahl anzeigen"
 
-#: src/enigma_main.cpp:87
+#: src/enigma_main.cpp:86
 msgid "show audio selector"
-msgstr "Sprachauswahl anzeigen"
+msgstr "Audioauswahl anzeigen"
 
-#: src/enigma_main.cpp:88
+#: src/enigma_main.cpp:87
 msgid "show Videotext"
 msgstr "Videotext anzeigen"
 
-#: src/enigma_main.cpp:89
+#: src/enigma_main.cpp:88
 msgid "show extension Plugins"
-msgstr "Erweitertungs Plugins zeigen"
+msgstr "Erweiterte Plugins anzeigen"
 
-#: src/enigma_main.cpp:90
+#: src/enigma_main.cpp:89
 msgid "show epg schedule list"
 msgstr "EPG Info anzeigen"
 
-#: src/enigma_main.cpp:91
+#: src/enigma_main.cpp:90
 msgid "show extended info"
-msgstr "Erweiterte Programm Info anzeigen"
+msgstr "Erweiterte Info anzeigen"
+
+#: src/enigma_main.cpp:91
+msgid "zap to next subService"
+msgstr "Zum nächsten Unterkanal zappen"
 
 #: src/enigma_main.cpp:92
-msgid "zap to next subService"
-msgstr "zum nächsten Unterkanal schalten"
+msgid "zap to prev subService"
+msgstr "Zum vorherigen Unterkanal zappen"
 
 #: src/enigma_main.cpp:93
-msgid "zap to prev subService"
-msgstr "zum vorigen Unterkanal schalten"
-
-#: src/enigma_main.cpp:94
 msgid "quickzap next"
 msgstr "quickzap: nächstes"
 
-#: src/enigma_main.cpp:95
+#: src/enigma_main.cpp:94
 msgid "quickzap prev"
 msgstr "quickzap: vorheriges"
 
-#: src/enigma_main.cpp:97
+#: src/enigma_main.cpp:96
 msgid "playlist/history next"
 msgstr "Playlist/Verlauf nächste"
 
-#: src/enigma_main.cpp:98
+#: src/enigma_main.cpp:97
 msgid "playlist/history prev"
 msgstr "Playlist/Verlauf vorherige"
 
-#: src/enigma_main.cpp:100
+#: src/enigma_main.cpp:99
 msgid "service list and down"
-msgstr "Service-Liste runter"
+msgstr "Serviceliste und nach unten"
 
-#: src/enigma_main.cpp:101
+#: src/enigma_main.cpp:100
 msgid "service list and up"
-msgstr "Service-Liste rauf"
+msgstr "Serviceliste und hoch"
 
-#: src/enigma_main.cpp:103 src/enigma_main.cpp:147
+#: src/enigma_main.cpp:102 src/enigma_main.cpp:146
 msgid "volume up"
 msgstr "Laustärke (lauter)"
 
-#: src/enigma_main.cpp:104 src/enigma_main.cpp:148
+#: src/enigma_main.cpp:103 src/enigma_main.cpp:147
 msgid "volume down"
 msgstr "Laustärke (leiser)"
 
-#: src/enigma_main.cpp:105 src/enigma_main.cpp:149
+#: src/enigma_main.cpp:104 src/enigma_main.cpp:148
 msgid "toggle mute flag"
 msgstr "Stumm an/aus"
 
-#: src/enigma_main.cpp:107
+#: src/enigma_main.cpp:106
 msgid "stop playback"
 msgstr "Wiedergabe stoppen"
 
-#: src/enigma_main.cpp:108
+#: src/enigma_main.cpp:107
 msgid "pause playback"
-msgstr "Wiedergabe Pause"
+msgstr "Wiedergabe pausieren"
 
-#: src/enigma_main.cpp:109
+#: src/enigma_main.cpp:108
 msgid "resume playback"
 msgstr "Wiedergabe fortsetzen"
 
-#: src/enigma_main.cpp:110 src/enigma_main.cpp:2474
+#: src/enigma_main.cpp:109 src/enigma_main.cpp:2479
 msgid "record"
 msgstr "Aufnahme"
 
-#: src/enigma_main.cpp:112
+#: src/enigma_main.cpp:111
 msgid "start skipping forward"
-msgstr "Start schnellen  Vorlauf"
+msgstr "Schnellen Vorlauf starten"
+
+#: src/enigma_main.cpp:112
+msgid "repeat skipping forward"
+msgstr "Schnellen Vorlauf wiederholen"
 
 #: src/enigma_main.cpp:113
-msgid "repeat skipping forward"
-msgstr "Wiederhole schnellen Vorlauf"
-
-#: src/enigma_main.cpp:114
 msgid "stop skipping forward"
-msgstr "Stopp schnellen Vorlauf"
+msgstr "Schnellen Vorlauf stoppen"
+
+#: src/enigma_main.cpp:115
+msgid "start skipping reverse"
+msgstr "Schnellen Rücklauf starten"
 
 #: src/enigma_main.cpp:116
-msgid "start skipping reverse"
-msgstr "Start schnellen Rücklauf"
+msgid "repeat skipping reverse"
+msgstr "Schnellen Rücklauf wiederholen"
 
 #: src/enigma_main.cpp:117
-msgid "repeat skipping reverse"
-msgstr "Wiederhole schnellen Rücklauf"
-
-#: src/enigma_main.cpp:118
 msgid "stop skipping reverse"
-msgstr "Stopp schnellen Rücklauf"
+msgstr "Schnellen Rücklauf stoppen"
 
-#
-#: src/enigma_main.cpp:120
+#: src/enigma_main.cpp:119
 msgid "open the serviceselector and show bouquets"
-msgstr "den Serviceselector öffnen und Bouquets anzeigen"
+msgstr "Die Serviceauswahl öffnen und Bouquets anzeigen"
 
-#
-#: src/enigma_main.cpp:121
+#: src/enigma_main.cpp:120
 msgid "open the serviceselector and show provider"
-msgstr "den Serviceselector öffnen und Provider anzeigen"
+msgstr "Den Serviceselector öffnen und Provider anzeigen"
+
+#: src/enigma_main.cpp:121
+msgid "open the serviceselector and show recorded movies"
+msgstr "Die Serviceauswahl öffnen und aufgenommene Filme anzeigen"
 
 #: src/enigma_main.cpp:122
-msgid "open the serviceselector and show recorded movies"
-msgstr "den Serviceselector öffnen und aufgenommene Filme anzeigen"
-
-#: src/enigma_main.cpp:123
 msgid "open the serviceselector and shows the playlist"
-msgstr "den Serviceselector öffnen und die Playlist anzeigen"
+msgstr "Die Serviceauswahl öffnen und die Playlist anzeigen"
 
-#: src/enigma_main.cpp:125 src/sselect.cpp:111
+#: src/enigma_main.cpp:124 src/sselect.cpp:112
 msgid "switch to TV mode"
-msgstr "wechselt zum TV Modus"
+msgstr "In den TV-Modus wechseln"
 
-#: src/enigma_main.cpp:126 src/sselect.cpp:112
+#: src/enigma_main.cpp:125 src/sselect.cpp:113
 msgid "switch to Radio mode"
-msgstr "wechselt zum Radio Modus"
+msgstr "In den Radio-Modus wechseln"
 
-#: src/enigma_main.cpp:127 src/sselect.cpp:113
+#: src/enigma_main.cpp:126 src/sselect.cpp:114
 msgid "switch to File mode"
-msgstr "wechselt zum Datei Modus"
+msgstr "in den Datei-Modus wechseln"
+
+#: src/enigma_main.cpp:128
+msgid "toggle DVR panel"
+msgstr "DVR  Panel wechseln"
 
 #: src/enigma_main.cpp:129
-msgid "toggle DVR panel"
-msgstr "DVR  Fenster umschalten"
-
-#: src/enigma_main.cpp:130
 msgid "toggle index mark"
-msgstr "Markierung umschalten"
+msgstr "Indexmarke wechseln"
+
+#: src/enigma_main.cpp:131
+msgid "seek to next index mark"
+msgstr "Nächste Indexmarke suchen"
 
 #: src/enigma_main.cpp:132
-msgid "seek to next index mark"
-msgstr "nächste Indexmarke suchen"
-
-#: src/enigma_main.cpp:133
 msgid "seek to previous index mark"
-msgstr "vorherige Indexmarke suchen"
+msgstr "Vorherige Indexmarke suchen"
 
-#: src/enigma_main.cpp:166
+#: src/enigma_main.cpp:165
 msgid "enigma standby"
 msgstr "Standby-Modus"
 
-#: src/enigma_main.cpp:167
+#: src/enigma_main.cpp:166
 msgid "wake up enigma"
-msgstr "enigma hochfahren"
+msgstr "Enigma aufwecken"
 
-#: src/enigma_main.cpp:440
+#: src/enigma_main.cpp:439
 msgid " to "
-msgstr " bis "
+msgstr "bis "
 
-#: src/enigma_main.cpp:450
+#: src/enigma_main.cpp:449
 msgid " Euro lost)"
-msgstr " Euro vergeudet"
+msgstr "Euro verloren)"
 
-#: src/enigma_main.cpp:491
+#: src/enigma_main.cpp:490
 msgid "not valid!"
-msgstr "Fehlerhafte Eingabe"
+msgstr "Nicht erlaubt!"
 
-#: src/enigma_main.cpp:509
+#: src/enigma_main.cpp:508
 msgid "NVOD"
 msgstr "NVOD"
 
-#: src/enigma_main.cpp:645
+#: src/enigma_main.cpp:644
 msgid "Video"
 msgstr "Video"
 
-#: src/enigma_main.cpp:754
+#: src/enigma_main.cpp:753
 msgid "Audio"
 msgstr "Audio"
 
-#: src/enigma_main.cpp:803
+#: src/enigma_main.cpp:802
 msgid "multiple Services"
 msgstr "Untergeordnete Services"
 
-#: src/enigma_main.cpp:814 src/enigma_main.cpp:865 src/enigma_main.cpp:881
+#: src/enigma_main.cpp:813 src/enigma_main.cpp:864 src/enigma_main.cpp:880
 msgid "enable quickzap"
 msgstr "Quickzap einschalten"
 
-#
-#: src/enigma_main.cpp:822
+#: src/enigma_main.cpp:821
 msgid "add to bouquet"
-msgstr "Service zu Bouquet hinzufügen"
+msgstr "Zu Bouquet hinzufügen"
 
-#: src/enigma_main.cpp:861
+#: src/enigma_main.cpp:860
 msgid "disable quickzap"
 msgstr "Quickzap ausschalten"
 
-#: src/enigma_main.cpp:949
+#: src/enigma_main.cpp:948
 msgid "Channel"
 msgstr "Kanal"
 
-#: src/enigma_main.cpp:954
+#: src/enigma_main.cpp:953
 msgid "Channel:"
 msgstr "Kanal:"
 
-#: src/enigma_main.cpp:1029
-#, fuzzy, c-format
+#: src/enigma_main.cpp:1028
+#, c-format
 msgid "Please wait while the motor is turning to %d.%d%c ...."
-msgstr "Bitte warten während der Rotor nach %d.%d°%c dreht ..."
+msgstr "Bitte warten, der Rotor dreht nach %d.%d°%c..."
 
-#: src/enigma_main.cpp:1029
+#: src/enigma_main.cpp:1028
 msgid "Message"
 msgstr "Mitteilung"
 
-#: src/enigma_main.cpp:1122
+#: src/enigma_main.cpp:1121
 msgid "recorded movies"
 msgstr "Aufgenommene Filme"
 
-#
-#: src/enigma_main.cpp:1208
+#: src/enigma_main.cpp:1207
 msgid "Bouquets (TV)"
 msgstr "Bouquets (TV)"
 
-#
-#: src/enigma_main.cpp:1220
+#: src/enigma_main.cpp:1219
 msgid "Bouquets (Radio)"
 msgstr "Bouquets (Radio)"
 
-#: src/enigma_main.cpp:1259
+#: src/enigma_main.cpp:1258
 msgid "Favourites (TV)"
 msgstr "Favouriten (TV)"
 
-#: src/enigma_main.cpp:1264
+#: src/enigma_main.cpp:1263
 msgid "Favourites (Radio)"
 msgstr "Favouriten (Radio)"
 
-#: src/enigma_main.cpp:1847
+#: src/enigma_main.cpp:1859
 msgid "no EPG available"
-msgstr "Keine Beschreibung verfügbar"
+msgstr "Kein EPG verfügbar"
 
-#: src/enigma_main.cpp:2303
+#: src/enigma_main.cpp:2315
 msgid "ShutdownTimer"
 msgstr "Shutdowntimer"
 
-#: src/enigma_main.cpp:2303
+#: src/enigma_main.cpp:2315
 msgid "SleepTimer"
-msgstr "Sleeptimer"
+msgstr "SleepTimer"
 
-#: src/enigma_main.cpp:2474
+#: src/enigma_main.cpp:2479
 msgid "Sorry, you cannot record this service."
-msgstr "Dieser Service kann nicht aufgenommen werden."
+msgstr "Sorry, Sie können diesen Service nicht aufnehmen."
 
-#: src/enigma_main.cpp:2630
+#: src/enigma_main.cpp:2635
 msgid "Show recorded movies?"
 msgstr "Aufgenommene Filme anzeigen?"
 
-#: src/enigma_main.cpp:2630
+#: src/enigma_main.cpp:2635
 msgid "recording finished"
 msgstr "Aufnahme beendet"
 
-#: src/enigma_main.cpp:2804
+#: src/enigma_main.cpp:2809
 msgid "Enter new name:"
 msgstr "Neuen Namen eingeben:"
 
-#: src/enigma_main.cpp:2805
+#: src/enigma_main.cpp:2810
 msgid "Rename entry"
 msgstr "Eintrag umbenennen"
 
-#: src/enigma_main.cpp:2860
+#: src/enigma_main.cpp:2865
 msgid "Sorry, you cannot delete this service."
-msgstr "Dieser Service kann nicht gelöscht werden."
+msgstr "Sorry, Sie können diesen Service nicht löschen."
 
-#: src/enigma_main.cpp:2860
+#: src/enigma_main.cpp:2865
 msgid "delete service"
 msgstr "Service löschen"
 
-#: src/enigma_main.cpp:2885
+#: src/enigma_main.cpp:2890
 msgid ""
 "This is a recorded stream!\n"
 "Really delete?"
 msgstr "Aufgenommenen Film wirklich löschen?"
 
-#: src/enigma_main.cpp:2885
+#: src/enigma_main.cpp:2890
 msgid "Delete recorded stream"
 msgstr "Lösche aufgenommenen Film"
 
-#
-#: src/enigma_main.cpp:2904
+#: src/enigma_main.cpp:2909
 msgid ""
 "This is a complete Bouquet!\n"
 "Really delete?"
@@ -2090,55 +2050,51 @@ msgstr ""
 "Dies ist ein komplettes Bouquet!\n"
 "Wirklich löschen?"
 
-#
-#: src/enigma_main.cpp:2905
+#: src/enigma_main.cpp:2910
 msgid "Delete bouquet"
 msgstr "Bouquet löschen"
 
-#: src/enigma_main.cpp:2947
+#: src/enigma_main.cpp:2952
 msgid "Enter new name for the bouquet:"
 msgstr "Bitte neuen Namen für das Bouquet eingeben:"
 
-#: src/enigma_main.cpp:2948
+#: src/enigma_main.cpp:2953
 msgid "Rename bouquet"
 msgstr "Bouquet umbennenen"
 
-#: src/enigma_main.cpp:2974
+#: src/enigma_main.cpp:2979
 msgid "Enter name for the new bouquet:"
-msgstr "Bitte Name für das neue Bouquet eingeben:"
+msgstr "Bitte Namen für das neue Bouquet eingeben:"
 
-#
-#: src/enigma_main.cpp:2975
+#: src/enigma_main.cpp:2980
 msgid "Add new bouquet"
 msgstr "Neues Bouquet hinzufügen"
 
-#: src/enigma_main.cpp:3016
-#, fuzzy
+#: src/enigma_main.cpp:3021
 msgid "unnamed"
-msgstr "unbennantes Bouquet"
+msgstr "Unbenannt"
 
-#: src/enigma_main.cpp:3017
-#, fuzzy
+#: src/enigma_main.cpp:3022
 msgid "Enter marker name:"
-msgstr "Neuen Namen eingeben:"
+msgstr "Marker-Namen eingeben:"
 
-#: src/enigma_main.cpp:3018
+#: src/enigma_main.cpp:3023
 msgid "create marker"
-msgstr ""
+msgstr "Marker erstellen"
 
-#: src/enigma_main.cpp:3057
+#: src/enigma_main.cpp:3062
 msgid "unnamed bouquet"
-msgstr "unbennantes Bouquet"
+msgstr "Unbennantes Bouquet"
 
-#: src/enigma_main.cpp:3330 src/enigma_main.cpp:3331
+#: src/enigma_main.cpp:3337 src/enigma_main.cpp:3338
 msgid "This directory doesn't contain anything playable!"
-msgstr "Dieses Verzeichnis enthält keine abspielbaren Einträge!"
+msgstr "Dieses Verzeichnis enthält nichts Abspielbares!"
 
-#: src/enigma_main.cpp:3331
+#: src/enigma_main.cpp:3338
 msgid "Play"
 msgstr "Wiedergabe"
 
-#: src/enigma_main.cpp:3675
+#: src/enigma_main.cpp:3682
 msgid ""
 "A timer based digital recording is currently in progress!\n"
 "This stops the timer, and digital recording!"
@@ -2146,221 +2102,217 @@ msgstr ""
 "Es findet gerade eine timergesteuerte digitale Aufnahme statt!\n"
 "Der Timer und die digitale Aufnahme wird beendet!"
 
-#: src/enigma_main.cpp:3685
+#: src/enigma_main.cpp:3692
 msgid ""
 "A digital recording is currently in progress!\n"
 "This stops the digital recording!"
 msgstr ""
 "Es wird gerade digital aufgenommen!\n"
-"Dies stoppt die Aufnahme!"
+"Dies stoppt die digitale Aufnahme!"
 
-#: src/enigma_main.cpp:3697
+#: src/enigma_main.cpp:3704
 msgid ""
 "A timer event is currently in progress!\n"
 "This stops the timer event!"
 msgstr ""
-"Es ist gerade ein timerbasiertes Ereignis aktiv! \n"
-"Dies beendet das Ereignis."
+"Es ist gerade ein timerbasiertes Event aktiv! \n"
+"Dies beendet das Event."
 
-#: src/enigma_main.cpp:3705
+#: src/enigma_main.cpp:3712
 msgid "Really do this?"
 msgstr "Sind Sie sicher?"
 
-#: src/enigma_main.cpp:4374 src/enigma_main.cpp:4375
+#: src/enigma_main.cpp:4428 src/enigma_main.cpp:4429
 msgid "One moment please..."
 msgstr "Einen Moment, bitte..."
 
-#: src/enigma_main.cpp:4375 src/enigma_main.cpp:4380 src/enigma_main.cpp:4390
-#: src/enigma_main.cpp:4398 src/enigma_main.cpp:4405 src/enigma_main.cpp:4410
-#: src/enigma_main.cpp:4416 src/timer.cpp:1635
+#: src/enigma_main.cpp:4429 src/enigma_main.cpp:4434 src/enigma_main.cpp:4444
+#: src/enigma_main.cpp:4452 src/enigma_main.cpp:4459 src/enigma_main.cpp:4464
+#: src/enigma_main.cpp:4470 src/timer.cpp:1635
 msgid "switch"
-msgstr "Umschaltung"
+msgstr "Switch"
 
-#: src/enigma_main.cpp:4379 src/enigma_main.cpp:4380
+#: src/enigma_main.cpp:4433 src/enigma_main.cpp:4434
 msgid "Service could not be found !"
 msgstr "Service wurde nicht gefunden."
 
-#: src/enigma_main.cpp:4389 src/enigma_main.cpp:4390
+#: src/enigma_main.cpp:4443 src/enigma_main.cpp:4444
 msgid "This service could not be descrambled"
 msgstr "Service kann nicht entschlüsselt werden"
 
-#: src/enigma_main.cpp:4397 src/enigma_main.cpp:4398
+#: src/enigma_main.cpp:4451 src/enigma_main.cpp:4452
 msgid "This service doesn't currently send a signal"
 msgstr "Service sendet momentan kein Signal."
 
-#: src/enigma_main.cpp:4403 src/enigma_main.cpp:4405
+#: src/enigma_main.cpp:4457 src/enigma_main.cpp:4459
 msgid "This content could not be displayed"
 msgstr "Dieser Inhalt kann nicht angezeigt werden"
 
-#: src/enigma_main.cpp:4408 src/enigma_main.cpp:4410
+#: src/enigma_main.cpp:4462 src/enigma_main.cpp:4464
 msgid "NVOD Service - please select a starttime"
-msgstr "NVOD Dienst - bitte eine Startzeit wählen!"
+msgstr "NVOD Dienst - Bitte eine Startzeit wählen!"
 
-#: src/enigma_main.cpp:4414 src/enigma_main.cpp:4416
+#: src/enigma_main.cpp:4468 src/enigma_main.cpp:4470
 msgid "Unknown error!!"
 msgstr "Unbekannter Fehler!!"
 
-#: src/enigma_main.cpp:4876 src/sselect.cpp:372
+#: src/enigma_main.cpp:4930 src/sselect.cpp:373
 msgid "Playlist"
 msgstr "Wiedergabeliste"
 
-#: src/enigma_main.cpp:4878
+#: src/enigma_main.cpp:4932
 msgid "History"
 msgstr "Verlauf"
 
-#: src/enigma_main.cpp:5167
+#: src/enigma_main.cpp:5203
 msgid "Service Menu"
 msgstr "Service Menü"
 
-#: src/enigma_main.cpp:5180 src/sselect.cpp:109
+#: src/enigma_main.cpp:5216 src/sselect.cpp:110
 msgid "add service to playlist"
 msgstr "Service zur Playlist hinzufügen"
 
-#
-#: src/enigma_main.cpp:5189
+#: src/enigma_main.cpp:5225
 msgid "create new bouquet"
-msgstr "neues Bouquet erstellen"
+msgstr "Neues Bouquet erstellen"
 
-#
-#: src/enigma_main.cpp:5198
+#: src/enigma_main.cpp:5234
 msgid "duplicate bouquet"
 msgstr "Bouquet duplizieren"
 
-#
-#: src/enigma_main.cpp:5201 src/enigma_main.cpp:5235
+#: src/enigma_main.cpp:5237 src/enigma_main.cpp:5271
 msgid "add to specific bouquet"
-msgstr "zu bestimmten Bouquet hinzufügen"
+msgstr "Zu bestimmten Bouquet hinzufügen"
 
-#: src/enigma_main.cpp:5203
+#: src/enigma_main.cpp:5239
 msgid "add marker"
-msgstr ""
+msgstr "Marker hinzufügen"
 
-#: src/enigma_main.cpp:5210 src/enigma_main.cpp:5214 src/sselect.cpp:351
+#: src/enigma_main.cpp:5246 src/enigma_main.cpp:5250 src/sselect.cpp:352
 msgid "rename"
-msgstr "umbennenen"
+msgstr "Umbennenen"
 
-#: src/enigma_main.cpp:5217 src/sselect.cpp:349
+#: src/enigma_main.cpp:5253 src/sselect.cpp:350
 msgid "delete"
-msgstr "löschen"
+msgstr "Löschen"
 
-#: src/enigma_main.cpp:5223
+#: src/enigma_main.cpp:5259
 msgid "disable move mode"
-msgstr "'Verschiebe-Modus' abschalten"
+msgstr "Verschiebe-Modus abschalten"
 
-#: src/enigma_main.cpp:5225
+#: src/enigma_main.cpp:5261
 msgid "enable move mode"
 msgstr "'Verschiebe-Modus' aktivieren"
 
-#
-#: src/enigma_main.cpp:5241
+#: src/enigma_main.cpp:5277
 msgid "copy to bouquet list"
 msgstr "in Bouquetliste kopieren"
 
-#: src/enigma_main.cpp:5252
+#: src/enigma_main.cpp:5288
 msgid "disable edit mode"
-msgstr "'Editier-Modus' abschalten"
+msgstr "'Editiermodus' abschalten"
 
-#: src/enigma_main.cpp:5254
+#: src/enigma_main.cpp:5290
 msgid "enable edit mode"
-msgstr "'Editier-Modus' aktivieren"
+msgstr "'Editiermodus' aktivieren"
 
-#: src/enigma_main.cpp:5262
+#: src/enigma_main.cpp:5298
 msgid "unlock"
 msgstr "entsperren"
 
-#: src/enigma_main.cpp:5264
+#: src/enigma_main.cpp:5300
 msgid "lock"
 msgstr "sperren"
 
-#: src/enigma_main.cpp:5267
+#: src/enigma_main.cpp:5303
 msgid "disable parental lock"
 msgstr "Jugendschutz abschalten"
 
-#: src/enigma_main.cpp:5269
+#: src/enigma_main.cpp:5305
 msgid "enable parental lock"
-msgstr "Jugendschutz einschalten"
+msgstr "Jugendschutz aktivieren"
 
-#: src/enigma_main.cpp:5287
+#: src/enigma_main.cpp:5323
 msgid "Shutdown/Standby Menu"
 msgstr "Shutdown/Standby Menü"
 
-#: src/enigma_main.cpp:5295
+#: src/enigma_main.cpp:5331
 msgid "shutdown now"
-msgstr "jetzt herunterfahren"
+msgstr "Jetzt herunterfahren"
 
-#: src/enigma_main.cpp:5296
+#: src/enigma_main.cpp:5332
 msgid "restart"
-msgstr "neustarten"
+msgstr "Neustarten"
 
-#: src/enigma_main.cpp:5299
+#: src/enigma_main.cpp:5335
 msgid "reboot now"
-msgstr "jetzt neustarten"
+msgstr "Jetzt neustarten"
 
-#: src/enigma_main.cpp:5301
+#: src/enigma_main.cpp:5337
 msgid "goto standby"
-msgstr "in den Standbymodus gehen"
+msgstr "In Standby gehen"
 
-#: src/enigma_main.cpp:5302
+#: src/enigma_main.cpp:5338
 msgid "set sleeptimer"
 msgstr "Sleep-Timer setzen"
 
-#: src/enigma_main.cpp:5403
+#: src/enigma_main.cpp:5439
 msgid "Record Menu"
 msgstr "Aufnahme Menü"
 
-#: src/enigma_main.cpp:5409
+#: src/enigma_main.cpp:5445
 msgid "stop record now"
 msgstr "Aufnahme sofort beenden"
 
-#: src/enigma_main.cpp:5411
+#: src/enigma_main.cpp:5447
 msgid "set record duration"
 msgstr "Aufnahmedauer eingeben"
 
-#: src/enigma_main.cpp:5412
+#: src/enigma_main.cpp:5448
 msgid "set record stop time"
 msgstr "Aufnahme Stopp Zeit eingeben"
 
-#: src/enigma_main.cpp:5486
+#: src/enigma_main.cpp:5522
 msgid "press ok to start edit mode"
 msgstr "OK, um den Editiermodus zu starten"
 
-#: src/enigma_main.cpp:5534 src/time_settings.cpp:36
+#: src/enigma_main.cpp:5570 src/time_settings.cpp:36
 msgid "Time Correction"
 msgstr "Zeitkorrektur"
 
-#: src/enigma_main.cpp:5541
+#: src/enigma_main.cpp:5577
 msgid "Transponder Time:"
 msgstr "Transponderzeit:"
 
-#: src/enigma_main.cpp:5550
+#: src/enigma_main.cpp:5586
 msgid "Transponder Date:"
 msgstr "Transponderdatum:"
 
-#: src/enigma_main.cpp:5557
+#: src/enigma_main.cpp:5593
 msgid "New Time:"
 msgstr "Neue Zeit:"
 
-#: src/enigma_main.cpp:5570
+#: src/enigma_main.cpp:5606
 msgid "enter correct time here"
-msgstr "richtige Zeit hier eintragen"
+msgstr "Richtige Zeit hier eintragen"
 
-#: src/enigma_main.cpp:5576
+#: src/enigma_main.cpp:5612
 msgid "New Date:"
 msgstr "Neues Datum:"
 
-#: src/enigma_main.cpp:5585
+#: src/enigma_main.cpp:5621
 msgid "press ok to select another day"
 msgstr "OK drücken um einen anderen Tag zu wählen"
 
-#: src/enigma_main.cpp:5591
+#: src/enigma_main.cpp:5627
 msgid "press ok to select another month"
 msgstr "OK drücken um einen anderen Monat zu wählen"
 
-#: src/enigma_main.cpp:5600
+#: src/enigma_main.cpp:5636
 msgid "press ok to select another year"
 msgstr "OK drücken um ein anderes Jahr zu wählen"
 
-#: src/enigma_main.cpp:5616
+#: src/enigma_main.cpp:5652
 msgid "set new time and close window"
 msgstr "Neue Zeit speichern und Fenster schließen (ok)"
 
@@ -2439,17 +2391,15 @@ msgstr "Plugin '%s' nicht gefunden"
 
 #: src/enigma_plugins.cpp:215
 msgid "no name given"
-msgstr "kein Name vergeben"
+msgstr "Kein Name vergeben"
 
 #: src/enigma_scan.cpp:38 src/enigma_setup.cpp:41
-#, fuzzy
 msgid "Service Searching"
-msgstr "Service Menü"
+msgstr "Servicesuche"
 
 #: src/enigma_scan.cpp:44
-#, fuzzy
 msgid "open satellite config"
-msgstr "Satellitenkonfiguration"
+msgstr "Satellitenkonfiguration öffnen"
 
 #: src/enigma_scan.cpp:45
 msgid "goto Motor Setup"
@@ -2460,27 +2410,24 @@ msgid "Transponder Edit"
 msgstr "Transponder Edit"
 
 #: src/enigma_scan.cpp:46
-#, fuzzy
 msgid "for automatic transponder scan"
-msgstr "automatische Kanalsuche öffnen"
+msgstr "Für automatische Kanalsuche"
 
 #: src/enigma_scan.cpp:49
-#, fuzzy
 msgid "Automatic Transponder Scan"
-msgstr "automatische Kanalsuche öffnen"
+msgstr "Automatische Kanalsuche"
 
 #: src/enigma_scan.cpp:49 src/scan.cpp:35
 msgid "open automatic transponder scan"
-msgstr "automatische Kanalsuche öffnen"
+msgstr "Automatische Kanalsuche öffnen"
 
 #: src/enigma_scan.cpp:50
-#, fuzzy
 msgid "Manual Transponder Scan"
-msgstr "Kanalsuche"
+msgstr "Manuelle Kanalsuche"
 
 #: src/enigma_scan.cpp:50 src/scan.cpp:36
 msgid "open manual transponder scan"
-msgstr "manuelle Kanalsuche öffnen"
+msgstr "Manuelle Kanalsuche öffnen"
 
 #: src/enigma_scan.cpp:105
 msgid ""
@@ -2524,61 +2471,52 @@ msgid "use LNB %d for Motor"
 msgstr "LNB %d für Rotor benutzen"
 
 #: src/enigma_setup.cpp:40
-#, fuzzy
 msgid "open service organising"
-msgstr "Sontige Einstellungen öffnen"
+msgstr "Serviceverwaltung öffnen"
 
 #: src/enigma_setup.cpp:41
-#, fuzzy
 msgid "open service searching"
-msgstr "Serviceliste anzeigen"
+msgstr "Servicesuche öffnen"
 
 #: src/enigma_setup.cpp:43 src/system_settings.cpp:35
 msgid "System Settings"
-msgstr ""
+msgstr "Systemeinstellungen"
 
 #: src/enigma_setup.cpp:43
-#, fuzzy
 msgid "open system settings"
-msgstr "Jugendschutz..."
+msgstr "Systemeinstellungen öffnen"
 
 #: src/enigma_setup.cpp:46
-#, fuzzy
 msgid "Common Interface"
-msgstr "Common Interface..."
+msgstr "Common Interface"
 
 #: src/enigma_setup.cpp:46
 msgid "open common interface menu"
 msgstr "Common Interface Menü öffnen"
 
 #: src/enigma_setup.cpp:50 src/system_settings.cpp:47
-#, fuzzy
 msgid "Harddisc Setup"
-msgstr "Festplatten Setup..."
+msgstr "Festplatteneinstellungen"
 
 #: src/enigma_setup.cpp:50 src/system_settings.cpp:47
-#, fuzzy
 msgid "open harddisc setup"
-msgstr "Festplatten Setup öffnen"
+msgstr "Festplatteneinstellungen öffnen"
 
 #: src/enigma_setup.cpp:52
-#, fuzzy
 msgid "Parental Lock"
 msgstr "Jugendschutz"
 
 #: src/enigma_setup.cpp:52
 msgid "open parental setup"
-msgstr "Jugendschutz Einstellungen öffnen"
+msgstr "Jugendschutzeinstellungen öffnen"
 
 #: src/enigma_setup.cpp:54 src/setup_extra.cpp:31
-#, fuzzy
 msgid "Expert Setup"
-msgstr "Rotor Einstellungen"
+msgstr "Experten-Einstellungen"
 
 #: src/enigma_setup.cpp:54
-#, fuzzy
 msgid "open expert setup"
-msgstr "Jugendschutz Einstellungen öffnen"
+msgstr "Experten-Einstellungen öffnen"
 
 #: src/enigma_setup.cpp:122 src/system_settings.cpp:115
 msgid "sorry, no harddisks found!"
@@ -2586,7 +2524,7 @@ msgstr "Leider wurden keine Festplatten gefunden!"
 
 #: src/enigma_setup.cpp:122 src/system_settings.cpp:115
 msgid "Harddisk setup..."
-msgstr "Festplatten Setup..."
+msgstr "Festplatteneinstellungen..."
 
 #: src/epgwindow.cpp:115 src/timer.cpp:140
 msgid "Sun"
@@ -2609,23 +2547,20 @@ msgid "EPG - "
 msgstr "EPG -"
 
 #: src/helpwindow.cpp:19
-#, fuzzy
 msgid "Help window"
-msgstr "Fenster schließen"
+msgstr "Hilfefenster"
 
 #: src/helpwindow.cpp:20
-#, fuzzy
 msgid "close the help window"
-msgstr "Fenster schließen"
+msgstr "Hilfefenster schließen"
 
 #: src/helpwindow.cpp:21
 msgid "scroll up"
-msgstr ""
+msgstr "Nach oben scrollen"
 
 #: src/helpwindow.cpp:22
-#, fuzzy
 msgid "scroll down"
-msgstr "Laustärke (leiser)"
+msgstr "Nach unten scrollen"
 
 #: src/parentallock.cpp:25
 msgid "please enter pin:"
@@ -2664,13 +2599,12 @@ msgid "change Setup PIN (ok)"
 msgstr "Setup PIN ändern (ok)"
 
 #: src/parentallock.cpp:86
-#, fuzzy
 msgid "Hide locked services"
-msgstr "Service löschen"
+msgstr "Gesperrte Services verstecken"
 
 #: src/parentallock.cpp:89
 msgid "don't show locked services in any list"
-msgstr ""
+msgstr "Gesperrte Services in keiner Liste zeigen"
 
 #: src/parentallock.cpp:171
 #, c-format
@@ -2707,7 +2641,7 @@ msgstr "PIN geändert"
 #: src/parentallock.cpp:256
 #, c-format
 msgid "current %s PIN"
-msgstr "derzeitige %s PIN"
+msgstr "Derzeitige %s PIN"
 
 #: src/parentallock.cpp:267
 msgid ""
@@ -2735,7 +2669,7 @@ msgstr "Süden"
 
 #: src/rotorconfig.cpp:288 src/rotorconfig.cpp:344
 msgid "delete me"
-msgstr "lösch mich"
+msgstr "Lösch mich"
 
 #: src/rotorconfig.cpp:381 src/rotorconfig.cpp:384
 msgid "drive Motor East"
@@ -2763,19 +2697,19 @@ msgstr "Position"
 
 #: src/rotorconfig.cpp:457
 msgid "store new sat positions"
-msgstr "neue Satpositionen speichern"
+msgstr "Neue Satpositionen speichern"
 
 #: src/rotorconfig.cpp:458
 msgid "drive to stored pos"
-msgstr "zu gespeicherter Position drehen"
+msgstr "Zu gespeicherter Position drehen"
 
 #: src/rotorconfig.cpp:458
 msgid "drive to stored position"
-msgstr "zu gespeicherter Position drehen"
+msgstr "Zu gespeicherter Position drehen"
 
 #: src/rotorconfig.cpp:459
 msgid "drive to satellite"
-msgstr "zum Satelliten drehen"
+msgstr "Zum Satelliten drehen"
 
 #: src/rotorconfig.cpp:459
 msgid "drive to stored satellite"
@@ -2783,15 +2717,15 @@ msgstr "zum gespeicherten Satelliten drehen"
 
 #: src/rotorconfig.cpp:460
 msgid "drive to 0"
-msgstr "auf 0° drehen"
+msgstr "Auf 0° drehen"
 
 #: src/rotorconfig.cpp:460
 msgid "drives to 0"
-msgstr "dreht auf 0°"
+msgstr "Dreht auf 0°"
 
 #: src/rotorconfig.cpp:461
 msgid "recalculate"
-msgstr "neu berechnen"
+msgstr "Neu berechnen"
 
 #: src/rotorconfig.cpp:461
 msgid "recalculate stored positions rel. to current pos"
@@ -2800,19 +2734,19 @@ msgstr ""
 
 #: src/rotorconfig.cpp:462
 msgid "set east limit"
-msgstr "östl. Limit setzen"
+msgstr "Östl. Limit setzen"
 
 #: src/rotorconfig.cpp:462
 msgid "set east soft limit"
-msgstr "östl. Soft Limit setzen"
+msgstr "Östl. Soft Limit setzen"
 
 #: src/rotorconfig.cpp:463
 msgid "set west limit"
-msgstr "westl. Limit setzen"
+msgstr "Westl. Limit setzen"
 
 #: src/rotorconfig.cpp:463
 msgid "set west soft limit"
-msgstr "westliches Soft Limit setzen"
+msgstr "Westl. Soft Limit setzen"
 
 #: src/rotorconfig.cpp:464
 msgid "disable limits"
@@ -2832,12 +2766,12 @@ msgstr "Soft Limits einschalten"
 
 #: src/rotorconfig.cpp:503
 msgid "store current pos in motor"
-msgstr "derzeitige Position im Rotor speichern"
+msgstr "Derzeitige Position im Rotor speichern"
 
 #: src/rotorconfig.cpp:504 src/rotorconfig.cpp:520 src/rotorconfig.cpp:524
 #: src/rotorconfig.cpp:853
 msgid "store"
-msgstr "speichern"
+msgstr "Speichern"
 
 #: src/rotorconfig.cpp:507
 msgid "drive motor to stored pos"
@@ -2845,7 +2779,7 @@ msgstr "Rotor zu gespeicherter Position drehen"
 
 #: src/rotorconfig.cpp:508 src/rotorconfig.cpp:512 src/rotorconfig.cpp:536
 msgid "go"
-msgstr "gehe"
+msgstr "Gehe"
 
 #: src/rotorconfig.cpp:511
 msgid "drive motor to reference position"
@@ -2853,23 +2787,23 @@ msgstr "Rotor zur Ausgangsposition drehen"
 
 #: src/rotorconfig.cpp:515
 msgid "recalculate all stored positions"
-msgstr "alle gespeicherten Positionen neu berechnen"
+msgstr "Alle gespeicherten Positionen neu berechnen"
 
 #: src/rotorconfig.cpp:516
 msgid "recalc"
-msgstr "neuberechnen"
+msgstr "Neuberechnen"
 
 #: src/rotorconfig.cpp:519
 msgid "store current pos as east soft limit"
-msgstr "speichere aktuelle Position als östliches Soft Limit"
+msgstr "Speichere aktuelle Position als östliches Soft Limit"
 
 #: src/rotorconfig.cpp:523
 msgid "store current pos as west soft limit"
-msgstr "speichere aktuelle Position als westliches Soft Limit"
+msgstr "Speichere aktuelle Position als westliches Soft Limit"
 
 #: src/rotorconfig.cpp:528 src/rotorconfig.cpp:532
 msgid "do it"
-msgstr "ausführen"
+msgstr "Ausführen"
 
 #: src/rotorconfig.cpp:535
 msgid "drive motor to satellite"
@@ -2886,19 +2820,19 @@ msgstr ""
 
 #: src/rotorconfig.cpp:757
 msgid "one step East..."
-msgstr "ein Schritt nach Osten"
+msgstr "Ein Schritt östlich..."
 
 #: src/rotorconfig.cpp:766
 msgid "one step west..."
-msgstr "ein Schritt nach Westen"
+msgstr "Ein Schritt westlich..."
 
 #: src/rotorconfig.cpp:780
 msgid "turning to east..."
-msgstr "drehe nach Osten..."
+msgstr "Drehe nach Osten..."
 
 #: src/rotorconfig.cpp:791
 msgid "turning to west..."
-msgstr "drehe nach Westen..."
+msgstr "Drehe nach Westen..."
 
 #: src/rotorconfig.cpp:804
 msgid "<    Stop    >"
@@ -2920,7 +2854,7 @@ msgid ""
 "Are you sure you want to do this?"
 msgstr ""
 "%d.%d%c ist im Moment auf Position %d gespeichert!\n"
-"Wenn Sie unter Position %d speichern, wird die alte Position entfernt.\n"
+"Wenn Sie unter Position %d speichern, wird die alte Position gelöscht.\n"
 "Sind Sie sicher? "
 
 #: src/rotorconfig.cpp:909
@@ -2937,16 +2871,15 @@ msgstr ""
 
 #: src/satconfig.cpp:59
 msgid "one single satellite"
-msgstr "ein einziger Satellit"
+msgstr "ein einzelner Satellit"
 
 #: src/satconfig.cpp:59
 msgid "one directly connected LNB"
-msgstr "nur direkt verbundenes LNB"
+msgstr "Ein direkt verbundenes LNB"
 
 #: src/satconfig.cpp:60
-#, fuzzy
 msgid "2 satellites via Toneburst"
-msgstr "2 Satelliten über DiSEqC A/B"
+msgstr "2 Satelliten via Toneburst"
 
 #: src/satconfig.cpp:60 src/satconfig.cpp:61
 msgid "2 LNBs via DiSEqC"
@@ -2966,7 +2899,7 @@ msgstr "4 LNBs über DiSEqC"
 
 #: src/satconfig.cpp:63
 msgid "many satellites via DiSEqC Rotor"
-msgstr "mehrere Satelliten mit DiSEqC Rotor"
+msgstr "Mehrere Satelliten mit DiSEqC Rotor"
 
 #: src/satconfig.cpp:63
 msgid "1 LNB with DiSEqC Rotor"
@@ -2974,11 +2907,11 @@ msgstr "1 LNB mit DiSEqC"
 
 #: src/satconfig.cpp:64
 msgid "non-standard user defined configuration..."
-msgstr "nicht-Standard - benutzerdefinierte Konfiguration..."
+msgstr "Nicht-Standard - benutzerdefinierte Konfiguration..."
 
 #: src/satconfig.cpp:64
 msgid "special"
-msgstr "spezial"
+msgstr "Spezial"
 
 #: src/satconfig.cpp:131
 msgid ""
@@ -2994,19 +2927,20 @@ msgstr "DiSEqC-Typ ändern..."
 
 #: src/satconfig.cpp:305
 msgid "direct connection"
-msgstr "direkte Verbindung"
+msgstr "Direkte Verbindung"
 
 #: src/satconfig.cpp:681
 msgid "press ok to select another satellite, or delete this satellite"
-msgstr "OK, um einen anderen Satelliten auszuwählen oder zu löschen"
+msgstr ""
+"OK drücken, um einen anderen Satelliten auszuwählen oder diesen zu löschen"
 
 #: src/satconfig.cpp:702
 msgid "press ok to goto LNB config"
-msgstr "OK, um in die LNB Konfiguration zu gelangen"
+msgstr "OK drücken, um in die LNB Konfiguration zu gelangen"
 
 #: src/satconfig.cpp:720
 msgid "press ok to select another 22kHz mode"
-msgstr "OK, um einen anderen 22kHz Modus zu wählen"
+msgstr "OK drücken, um einen anderen 22kHz Modus zu wählen"
 
 #: src/satconfig.cpp:721
 msgid "22kHz signal is automatically switched"
@@ -3018,11 +2952,11 @@ msgstr "22kHz ist immer aktiv (high band)"
 
 #: src/satconfig.cpp:723
 msgid "22kHz is always disabled (low band)"
-msgstr "22kHz ist niemals aktiv (low band)"
+msgstr "22kHz ist immer aus(low band)"
 
 #: src/satconfig.cpp:733
 msgid "press ok to select another LNB Voltage mode"
-msgstr "OK, um einen anderen Spannungsmodus zu wählen"
+msgstr "OK drücken, um einen anderen LNB-Spannungsmodus zu wählen"
 
 #: src/satconfig.cpp:734
 msgid "Voltage is automatically changed"
@@ -3038,7 +2972,7 @@ msgstr "Spannung ist immer 18V (horizontal)"
 
 #: src/satconfig.cpp:737
 msgid "Voltage is always off"
-msgstr "Spannung ist immer 0V (abgeschaltet)"
+msgstr "Spannung ist immer aus"
 
 #: src/satconfig.cpp:1076 src/satconfig.cpp:1122 src/satconfig.cpp:1132
 msgid "None"
@@ -3046,11 +2980,11 @@ msgstr "Keine"
 
 #: src/satconfig.cpp:1076
 msgid "sends no tone burst"
-msgstr "Keinen 'tone burst' senden"
+msgstr "Sendet keinen Toneburst"
 
 #: src/satconfig.cpp:1077
 msgid "sends modulated tone burst"
-msgstr "modulierten 'tone burst' senden"
+msgstr "Sendet modulierten Toneburst"
 
 #: src/satconfig.cpp:1078
 msgid "sends unmodulated tone burst"
@@ -3090,75 +3024,75 @@ msgstr "DiSEqC cmd B/B senden"
 
 #: src/satconfig.cpp:1100
 msgid "sends no committed DiSEqC cmd"
-msgstr "sende keine 'committed' DiSEqC Kommandos"
+msgstr "Sendet kein committed DiSEqC cmd"
 
 #: src/satconfig.cpp:1101
 msgid "sends switch cmd 1"
-msgstr "sendet Schalter cmd 1"
+msgstr "Sendet Switch cmd 1"
 
 #: src/satconfig.cpp:1102
 msgid "sends switch cmd 2"
-msgstr "sendet Schalter cmd 2"
+msgstr "Sendet Switch cmd 2"
 
 #: src/satconfig.cpp:1103
 msgid "sends switch cmd 3"
-msgstr "sendet Schalter cmd 3"
+msgstr "Sendet Switch cmd 3"
 
 #: src/satconfig.cpp:1104
 msgid "sends switch cmd 4"
-msgstr "sendet Schalter cmd 4"
+msgstr "Sendet Switch cmd 4"
 
 #: src/satconfig.cpp:1105
 msgid "sends switch cmd 5"
-msgstr "sendet Schalter cmd 5"
+msgstr "Sendet Switch cmd 5"
 
 #: src/satconfig.cpp:1106
 msgid "sends switch cmd 6"
-msgstr "sendet Schalter cmd 6"
+msgstr "Sendet Switch cmd 6"
 
 #: src/satconfig.cpp:1107
 msgid "sends switch cmd 7"
-msgstr "sendet Schalter cmd 7"
+msgstr "Sendet Switch cmd 7"
 
 #: src/satconfig.cpp:1108
 msgid "sends switch cmd 8"
-msgstr "sendet Schalter cmd 8"
+msgstr "Sendet Switch cmd 8"
 
 #: src/satconfig.cpp:1109
 msgid "sends switch cmd 9"
-msgstr "sendet Schalter cmd 9"
+msgstr "Sendet Switch cmd 9"
 
 #: src/satconfig.cpp:1110
 msgid "sends switch cmd 10"
-msgstr "sendet Schalter cmd 10"
+msgstr "Sendet Switch cmd 10"
 
 #: src/satconfig.cpp:1111
 msgid "sends switch cmd 11"
-msgstr "sendet Schalter cmd 11"
+msgstr "Sendet Switch cmd 11"
 
 #: src/satconfig.cpp:1112
 msgid "sends switch cmd 12"
-msgstr "sendet Schalter cmd 12"
+msgstr "Sendet Switch cmd 12"
 
 #: src/satconfig.cpp:1113
 msgid "sends switch cmd 13"
-msgstr "sendet Schalter cmd 13"
+msgstr "sendet Switch cmd 13"
 
 #: src/satconfig.cpp:1114
 msgid "sends switch cmd 14"
-msgstr "sendet Schalter cmd 14"
+msgstr "sendet Switch cmd 14"
 
 #: src/satconfig.cpp:1115
 msgid "sends switch cmd 15"
-msgstr "sendet Schalter cmd 15"
+msgstr "Sendet Switch cmd 15"
 
 #: src/satconfig.cpp:1116
 msgid "sends switch cmd 16"
-msgstr "sendet Schalter cmd 16"
+msgstr "Sendet Switch cmd 16"
 
 #: src/satconfig.cpp:1122
 msgid "sends no DiSEqC repeats"
-msgstr "sendet keine DiSEqC Wiederholungen"
+msgstr "Sendet keine DiSEqC Wiederholungen"
 
 #: src/satconfig.cpp:1123
 msgid "One"
@@ -3166,7 +3100,7 @@ msgstr "Eine"
 
 #: src/satconfig.cpp:1123
 msgid "sends one repeat"
-msgstr "eine Wiederholung senden"
+msgstr "Sendet eine Wiederholung"
 
 #: src/satconfig.cpp:1124
 msgid "Two"
@@ -3174,7 +3108,7 @@ msgstr "Zwei"
 
 #: src/satconfig.cpp:1124
 msgid "sends two repeats"
-msgstr "zwei Wiederholungen senden"
+msgstr "Sendet zwei Wiederholungen"
 
 #: src/satconfig.cpp:1125
 msgid "Three"
@@ -3182,11 +3116,11 @@ msgstr "Drei"
 
 #: src/satconfig.cpp:1125
 msgid "sends three repeats"
-msgstr "drei Wiederholungen senden"
+msgstr "Sendet drei Wiederholungen"
 
 #: src/satconfig.cpp:1132
 msgid "sends no uncommitted switch command"
-msgstr "sende keine Kommandos an uncommitted Switches"
+msgstr "sendet kein uncommitted Switch Kommando"
 
 #: src/satconfig.cpp:1133
 msgid "Input 1"
@@ -3194,7 +3128,7 @@ msgstr "Eingang 1"
 
 #: src/satconfig.cpp:1133
 msgid "select uncommitted switch Input 1"
-msgstr "wähle 'uncommitted' Eingang 1"
+msgstr "Wähle 'uncommitted' Eingang 1"
 
 #: src/satconfig.cpp:1134
 msgid "Input 2"
@@ -3202,7 +3136,7 @@ msgstr "Eingang 2"
 
 #: src/satconfig.cpp:1134
 msgid "select uncommitted switch Input 2"
-msgstr "wähle 'uncommitted' Eingang 2"
+msgstr "Wähle 'uncommitted' Eingang 2"
 
 #: src/satconfig.cpp:1135
 msgid "Input 3"
@@ -3210,7 +3144,7 @@ msgstr "Eingang 3"
 
 #: src/satconfig.cpp:1135
 msgid "select uncommitted switch Input 3"
-msgstr "wähle 'uncommitted' Eingang 3"
+msgstr "Wähle 'uncommitted' Eingang 3"
 
 #: src/satconfig.cpp:1136
 msgid "Input 4"
@@ -3218,7 +3152,7 @@ msgstr "Eingang 4"
 
 #: src/satconfig.cpp:1136
 msgid "select uncommitted switch Input 4"
-msgstr "wähle 'uncommitted' Eingang 4"
+msgstr "Wähle 'uncommitted' Eingang 4"
 
 #: src/satconfig.cpp:1137
 msgid "Input 5"
@@ -3226,7 +3160,7 @@ msgstr "Eingang 5"
 
 #: src/satconfig.cpp:1137
 msgid "select uncommitted switch Input 5"
-msgstr "wähle 'uncommitted' Eingang 5"
+msgstr "Wähle 'uncommitted' Eingang 5"
 
 #: src/satconfig.cpp:1138
 msgid "Input 6"
@@ -3234,7 +3168,7 @@ msgstr "Eingang 6"
 
 #: src/satconfig.cpp:1138
 msgid "select uncommitted switch Input 6"
-msgstr "wähle 'uncommitted' Eingang 6"
+msgstr "Wähle 'uncommitted' Eingang 6"
 
 #: src/satconfig.cpp:1139
 msgid "Input 7"
@@ -3242,7 +3176,7 @@ msgstr "Eingang 7"
 
 #: src/satconfig.cpp:1139
 msgid "select uncommitted switch Input 7"
-msgstr "wähle 'uncommitted' Eingang 7"
+msgstr "Wähle 'uncommitted' Eingang 7"
 
 #: src/satconfig.cpp:1140
 msgid "Input 8"
@@ -3250,7 +3184,7 @@ msgstr "Eingang 8"
 
 #: src/satconfig.cpp:1140
 msgid "select uncommitted switch Input 8"
-msgstr "wähle 'uncommitted' Eingang 8"
+msgstr "Wähle 'uncommitted' Eingang 8"
 
 #: src/satconfig.cpp:1141
 msgid "Input 9"
@@ -3258,7 +3192,7 @@ msgstr "Eingang 9"
 
 #: src/satconfig.cpp:1141
 msgid "select uncommitted switch Input 9"
-msgstr "wähle 'uncommitted' Eingang 9"
+msgstr "Wähle 'uncommitted' Eingang 9"
 
 #: src/satconfig.cpp:1142
 msgid "Input 10"
@@ -3266,7 +3200,7 @@ msgstr "Eingang 10"
 
 #: src/satconfig.cpp:1142
 msgid "select uncommitted switch Input 10"
-msgstr "wähle 'uncommitted' Eingang 10"
+msgstr "Wähle 'uncommitted' Eingang 10"
 
 #: src/satconfig.cpp:1143
 msgid "Input 11"
@@ -3274,7 +3208,7 @@ msgstr "Eingang 11"
 
 #: src/satconfig.cpp:1143
 msgid "select uncommitted switch Input 11"
-msgstr "wähle 'uncommitted' Eingang 11"
+msgstr "Wähle 'uncommitted' Eingang 11"
 
 #: src/satconfig.cpp:1144
 msgid "Input 12"
@@ -3290,7 +3224,7 @@ msgstr "Eingang 13"
 
 #: src/satconfig.cpp:1145
 msgid "select uncommitted switch Input 13"
-msgstr "wähle 'uncommitted' Eingang 13"
+msgstr "Wähle 'uncommitted' Eingang 13"
 
 #: src/satconfig.cpp:1146
 msgid "Input 14"
@@ -3298,7 +3232,7 @@ msgstr "Eingang 14"
 
 #: src/satconfig.cpp:1146
 msgid "select uncommitted switch Input 14"
-msgstr "wähle 'uncommitted' Eingang 14"
+msgstr "Wähle 'uncommitted' Eingang 14"
 
 #: src/satconfig.cpp:1147
 msgid "Input 15"
@@ -3306,7 +3240,7 @@ msgstr "Eingang 15"
 
 #: src/satconfig.cpp:1147
 msgid "select uncommitted switch Input 15"
-msgstr "wähle 'uncommitted' Eingang 15"
+msgstr "Wähle 'uncommitted' Eingang 15"
 
 #: src/satconfig.cpp:1148
 msgid "Input 16"
@@ -3314,7 +3248,7 @@ msgstr "Eingang 16"
 
 #: src/satconfig.cpp:1148
 msgid "select uncommitted switch Input 16"
-msgstr "wähle 'uncommitted' Eingang 16"
+msgstr "Wähle 'uncommitted' Eingang 16"
 
 #: src/scan.cpp:35
 msgid "auto scan"
@@ -3322,29 +3256,29 @@ msgstr "Automatischer Suchlauf"
 
 #: src/scan.cpp:36
 msgid "manual scan.."
-msgstr "Manueller Suchlauf"
+msgstr "Manueller Suchlauf.."
 
 #: src/scan.cpp:225
 msgid ""
 "To begin searching for a valid satellite press OK, or choose your desired "
 "satellite manually and press OK"
 msgstr ""
-"Um nach gültigen Satelliten zu suchen bitte OK drücken, oder den gewünschten "
-"Satelliten manuell auswählen und OK drücken"
+"Um nach einem gültigen Satelliten zu suchen bitte OK drücken oder den "
+"gewünschten Satelliten manuell auswählen und OK drücken"
 
 #: src/scan.cpp:228
 msgid ""
 "To begin searching for a valid cable provider press OK, or choose your "
 "desired cable provider manually and press OK"
 msgstr ""
-"Um die Suche nach gültigen Anbietern zu beginnen bitte OK drücken oder den "
+"Um die Suche nach gültigen Kabelprovidern zu beginnen, OK drücken oder den "
 "gewünschten Kabelanbieter manuell wählen und OK drücken."
 
 #: src/scan.cpp:299
 msgid ""
 "A valid transponder has been found. Verify that the right network is selected"
 msgstr ""
-"Ein gültiger Transponder wurde gefunden. Bitte vergleichen, ob das richtige "
+"Ein gültiger Transponder wurde gefunden. Bestätigen, dass das richtige "
 "Netzwerk gewählt ist."
 
 #: src/scan.cpp:367
@@ -3353,7 +3287,7 @@ msgid ""
 "antenna-/cable-setup or try manual search if its some obscure satellite/"
 "network."
 msgstr ""
-"Alle bekannten Transponder wurden durchsucht, es war aber keine Verbindung "
+"Alle bekannten Transponder wurden durchsucht, es war aber keine Lock "
 "möglich. Bitte Antennen-Setup prüfen oder manuelle Suche durchführen, falls "
 "es sich um einen unbekannten Satelliten/Netzwerk handelt."
 
@@ -3362,8 +3296,8 @@ msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try another satellite/network."
 msgstr ""
-"Alle bekannten Transponder wurden durchsucht, es war aber keine Verbindung "
-"möglich. Bitte Antennen Einstellungen prüfen oder manuelle Suche durchführen."
+"Alle bekannten Transponder wurden durchsucht, es war aber kein Lock möglich. "
+"Bitte Antennen Einstellungen prüfen oder manuelle Suche durchführen."
 
 #: src/scan.cpp:384
 msgid "Search in progress "
@@ -3372,7 +3306,7 @@ msgstr "Suchlauf aktiv"
 #: src/scan.cpp:497
 #, c-format
 msgid "%02i minutes and %02i seconds left"
-msgstr "noch %d Minuten und %02d Sekunden"
+msgstr "noch %d Minuten und %02d Sekunden verbleibend"
 
 #: src/scan.cpp:499
 #, c-format
@@ -3385,7 +3319,7 @@ msgstr "Kanalsuche"
 
 #: src/scan.cpp:735
 msgid "Scan is in progress... please wait"
-msgstr "Suche läuft... bitte warten"
+msgstr "Suche läuft... Bitte Warten"
 
 #: src/scan.cpp:739
 #, c-format
@@ -3410,7 +3344,7 @@ msgstr "Fertig."
 
 #: src/scan.cpp:755
 msgid "Scan is in finished, press ok to close window"
-msgstr "Suchlauf ist beendet, OK um das Fenster zu schließen"
+msgstr "Suchlauf ist beendet, OK drücken, um das Fenster zu schließen"
 
 #: src/scan.cpp:761
 #, c-format
@@ -3419,9 +3353,9 @@ msgid ""
 "to scan another\n"
 "%s?"
 msgstr ""
-"Wollen sie\n"
-"to einen weiteren\n"
-" %s scannen?"
+"Wollen Sie\n"
+"einen weiteren\n"
+"%s scannen?"
 
 #: src/scan.cpp:761
 msgid "Satellite"
@@ -3435,98 +3369,81 @@ msgstr "Transponder"
 msgid "Scan finished"
 msgstr "Suche beendet"
 
-#
 #: src/setup_extra.cpp:37
-#, fuzzy
 msgid "Communication Setup"
 msgstr "Kommunikationseinstellungen"
 
-#
 #: src/setup_extra.cpp:37
 msgid "open communication setup"
 msgstr "Kommunikationseinstellungen öffnen"
 
 #: src/setup_extra.cpp:38
 msgid "Ngrab Streaming Setup"
-msgstr ""
+msgstr "NGrab-Streaming Einstellungen"
 
-#
 #: src/setup_extra.cpp:38
-#, fuzzy
 msgid "open ngrab server setup"
-msgstr "Video Einstellungen öffnen"
+msgstr "NGrab-Server Einstellungen öffnen"
 
 #: src/setup_extra.cpp:39 src/software_update.cpp:28
-#, fuzzy
 msgid "Software Update"
-msgstr "Software Update..."
+msgstr "Software Update"
 
 #: src/setup_extra.cpp:39
-#, fuzzy
 msgid "open software update"
-msgstr "Software Update..."
+msgstr "Software Update öffnen"
 
 #: src/setup_extra.cpp:41
-#, fuzzy
 msgid "Remote Control"
-msgstr "Fernbedienung..."
+msgstr "Fernbedienung"
 
 #: src/setup_extra.cpp:41
 msgid "open remote control setup"
 msgstr "Fernbedienungseinstellungen öffnen"
 
 #: src/setup_extra.cpp:43
-#, fuzzy
 msgid "Skip confirmations"
-msgstr "Satellitenkonfiguration"
+msgstr "Bestätigungen überspringen"
 
 #: src/setup_extra.cpp:43
-#, fuzzy
 msgid "enable/disable confirmations"
-msgstr "Inversion an/ausschalten (OK)"
+msgstr "Bestätigungen an-/ausschalten"
 
 #: src/setup_extra.cpp:44
 msgid "Hide error windows"
-msgstr ""
+msgstr "Fehlermeldungen verstecken"
 
 #: src/setup_extra.cpp:44
 msgid "show no zap error messages"
-msgstr ""
+msgstr "Keine Zap-Fehlermeldungen anzeigen"
 
 #: src/setup_extra.cpp:45
-#, fuzzy
 msgid "Auto show Infobar"
-msgstr "Infobar anzeigen"
+msgstr "Infobar automatisch anzeigen"
 
 #: src/setup_extra.cpp:45
-#, fuzzy
 msgid "show infobar when event info changed"
-msgstr "Infobar anzeigen wenn jetzt/nächste Info wechselt"
+msgstr "Infobar anzeigen wenn Event-Info sich ändert"
 
 #: src/setup_extra.cpp:46
-#, fuzzy
 msgid "Show remaining Time"
-msgstr "Restzeit des Events anzeigen"
+msgstr "Restzeit anzeigen"
 
 #: src/setup_extra.cpp:46
-#, fuzzy
 msgid "show event remaining time in the infobar"
-msgstr "Restzeit des Events anzeigen"
+msgstr "Restzeit des Events in der Infobar anzeigen"
 
 #: src/setup_extra.cpp:47
-#, fuzzy
 msgid "Serviceselector help buttons"
-msgstr "Serviceliste"
+msgstr "Service Auswahl Hilfsbuttons"
 
 #: src/setup_extra.cpp:47
-#, fuzzy
 msgid "show colored help buttons in service selector"
-msgstr "Serviceliste anzeigen"
+msgstr "Farbige Hilfebuttons in der Service Auswahl zeigen"
 
 #: src/setup_harddisk.cpp:176
-#, fuzzy
 msgid "Harddisk Setup"
-msgstr "Festplatten Setup..."
+msgstr "Festplatten Einstellungen..."
 
 #: src/setup_harddisk.cpp:294
 msgid "Are you SURE that you want to format this disk?\n"
@@ -3557,7 +3474,8 @@ msgstr ""
 #: src/setup_harddisk.cpp:338
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
 msgstr ""
-"Konnte das Utility sfdisk zum partitionieren der Festplatte nicht finden"
+"Sorry, konnte das sfdisk Utility zum partitionieren der Festplatte nicht "
+"finden."
 
 #: src/setup_harddisk.cpp:384
 msgid "creating filesystem failed."
@@ -3569,42 +3487,42 @@ msgstr "Ihre Festplatte wurde erfolgreich formatiert!"
 
 #: src/setup_harddisk.cpp:429
 msgid "(error reading information)"
-msgstr "(fehler beim lesen der Informationen)"
+msgstr "(Fehler beim Lesen der Informationen)"
 
 #: src/setup_harddisk.cpp:431
 msgid "uninitialized - format it to use!"
-msgstr "nicht initialisiert - zur Nutzung bitte formatieren!"
+msgstr "Nicht initialisiert - zur Nutzung bitte formatieren!"
 
 #: src/setup_harddisk.cpp:433
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
-msgstr "OK, %d.%03d GB (~%d minuten) übrig"
+msgstr "Belegt, %d.%03d GB (~%d minuten) frei"
 
 #: src/setup_harddisk.cpp:435
 msgid "initialized, but unknown filesystem"
-msgstr "initialisiert, aber unbekanntes Dateisystem"
+msgstr "Initialisiert, aber unbekanntes Dateisystem"
 
 #: src/setup_harddisk.cpp:512
 msgid "could not unmount the filesystem... "
-msgstr "konnte das Dateisystem nicht unmounten"
+msgstr "Konnte das Dateisystem nicht unmounten"
 
 #: src/setup_harddisk.cpp:513 src/setup_harddisk.cpp:525
 #: src/setup_harddisk.cpp:547 src/setup_harddisk.cpp:566
 msgid "check filesystem..."
-msgstr "überprüfe Dateisystem..."
+msgstr "Überprüfe Dateisystem..."
 
 #: src/setup_harddisk.cpp:524
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 msgstr ""
-"sorry, konnte das Utility fscdk.ext3 zum Überprüfen des ext3 Dateisystems "
+"Sorry, konnte das fscdk.ext3 Utility zum Überprüfen des ext3 Dateisystems "
 "nicht finden"
 
 #: src/setup_harddisk.cpp:546
 msgid ""
 "sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
 msgstr ""
-"sorry, konnte das Utility reiserfsck zum Überprüfen des ext3 Dateisystems "
-"nicht finden"
+"Sorry, konnte das reiserfsck Utility zum Überprüfen des ext3 Dateisystems "
+"nicht finden."
 
 #: src/setup_harddisk.cpp:565
 msgid "not supported filesystem for check."
@@ -3652,64 +3570,59 @@ msgstr "PluginOffsetAktionen"
 
 #: src/setup_osd.cpp:39
 msgid "enable set the leftTop Point of the rectangle"
-msgstr "aktiviert das linke rechteck um die den linken TopPunkt zu setzen"
+msgstr "Linkes Rechteck aktivieren um den linken TopPunkt zu setzen"
 
 #: src/setup_osd.cpp:40
 msgid "enable set the rightBottom Point of the rectangle"
-msgstr "aktiviert das rechte rechteck um die den rechten Tiefpunkt zu setzen"
+msgstr "Rechtes Rechteck aktivieren um den rechten Tiefpunkt zu setzen"
 
 #: src/setup_osd.cpp:41
 msgid "saves the current positions"
-msgstr "speichert die aktuelle Position"
+msgstr "Speichert die aktuelle Position"
 
 #: src/setup_osd.cpp:164
-#, fuzzy
 msgid ""
 "here you can center the tuxtxt rectangle...\n"
 "for more infos press help"
 msgstr ""
-"hier können Sie den Plugin-Anzeigebereich zentrieren... für mehr Infos bitte "
-"Hilfe drücken"
+"Hier können Sie den TuxTxt-Anzeigebereich zentrieren... \n"
+"Für mehr Infos Hilfe drücken"
 
 #: src/setup_osd.cpp:180 src/system_settings.cpp:50
-#, fuzzy
 msgid "OSD Settings"
 msgstr "OSD Einstellungen"
 
 #: src/setup_osd.cpp:188
 msgid "Alpha:"
-msgstr "Transparenz"
+msgstr "Transparenz:"
 
 #: src/setup_osd.cpp:200
 msgid "change the transparency correction"
-msgstr "Tranparenzkorrektur ändern"
+msgstr "Die Tranparenzkorrektur ändern"
 
 #: src/setup_osd.cpp:213
 msgid "change the brightness correction"
-msgstr "Helligkeitskorrektur ändern"
+msgstr "Die Helligkeitskorrektur ändern"
 
 #: src/setup_osd.cpp:226
 msgid "change the contrast"
-msgstr "Kontrast ändern"
+msgstr "Den Kontrast ändern"
 
 #: src/setup_osd.cpp:231
-#, fuzzy
 msgid "Change skin"
-msgstr "Kanäle"
+msgstr "Skin wechseln"
 
 #: src/setup_osd.cpp:237
-#, fuzzy
 msgid "press ok to open skin selector"
-msgstr "Skinauswahl öffnen"
+msgstr "OK drücken um Skinauswahl zu öffnen"
 
 #: src/setup_osd.cpp:241
-#, fuzzy
 msgid "TuxText position"
-msgstr "Position"
+msgstr "TuxText Position"
 
 #: src/setup_osd.cpp:242
 msgid "here you can center the Tuxtxt (builtin videotext)"
-msgstr ""
+msgstr "Hier können sie den Tuxtxt (eingebauter Videotext) zentrieren"
 
 #: src/setup_osd.cpp:323
 msgid ""
@@ -3741,11 +3654,11 @@ msgstr "FB-Wiederholungsrate (links, rechts)"
 
 #: src/setup_rc.cpp:70
 msgid "set RC repeat delay ( left / right )"
-msgstr "FB-Verzögerung einstellen (links, rechts)"
+msgstr "FB-Verzögerungsrate einstellen (links, rechts)"
 
 #: src/setup_rc.cpp:80
 msgid "select your favourite RC style (ok)"
-msgstr "wählen Sie ihren bevorzugten Fernbedienungsstil aus (ok)"
+msgstr "Wählen Sie Ihren bevorzugten Fernbedienungsstil aus (OK)"
 
 #: src/setup_rc.cpp:102
 msgid "Next Char Timeout:"
@@ -3758,9 +3671,8 @@ msgstr ""
 "(in msek)"
 
 #: src/setup_rfmod.cpp:22
-#, fuzzy
 msgid "UHF-Modulator Setup"
-msgstr "RF-Modulator Einstellungen"
+msgstr "UHF-Modulator Einstellungen"
 
 #: src/setup_rfmod.cpp:27 src/setup_rfmod.cpp:155
 msgid "Test Pattern"
@@ -3808,7 +3720,7 @@ msgstr "250Khz Schritte"
 
 #: src/setup_rfmod.cpp:131
 msgid "save settings and leave rf setup"
-msgstr "Änderungen speichern und Fenster schließen"
+msgstr "Änderungen speichern und RF-Einstellungen schließen"
 
 #: src/setup_rfmod.cpp:155
 msgid "if you can read this your rfmod will not work."
@@ -3824,11 +3736,11 @@ msgstr "Zeitzone:"
 
 #: src/setup_timezone.cpp:30
 msgid "select your time zone (ok)"
-msgstr "wählen Sie Ihre Zeitzone (ok)"
+msgstr "Wählen Sie Ihre Zeitzone (OK)"
 
 #: src/setup_timezone.cpp:41
 msgid "use automatically daylight saving time"
-msgstr "automatisch Sommerzeit benutzen"
+msgstr "Automatisch Sommerzeit benutzen"
 
 #: src/setup_timezone.cpp:44
 msgid "Automatically adjust clock for daylight saving changes"
@@ -3847,7 +3759,6 @@ msgid "enter ngrab server port (standard is 4000)"
 msgstr "Ngrab Server-Port eingeben (Standard ist 4000)"
 
 #: src/setupengrab.cpp:72
-#, fuzzy
 msgid "enter MAC address of server (for wake on lan)"
 msgstr "MAC-Adresse des Servers eingeben (für wake on LAN)"
 
@@ -3856,9 +3767,8 @@ msgid "detect MAC Adress"
 msgstr "MAC-Adresse finden"
 
 #: src/setupengrab.cpp:92
-#, fuzzy
 msgid "try to autodetect server MAC address"
-msgstr "versucht die MAC-Adresse automatisch zu finden"
+msgstr "Versuchen die MAC-Adresse automatisch zu finden"
 
 #: src/setupengrab.cpp:180
 msgid "Please check your NGrab Server or the IP"
@@ -3868,7 +3778,6 @@ msgstr "Bitte überprüfen sie Ihren NGrab Server oder die IP"
 msgid "HW Address(MAC) detection failed"
 msgstr "HW Addresse (MAC) konnte nicht gefunden werden"
 
-#
 #: src/setupnetwork.cpp:274
 msgid "Communication setup"
 msgstr "Kommunikationseinstellungen"
@@ -3879,25 +3788,23 @@ msgstr "IP-Addresse der Box eingeben (0..9, links, rechts)"
 
 #: src/setupnetwork.cpp:315
 msgid "enter netmask of your network (0..9, left, right)"
-msgstr "Bitte Netzmaske eingeben (0..9, left, right)"
+msgstr "Bitte die Netzmaske ihres Netzwerkes eingeben (0..9, links, rechts)"
 
-#
 #: src/setupnetwork.cpp:329
 msgid "press ok to change connection type"
 msgstr "OK drücken, um den Verbindungstyp zu ändern"
 
-#
 #: src/setupnetwork.cpp:332 src/setupnetwork.cpp:340
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: src/setupnetwork.cpp:332 src/setupnetwork.cpp:340
 msgid "Communicate to Local Area Network"
-msgstr "Mit Lokalem Netzwerk kommunizieren"
+msgstr "Mit lokalem Netzwerk kommunizieren"
 
 #: src/setupnetwork.cpp:334 src/setupnetwork.cpp:341
 msgid "WAN(PPPoE)"
-msgstr ""
+msgstr "WAN(PPPoE)"
 
 #: src/setupnetwork.cpp:334 src/setupnetwork.cpp:341
 msgid "Communicate to the Internet via DSL"
@@ -3909,14 +3816,12 @@ msgstr "T-Online User hier OK drücken"
 
 #: src/setupnetwork.cpp:364
 msgid "enter your domain name server (0..9, left, right)"
-msgstr "Bitte DNS einstellen (0..9, left, right)"
+msgstr "Geben Sie Ihren Dobmain Name Server ein (0..9, links, rechts)"
 
-#
 #: src/setupnetwork.cpp:370
 msgid "Login:"
-msgstr ""
+msgstr "Login:"
 
-#
 #: src/setupnetwork.cpp:382
 msgid "press ok to edit your provider login name"
 msgstr "OK drücken, um den Provider-Loginnamen zu editieren"
@@ -3929,126 +3834,121 @@ msgstr "Bitte IP-Adresse des Gateways einstellen (0..9, left, right)"
 msgid "Password:"
 msgstr "Passwort:"
 
-#
 #: src/setupnetwork.cpp:414
 msgid "press ok to edit your provider password"
 msgstr "Ok drücken, um das Provider-Passwort zu editieren"
 
 #: src/setupnetwork.cpp:420
 msgid "Configure Network"
-msgstr "Netzwerk aktivieren"
+msgstr "Netzwerk konfigurieren"
 
 #: src/setupnetwork.cpp:423
 msgid "enable/disable network config (ok)"
 msgstr "Netzwerkeinstellungen ein/ausschalten (OK)"
 
 #: src/setupnetwork.cpp:431
-#, fuzzy
 msgid "reject incoming connections on port 80"
 msgstr "eingehende Verbindungen auf Port 80 ablehnen"
 
 #: src/setupnetwork.cpp:438
-#, fuzzy
 msgid "reject incoming connections on port 23"
 msgstr "eingehende Verbindungen auf Port 23 ablehnen"
 
 #: src/setupnetwork.cpp:445
-#, fuzzy
 msgid "reject incoming connections on ports 137,138,139"
-msgstr "eingehende Verbindungen auf den Porst 137, 138, 139 ablehnen"
+msgstr "eingehende Verbindungen auf den Ports 137, 138, 139 ablehnen"
 
 #: src/setupnetwork.cpp:452
-#, fuzzy
 msgid "reject incoming connections on ports 21"
 msgstr "eingehende Verbindungen auf Port 21 ablehnen"
 
-#
-#: src/setupvideo.cpp:36 src/system_settings.cpp:41
-#, fuzzy
+#: src/setupvideo.cpp:39 src/system_settings.cpp:41
 msgid "A/V Settings"
 msgstr "A/V Einstellungen"
 
-#: src/setupvideo.cpp:41
+#: src/setupvideo.cpp:44
 msgid "Color Format:"
 msgstr "Farbformat:"
 
-#: src/setupvideo.cpp:51
+#: src/setupvideo.cpp:54
 msgid "CVBS"
-msgstr ""
+msgstr "CVBS"
 
-#: src/setupvideo.cpp:52
+#: src/setupvideo.cpp:55
 msgid "RGB"
 msgstr "RGB"
 
-#: src/setupvideo.cpp:53
+#: src/setupvideo.cpp:56
 msgid "SVideo"
 msgstr "SVideo"
 
-#: src/setupvideo.cpp:56
-msgid "YPbPr"
-msgstr ""
-
 #: src/setupvideo.cpp:59
-#, fuzzy
+msgid "YPbPr"
+msgstr "YPbPr"
+
+#: src/setupvideo.cpp:62
 msgid "choose color format ( left, right )"
 msgstr "Farbformat auswählen (links, rechts)"
 
-#: src/setupvideo.cpp:63
+#: src/setupvideo.cpp:66
 msgid "Aspect Ratio:"
 msgstr "Seitenverhältnis:"
 
-#: src/setupvideo.cpp:73
+#: src/setupvideo.cpp:76
 msgid "choose aspect ratio ( left, right )"
 msgstr "Bitte Seitenverhältnis auswählen (links, rechts)"
 
-#: src/setupvideo.cpp:74
+#: src/setupvideo.cpp:77
 msgid "4:3 letterbox"
 msgstr "4:3 Letterbox"
 
-#: src/setupvideo.cpp:75
+#: src/setupvideo.cpp:78
 msgid "4:3 panscan"
-msgstr "4:3 panscan"
+msgstr "4:3 Panscan"
 
-#: src/setupvideo.cpp:76
+#: src/setupvideo.cpp:79
 msgid "16:9"
 msgstr "16:9"
 
-#: src/setupvideo.cpp:83
+#: src/setupvideo.cpp:86
 msgid "Disable WSS on 4:3"
 msgstr "WSS auf 4:3 deaktivieren"
 
-#: src/setupvideo.cpp:84
+#: src/setupvideo.cpp:87
 msgid "don't send WSS signal when A-ratio is 4:3"
 msgstr "kein WSS-Signal senden wenn A-Ratio 4:3 ist"
 
-#: src/setupvideo.cpp:91
+#: src/setupvideo.cpp:94
 msgid "AC3 default output"
 msgstr "AC3 als Standardausgabe"
 
-#: src/setupvideo.cpp:94
+#: src/setupvideo.cpp:97
 msgid "enable/disable ac3 default output (ok)"
-msgstr "AC3 als Default ein/ausschalten (OK)"
+msgstr "AC3 als Standardausgabe ein/ausschalten (OK)"
+
+#: src/setupvideo.cpp:101
+msgid "use PAL-M for NTSC"
+msgstr "PAL-M statt NTSC benutzen"
+
+#: src/setupvideo.cpp:104
+msgid "use PAL-M instead of real NTSC"
+msgstr "PAL-M statt echtem NTSC benutzen"
 
 #: src/software_update.cpp:33
-#, fuzzy
 msgid "Internet Update"
-msgstr "Neuen Namen eingeben:"
+msgstr "Internet Update"
 
-#
 #: src/software_update.cpp:33
-#, fuzzy
 msgid "open internet update"
-msgstr "Video Einstellungen öffnen"
+msgstr "Internet Update öffnen"
 
 #: src/software_update.cpp:34
-#, fuzzy
 msgid "Manual Update"
-msgstr "Manueller Upload"
+msgstr "Manuelles Update"
 
 #: src/software_update.cpp:34
-#, fuzzy
 msgid "open manual update"
-msgstr "manuelle Kanalsuche öffnen"
+msgstr "Manuelles Update öffnen"
 
 #: src/software_update.cpp:55
 msgid ""
@@ -4056,178 +3956,168 @@ msgid ""
 "'root.cramfs' and press ok.In the upcomming list select 'manual update' and "
 "follow the instructions."
 msgstr ""
+"Laden Sie ihr Image via FTP oder Samba in das '/tmp' Verzeichnis. Benennen "
+"Sie es dann in 'root.cramfs' um und drücken Sie OK. Im erscheinenden Fenster "
+"wählen Sie 'manuelles Update' und folgen den Anweisungen."
 
 #: src/software_update.cpp:57
-#, fuzzy
 msgid "Manual update"
-msgstr "Manueller Upload"
+msgstr "Manuelles Update"
 
-#
-#: src/sselect.cpp:40
+#: src/sselect.cpp:41
 msgid "EPG Style Selector"
 msgstr "EPG-Stil Auswahl"
 
-#
-#: src/sselect.cpp:41
+#: src/sselect.cpp:42
 msgid "open the EPG with selected style"
-msgstr "EPG mit gewählten Stil öffnen"
+msgstr "EPG mit gewähltem Stil öffnen"
 
-#
-#: src/sselect.cpp:51
+#: src/sselect.cpp:52
 msgid "EPG Style"
-msgstr "EPG Stil"
+msgstr "EPG-Stil"
 
-#
-#: src/sselect.cpp:58
+#: src/sselect.cpp:59
 msgid "Channel EPG"
 msgstr "Kanal EPG"
 
-#: src/sselect.cpp:58
+#: src/sselect.cpp:59
 msgid "open EPG for selected Channel"
 msgstr "EPG für gewählten Kanal öffnen"
 
-#: src/sselect.cpp:59
+#: src/sselect.cpp:60
 msgid "Multi EPG"
-msgstr ""
+msgstr "Multi EPG"
 
-#: src/sselect.cpp:59
+#: src/sselect.cpp:60
 msgid "open EPG for next five channels"
 msgstr "EPG für die nächsten fünf Kanäle öffnen"
 
-#: src/sselect.cpp:103
-msgid "service selector"
-msgstr "Serviceliste"
-
 #: src/sselect.cpp:104
-msgid "switch to next bouquet"
-msgstr "schaltet zum nächsten Bouquet"
+msgid "service selector"
+msgstr "Serviceauswahl"
 
 #: src/sselect.cpp:105
-msgid "switch to previous bouquet"
-msgstr "schaltet zum vorherigen Bouquet"
+msgid "switch to next bouquet"
+msgstr "Zum nächsten Bouquet wechseln"
 
 #: src/sselect.cpp:106
-msgid "go up a directory"
-msgstr "ein Verzeichnis nach oben gehen"
+msgid "switch to previous bouquet"
+msgstr "Zum vorherigen Bouquet wechseln"
 
 #: src/sselect.cpp:107
-msgid "shows the EPG selector for the highlighted channel"
-msgstr "zeigt die EPG Auswahl für den gewählten Kanal"
+msgid "go up a directory"
+msgstr "Ein Verzeichnis nach oben gehen"
 
 #: src/sselect.cpp:108
-msgid "show service selector menu"
-msgstr "zeigt die Serviceliste an"
+msgid "shows the EPG selector for the highlighted channel"
+msgstr "Zeigt die EPG Auswahl für den gewählten Kanal"
 
-#
-#: src/sselect.cpp:110
+#: src/sselect.cpp:109
+msgid "show service selector menu"
+msgstr "Serviceauswahl Menü anzeigen"
+
+#: src/sselect.cpp:111
 msgid "add service to a specific bouquet"
 msgstr "Service zu einem bestimmten Bouquet hinzufügen"
 
-#: src/sselect.cpp:114
+#: src/sselect.cpp:115
 msgid "toggle between classic and multi column style"
 msgstr "umschalten zwischen klassischem und mehrspaltigem Stil"
 
-#
-#: src/sselect.cpp:115
+#: src/sselect.cpp:116
 msgid "toggle focus between service and bouquet list (in combi column style)"
 msgstr ""
-"Focus zwischen Service- und Bouquetliste wechseln (im kombinierten Spalten-"
-"Stil)"
-
-#: src/sselect.cpp:116
-msgid "go to the prev Marker if exist.. else goto first service"
-msgstr ""
+"Focus zwischen Service- und Bouquetliste wechseln (im Kombi-Spalten-Stil)"
 
 #: src/sselect.cpp:117
+msgid "go to the prev Marker if exist.. else goto first service"
+msgstr ""
+"zum vorherhigen Marker springen falls vorhanden.. ansonsten zum ersten "
+"Service springen"
+
+#: src/sselect.cpp:118
 msgid "go to the next Marker if exist.. else goto last service"
 msgstr ""
+"zum nächsten Marker springen falls vorhanden.. ansonsten zum letzten Service "
+"springen"
 
-#: src/sselect.cpp:119
+#: src/sselect.cpp:120
 msgid "show all services"
 msgstr "alle Services anzeigen"
 
-#
-#: src/sselect.cpp:120
+#: src/sselect.cpp:121
 msgid "show satellite list"
 msgstr "Liste der Satelliten anzeigen"
 
-#
-#: src/sselect.cpp:121
+#: src/sselect.cpp:122
 msgid "show provider list"
 msgstr "Providerliste anzeigen"
 
-#
-#: src/sselect.cpp:122
+#: src/sselect.cpp:123
 msgid "show bouquet list"
 msgstr "Bouquetliste anzeigen"
 
-#
-#: src/sselect.cpp:124
+#: src/sselect.cpp:125
 msgid "delete selected entry"
 msgstr "gewählten Eintrag löschen"
 
-#
-#: src/sselect.cpp:125
+#: src/sselect.cpp:126
 msgid "mark selected entry for move"
 msgstr "gewählten Eintrag zum Verschieben markieren"
 
-#
-#: src/sselect.cpp:126
+#: src/sselect.cpp:127
 msgid "rename selected entry"
 msgstr "gewählten Eintrag umbenennen"
 
-#
-#: src/sselect.cpp:127
-#, fuzzy
+#: src/sselect.cpp:128
 msgid "create new marker entry"
-msgstr "neues Bouquet erstellen"
+msgstr "neuen Marker erstellen"
 
-#: src/sselect.cpp:269
+#: src/sselect.cpp:270
 msgid "[GO UP]"
 msgstr "[Eine Ebene nach oben]"
 
-#: src/sselect.cpp:271
+#: src/sselect.cpp:272
 msgid "(removed service)"
 msgstr "(gelöschter service)"
 
-#: src/sselect.cpp:350
+#: src/sselect.cpp:351
 msgid "mark"
 msgstr "markieren"
 
-#: src/sselect.cpp:352
-#, fuzzy
+#: src/sselect.cpp:353
 msgid "marker"
-msgstr "markieren"
+msgstr "Marker"
 
-#
-#: src/sselect.cpp:360
+#: src/sselect.cpp:361
 msgid "All Services"
 msgstr "Alle Services"
 
-#: src/sselect.cpp:362
+#: src/sselect.cpp:363
 msgid "Satellites"
 msgstr "Satelliten"
 
-#
-#: src/sselect.cpp:365
+#: src/sselect.cpp:366
 msgid "Providers"
 msgstr "Provider"
 
-#: src/sselect.cpp:370 src/sselect.cpp:373
+#: src/sselect.cpp:371 src/sselect.cpp:374
 msgid "Root"
-msgstr ""
+msgstr "Root"
 
-#: src/sselect.cpp:371
+#: src/sselect.cpp:372
 msgid "Movies"
 msgstr "Filme"
 
-#: src/sselect.cpp:741
+#: src/sselect.cpp:742
 msgid "Select No or press Abort to lock/unlock the complete directory"
 msgstr ""
+"Nein wählen oder Abbrechen drücken um das komplette Verzeichnis zu sperren/"
+"entsperren"
 
-#: src/sselect.cpp:741
+#: src/sselect.cpp:742
 msgid "Enter Directory"
-msgstr ""
+msgstr "Verzeichnis öffnen"
 
 #: src/streaminfo.cpp:164
 msgid "album"
@@ -4283,7 +4173,7 @@ msgstr "Serviceinfos (rechts)"
 
 #: src/streaminfo.cpp:639
 msgid "Scrambled system information (left, right)"
-msgstr "Info zum Verschlüsselungssystem (links, rechts)"
+msgstr "Infos zum Verschlüsselungssystem (links, rechts)"
 
 #: src/streaminfo.cpp:640
 msgid "Transponder information (left)"
@@ -4298,32 +4188,32 @@ msgid ""
 "You would to delete the running event..\n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"Sie wollen das laufende Ereignis löschen... dadurch wird der aktuelle Timer "
-"(läuft noch!) angehalten!"
+"Sie wollen das laufende Event löschen... dadurch wird der Timer angehalten "
+"(Aufnahme)!"
 
 #: src/timer.cpp:1048
 msgid "Delete the event from the timerlist"
-msgstr "Das Ereignis aus der Timer Liste löschen"
+msgstr "Das Event aus der Timerliste löschen"
 
 #: src/timer.cpp:1049
 msgid "Really delete this event?"
-msgstr "Dieses Ereignis wirklich löschen?"
+msgstr "Dieses Event wirklich löschen?"
 
 #: src/timer.cpp:1053
 msgid ""
 "You would to update the running event.. \n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"Sie wollen das laufende Ereignis aktualisieren... dadurch wird der aktuelle "
-"Timer angehalten!"
+"Sie wollen das laufende Event aktualisieren... dadurch wird der Timer "
+"angehalten (Aufnahme)!"
 
 #: src/timer.cpp:1054 src/timer.cpp:1850
 msgid "Update event in timerlist"
-msgstr "aktualisiert das Ereignis in der Timerliste"
+msgstr "Aktualisiert das Event in der Timerliste"
 
 #: src/timer.cpp:1055
 msgid "Really update this event?"
-msgstr "Dieses Ereignis wirklich aktualisieren?"
+msgstr "Dieses Event wirklich aktualisieren?"
 
 #: src/timer.cpp:1110 src/timer.cpp:1133
 msgid "This event is already in the timerlist."
@@ -4331,11 +4221,11 @@ msgstr "Dieses Ereignis ist schon in der Timerliste."
 
 #: src/timer.cpp:1111 src/timer.cpp:1133 src/timer.cpp:1168
 msgid "Add event to timerlist"
-msgstr "fügt das Ereignis zur Timerliste hinzu"
+msgstr "Fügt das Event zur Timerliste hinzu"
 
 #: src/timer.cpp:1157
 msgid "The Endtime overlaps with another event in the timerlist"
-msgstr "Die Endzeit überlappt mit einem anderen Ereignis in der Timerliste."
+msgstr "Die Endzeit überlappt mit einem anderen Event in der Timerliste."
 
 #: src/timer.cpp:1157
 msgid "Set Stop Time"
@@ -4347,8 +4237,8 @@ msgid ""
 "The event overlaps with another event in the timerlist\n"
 "Please check the timerlist manually."
 msgstr ""
-"Dieses Ereignis kann nicht zur Timerliste hinzugefügt werde.\n"
-"Der Eintrag überlappt sich mit einem anderen Ereignis in der Timerliste\n"
+"Dieses Event kann nicht zur Timerliste hinzugefügt werde.\n"
+"Der Eintrag überlappt sich mit einem anderen Event in der Timerliste\n"
 "Bitte die Timerliste manuell überprüfen."
 
 #: src/timer.cpp:1245
@@ -4357,11 +4247,11 @@ msgstr "Timeransicht"
 
 #: src/timer.cpp:1246
 msgid "add new event to Timerlist"
-msgstr "neues Ereignis zur Timerliste hinzufügen"
+msgstr "neues Event zur Timerliste hinzufügen"
 
 #: src/timer.cpp:1247
 msgid "remove this entry from timer list"
-msgstr "löscht diesen Eintrag aus der Timerliste"
+msgstr "Diesen Eintrag aus der Timerliste löschen"
 
 #: src/timer.cpp:1441
 msgid "Timer list"
@@ -4373,19 +4263,19 @@ msgstr "Timeransicht"
 
 #: src/timer.cpp:1514
 msgid "increase the event begin time in 1 minute steps"
-msgstr "die Ereignis-Anfangszeit in 1 Minuten Schritten erhöhen"
+msgstr "Die Event-Anfangszeit in 1 Minutenschritten erhöhen"
 
 #: src/timer.cpp:1515
 msgid "decrease the event begin time in 1 minute steps"
-msgstr "die Ereignis-Anfangszeit in 1 Minuten Schritten herabsetzen"
+msgstr "Die Event-Anfangszeit in 1 Minutenschritten herabsetzen"
 
 #: src/timer.cpp:1516
 msgid "increase the event end time in 1 minute steps"
-msgstr "die Ereignis-Endzeit in 1 Minuten Schritten erhöhen"
+msgstr "Die Event-Endzeit in 1 Minutenschritten erhöhen"
 
 #: src/timer.cpp:1517
 msgid "decrease the event end time in 1 minute steps"
-msgstr "die Ereignis-Endzeit in 1 Minuten Schritten herabsetzen"
+msgstr "Die Event-Endzeit in 1 Minutenschritten herabsetzen"
 
 #: src/timer.cpp:1526
 msgid "January"
@@ -4441,16 +4331,15 @@ msgstr "DVR-Aufnahme"
 
 #: src/timer.cpp:1642
 msgid "Ngrab"
-msgstr "Ngrab"
+msgstr "NGrab"
 
-#
 #: src/timer.cpp:1646
 msgid "Record VCR"
-msgstr "VCR Aufnahme"
+msgstr "VCR-Aufnahme"
 
 #: src/timer.cpp:1719
 msgid "unknown service"
-msgstr "unbekannter Dienst"
+msgstr "unbekannter Service"
 
 #: src/timer.cpp:1850
 msgid ""
@@ -4474,27 +4363,22 @@ msgstr ""
 msgid "no description found"
 msgstr "keine Beschreibung gefunden"
 
-#
 #: src/tpeditwindow.cpp:57
 msgid "Satellite Edit"
 msgstr "Satelliten editieren"
 
-#
 #: src/tpeditwindow.cpp:63
 msgid "press ok to change satellite name"
-msgstr "OK drücken, um den Satellitennamen zu ändern"
+msgstr "OK drücken, um Satellitennamen zu ändern"
 
-#
 #: src/tpeditwindow.cpp:73
 msgid "enter orbital position without dot (19.2 = 192)"
 msgstr "Orbitalposition ohne Punkt eingeben (19.2 = 192)"
 
-#
 #: src/tpeditwindow.cpp:81
 msgid "press ok to change direction"
 msgstr "Ok drücken, um Richtung zu ändern"
 
-#
 #: src/tpeditwindow.cpp:90
 msgid "Network search"
 msgstr "Netzwerksuche"
@@ -4504,10 +4388,9 @@ msgid ""
 "scan Network Information Table(s)\n"
 "this is recommend"
 msgstr ""
-"Network Information Table scannen\n"
+"Network Information Table(s) scannen\n"
 "Dies wird empfohlen"
 
-#
 #: src/tpeditwindow.cpp:96
 msgid "Extended networks search"
 msgstr "Erweiterte Netzwerksuche"
@@ -4532,24 +4415,21 @@ msgstr ""
 "NITs bekannter Netzwerke nicht scannen\n"
 "Schnellerer Suchlauf"
 
-#
 #: src/tpeditwindow.cpp:108
 msgid "Use BAT"
 msgstr "BAT verwenden"
 
 #: src/tpeditwindow.cpp:109
 msgid "use Provider DVB Bouquet Tables if exist"
-msgstr "Provder DVB Bouquet Tabellen benutzen wenn sie existieren"
+msgstr "Provider DVB Bouquet Tabellen benutzen wenn vorhanden"
 
-#
 #: src/tpeditwindow.cpp:188
 msgid "add new Network"
 msgstr "neues Netzwerk hinzufügen"
 
-#
 #: src/tpeditwindow.cpp:189
 msgid "remove selected Network"
-msgstr "gewählten Netzwerk entfernen"
+msgstr "gewähltes Netzwerk entfernen"
 
 #: src/tpeditwindow.cpp:256
 msgid "Save changed Transponders?"
@@ -4567,15 +4447,13 @@ msgstr "Transponder konnten nicht in Datei gschrieben werden!"
 msgid "Write Error"
 msgstr "Schreibfehler"
 
-#
 #: src/tpeditwindow.cpp:445
 msgid "new Satellite"
 msgstr "neuer Satellit"
 
-#
 #: src/tpeditwindow.cpp:474
 msgid "Really delete the selected satellite?"
-msgstr "Ausgewählten Satelliten wirklich entfernen?"
+msgstr "Den ausgewählten Satelliten wirklich löschen?"
 
 #: src/tpeditwindow.cpp:475
 #, c-format
@@ -4584,7 +4462,7 @@ msgstr "Lösche %s"
 
 #: src/upgrade.cpp:138
 msgid "Please select the software version to upgrade to:"
-msgstr "Bitte die Version wählen, auf die geupdated werden soll:"
+msgstr "Bitte die Software-Version wählen, auf die upgegraded werden soll:"
 
 #: src/upgrade.cpp:172
 msgid "manual upload"
@@ -4592,19 +4470,19 @@ msgstr "Manueller Upload"
 
 #: src/upgrade.cpp:190
 msgid "downloading catalog..."
-msgstr "Lade Katalog..."
+msgstr "Downloade Katalog..."
 
 #: src/upgrade.cpp:210
 msgid "downloading changelog..."
-msgstr "downloade Changelog..."
+msgstr "Downloade Changelog..."
 
 #: src/upgrade.cpp:235
 msgid "downloading image..."
-msgstr "downloade Image..."
+msgstr "Downloade Image..."
 
 #: src/upgrade.cpp:294
 msgid "Please select version to upgrade or LAME! to abort"
-msgstr "Bitte gewünschte Version wählen oder LAME! drücken um abzubrechen:"
+msgstr "Bitte gewünschte Version wählen um upzugraden oder mit LAME! abbrechen"
 
 #: src/upgrade.cpp:413 src/upgrade.cpp:486 src/upgrade.cpp:500
 msgid "Error!"
@@ -4628,7 +4506,7 @@ msgstr "Datenfehler. Checksumme stimmt nicht überein."
 
 #: src/upgrade.cpp:509
 msgid "Checksum OK. Ready to upgrade."
-msgstr "Checksumme okay. Fertig für Update."
+msgstr "Checksumme OK. Fertig zum Upgraden."
 
 #: src/upgrade.cpp:511
 msgid "Are you sure you want to upgrade to this new version?"
@@ -4636,9 +4514,8 @@ msgstr "Möchten Sie wirklich auf diese neue Version upgraden?"
 
 #: src/upgrade.cpp:512
 msgid "Ready to upgrade"
-msgstr "Fertig für Update"
+msgstr "Fertig zum Upgraden"
 
-#
 #: src/upgrade.cpp:522
 msgid "Please wait... do NOT switch off the receiver!"
 msgstr "Bitte warten... den Receiver NICHT ausschalten!"
@@ -4651,7 +4528,6 @@ msgstr "Update läuft"
 msgid "Can't read flashimage.img!"
 msgstr "Kann flashimage.img nicht lesen!"
 
-#
 #: src/upgrade.cpp:550 src/upgrade.cpp:564 src/upgrade.cpp:580
 #: src/upgrade.cpp:591
 msgid "Flash"
@@ -4659,9 +4535,8 @@ msgstr "Flash"
 
 #: src/upgrade.cpp:564
 msgid "flashimage.img has filesize of 0byte!"
-msgstr "flashimage.img hat eine Dateigrösse von 0 Byte!"
+msgstr "flashimage.img hat die Dateigrösse von 0 Byte!"
 
-#
 #: src/upgrade.cpp:580
 msgid "Erase error!"
 msgstr "Fehler beim Löschen!"
@@ -4672,21 +4547,20 @@ msgstr "Kann mtd nicht öffnen!"
 
 #: src/upgrade.cpp:606
 msgid "Writing Software to Flash..."
-msgstr "Schreibe Software auf Flash..."
+msgstr "Schreibe Software in Flash..."
 
 #: src/upgrade.cpp:628
 msgid ""
 "upgrade successful!\n"
 "restarting..."
 msgstr ""
-"Update erfolgreich beendet!\n"
-"starte neu..."
+"Upgrade erfolgreich!\n"
+"Starte neu..."
 
 #: src/upgrade.cpp:629
 msgid "upgrade ok"
-msgstr "Update ok"
+msgstr "Upgrade OK"
 
-#
 #: src/upgrade.cpp:656
 msgid "Erasing Flash..."
 msgstr "Lösche Flash..."
@@ -4713,80 +4587,71 @@ msgstr "Folgende neue Funktionen wurden in diesem Release hinzugefügt:\n"
 
 #: src/wizard_language.cpp:154
 msgid "Choose your language..."
-msgstr "Bitte Sprache wählen..."
+msgstr "Wählen Sie Ihre Sprache..."
 
 #: src/wizard_language.cpp:155
 msgid "press up/down/ok"
-msgstr "hoch/runter/OK"
+msgstr "hoch/runter/OK drücken"
 
 #: src/wizard_scan.cpp:114
-#, fuzzy
 msgid "Direct connection to one LNB"
-msgstr "direkte Verbindung"
+msgstr "Direkte Verbindung mit einem LNB"
 
 #: src/wizard_scan.cpp:117
 msgid "Simple DiSEqC (2 LNBs/satellites)"
-msgstr ""
+msgstr "Einfaches DiSEqC (2 LNBs/Satelliten)"
 
 #: src/wizard_scan.cpp:120
 msgid "Complex configuration (including DiSEqC 1.2)"
-msgstr ""
+msgstr "Komplexe Konfiguration (inklusive DiSEqC 1.2)"
 
 #: src/system_settings.cpp:39 src/time_settings.cpp:31
-#, fuzzy
 msgid "Time Settings"
-msgstr "Zeitkorrektur"
+msgstr "Zeit Einstellungen"
 
 #: src/system_settings.cpp:39
-#, fuzzy
 msgid "open time settings"
-msgstr "Zeitzonen Einstellungen öffnen"
+msgstr "Zeit Einstellungen öffnen"
 
 #: src/system_settings.cpp:41
 msgid "open A/V settings"
-msgstr ""
+msgstr "A/V Einstellungen öffnen"
 
-#
 #: src/system_settings.cpp:43
-#, fuzzy
 msgid "UHF Modulator"
-msgstr "RF-Modulator..."
+msgstr "UHF Modulator"
 
 #: src/system_settings.cpp:43
-#, fuzzy
 msgid "open UHF-Modulator setup"
-msgstr "RF-Modulator Einstellungen"
+msgstr "UHF-Modulator Einstellungen öffnen"
 
 #: src/system_settings.cpp:50
-#, fuzzy
 msgid "open on screen display settings"
-msgstr "Onscreen Display Einstellungen öffnen"
+msgstr "Onscreen-Display Einstellungen öffnen"
 
 #: src/system_settings.cpp:51
 msgid "open language selector"
-msgstr "Spracheinstellungen öffnen"
+msgstr "Sprachauswahl öffnen"
 
 #: src/system_settings.cpp:53
 msgid "LCD Settings"
-msgstr ""
+msgstr "LCD Einstellungen"
 
 #: src/system_settings.cpp:53
 msgid "open LCD settings"
-msgstr ""
+msgstr "LCD Einstellungen öffnen"
 
 #: src/time_settings.cpp:35
-#, fuzzy
 msgid "Timezone Configuration"
-msgstr "LNB Konfiguration"
+msgstr "Zeitzonen Konfiguration"
 
 #: src/time_settings.cpp:35
-#, fuzzy
 msgid "open timezone selector"
-msgstr "Zeitzonen Einstellungen öffnen"
+msgstr "Zeitzonen Auswahl öffnen"
 
 #: src/time_settings.cpp:36
 msgid "open time correction window"
-msgstr "Zeitkorrekturfenster öffnen"
+msgstr "Zeitkorrektur Fenster öffnen"
 
 #: src/time_settings.cpp:82
 msgid "To change time correction you must tune first to any transponder"
@@ -4797,202 +4662,3 @@ msgstr ""
 #: src/time_settings.cpp:82
 msgid "time correction change error"
 msgstr "Fehler beim Ändern der Zeitkorrektur"
-
-#~ msgid "A/V Setup..."
-#~ msgstr "A/V Einstellungen..."
-
-#
-#~ msgid "All services"
-#~ msgstr "Alle Services"
-
-#~ msgid "Audio setup"
-#~ msgstr "Audioeinstellungen"
-
-#~ msgid "back to main menu"
-#~ msgstr "Zurück zum Hauptmenü"
-
-#~ msgid "back to mainmenu"
-#~ msgstr "Zurück zum Hauptmenü"
-
-#
-#~ msgid "back to setup"
-#~ msgstr "zurück zum Setup"
-
-#~ msgid "Channels..."
-#~ msgstr "Kanäle..."
-
-#~ msgid "choose the LNB you wish to apply or edit"
-#~ msgstr "LNB wählen zum hinzufügen oder verändern"
-
-#~ msgid "choose wished modulation (ok)"
-#~ msgstr "gewünschte Modulation auswählen (ok)"
-
-#~ msgid "Column"
-#~ msgstr "Spalte"
-
-#
-#~ msgid "Communication..."
-#~ msgstr "Kommunikation..."
-
-#~ msgid "Enable auto-hide OSD"
-#~ msgstr "Auto-Ausblenden des OSD's aktivieren"
-
-#~ msgid "enable auto-hide the OSD"
-#~ msgstr "Auto-Ausblenden des OSD's aktivieren"
-
-#~ msgid "erase all"
-#~ msgstr "alle löschen"
-
-#~ msgid "erase bouquets and services before scan"
-#~ msgstr "vor dem Suchlauf Bouquets und Services löschen"
-
-#~ msgid "Extra settings..."
-#~ msgstr "Sonstiges..."
-
-#~ msgid "Frontend: Simulator"
-#~ msgstr "Tuner: Simulator"
-
-#~ msgid "go to first service"
-#~ msgstr "zum ersten Service springen"
-
-#~ msgid "go to last service"
-#~ msgstr "zum letzten Service springen"
-
-#~ msgid "goto transponder edit dialog"
-#~ msgstr "zum den Transponder-Edit-Dialog gehen"
-
-#~ msgid "goto transponder scan"
-#~ msgstr "Kanalsuche"
-
-#~ msgid "harddisk setup..."
-#~ msgstr "Festplatten Setup..."
-
-#~ msgid "Harddisk..."
-#~ msgstr "Festplatte..."
-
-#~ msgid "Language..."
-#~ msgstr "Sprache..."
-
-#~ msgid "LCD..."
-#~ msgstr "LCD..."
-
-#~ msgid "leave Common Interface menu"
-#~ msgstr "Common Interface Menü verlassen"
-
-#~ msgid "leave transponder scan"
-#~ msgstr "Kanalsuche verlassen"
-
-#~ msgid "Menu"
-#~ msgstr "Menü"
-
-#~ msgid "MiniDiSEqC Parameter:"
-#~ msgstr "MiniDiSEqC Parameter:"
-
-#~ msgid "Modulation:"
-#~ msgstr "Modulation:"
-
-#~ msgid "Motor Setup..."
-#~ msgstr "Rotor Einstellungen..."
-
-#~ msgid "New"
-#~ msgstr "Neu"
-
-#~ msgid "Ngrab..."
-#~ msgstr "Ngrab..."
-
-#
-#~ msgid "open audio setup"
-#~ msgstr "Audio Einstellungen öffnen"
-
-#~ msgid "open audio/video setup"
-#~ msgstr "Audio/Video Einstellungen öffnen"
-
-#
-#~ msgid "open Bouquet Setup"
-#~ msgstr "Bouquet Setup öffnen"
-
-#~ msgid "open channel setup"
-#~ msgstr "Kanaleinstellungen öffnen"
-
-#~ msgid "open LC display setup"
-#~ msgstr "LC Display Einstellungen öffnen"
-
-#~ msgid "open ngrab config"
-#~ msgstr "ngrab Konfiguration öffnen"
-
-#~ msgid "OSD..."
-#~ msgstr "OSD..."
-
-#~ msgid "other bouquet selection keys"
-#~ msgstr "andere Bouquet-Auswahltasten"
-
-#~ msgid "plugin offset"
-#~ msgstr "Plugin Offset"
-
-#~ msgid "Satellites..."
-#~ msgstr "Satelliten..."
-
-#~ msgid "set the pluging offset coordinates (tuxtxt, a.o. )"
-#~ msgstr "die plugin offset koordinaten setzen (tuxtxt, u.ä.)"
-
-#~ msgid "setup modulator"
-#~ msgstr "Modulator einstellen*-"
-
-#~ msgid "show calibration picture"
-#~ msgstr "Kalibrierungbild anzeigen"
-
-#~ msgid "Show Console on Framebuffer"
-#~ msgstr "Framebuffer-Konsole anzeigen"
-
-#~ msgid "Show OSD on EIT Update"
-#~ msgstr "Programmwechsel einblenden"
-
-#~ msgid "shows the linux console on TV"
-#~ msgstr "Linux-Konsole auf TV anzeigen"
-
-#~ msgid "shows the remaining time for current event (total otherwise)"
-#~ msgstr ""
-#~ "zeigt die Restzeit für das derzeitige Event (ansonsten die Gesamtzeit)"
-
-#~ msgid "Skin..."
-#~ msgstr "Skin..."
-
-#~ msgid "Style"
-#~ msgstr "Stil"
-
-#~ msgid "Time Correction..."
-#~ msgstr "Zeitkorrektur..."
-
-#~ msgid "Time Zone..."
-#~ msgstr "Zeitzone..."
-
-#
-#~ msgid "toggle between provider and bouquet list"
-#~ msgstr "zwischen Provider- und Bouquetliste wechseln"
-
-#~ msgid "Transponder scan"
-#~ msgstr "Kanalsuche"
-
-#~ msgid "Transponders..."
-#~ msgstr "Transponder..."
-
-#~ msgid "upgrade firmware"
-#~ msgstr "Update Firmware"
-
-#~ msgid "Upgrade..."
-#~ msgstr "Update..."
-
-#~ msgid "use classic enigma bouquet selection keys"
-#~ msgstr "standard enigma Bouquet Auswahltasten benutzen"
-
-#~ msgid "Video calibration..."
-#~ msgstr "Videokalibrierung"
-
-#~ msgid "Video Setup"
-#~ msgstr "Videoeinstellungen"
-
-#~ msgid "Your language"
-#~ msgstr "Ihre Sprache"
-
-#~ msgid "[back]"
-#~ msgstr "[Zurück]"
