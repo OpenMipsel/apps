@@ -1043,9 +1043,11 @@ void eWidget::zOrderRaise()
 
 void eWidget::setShortcut(const eString &shortcutname)
 {
-	if (!shortcut)
-		getTLW()->actionListener.push_back(this);
+	if (shortcut)
+		getTLW()->actionListener.remove(this);
 	shortcut=i_shortcutActions->map.findAction(shortcutname.c_str());
+	if (shortcut)
+		getTLW()->actionListener.push_back(this);
 }
 
 void eWidget::setShortcutFocus(eWidget *focus)

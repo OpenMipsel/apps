@@ -415,7 +415,7 @@
 			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="220:30" helptext="remove all services before scan" />
 			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="200:30" helptext="enable/disable initiate network search" />
 			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponder scan" loadDeco="" vcenter="on" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" vcenter="on" shortcut="abort" />
+			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" vcenter="on" shortcut="escape" />
 		</tsManual>
 	</object>
 
@@ -427,7 +427,7 @@
 			<eFEStatus name="festatus" position="0:190" size="400:85" />
 			<eCheckBox name="eraseall" text="erase all" position="10:e-80" size="150:30" helptext="erase bouquets and services before scan" />
   		<eButton text="start scan" name="start" position="10:e-40" size="200:40" align="center" helptext="starts the transponder scan" loadDeco="" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" shortcut="abort" />
+			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" shortcut="escape" />
 		</tsAutomatic>
 	</object>
 
