@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.45 2003/06/10 11:21:07 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.46 2003/06/10 12:08:35 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -241,7 +241,7 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 	}
 
 	/* if channel's transponder does not match frontend's tuned transponder ... */
-	if (channel->getSposTsidOnid() != frontend->getSposTsidOnid())
+	if (channel->getTsidOnid() != frontend->getTsidOnid())
 	{
 		/* ... tune to it if not in record mode ... */
 		if (currentMode & RECORD_MODE)
@@ -724,6 +724,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				strncpy(sat.satName, satname, 29);
 				sat.satPosition = satellitePositions[satname];
 				sat.motorPosition = motorPositions[sat.satPosition];
+				sat.satDiseqc = satelliteDiseqcs[satname];
 				satlength = sizeof(sat);
 				//printf("[zapit] sending %s, %d, %d\n", sat.satName, sat.satPosition, sat.motorPosition);
 				CBasicServer::send_data(connfd, &satlength, sizeof(satlength));
@@ -754,25 +755,23 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		
 		while (CBasicServer::receive_data(connfd, &pos, sizeof(pos))) 
 		{
-			DBG("adding %s (motorPos %d)", pos.satName, pos.motorPos);
-			changed |= (motorPositions[pos.satName] != pos.motorPos);
-			motorPositions[pos.satName] = pos.motorPos;
+			//printf("adding %d (motorPos %d)\n", pos.satPosition, pos.motorPos);
+			changed |= (motorPositions[pos.satPosition] != pos.motorPos);
+			motorPositions[pos.satPosition] = pos.motorPos;
 		}
 		
 		if (changed)
 		{
 			// save to motor.conf
-			printf("[zapit] saving motor.conf\n");
+			//printf("[zapit] saving motor.conf\n");
 			fd = fopen(MOTORCONFIGFILE, "w");
-			std::map<std::string, uint8_t>::iterator it;
-			for (it = motorPositions.begin(); it != motorPositions.end(); it++)
+			for (mpos_it = motorPositions.begin(); mpos_it != motorPositions.end(); mpos_it++)
 			{
-				printf("[zapit] saving %s: %d\n", it->first.c_str(), it->second);
-				fprintf(fd, "%s:%d\n", it->first.c_str(), it->second);
+				//printf("[zapit] saving %d %d\n", mpos_it->first, mpos_it->second);
+				fprintf(fd, "%d %d\n", mpos_it->first, mpos_it->second);
 			}
 			fclose(fd);
 		}
-		
 		break;
 	}
 	
@@ -1539,7 +1538,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.45 2003/06/10 11:21:07 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.46 2003/06/10 12:08:35 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
