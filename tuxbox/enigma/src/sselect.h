@@ -24,7 +24,7 @@ class eListBoxEntryService: public eListBoxEntry
 	eString sort;
 	static gFont serviceFont, descrFont, numberFont;
 	static int maxNumSize;
-	static gPixmap *folder, *marker;
+	static gPixmap *folder, *marker, *locked;
 	eTextPara *numPara, *namePara, *descrPara;
 	int nameXOffs, descrXOffs, numYOffs, nameYOffs, descrYOffs;
 	int flags;

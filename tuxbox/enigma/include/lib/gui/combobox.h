@@ -17,7 +17,6 @@ class eComboBox: public eButton
 	int eventHandler( const eWidgetEvent& );
 	eString oldHelpText;
 	int setProperty( const eString&, const eString& );
-	void redrawWidget(gPainter *target, const eRect &rc);
 public:
 	~eComboBox();
 	void setOpenWidth( int w ) { listbox.resize( eSize(w, listbox.getSize().height()) ); }

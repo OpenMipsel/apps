@@ -35,13 +35,6 @@ eComboBox::~eComboBox()
 	}
 }
 
-void eComboBox::redrawWidget(gPainter *target, const eRect &rc)
-{
-//	target->clip( eRect( rc.left(), rc.top(), rc.width()-button.width(), rc.bottom() ) );
-	eLabel::redrawWidget(target, rc);
-//	target->clippop();
-}
-
 void eComboBox::onOkPressed()
 {
 	if ( flags & flagShowEntryHelp)
@@ -126,7 +119,6 @@ int eComboBox::moveSelection ( int dir, bool sendSelChanged )
 	}
 	return ret;
 }
-
 
 void eComboBox::onEntrySelected( eListBoxEntryText* e)
 {

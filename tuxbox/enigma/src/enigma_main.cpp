@@ -3187,13 +3187,19 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			ref.lock();
 			if ( pLockActive && ref == eServiceInterface::getInstance()->service )
 				eServiceInterface::getInstance()->stop();
-			sel->actualize();
+			if ( pLockActive )
+				sel->actualize();
+			else
+				sel->invalidateCurrent();
 			break;
 		}
 	}
 	case 11:  // unlock service ( parental locking )
 		ref.unlock();
-		sel->actualize();
+		if ( eConfig::getInstance()->pLockActive() )
+			sel->actualize();
+		else
+			sel->invalidateCurrent();
 		break;
 	case 12:  // show / hide locked service ( parental locking )
 	{
@@ -3209,6 +3215,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			if ( eServiceInterface::getInstance()->service.isLocked() && eConfig::getInstance()->locked )
 				eServiceInterface::getInstance()->stop();
 		}
+		break;
 	}
 	case 13:
 		createMarker(sel);
