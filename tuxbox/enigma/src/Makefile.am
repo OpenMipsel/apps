@@ -10,7 +10,7 @@ enigma_SOURCES = \
 	enigma_mainmenu.cpp satconfig.cpp epgwindow.cpp setup_language.cpp enigma_info.cpp \
 	enigma_scan.cpp setupskin.cpp setup_osd.cpp timer.cpp setup_lcd.cpp enigma_vcr.cpp \
 	setup_rc.cpp channelinfo.cpp setup_harddisk.cpp enigma_ci.cpp upgrade.cpp satfind.cpp \
-	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp
+	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp wizard_scan.cpp
 
 enigma_TEST = \
 	-Wl,--whole-archive \
@@ -25,6 +25,17 @@ enigma_TEST = \
 	$(top_builddir)/lib/system/libenigma_system.a \
 	-Wl,--no-whole-archive -Wl,--export-dynamic
 
+enigma_SUCKS = \
+	$(top_builddir)/lib/driver/libenigma_driver.a \
+	$(top_builddir)/lib/base/libenigma_base.a \
+	$(top_builddir)/lib/codecs/libenigma_codecs.a \
+	$(top_builddir)/lib/dvb/libenigma_dvb.a \
+	$(top_builddir)/lib/dvb/lowlevel/libenigma_dvb_lowlevel.a \
+	$(top_builddir)/lib/gui/libenigma_gui.a \
+	$(top_builddir)/lib/gdi/libenigma_gdi.a \
+	$(top_builddir)/lib/socket/libenigma_socket.a \
+	$(top_builddir)/lib/system/libenigma_system.a
+
 enigma_LDADD = \
 	@SIGC_LIBS@ \
 	@XMLTREE_LIBS@ \
@@ -35,6 +46,6 @@ enigma_LDADD = \
 #\
 #	/dbox2/cdkroot/lib/libmpatrolmt.a -lbfd -liberty
 
-enigma$(EXEEXT): $(enigma_OBJECTS) $(enigma_DEPENDENCIES)
+enigma$(EXEEXT): $(enigma_OBJECTS) $(enigma_DEPENDENCIES) $(enigma_SUCKS)
 	@rm -f enigma$(EXEEXT)
 	$(CXXLINK) $(enigma_LDFLAGS) $(enigma_OBJECTS) $(enigma_TEST) $(enigma_LDADD) $(LIBS)
