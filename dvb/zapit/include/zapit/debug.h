@@ -1,7 +1,7 @@
 /*
- * $Id: debug.h,v 1.4 2003/01/30 17:21:16 obi Exp $
+ * $Id: debug.h,v 1.4.2.1 2003/02/18 15:16:46 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@
 /* zapit.cpp */
 extern int debug;
 
+
 #define DBG(fmt, args...)					\
 	do {							\
 		if (debug)					\
@@ -52,6 +53,7 @@ extern int debug;
 				__LINE__ , ## args);		\
 	} while (0)
 
+
 #define ERROR(str)						\
 	do {							\
 		fprintf(stderr, "[%s:%s:%d] %s: %s\n",		\
@@ -59,7 +61,9 @@ extern int debug;
 			__LINE__, str, strerror(errno));	\
 	} while (0)
 
+
 #ifdef DEBUG
+
 
 #define INFO(fmt, args...)					\
 	do {							\
@@ -68,6 +72,7 @@ extern int debug;
 			__LINE__ , ## args);			\
 	} while (0)
 
+
 #define WARN(fmt, args...)					\
 	do {							\
 		fprintf(stderr, "[%s:%s:%d] " fmt "\n",		\
@@ -75,19 +80,15 @@ extern int debug;
 			__LINE__ , ## args);			\
 	} while (0)
 
+
 #else /* DEBUG */
+
 
 #define INFO(fmt, args...)
 #define WARN(fmt, args...)
 
+
 #endif /* DEBUG */
 
-#define fop(cmd, args...) ({					\
-	int _r;							\
-	if (fd >= 0) { if ((_r = ::cmd(fd, args)) < 0)		\
-		ERROR(#cmd"("#args")");				\
-	} else { _r = fd; } 					\
-	_r;							\
-})
 
 #endif /* __zapit_debug_h__ */

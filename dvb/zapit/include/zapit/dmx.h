@@ -1,7 +1,7 @@
 /*
- * $Id: dmx.h,v 1.11 2003/01/30 17:21:16 obi Exp $
+ * $Id: dmx.h,v 1.11.2.1 2003/02/18 15:16:46 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +19,20 @@
  *
  */
 
-#ifndef __zapit_dmx_h__
-#define __zapit_dmx_h__
+#ifndef __dmx_h__
+#define __dmx_h__
 
-#include <linux/dvb/dmx.h>
+/* system c */
+#include <stdint.h>
+#include <time.h>
 
-class CDemux
-{
-	private:
-		int fd;
-		struct dmx_caps dmx_caps;
+/* nokia api */
+#include <ost/dmx.h>
 
-	public:
-		CDemux(void);
-		~CDemux(void);
-		int sectionFilter(const unsigned short pid, const unsigned char * const filter, const unsigned char * const mask);
-		int pesFilter(const unsigned short pid, const dmx_output_t output, const dmx_pes_type_t pes_type);
-		int start(void);
-		int stop(void);
-		int read(unsigned char * const buf, const size_t n);
-};
+int setDmxSctFilter (int fd, unsigned short pid, unsigned char * filter, unsigned char * mask);
+int setDmxPesFilter (int fd, dmxOutput_t output, dmxPesType_t pesType, unsigned short pid);
+int startDmxFilter  (int fd);
+int stopDmxFilter   (int fd);
+int readDmx         (int fd, unsigned char * buf, const size_t n);
 
-#endif /* __zapit_dmx_h__ */
+#endif /* __dmx_h__ */

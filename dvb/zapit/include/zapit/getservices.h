@@ -1,5 +1,5 @@
 /*
- * $Id: getservices.h,v 1.51 2002/12/22 20:48:50 thegoodguy Exp $
+ * $Id: getservices.h,v 1.51.2.1 2003/02/18 15:16:46 alexw Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -22,7 +22,7 @@
 #ifndef __getservices_h__
 #define __getservices_h__
 
-#include <linux/dvb/frontend.h>
+#include <ost/frontend.h>
 
 #include <eventserver.h>
 
@@ -46,12 +46,12 @@ int LoadServices      ();
 struct transponder
 {
 	t_transport_stream_id transport_stream_id;
-	dvb_frontend_parameters feparams;
+	FrontendParameters feparams;
 	unsigned char polarization;
 	unsigned char DiSEqC;
 	t_original_network_id original_network_id;
 
-	transponder (t_transport_stream_id p_transport_stream_id, dvb_frontend_parameters p_feparams)
+	transponder (t_transport_stream_id p_transport_stream_id, FrontendParameters p_feparams)
 	{
 		transport_stream_id = p_transport_stream_id;
 		feparams = p_feparams;
@@ -60,7 +60,7 @@ struct transponder
 		original_network_id = 0;
 	}
 
-	transponder (t_transport_stream_id p_transport_stream_id, dvb_frontend_parameters p_feparams, unsigned short p_polarization, unsigned char p_DiSEqC, t_original_network_id p_original_network_id)
+	transponder (t_transport_stream_id p_transport_stream_id, FrontendParameters p_feparams, unsigned short p_polarization, unsigned char p_DiSEqC, t_original_network_id p_original_network_id)
 	{
 		transport_stream_id = p_transport_stream_id;
 		feparams = p_feparams;

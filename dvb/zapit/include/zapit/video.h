@@ -1,7 +1,7 @@
 /*
- * $Id: video.h,v 1.5 2003/01/30 17:21:16 obi Exp $
+ * $Id: video.h,v 1.5.2.1 2003/02/18 15:16:46 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,12 @@
  *
  */
 
-#ifndef __zapit_video_h__
-#define __zapit_video_h__
+#ifndef __video_h__
+#define __video_h__
 
-#include <linux/dvb/video.h>
+#include <time.h>
+
+#include <ost/video.h>
 
 class CVideo
 {
@@ -30,33 +32,41 @@ class CVideo
 		/* video device */
 		int fd;
 
+		/* video status */
+		struct videoStatus status;
+
+		/* true when construction was complete */
+		bool initialized;
+
 	public:
 		/* constructor & destructor */
-		CVideo(void);
-		~CVideo(void);
+		CVideo ();
+		~CVideo ();
+
+		bool isInitialized () { return initialized; }
 
 		/* aspect ratio */
-		video_format_t getAspectRatio(void);
-		int setAspectRatio(video_format_t format);
+		videoFormat_t getAspectRatio () { return status.videoFormat; }
+		int setAspectRatio (videoFormat_t format);
 
 		/* cropping mode */
-		video_displayformat_t getCroppingMode(void);
-		int setCroppingMode(video_displayformat_t format);
+		videoDisplayFormat_t getCroppingMode () { return status.displayFormat; }
+		int setCroppingMode (videoDisplayFormat_t format);
 
 		/* stream source */
-		video_stream_source_t getSource(void);
-		int setSource(video_stream_source_t source);
+		videoStreamSource_t getSource () { return status.streamSource; }
+		int setSource (videoStreamSource_t source);
 
 		/* blank on freeze */
-		int getBlank(void);
-		int setBlank(int enable);
+		bool getBlank () { return status.videoBlank; }
+		int setBlank (bool blank);
 
 		/* get play state */
-		video_play_state_t getPlayState(void);
+		bool isPlaying () { return (status.playState == VIDEO_PLAYING); }
 
 		/* change video play state */
-		int start(void);
-		int stop(void);
+		int start ();
+		int stop ();
 };
 
-#endif /* __zapit_video_h__ */
+#endif /* __video_h__ */

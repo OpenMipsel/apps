@@ -1,7 +1,7 @@
 /*
- * $Id: video.cpp,v 1.8 2003/01/30 17:21:17 obi Exp $
+ * $Id: video.cpp,v 1.8.2.1 2003/02/18 15:16:47 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,88 +22,138 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include <zapit/debug.h>
 #include <zapit/settings.h>
 #include <zapit/video.h>
 
-CVideo::CVideo(void)
-{
-	if ((fd = open(VIDEO_DEVICE, O_RDWR)) < 0)
-		ERROR(VIDEO_DEVICE);
 
-	setBlank(true);
+CVideo::CVideo ()
+{
+	initialized = false;
+	status.playState = VIDEO_STOPPED;
+	status.streamSource = VIDEO_SOURCE_DEMUX;
+
+	if ((fd = open(VIDEO_DEVICE, O_RDWR)) < 0)
+	{
+		ERROR(VIDEO_DEVICE);
+	}
+	else if (ioctl(fd, VIDEO_GET_STATUS, &status) < 0)
+	{
+		ERROR("VIDEO_GET_STATUS");
+		close(fd);
+	}
+	else
+	{
+		setBlank(true);
+		initialized = true;
+	}
 }
 
-CVideo::~CVideo(void)
+CVideo::~CVideo ()
 {
-	if (fd >= 0)
+	if (initialized)
 		close(fd);
 }
 
-int CVideo::setAspectRatio(video_format_t format)
+int CVideo::setAspectRatio (videoFormat_t format)
 {
-	return fop(ioctl, VIDEO_SET_FORMAT, format);
+	if (status.videoFormat == format)
+		return 0;
+
+	if (ioctl(fd, VIDEO_SET_FORMAT, format) < 0)
+	{
+		ERROR("VIDEO_SET_FORMAT");
+		return -1;
+	}
+
+	status.videoFormat = format;
+	return 0;
 }
 
-video_format_t CVideo::getAspectRatio(void)
+int CVideo::setCroppingMode (videoDisplayFormat_t format)
 {
-	struct video_status status;
-	fop(ioctl, VIDEO_GET_STATUS, &status);
-	return status.video_format;
+	if (status.displayFormat == format)
+		return 0;
+
+	if (ioctl(fd, VIDEO_SET_DISPLAY_FORMAT, format) < 0)
+	{
+		ERROR("VIDEO_SET_DISPLAY_FORMAT");
+		return -1;
+	}
+
+	status.displayFormat = format;
+	return 0;
 }
 
-int CVideo::setCroppingMode(video_displayformat_t format)
+int CVideo::setSource (videoStreamSource_t source)
 {
-	return fop(ioctl, VIDEO_SET_DISPLAY_FORMAT, format);
+#ifndef ALWAYS_DO_VIDEO_SELECT_SOURCE
+	if (status.streamSource == source)
+		return 0;
+#endif
+	if (status.playState != VIDEO_STOPPED)
+		return -1;
+
+	if (ioctl(fd, VIDEO_SELECT_SOURCE, source) < 0)
+	{
+		ERROR("VIDEO_SELECT_SOURCE");
+		return -1;
+	}
+
+	status.streamSource = source;
+
+	return 0;
 }
 
-video_displayformat_t CVideo::getCroppingMode(void)
+int CVideo::start ()
 {
-	struct video_status status;
-	fop(ioctl, VIDEO_GET_STATUS, &status);
-	return status.display_format;
+	if (status.playState == VIDEO_PLAYING)
+		return 0;
+
+	if (ioctl(fd, VIDEO_PLAY) < 0)
+	{
+		ERROR("VIDEO_PLAY");
+		return -1;
+	}
+
+	status.playState = VIDEO_PLAYING;
+
+	return 0;
 }
 
-int CVideo::setSource(video_stream_source_t source)
+int CVideo::stop ()
 {
-	return fop(ioctl, VIDEO_SELECT_SOURCE, source);
+	if (status.playState == VIDEO_STOPPED)
+		return 0;
+
+	if (ioctl(fd, VIDEO_STOP, status.videoBlank) < 0)
+	{
+		ERROR("VIDEO_STOP");
+		return -1;
+	}
+
+	status.playState = VIDEO_STOPPED;
+
+	return 0;
 }
 
-video_stream_source_t CVideo::getSource(void)
+int CVideo::setBlank (bool blank)
 {
-	struct video_status status;
-	fop(ioctl, VIDEO_GET_STATUS, &status);
-	return status.stream_source;
-}
+	if (status.videoBlank == blank)
+		return 0;
 
-int CVideo::start(void)
-{
-	return fop(ioctl, VIDEO_PLAY);
-}
+	if (ioctl(fd, VIDEO_SET_BLANK, blank) < 0)
+	{
+		ERROR("VIDEO_SET_BLANK");
+		return -1;
+	}
 
-int CVideo::stop(void)
-{
-	return fop(ioctl, VIDEO_STOP);
-}
+	status.videoBlank = blank;
 
-int CVideo::setBlank(int enable)
-{
-	return fop(ioctl, VIDEO_SET_BLANK, enable);
-}
-
-int CVideo::getBlank(void)
-{
-	struct video_status status;
-	fop(ioctl, VIDEO_GET_STATUS, &status);
-	return status.video_blank;
-}
-
-video_play_state_t CVideo::getPlayState(void)
-{
-	struct video_status status;
-	fop(ioctl, VIDEO_GET_STATUS, &status);
-	return status.play_state;
+	return 0;
 }
 

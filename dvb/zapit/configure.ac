@@ -12,8 +12,7 @@ TUXBOX_APPS_DVB
 TUXBOX_APPS_LIB_PKGCONFIG(CONFIGFILE,tuxbox-configfile)
 TUXBOX_APPS_LIB_PKGCONFIG(CONNECTION,tuxbox-connection)
 TUXBOX_APPS_LIB_PKGCONFIG(EVENTSERVER,tuxbox-eventserver)
-CPPFLAGS="$CPPFLAGS $EVENTSERVER_CFLAGS -Werror"
-CXXFLAGS="$CXXFLAGS -fno-rtti -fno-exceptions"
+CPPFLAGS="$CPPFLAGS $EVENTSERVER_CFLAGS"
 LDFLAGS="$LDFLAGS $EVENTSERVER_LIBS"
 
 AC_LANG(C++)
@@ -25,8 +24,12 @@ AC_ARG_ENABLE(pid-cache,
 AC_ARG_ENABLE(use-libxml2,
 	[  --enable-use-libxml2    use libxml2 instead of libxmltree],
 	[AC_DEFINE(USE_LIBXML,1,[use libxml2 instead of libxmltree])
-         TUXBOX_APPS_LIB_PKGCONFIG(XML,libxml-2.0)],
-        [TUXBOX_APPS_LIB_PKGCONFIG(XML,tuxbox-xmltree)])
+         TUXBOX_APPS_LIB_PKGCONFIG(LIBXML,libxml-2.0)],
+        [TUXBOX_APPS_LIB_PKGCONFIG(XMLTREE,tuxbox-xmltree)])
+
+AC_ARG_ENABLE(tunning-retries,
+	[  --enable-tuning-retries  retry tuning on failure],
+	[AC_DEFINE(EXCESSIVE_TUNING_RETRIES,1,[retry tuning on failure])])
 
 AC_OUTPUT([
 Makefile

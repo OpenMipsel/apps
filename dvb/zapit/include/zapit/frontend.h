@@ -1,7 +1,7 @@
 /*
- * $Id: frontend.h,v 1.24 2003/01/30 17:21:16 obi Exp $
+ * $Id: frontend.h,v 1.24.2.1 2003/02/18 15:16:46 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +19,48 @@
  *
  */
 
-#ifndef __zapit_frontend_h__
-#define __zapit_frontend_h__
+#ifndef __frontend_h__
+#define __frontend_h__
 
 /* system */
 #include <stdint.h>
 
-/* linuxtv api */
-#include <linux/dvb/frontend.h>
+/* nokia api */
+#include <ost/frontend.h>
+#include <ost/sec.h>
 
 /* zapit */
-#include <zapit/types.h>
+#include "channel.h"
 
-#define MAX_LNBS	64	/* due to Diseqc 1.1  (2003-01-10 rasc) */
+#define MAX_LNBS	64
 
 class CFrontend
 {
 	private:
 		/* frontend file descriptor */
-		int fd;
+		int frontend_fd;
+		/* sec file descriptor */
+		int sec_fd;
+		/* last action failed flag */
+		bool failed;
 		/* tuning finished flag */
 		bool tuned;
+		/* all devices opened without error flag */
+		bool initialized;
 		/* information about the used frontend type */
-		dvb_frontend_info *info;
+		FrontendInfo *info;
+		/* current tuned transport stream id / original network id */
+		uint32_t currentTsidOnid;
 		/* current tuned frequency */
 		uint32_t currentFrequency;
 		/* current 22kHz tone mode */
-		fe_sec_tone_mode_t currentToneMode;
+		secToneMode currentToneMode;
 		/* current H/V voltage */
-		fe_sec_voltage_t currentVoltage;
+		secVoltage currentVoltage;
 		/* current diseqc position */
 		uint8_t currentDiseqc;
 		/* how often to repeat DiSEqC 1.1 commands */
-		uint8_t diseqcRepeats;
+		uint32_t diseqcRepeats;
 		/* DiSEqC type of attached hardware */
 		diseqc_t diseqcType;
 		/* low lnb offsets */
@@ -59,45 +68,72 @@ class CFrontend
 		/* high lnb offsets */
 		int32_t lnbOffsetsHigh[MAX_LNBS];
 
-		uint32_t			getBitErrorRate(void);
-		uint32_t			getDiseqcReply(int timeout_ms);
-		struct dvb_frontend_event	getEvent(void);
-		struct dvb_frontend_parameters	getFrontend(void);
-		uint16_t			getSignalNoiseRatio(void);
-		uint16_t			getSignalStrength(void);
-		fe_status_t			getStatus(void);
-		uint32_t			getUncorrectedBlocks(void);
-
-		void				secResetOverload(void);
-		void				secSetTone(fe_sec_tone_mode_t mode);
-		void				secSetVoltage(fe_sec_voltage_t voltage, uint32_t ms);
-		void				sendDiseqcCommand(struct dvb_diseqc_master_cmd *cmd, uint32_t ms);
-		void				sendDiseqcPowerOn(void);
-		void				sendDiseqcReset(void);
-		void				sendDiseqcSmatvRemoteTuningCommand(uint32_t frequency);
-		void				sendDiseqcStandby(void);
-		void				sendDiseqcZeroByteCommand(uint8_t frm, uint8_t addr, uint8_t cmd);
-		void				sendToneBurst(fe_sec_mini_cmd_t burst, uint32_t ms);
-		void				setFrontend(struct dvb_frontend_parameters *feparams);
-		void				setSec(uint8_t sat_no, uint8_t pol, bool high_band, uint32_t frequency);
-
 	public:
-		CFrontend(void);
-		~CFrontend(void);
+		CFrontend ();
+		~CFrontend ();
 
-		static fe_code_rate_t		getCodeRate(uint8_t fec_inner);
-		uint8_t				getDiseqcPosition(void)			{ return currentDiseqc; }
-		uint8_t				getDiseqcRepeats(void)			{ return diseqcRepeats; }
-		diseqc_t			getDiseqcType(void)			{ return diseqcType; }
-		unsigned int			getFrequency(void);
-		static fe_modulation_t		getModulation(uint8_t modulation);
-		unsigned char			getPolarization(void);
-		struct dvb_frontend_info *	getInfo(void)				{ return info; };
+		/* ost tuner api */
+		static CodeRate CFrontend::getFEC (uint8_t FEC_inner);
+		static Modulation CFrontend::getModulation (uint8_t modulation);
 
-		void				setDiseqcRepeats(uint8_t repeats)	{ diseqcRepeats = repeats; }
-		void				setDiseqcType(diseqc_t type);
-		void				setLnbOffset(bool high, uint8_t index, int32_t offset);
-		int				setParameters(struct dvb_frontend_parameters *feparams, uint8_t polarization, uint8_t diseqc);
+		void selfTest ();
+		void setPowerState (FrontendPowerState state);
+		void setFrontend (FrontendParameters *feparams);
+		const FrontendPowerState getPowerState ();
+		const FrontendStatus getStatus ();
+		const uint32_t getBitErrorRate ();
+		const int32_t getSignalStrength ();
+		const int32_t getSignalNoiseRatio ();
+		const uint32_t getUncorrectedBlocks ();
+		const uint32_t getNextFrequency (uint32_t frequency);
+		const uint32_t getNextSymbolRate (uint32_t rate);
+		const FrontendParameters *getFrontend ();
+		const bool getEvent ();
+		const FrontendInfo *getInfo ()	{ return info; };
+		unsigned int getFrequency ();
+		unsigned char getPolarization ();
+
+		/* ost sec api */
+		void secSetTone (secToneMode mode);
+		void secSetVoltage (secVoltage voltage);
+		void secSendSequence (secCmdSequence *sequence);
+		//void secResetOverload ();
+		const secStatus *secGetStatus ();
+
+		/* zapit tuner api */
+		const bool tuneChannel (CZapitChannel *channel);
+		const bool tuneFrequency (FrontendParameters feparams, uint8_t polarization, uint8_t diseqc);
+
+		/* zapit diseqc api */
+		const bool sendDiseqcMiniCommand (secToneMode mode, secVoltage voltage, uint8_t diseqc);
+		const bool sendDiseqcCommand (secToneMode mode, secVoltage voltage, uint8_t diseqc, uint32_t repeats);
+		const bool sendDiseqcPowerOn ();
+		const bool sendDiseqcReset ();
+		const bool sendDiseqcStandby ();
+		const bool sendDiseqcZeroByteCommand (uint8_t addr, uint8_t cmd);
+		const bool sendDiseqcSmatvRemoteTuningCommand (secToneMode toneMode, secVoltage voltage, uint8_t diseqc, uint32_t frequency);
+
+		void setDiseqcRepeats(uint32_t repeats)	{ diseqcRepeats = repeats; }
+		void setDiseqcType(diseqc_t type)	{ diseqcType = type; }
+		const uint32_t getDiseqcRepeats()	{ return diseqcRepeats; }
+		const diseqc_t getDiseqcType()		{ return diseqcType; }
+		const bool isInitialized()		{ return initialized; }
+		const uint32_t getTsidOnid()		{ return currentTsidOnid; }
+
+		void setLnbOffset(bool high, uint8_t index, int32_t offset)
+		{
+			if (index < MAX_LNBS)
+			{
+				if (high)
+				{
+					lnbOffsetsHigh[index] = offset;
+				}
+				else
+				{
+					lnbOffsetsLow[index] = offset;
+				}
+			}
+		}
 };
 
-#endif /* __zapit_frontend_h__ */
+#endif /* __frontend_h__ */

@@ -1,35 +1,22 @@
 /*
- * $Id: scan.cpp,v 1.96 2003/02/17 14:31:42 thegoodguy Exp $
- *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
+ * $Id: scan.cpp,v 1.96.2.1 2003/02/18 15:16:46 alexw Exp $
  */
 
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 /* libevent */
 #include <eventserver.h>
 
+#include <zapit/bat.h>
 #include <zapit/bouquets.h>
 #include <zapit/client/zapitclient.h>
 #include <zapit/debug.h>
 #include <zapit/frontend.h>
 #include <zapit/nit.h>
+#include <zapit/pat.h>
 #include <zapit/scan.h>
 #include <zapit/sdt.h>
 #include <zapit/settings.h>
@@ -53,13 +40,14 @@ extern CFrontend *frontend;
 extern xmlDocPtr scanInputParser;
 extern std::map <uint8_t, std::string> scanProviders;
 extern CZapitClient::bouquetMode bouquetMode;
+
 extern CEventServer *eventServer;
 
-void stop_scan(const bool success)
+void stop_scan()
 {
 	/* notify client about end of scan */
 	scan_runs = 0;
-	eventServer->sendEvent(success ? CZapitClient::EVT_SCAN_COMPLETE : CZapitClient::EVT_SCAN_FAILED, CEventServer::INITID_ZAPIT);
+	eventServer->sendEvent(CZapitClient::EVT_SCAN_COMPLETE, CEventServer::INITID_ZAPIT);
 	if (scanBouquetManager)
 	{
 		for (vector<CBouquet*>::iterator it = scanBouquetManager->Bouquets.begin(); it != scanBouquetManager->Bouquets.end(); it++)
@@ -74,166 +62,209 @@ void stop_scan(const bool success)
 	}
 }
 
-
-int bla_hiess_mal_fake_pat_hat_aber_nix_mit_pat_zu_tun(uint32_t TsidOnid, struct dvb_frontend_parameters *feparams, uint8_t polarity, uint8_t DiSEqC)
+/* build transponder for cable-users with sat-feed*/
+int build_bf_transponder(uint32_t frequency, uint32_t symbol_rate, CodeRate FEC_inner, Modulation modulation)
 {
-	if (scantransponders.find(TsidOnid) == scantransponders.end())
+	FrontendParameters feparams;
+	feparams.Frequency = frequency;
+	feparams.Inversion = INVERSION_AUTO;
+	if (frontend->getInfo()->type == FE_QPSK)
 	{
-		found_transponders++;
-
-		eventServer->sendEvent
-		(
-			CZapitClient::EVT_SCAN_NUM_TRANSPONDERS,
-			CEventServer::INITID_ZAPIT,
-			&found_transponders,
-			sizeof(found_transponders)
-		);
-
-		scantransponders.insert
-		(
-			std::pair <unsigned int, transpondermap>
-			(
-				TsidOnid,
-				transpondermap
-				(
-					(TsidOnid >> 16),
-					TsidOnid,
-					*feparams,
-					polarity,
-					DiSEqC
-				)
-			)
-		);
-
-		return 0;
+		feparams.u.qpsk.SymbolRate = symbol_rate;
+		feparams.u.qpsk.FEC_inner = FEC_inner;
+	}
+	else
+	{
+		feparams.u.qam.SymbolRate = symbol_rate;
+		feparams.u.qam.FEC_inner = FEC_inner;
+		feparams.u.qam.QAM = modulation;
 	}
 
-	return 1;
+	if (frontend->tuneFrequency(feparams, 0, 0) == true)
+	{
+		status = fake_pat(get_sdt_TsidOnid(), feparams,0,0);
+	}
+	else
+	{
+		printf("No signal found on transponder\n");
+		status = -1;
+	}
+	return status;
 }
 
-
-/* build transponder for cable-users with sat-feed*/
-int build_bf_transponder(struct dvb_frontend_parameters *feparams)
+int get_nits (uint32_t frequency, uint32_t symbol_rate, CodeRate FEC_inner, uint8_t polarization, uint8_t DiSEqC, Modulation modulation)
 {
-	if (frontend->setParameters(feparams, 0, 0) < 0)
-		return -1;
+	FrontendParameters feparams;
+	feparams.Frequency = frequency;
+	feparams.Inversion = INVERSION_AUTO;
 
-	return bla_hiess_mal_fake_pat_hat_aber_nix_mit_pat_zu_tun(get_sdt_TsidOnid(), feparams, 0, 0);
-}
+	if (frontend->getInfo()->type == FE_QPSK)
+	{
+		feparams.u.qpsk.SymbolRate = symbol_rate;
+		feparams.u.qpsk.FEC_inner = FEC_inner;
+	}
+	else
+	{
+		feparams.u.qam.SymbolRate = symbol_rate;
+		feparams.u.qam.FEC_inner = FEC_inner;
+		feparams.u.qam.QAM = modulation;
+	}
 
+	if (frontend->tuneFrequency(feparams, polarization, DiSEqC) == true)
+	{
+		int tmp = found_transponders;
 
-int get_nits(struct dvb_frontend_parameters *feparams, uint8_t polarization, uint8_t DiSEqC)
-{
-	if (frontend->setParameters(feparams, polarization, DiSEqC) < 0)
-		return -1;
+		if ((status = parse_nit(DiSEqC)) <= -2)
+		{
+			/* NIT war leer, leese TS-ID und ON-ID von der SDT aus */
+			switch (status)
+			{
+				case -2:
+					printf("[scan.cpp] NIT nicht frontendkonform, lese SDT aus\n");
+					break;
+				case -3:
+					printf("[scan.cpp] NIT war leer, lese SDT aus\n");
+					break;
+				//todo weitere stati abfragen
+			}
 
-	if ((status = parse_nit(DiSEqC)) <= -2) /* nit unavailable */
-		status = bla_hiess_mal_fake_pat_hat_aber_nix_mit_pat_zu_tun(get_sdt_TsidOnid(), feparams, polarization, DiSEqC);
+			status = fake_pat(get_sdt_TsidOnid(), feparams, polarization, DiSEqC);
+			printf("[scan.cpp] TS-ON ID = %08x\n", get_sdt_TsidOnid());
+		}
+
+		if (found_transponders != tmp)
+		{
+			printf("found new transponder(s) on %u %u %hhu\n", frequency, symbol_rate, polarization);
+		}
+		else
+		{
+			printf("no new transponder(s) in current nit\n");
+		}
+	}
+	else
+	{
+		printf("\n****************\nNo signal found on transponder (%u %u %hhu)\n****************\n\n", frequency, symbol_rate, polarization);
+		status = -1;
+	}
 
 	return status;
 }
 
-
-int get_sdts(void)
+int get_sdts()
 {
 	stiterator tI;
+	int demux_fd = -1;
 
-	for (tI = scantransponders.begin(); tI != scantransponders.end(); tI++) {
+	//demux_fd = open(DEMUX_DEVICE, O_RDWR);
+	//if (demux_fd == -1)
+	//	perror(DEMUX_DEVICE);
 
-		if (frontend->setParameters(&tI->second.feparams, tI->second.polarization, tI->second.DiSEqC) < 0)
-			continue;
+	for (tI = scantransponders.begin(); tI != scantransponders.end(); tI++)
+	{
+		if (frontend->tuneFrequency(tI->second.feparams, tI->second.polarization, tI->second.DiSEqC) == true)
+		{
+			INFO("parsing SDT (tsid:onid %04x:%04x)", tI->second.transport_stream_id, tI->second.original_network_id);
+			status = parse_sdt(tI->second.DiSEqC);
 
-		INFO("parsing SDT (tsid:onid %04x:%04x)", tI->second.transport_stream_id, tI->second.original_network_id);
-
-		parse_sdt(tI->second.transport_stream_id, tI->second.original_network_id, tI->second.DiSEqC);
+			if (demux_fd != -1) {
+				printf("[scan.cpp] parsing PAT\n");
+				parse_pat(demux_fd, NULL, tI->second.original_network_id, tI->second.DiSEqC);
+				printf("[scan.cpp] parsing BAT\n");
+				parse_bat(demux_fd);
+				printf("[scan.cpp] parsing NIT\n");
+				parse_nit(tI->second.DiSEqC);
+			}
+		}
+		else
+		{
+			printf("\n****************\nNo signal found on transponder (%u %u %hhu)\n****************\n\n", tI->second.feparams.Frequency, tI->second.feparams.u.qpsk.SymbolRate, tI->second.polarization);
+			status = -1;
+		}
 	}
 
-	return 0;
+	if (demux_fd != -1)
+		close(demux_fd);
+
+	return status;
 }
 
-FILE *write_xml_header(const char *filename)
+FILE *write_xml_header (const char *filename)
 {
 	FILE *fd = fopen(filename, "w");
 
 	if (fd == NULL)
 	{
 		ERROR(filename);
-		stop_scan(false);
+		stop_scan();
 		pthread_exit(0);
 	}
-
-	fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<zapit>\n");
+	else
+	{
+		fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<zapit>\n");
+	}
 
 	return fd;
 }
 
 int write_xml_footer(FILE *fd)
 {
-	if (fd != NULL)	{
+	if (fd != NULL)
+	{
 		fprintf(fd, "</zapit>\n");
-		return fclose(fd);
+		status = fclose(fd);
 	}
-
-	return -1;
+	else
+	{
+		status = -1;
+	}
+	return status;
 }
 
-void write_bouquets(void)
+void write_bouquets()
 {
-	if (bouquetMode == CZapitClient::BM_DELETEBOUQUETS) {
+	if (bouquetMode == CZapitClient::BM_DELETEBOUQUETS)
+	{
 		INFO("removing existing bouquets");
 		unlink(BOUQUETS_XML);
 	}
 
 	else if ((bouquetMode == CZapitClient::BM_DONTTOUCHBOUQUETS))
+	{
 		INFO("leaving bouquets untouched");
+	}
 
 	else
+	{
 		scanBouquetManager->saveBouquets();
+	}
 }
 
 void write_transponder(FILE *fd, t_transport_stream_id transport_stream_id, t_original_network_id original_network_id, uint8_t diseqc)
 {
 	stiterator tI = scantransponders.find((transport_stream_id << 16) | original_network_id);
 
-	switch (frontend->getInfo()->type) {
+	switch (frontend->getInfo()->type)
+	{
 	case FE_QAM: /* cable */
 		fprintf(fd,
-			"\t\t<transponder id=\"%04x\" onid=\"%04x\" frequency=\"%u\" inversion=\"%hu\" symbol_rate=\"%u\" fec_inner=\"%hu\" modulation=\"%hu\">\n",
+			"\t\t<transponder id=\"%04x\" onid=\"%04x\" frequency=\"%u\" symbol_rate=\"%u\" fec_inner=\"%hhu\" modulation=\"%hhu\">\n",
 			tI->second.transport_stream_id,
 			tI->second.original_network_id,
-			tI->second.feparams.frequency,
-			tI->second.feparams.inversion,
-			tI->second.feparams.u.qam.symbol_rate,
-			tI->second.feparams.u.qam.fec_inner,
-			tI->second.feparams.u.qam.modulation);
+			tI->second.feparams.Frequency,
+			tI->second.feparams.u.qam.SymbolRate,
+			tI->second.feparams.u.qam.FEC_inner,
+			tI->second.feparams.u.qam.QAM);
 		break;
 
 	case FE_QPSK: /* satellite */
 		fprintf(fd,
-			"\t\t<transponder id=\"%04x\" onid=\"%04x\" frequency=\"%u\" inversion=\"%hu\" symbol_rate=\"%u\" fec_inner=\"%hu\" polarization=\"%hu\">\n",
+			"\t\t<transponder id=\"%04x\" onid=\"%04x\" frequency=\"%u\" symbol_rate=\"%u\" fec_inner=\"%hhu\" polarization=\"%hhu\">\n",
 			tI->second.transport_stream_id,
 			tI->second.original_network_id,
-			tI->second.feparams.frequency,
-			tI->second.feparams.inversion,
-			tI->second.feparams.u.qpsk.symbol_rate,
-			tI->second.feparams.u.qpsk.fec_inner,
+			tI->second.feparams.Frequency,
+			tI->second.feparams.u.qpsk.SymbolRate,
+			tI->second.feparams.u.qpsk.FEC_inner,
 			tI->second.polarization);
-		break;
-
-	case FE_OFDM: /* terrestrial */
-		fprintf(fd,
-			"\t\t<transponder id=\"%04x\" onid=\"%04x\" frequency=\"%u\" inversion=\"%hu\" bandwidth=\"%hu\" code_rate_HP=\"%hu\" code_rate_LP=\"%hu\" constellation=\"%hu\" transmission_mode=\"%hu\" guard_interval=\"%hu\" hierarchy_information=\"%hu\">\n",
-			tI->second.transport_stream_id,
-			tI->second.original_network_id,
-			tI->second.feparams.frequency,
-			tI->second.feparams.inversion,
-			tI->second.feparams.u.ofdm.bandwidth,
-			tI->second.feparams.u.ofdm.code_rate_HP,
-			tI->second.feparams.u.ofdm.code_rate_LP,
-			tI->second.feparams.u.ofdm.constellation,
-			tI->second.feparams.u.ofdm.transmission_mode,
-			tI->second.feparams.u.ofdm.guard_interval,
-			tI->second.feparams.u.ofdm.hierarchy_information);
 		break;
 
 	default:
@@ -241,20 +272,27 @@ void write_transponder(FILE *fd, t_transport_stream_id transport_stream_id, t_or
 	}
 
 	for (tallchans::const_iterator cI = allchans.begin(); cI != allchans.end(); cI++)
-		if ((cI->second.getTransportStreamId() == transport_stream_id) && (cI->second.getOriginalNetworkId() == original_network_id)) {
+	{
+		if ((cI->second.getTransportStreamId() == transport_stream_id) && (cI->second.getOriginalNetworkId() == original_network_id))
+		{
 			if (cI->second.getName().length() == 0)
+			{
 				fprintf(fd,
 					"\t\t\t<channel service_id=\"%04x\" name=\"%04x\" service_type=\"%02x\"/>\n",
 					cI->second.getServiceId(),
 					cI->second.getServiceId(),
 					cI->second.getServiceType());
+			}
 			else
+			{
 				fprintf(fd,
 					"\t\t\t<channel service_id=\"%04x\" name=\"%s\" service_type=\"%02x\"/>\n",
 					cI->second.getServiceId(),
 					convert_UTF8_To_UTF8_XML(cI->second.getName()).c_str(),
 					cI->second.getServiceType());
+			}
 		}
+	}
 
 	fprintf(fd, "\t\t</transponder>\n");
 
@@ -280,7 +318,7 @@ FILE *write_provider(FILE *fd, const char *type, const char *provider_name, cons
 		/* satellite tag */
 		else
 		{
-			fprintf(fd, "\t<%s name=\"%s\" diseqc=\"%hd\">\n", type, provider_name, DiSEqC);
+			fprintf(fd, "\t<%s name=\"%s\" diseqc=\"%hhd\">\n", type, provider_name, DiSEqC);
 		}
 
 		/* channels */
@@ -308,7 +346,12 @@ void *start_scanthread(void *param)
 	char * type;
 
 	uint8_t diseqc_pos = 0;
-	uint8_t polarization = 0;
+
+	uint32_t frequency;
+	uint32_t symbol_rate;
+	uint8_t polarization;
+	uint8_t fec_inner;
+	uint8_t modulation;
 
 	bool satfeed = false;
 
@@ -316,10 +359,10 @@ void *start_scanthread(void *param)
 
 	curr_sat = 0;
 
-        if ((type = getFrontendName()) == NULL)
+	if ((type = getFrontendName()) == NULL)
 	{
 		WARN("unable to scan without a supported frontend");
-		stop_scan(false);
+		stop_scan();
 		pthread_exit(0);
 	}
 
@@ -349,18 +392,20 @@ void *start_scanthread(void *param)
 			continue;
 		}
 
-		/* Special mode for cable-users with sat-feed */
-		if (frontend->getInfo()->type == FE_QAM)
-			if (!strcmp(type, "cable") && xmlGetAttribute(search, "satfeed"))
-				if (!strcmp(xmlGetAttribute(search, "satfeed"), "true"))
-					satfeed = true;
+		/* Special mode for cable-users with sat-feed*/
+		if (!strcmp(type, "cable") && xmlGetAttribute(search, "satfeed"))
+			if (!strcmp(xmlGetAttribute(search, "satfeed"), "true"))
+				satfeed = true;
+
 
 		/* increase sat counter */
 		curr_sat++;
 
-		/* satellite receivers might need diseqc */
+		/* satellite tuners might need diseqc */
 		if (frontend->getInfo()->type == FE_QPSK)
+		{
 			diseqc_pos = spI->first;
+		}
 
 		/* send sat name to client */
 		eventServer->sendEvent(CZapitClient::EVT_SCAN_SATELLITE, CEventServer::INITID_ZAPIT, &providerName, strlen(providerName) + 1);
@@ -369,49 +414,29 @@ void *start_scanthread(void *param)
 		/* read all transponders */
 		while ((transponder = xmlGetNextOccurence(transponder, "transponder")) != NULL)
 		{
-			dvb_frontend_parameters feparams;
-
-			feparams.frequency = xmlGetNumericAttribute(transponder, "frequency", 0);
-			feparams.inversion = INVERSION_AUTO;
+			/* generic */
+			sscanf(xmlGetAttribute(transponder, "frequency"), "%u", &frequency);
+			sscanf(xmlGetAttribute(transponder, "symbol_rate"), "%u", &symbol_rate);
+			sscanf(xmlGetAttribute(transponder, "fec_inner"), "%hhu", &fec_inner);
 
 			/* cable */
 			if (frontend->getInfo()->type == FE_QAM)
 			{
-				feparams.u.qam.symbol_rate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
-				feparams.u.qam.fec_inner = (fe_code_rate_t) xmlGetNumericAttribute(transponder, "fec_inner", 0);
-				feparams.u.qam.modulation = (fe_modulation_t) xmlGetNumericAttribute(transponder, "modulation", 0);
+				sscanf(xmlGetAttribute(transponder, "modulation"), "%hhu", &modulation);
 			}
 
 			/* satellite */
-			else if (frontend->getInfo()->type == FE_QPSK)
+			else
 			{
-				feparams.u.qpsk.symbol_rate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
-				feparams.u.qpsk.fec_inner = (fe_code_rate_t) xmlGetNumericAttribute(transponder, "fec_inner", 0);
-				polarization = xmlGetNumericAttribute(transponder, "polarization", 0);
+				sscanf(xmlGetAttribute(transponder, "polarization"), "%hhu", &polarization);
 			}
 
-			/* terrestrial */
-			else if (frontend->getInfo()->type == FE_OFDM)
-			{
-				feparams.u.ofdm.bandwidth = (fe_bandwidth_t) xmlGetNumericAttribute(transponder, "bandwidth", 0);
-				feparams.u.ofdm.code_rate_HP = FEC_AUTO;
-				feparams.u.ofdm.code_rate_LP = FEC_AUTO;
-				feparams.u.ofdm.constellation = QAM_AUTO;
-				feparams.u.ofdm.transmission_mode = TRANSMISSION_MODE_AUTO;
-				feparams.u.ofdm.guard_interval = GUARD_INTERVAL_AUTO;
-				feparams.u.ofdm.hierarchy_information = HIERARCHY_AUTO;
-			}
-
-			/* build special transponder for cable with satfeed */
-			if (!strcmp(type,"cable") && satfeed) {
-				status = build_bf_transponder(&feparams);
-			}
-
-			/* read network information table */
-			else {
-				status = get_nits(&feparams, polarization, diseqc_pos);
-			}
-
+			if (!strcmp(type,"cable") && satfeed)
+				/* build special transponder for cable with satfeed*/
+				status = build_bf_transponder(frequency, symbol_rate, CFrontend::getFEC(fec_inner), CFrontend::getModulation(modulation));
+			else
+				/* read network information table */
+				status = get_nits(frequency, symbol_rate, CFrontend::getFEC(fec_inner), polarization, diseqc_pos, CFrontend::getModulation(modulation));
 			/* next transponder */
 			transponder = transponder->xmlNextNode;
 		}
@@ -456,7 +481,7 @@ void *start_scanthread(void *param)
 		search = search->xmlNextNode;
 	}
 
-	/* clean up - should this be done before every xmlNextNode ? */
+	/* clean up - should this be done before every GetNext() ? */
 	delete transponder;
 	delete search;
 
@@ -474,24 +499,29 @@ void *start_scanthread(void *param)
 	CZapitClient myZapitClient;
 	myZapitClient.reinitChannels();
 
-	stop_scan(true);
+	stop_scan();
 	pthread_exit(0);
 }
 
-char *getFrontendName(void)
+char * getFrontendName()
 {
-	if (!frontend)
-		return NULL;
+    if ((frontend == NULL) || (frontend->isInitialized() == false))
+	return NULL;
 
-	switch (frontend->getInfo()->type) {
-	case FE_QPSK:   /* satellite frontend */
-		return "sat";
-	case FE_QAM:    /* cable frontend */
-		return "cable";
-	case FE_OFDM:   /* terrestrial frontend */
-		return "terrestrial";
-	default:        /* unsupported frontend */
-		return NULL;
-	}
+    switch (frontend->getInfo()->type) {
+        case FE_QPSK:   /* satellite frontend */
+	    return "sat";
+	    break;
+
+        case FE_QAM:    /* cable frontend */
+	    return "cable";
+	    break;
+
+        case FE_OFDM:   /* terrestrial frontend */
+	    return "terrestrial";
+	    break;
+
+        default:        /* unsupported frontend */
+	    return NULL;
+    }
 }
-

@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/settings.h,v 1.8 2003/02/09 21:58:40 thegoodguy Exp $
+ * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/settings.h,v 1.8.2.1 2003/02/18 15:16:46 alexw Exp $
  *
  * zapit's settings - d-box2 linux project
  *
@@ -31,20 +31,19 @@
 #define CONFIGDIR       "/var/tuxbox/config"
 #endif
 
-#define ZAPITCONFIGDIR  CONFIGDIR "/zapit"
 
-#define CONFIGFILE      ZAPITCONFIGDIR "/zapit.conf"
-#define SERVICES_XML    ZAPITCONFIGDIR "/services.xml"
-#define BOUQUETS_XML    ZAPITCONFIGDIR "/bouquets.xml"
+#define CONFIGFILE      CONFIGDIR "/zapit/zapit.conf"
+#define SERVICES_XML    CONFIGDIR "/zapit/services.xml"
+#define BOUQUETS_XML    CONFIGDIR "/zapit/bouquets.xml"
 
-#define CABLES_XML      DATADIR "/cables.xml"
-#define SATELLITES_XML  DATADIR "/satellites.xml"
-#define TERRESTRIAL_XML DATADIR "/terrestrial.xml"
+#define CABLES_XML      "/etc/cables.xml"
+#define SATELLITES_XML  "/etc/satellites.xml"
 
-#define AUDIO_DEVICE    "/dev/dvb/adapter0/audio0"
-#define DEMUX_DEVICE    "/dev/dvb/adapter0/demux0"
-#define FRONTEND_DEVICE "/dev/dvb/adapter0/frontend0"
-#define VIDEO_DEVICE    "/dev/dvb/adapter0/video0"
+#define AUDIO_DEVICE    "/dev/dvb/card0/audio0"
+#define DEMUX_DEVICE    "/dev/dvb/card0/demux0"
+#define FRONTEND_DEVICE "/dev/dvb/card0/frontend0"
+#define SEC_DEVICE      "/dev/dvb/card0/sec0"
+#define VIDEO_DEVICE    "/dev/dvb/card0/video0"
 
 
 #define CAMD_UDS_NAME  "/tmp/camd.socket"

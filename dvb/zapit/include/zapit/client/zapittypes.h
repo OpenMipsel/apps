@@ -1,10 +1,9 @@
 /*
- * $Id: zapittypes.h,v 1.8 2003/01/17 16:26:41 obi Exp $
+ * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/client/zapittypes.h,v 1.8.2.1 2003/02/18 15:16:46 alexw Exp $
  *
  * zapit's types which are used by the clientlib - d-box2 linux project
  *
  * (C) 2002 by thegoodguy <thegoodguy@berlios.de>
- * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +34,6 @@ typedef uint16_t t_original_network_id;
 #define SCANF_ORIGINAL_NETWORK_ID_TYPE "%hx"
 
 typedef uint16_t t_transport_stream_id;
-typedef uint16_t t_network_id;
 
 /* unique channel identification */
 typedef uint32_t t_channel_id;
@@ -43,28 +41,18 @@ typedef uint32_t t_channel_id;
 #define PRINTF_CHANNEL_ID_TYPE "%08x"
 
 /* diseqc types */
-typedef enum {
+enum diseqc_t
+{
 	NO_DISEQC,
 	MINI_DISEQC,
-	SMATV_REMOTE_TUNING,
 	DISEQC_1_0,
 	DISEQC_1_1,
-	DISEQC_1_2,
-	DISEQC_2_0,
-	DISEQC_2_1,
-	DISEQC_2_2
-} diseqc_t;
-
-/* dvb transmission types */
-typedef enum {
-	DVB_C,
-	DVB_S,
-	DVB_T
-} delivery_system_t;
+	SMATV_REMOTE_TUNING
+};
 
 /* video display formats (cf. video_displayformat_t in driver/dvb/include/linux/dvb/video.h): */
-typedef enum {
-	ZAPIT_VIDEO_PAN_SCAN,       /* use pan and scan format */
+typedef enum {   
+        ZAPIT_VIDEO_PAN_SCAN,       /* use pan and scan format */
 	ZAPIT_VIDEO_LETTER_BOX,     /* use letterbox format */
 	ZAPIT_VIDEO_CENTER_CUT_OUT  /* use center cut out format */
 } video_display_format_t;

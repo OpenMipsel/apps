@@ -1,5 +1,5 @@
 /*
- * $Id: bat.cpp,v 1.13 2003/01/30 17:21:17 obi Exp $
+ * $Id: bat.cpp,v 1.13.2.1 2003/02/18 15:16:47 alexw Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -19,17 +19,18 @@
  *
  */
 
+/* debug */
+#include <stdlib.h>
+
 #include <zapit/bat.h>
-#include <zapit/debug.h>
 #include <zapit/descriptors.h>
 #include <zapit/dmx.h>
+#include <zapit/debug.h>
 
 #define BAT_SIZE 1024
 
-int parse_bat(void)
+int parse_bat (int demux_fd)
 {
-	CDemux dmx;
-
 	unsigned char buffer[BAT_SIZE];
 
 	/* position in buffer */
@@ -57,16 +58,20 @@ int parse_bat(void)
 	mask[0] = 0xFF;
 	mask[4] = 0xFF;
 
-	do {
-		if ((dmx.sectionFilter(0x11, filter, mask) < 0) || (dmx.read(buffer, BAT_SIZE) < 0))
+	do
+	{
+		if ((setDmxSctFilter(demux_fd, 0x0011, filter, mask) < 0) ||
+		    (readDmx(demux_fd, buffer, BAT_SIZE) < 0))
 			return -1;
 
 		section_length = ((buffer[1] & 0x0F) << 8) | buffer[2];
 		bouquet_id = (buffer[3] << 8) | buffer[4];
 		bouquet_descriptors_length = ((buffer[8] & 0x0F) << 8) | buffer[9];
 
-		for (pos = 10; pos < bouquet_descriptors_length + 10; pos += buffer[pos + 1] + 2) {
-			switch (buffer[pos]) {
+		for (pos = 10; pos < bouquet_descriptors_length + 10; pos += buffer[pos + 1] + 2)
+		{
+			switch (buffer[pos])
+			{
 			case 0x47:
 				bouquet_name_descriptor(buffer + pos);
 				break;
@@ -105,13 +110,16 @@ int parse_bat(void)
 
 		transport_stream_loop_length = ((buffer[pos] & 0x0F) << 8) | buffer[pos + 1];
 
-		for (pos2 = pos + 2; pos2 < pos + 2 + transport_stream_loop_length; pos2 += transport_descriptors_length + 6) {
+		for (pos2 = pos + 2; pos2 < pos + 2 + transport_stream_loop_length; pos2 += transport_descriptors_length + 6)
+		{
 			transport_stream_id = (buffer[pos2] << 8) | buffer[pos2 + 1];
 			original_network_id = (buffer[pos2 + 2] << 8) | buffer[pos2 + 3];
 			transport_descriptors_length = ((buffer[pos2 + 4] & 0x0F) << 8) | buffer[pos2 + 5];
 
-			for (pos3 = pos2 + 6; pos3 < transport_descriptors_length + pos2 + 6; pos3 += buffer[pos3 + 1] + 2) {
-				switch (buffer[pos3]) {
+			for (pos3 = pos2 + 6; pos3 < transport_descriptors_length + pos2 + 6; pos3 += buffer[pos3 + 1] + 2)
+			{
+				switch (buffer[pos3])
+				{
 				case 0x41:
 					service_list_descriptor(buffer + pos3, original_network_id);
 					break;
@@ -139,8 +147,8 @@ int parse_bat(void)
 				}
 			}
 		}
-
-	} while (filter[4]++ != buffer[7]);
+	}
+	while (filter[4]++ != buffer[7]);
 
 	return 0;
 }

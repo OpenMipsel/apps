@@ -1,7 +1,7 @@
 /*
- * $Id: descriptors.cpp,v 1.55 2003/01/30 17:21:17 obi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.1 2003/02/18 15:16:47 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,101 +45,125 @@ std::map <t_channel_id, uint8_t> service_types;
 extern CFrontend *frontend;
 extern CEventServer *eventServer;
 
-void generic_descriptor(const unsigned char * const buffer)
+uint8_t generic_descriptor (uint8_t *buffer)
 {
-#if 0
-	DBG("generic descriptor dump:");
-	for (unsigned short i = 0; i < buffer[1] + 2; i++)
+	int i;
+
+	printf("[descriptors.cpp] generic descriptor dump:\n");
+	for (i = 0; i < buffer[1] + 2; i++)
+	{
 		printf(" %02x", buffer[i]);
+	}
 	printf("\n");
-#endif
+
+	return buffer[1];
 }
 
 /* 0x02 */
-void video_stream_descriptor(const unsigned char * const buffer)
+uint8_t video_stream_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x03 */
-void audio_stream_descriptor(const unsigned char * const buffer)
+uint8_t audio_stream_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x04 */
-void hierarchy_descriptor(const unsigned char * const buffer)
+uint8_t hierarchy_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x05 */
-void registration_descriptor(const unsigned char * const buffer)
+uint8_t registration_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x06 */
-void data_stream_alignment_descriptor(const unsigned char * const buffer)
+uint8_t data_stream_alignment_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x07 */
-void target_background_grid_descriptor(const unsigned char * const buffer)
+uint8_t target_background_grid_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x08 */
-void Video_window_descriptor(const unsigned char * const buffer)
+uint8_t Video_window_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x09 */
-void CA_descriptor(const unsigned char * const buffer, uint16_t ca_system_id, uint16_t* ca_pid)
+uint8_t CA_descriptor (uint8_t *buffer, uint16_t ca_system_id, uint16_t* ca_pid)
 {
 	if ((((buffer[2] & 0x1F) << 8) | buffer[3]) == ca_system_id)
+	{
 		*ca_pid = ((buffer[4] & 0x1F) << 8) | buffer[5];
+	}
+
+	return buffer[1];
 }
 
 /* 0x0A */
-void ISO_639_language_descriptor(const unsigned char * const buffer)
+uint8_t ISO_639_language_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x0B */
-void System_clock_descriptor(const unsigned char * const buffer)
+uint8_t System_clock_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x0C */
-void Multiplex_buffer_utilization_descriptor(const unsigned char * const buffer)
+uint8_t Multiplex_buffer_utilization_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x0D */
-void Copyright_descriptor(const unsigned char * const buffer)
+uint8_t Copyright_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x0E */
-void Maximum_bitrate_descriptor(const unsigned char * const buffer)
+uint8_t Maximum_bitrate_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x0F */
-void Private_data_indicator_descriptor(const unsigned char * const buffer)
+uint8_t Private_data_indicator_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x10 */
-void Smoothing_buffer_descriptor(const unsigned char * const buffer)
+uint8_t Smoothing_buffer_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x11 */
-void STD_descriptor(const unsigned char * const buffer)
+uint8_t STD_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x12 */
-void IBP_descriptor(const unsigned char * const buffer)
+uint8_t IBP_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /*
@@ -147,53 +171,63 @@ void IBP_descriptor(const unsigned char * const buffer)
  */
 
 /* 0x1B */
-void MPEG4_video_descriptor(const unsigned char * const buffer)
+uint8_t MPEG4_video_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x1C */
-void MPEG4_audio_descriptor(const unsigned char * const buffer)
+uint8_t MPEG4_audio_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x1D */
-void IOD_descriptor(const unsigned char * const buffer)
+uint8_t IOD_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x1E */
-void SL_descriptor(const unsigned char * const buffer)
+uint8_t SL_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x1F */
-void FMC_descriptor(const unsigned char * const buffer)
+uint8_t FMC_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x20 */
-void External_ES_ID_descriptor(const unsigned char * const buffer)
+uint8_t External_ES_ID_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x21 */
-void MuxCode_descriptor(const unsigned char * const buffer)
+uint8_t MuxCode_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x22 */
-void FmxBufferSize_descriptor(const unsigned char * const buffer)
+uint8_t FmxBufferSize_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x23 */
-void MultiplexBuffer_descriptor(const unsigned char * const buffer)
+uint8_t MultiplexBuffer_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x24 */
-void FlexMuxTiming_descriptor(const unsigned char * const buffer)
+uint8_t FlexMuxTiming_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /*
@@ -201,34 +235,36 @@ void FlexMuxTiming_descriptor(const unsigned char * const buffer)
  */
 
 /* 0x40 */
-void network_name_descriptor(const unsigned char * const buffer)
+uint8_t network_name_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x41 */
-void service_list_descriptor(const unsigned char * const buffer, uint16_t original_network_id)
+uint8_t service_list_descriptor (uint8_t *buffer, uint16_t original_network_id)
 {
-	for (int i = 0; i < buffer[1]; i += 3) {
-		t_service_id service_id = (buffer[i + 2] << 8) | buffer[i + 3];
-		service_types[CREATE_CHANNEL_ID] = buffer[i + 4];
-	}
+	for (int i = 0; i < buffer[1]; i += 3)
+		{
+			uint16_t service_id = (buffer[i + 2] << 8) | buffer[i + 3];
+			service_types[CREATE_CHANNEL_ID] = buffer[i + 4];
+		}
+
+	return buffer[1];
 }
 
 /* 0x42 */
-void stuffing_descriptor(const unsigned char * const buffer)
+uint8_t stuffing_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x43 */
-int satellite_delivery_system_descriptor(const unsigned char * const buffer, t_transport_stream_id transport_stream_id, t_original_network_id original_network_id, unsigned char DiSEqC)
+uint8_t satellite_delivery_system_descriptor (uint8_t *buffer, uint16_t transport_stream_id, uint16_t original_network_id, uint8_t DiSEqC)
 {
-	dvb_frontend_parameters feparams;
+	FrontendParameters feparams;
 	uint8_t polarization;
 
-	if (frontend->getInfo()->type != FE_QPSK)
-		return -1;
-
-	feparams.frequency =
+	feparams.Frequency =
 	(
 		((buffer[2] >> 4)	* 100000000) +
 		((buffer[2] & 0x0F)	* 10000000) +
@@ -239,10 +275,14 @@ int satellite_delivery_system_descriptor(const unsigned char * const buffer, t_t
 		((buffer[5] >> 4)	* 100) +
 		((buffer[5] & 0x0F)	* 10)
 	);
+	if (frontend->getInfo()->type == FE_QAM)
+	{
+		if (feparams.Frequency > 810000) return 0;
+	}
 
-	feparams.inversion = INVERSION_AUTO;
+	feparams.Inversion = INVERSION_AUTO;
 
-	feparams.u.qpsk.symbol_rate =
+	feparams.u.qpsk.SymbolRate =
 	(
 		((buffer[9] >> 4)	* 100000000) +
 		((buffer[9] & 0x0F)	* 10000000) +
@@ -253,7 +293,7 @@ int satellite_delivery_system_descriptor(const unsigned char * const buffer, t_t
 		((buffer[12] >> 4)	* 100)
 	);
 
-	feparams.u.qpsk.fec_inner = CFrontend::getCodeRate(buffer[12] & 0x0F);
+	feparams.u.qpsk.FEC_inner = CFrontend::getFEC(buffer[12] & 0x0F);
 	polarization = (buffer[8] >> 5) & 0x03;
 
 	if (scantransponders.find((transport_stream_id << 16) | original_network_id) == scantransponders.end())
@@ -285,32 +325,30 @@ int satellite_delivery_system_descriptor(const unsigned char * const buffer, t_t
 		);
 	}
 
-	return 0;
+	return buffer[1];
 }
 
 /* 0x44 */
-int cable_delivery_system_descriptor(const unsigned char * const buffer, t_transport_stream_id transport_stream_id, t_original_network_id original_network_id)
+uint8_t cable_delivery_system_descriptor (uint8_t *buffer, uint16_t transport_stream_id, uint16_t original_network_id)
 {
-	if (frontend->getInfo()->type != FE_QAM)
-		return -1;
+	FrontendParameters feparams;
 
-	dvb_frontend_parameters feparams;
-
-	feparams.frequency =
+	feparams.Frequency =
 	(
-		((buffer[2] >> 4)	* 1000000000) +
-		((buffer[2] & 0x0F)	* 100000000) +
-		((buffer[3] >> 4)	* 10000000) +
-		((buffer[3] & 0x0F)	* 1000000) +
-		((buffer[4] >> 4)	* 100000) +
-		((buffer[4] & 0x0F)	* 10000) +
-		((buffer[5] >> 4)	* 1000) +
-		((buffer[5] & 0x0F)	* 100)
+		((buffer[2] >> 4)	* 1000000) +
+		((buffer[2] & 0x0F)	* 100000) +
+		((buffer[3] >> 4)	* 10000) +
+		((buffer[3] & 0x0F)	* 1000) +
+		((buffer[4] >> 4)	* 100) +
+		((buffer[4] & 0x0F)	* 10) +
+		((buffer[5] >> 4)	* 1)
 	);
 
-	feparams.inversion = INVERSION_AUTO;
+	if (feparams.Frequency > 810000) return 0;
 
-	feparams.u.qam.symbol_rate =
+	feparams.Inversion = INVERSION_AUTO;
+
+	feparams.u.qam.SymbolRate =
 	(
 		((buffer[9] >> 4)	* 100000000) +
 		((buffer[9] & 0x0F)	* 10000000) +
@@ -321,8 +359,8 @@ int cable_delivery_system_descriptor(const unsigned char * const buffer, t_trans
 		((buffer[12] >> 4)	* 100)
 	);
 
-	feparams.u.qam.fec_inner = CFrontend::getCodeRate(buffer[12] & 0x0F);
-	feparams.u.qam.modulation = CFrontend::getModulation(buffer[8]);
+	feparams.u.qam.FEC_inner = CFrontend::getFEC(buffer[12] & 0x0F);
+	feparams.u.qam.QAM = CFrontend::getModulation(buffer[8]);
 
 	if (scantransponders.find((transport_stream_id << 16) | original_network_id) == scantransponders.end())
 	{
@@ -351,32 +389,35 @@ int cable_delivery_system_descriptor(const unsigned char * const buffer, t_trans
 		);
 	}
 
-	return 0;
+	return buffer[1];
 }
 
 /* 0x45 */
-void VBI_data_descriptor(const unsigned char * const buffer)
+uint8_t VBI_data_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x46 */
-void VBI_teletext_descriptor(const unsigned char * const buffer)
+uint8_t VBI_teletext_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x47 */
-void bouquet_name_descriptor(const unsigned char * const buffer)
+uint8_t bouquet_name_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x48 */
-void service_descriptor(const unsigned char * const buffer, const t_service_id service_id, const t_transport_stream_id transport_stream_id, const t_original_network_id original_network_id, const uint8_t DiSEqC, bool free_CA_mode)
+uint8_t service_descriptor (uint8_t *buffer, const t_service_id service_id, const t_transport_stream_id transport_stream_id, const t_original_network_id original_network_id, const uint8_t DiSEqC)
 {
 	tallchans_iterator I = allchans.find(CREATE_CHANNEL_ID);
 
 	if (I != allchans.end())
-		return;
-	
+		return buffer[1];
+
 	uint8_t service_type = buffer[2];
 	uint8_t service_provider_name_length = buffer[3];
 
@@ -400,7 +441,7 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		providerName = "Premiere"; // well the name PREMIERE itself is not a problem
 		in_blacklist = true;
 	}
-
+	
 	if (in_blacklist)
 	{
 		if (((unsigned char)buffer[4 + service_provider_name_length + 1]) >= 0x20) // no encoding info
@@ -452,12 +493,12 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		eventServer->sendEvent(CZapitClient::EVT_SCAN_PROVIDER, CEventServer::INITID_ZAPIT, (void *) lastProviderName.c_str(), lastProviderName.length() + 1);
 	}
 
-	switch (service_type) {
+	switch (service_type)
+	{
 	case DIGITAL_TELEVISION_SERVICE:
 	case DIGITAL_RADIO_SOUND_SERVICE:
 	case NVOD_REFERENCE_SERVICE:
 	case NVOD_TIME_SHIFTED_SERVICE:
-	{
 		CBouquet* bouquet;
 		int bouquetId;
 
@@ -471,220 +512,239 @@ void service_descriptor(const unsigned char * const buffer, const t_service_id s
 		bouquet->addService(new CZapitChannel(serviceName, service_id, transport_stream_id, original_network_id, service_type, 0));
 		break;
 	}
-	default:
-		break;
-	}
+
+	return buffer[1];
 }
 
 /* 0x49 */
-void country_availability_descriptor(const unsigned char * const buffer)
+uint8_t country_availability_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x4A */
-void linkage_descriptor(const unsigned char * const buffer)
+uint8_t linkage_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x4B */
-int NVOD_reference_descriptor(
-	const unsigned char * const buffer,
-	const unsigned int num,
-	t_transport_stream_id * const tsid,
-	t_original_network_id * const onid,
-	t_service_id * const sid)
+uint8_t NVOD_reference_descriptor (uint8_t *buffer)
 {
-	if ((unsigned int)(buffer[1] / 6) + 1 >= num) {
-		*tsid = (buffer[2 + (6 * num)] << 16) | buffer[3 + (6 * num)];
-		*onid = (buffer[4 + (6 * num)] << 16) | buffer[5 + (6 * num)];
-		*sid =  (buffer[6 + (6 * num)] << 16) | buffer[7 + (6 * num)];
-		return 0;
-	}
-
-	return -1;
+	return buffer[1];
 }
 
 /* 0x4C */
-void time_shifted_service_descriptor(const unsigned char * const buffer)
+uint8_t time_shifted_service_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x4D */
-void short_event_descriptor(const unsigned char * const buffer)
+uint8_t short_event_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x4E */
-void extended_event_descriptor(const unsigned char * const buffer)
+uint8_t extended_event_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x4F */
-void time_shifted_event_descriptor(const unsigned char * const buffer)
+uint8_t time_shifted_event_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x50 */
-void component_descriptor(const unsigned char * const buffer)
+uint8_t component_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x51 */
-void mosaic_descriptor(const unsigned char * const buffer)
+uint8_t mosaic_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x52 */
-void stream_identifier_descriptor(const unsigned char * const buffer)
+uint8_t stream_identifier_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x53 */
-void CA_identifier_descriptor(const unsigned char * const buffer)
+uint8_t CA_identifier_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x54 */
-void content_descriptor(const unsigned char * const buffer)
+uint8_t content_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x55 */
-void parental_rating_descriptor(const unsigned char * const buffer)
+uint8_t parental_rating_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x56 */
-void teletext_descriptor(const unsigned char * const buffer)
+uint8_t teletext_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x57 */
-void telephone_descriptor(const unsigned char * const buffer)
+uint8_t telephone_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x58 */
-void local_time_offset_descriptor(const unsigned char * const buffer)
+uint8_t local_time_offset_descriptor (uint8_t* buffer)
 {
+	return buffer[1];
 }
 
 /* 0x59 */
-void subtitling_descriptor(const unsigned char * const buffer)
+uint8_t subtitling_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x5A */
-int terrestrial_delivery_system_descriptor(const unsigned char * const buffer)
+uint8_t terrestrial_delivery_system_descriptor (uint8_t *buffer)
 {
-	if (frontend->getInfo()->type != FE_OFDM)
-		return -1;
-
-	/* TODO */
-
-	return 0;
+	return buffer[1];
 }
 
 /* 0x5B */
-void multilingual_network_name_descriptor(const unsigned char * const buffer)
+uint8_t multilingual_network_name_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x5C */
-void multilingual_bouquet_name_descriptor(const unsigned char * const buffer)
+uint8_t multilingual_bouquet_name_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x5D */
-void multilingual_service_name_descriptor(const unsigned char * const buffer)
+uint8_t multilingual_service_name_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x5E */
-void multilingual_component_descriptor(const unsigned char * const buffer)
+uint8_t multilingual_component_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x5F */
-void private_data_specifier_descriptor(const unsigned char * const buffer)
+uint8_t private_data_specifier_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x60 */
-void service_move_descriptor(const unsigned char * const buffer)
+uint8_t service_move_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x61 */
-void short_smoothing_buffer_descriptor(const unsigned char * const buffer)
+uint8_t short_smoothing_buffer_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x62 */
-void frequency_list_descriptor(const unsigned char * const buffer)
+uint8_t frequency_list_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x63 */
-void partial_transport_stream_descriptor(const unsigned char * const buffer)
+uint8_t partial_transport_stream_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x64 */
-void data_broadcast_descriptor(const unsigned char * const buffer)
+uint8_t data_broadcast_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x65 */
-void CA_system_descriptor(const unsigned char * const buffer)
+uint8_t CA_system_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x66 */
-void data_broadcast_id_descriptor(const unsigned char * const buffer)
+uint8_t data_broadcast_id_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x67 */
-void transport_stream_descriptor(const unsigned char * const buffer)
+uint8_t transport_stream_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x68 */
-void DSNG_descriptor(const unsigned char * const buffer)
+uint8_t DSNG_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x69 */
-void PDC_descriptor(const unsigned char * const buffer)
+uint8_t PDC_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x6A */
-void AC3_descriptor(const unsigned char * const buffer)
+uint8_t AC3_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x6B */
-void ancillary_data_descriptor(const unsigned char * const buffer)
+uint8_t ancillary_data_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x6C */
-void cell_list_descriptor(const unsigned char * const buffer)
+uint8_t cell_list_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x6D */
-void cell_frequency_link_descriptor(const unsigned char * const buffer)
+uint8_t cell_frequency_link_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x6E */
-void announcement_support_descriptor(const unsigned char * const buffer)
+uint8_t announcement_support_descriptor (uint8_t *buffer)
 {
+	return buffer[1];
 }
 
 /* 0x6F ... 0x7F: reserved */
 /* 0x80 ... 0xFE: user private */
 /* 0xFF: forbidden */
+

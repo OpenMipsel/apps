@@ -1,7 +1,7 @@
 /*
- * $Id: audio.h,v 1.12 2003/01/30 17:21:16 obi Exp $
+ * $Id: audio.h,v 1.12.2.1 2003/02/18 15:16:46 alexw Exp $
  *
- * (C) 2002-2003 by Steffen Hehn 'McClean' &
+ * (C) 2002 by Steffen Hehn 'McClean' &
  *	Andreas Oberritter <obi@tuxbox.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,10 +20,11 @@
  *
  */
 
-#ifndef __zapit_audio_h__
-#define __zapit_audio_h__
+#ifndef __audio_h__
+#define __audio_h__
 
-#include <linux/dvb/audio.h>
+/* nokia api */
+#include <ost/audio.h>
 
 class CAudio
 {
@@ -31,37 +32,47 @@ class CAudio
 		/* dvb audio device */
 		int fd;
 
+		/* current audio settings */
+		struct audioStatus status;
+		struct audioMixer mixer;
+
 		/* internal methods */
-		int setMute(int enable);
-		int setBypassMode(int disable);
+		int setMute (bool mute);
+		int setBypassMode (bool bypass);
+
+		/* true if constructor had success */
+		bool initialized;
 
 	public:
 		/* construct & destruct */
-		CAudio(void);
-		~CAudio(void);
+		CAudio();
+		~CAudio();
+
+		/* check if initialitation failed before rocking */
+		bool isInitialized () { return initialized; }
 
 		/* shut up */
-		int mute(void);
-		int unmute(void);
+		int mute ();
+		int unmute ();
 
 		/* bypass audio to external decoder */
-		int enableBypass(void);
-		int disableBypass(void);
+		int enableBypass ();
+		int disableBypass ();
 
 		/* volume, min = 0, max = 255 */
-		int setVolume(unsigned int left, unsigned int right);
+		int setVolume (unsigned char left, unsigned char right);
 
 		/* start and stop audio */
-		int start(void);
-		int stop(void);
+		int start ();
+		int stop ();
 
 		/* stream source */
-		audio_stream_source_t getSource(void);
-		int setSource(audio_stream_source_t source);
+		audioStreamSource_t getSource () { return status.streamSource; }
+		int setSource (audioStreamSource_t source);
 
 		/* select channels */
-		int setChannel(audio_channel_select_t channel);
-		audio_channel_select_t getChannel(void);
+		int selectChannel (audioChannelSelect_t sel);
+		audioChannelSelect_t getSelectedChannel ();
 };
 
-#endif /* __zapit_audio_h__ */
+#endif /* __audio_h__ */

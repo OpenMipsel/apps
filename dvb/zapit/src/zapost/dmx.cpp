@@ -1,7 +1,7 @@
 /*
- * $Id: dmx.cpp,v 1.15 2003/01/30 17:21:17 obi Exp $
+ * $Id: dmx.cpp,v 1.15.2.1 2003/02/18 15:16:47 alexw Exp $
  *
- * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
+ * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  */
 
-#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -27,32 +26,91 @@
 
 #include <zapit/dmx.h>
 #include <zapit/debug.h>
-#include <zapit/settings.h>
 
-CDemux::CDemux(void)
+int setDmxSctFilter (int fd, unsigned short pid, unsigned char * filter, unsigned char * mask)
 {
-	if ((fd = open(DEMUX_DEVICE, O_RDWR)) < 0)
-		ERROR(DEMUX_DEVICE);
-}
+	struct dmxSctFilterParams sctFilterParams;
 
-CDemux::~CDemux(void)
-{
-	if (fd >= 0)
-		close(fd);
-}
+	if (fd < 0)
+		return -1;
 
-int CDemux::sectionFilter(const unsigned short pid, const unsigned char * const filter, const unsigned char * const mask)
-{
-	struct dmx_sct_filter_params sctFilterParams;
-
-	memset(&sctFilterParams.filter, 0, sizeof(struct dmx_filter));
+	memset(&sctFilterParams, 0x00, sizeof(sctFilterParams));
 	memcpy(&sctFilterParams.filter.filter, filter, DMX_FILTER_SIZE);
 	memcpy(&sctFilterParams.filter.mask, mask, DMX_FILTER_SIZE);
 
 	sctFilterParams.pid = pid;
-	sctFilterParams.flags = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
 
-	switch (sctFilterParams.filter.filter[0]) {
+	switch (sctFilterParams.pid)
+	{
+	case 0x0000: /* Program Association Table */
+		sctFilterParams.flags = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0001: /* Conditional Access Table */
+		sctFilterParams.flags = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0002: /* Transport Streams Description Table */
+		sctFilterParams.flags = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0003 ... 0x000F: /* reserved */
+		return -1;
+
+	case 0x0010: /* Network Information Table, Stuffing Table */
+		sctFilterParams.flags = DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0011: /* Service Description Table, Bouquet Association Table, Stuffing Table */
+		sctFilterParams.flags = DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0012: /* Event Information Table, Stuffing Table */
+		sctFilterParams.flags = DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0013: /* Running Status Table, Stuffing Table */
+		sctFilterParams.flags = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0014: /* Time and Date Table, Time Offset Table, Stuffing Table */
+		sctFilterParams.flags = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+
+	case 0x0015: /* network synchronization */
+		return -1;
+
+	case 0x0016 ... 0x001D: /* reserved */
+		return -1;
+
+	case 0x001E: /* Discontinuity Information Table */
+		return -1;
+
+	case 0x001F: /* Selection Information Table */
+		return -1;
+
+	case 0x0020 ... 0x1FFB:
+		sctFilterParams.flags = DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		break;
+	
+	case 0x1FFC: /* ATSC SI */
+		return -1;
+
+	case 0x1FFD: /* ATSC Master Program Guide */
+		return -1;
+
+	case 0x1FFE:
+		return -1;
+
+	case 0x1FFF: /* reserved */
+		return -1;
+
+	default:
+		break;
+	}
+
+	switch (sctFilterParams.filter.filter[0])
+	{
 	case 0x00: /* program_association_section */
 		sctFilterParams.timeout = 2000;
 		break;
@@ -69,7 +127,8 @@ int CDemux::sectionFilter(const unsigned short pid, const unsigned char * const 
 		sctFilterParams.timeout = 10000;
 		break;
 
-	/* 0x04 - 0x3F: reserved */
+	case 0x04 ... 0x3F: /* reserved */
+		return -1;
 
 	case 0x40: /* network_information_section - actual_network */
 		sctFilterParams.timeout = 10000;
@@ -83,19 +142,22 @@ int CDemux::sectionFilter(const unsigned short pid, const unsigned char * const 
 		sctFilterParams.timeout = 10000;
 		break;
 
-	/* 0x43 - 0x45: reserved for future use */
+	case 0x43 ... 0x45: /* reserved for future use */
+		return -1;
 
 	case 0x46: /* service_description_section - other_transport_stream */
 		sctFilterParams.timeout = 10000;
 		break;
 
-	/* 0x47 - 0x49: reserved for future use */
+	case 0x47 ... 0x49: /* reserved for future use */
+		return -1;
 
 	case 0x4A: /* bouquet_association_section */
 		sctFilterParams.timeout = 11000;
 		break;
 
-	/* 0x4B - 0x4D: reserved for future use */
+	case 0x4B ... 0x4D: /* reserved for future use */
+		return -1;
 
 	case 0x4E: /* event_information_section - actual_transport_stream, present/following */
 		sctFilterParams.timeout = 2000;
@@ -105,8 +167,13 @@ int CDemux::sectionFilter(const unsigned short pid, const unsigned char * const 
 		sctFilterParams.timeout = 10000;
 		break;
 
-	/* 0x50 - 0x5F: event_information_section - actual_transport_stream, schedule */
-	/* 0x60 - 0x6F: event_information_section - other_transport_stream, schedule */
+	case 0x50 ... 0x5F: /* event_information_section - actual_transport_stream, schedule */
+		sctFilterParams.timeout = 10000;
+		break;
+
+	case 0x60 ... 0x6F: /* event_information_section - other_transport_stream, schedule */
+		sctFilterParams.timeout = 10000;
+		break;
 
 	case 0x70: /* time_date_section */
 		sctFilterParams.timeout = 30000;
@@ -124,7 +191,8 @@ int CDemux::sectionFilter(const unsigned short pid, const unsigned char * const 
 		sctFilterParams.timeout = 30000;
 		break;
 
-	/* 0x74 - 0x7D: reserved for future use */
+	case 0x74 ... 0x7D: /* reserved for future use */
+		return -1;
 
 	case 0x7E: /* discontinuity_information_section */
 		sctFilterParams.timeout = 0;
@@ -134,47 +202,91 @@ int CDemux::sectionFilter(const unsigned short pid, const unsigned char * const 
 		sctFilterParams.timeout = 0;
 		break;
 
-	/* 0x80 - 0x8F: ca_message_section */
-	/* 0x90 - 0xFE: user defined */
-	/*        0xFF: reserved */
-	default:
+	case 0x80 ... 0x8F: /* ca_message_section */
+		sctFilterParams.timeout = 1000;
+		break;
+
+	case 0x90 ... 0xFE: /* user defined */
+		return -1;
+
+	case 0xFF: /* reserved */
 		return -1;
 	}
 
-	return fop(ioctl, DMX_SET_FILTER, &sctFilterParams);
+	if (ioctl(fd, DMX_SET_FILTER, &sctFilterParams) < 0)
+	{
+		ERROR("DMX_SET_FILTER");
+		return -1;
+	}
+
+	return 0;
 }
 
-int CDemux::pesFilter(const unsigned short pid, const dmx_output_t output, const dmx_pes_type_t pes_type)
+int setDmxPesFilter (int fd, dmxOutput_t output, dmxPesType_t pesType, unsigned short pid)
 {
-	dmx_pes_filter_params pesFilterParams;
+	dmxPesFilterParams pesFilterParams;
 
-	if ((pid <= 0x0001) && (pes_type != DMX_PES_PCR))
+	if (fd < 0)
 		return -1;
 
-	if (((pid >= 0x0002) && (pid <= 0x0000F)) || (pid >= 0x1FFF))
+	if ((pid <= 0x0001) && (pesType != DMX_PES_PCR))
+		return -1;
+
+	if ((pid >= 0x0002) && (pid <= 0x0000F))
+		return -1;
+
+	if (pid >= 0x1FFF)
 		return -1;
 
 	pesFilterParams.pid = pid;
 	pesFilterParams.input = DMX_IN_FRONTEND;
 	pesFilterParams.output = output;
-	pesFilterParams.pes_type = pes_type;
+	pesFilterParams.pesType = pesType;
 	pesFilterParams.flags = 0;
 
-	return fop(ioctl, DMX_SET_PES_FILTER, &pesFilterParams);
+	if (ioctl(fd, DMX_SET_PES_FILTER, &pesFilterParams) < 0)
+	{
+		ERROR("DMX_SET_PES_FILTER");
+		return -1;
+	}
+
+	return 0;
 }
 
-int CDemux::start(void)
+int startDmxFilter (int fd)
 {
-	return fop(ioctl, DMX_START);
+	if (fd < 0)
+		return -1;
+
+	if (ioctl(fd, DMX_START) < 0)
+	{
+		ERROR("DMX_START");
+		return -1;
+	}
+
+	return 0;
 }
 
-int CDemux::stop(void)
+int stopDmxFilter (int fd)
 {
-	return fop(ioctl, DMX_STOP);
+	if (fd < 0)
+		return -1;
+
+	if (ioctl(fd, DMX_STOP) < 0)
+	{
+		ERROR("DMX_STOP");
+		return -1;
+	}
+
+	return 0;
 }
 
-int CDemux::read(unsigned char * const buf, const size_t n)
+int readDmx(int fd, unsigned char * buf, const size_t n)
 {
-	return fop(read, buf, n);
-}
+	int return_value = read(fd, buf, n);
 
+	if (return_value < 0)
+		ERROR("DMX_READ");
+
+	return return_value;
+}
