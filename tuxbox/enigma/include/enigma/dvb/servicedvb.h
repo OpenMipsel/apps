@@ -46,6 +46,9 @@ public:
 
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);
+
+	eService *addRef(const eServiceReference &service);
+	void removeRef(const eServiceReference &service);
 };
 
 #endif

@@ -33,6 +33,21 @@ public:
 	int type;
 };
 
+class eServiceCommand
+{
+public:
+	eServiceCommand(int type): type(type) { }
+	eServiceCommand(int type, int parm): type(type), parm(parm) { }
+	enum
+	{
+		cmdSetSpeed,		// parm : ratio.. 1 normal, 0 pause, >1 fast forward, <0 reverse (if supported)
+		cmdSkip,				// parm : in ms (~)
+		cmdSeekAbsolute	// parm : percentage ~
+	};
+	int type;
+	int parm;
+};
+
 class PMTEntry;
 class eService;
 class EIT;
@@ -50,10 +65,11 @@ public:
 		flagIsScrambled=1, 
 		flagHaveSubservices=2, 
 		flagHaveMultipleAudioStreams=4,
+		flagIsSeekable=8
 	};
 	enum
 	{
-		statePlaying, stateError, stateScrambled, stateStopped
+		statePlaying, stateError, stateScrambled, stateStopped, statePause, stateSkipping
 	};
 	eServiceHandler(int id);
 	int getID()
@@ -61,13 +77,12 @@ public:
 		return id;
 	}
 	virtual ~eServiceHandler();
-	virtual eService *lookupService(const eServiceReference &service)=0;
-
 	virtual eService *createService(const eServiceReference &node);
 
 	virtual int play(const eServiceReference &service);
 
 		// current service
+	virtual int serviceCommand(const eServiceCommand &cmd);
 
 		// for DVB audio channels:
 	virtual PMT *getPMT();
@@ -94,6 +109,9 @@ public:
 		// service list functions
 	virtual void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	virtual void leaveDirectory(const eServiceReference &dir);
+	
+	virtual eService *addRef(const eServiceReference &service);
+	virtual void removeRef(const eServiceReference &service);
 };
 
 class eService;
@@ -117,12 +135,9 @@ public:
 	int unregisterHandler(int id);
 	eServiceHandler *getServiceHandler(int id);
 
-	eService *lookupService(const eServiceReference &service);
-
 	int play(const eServiceReference &service);
 	
 		// service related functions
-	
 	Signal1<void,const eServiceEvent &> serviceEvent;
 	
 	eServiceHandler *getService()
@@ -137,6 +152,9 @@ public:
 		// service list functions
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);
+	
+	eService *addRef(const eServiceReference &service);
+	void removeRef(const eServiceReference &service);
 };
 
 #endif

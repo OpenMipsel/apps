@@ -336,6 +336,8 @@ struct eServiceReference
 	{
 		data[0]=data[1]=data[2]=data[3]=0;
 	}
+	eServiceReference(const eString &string);
+	eString toString() const;
 	bool operator==(const eServiceReference &c) const
 	{
 		if (type != c.type)

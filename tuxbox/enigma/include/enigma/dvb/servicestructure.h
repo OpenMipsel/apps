@@ -10,7 +10,6 @@ class eServiceStructureHandler: public eServiceHandler
 public:
 	void loadNode(eServiceCache<eServiceStructureHandler>::eNode &node, const eServiceReference &ref);
 	eService *createService(const eServiceReference &node);
-	eService* lookupService(const eServiceReference&);
 	
 	eServiceStructureHandler();
 	~eServiceStructureHandler();
@@ -18,7 +17,8 @@ public:
 		// service list functions
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);
+	eService* addRef(const eServiceReference&);
+	void removeRef(const eServiceReference&);
 };
 
 #endif
-
