@@ -570,7 +570,7 @@ void CleanUp()
 int GetTeletextPIDs()
 {
 	struct dmxSctFilterParams dmx_flt;
-	int pat_scan, pmt_scan, sdt_scan, desc_scan, pid_test, byte, diff;
+	int pat_scan, pmt_scan, sdt_scan, desc_scan, pid_test, byte, diff, first_sdt_sec;
 
 	unsigned char PAT[1024];
 	unsigned char SDT[1024];
@@ -685,7 +685,7 @@ skip_pid:;
 		SDT_ready = 0;
 
 		dmx_flt.pid				= 0x0011;
-		dmx_flt.flags			= DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		dmx_flt.flags			= DMX_CHECK_CRC | DMX_IMMEDIATE_START;
 		dmx_flt.filter.filter[0]= 0x42;
 		dmx_flt.filter.mask[0]	= 0xFF;
 		dmx_flt.timeout			= 5000;
@@ -699,45 +699,65 @@ skip_pid:;
 			return 1;
 		}
 
-		if(read(dmx, SDT, sizeof(SDT)) == -1)
+		first_sdt_sec = -1;
+		while(1)
 		{
-			perror("TuxTxt <read SDT>");
-
-			RenderMessage(ShowServiceName);
-
-			return 1;
-		}
-
-		SDT_ready = 1;
-
-	//scan SDT to get servicenames
-
-		for(sdt_scan = 0x0B; sdt_scan < ((SDT[1]<<8 | SDT[2]) & 0x0FFF) - 7; sdt_scan += 5 + ((SDT[sdt_scan + 3]<<8 | SDT[sdt_scan + 4]) & 0x0FFF))
-		{
-			for(pid_test = 0; pid_test < pids_found; pid_test++)
+			if(read(dmx, SDT, 3) == -1)
 			{
-				if((SDT[sdt_scan]<<8 | SDT[sdt_scan + 1]) == pid_table[pid_test].service_id && SDT[sdt_scan + 5] == 0x48)
+				perror("TuxTxt <read SDT>");
+
+				ioctl(dmx, DMX_STOP);
+
+				RenderMessage(ShowServiceName);
+
+				return 1;
+			}
+
+			if(read(dmx, SDT+3, ((SDT[1] & 0x0f) << 8) | SDT[2]) == -1)
+			{
+				perror("TuxTxt <read SDT>");
+
+				ioctl(dmx, DMX_STOP);
+
+				RenderMessage(ShowServiceName);
+
+				return 1;
+			}
+
+			if (first_sdt_sec == SDT[6]) break;
+			if (first_sdt_sec == -1) first_sdt_sec = SDT[6];
+
+		//scan SDT to get servicenames
+
+			for(sdt_scan = 0x0B; sdt_scan < ((SDT[1]<<8 | SDT[2]) & 0x0FFF) - 7; sdt_scan += 5 + ((SDT[sdt_scan + 3]<<8 | SDT[sdt_scan + 4]) & 0x0FFF))
+			{
+				for(pid_test = 0; pid_test < pids_found; pid_test++)
 				{
-					diff = 0;
-					pid_table[pid_test].service_name_len = SDT[sdt_scan+9 + SDT[sdt_scan+8]];
-					for(byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
+					if((SDT[sdt_scan]<<8 | SDT[sdt_scan + 1]) == pid_table[pid_test].service_id && SDT[sdt_scan + 5] == 0x48)
 					{
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ž') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '„') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '™') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '÷') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'š') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '˜') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
+						diff = 0;
+						pid_table[pid_test].service_name_len = SDT[sdt_scan+9 + SDT[sdt_scan+8]];
+						for(byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
+						{
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ž') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '„') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '™') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '÷') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'š') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '˜') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
 
-						if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] >= 0x80 && SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] <= 0x9F) diff--;
-						else pid_table[pid_test].service_name[byte + diff] = SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte];
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] >= 0x80 && SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] <= 0x9F) diff--;
+							else pid_table[pid_test].service_name[byte + diff] = SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte];
+						}
+
+						pid_table[pid_test].service_name_len += diff;
 					}
-
-					pid_table[pid_test].service_name_len += diff;
 				}
 			}
 		}
+		ioctl(dmx, DMX_STOP);
+		SDT_ready = 1;
 
 	//show current servicename
 
