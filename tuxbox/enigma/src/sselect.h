@@ -100,6 +100,7 @@ public:
 	void forEachServiceRef( Signal1<void,const eServiceReference&>, bool );
 	int movemode;
 	int editMode;
+	int plockmode;
 	enum { styleInvalid, styleCombiColumn, styleSingleColumn, styleMultiColumn };
 	enum { dirNo, dirUp, dirDown, dirFirst, dirLast };
 

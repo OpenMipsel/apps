@@ -1,4 +1,6 @@
 #include <lib/dvb/service.h>
+
+#include <lib/base/i18n.h>
 #include <lib/dvb/dvb.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -182,10 +184,12 @@ eServiceHandler *eServiceInterface::getServiceHandler(int id)
 	return i->second;
 }
 
+extern bool checkPin( int pin, const char * text );
+
 int eServiceInterface::play(const eServiceReference &s)
 {
 	int pLockActive = eConfig::getInstance()->pLockActive();
-	if ( s.isLocked() && pLockActive )
+	if ( s.isLocked() && pLockActive && !checkPin( eConfig::getInstance()->getParentalPin(), _("parental") ) )
 	{
 		eWarning("service is parentallocked... don't play");
 		return -1;
@@ -214,6 +218,12 @@ int eServiceInterface::stop()
 
 void eServiceInterface::enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback)
 {
+	int pLockActive = eConfig::getInstance()->pLockActive();
+	if ( dir.isLocked() && pLockActive && !checkPin( eConfig::getInstance()->getParentalPin(), _("parental") ) )
+	{
+		eWarning("directory is parentallocked... don't enter");
+		return;
+	}
 	for (std::map<int,eServiceHandler*>::iterator i(handlers.begin()); i != handlers.end(); ++i)
 		i->second->enterDirectory(dir, callback);
 }

@@ -1,5 +1,7 @@
 #include <parentallock.h>
 
+#include <src/enigma.h>
+#include <src/enigma_main.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/elabel.h>
@@ -41,7 +43,7 @@ eParentalSetup::eParentalSetup():
 {
 	setText(_("Parental setup"));
 	cmove(ePoint(170, 186));
-	cresize(eSize(390, 230));
+	cresize(eSize(390, 245));
 
 	loadSettings();
 
@@ -79,11 +81,21 @@ eParentalSetup::eParentalSetup():
 	if ( !ssetuplock )
 		changeSetupPin->hide();
 
+	lockunlock = new eButton(this);
+	lockunlock->setText(_("Lock/Unlock Services"));
+	lockunlock->move( ePoint( 10, 115 ) );
+	lockunlock->resize( eSize( 370, 40 ) );
+	lockunlock->loadDeco();
+	lockunlock->setHelpText(_("press ok to lock/unlock many services"));
+	CONNECT(lockunlock->selected, eParentalSetup::lockunlockPressed );
+	if ( !parentalpin )
+		lockunlock->hide();
+
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(10, 140));
+	ok->move(ePoint(10, 165));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -101,13 +113,17 @@ eParentalSetup::eParentalSetup():
 void eParentalSetup::plockChecked(int i)
 {
 	if ( i && !changeParentalPin->isVisible() )
+	{
+		lockunlock->show();
 		changeParentalPin->show();
+	}
 	else
 	{
 		if ( checkPin( parentalpin, _("parental") ) )
 		{
 			parentalpin=0;
 			changeParentalPin->hide();
+			lockunlock->hide();
 		}
 		else
 			parentallock->setCheck(1);
@@ -248,4 +264,14 @@ bool checkPin( int pin, const char * text )
 	}
 	while ( ret != pin );
 	return true;
+}
+
+void eParentalSetup::lockunlockPressed()
+{
+	if ( checkPin( parentalpin, _("parental")) )
+	{
+		eZap::getInstance()->getServiceSelector()->plockmode = 1;
+		eZap::getInstance()->getServiceSelector()->choose(-1);
+		eZap::getInstance()->getServiceSelector()->plockmode = 0;
+	}
 }

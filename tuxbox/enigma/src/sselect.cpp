@@ -281,7 +281,7 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 	// we can always render namePara
 	rc->renderPara(*namePara, ePoint( rect.left() + nameXOffs, rect.top() + nameYOffs ) );
 
-	if ( service.isLocked() && locked )
+	if ( service.isLocked() && locked && eConfig::getInstance()->getParentalPin() )
 	{
 		int ypos = (rect.height() - locked->y) / 2;
 		rc->blit( *locked, ePoint(nameXOffs+namePara->getBoundBox().width()+10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
@@ -317,7 +317,7 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 						descrPara->setFont( descrFont );
 						descrPara->renderString( sdescr );
 						descrXOffs = nameXOffs+namePara->getBoundBox().width();
-						if ( service.isLocked() && locked )
+						if ( service.isLocked() && locked && eConfig::getInstance()->getParentalPin() )
 							descrXOffs = descrXOffs + locked->x;
 						if (numPara)
 							descrXOffs += numPara->getBoundBox().height();
@@ -767,6 +767,32 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 		}
 		eServiceReference ref=entry->service;
 
+		if (plockmode)
+		{
+			int doit=1;
+			if ( ref.flags & eServiceReference::isDirectory )
+			{
+				hide();
+				eMessageBox mb(_("Select No or press Abort to lock/unlock the complete directory"), _("Enter Directory"),  eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo );
+				mb.show();
+				if ( mb.exec() == eMessageBox::btYes )
+					doit=0;
+				mb.hide();
+				show();
+			}
+			if ( doit )
+			{
+				if ( ref.isLocked() )
+					ref.unlock();
+				else
+					ref.lock();
+				invalidateCurrent();
+			}
+			else
+				enterDirectory(ref);
+			return;
+		}
+
 		if (movemode)
 		{
 			const std::set<eString> &styles =
@@ -1037,7 +1063,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					else
 						setFocus( services );
 			}
-			else if (event.action == &i_serviceSelectorActions->showMenu && focus != bouquets )
+			else if (event.action == &i_serviceSelectorActions->showMenu && focus != bouquets && !plockmode )
 			{
 				hide();
 				/*emit*/ showMenu(this);
@@ -1452,7 +1478,10 @@ void eServiceSelector::actualize()
 }
 
 eServiceSelector::eServiceSelector()
-	:eWindow(0), result(0), services(0), bouquets(0), style(styleInvalid), lastSelectedStyle(styleSingleColumn), BrowseChar(0), BrowseTimer(eApp), ciDelay(eApp), movemode(0), editMode(0)
+	:eWindow(0), result(0), services(0), bouquets(0)
+	,style(styleInvalid), lastSelectedStyle(styleSingleColumn)
+	,BrowseChar(0), BrowseTimer(eApp), ciDelay(eApp), movemode(0)
+	,editMode(0), plockmode(0)
 {
 	ci = new eChannelInfo(this);
 	ci->setName("channelinfo");
