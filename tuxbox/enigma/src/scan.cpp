@@ -203,9 +203,18 @@ tsAutomatic::tsAutomatic(eWidget *parent)
 	b_start->hide();
 
 	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "tsAutomatic"))
-		eFatal("skin load of \"tsAutomatic\" failed");
 
+	eString tmp = "tsAutomatic";
+
+	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+		tmp+="_sat";
+	else
+		tmp+="_cable";
+
+	if (skin->build(this, tmp.c_str()))
+		eFatal("skin load of \"%s\" failed", tmp.c_str());
+
+	eDebug("build %s", tmp.c_str() );
 //	l_network->setCurrent(new eListBoxEntryText(*l_network, _("automatic"), (void*)0, eTextPara::dirCenter) );
 
 	CONNECT(b_start->selected, tsAutomatic::start);
@@ -604,9 +613,9 @@ TransponderScan::~TransponderScan()
 
 void showPic()
 {
-        FILE *f = fopen(CONFIGDIR "/enigma/pictures/scan.mvi", "r");
+	FILE *f = fopen(CONFIGDIR "/enigma/pictures/scan.mvi", "r");
 	if ( f )
-        {
+	{
 		fclose(f);
 		Decoder::displayIFrameFromFile(CONFIGDIR "/enigma/pictures/scan.mvi" );
 	}
