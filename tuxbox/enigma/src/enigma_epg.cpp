@@ -181,7 +181,15 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 	const timeMap *evmap = epgcache->getTimeMap(service.service);
 	if (!evmap)
 		return;
-	for (timeMap::const_iterator event(evmap->begin()); event != evmap->end(); ++event)
+	timeMap::const_iterator ibegin = evmap->lower_bound(start);
+	if ((ibegin != evmap->end()) && (ibegin != evmap->begin()))
+		--ibegin;
+		
+	timeMap::const_iterator iend = evmap->upper_bound(end);
+	if (iend != evmap->end())
+		++iend;
+	
+	for (timeMap::const_iterator event(ibegin); event != iend; ++event)
 	{
 		const EITEvent *ev = epgcache->lookupEvent(service.service, event->first);
 		if (!ev)
