@@ -269,10 +269,6 @@ int eAVSwitch::setTVPin8(int vol)
 */
 
 
-	printf("PIN8:%d\n",vol);
-
-	printf("Type:%d philips:%d\n",Type,PHILIPS);
-
 	int fnc;
 	switch (vol)
 	{
