@@ -267,6 +267,12 @@ int eAVSwitch::setTVPin8(int vol)
 				fnc=2 -> 6V
 				fnc=3 -> 12V
 */
+
+
+	printf("PIN8:%d\n",vol);
+
+	printf("Type:%d philips:%d\n",Type,PHILIPS);
+
 	int fnc;
 	switch (vol)
 	{
