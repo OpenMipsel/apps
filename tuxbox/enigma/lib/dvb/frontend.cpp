@@ -339,10 +339,10 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	}
 	else if ( SeqRepeat )   // Sequence Repeat selected ?
 	{
-		usleep( 80000 ); // between seq repeats we wait 80ms
+		usleep( 100000 ); // between seq repeats we wait 100ms
 		ioctl(secfd, SEC_SEND_SEQUENCE, &seq);  // then repeat the cmd
 	}
-	usleep( 80000 ); // wait 80ms
+	usleep( 100000 ); // wait 100ms
 
 	// get power input of Rotor on idle  not work on dbox yet .. only dreambox
 	if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &idlePowerInput )<0)

@@ -214,7 +214,7 @@
 	</object>
 
 	<object name="eSatelliteConfigurationManager">
-		<eSatelliteConfigurationManager position="80:40" size="570:470" text="Satelliteconfiguration">
+		<eSatelliteConfigurationManager cposition="80:80" csize="570:450" text="Satelliteconfiguration">
 			<eLabel text="Sat/Position" name="lSatPos" position="100:10" size="190:30" align="center"/>
 			<eLabel text="LNB" name="lLnb" position="300:10" size="60:30" align="center"/>
 			<eLabel text="22Khz" name="l22khz" position="370:10" size="90:30" align="center"/>
@@ -269,7 +269,7 @@
 	</object>
 
 	<object name="eSatfind">
-		<eSatfind position="80:40" csize="550:420">
+		<eSatfind cposition="80:40" csize="550:420">
 			<eLabel text="SNR:" position="10:10" size="190:50" font="eSatfind" vcenter="on" />
 			<eLabel name="snr_num" position="210:10" size="150:50" font="eSatfind" vcenter="on" />
 			<eProgress name="snr" position="10:70" size="e-10:50" />
