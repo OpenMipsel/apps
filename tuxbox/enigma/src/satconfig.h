@@ -28,6 +28,7 @@ class eSatelliteConfigurationManager: public eWindow, public existNetworks
 	eWidget *w_buttons;
 	eButton *button_close, *button_new, *button_erase;
 	eLabel *lSatPos, *lLNB, *l22Khz, *lVoltage;
+	eProgress *scrollbar;
 	eComboBox *combo_type;
 	eMultipage satPages;
 	SatelliteEntry* deleteThisEntry;
@@ -45,6 +46,7 @@ class eSatelliteConfigurationManager: public eWindow, public existNetworks
 	void closePressed();
 	void erasePressed();
 	void newPressed();
+	void updateScrollbar(int show);
 	void lnbSelected(eButton *who);
 	void delSatellite( eSatellite* sat );
 	void satChanged(eComboBox *who, eListBoxEntryText *le);

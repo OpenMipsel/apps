@@ -239,6 +239,7 @@
 			<eLabel text="22Khz" name="l22khz" position="340:55" size="90:30" align="center"/>
 			<eLabel text="Voltage" name="lVoltage" position="440:55" size="90:30" align="center"/>
 			<eWidget name="buttons" position="10:90" size="e-40:e-80" />
+			<eProgress name="scrollbar" position="e-35:90" size="e-10:e-90" direction="1" />
 			<eButton name="new" position="10:e-80" size="170:40" text="new" helptext="add a new Satellite" loadDeco="" shortcut="green" />
 			<eButton name="erase" position="190:e-80" size="170:40" text="erase" helptext="remove the selected Satellite" loadDeco="" shortcut="red" />
 			<eButton name="close" position="370:e-80" size="170:40" text="close" helptext="close Satelliteconfiguration" loadDeco="" />

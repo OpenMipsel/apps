@@ -221,6 +221,7 @@ void eWidget::invalidate(eRect area, int force)
 		area.moveBy(w->position.x(), w->position.y());
 		w=w->parent;
 		area.moveBy(w->clientrect.x(), w->clientrect.y());
+		area&=w->clientrect;
 	}
 	w->redraw(area);
 }

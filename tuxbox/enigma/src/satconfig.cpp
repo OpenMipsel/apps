@@ -5,6 +5,7 @@
 #include <lib/gui/ebutton.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/echeckbox.h>
+#include <lib/gui/eprogress.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/frontend.h>
@@ -32,6 +33,11 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	lVoltage = new eLabel(this);
 	lVoltage->setName("lVoltage");
 	lVoltage->hide();
+	
+	scrollbar = new eProgress(this);
+	scrollbar->setName("scrollbar");
+	scrollbar->setStart(0);
+	scrollbar->setPerc(100);
 
 	button_new=new eButton(this);
 	button_new->setName("new");
@@ -95,9 +101,14 @@ void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
 		relFocusPos+=ePoint( 0, wPosition.y()*2 );
     
 		if ( relFocusPos.y()+40 > rcVisible.bottom() )
+		{
 			w_buttons->move( ePoint( wPosition.x(), wPosition.y()-40 ) );
-		else if ( relFocusPos.y() < rcVisible.top() ) // we must scroll down
+			updateScrollbar(complexity == 3);
+		} else if ( relFocusPos.y() < rcVisible.top() ) // we must scroll down
+		{
 			w_buttons->move( ePoint( wPosition.x(), wPosition.y()+40 ) );
+			updateScrollbar(complexity == 3);
+		}
 	}
 }
 
@@ -422,6 +433,7 @@ void eSatelliteConfigurationManager::repositionWidgets()
 		}
 		count++;
 	}
+	updateScrollbar(complexity == 3);
 }
 
 void eSatelliteConfigurationManager::createControlElements()
@@ -658,6 +670,25 @@ void eSatelliteConfigurationManager::newPressed()
 	// here we must add the new Comboboxes and the button to the hash maps...
 	addSatellite(satellite);
 	repositionWidgets();
+}
+
+void eSatelliteConfigurationManager::updateScrollbar(int show)
+{
+	if (!show)
+	{
+		scrollbar->hide();
+		return;
+	}
+	int total=entryMap.size()*40; // w_buttons->getSize().height();
+	if (total < buttonWidget->getSize().height())
+		total=buttonWidget->getSize().height();
+	if (!total)
+		total=1;
+	int start=-w_buttons->getPosition().y()*100/total;
+	int vis=buttonWidget->getSize().height()*100/total;
+	scrollbar->setStart(start);
+	scrollbar->setPerc(vis);
+	scrollbar->show();
 }
 
 int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
