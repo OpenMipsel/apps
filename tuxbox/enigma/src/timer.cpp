@@ -1008,7 +1008,8 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 			paraService->renderString( sname );
 		}
 	}
-	rc->renderPara(*paraService, ePoint( xpos, rect.top() + TimeYOffs ) );
+	if ( paraService )
+		rc->renderPara(*paraService, ePoint( xpos, rect.top() + TimeYOffs ) );
 
 	static eString ret = hlp + " "+descr;
 	return ret;
