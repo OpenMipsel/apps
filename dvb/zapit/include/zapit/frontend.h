@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.2 2003/05/07 18:55:54 digi_casi Exp $
+ * $Id: frontend.h,v 1.24.2.3 2003/05/08 18:22:47 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -115,6 +115,8 @@ class CFrontend
 		const bool sendDiseqcStandby ();
 		const bool sendDiseqcZeroByteCommand (uint8_t addr, uint8_t cmd);
 		const bool sendDiseqcSmatvRemoteTuningCommand (secToneMode toneMode, secVoltage voltage, uint8_t diseqc, uint32_t frequency);
+		const int32_t getCurrentSatellitePosition() { return currentSatellitePosition; }
+		void setCurrentSatellitePosition(int32_t satellitePosition) {currentSatellitePosition = satellitePosition; } 
 
 		void setDiseqcRepeats(uint32_t repeats)	{ diseqcRepeats = repeats; }
 		void setDiseqcType(diseqc_t type)	{ diseqcType = type; }
