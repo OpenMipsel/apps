@@ -71,7 +71,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 			else
 				listbox.move( ePoint( pt.x(), pt.y()+getSize().height() ) );
 
-      if (cur)
+			if (cur)
 				listbox.setCurrent(cur);
 		}
 		default:

@@ -65,6 +65,7 @@
 		<img name="eCheckbox.unchecked" src="unchecked.png" />
 		<img name="eCheckboxLCD.checked" src="checked_lcd.png" nomerge="yes" />
 		<img name="eCheckboxLCD.unchecked" src="unchecked_lcd.png" nomerge="yes" />
+		<img name="eComboBox.arrow" src="combo_arrow.png" />
 		<img name="lcd_standby" src="lcd_standby.png" nomerge="yes" />
 		<img name="lcd_shutdown" src="lcd_shutdown.png" nomerge="yes" />
 		<img name="lcd_enigma_logo" src="enigma2.png" nomerge="yes" />
@@ -359,7 +360,7 @@
 	<object name="transpondersettings.satellite">
 		<eTranspondersettings position="0:0" size="400:160">
 			<eLabel text="Satellite:" name="lSat" position="10:10" size="140:34" vcenter="on" />
-			<eComboBox name="sat" position="150:10" size="e-10:34" loadDeco="" helptext="choose wished satellite (ok)" />
+			<eComboBox name="sat" position="150:10" size="e-10:35" helptext="choose wished satellite (ok)" loadDeco=""  />
 
 			<eLabel  name="lFreq" text="Frequency:" position="10:50" size="140:32" vcenter="on" />
 			<eNumber name="frequency" position="150:50" size="e-150:32" helptext="enter transponder frequeny (0..9, left, right)" loadDeco="" />

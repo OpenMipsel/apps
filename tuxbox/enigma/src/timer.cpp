@@ -102,7 +102,12 @@ void eTimerManager::actionHandler()
 				long t = getSecondsToBegin();
 				nextAction=startEvent;
 				if (t > 0)
-					actionTimer.start( t*1000 , true );
+				{
+					if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
+						t-=10;
+
+						actionTimer.start( t*1000 , true );					
+				}
 				else
 					actionHandler();
 			}
@@ -201,6 +206,7 @@ void eTimerManager::actionHandler()
 						count++;
 			}
 			eDebug("[eTimerManager] updated ( %d waiting events in list )", count );
+			timerlist->save();
 			if ( nextStartingEvent != timerlist->list.end() )
 			{
 				tm* evtTime = localtime( &nextStartingEvent->time_begin );
@@ -303,13 +309,19 @@ void eTimerManager::serviceChanged( const eServiceReferenceDVB& ref )
 	}
 }
 
+void eTimerManager::abortEvent( int err )
+{
+	eDebug("[eTimerManager] abortEvent(%d)", err);
+	nextAction=stopEvent;
+	nextStartingEvent->type |= (ePlaylistEntry::stateError|err);
+	actionTimer.start(0, true);
+	eDebug("state=%d", nextStartingEvent->type );
+}
+
 void eTimerManager::leaveService( const eServiceReferenceDVB& ref )
 {
 	eDebug("[eTimerManager] leaveService");
-	// this works from 5 min before the event begin to end of event...
-	nextAction=stopEvent;
-	nextStartingEvent->type |= (ePlaylistEntry::stateError|ePlaylistEntry::errorUserAborted);
-	actionTimer.start(0, true);
+	abortEvent( ePlaylistEntry::errorUserAborted );
 }
 
 void eTimerManager::EITready( int error )
@@ -386,7 +398,7 @@ eTimerManager::~eTimerManager()
 {
 	if (this == instance)
 		instance = 0;
-	timerlist->save(CONFIGDIR "/enigma/timer.epl");
+	timerlist->save();
 	eServiceInterface::getInstance()->removeRef(timerlistref);
 	eDebug("[eTimerManager] down ( %d events in list )", timerlist->list.size() );
 }
@@ -523,6 +535,7 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *
 		if (descriptor->Tag() == DESCR_SHORT_EVENT)
 		{
 			descr = ((ShortEventDescriptor*)descriptor)->event_name;
+			descr += " - " + ((ShortEventDescriptor*)descriptor)->text;
 			break;
 		}
 	}
@@ -858,40 +871,37 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 
 void eTimerView::updatePressed()
 {
-	eString descr;
+	if ( !events->getCount() || !events->getCurrent()->entry ) // entry in list and selected ?
+		return;
+
 	EITEvent evt;
 	time_t newEventBegin;
 	int newEventDuration;
 	if ( getData( newEventBegin, newEventDuration ) )  // all is okay... we add the event..
 	{
+		// parse EPGCache to get event informations
+		EITEvent *tmp = eEPGCache::getInstance()->lookupEvent( (eServiceReferenceDVB&)tmpService, newEventBegin+newEventDuration / 2 );
+		if (tmp)
+			evt = *tmp;
+		else  // ohh.. not found...
+		{
+			evt.running_status = -1;
+			evt.free_CA_mode = -1;
+			evt.event_id = -1;
+		}
 		evt.start_time = newEventBegin;
 		evt.duration = newEventDuration;
-		evt.running_status = -1;
-		evt.free_CA_mode = -1;
-		if ( events->getCount() && events->getCurrent()->entry )
-		{
-			time_t oldEventBegin = events->getCurrent()->entry->time_begin;
-			int oldEventDuration = events->getCurrent()->entry->duration;
-			if ( tmpService == events->getCurrent()->entry->service
-				 	&& Overlap( newEventBegin, newEventDuration, oldEventBegin, oldEventDuration ) )
-			{ // we have a description...
-				descr = events->getCurrent()->entry->service.descr;
-				evt.event_id = events->getCurrent()->entry->event_id;
+
+		// remove old event from list...
+		if (eTimerManager::getInstance()->removeEventFromTimerList( this, *events->getCurrent()->entry, eTimerManager::update ) )
+			if ( eTimerManager::getInstance()->addEventToTimerList( this, &tmpService, &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting ) )
+			{
+				ePlaylistEntry *entry = eTimerManager::getInstance()->findEvent( &tmpService, &evt);
+				events->beginAtomic();
+				fillTimerList();
+				selectEvent( entry );
+				events->endAtomic();
 			}
-			else
-				evt.event_id = -1;
-			eTimerManager::getInstance()->removeEventFromTimerList( this, *events->getCurrent()->entry, eTimerManager::update );
-		}
-		if ( eTimerManager::getInstance()->addEventToTimerList( this, &tmpService, &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting ) )
-		{
-			ePlaylistEntry *entry = eTimerManager::getInstance()->findEvent( &tmpService, &evt);
-			if (descr)
-				entry->service.descr=descr;
-			events->beginAtomic();
-			fillTimerList();
-			selectEvent( entry );
-			events->endAtomic();
-		}
 	}
 	else
 	{
@@ -939,14 +949,20 @@ void eTimerView::addPressed()
 	int newEventDuration;
 	if ( getData( newEventBegin, newEventDuration ) )  // all is okay... we add the event..
 	{
+		// parse EPGCache to get event informations
+		EITEvent *tmp = eEPGCache::getInstance()->lookupEvent( (eServiceReferenceDVB&)tmpService, newEventBegin+newEventDuration / 2 );
+		if (tmp)
+			evt = *tmp;
+		else  // ohh.. not found...
+		{
+			evt.running_status = -1;
+			evt.free_CA_mode = -1;
+			evt.event_id = -1;
+		}
 		evt.start_time = newEventBegin;
 		evt.duration = newEventDuration;
-		evt.event_id = -1;
-		evt.running_status = -1;
-		evt.free_CA_mode = -1;
+
 		eTimerManager::getInstance()->addEventToTimerList( this, &tmpService, &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting );
-		if (descr)
-			eTimerManager::getInstance()->findEvent( &tmpService, &evt)->service.descr=descr;
 		fillTimerList();
 	}
 	else

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.2 2002/11/18 04:07:42 tmbinc Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.3 2002/11/19 03:19:45 Ghostrider Exp $
  */
 
 #include <enigma_scan.h>

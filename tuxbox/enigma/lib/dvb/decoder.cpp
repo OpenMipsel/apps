@@ -12,7 +12,7 @@
 #include <signal.h>
 #include <errno.h>
 
-// #define OLD_VBI
+#define OLD_VBI
 
 #undef strcpy
 #undef strcmp

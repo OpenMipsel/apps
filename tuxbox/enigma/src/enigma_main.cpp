@@ -15,8 +15,8 @@
 #include <enigma.h>
 #include <enigma_lcd.h>
 #include <enigma_plugins.h>
+#include <timer.h>
 #include <download.h>
-#include <enigma.h>
 #include <lib/base/i18n.h>
 #include <lib/system/init.h>
 #include <lib/system/econfig.h>
@@ -1503,11 +1503,18 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			box.hide();
 			break;
 		}
-/*		eMessageBox box(_("Really delete this service?"), _("delete service"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
-		box.show();
-		int r=box.exec();
-		box.hide();
-		if (r == eMessageBox::btYes)*/
+		bool removeEntry=true;
+		if ( ref.type & ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile )
+		{
+			eMessageBox box(_("This is a recorded stream!\nRealy delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+			box.show();
+			int r=box.exec();
+			box.hide();
+			if (r != eMessageBox::btYes)
+				removeEntry=false;
+		}
+
+		if (removeEntry)	
 		{
 			std::list<ePlaylistEntry>::iterator it=std::find(pl->list.begin(), pl->list.end(), ref);
 			pl->deleteService(it);
@@ -2036,12 +2043,12 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			stop();
 		else if (dvrfunctions && event.action == &i_enigmaMainActions->pause)
 			pause();
-		else if (dvrfunctions && event.action == &i_enigmaMainActions->record)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->record )
 		{
 			if ( handleState(1) )
 			{
 				if ( state & stateRecording)
-					recordDVR(0, 1);
+					eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorUserAborted );
 				else
 				{
 					eString name;
@@ -2208,6 +2215,15 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		break;
 	case eServiceEvent::evtGotPMT:
 		gotPMT();
+		break;
+	case eServiceEvent::evtRecordFailed:
+		if ( state&stateInTimerMode )
+		{
+			eDebug("stateInTimerMode");
+			eTimerManager::getInstance()->abortEvent( ePlaylistEntry::errorNoSpaceLeft );
+		}
+		else
+			recordDVR(0,1);  // stop Recording
 		break;
 	case eServiceEvent::evtEnd:
 	{

@@ -13,6 +13,7 @@
 	</fonts>
 
 	<fontalias>
+		<map name="eServiceSelector.Entry.Description" font="Blue.Regular" size="26" />
 		<map name="eStatusBar" font="Blue.Regular" size="24" />
 		<map name="eWindow.TitleBar" font="Blue.Bold" size="32" />
 		<map name="eWindow.Childs" font="Blue.Regular" size="30" />

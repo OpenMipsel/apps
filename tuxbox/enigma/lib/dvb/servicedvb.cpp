@@ -332,6 +332,16 @@ void eServiceHandlerDVB::scrambledStatusChanged(bool scrambled)
 		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 }
 
+void eServiceHandlerDVB::handleDVBEvent( const eDVBEvent & e )
+{
+	switch ( e.type )
+	{
+		case eDVBEvent::eventRecordWriteError:
+			serviceEvent(eServiceEvent(eServiceEvent::evtRecordFailed));
+		break;
+	}
+}
+
 void eServiceHandlerDVB::switchedService(const eServiceReferenceDVB &, int err)
 {
 	int oldstate=state;
@@ -384,6 +394,7 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 	CONNECT(eDVB::getInstance()->gotSDT, eServiceHandlerDVB::gotSDT);
 	CONNECT(eDVB::getInstance()->gotPMT, eServiceHandlerDVB::gotPMT);
 	CONNECT(eDVB::getInstance()->leaveService, eServiceHandlerDVB::leaveService);
+	CONNECT(eDVB::getInstance()->eventOccured, eServiceHandlerDVB::handleDVBEvent);
 	CONNECT(eStreamWatchdog::getInstance()->AspectRatioChanged, eServiceHandlerDVB::aspectRatioChanged);
 
 	cache.addPersistentService(

@@ -6,6 +6,8 @@
 #include <lib/base/thread.h>
 #include <lib/base/buffer.h>
 #include <lib/base/message.h>
+#include <lib/dvb/edvb.h>
+
 
 class eServiceHandlerDVB;
 
@@ -104,6 +106,7 @@ class eServiceHandlerDVB: public eServiceHandler
 	int flags, state, aspect, error;
 
 	eServiceCache<eServiceHandlerDVB> cache;
+	void handleDVBEvent( const eDVBEvent& );
 public:
 	int getID() const;
 	eServiceHandlerDVB();
