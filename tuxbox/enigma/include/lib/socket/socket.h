@@ -32,9 +32,7 @@ public:
 	eSocket(eMainloop *ml);
 	eSocket(int socket, int issocket, eMainloop *ml);
 	~eSocket();
-#ifndef DISABLE_NET
 	int connectToHost(eString hostname, int port);
-#endif
 	int getDescriptor();
 	int writeBlock(const char *data, unsigned int len);
 	int setSocket(int socketfd, int issocket, eMainloop *ml);
