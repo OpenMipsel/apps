@@ -28,6 +28,7 @@ data/Makefile
 data/fonts/Makefile
 data/htdocs/Makefile
 data/pictures/Makefile
+data/pictures/chk_stone/Makefile
 data/pictures/chk_silver/Makefile
 data/pictures/chk_v2/Makefile
 data/pictures/neutrino/Makefile
