@@ -102,13 +102,20 @@ static struct
 	{0x4700, 0xFF00, "General Instruments"}, 
 	{0x4800, 0xFF00, "Telemann"}, 
 	{0x4900, 0xFF00, "Digital TV Industry Alliance of China"}, 
-	{0x4A60, 0xFFFF, "Tsinghua TongFang"}, 
+	{0x4A00, 0xFFF0, "Tsinghua TongFang"}, 
+	{0x4A10, 0xFFF0, "Easycas"},
+	{0x4A20, 0xFFF0, "Alphacrypt"},
+	{0x4A30, 0xFFF0, "DVN Holdings"},
+	{0x4A40, 0xFFF0, "Shanghai Advanced Digital Technology Co. Ltd."},
+	{0x4A50, 0xFFF0, "Shenzhen Kingsky Company (China) Ltd."},
+	{0x4A60, 0xFFF0, "@Sky"},
 	{0x4A70, 0xFFFF, "Dream Multimedia TV (DreamCrypt)"},
 	{0x4A71, 0xFFFF, "Dream Multimedia TV (High security, 4096bit RSA)"},
 	{0x4A72, 0xFFFF, "Dream Multimedia TV (Consumer, 48bit)"},
 	{0x4A73, 0xFFFF, "Dream Multimedia TV (non-DVB)"},
 	{0x4A74, 0xFFFF, "Dream Multimedia TV (export)"},
 	{0x4A70, 0xFFF0, "Dream Multimedia TV (other)"},
+	{0x4A80, 0xFFF0, "THALESCrypt"},
 	{0x0000, 0x0000, "other/unknown"}};
 
 static void clearCA()
