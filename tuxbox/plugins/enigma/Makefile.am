@@ -1,2 +1,2 @@
-SUBDIRS = demo
+SUBDIRS = demo ngrabstart ngrabstop
 

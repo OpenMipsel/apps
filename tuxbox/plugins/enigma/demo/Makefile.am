@@ -1,10 +1,14 @@
-INCLUDES = -I$(srcdir)/../lib -I$(top_srcdir)/include -I$(top_srcdir)/../enigma/include 
+INCLUDES = -I$(srcdir)/../lib \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/../enigma/include 
 
 noinst_LTLIBRARIES = enigma_demo.la
 
 enigma_demo_la_SOURCES = demo.cpp
 
 enigma_demo_la_LDFLAGS = -rpath $(PLUGINDIR) -module
+
+enigma_demo_la_CXXFLAGS = -fno-rtti -fno-exceptions $(SIGC_CFLAGS) $(XMLTREE_CFLAGS) 
 
 install-exec-local:
 	install -d $(PLUGINDIR)
