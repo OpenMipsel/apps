@@ -46,7 +46,6 @@ int tsSelectType::eventHandler( const eWidgetEvent &e )
 	switch (e.type)
 	{
 		case eWidgetEvent::execBegin:
-			eDebug("execBegin");
 		case eWidgetEvent::childChangedHelpText:
 			parent->focusChanged( list );
 		break;
@@ -276,7 +275,7 @@ void tsAutomatic::start()
 	} else
 	{
 		tpPacket *pkt=(tpPacket*)(l_network->getCurrent() -> getKey());
-		for (std::list<eTransponder>::iterator i(current_tp); i != pkt->possibleTransponders.end(); ++i)
+		for (std::list<eTransponder>::iterator i(pkt->possibleTransponders.begin()); i != pkt->possibleTransponders.end(); ++i)
 		{
 			if(snocircular)
 				i->satellite.polarisation&=1;   // CEDR
@@ -378,7 +377,10 @@ int tsAutomatic::nextNetwork(int first)
 int tsAutomatic::nextTransponder(int next)
 {
 	if (next)
+	{
+		current_tp->state=eTransponder::stateError;
 		++current_tp;
+	}
 
 	if (current_tp == last_tp)
 		return 1;

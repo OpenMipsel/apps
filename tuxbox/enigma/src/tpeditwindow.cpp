@@ -357,7 +357,11 @@ void eTransponderEditWindow::satPressed()
 #endif
 		dlg.show();
 		if ( !dlg.exec() )
+		{
+			tpPacket *p = (tpPacket*)sat->getKey();
+			sat->SetText( p->name );
 			changed++;
+		}
 		dlg.hide();
 		show();
 	}

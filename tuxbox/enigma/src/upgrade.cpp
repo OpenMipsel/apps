@@ -524,8 +524,7 @@ void eUpgrade::flashImage(int checkmd5)
 					int fd=open(eString("/dev/mtdblock/" + mtd).c_str(), O_RDONLY);
 					void *ptr;
 					volatile int a;
-					if ((fd < 0) || !(ptr=mmap(0, mtdsize, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0)))
-
+					if ( (fd < 0) || ( ptr = mmap(0, mtdsize, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0) ) == MAP_FAILED )
 					{
 						eMessageBox mb(
 							_("upgrade failed with errorcode UD0"),

@@ -9,6 +9,7 @@
 #include <lib/gui/elabel.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/eskin.h>
+#include <lib/gui/echeckbox.h>
 #include <lib/system/econfig.h>
 
 
@@ -27,11 +28,14 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	if (eConfig::getInstance()->getKey("/elitedvb/video/pin8", v_pin8))
 		v_pin8 = 0;
 
+	if (eConfig::getInstance()->getKey("/elitedvb/video/disableWSS", v_disableWSS ))
+		v_disableWSS = 0;
+
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	setText(_("Video Setup"));
 	move(ePoint(160, 146));
-	cresize(eSize(390, 200));
+	cresize(eSize(390, 250));
 
 	eLabel *l=new eLabel(this);
 	l->setText(_("Color Format:"));
@@ -73,11 +77,18 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	pin8->setCurrent(entrys[v_pin8]);
 	CONNECT( pin8->selchanged, eZapVideoSetup::VPin8Changed );
 
+	c_disableWSS = new eCheckbox(this, v_disableWSS, 1);
+	c_disableWSS->move(ePoint(10,110));
+	c_disableWSS->resize(eSize(350,30));
+	c_disableWSS->setText(_("Disable WSS on 4:3"));
+	c_disableWSS->setHelpText(_("don't send WSS signal when A-ratio is 4:3"));
+	CONNECT( c_disableWSS->checked, eZapVideoSetup::VDisableWSSChanged );
+
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 120));
+	ok->move(ePoint(20, 160));
 	ok->resize(eSize(170, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -86,7 +97,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 
 	abort=new eButton(this);
 	abort->setText(_("abort"));
-	abort->move(ePoint(210, 120));
+	abort->move(ePoint(210, 160));
 	abort->resize(eSize(170, 40));
 	abort->setHelpText(_("ignore changes and return"));
 	abort->loadDeco();
@@ -109,6 +120,7 @@ void eZapVideoSetup::okPressed()
 {
 	eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat );
 	eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 );
+	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", v_disableWSS );
 	eConfig::getInstance()->flush();
 	close(1);
 }
@@ -152,5 +164,16 @@ void eZapVideoSetup::VPin8Changed( eListBoxEntryText * e)
 		eStreamWatchdog::getInstance()->reloadSettings();
 		eConfig::getInstance()->setKey("/elitedvb/video/pin8", old );
 	}
+}
+
+void eZapVideoSetup::VDisableWSSChanged( int i )
+{
+	unsigned int old = 0;
+	eConfig::getInstance()->getKey("/elitedvb/video/disableWSS", old );
+
+	v_disableWSS = (unsigned int) i;
+	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", v_disableWSS );
+	eStreamWatchdog::getInstance()->reloadSettings();
+	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", old );
 }
 

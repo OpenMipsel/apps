@@ -3629,7 +3629,9 @@ bool eZapMain::handleState(int justask)
 		box.show();
 		b = (box.exec() == eMessageBox::btYes);
 		box.hide();
-	} else b=true;
+	}
+	else
+		b=true;
 
 	if (b && !justask)
 	{

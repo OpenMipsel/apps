@@ -1,25 +1,25 @@
 #ifndef DISABLE_LIRC
 
 #include <elirc.h>
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <lib/gui/ebutton.h>
-#include <lib/gui/emessage.h>
-#include <lib/dvb/decoder.h>
-#include <lib/dvb/service.h>
-#include <lib/dvb/dvb.h>
-/*#include <lib/dvb/dvbservice.h>*/
-#include <lib/dvb/epgcache.h>
-//#include <lib/base/estring.h>
-//#define TMP_NgrabXML "/var/tmp/e-ngrab.xml"
-#include <lib/gui/enumber.h>
-#include <lib/gui/statusbar.h>
+
 #include <sys/socket.h>
 #include <string>
 #include <sstream>
 #include <unistd.h>
 #include <sys/un.h>
+#include <signal.h>
+#include <stdio.h>
+#include <fstream>
+#include <iostream>
+
+#include <lib/gui/ebutton.h>
+#include <lib/gui/emessage.h>
+#include <lib/dvb/decoder.h>
+#include <lib/dvb/service.h>
+#include <lib/dvb/dvb.h>
+#include <lib/dvb/epgcache.h>
+#include <lib/gui/enumber.h>
+#include <lib/gui/statusbar.h>
 
 ELirc::ELirc()
 	:timeout(eApp)
@@ -30,34 +30,44 @@ ELirc::~ELirc()
 {
 }
  
-
 void ELirc::sendcommand(std::string cmd)
 {
-        std::stringstream ostr;
+	std::stringstream ostr;
 
 	ostr << "SEND_ONCE " << device << " " << cmd << std::endl << std::ends;
 	write(fd, ostr.str().c_str(), ostr.str().length());
 	std::cout << "[elirc.cpp]Sending: " << ostr.str() << std::endl;
 }
 
+void handle_sig_pipe (int i)
+{
+  return;
+}
+
 void ELirc::sendcommandlist(std::string filename)
 {
-        struct sockaddr_un addr;
+	struct sigaction act;
+	act.sa_handler = handle_sig_pipe;
+	sigemptyset (&act.sa_mask);
+	act.sa_flags = 0;
+	sigaction (SIGPIPE, &act, NULL);
 
-        addr.sun_family=AF_UNIX;
-        strcpy(addr.sun_path, "/dev/lircd");
-        fd=socket(AF_UNIX,SOCK_STREAM,0);
-        if(fd==-1)
-        {
-                perror("could not open lircd-socket\n");
-                return;
-        };
+	struct sockaddr_un addr;
 
-        if(connect(fd,(struct sockaddr *)&addr,sizeof(addr))==-1)
-        {
-                perror("could not connect to lircd-socket\n");
-                return;
-        };
+	addr.sun_family=AF_UNIX;
+	strcpy(addr.sun_path, "/dev/lircd");
+	fd=socket(AF_UNIX,SOCK_STREAM,0);
+	if(fd==-1)
+	{
+		perror("could not open lircd-socket\n");
+	return;
+	};
+
+	if(connect(fd,(struct sockaddr *)&addr,sizeof(addr))==-1)
+	{
+		perror("could not connect to lircd-socket\n");
+		return;
+	};
 	std::ifstream inFile;
 
 	inFile.open(filename.c_str());
@@ -84,7 +94,7 @@ void ELirc::sendcommandlist(std::string filename)
 	}
 	inFile.close();
 
-        close(fd);
+	close(fd);
 }
 
 void ELirc::sendstart()

@@ -176,6 +176,7 @@ void eZapRCSetup::okPressed()
 	eZap::getInstance()->getServiceSelector()->setKeyDescriptions();
 	setStyle();
 
+	rrate = 250 - srrate->getValue();
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->setKey("/ezap/rc/repeatDelay", rdelay);
 	unsigned int t = (unsigned int) NextCharTimeout->getNumber();
@@ -192,6 +193,7 @@ int eZapRCSetup::eventHandler( const eWidgetEvent & e )
 			setStyle();
 			eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
 			eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);
+			rrate=250-rrate;
 			update();
 			break;
 		default:

@@ -984,9 +984,9 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			if (enterPath.size())
 			{
 				ci->clear();
-//Fixme				if ( path.bottom() == enterPath.bottom() )
-//					pathUp();
-//				else
+				if ( path.bottom() == enterPath.bottom() )
+					pathUp();
+				else
 					setPath(enterPath);
 			}
 			else if (num)

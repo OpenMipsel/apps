@@ -74,6 +74,7 @@ public:
 	void abortEvent(int err);
 	void loadTimerList();
 	void saveTimerList();
+	void timeChanged();
 	ePlaylistEntry* findEvent( eServiceReference *service, EITEvent *evt );
 	template <class Z>
 	void forEachEntry(Z ob)

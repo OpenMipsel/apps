@@ -183,7 +183,7 @@ eZap::eZap(int argc, char **argv)
 	serialhttpd=0;
 
 	bool SerialConsoleActivated=true;
-	FILE *f=fopen("/proc/cmdline", "rt");
+/*	FILE *f=fopen("/proc/cmdline", "rt");
 	if (f)
 	{
 		char *cmdline=NULL;
@@ -196,7 +196,7 @@ eZap::eZap(int argc, char **argv)
 			eDebug("console=ttyS0 detected...disable enigma serial http interface");
 		else
 			eDebug("activate enigma serial http interface");
-	}
+	}*/
 
 	if ( !SerialConsoleActivated && eDVB::getInstance()->getmID() > 4 )
 	{

@@ -95,7 +95,6 @@ private:
 	void EPGUpdated( const tmpMap* );
 	void updateCi();
 	void doSPFlags(const eServiceReference &ref);
-	void focusChanged( const eWidget* focus );
 public:
 	void setKeyDescriptions();
 	void forEachServiceRef( Signal1<void,const eServiceReference&>, bool );

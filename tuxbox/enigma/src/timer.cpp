@@ -200,6 +200,16 @@ void eTimerManager::saveTimerList()
 	timerlist->save();
 }
 
+void eTimerManager::timeChanged()
+{
+	if ( nextStartingEvent != timerlist->getConstList().end()
+		&& nextStartingEvent->type & ePlaylistEntry::stateWaiting )
+	{
+		nextAction=setNextEvent;
+		actionTimer.start(0, true);
+	}
+}
+
 #define WOL_PREPARE_TIME 240
 #define ZAP_BEFORE_TIME 60
 #define HDD_PREPARE_TIME 10
@@ -583,12 +593,10 @@ void eTimerManager::actionHandler()
 			}
 			else  // insert lirc ( VCR stop ) here
 #endif
+			if (nextStartingEvent->type & ePlaylistEntry::recVCR)
 			{
-				if (nextStartingEvent->type & ePlaylistEntry::recVCR)
-	                        {
-        	                        eDebug("[eTimerManager] stop VCR-Lirc-Recording");
-                	                ELirc::getNew()->sendstop();
-                        	}
+				eDebug("[eTimerManager] stop VCR-Lirc-Recording");
+				ELirc::getNew()->sendstop();
 			}
 			break;
 
@@ -1203,7 +1211,7 @@ void normalize( struct tm &t )
 	int days = monthdays[t.tm_mon];
 	if ( days==28 && __isleap(t.tm_year) )
 		days++;
-	while ( t.tm_mday > days )
+	if ( t.tm_mday > days )
 	{
 		t.tm_mday -= days;
 		t.tm_mon++;
@@ -1428,15 +1436,20 @@ void eTimerEditView::createWidgets()
 	for ( int i=0; i<=11; i++ )
 		new eListBoxEntryText( *emonth, monthStr[i], (void*) i );
 
+	int mID = eDVB::getInstance()->getmID();
+
 	new eListBoxEntryText( *type, _("switch"), (void*) ePlaylistEntry::SwitchTimerEntry );
 #ifndef DISABLE_FILE
-	new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
+	if ( mID == 5 )
+		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 #endif
 #ifndef DISABLE_NETWORK
-	new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
+	if ( mID != 6 )
+		new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
 #endif
 #ifndef DISABLE_LIRC
-	new eListBoxEntryText( *type, _("Record VCR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recVCR) );
+	if ( mID <5 )
+		new eListBoxEntryText( *type, _("Record VCR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recVCR) );
 #endif
 	addActionMap( &i_TimerEditActions->map );
 }
