@@ -15,14 +15,31 @@ public:
 
 class eHarddiskMenu: public eWindow
 {
-	eButton *close, *format;
+	eButton *close, *format, *bcheck;
 	eLabel *status, *model, *capacity, *bus;
 	int dev;
 	int numpart;
 	void s_format();
+	void check();
 	void readStatus();
 public:
 	eHarddiskMenu(int dev);
+};
+
+class ePartitionCheck: public eWindow
+{
+	eLabel *lState;
+	eButton *bCancel;
+	int dev;
+	char *outbuf;
+	int fd[2];
+	eSocketNotifier *in, *out;
+	void msgAvail(int what);
+	void strWritten(int what);
+	void onCancel();
+	int eventHandler( const eWidgetEvent &e );
+public:
+	ePartitionCheck( int dev );
 };
 
 #endif

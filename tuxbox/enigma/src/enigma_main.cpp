@@ -808,7 +808,7 @@ eZapMain::~eZapMain()
 	pLCD->lcdMain->hide();
 	pLCD->lcdShutdown->show();
 	gLCDDC::getInstance()->setUpdate(0);
-	if ( eDVB::getInstance()->getInfo("mID") == "05" )
+	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str()) == 5 )
 		eDBoxLCD::getInstance()->switchLCD(0);
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
 }

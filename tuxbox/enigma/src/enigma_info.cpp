@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.5 2002/12/16 23:00:21 TripleDES Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.6 2002/12/31 14:37:21 Ghostrider Exp $
  */
 
 #include <enigma_info.h>
@@ -42,7 +42,7 @@ eZapInfo::eZapInfo()
 	move(ePoint(150, 136));
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("go back to mainmenu")))->selected, eZapInfo::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Streaminfo"), _("open the Streaminfo")))->selected, eZapInfo::sel_streaminfo);
-	if ( eDVB::getInstance()->getInfo("mID") != "05" && eDVB::getInstance()->getInfo("mID") != "06" )
+	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) > 4 )
 		CONNECT((new eListBoxEntryMenu(&list, _("Show BN version"),_("show the Current Version of the Betanova FW")))->selected, eZapInfo::sel_bnversion);
 
 	CONNECT((new eListBoxEntryMenu(&list, _("About..."), _("open the about dialog")))->selected, eZapInfo::sel_about);

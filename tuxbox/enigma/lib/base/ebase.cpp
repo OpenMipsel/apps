@@ -143,7 +143,7 @@ void eMainloop::processOneEvent()
 				if (!--ret)
 					break;
 			} else if (pfd[i].revents & (POLLERR|POLLHUP|POLLNVAL))
-				eDebug("poll: unhandled POLLERR/HUP/NVAL for fd %d", pfd[i].fd);
+				eDebug("poll: unhandled POLLERR/HUP/NVAL for fd %d(%d)", pfd[i].fd,pfd[i].revents);
 		}
 	}
 	else if (ret<0)

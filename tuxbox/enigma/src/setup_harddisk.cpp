@@ -17,14 +17,51 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.6 2002/12/30 02:50:05 Ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.7 2002/12/31 14:37:21 Ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
 #include <lib/gui/emessage.h>
 #include <sys/vfs.h> // for statfs
+#include <unistd.h>
+#include <signal.h>
 
 // #define EXT3
+
+int bidirpipe(int pfd[], char *cmd , char *argv[])
+{
+	int pfdin[2];  /* from child to parent */
+	int pfdout[2]; /* from parent to child */
+	int pid;       /* child's pid */
+
+	if ( pipe(pfdin) == -1 || pipe(pfdout) == -1)
+		return(-1);
+
+	if ( ( pid = fork() ) == -1 )
+		return(-1);
+	else if (pid == 0) /* child process */
+	{
+		if ( close(0) == -1 || close(1) == -1 )
+			_exit(0);
+
+		if (dup(pfdout[0]) != 0 || dup(pfdin[1]) != 1)
+			_exit(0);
+
+		if (close(pfdout[0]) == -1 || close(pfdout[1]) == -1 ||
+				close(pfdin[0]) == -1 || close(pfdin[1]) == -1)
+			_exit(0);
+
+		execv(cmd,argv);
+		_exit(0);
+	}
+	if (close(pfdout[0]) == -1 || close(pfdin[1]) == -1)
+			return(-1);
+
+	pfd[0] = pfdin[0];
+	pfd[1] = pfdout[1];
+
+	return(pid);
+}
 
 static int getCapacity(int dev)
 {
@@ -121,7 +158,52 @@ int freeDiskspace(int dev, eString mp="")
 	return -1;
 }
 
-eHarddiskSetup::eHarddiskSetup(): eListBoxWindow<eListBoxEntryText>(_("harddisk setup..."), 5, 420, true)
+eString getPartFS(int dev, eString mp="")
+{
+	FILE *f=fopen("/proc/mounts", "rb");
+	if (!f)
+		return "";
+	eString path;
+	int host=dev/4;
+	int bus=!!(dev&2);
+	int target=!!(dev&1);
+	path.sprintf("/dev/ide/host%d/bus%d/target%d/lun0/", host, bus, target);
+
+	while (1)
+	{
+		char line[1024];
+		if (!fgets(line, 1024, f))
+			break;
+
+		if (!strncmp(line, path.c_str(), path.size()))
+		{
+			eString mountpoint=line;
+			mountpoint=mountpoint.mid(mountpoint.find(' ')+1);
+			mountpoint=mountpoint.left(mountpoint.find(' '));
+//			eDebug("mountpoint: %s", mountpoint.c_str());
+			if ( mp && mountpoint != mp )
+				continue;
+
+			if (!strncmp(line, path.c_str(), path.size()))
+			{
+				eString fs=line;
+				fs=fs.mid(fs.find(' ')+1);
+				fs=fs.mid(fs.find(' ')+1);
+				fs=fs.left(fs.find(' '));
+				eString mpath=line;
+				mpath=mpath.left(mpath.find(' '));
+				mpath=mpath.mid(mpath.rfind('/')+1);
+				fclose(f);
+				return fs+','+mpath;
+			}
+		}
+	}
+	fclose(f);
+	return "";
+}
+
+eHarddiskSetup::eHarddiskSetup()
+: eListBoxWindow<eListBoxEntryText>(_("harddisk setup..."), 5, 420, true)
 {
 	nr=0;
 	
@@ -191,6 +273,15 @@ void eHarddiskSetup::selectedHarddisk(eListBoxEntryText *t)
 	menu.exec();
 	menu.hide();
 	show();
+}
+
+void eHarddiskMenu::check()
+{
+	hide();
+	ePartitionCheck check(dev);
+	check.show();
+	check.exec();
+	check.hide();
 }
 
 void eHarddiskMenu::s_format()
@@ -330,7 +421,7 @@ void eHarddiskMenu::readStatus()
 	else if (!numpart)
 		status->setText(_("uninitialized - format it to use!"));
 	else if ((fds=freeDiskspace(dev)) != -1)
-		status->setText(eString().sprintf(_("in use, %d.%03d GB (~%d minutes) free"), fds/1000, fds%1000, fds/33));
+		status->setText(eString().sprintf(_("in use, %d.%03d GB (~%d minutes) free"), fds/1000, fds%1000, fds/33 ));
 	else
 		status->setText(_("initialized, but unknown filesystem"));
 }
@@ -344,12 +435,162 @@ eHarddiskMenu::eHarddiskMenu(int dev): dev(dev)
 	
 	close=new eButton(this); close->setName("close");
 	format=new eButton(this); format->setName("format");
+	bcheck=new eButton(this); bcheck->setName("check");
 
 	if (eSkin::getActive()->build(this, "eHarddiskMenu"))
 		eFatal("skin load of \"eHarddiskMenu\" failed");
-	
+
 	readStatus();
-	
+
 	CONNECT(close->selected, eWidget::accept);
-	CONNECT(format->selected, eHarddiskMenu::s_format);	
+	CONNECT(format->selected, eHarddiskMenu::s_format);
+	CONNECT(bcheck->selected, eHarddiskMenu::check);
+}
+
+ePartitionCheck::ePartitionCheck( int dev )
+:dev(dev), outbuf(0)
+{
+	memset(fd, 0, sizeof(fd) );
+	lState = new eLabel(this);
+	lState->setName("state");
+	bCancel = new eButton(this);
+	bCancel->setName("cancel");
+	CONNECT( bCancel->selected, ePartitionCheck::onCancel );
+	if (eSkin::getActive()->build(this, "ePartitionCheck"))
+		eFatal("skin load of \"ePartitionCheck\" failed");
+}
+
+int ePartitionCheck::eventHandler( const eWidgetEvent &e )
+{
+	switch(e.type)
+	{
+		case eWidgetEvent::execBegin:
+		{
+			eString fs = getPartFS(dev,"/hdd"),
+							part = fs.mid( fs.find(",")+1 );
+
+			fs = fs.left( fs.find(",") );
+
+			eDebug("part = %s, fs = %s", part.c_str(), fs.c_str() );
+
+			int host=dev/4;
+			int bus=!!(dev&2);
+			int target=!!(dev&1);
+
+			// kill samba server... (exporting /hdd)
+			system("killall -9 smbd");
+
+			if ( system(
+					eString().sprintf(
+					"/bin/umount /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()).c_str()) >> 8)
+			{
+				eMessageBox msg(
+				_("could not unmount the filesystem... "),
+				_("check filesystem..."),
+				 eMessageBox::btOK|eMessageBox::iconError);
+				close(-1);
+			}
+			if ( fs == "ext3" )
+			{
+				eString str;
+				str.sprintf("/dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str());
+				char *bla0 = "/sbin/fsck.ext3";
+				char *bla1 = new char[str.length()+1];
+				char *bla2 = "-f";
+				strcpy( bla1, str.c_str() );
+				char *argv[4] = { bla0, bla1, bla2, 0 };
+				bidirpipe(fd, bla0, argv);
+				eDebug("pipe in = %d, out = %d", fd[0], fd[1]);
+				if (!fd[0] || !fd[1])
+				{
+					eMessageBox msg(
+						_("sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."),
+						_("check filesystem..."),
+						eMessageBox::btOK|eMessageBox::iconError);
+					msg.show();
+					msg.exec();
+					msg.hide();
+					close(-1);
+				}
+				else
+					eDebug("fsck.ext3 opened");
+			}
+			else
+			{
+				eMessageBox msg(
+					_("not supportet filesystem for check."),
+					_("check filesystem..."),
+					eMessageBox::btOK|eMessageBox::iconError);
+				msg.show();
+				msg.exec();
+				msg.hide();
+				close(-1);
+			}
+			in = new eSocketNotifier(eApp, fd[0], 17 );
+			out = new eSocketNotifier(eApp, fd[1], eSocketNotifier::Write);
+			CONNECT(in->activated, ePartitionCheck::msgAvail);
+			CONNECT(out->activated, ePartitionCheck::strWritten);
+			signal(SIGCHLD, SIG_IGN);
+		}
+		break;
+
+		case eWidgetEvent::execDone:
+			if (fd[0])
+				::close(fd[0]);
+		break;
+
+		default:
+			return eWindow::eventHandler( e );
+	}
+	return 1;	
+}
+
+void ePartitionCheck::onCancel()
+{
+	in->stop();
+	out->stop();
+	::close(fd[0]);
+	fd[0]=0;
+	::close(fd[1]);
+	fd[1]=0;
+	close(-1);
+}
+
+void ePartitionCheck::msgAvail(int what)
+{
+	if (what & POLLPRI|POLLIN)
+	{
+		eDebug("what = %d");
+		char buf[2048];
+		int readed = read(fd[0], buf, 2048);
+		eDebug("%d bytes read", readed);
+		if ( readed != -1 && readed )
+			lState->setText(buf);
+		else if (readed == -1)
+			eDebug("readerror %d", errno);
+		if ( strstr( buf, "<y>") )
+		{
+			outbuf = new char[2];
+			strcpy(outbuf, "y");
+		}
+	}
+	if (what & eSocketNotifier::Hungup)
+	{
+		eDebug("child has terminated");
+		onCancel();
+	}
+}
+
+void ePartitionCheck::strWritten(int what)
+{
+	if (what == 4 && outbuf)
+	{
+		if ( write( fd[1], outbuf, strlen(outbuf) ) != strlen(outbuf) )
+			eDebug("writeError");
+		else
+			eDebug("write ok");
+			
+		delete outbuf;
+		outbuf=0;
+	}
 }
