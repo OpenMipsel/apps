@@ -99,16 +99,16 @@ eRFmod *eRFmod::getInstance()
 
 eRFmod::~eRFmod()
 {
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/sfd", SFD);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/ps", PS);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/so", SO);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/aux", AUX);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/sysl", SYSL);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/pwc", PWC);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/tpen", TPEN);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/osc", OSC);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/att", ATT);
-	eConfig::getInstance()->getKey("/elitedvb/rfmod/div", DIV);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/sfd", SFD);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/ps", PS);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/so", SO);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/aux", AUX);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/sysl", SYSL);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/pwc", PWC);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/tpen", TPEN);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/osc", OSC);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/att", ATT);
+	eConfig::getInstance()->setKey("/elitedvb/rfmod/div", DIV);
 
 	if (instance==this)
 		instance=0;

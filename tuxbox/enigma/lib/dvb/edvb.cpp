@@ -153,6 +153,10 @@ eDVB::~eDVB()
 
 	eAVSwitch::getInstance()->setActive(0);
 	delete eAVSwitch::getInstance();
+	
+	if(eRFmod::getInstance())
+		delete eRFmod::getInstance();
+		
 	Decoder::Close();
 
 	eFrontend::close();
