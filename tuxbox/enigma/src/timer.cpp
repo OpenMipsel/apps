@@ -339,7 +339,7 @@ void eTimerManager::leaveService( const eServiceReferenceDVB& ref )
 void eTimerManager::EITready( int error )
 {
 	eDebug("[eTimerManager] EITready %s", strerror(-error));
-	EIT *eit = eDVB::getInstance()->tEIT.getCurrent();
+	EIT *eit = eDVB::getInstance()->getEIT();
 	if (!error && eit)
 	{
 		for (ePtrList<EITEvent>::const_iterator event(eit->events); event != eit->events.end(); ++event)		// always take the first one
@@ -390,7 +390,8 @@ void eTimerManager::EITready( int error )
 				}
 				break;
 			}
-		}	
+		}
+		eit->unlock();
 	}
 }
 

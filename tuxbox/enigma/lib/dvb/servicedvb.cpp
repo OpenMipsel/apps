@@ -456,7 +456,10 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 //	if (oldflags != flags)
 		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 	if (sapi)
+	{
+		eDebug("play -> switchService");
 		return sapi->switchService((const eServiceReferenceDVB&)service);
+	}
 	return -1;
 }
 
@@ -603,6 +606,8 @@ int eServiceHandlerDVB::getErrorInfo()
 int eServiceHandlerDVB::stop()
 {
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+
+	eDebug("eServiceHandlerDVB::stop()");
 
 	if (sapi)
 		sapi->switchService(eServiceReferenceDVB());

@@ -4,7 +4,8 @@
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/dvbci.h>
 
-eDVBServiceController::eDVBServiceController(eDVB &dvb): eDVBController(dvb)
+eDVBServiceController::eDVBServiceController(eDVB &dvb)
+: eDVBController(dvb)
 {
 	CONNECT(dvb.tPAT.tableReady, eDVBServiceController::PATready);
 	CONNECT(dvb.tPMT.tableReady, eDVBServiceController::PMTready);
@@ -171,7 +172,6 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 			break;
 		}
 
-
 		dvb.tSDT.start(new SDT());
 		switch (service.getServiceType())
 		{
@@ -313,7 +313,15 @@ void eDVBServiceController::EITready(int error)
 	eDebug("EITready %s", strerror(-error));
 	if (!error)
 	{
-		EIT *eit=dvb.tEIT.getCurrent();
+		EIT *eit=dvb.getEIT();
+		if ( service.getServiceType() == 4 ) // NVOD Service
+		{
+			eDebug("save nvodEIT");
+			delete dvb.nvodEIT;
+			dvb.nvodEIT = new EIT( eit );
+			dvb.nvodEIT->events.setAutoDelete(true);
+			eit->events.setAutoDelete(false);
+		}
 		/*emit*/ dvb.gotEIT(eit, 0);
 		eit->unlock();
 	} else
@@ -341,16 +349,29 @@ int eDVBServiceController::switchService(const eServiceReferenceDVB &newservice)
 	
 	Decoder::Flush();
 	/*emit*/ dvb.leaveService(service);
-	
-	service=newservice;
 
-	dvb.tPAT.start(0);		// clear tables.
+	service=newservice;
+	
+	dvb.tEIT.start(0);  // clear eit	
+	dvb.tPAT.start(0);  // clear tables.
 	dvb.tPMT.start(0);
 	dvb.tSDT.start(0);
-	dvb.tEIT.start(0);
-	
+
 	if (service)
 		dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceSwitch));
+
+	switch(newservice.getServiceType())
+	{
+		case 1:
+		case 2:
+			delete dvb.nvodEIT;
+			dvb.nvodEIT = 0;
+		break;
+		case 5:
+			eDebug("NVOD EIT Fake");
+			dvb.gotEIT(0,0);   // eit for nvod reference services
+		break;
+	}
 	return 1;
 }
 

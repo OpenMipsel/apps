@@ -127,7 +127,7 @@ eSection::~eSection()
 		eDebug("deleted still locked table");
 }
 
-int eSection::start()
+	int eSection::start()
 {
 	if (timer && (version==-1) && !(flags&SECREAD_NOTIMEOUT))
 		timer->start((pid==0x14)?60000:10000, true);

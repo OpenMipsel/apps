@@ -360,7 +360,7 @@ void AudioStream::EITready(int error)
 {
 	if (!error)
 	{
-		EIT *eit=eDVB::getInstance()->tEIT.getCurrent();
+		EIT *eit=eDVB::getInstance()->getEIT();
 		parseEIT(eit);
 	}
 }
@@ -2477,7 +2477,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		eString name="";
 
 		if (rservice)
-			name=rservice->service_name + " - ";
+			name=rservice->service_name/* + " - "*/;
 
 		if (service)
 			name+=service->service_name;
@@ -2485,7 +2485,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			switch (serviceref.getServiceType())
 			{
 			case 5: // nvod stream or linkage subservice ( type faked in SubServiceSelector::selected )
-				name+=serviceref.descr;
+				;//name+=serviceref.descr;
 			}
 
 		if (!name.length())
@@ -2638,9 +2638,13 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 void eZapMain::gotEIT()
 {
+	eDebug("gotEIT");
 	eServiceHandler *sapi=eServiceInterface::getInstance()->getService();
 	if (!sapi)
+	{
+		eDebug("no sapi");
 		return;
+	}
 
 	EIT *eit=sapi->getEIT();
 	int old_event_id=cur_event_id;

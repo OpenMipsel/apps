@@ -953,6 +953,31 @@ EIT::EIT()
 	events.setAutoDelete(true);
 }
 
+EIT::EIT(const EIT* eit)
+{
+	if (eit)
+	{
+		current_next_indicator = eit->current_next_indicator;
+		events = eit->events;
+		original_network_id = eit->original_network_id;
+		service_id = eit->service_id;
+		transport_stream_id = eit->transport_stream_id;
+		ts = eit->ts;
+		type = eit->type;
+		version_number = eit->version_number;
+	}
+	else
+	{
+		current_next_indicator=0;
+		original_network_id=0;
+		service_id=0;
+		transport_stream_id=0;
+		ts=0;
+		type=0;
+		version_number=0;
+	}
+}
+
 eTable *EIT::createNext()
 {
 	if (ts != tsFaked)
