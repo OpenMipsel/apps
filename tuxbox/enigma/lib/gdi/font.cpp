@@ -18,8 +18,8 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
-#undef HAVE_FRIBIDI
-	// until we have it in the cdk
+// #define HAVE_FRIBIDI
+// until we have it in the cdk
 
 #ifdef HAVE_FRIBIDI
 #include <fribidi/fribidi.h>
@@ -530,10 +530,16 @@ int eTextPara::renderString(const eString &string, int rflags)
 	
 		// now do the usual logical->visual reordering
 #ifdef HAVE_FRIBIDI
-	uc_visual.resize(size);
 	FriBidiCharType dir=FRIBIDI_TYPE_ON;
-	fribidi_log2vis(&*uc_shape.begin(), uc_visual.size(), &dir, 
-		&*uc_visual.begin(), 0, 0, 0);
+	{
+		int size=uc_shape.size();
+		uc_visual.resize(size);
+		// gaaanz lahm, aber anders geht das leider nicht, sorry.
+		FriBidiChar array[size], target[size];
+		std::copy(uc_shape.begin(), uc_shape.end(), array);
+		fribidi_log2vis(array, size, &dir, target, 0, 0, 0);
+		uc_visual.assign(target, target+size);
+	}
 #else
 	uc_visual=uc_shape;
 #endif
@@ -743,13 +749,15 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 		int numspaces=0, num=0;
 		begin=end;
 		
+		ASSERT( end != glyphs.end());
+		
 			// zeilenende suchen
 		do {
 			last=end;
 			++end;
 		} while ((end != glyphs.end()) && (!(end->flags&GS_ISFIRST)));
 			// end zeigt jetzt auf begin der naechsten zeile
-			
+		
 		for (c=begin; c!=end; ++c)
 		{
 				// space am zeilenende skippen
@@ -758,7 +766,7 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 
 			if (c->flags&GS_ISSPACE)
 				numspaces++;
-			linelength+=c->w;;
+			linelength+=c->w;
 			num++;
 		}
 		if (!num)		// line mit nur einem space
@@ -772,10 +780,12 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 			int offset=area.width()-linelength;
 			if (dir==dirCenter)
 				offset/=2;
+			offset+=area.left();
 			while (begin != end)
 			{
-				begin->x+=offset;
-				begin->bbox.moveBy(offset,0);
+				begin->bbox.moveBy(offset-begin->x,0);
+				begin->x=offset;
+				offset+=begin->w;
 				++begin;
 			}
 			break;
@@ -809,6 +819,7 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 		}
 	}
 	bboxValid=false;
+	calc_bbox();
 }
 
 void eTextPara::clear()
