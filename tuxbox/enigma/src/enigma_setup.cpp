@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.6 2002/12/23 02:32:56 tmbinc Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.7 2003/01/07 03:41:12 TripleDES Exp $
  */
 
 #include <enigma_setup.h>
@@ -44,7 +44,7 @@ eZapSetup::eZapSetup()
 	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 12, 300, true)
 {
 	move(ePoint(150, 90));
-	int havenetwork, haveci, haveharddisk, havelcd;
+	int havenetwork, haveci, haveharddisk, havelcd, haverfmod;
 	switch (atoi(eDVB::getInstance()->getInfo("mID").c_str()))
 	{
 	case 1:
@@ -54,19 +54,28 @@ eZapSetup::eZapSetup()
 		haveci=0;
 		haveharddisk=0;
 		havelcd=1;
+		haverfmod=0;
 		break;
 	case 5:
 		havenetwork=1;
 		haveci=1;
 		haveharddisk=1;
 		havelcd=1;
+		haverfmod=0;
 		break;
-	case 6:
+	case 6:			//have garnix
 		havenetwork=0;
 		haveci=1;
 		haveharddisk=0;
 		havelcd=0;
+		haverfmod=1;
 		break;
+	default:		//have noch weniger
+		havenetwork=0;
+		haveci=0;
+		haveharddisk=0;
+		havelcd=0;
+		haverfmod=0;
 	}
 	
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to Mainmenu") ))->selected, eZapSetup::sel_close);
@@ -86,6 +95,8 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), _("show CI Menu") ))->selected, eZapSetup::sel_ci);
 	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), _("upgrade firmware") ))->selected, eZapSetup::sel_upgrade);
+	if (haverfmod)
+		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), _("setup modulator") ))->selected, eZapSetup::sel_rfmod);
 }
 
 eZapSetup::~eZapSetup()
@@ -238,4 +249,8 @@ void eZapSetup::sel_upgrade()
 		up.hide();
 	}
 	show();
+}
+
+void eZapSetup::sel_rfmod()
+{
 }
