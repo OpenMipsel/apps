@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.7 2003/01/07 03:41:12 TripleDES Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.8 2003/01/07 03:55:03 TripleDES Exp $
  */
 
 #include <enigma_setup.h>
@@ -30,6 +30,7 @@
 #include <setup_lcd.h>
 #include <setup_rc.h>
 #include <setup_harddisk.h>
+#include <setup_rfmod.h>
 #include <enigma_ci.h>
 #include <enigma_scan.h>
 #include <setupskin.h>
@@ -253,4 +254,11 @@ void eZapSetup::sel_upgrade()
 
 void eZapSetup::sel_rfmod()
 {
+	hide();
+	eZapRFmodSetup setup;
+	setup.setLCD(LCDTitle, LCDElement);
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
 }
