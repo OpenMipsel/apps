@@ -93,6 +93,8 @@ public:
 	}
 };
 
+#ifndef DISABLE_FILE
+
 class eZapSeekIndices
 {
 private:
@@ -129,6 +131,8 @@ public:
 	void redrawWidget(gPainter *target, const eRect &area);
 	void setIndices(eZapSeekIndices *indices);
 };
+
+#endif
 
 class NVODStream: public eListBoxEntryTextStream
 {
@@ -309,7 +313,11 @@ private:
 
 	// eRecordingStatus *recstatus;
 
+#ifndef DISABLE_FILE
 	eProgressWithIndices *Progress;
+#else
+	eProgress *Progress;
+#endif
 	eProgress *VolumeBar;
 	eMessageBox *pMsg, *pRotorMsg;
 
@@ -599,6 +607,8 @@ public:
 	eTimerInput();
 };
 
+#endif //DISABLE_FILE
+
 class eTimeCorrectionEditWindow: public eWindow
 {
 	eTimer updateTimer;
@@ -617,7 +627,5 @@ class eTimeCorrectionEditWindow: public eWindow
 public:
 	eTimeCorrectionEditWindow( tsref tp );
 };
-
-#endif //DISABLE_FILE
 
 #endif /* __enigma_main_h */

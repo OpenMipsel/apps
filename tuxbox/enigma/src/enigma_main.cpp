@@ -297,6 +297,8 @@ eString getISO639Description(char *iso)
 	return eString()+iso[0]+iso[1]+iso[2];
 }
 
+#ifndef DISABLE_FILE
+
 eZapSeekIndices::eZapSeekIndices()
 {
 	length = -1;
@@ -389,7 +391,7 @@ int  eZapSeekIndices::getTotalLength()
 {
 	return length;
 }
-    
+
 eProgressWithIndices::eProgressWithIndices(eWidget *parent): eProgress(parent)
 {
 	indexmarkcolor = eSkin::getActive()->queryColor("indexmark");
@@ -418,6 +420,8 @@ void eProgressWithIndices::setIndices(eZapSeekIndices *i)
 	indices = i;
 	invalidate();
 }
+
+#endif
 
 int NVODStream::validate()
 {
@@ -1394,10 +1398,15 @@ eZapMain::eZapMain()
 	recstatus=new eLabel(this);
 	recstatus->setName("recStatus");
 	recstatus->hide();
-	
+
+#ifndef DISABLE_FILE	
 	Progress=new eProgressWithIndices(this);
 	Progress->setName("progress_bar");
 	Progress->setIndices(&indices);
+#else
+	Progress=new eProgress(this);
+	Progress->setName("progress-bar");
+#endif	
 
 	isVT=0;
 	eSkin *skin=eSkin::getActive();
@@ -1896,6 +1905,8 @@ void eZapMain::updateProgress()
 #ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
 #endif
+
+#ifndef DISABLE_FILE
 	if (serviceFlags & eServiceHandler::flagSupportPosition)
 	{
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -1903,8 +1914,10 @@ void eZapMain::updateProgress()
 			return;
 		int total=handler->getPosition(eServiceHandler::posQueryLength);
 		int current=handler->getPosition(eServiceHandler::posQueryCurrent);
+
 		if (total != indices.getTotalLength())
 			indices.setTotalLength(total);
+
 		if ((total > 0) && (current != -1))
 		{
 			Progress->setPerc(current*100/total);
@@ -1928,6 +1941,7 @@ void eZapMain::updateProgress()
 		}
 	}
 	else
+#endif
 	{
 		updateServiceNum( eServiceInterface::getInstance()->service );
 
@@ -4559,7 +4573,9 @@ void eZapMain::leaveService()
 	EINextTime->setText("");
 
 	Progress->hide();
+#ifndef DISABLE_FILE
 	indices.clear();
+#endif
 }
 
 void eZapMain::clockUpdate()
