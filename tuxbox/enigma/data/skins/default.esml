@@ -269,7 +269,7 @@
 	</object>
 
 	<object name="eSatfind">
-		<eSatfind cposition="80:40" csize="550:420">
+		<eSatfind cposition="100:80" csize="550:420">
 			<eLabel text="SNR:" position="10:10" size="190:50" font="eSatfind" vcenter="on" />
 			<eLabel name="snr_num" position="210:10" size="150:50" font="eSatfind" vcenter="on" />
 			<eProgress name="snr" position="10:70" size="e-10:50" />
@@ -292,7 +292,7 @@
 		<eRotorPage position="0:0" size="550:400" >
 			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use" vcenter="on" />
 			<eLabel text="Offset" name="lRotorOffset" position="10:55" size="150:35" vcenter="on" />
-			<eNumber name="RotorOffset" position="200:55" size="100:35" helptext="enter Rotor Offset (0..9, +, -, ok)" loadDeco="" />
+			<eNumber name="RotorOffset" position="200:55" size="100:35" helptext="enter Rotor Offset (180 is exakt south) (0..9, +, -, ok)" loadDeco="" />
 			<eLabel name="lLongitude" text="Longitude:" position="10:100" size="150:35" vcenter="on" />
 			<eNumber name="Longitude" position="200:100" size="100:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
 			<eLabel name="lLatitude" text="Latitude:" position="10:145" size="150:35" vcenter="on" />
