@@ -143,9 +143,9 @@ void free ();
 //char *memchr ();
 //#endif
 
-#ifndef HAVE_DECL_REALLOC
-char *realloc ();
-#endif
+//#ifndef HAVE_DECL_REALLOC
+//char *realloc ();
+//#endif
 
 #ifndef HAVE_DECL_STPCPY
 # ifndef stpcpy

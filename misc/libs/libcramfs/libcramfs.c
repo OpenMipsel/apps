@@ -3,7 +3,7 @@
  */
 
 #include <fcntl.h>
-#include <linux/fs.h>
+#include <sys/mount.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
