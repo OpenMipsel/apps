@@ -562,6 +562,7 @@ class eServiceContextMenu: public eListBoxWindow<eListBoxEntryText>
 	eServiceReference ref;
 	void entrySelected(eListBoxEntryText *s);
 public:
+	int getCount() { return list.getCount(); }
 	eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path, eWidget *LCDTitle=0, eWidget *LCDElement=0);
 };
 

@@ -186,10 +186,14 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		}
 
 		delete tdt;
+		tdt=0;
 
-		tdt=new TDT();
-		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
-		tdt->start();
+		if ( !service.path.size() )
+		{
+			tdt=new TDT();
+			CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
+			tdt->start();
+		}
 
 		dvb.tSDT.start(new SDT());
 

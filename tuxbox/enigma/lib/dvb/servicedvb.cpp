@@ -450,6 +450,9 @@ void eServiceHandlerDVB::stopPlayback( int waslivemode )
 		decoder=0;
 		if ( waslivemode )
 			flags&=~flagIsSeekable;
+		// do not remove the following delay !
+		if ( state != statePlaying )
+			usleep(500000);
 	}
 }
 

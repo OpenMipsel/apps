@@ -179,10 +179,6 @@ tsAutomatic::tsAutomatic(eWidget *parent)
 	l_status=new eLabel(this, RS_WRAP);
 	l_status->setName("status");
 
-	c_eraseall=new eCheckbox(this);
-	c_eraseall->setName("eraseall");
-	c_eraseall->hide();
-
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 	{
 		int snocircular=0;
@@ -265,8 +261,7 @@ void tsAutomatic::start()
 
 		// macht nur Probleme...bzw dauert recht lang...
 		sapi->setSkipOtherOrbitalPositions(1);
-
-		sapi->setClearList(c_eraseall->isChecked());
+		sapi->setClearList(1);
 		sapi->setNoCircularPolarization(snocircular);
 
 		close(0);
@@ -297,11 +292,10 @@ void tsAutomatic::dvbEvent(const eDVBEvent &event)
 			tuneNext(1);
 		} else
 		{
-			c_eraseall->show();
 			if ( c_nocircular )
 				c_nocircular->show();
 			b_start->show();
-			setFocus(c_eraseall);
+			setFocus(c_nocircular);
 			l_status->setText(_("A valid transponder has been found. Verify that the right network is selected"));
 		}
 		break;

@@ -3136,6 +3136,8 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 #else
 	eServiceContextMenu m(ref, path);
 #endif
+	if ( !m.getCount() )
+		return;
 	m.show();
 	int res=m.exec();
 	m.hide();

@@ -185,6 +185,7 @@ eTimerManager::eTimerManager()
 	ASSERT(timerlist);
 	timerlist->service_name=_("Timerlist");
 	timerlist->load(CONFIGDIR "/enigma/timer.epl");
+	nextStartingEvent=timerlist->getList().end();
 	CONNECT( actionTimer.timeout, eTimerManager::actionHandler );
 	conn = CONNECT( timer.timeout, eTimerManager::waitClock );
 	waitClock();
@@ -478,13 +479,20 @@ void eTimerManager::actionHandler()
 					writeToLogfile("SwitchTimer... do nothing");
 				}
 
-				int i=0;
-				if ( nextStartingEvent->type&ePlaylistEntry::doShutdown )
-					i = 2;
-				else if ( nextStartingEvent->type&ePlaylistEntry::doGoSleep )
-					i = 3;
-				writeToLogfile(eString().sprintf("call eZapMain::handleStandby(%d)",i));
-				eZapMain::getInstance()->handleStandby(i);
+				if ( nextStartingEvent->type & ePlaylistEntry::doFinishOnly
+					&& !nextStartingEvent->service
+					&& nextStartingEvent->type & ePlaylistEntry::stateError )
+					writeToLogfile("abort running sleeptimer don't handleStandby");
+				else
+				{
+					int i=0;
+					if ( nextStartingEvent->type&ePlaylistEntry::doShutdown )
+						i = 2;
+					else if ( nextStartingEvent->type&ePlaylistEntry::doGoSleep )
+						i = 3;
+					writeToLogfile(eString().sprintf("call eZapMain::handleStandby(%d)",i));
+					eZapMain::getInstance()->handleStandby(i);
+				}
 
 				if ( nextStartingEvent->type & ePlaylistEntry::doFinishOnly
 					&& !nextStartingEvent->service )
