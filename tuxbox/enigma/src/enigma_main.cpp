@@ -3384,6 +3384,11 @@ void eZapMain::setMode(int newmode, int user)
 {
 	if ( handleState() )
 	{
+		if ( newmode == modeFile )
+			playlist->service_name=_("Playlist");
+		else
+			playlist->service_name=_("History");
+
 		if ( newmode == modeFile && mode != newmode )
 			eEPGCache::getInstance()->pauseEPG();
 		else if ( mode == modeFile && mode != newmode && newmode != -1 )
@@ -3541,18 +3546,18 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 	}
 	else
 	{
+		// add current service to favourite
 		if ( !(ref.flags & eServiceReference::flagDirectory) ) 
-			new eListBoxEntryText(&list, _("add service to user bouquet"), (void*)4);
+			new eListBoxEntryText(&list, _("add to user bouquet"), (void*)4);
+		else if (ref.data[0] == -2 || ref.data[0] == -3 )
+			new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
 		// Favourite Mode ( simple add services to favourite list )
 		if ( eZap::getInstance()->getServiceSelector()->editMode )
 			new eListBoxEntryText(&list, _("disable edit mode"), (void*)5);
 		else
 			new eListBoxEntryText(&list, _("enable edit mode"), (void*)5);
-		// add current service to favourite
 		eServicePath p = path;
 		p.up();
-		if ( ref.flags & eServiceReference::flagDirectory && (ref.data[0] == -2 || ref.data[0] == -3 ) ) 
-			new eListBoxEntryText(&list, _("duplicate as user bouquet"), (void*)8);
 	}
 		// add current service to playlist
 	new eListBoxEntryText(&list, _("create new user bouquet"), (void*)6);
