@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.14 2003/03/26 17:09:29 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.15 2003/03/26 18:30:40 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -346,7 +346,10 @@ int change_audio_pid(uint8_t index)
         if (currentAudioChannel->isAc3)
                 audio->enableBypass();
         else
+	{
+		audio->enableBypass(); // workaround for actual used drivers (alexw 5-feb-2003)
                 audio->disableBypass();
+	}
 
         /* set demux filter */
         if (audioDemux->pesFilter(channel->getAudioPid(), DMX_OUT_DECODER, DMX_PES_AUDIO) < 0)
@@ -1197,15 +1200,11 @@ int startPlayBack()
                         pcrDemux = new CDemux();
                 if (pcrDemux->pesFilter(channel->getPcrPid(), DMX_OUT_DECODER, DMX_PES_PCR) < 0)
                         return -1;
-                if (pcrDemux->start() < 0)
-                        return -1;
         }
         if (have_audio) {
                 if (!audioDemux)
                         audioDemux = new CDemux();
                 if (audioDemux->pesFilter(channel->getAudioPid(), DMX_OUT_DECODER, DMX_PES_AUDIO) < 0)
-                        return -1;
-                if (audioDemux->start() < 0)
                         return -1;
         }
         if (have_video) {
@@ -1213,16 +1212,12 @@ int startPlayBack()
                         videoDemux = new CDemux();
                 if (videoDemux->pesFilter(channel->getVideoPid(), DMX_OUT_DECODER, DMX_PES_VIDEO) < 0)
                         return -1;
-                if (videoDemux->start() < 0)
-                        return -1;
         }
 #ifdef TELETEXT_DEMUX
 	if (have_teletext) {
                 if (!teletextDemux)
                         teletextDemux = new CDemux();
                 if (teletextDemux->pesFilter(channel->getTeletextPid(), DMX_OUT_DECODER, DMX_PES_TELETEXT) < 0)
-                        return -1;
-                if (teletextDemux->start() < 0)
                         return -1;
         }
 #endif	//TELETEXT_DEMUX
@@ -1246,9 +1241,24 @@ int startPlayBack()
 	}
 
 	/* start demux filters */
+        if (have_pcr) {
+                if (pcrDemux->start() < 0)
+                        return -1;
+        }
+        if (have_audio) {
+                if (audioDemux->start() < 0)
+                        return -1;
+        }
+        if (have_video) {
+                if (videoDemux->start() < 0)
+                        return -1;
+        }
 	if (have_teletext)
 	{
-#ifndef TELETEXT_DEMUX
+#ifdef TELETEXT_DEMUX
+                if (teletextDemux->start() < 0)
+                        return -1;
+#else
 		ioctl(dmx_teletext_fd, 1, channel->getTeletextPid());
 #endif	//TELETEXT_DEMUX
 	}
@@ -1460,7 +1470,7 @@ int main (int argc, char **argv)
 	CZapitClient::responseGetLastChannel test_lastchannel;
 	int i;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.14 2003/03/26 17:09:29 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.15 2003/03/26 18:30:40 thegoodguy Exp $\n");
 
 	if (argc > 1)
 	{
