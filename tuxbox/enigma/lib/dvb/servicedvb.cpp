@@ -122,6 +122,7 @@ void eDVRPlayerThread::thread()
 
 void eDVRPlayerThread::outputReady(int what)
 {
+	(void)what;
 	seekbusy-=buffer.tofile(dvrfd, 65536);
 	if (seekbusy < 0)
 		seekbusy=0;
@@ -164,6 +165,7 @@ void eDVRPlayerThread::dvrFlush()
 
 void eDVRPlayerThread::readMore(int what)
 {
+	(void)what;
 	if ((state != statePlaying) && (state != stateBuffering))
 	{
 		eDebug("wrong state (%d)", state);
