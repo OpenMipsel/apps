@@ -314,13 +314,13 @@
 	<object name="tsManual">
 		<tsManual position="0:0" size="e:360">
 			<eTranspondersettings name="transponder" position="0:0" size="400:160" />
-			<eFEStatus name="festatus" position="0:160" size="400:85" />
-			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponderscan" loadDeco="" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" />
+			<eFEStatus name="festatus" position="0:165" size="400:85" />
 			<eCheckbox text="use ONIT" name="useonit" position="10:e-110" size="200:30" helptext="enable/disable check ONIT on any transponder" />
 			<eCheckbox text="use BAT" name="usebat" position="230:e-110" size="e:30" helptext="enable/disable use BAT for scan (if exist)" />
 			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="200:30" helptext="remove all services before scan" />
 			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="e:30" helptext="enable/disable initiate network search" />
+			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponderscan" loadDeco="" />
+			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" />
 		</tsManual>
 	</object>
 
