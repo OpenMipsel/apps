@@ -254,7 +254,7 @@ int eActionMapList::loadXML(const char *filename)
 		return -1;
 	if (strcmp(root->GetType(), "rcdefaults"))
 	{
-		eFatal("not an rcdefaults file.");
+		eFatal("not a rcdefaults file.");
 		return -1;
 	}
 	
@@ -267,7 +267,7 @@ int eActionMapList::loadXML(const char *filename)
 			const char *identifier=node->GetAttributeValue("identifier");
 			if (!identifier)
 			{
-				eFatal("please specify an remote control identifier!");
+				eFatal("please specify a remote control identifier!");
 				continue;
 			}
 			
@@ -276,7 +276,7 @@ int eActionMapList::loadXML(const char *filename)
 				device=eRCInput::getInstance()->getDevice(identifier);
 			if (!device)
 			{
-				eFatal("please specify an remote control identifier, '%s' is invalid!", identifier);
+				eFatal("please specify a remote control identifier, '%s' is invalid!\nMaybe old file '%s'?\n", identifier, filename);
 				continue;
 			}
 			
