@@ -1,5 +1,5 @@
 /*
- * $Id: descriptors.cpp,v 1.55.2.9 2003/06/04 08:30:02 digi_casi Exp $
+ * $Id: descriptors.cpp,v 1.55.2.10 2003/11/09 06:31:37 obi Exp $
  *
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
@@ -259,6 +259,12 @@ int satellite_delivery_system_descriptor(const unsigned char * const buffer, t_t
 
 	feparams.u.qpsk.FEC_inner = CFrontend::getFEC(buffer[12] & 0x0F);
 	polarization = (buffer[8] >> 5) & 0x03;
+
+	/* workarounds for braindead broadcasters (e.g. on Telstar 12 at 15.0W) */
+	if (feparams.Frequency >= 100000000)
+		feparams.Frequency /= 10;
+	if (feparams.u.qpsk.SymbolRate >= 50000000)
+		feparams.u.qpsk.SymbolRate /= 10;
 
 	if (scantransponders.find((transport_stream_id << 16) | original_network_id) == scantransponders.end())
 	{
