@@ -304,9 +304,9 @@ void eDVBCI::newService()
 
 	sendTPDU(0xA0,wp,1,capmt);
 	
-	for(int i=0;i<wp;i++)
-		printf("%02x ",capmt[i]);
-	printf("\n");	
+//	for(int i=0;i<wp;i++)
+//		printf("%02x ",capmt[i]);
+//	printf("\n");	
 }
 
 void eDVBCI::clearCAIDs()
@@ -353,22 +353,22 @@ void eDVBCI::sendTPDU(unsigned char tpdu_tag,unsigned int len,unsigned char tc_i
 	buffer[0]=tc_id;
 	buffer[1]=0;
 	buffer[2]=tpdu_tag;
-	buffer[3]=0x81;
-	buffer[4]=len+1;
-	buffer[5]=tc_id;
-	
-	memcpy(buffer+6,data,len);
-#if 0	
-	if(write(fd,buffer,len+5)<0)
+
+	if(len>110)
 	{
-		eDebug("[DVBCI] write error");
-		ci_state=0;	
-		dataAvailable(0);
+		buffer[3]=0x81;
+		buffer[4]=len+1;
+		buffer[5]=tc_id;
+		memcpy(buffer+6,data,len);
+		sendData(tc_id,buffer+2,len+4);
 	}
-#else
-	sendData(tc_id,buffer+2,len+4);
-#endif	
-	
+	else
+	{	
+		buffer[3]=len+1;
+		buffer[4]=tc_id;
+		memcpy(buffer+5,data,len);
+		sendData(tc_id,buffer+2,len+3);
+	}
 }
 #define PAYLOAD_LEN	126				//fixme do it dynamic
 void eDVBCI::sendData(unsigned char tc_id,unsigned char *data,unsigned int len)
