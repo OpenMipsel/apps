@@ -52,7 +52,7 @@ void  CControldClient::shutdown()
 	close_connection();
 }
 
-void CControldClient::setBoxType(char type)
+void CControldClient::setBoxType(CControldClient::tuxbox_maker_t type)
 {
 	CControld::commandBoxType msg2;
 
@@ -63,13 +63,14 @@ void CControldClient::setBoxType(char type)
 	close_connection();
 }
 
-char CControldClient::getBoxType()
+CControldClient::tuxbox_maker_t CControldClient::getBoxType()
 {
 	CControld::responseBoxType rmsg;
 
 	send(CControld::CMD_GETBOXTYPE);
 
-	receive_data((char*)&rmsg, sizeof(rmsg));
+	if (!receive_data((char*)&rmsg, sizeof(rmsg)))
+		rmsg.boxtype = CControldClient::TUXBOX_MAKER_UNKNOWN;
 
 	close_connection();
 

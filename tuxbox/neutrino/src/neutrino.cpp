@@ -96,8 +96,6 @@
 #include "system/flashtool.h"
 
 
-using namespace std;
-
 // Globale Variablen - to use import global.h
 
 // I don't like globals, I would have hidden them in classes,
@@ -110,7 +108,7 @@ static void initGlobals(void)
 	g_Fonts         = NULL;
 
 	g_RCInput       = NULL;
-	g_Controld      = NULL;
+	g_Controld      = new CControldClient;
 	g_Timerd        = NULL;
 	g_Zapit         = new CZapitClient;
 	g_RemoteControl = NULL;
@@ -446,7 +444,7 @@ int CNeutrinoApp::loadSetup()
 	g_settings.network_nfs_automount[1] = configfile.getInt32( "network_nfs_automount_2", 0);
 	g_settings.network_nfs_automount[2] = configfile.getInt32( "network_nfs_automount_3", 0);
 	g_settings.network_nfs_automount[3] = configfile.getInt32( "network_nfs_automount_4", 0);
-
+	
 	//streaming (server + vcr)
 	g_settings.recording_type = configfile.getInt32( "recording_type", 0 );
 	g_settings.recording_stopplayback = configfile.getInt32( "recording_stopplayback", 0 );
@@ -472,8 +470,8 @@ int CNeutrinoApp::loadSetup()
 	g_settings.key_subchannel_up = configfile.getInt32( "key_subchannel_up",  CRCInput::RC_right );
 	g_settings.key_subchannel_down = configfile.getInt32( "key_subchannel_down",  CRCInput::RC_left );
 
-	strcpy( g_settings.repeat_blocker, configfile.getString( "repeat_blocker", g_info.box_Type==3?"150":"25" ).c_str() );
-	strcpy( g_settings.repeat_genericblocker, configfile.getString( "repeat_genericblocker", g_info.box_Type==3?"25":"0" ).c_str() );
+	strcpy(g_settings.repeat_blocker, configfile.getString("repeat_blocker", g_info.box_Type == CControldClient::TUXBOX_MAKER_PHILIPS ? "150" : "25").c_str());
+	strcpy(g_settings.repeat_genericblocker, configfile.getString("repeat_genericblocker", g_info.box_Type == CControldClient::TUXBOX_MAKER_PHILIPS ? "25" : "0").c_str());
 
 	//screen configuration
 	g_settings.screen_StartX = configfile.getInt32( "screen_StartX", 37 );
@@ -552,7 +550,7 @@ int CNeutrinoApp::loadSetup()
 	{
 		dprintf(DEBUG_NORMAL, "Loading of scan settings failed. Using defaults.\n");
 	}
-	
+
 	return erg;
 }
 
@@ -1690,7 +1688,7 @@ void CNeutrinoApp::InitColorSettings(CMenuWidget &colorSettings, CMenuWidget &fo
 	colorSettings.addItem( new CMenuForwarder("colorstatusbar.head", true, "", colorSettings_statusbarColors) );
 
 	colorSettings.addItem( new CMenuSeparator(CMenuSeparator::LINE) );
-	if (!strcmp( "ffffffff", getenv("gtxID") ))
+	if(g_info.box_Type != CControldClient::TUXBOX_MAKER_NOKIA)
 	{
 		//menuefaden nur bei enx-chips!
 		CMenuOptionChooser* oj = new CMenuOptionChooser("colormenu.fade", &g_settings.widget_fade, true );
@@ -2084,14 +2082,8 @@ int CNeutrinoApp::run(int argc, char **argv)
 
 	CLCD::getInstance()->init((fontFile + ".ttf").c_str(), fontName.c_str());
 
-	char* mID = getenv("mID");
-	if (mID == NULL)
-	{
-		dprintf( DEBUG_NORMAL, "[neutrino] Fatal Error: Environment variable mID not set. Bye.\n\n");
-		return 1;
-	}
-	g_info.box_Type = atoi(mID);
-
+	g_info.box_Type = g_Controld->getBoxType();
+	
 	dprintf( DEBUG_DEBUG, "[neutrino] box_Type: %d\n", g_info.box_Type);
 
 
@@ -2100,7 +2092,6 @@ int CNeutrinoApp::run(int argc, char **argv)
 	int loadSettingsErg = loadSetup();
 
 	//lcd aktualisieren
-	g_Controld = new CControldClient;
 	CLCD::getInstance()->showVolume(g_Controld->getVolume(g_settings.audio_avs_Control==1));
 	CLCD::getInstance()->setMuted(g_Controld->getMute(g_settings.audio_avs_Control==1));
 
@@ -2485,67 +2476,70 @@ int CNeutrinoApp::handleMsg(uint msg, uint data)
 	}
 	else if( msg == CRCInput::RC_standby )
 	{
-		// trigger StandBy
-		struct timeval tv;
-		gettimeofday( &tv, NULL );
-		standby_pressed_at = (tv.tv_sec*1000000) + tv.tv_usec;
-
-		if( mode == mode_standby )
+		if (data == 0)
 		{
-			g_RCInput->postMsg( NeutrinoMessages::STANDBY_OFF, 0 );
-		}
-		else if( !g_settings.shutdown_real )
-		{
-			int timeout = 5;
-			int timeout1 = 5;
-
-			sscanf(g_settings.repeat_blocker, "%d", &timeout);
-			timeout = int(timeout/100.0) + 5;
-			sscanf(g_settings.repeat_genericblocker, "%d", &timeout1);
-			timeout1 = int(timeout1/100.0) + 5;
-			if(timeout1>timeout)
-				timeout=timeout1;
-
-			uint msg; uint data;
-			int diff = 0;
-			long long endtime;
-
-			do
+			// trigger StandBy
+			struct timeval tv;
+			gettimeofday( &tv, NULL );
+			standby_pressed_at = (tv.tv_sec*1000000) + tv.tv_usec;
+			
+			if( mode == mode_standby )
 			{
-				g_RCInput->getMsg( &msg, &data, timeout );
+				g_RCInput->postMsg( NeutrinoMessages::STANDBY_OFF, 0 );
+			}
+			else if( !g_settings.shutdown_real )
+			{
+				int timeout = 5;
+				int timeout1 = 5;
+				
+				sscanf(g_settings.repeat_blocker, "%d", &timeout);
+				timeout = int(timeout/100.0) + 5;
+				sscanf(g_settings.repeat_genericblocker, "%d", &timeout1);
+				timeout1 = int(timeout1/100.0) + 5;
+				if(timeout1>timeout)
+					timeout=timeout1;
 
-				if( msg != CRCInput::RC_timeout )
+				uint msg; uint data;
+				int diff = 0;
+				long long endtime;
+				
+				do
 				{
-					gettimeofday( &tv, NULL );
-					endtime = (tv.tv_sec*1000000) + tv.tv_usec;
-					diff = int((endtime - standby_pressed_at)/100000. );
-				}
+					g_RCInput->getMsg( &msg, &data, timeout );
+					
+					if( msg != CRCInput::RC_timeout )
+					{
+						gettimeofday( &tv, NULL );
+						endtime = (tv.tv_sec*1000000) + tv.tv_usec;
+						diff = int((endtime - standby_pressed_at)/100000. );
+					}
+					
+				} while( ( msg != CRCInput::RC_timeout ) && ( diff < 10 ) );
 
-			} while( ( msg != CRCInput::RC_timeout ) && ( diff < 10 ) );
-
-			g_RCInput->postMsg( ( diff >= 10 ) ? NeutrinoMessages::SHUTDOWN : NeutrinoMessages::STANDBY_ON, 0 );
-		}
-		else
-		{
-			g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
-		}
-		return messages_return::cancel_all | messages_return::handled;
-	}
-	else if( msg == CRCInput::RC_standby_release )
-	{
-		struct timeval tv;
-		gettimeofday( &tv, NULL );
-		long long endtime = (tv.tv_sec*1000000) + tv.tv_usec;
-		int diff = int((endtime - standby_pressed_at)/100000. );
-		if( diff >= 10 )
-		{
-			g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
+				g_RCInput->postMsg( ( diff >= 10 ) ? NeutrinoMessages::SHUTDOWN : NeutrinoMessages::STANDBY_ON, 0 );
+			}
+			else
+			{
+				g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
+			}
 			return messages_return::cancel_all | messages_return::handled;
+		}
+		else /* data == 1: Standby button released */
+		{
+			struct timeval tv;
+			gettimeofday( &tv, NULL );
+			long long endtime = (tv.tv_sec*1000000) + tv.tv_usec;
+			int diff = int((endtime - standby_pressed_at)/100000. );
+			if( diff >= 10 )
+			{
+				g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
+				return messages_return::cancel_all | messages_return::handled;
+			}
 		}
 	}
 	else if( msg == CRCInput::RC_plus ||
-				msg == CRCInput::RC_minus )
-   {
+		 msg == CRCInput::RC_minus )
+	{
 		//volume
 		setVolume( msg, ( mode != mode_scart ) );
 		return messages_return::handled;
@@ -3359,7 +3353,7 @@ bool CNeutrinoApp::changeNotify(std::string OptionName, void *Data)
 int main(int argc, char **argv)
 {
 	setDebugLevel(DEBUG_NORMAL);
-	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.5 2003/02/18 17:25:34 thegoodguy Exp $\n\n");
+	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.6 2003/02/19 19:58:44 thegoodguy Exp $\n\n");
 
 	//dhcp-client beenden, da sonst neutrino beim hochfahren stehenbleibt
 	system("killall -9 udhcpc >/dev/null 2>/dev/null");
