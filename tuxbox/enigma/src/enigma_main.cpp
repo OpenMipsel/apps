@@ -293,45 +293,54 @@ std::map<int,int> &eZapSeekIndices::getIndices()
 	return index;
 }
 
-void NVODStream::buildText()
+int NVODStream::validate()
 {
-	if (eit.ready && !eit.error)
+	text.str(eString());
+	for (ePtrList<EITEvent>::const_iterator event(eit.events); event != eit.events.end(); ++event)		// always take the first one
 	{
-		text.str(eString());
-		for (ePtrList<EITEvent>::const_iterator event(eit.events); event != eit.events.end(); ++event)		// always take the first one
+		tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
+
+		if (begin)
+			text << std::setfill('0') << std::setw(2) << begin->tm_hour << ':' << std::setw(2) << begin->tm_min;
+
+		time_t endtime=event->start_time+event->duration;
+		tm *end=event->start_time!=-1?localtime(&endtime):0;
+
+		if (end)
+			text << _(" to ") << std::setw(2) << end->tm_hour << ':' << std::setw(2) << end->tm_min;
+
+		time_t now=time(0)+eDVB::getInstance()->time_difference;
+
+		if ( now > endtime )
+			return 0;
+
+		if ((event->start_time <= now) && (now < endtime))
 		{
-			tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
-
-			if (begin)
-				text << std::setfill('0') << std::setw(2) << begin->tm_hour << ':' << std::setw(2) << begin->tm_min;
-
-			time_t endtime=event->start_time+event->duration;
-			tm *end=event->start_time!=-1?localtime(&endtime):0;
-
-			if (end)
-				text << _(" to ") << std::setw(2) << end->tm_hour << ':' << std::setw(2) << end->tm_min;
-
-			time_t now=time(0)+eDVB::getInstance()->time_difference;
-			if ((event->start_time <= now) && (now < endtime))
-			{
-				int perc=(now-event->start_time)*100/event->duration;
-				text << " (" << perc << "%, " << perc*3/100 << '.' << std::setw(2) << (perc*3)%100 << _(" Euro lost)");
-			}
-			break;
+			int perc=(now-event->start_time)*100/event->duration;
+			text << " (" << perc << "%, " << perc*3/100 << '.' << std::setw(2) << (perc*3)%100 << _(" Euro lost)");
 		}
+		return 1;
 	}
-	else
-		text << "Service " << std::setw(4) << std::hex << service.getServiceID().get();
+	return 0;
 }
 
 void NVODStream::EITready(int error)
 {
 	eDebug("NVOD eit ready: %d", error);
 
-	((eListBox<NVODStream>*)listbox)->sort(); // <<< without explicit cast the compiler nervs ;)
+	if ( error )
+		delete this;
+	else if ( eit.ready && !error && !valid && validate() )
+	{
+		valid=1;
+		listbox->append( this );
+		((eListBox<NVODStream>*)listbox)->sort(); // <<< without explicit cast the compiler nervs ;)
+	}
 
+/*
 	if (listbox && listbox->isVisible())
 		listbox->invalidate();
+	*/
 }
 
 NVODStream::NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type)
@@ -340,13 +349,20 @@ NVODStream::NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespac
 			eServiceID(ref->service_id), 5), eit(EIT::typeNowNext, ref->service_id, type)
 {
 	CONNECT(eit.tableReady, NVODStream::EITready);
+	listbox->remove(this);
+	valid=0;
 	eit.start();
 }
 
 eString NVODStream::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
 {
-	buildText();
-	return eListBoxEntryTextStream::redraw(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state);
+	if (valid && validate())
+		return eListBoxEntryTextStream::redraw(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state);
+
+	valid=0;
+	listbox->remove( this );
+	eit.start();
+	return _("not valid!");
 }
 
 void eNVODSelector::selected(NVODStream* nv)
@@ -1208,11 +1224,6 @@ void eZapMain::setEIT(EIT *eit)
 	{
 		ButtonGreenEn->show();
 		ButtonGreenDis->hide();
-	}
-	else
-	{
-		ButtonGreenDis->show();
-		ButtonGreenEn->hide();
 	}
 	ePtrList<EITEvent> dummy;
 	if (actual_eventDisplay)
@@ -3003,24 +3014,17 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 			if (refservice.getServiceType()==4) // nvod ref service
 				flags|=ENIGMA_NVOD;
-			else
-				flags&=~ENIGMA_NVOD;
 		}
 		else
 		{
 			if (serviceref.getServiceType()==4) // nvod ref service
 				flags|=ENIGMA_NVOD;
-			else
-				flags&=~ENIGMA_NVOD;
 		}
 
 		if (serviceref.getServiceType()==6)  // linkage service
 			flags|=ENIGMA_SUBSERVICES;
 		else
-		{
 			subservicesel.clear();
-			flags&=~ENIGMA_SUBSERVICES;
-		}
 
 		eString name="";
 
@@ -3312,7 +3316,12 @@ void eZapMain::timeOut()
 
 void eZapMain::leaveService()
 {
-//	flags=0;
+	ButtonGreenDis->show();
+	ButtonGreenEn->hide();
+	ButtonYellowDis->show();
+	ButtonYellowEn->hide();
+
+	flags&=~(ENIGMA_NVOD|ENIGMA_SUBSERVICES|ENIGMA_AUDIO);
 
 	ChannelName->setText("");
 	ChannelNumber->setText("");

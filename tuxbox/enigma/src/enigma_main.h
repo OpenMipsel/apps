@@ -96,10 +96,10 @@ class NVODStream: public eListBoxEntryTextStream
 {
 	friend class eListBox<NVODStream>;
 	friend class eNVODSelector;
-private:
+	int valid;
 	eString redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 	void EITready(int error);
-	void buildText();
+	int validate();
 public:
 	NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type);
 	eServiceReferenceDVB service;
