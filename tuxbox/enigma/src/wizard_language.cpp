@@ -150,7 +150,6 @@ void eWizardLanguage::selchanged(eLanguageEntry *entry)
 	{
 		setlocale(LC_ALL, entry->getLanguageID().c_str());
 		head->setText(_("Choose your language..."));
-		head->setText("أغلق قائمة القرص الصلب");
 		help->setText(_("press up/down/ok"));
 	}
 }
