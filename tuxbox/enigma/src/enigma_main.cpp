@@ -676,14 +676,14 @@ SubService::SubService(eListBox<SubService> *listbox, eDVBNamespace dvb_namespac
 }
 
 eSubServiceSelector::eSubServiceSelector()
-	:eListBoxWindow<SubService>(_("multiple Services"), 6, 330),
+	:eListBoxWindow<SubService>(_("multiple Services"), 10, 530),
 	quickzap(0)
 {
-	move(ePoint(100, 100));
+	move(ePoint(70, 70));
 	cresize( eSize( getClientSize().width(), getClientSize().height()+80 ) );
 
 	bToggleQuickZap = new eButton( this );
-	bToggleQuickZap->resize( eSize( 310, 30 ) );
+	bToggleQuickZap->resize( eSize( getClientSize().width()-20, 30 ) );
 	bToggleQuickZap->move( ePoint( 10, getClientSize().height()-70 ) );
 	bToggleQuickZap->setText(_("enable quickzap"));
 	bToggleQuickZap->setShortcut("green");
@@ -691,7 +691,7 @@ eSubServiceSelector::eSubServiceSelector()
 	bToggleQuickZap->show();
 
 	bAddToUserBouquet = new eButton( this );
-	bAddToUserBouquet->resize( eSize( 310, 30 ) );
+	bAddToUserBouquet->resize( eSize( getClientSize().width()-20, 30 ) );
 	bAddToUserBouquet->move( ePoint( 10, getClientSize().height()-40 ) );
 	bAddToUserBouquet->setText(_("add to user bouquet"));
 	bAddToUserBouquet->setShortcut("yellow");
