@@ -210,6 +210,8 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 	
 	if (! service.path.size())
 	{
+		cname.setFlags(RS_FADE);
+		cname.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)-2 ));		
 		EITEvent *e = 0;
 		e = eEPGCache::getInstance()->lookupEvent(service);
 	//	eDebug(" e = %p", e);	
@@ -246,8 +248,12 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 			filelength+=s.st_size/1024;
 			slice++;
 		}
-		
-		cname.setText(eString(_("Filesize: ")) + eString().sprintf("%d MB", filelength/1024));
+		int i = service.path.rfind("/");
+		i++;
+		cgenre.setText(eString(_("Filesize: ")) + eString().sprintf("%d MB", filelength/1024));
+		cname.setFlags(RS_WRAP);
+		cname.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)*2-2 ));
+		cname.setText(eString(_("Filename: "))+ service.path.mid( i, service.path.length()-i ) );
 	}
 }
 	

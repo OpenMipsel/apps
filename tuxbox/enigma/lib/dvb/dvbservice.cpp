@@ -309,8 +309,26 @@ void eDVBServiceController::EITready(int error)
 	if (!error)
 	{
 		EIT *eit=dvb.getEIT();
+/*
+		for (ePtrList<EITEvent>::iterator i(eit->events); i != eit->events.end(); ++i)
+		{
+			EITEvent *event=*i;
+			if ( event->running_status >= 2 )
+			{
+				for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
+					if (d->Tag()==DESCR_LINKAGE)
+					{
+						LinkageDescriptor *ld=(LinkageDescriptor*)*d;
+						if (ld->linkage_type!=0xB0)
+							continue;
+						eDebug("Linkage found");
+						goto bla;
+					}
+			}
+		}*/
 		if ( service.getServiceType() == 4 ) // NVOD Service
 		{
+//bla:
 			delete dvb.nvodEIT;
 			dvb.nvodEIT = new EIT( eit );
 			dvb.nvodEIT->events.setAutoDelete(true);

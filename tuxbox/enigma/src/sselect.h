@@ -23,7 +23,6 @@ class eListBoxEntryService: public eListBoxEntry
 	friend struct updateEPGChangedService;
 	friend struct renumber;
 	eString sort;
-	eString short_name;
 	static gFont serviceFont, descrFont, numberFont;
 	static int maxNumSize;
 	static gPixmap *folder;

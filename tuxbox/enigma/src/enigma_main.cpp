@@ -348,10 +348,8 @@ eString NVODStream::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gC
 void eNVODSelector::selected(NVODStream* nv)
 {
 	if (nv)
-	{
-		nv->service.descr = _("NVOD");
 		eServiceInterface::getInstance()->play(nv->service);
-	}
+
 	close(0);
 }
 
@@ -480,7 +478,7 @@ SubService::SubService(eListBox<SubService> *listbox, const LinkageDescriptor *d
 	:eListBoxEntryText((eListBox<eListBoxEntryText>*) listbox),
 		service(eTransportStreamID(descr->transport_stream_id), 
 			eOriginalNetworkID(descr->original_network_id),
-			eServiceID(descr->service_id), 1)
+			eServiceID(descr->service_id), 6)
 {
 	text=(const char*)descr->private_data;
 }
@@ -496,7 +494,6 @@ void eSubServiceSelector::selected(SubService *ss)
 {
 	if (ss)
 	{
-		ss->service.setServiceType(5);  // faked service type
 		ss->service.descr = ss->getText();
 		eServiceInterface::getInstance()->play(ss->service);
 	}
@@ -1101,9 +1098,6 @@ void eZapMain::setSmartcardLogo(bool b)
 
 void eZapMain::setEIT(EIT *eit)
 {
-	int numsub=0;
-	subservicesel.clear();
-
 	cur_event_text="";
 
 	if (eit)
@@ -1129,7 +1123,7 @@ void eZapMain::setEIT(EIT *eit)
 						if (ld->linkage_type!=0xB0)
 							continue;
 						subservicesel.add(ld);
-						numsub++;
+						flags|=ENIGMA_SUBSERVICES;
 					}
 			}
 			for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
@@ -1138,12 +1132,12 @@ void eZapMain::setEIT(EIT *eit)
 				if (descriptor->Tag()==DESCR_SHORT_EVENT)
 				{
 					ShortEventDescriptor *ss=(ShortEventDescriptor*)descriptor;
-					if (event->event_id == cur_event_id)
-						cur_event_text=ss->event_name;
+
 					switch (p)
 					{
 					case 0:
 						nowtext=ss->event_name;
+						cur_event_text=ss->event_name;
 						val|=1;
 						descr=ss->text;
 						break;
@@ -1197,10 +1191,6 @@ void eZapMain::setEIT(EIT *eit)
 		EINowTime->setText("");
 		EINextTime->setText("");
 	}
-	if (numsub>1)
-		flags|=ENIGMA_SUBSERVICES;
-	else
-		flags&=~ENIGMA_SUBSERVICES;
 	if (flags&(ENIGMA_NVOD|ENIGMA_SUBSERVICES))
 	{
 		ButtonGreenEn->show();
@@ -1352,6 +1342,7 @@ void eZapMain::showServiceSelector(int dir, int selcurrent)
 void eZapMain::nextService(int add)
 {
 	const eServiceReference *service=eZap::getInstance()->getServiceSelector()->next();
+		
 	if (!service)
 		return;
 	else
@@ -1369,6 +1360,7 @@ void eZapMain::nextService(int add)
 void eZapMain::prevService()
 {
 	const eServiceReference *service=eZap::getInstance()->getServiceSelector()->prev();
+
 	if (!service)
 		return;
 	else
@@ -1568,30 +1560,13 @@ void eZapMain::record()
 		else
 			recordDVR(0,1);
 	}
-	else  // build servicename for recording
-	{
-		eString name;
-		eServiceReference ref=eServiceInterface::getInstance()->service;
-		eService *service=eServiceInterface::getInstance()->addRef(ref);
-
-		if (service)
-		{
-			name=service->service_name;
-			eServiceInterface::getInstance()->removeRef(ref);
-		}
-		else
-			name+="record";
-
-		if (cur_event_text != "")
-			name+=" - " + cur_event_text;
-
-		recordDVR(1, 1, name);
-	}
+	else
+		recordDVR(1, 1);
 }
 
 extern int freeDiskspace(int dev, eString mp="");
 
-int eZapMain::recordDVR(int onoff, int user, eString name)
+int eZapMain::recordDVR(int onoff, int user, int event_id)
 {
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
@@ -1603,9 +1578,9 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			recordDVR(0, 0); // try to stop recording.. should not happen
 		if (state & stateRecording)
 			return -2; // already recording
-		eServiceReference ref=eServiceInterface::getInstance()->service;
-		if ( (ref.type != eServiceReference::idDVB) ||
-				(ref.data[0] < 0) || ref.path.size())
+		eServiceReference ref_=eServiceInterface::getInstance()->service;
+		if ( (ref_.type != eServiceReference::idDVB) ||
+				(ref_.data[0] < 0) || ref_.path.size())
 		{
 			if (user)
 			{
@@ -1617,13 +1592,62 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 			return -1; // cannot record this service
 		}
 
-		eString filename;
+		eServiceReferenceDVB &ref=(eServiceReferenceDVB&)ref_;
+		// build filename
+		eString servicename, descr = _("no description available");
+
+		eService *service=0;
+		EITEvent *event=0;
+
+		if ( ref.getServiceType() > 4 )  // nvod or linkage
+			service = eServiceInterface::getInstance()->addRef(refservice);
+		else
+			service = eServiceInterface::getInstance()->addRef(ref);
+
+		if (event_id != -1)
+			event = eEPGCache::getInstance()->lookupEvent( ref, event_id );
+
+		if (service)
+		{
+			servicename = service->service_name;
+			static char strfilter[4] = { 0xC2, 0x87, 0x86, 0x00 };
+			// filter short name brakets...
+			for (eString::iterator it(servicename.begin()); it != servicename.end();)
+				strchr( strfilter, *it ) ? it = servicename.erase(it) : it++;
+
+			if ( ref.getServiceType() > 4 )  // nvod or linkage
+				eServiceInterface::getInstance()->removeRef(refservice);
+			else
+				eServiceInterface::getInstance()->removeRef(ref);
+		}
+		else
+			servicename="record";
+
+		if (cur_event_text.length())
+			descr = cur_event_text;
+
+		else if ( event )
+		{
+			for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
+			{
+				Descriptor *descriptor=*d;
+				if (descriptor->Tag()==DESCR_SHORT_EVENT)
+				{
+					ShortEventDescriptor *ss=(ShortEventDescriptor*)descriptor;
+					descr = ss->event_name;
+					delete event;
+					break;
+				}
+			}
+		}
+
+		eString filename = servicename + " - " + descr;
 		eString cname="";
 
-		for (unsigned int i=0; i<name.length(); ++i)
+		for (unsigned int i=0; i<filename.length(); ++i)
 		{
-			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_- ()", name[i]) || (name[i] >= 0x80)) 	// allow UTF-8
-				cname+=name[i];
+			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_- ()", filename[i]) || (filename[i] >= 0x80)) 	// allow UTF-8
+				cname+=filename[i];
 			else
 				cname+='_';
 		}
@@ -1657,6 +1681,7 @@ int eZapMain::recordDVR(int onoff, int user, eString name)
 
 			eServiceReference ref2=ref;
 			ref2.path=filename;
+			ref2.descr=descr;
 			ePlaylistEntry en(ref2);
 			en.type=ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile;
 			recordings->getList().push_back(en); // add to playlist
@@ -1984,6 +2009,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		}
 	}
 	break;
+
 	case 7: // rename user bouquet
 	{
 		ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(ref);
@@ -2007,7 +2033,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		eServiceInterface::getInstance()->removeRef(ref);
 	}
 	break;
-
+	
 	case 8: // duplicate normal bouquet as user bouquet
 	{
 		// create new user bouquet
@@ -2048,6 +2074,38 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		currentSelectedUserBouquet->save();
 		currentSelectedUserBouquet=0;
 		currentSelectedUserBouquetRef = eServiceReference();
+	}
+	break;
+
+	case 9: // rename recorded movie
+	{
+		std::list<ePlaylistEntry>::iterator it=std::find(recordings->getList().begin(), recordings->getList().end(), ref);
+		if (it == recordings->getList().end())
+			break;
+
+		if ( it->service.type == eServiceReference::idDVB )
+		{
+			if ( it->type & ePlaylistEntry::boundFile )
+			{
+				TextEditWindow wnd(_("Enter new name for the recorded movie:"));
+				hide();
+				wnd.setText(_("Rename recorded movie"));
+				wnd.show();
+				wnd.setEditText(it->service.descr);
+				int ret = wnd.exec();
+				wnd.hide();
+				show();
+				if ( !ret )
+				{
+					if ( it->service.descr != wnd.getEditText() )
+					{
+						it->service.descr = wnd.getEditText();
+						recordings->save();
+						sel->actualize();
+					}
+				}
+			}
+		}
 	}
 	break;
 	}
@@ -2817,8 +2875,6 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		int err = eServiceInterface::getInstance()->getService()->getErrorInfo();
 		serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
 		startService(eServiceInterface::getInstance()->service, err);
-		cur_event_text="";
-		cur_event_id=0;
 		break;
 	}
 	case eServiceEvent::evtStop:
@@ -2922,19 +2978,23 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		else
 			flags&=~ENIGMA_NVOD;
 
+		if (serviceref.getServiceType()==6)
+			flags|=ENIGMA_SUBSERVICES;
+		else
+		{
+			subservicesel.clear();
+			flags&=~ENIGMA_SUBSERVICES;
+		}
+
 		eString name="";
 
 		if (rservice)
-			name=rservice->service_name/* + " - "*/;
+			name=rservice->service_name;
 
 		if (service)
 			name+=service->service_name;
-		else
-			switch (serviceref.getServiceType())
-			{
-			case 5: // nvod stream or linkage subservice ( type faked in SubServiceSelector::selected )
-				;//name+=serviceref.descr;
-			}
+		else if (serviceref.getServiceType() == 6)
+			name+=" - " + serviceref.descr;
 
 		if (!name.length())
 			name="unknown service";
@@ -3536,12 +3596,12 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
 	if (path.type == eServicePlaylistHandler::ID)
 	{
-//		if (!(ref.flags & eListBoxEntryService::flagIsReturn))
-		{
-			new eListBoxEntryText(&list, _("delete"), (void*)1);
-			if (ref.type == eServicePlaylistHandler::ID)
-				new eListBoxEntryText(&list, _("rename"), (void*)7);
-		}
+		new eListBoxEntryText(&list, _("delete"), (void*)1);
+		if (ref.type == eServicePlaylistHandler::ID)
+			new eListBoxEntryText(&list, _("rename"), (void*)7);
+		else if ( ref.type == eServiceReference::idDVB && ref.path.size() )
+			new eListBoxEntryText(&list, _("rename"), (void*)9);
+
 		// move Mode ( only in Favourite lists... )
 		if ( eZap::getInstance()->getServiceSelector()->movemode )
 			new eListBoxEntryText(&list, _("disable move mode"), (void*)2);

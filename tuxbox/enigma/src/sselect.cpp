@@ -355,9 +355,6 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	else */
 		eListBoxEntryService::maxNumSize=45;
 
-/*	if ( services->getCount() == 1 )
-		selected = services->getCurrent()->service;*/
-		
 	services->endAtomic();
 }
 
@@ -1080,7 +1077,11 @@ const eServiceReference *eServiceSelector::next()
 	services->beginAtomic();
 	selectService(eServiceInterface::getInstance()->service);
 
-	eListBoxEntryService *s=services->goNext();
+	eListBoxEntryService *s=0;
+	do
+		s=services->goNext();
+	while ( s && s->flags & eListBoxEntryService::flagIsReturn );
+
 	services->endAtomic();
 	if (s)
 		return &s->service;
@@ -1092,8 +1093,11 @@ const eServiceReference *eServiceSelector::prev()
 {
 	services->beginAtomic();
 	selectService(eServiceInterface::getInstance()->service);
-
-	eListBoxEntryService *s=services->goPrev();
+	eListBoxEntryService *s=0;
+	do
+		s=services->goPrev();
+	while ( s && s->flags & eListBoxEntryService::flagIsReturn );
+	
 	services->endAtomic();
 	if (s)
 		return &s->service;

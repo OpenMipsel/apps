@@ -234,7 +234,17 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, int event_
 	{
 		eventMap::iterator i( It->second.find( event_id ));
 		if ( i != It->second.end() )
-			return new EITEvent( *i->second );
+		{
+			if ( service.getServiceType() == 4 ) // nvod ref
+			{
+				EITEvent *evt = new EITEvent( *i->second );
+				int start_time = evt->start_time;
+				delete evt;
+				return lookupEvent( service, start_time );
+			}
+			else
+				return new EITEvent( *i->second );
+		}
 		else
 			eDebug("event %04x not found in epgcache", event_id);
 	}

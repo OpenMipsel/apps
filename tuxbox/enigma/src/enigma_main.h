@@ -392,7 +392,7 @@ public:
 		psDontAdd=8,  // just play
 	};
 	void playService(const eServiceReference &service, int flags);
-	int recordDVR(int onoff, int user, eString name="");	// starts recording
+	int recordDVR(int onoff, int user, int eventid=-1 ); // starts recording
 //////////////////////////////
 
 	void setMode(int mode, int user=0); // user made change?

@@ -125,7 +125,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			}
 			else if (event.action == &i_cursorActions->right && editMode )
 			{
-				if ( text[curPos] != ' ' )
+				if ( curPos+1 < text.length()-1 )
 					nextChar();
 			}
 			else if (event.action == &i_cursorActions->ok)

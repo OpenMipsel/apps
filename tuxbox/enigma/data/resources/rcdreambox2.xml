@@ -136,7 +136,7 @@
 
 		<actionmap name="enigmaMain" style="default">
 			<action name="showInfobar" key="ok" flags="m" />
-			<action name="hideInfobar" key="ok" flags="m" />			
+			<action name="hideInfobar" key="ok" flags="m" />
 			<action name="serviceListDown" key="down" flags="m" />
 			<action name="serviceListUp" key="up" flags="m" />
 			<action name="showEPG" key="info" flags="m" />
