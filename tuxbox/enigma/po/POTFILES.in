@@ -30,7 +30,10 @@ lib/dvb/serviceplaylist.cpp
 lib/dvb/servicestructure.cpp
 lib/dvb/settings.cpp
 lib/dvb/si.cpp
+lib/dvb/servicepicture.cpp
 lib/dvb/servicemp3.cpp
+lib/dvb/eaudio.cpp
+lib/codecs/codecmpg.cpp
 lib/codecs/pic.cpp
 lib/codecs/picjpeg.cpp
 lib/codecs/codec.cpp
@@ -38,7 +41,6 @@ lib/codecs/codecmp3.cpp
 lib/driver/eavswitch.cpp
 lib/driver/rc.cpp
 lib/driver/rcdbox.cpp
-lib/driver/rcdreambox.cpp
 lib/driver/rcdreambox2.cpp
 lib/driver/streamwd.cpp
 lib/driver/rfmod.cpp
@@ -115,4 +117,10 @@ src/timer.cpp
 src/upgrade.cpp
 src/rotorconfig.cpp
 src/setup_rfmod.cpp
+src/mountmanager.cpp
 src/enigma_event.cpp
+src/wizard_language.cpp
+src/setup_audio.cpp
+src/wizard_scan.cpp
+demux/demux.cpp
+demux/cliptest.cpp
