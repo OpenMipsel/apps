@@ -12,6 +12,7 @@ void eDVBRecorder::dataAvailable(int what)
 	char buffer[BSIZE];
 	int res;
 	int r=::read(dvrfd, buffer, BSIZE);
+	(void)what;
 	if (r<=0)
 	{
 		eDebug("reading failed..(err %d)", -r);
