@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.23 2003/05/24 14:12:09 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.24 2003/05/26 14:33:15 tmbinc Exp $
  */
 
 #include <enigma_setup.h>
@@ -47,6 +47,8 @@
 #include <lib/gui/testpicture.h>
 #include <upgrade.h>
 #include <enigma.h>
+
+Signal1<void,eZapSetup*> eZapSetup::setupHook;
 
 eZapSetup::eZapSetup()
 	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 9, 450, true)
@@ -126,6 +128,7 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapSetup::sel_rfmod);
 #endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Video calibration..."), eString().sprintf("(%d) %s", ++entry, _("show calibration picture")) ))->selected, eZapSetup::sel_test);
+	setupHook(this);
 }
 
 eZapSetup::~eZapSetup()

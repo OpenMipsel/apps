@@ -248,12 +248,11 @@ public:
 template <class T>
 class eListBoxWindow: public eWindow
 {
-protected:
+public:
 	int Entrys;
 	int width;
 	eListBox<T> list;
 	eStatusBar *statusbar;
-public:
 	eListBoxWindow(eString Title="", int Entrys=0, int width=400, bool sbar=0);
 };
 

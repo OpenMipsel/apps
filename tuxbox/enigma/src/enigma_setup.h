@@ -39,6 +39,7 @@ private:
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:
+	static Signal1<void,eZapSetup*> setupHook;
 	eZapSetup();
 	~eZapSetup();
 };
