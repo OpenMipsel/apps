@@ -408,15 +408,8 @@ public:
 
 	void setMode(int mode, int user=0); // user made change?
 	int getMode() { return mode; }
-	void rotateRoot()
-	{
-		eServicePath tmp;
-		getServiceSelectorPath(tmp); // save current path
-		modeLast[mode][0]=modeLast[mode][1];
-//		modeLast[mode][1]=modeLast[mode][2];
-		modeLast[mode][1]=tmp;
-		setServiceSelectorPath(modeLast[mode][0]); // set new path
-	}
+	const eServiceReference& getRecordingsref() { return recordingsref; }
+	void rotateRoot();
 	void toggleTimerMode();
 	void handleStandby();
 
