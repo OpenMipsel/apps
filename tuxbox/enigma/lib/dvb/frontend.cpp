@@ -787,6 +787,7 @@ int eFrontend::tune(eTransponder *trans,
 						commands[i].u.diseqc.cmdtype=0xE1;
 						i++;
 					}
+					eDebug("csw to send: %02x (sizeof: %d/%d)", csw, sizeof(secCommand), sizeof(commands[0]));
 				}
 			}
 		}

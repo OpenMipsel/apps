@@ -29,33 +29,33 @@ void eMainMenu::setActive(int i)
 	switch (i)
 	{
 	case 0:
-		description->setText(_("TV mode"));
+		description->setText(eString("(1) ") + eString(_("TV mode")));
 		break;
 	case 1:
-		description->setText(_("Radio mode"));
+		description->setText(eString("(2) ") + eString(_("Radio mode")));
 		break;
 	case 2:
-		description->setText(_("File mode"));
+		description->setText(eString("(3) ") + eString(_("File mode")));
 		break;
 	case 3:
-		description->setText(_("Information"));
+		description->setText(eString("(4) ") + eString(_("Information")));
 		break;
 	case 4:
-		description->setText(_("Shutdown"));
+		description->setText(eString("(5) ") + eString(_("Shutdown")));
 		break;
 	case 5:
-		description->setText(_("Setup"));
+		description->setText(eString("(6) ") + eString(_("Setup")));
 		break;
 	case 6:
-		description->setText(_("Games"));
+		description->setText(eString("(7) ") + eString(_("Games")));
 		break;
 	case 7:
-		description->setText(_("VCR"));
+		description->setText(eString("(8) ") + eString(_("VCR")));
 		break;
 	case 8:
-		description->setText(_("Timer"));
+		description->setText(eString("(9) ") + eString(_("Timer")));
 	}
-
+	
 	if (LCDTitle)
 		LCDTitle->setText(_("Mainmenu"));
 

@@ -368,7 +368,7 @@ void eMP3Decoder::outputReady2(int what)
 
 void eMP3Decoder::checkFlow(int last)
 {
-	eDebug("I: %d O: %d S: %d", input.size(), output.size(), state);
+// 	eDebug("I: %d O: %d S: %d", input.size(), output.size(), state);
 
 	if (state == statePause)
 		return;
@@ -696,7 +696,7 @@ eService *eServiceHandlerMP3::createService(const eServiceReference &service)
 
 int eServiceHandlerMP3::play(const eServiceReference &service)
 {
-	decoder=new eMP3Decoder(eMP3Decoder::codecMP3, service.path.c_str(), this);
+	decoder=new eMP3Decoder(service.data[0], service.path.c_str(), this);
 	decoder->messages.send(eMP3Decoder::eMP3DecoderMessage(eMP3Decoder::eMP3DecoderMessage::start));
 	
 	if (!decoder->getError())
@@ -777,13 +777,17 @@ void eServiceHandlerMP3::addFile(void *node, const eString &filename)
 		struct stat s;
 		if (::stat(filename.c_str(), &s))
 			return;
+		eServiceReference ref(id, 0, filename);
+		ref.data[0]=eMP3Decoder::codecMP3;
 		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
 	} else if ((filename.right(4).upper()==".MPG") || (filename.right(4).upper()==".VOB"))
 	{
 		struct stat s;
 		if (::stat(filename.c_str(), &s))
 			return;
-		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
+		eServiceReference ref(id, 0, filename);
+		ref.data[0]=eMP3Decoder::codecMPG;
+		eServiceFileHandler::getInstance()->addReference(node, ref);
 	}
 }
 

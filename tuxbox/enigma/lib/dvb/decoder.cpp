@@ -615,8 +615,8 @@ int Decoder::displayIFrameFromFile(const char *filename)
 	int fd=::open(filename, O_RDONLY);
 	if (fd < 0)
 		return -1;
-	int size=::lseek(fd, SEEK_END, 0);
-	::lseek(fd, SEEK_SET, 0);
+	int size=::lseek(fd, 0, SEEK_END);
+	::lseek(fd, 0, SEEK_SET);
 	if (size < 0)
 	{
 		::close(fd);

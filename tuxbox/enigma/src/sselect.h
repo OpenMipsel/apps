@@ -39,13 +39,17 @@ public:
 	void invalidateDescr();
 	static int getEntryHeight();
 	eServiceReference service;
-	enum { flagShowNumber=1, flagOwnNumber=2 };
+	enum { flagShowNumber=1, flagOwnNumber=2, flagIsReturn=4 };
 	eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num=-1);
 	~eListBoxEntryService();
 
 	bool operator<(const eListBoxEntryService &r) const
 	{
-		if (service.getSortKey() == r.service.getSortKey())
+		if (flags & flagIsReturn)
+			return 1;
+		else if (r.flags & flagIsReturn)
+			return 0;
+		else if (service.getSortKey() == r.service.getSortKey())
 			return sort < r.sort;
 		else
 			return service.getSortKey() > r.service.getSortKey();		// sort andersrum

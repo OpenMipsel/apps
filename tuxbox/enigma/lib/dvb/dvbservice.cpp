@@ -12,14 +12,8 @@ eDVBServiceController::eDVBServiceController(eDVB &dvb)
 	CONNECT(dvb.tPMT.tableReady, eDVBServiceController::PMTready);
 	CONNECT(dvb.tSDT.tableReady, eDVBServiceController::SDTready);
 	CONNECT(dvb.tEIT.tableReady, eDVBServiceController::EITready);
-
-	if ( atoi( dvb.getInfo("mID").c_str() ) < 5 )  // no dreambox
-	{
-		eDebug("add CAs");
-		availableCASystems.push_back(0x1702);	// BetaCrypt C (sat)
-		availableCASystems.push_back(0x1722);	// BetaCrypt D (cable)
-		availableCASystems.push_back(0x1762);	// BetaCrypt F (ORF)
-	}
+	
+	initCAlist();
 
 	transponder=0;
 	tdt=0;
@@ -396,6 +390,8 @@ void eDVBServiceController::scanPMT()
 	if ( atoi( dvb.getInfo("mID").c_str() ) > 4 )
 		calist.clear();
 
+	usedCASystems.clear();
+
 	Decoder::parms.descriptor_length=0;
 	
 	DVBCI=eDVB::getInstance()->DVBCI;
@@ -660,14 +656,10 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
       DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf2));
 
 			int avail=0;
-			for (std::list<int>::iterator i = availableCASystems.begin(); i != availableCASystems.end() && !avail; i++)
-			{
-				eDebug("ca id %d == %d", *i, ca->CA_system_ID );
-				if (*i == ca->CA_system_ID)
-				{
+			if (availableCASystems.find(ca->CA_system_ID) != availableCASystems.end())
 					avail++;
-				}
-			}
+			
+			usedCASystems.insert(ca->CA_system_ID);
 
 			if (avail)
 			{
@@ -693,3 +685,16 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
 	return found;
 }
 
+void eDVBServiceController::initCAlist()
+{
+	availableCASystems.clear();
+	if ( atoi( dvb.getInfo("mID").c_str() ) < 5 )  // no dreambox
+	{
+		availableCASystems.insert(0x1702);	// BetaCrypt C (sat)
+		availableCASystems.insert(0x1722);	// BetaCrypt D (cable)
+		availableCASystems.insert(0x1762);	// BetaCrypt F (ORF)
+	} else
+	{
+		availableCASystems.insert(0x4A70);	// DreamCrypt
+	}
+}

@@ -10,12 +10,12 @@ eConfig::eConfig()
 {
 	if (!instance)
 		instance=this;
-
+		
 	setName(CONFIGDIR "/enigma/registry");
 	int e=open();
 	if (e == NC_ERR_CORRUPT)
 	{
-		eFatal("CORRUTPED REGISTRY!");
+		eWarning("CORRUTPED REGISTRY!");
 		::remove(CONFIGDIR "/enigma/registry");
 	}
 	if (e)

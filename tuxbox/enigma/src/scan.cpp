@@ -10,6 +10,7 @@
 #include <lib/gdi/font.h>
 #include <lib/gui/eprogress.h>
 #include <lib/dvb/edvb.h>
+#include <lib/dvb/decoder.h>
 #include <lib/driver/rc.h>
 #include <lib/gui/echeckbox.h>
 #include <lib/gui/combobox.h>
@@ -569,7 +570,7 @@ tsText::tsText(eString sheadline, eString sbody, eWidget *parent): eWidget(paren
 	addActionMap(&i_cursorActions->map);
 	headline=new eLabel(this);
 	headline->setText(sheadline);
-	headline->setFont(gFont("NimbusSansL-Regular Sans L Regular", 32));
+	headline->setFont(eSkin::getActive()->queryFont("head"));
 	body=new eLabel(this, RS_WRAP);
 	body->setText(sbody);
 }
@@ -794,6 +795,7 @@ int TransponderScan::exec()
 	} state=stateMenu;
 
 	window->show();
+	Decoder::displayIFrameFromFile(DATADIR "/pictures/scan.mvi");
 
 	while (state != stateEnd)
 	{
@@ -898,6 +900,7 @@ int TransponderScan::exec()
 		}
 		case stateDone:
 		{
+			eDVB::getInstance()->setMode(eDVB::controllerService);  
 			tsText finish(_("Done."), text, window);
   		finish.setLCD( LCDTitle, LCDElement);
   		finish.move(ePoint(0, 0));
@@ -917,6 +920,8 @@ int TransponderScan::exec()
 
 	eDVB::getInstance()->setMode(eDVB::controllerService);  
 	window->hide();
+	
+	Decoder::Flush();
 
 	return 0;
 }

@@ -89,7 +89,7 @@ eZap::eZap(int argc, char **argv)
 		p.fill(eRect(0, 0, 720, 576));
 		
 		eRect x(10, 10, 100, 50);
-		p.setFont(gFont("NimbusSansL-Regular Sans L Regular", 30));
+		p.setFont(eSkin::getActive()->queryFont("global.30"));
 		for (int i=0; i<100; i++)
 		{
 			x.moveBy(5, 5);
@@ -275,7 +275,8 @@ int main(int argc, char **argv)
 	bindtextdomain ("tuxbox-enigma", "/share/locale");
 	bind_textdomain_codeset("tuxbox-enigma", "UTF8");
 	textdomain ("tuxbox-enigma");
-	
+
+	Decoder::Initialize();	
 	Decoder::displayIFrameFromFile("/iframe");
 	
 //	mtrace();
@@ -285,6 +286,8 @@ int main(int argc, char **argv)
 		eZap ezap(argc, argv);
 		res=ezap.exec();
 	}
+	
+	Decoder::Flush();
 	exit(res);
 //	mcheck_check_all();
 //	muntrace();

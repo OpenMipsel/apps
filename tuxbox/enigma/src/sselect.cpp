@@ -33,7 +33,9 @@ eListBoxEntryService *eListBoxEntryService::selectedToMove=0;
 struct serviceSelectorActions
 {
 	eActionMap map;
-	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio, modeFile, toggleStyle, toggleFocus;
+	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
+			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio, 
+			modeFile, toggleStyle, toggleFocus, gotoFirstService, gotoLastService;
 	serviceSelectorActions():
 		map("serviceSelector", _("service selector")),
 		nextBouquet(map, "nextBouquet", _("switch to next bouquet"), eAction::prioDialogHi),
@@ -48,7 +50,9 @@ struct serviceSelectorActions
 		modeRadio(map, "modeRadio", _("switch to Radio mode"), eAction::prioDialog),
 		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog),
 		toggleStyle(map, "toggleStyle", _("toggle between classic and multi column style"), eAction::prioDialog),
-		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list"), eAction::prioDialog)
+		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list"), eAction::prioDialog),
+		gotoFirstService(map, "gotoFirstService", _("go to first service"), eAction::prioDialogHi),
+		gotoLastService(map, "gotoLastService", _("go to last service"), eAction::prioDialogHi)
 	{
 	}
 };
@@ -57,14 +61,18 @@ eAutoInitP0<serviceSelectorActions> i_serviceSelectorActions(eAutoInitNumbers::a
 eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num)
 	:eListBoxEntry((eListBox<eListBoxEntry>*)lb),	numPara(0), namePara(0), descrPara(0), nameXOffs(0), flags(flags), num(num), service(service)
 {
+	if (!(flags & flagIsReturn))
+	{
 #if 0
-	sort=eString().sprintf("%06d", service->service_number);
+		sort=eString().sprintf("%06d", service->service_number);
 #else
-	const eService *pservice=eServiceInterface::getInstance()->addRef(service);
-	sort=pservice?pservice->service_name:"";
-	sort.upper();
-	eServiceInterface::getInstance()->removeRef(service);
+		const eService *pservice=eServiceInterface::getInstance()->addRef(service);
+		sort=pservice?pservice->service_name:"";
+		sort.upper();
+		eServiceInterface::getInstance()->removeRef(service);
 #endif
+	} else
+		sort="";
 }
 
 eListBoxEntryService::~eListBoxEntryService()
@@ -161,12 +169,16 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 
 		if (pservice)
 			sname=pservice->service_name;
+		else if (flags & flagIsReturn)
+			sname="[GO UP]";
 		else
 			sname="(removed service)";
 
 		namePara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
 		namePara->setFont( serviceFont );
 		namePara->renderString( sname );
+		if (flags & flagIsReturn)
+			namePara->realign(eTextPara::dirCenter);
 		nameYOffs = ((rect.height() - namePara->getBoundBox().height()) / 2 ) - namePara->getBoundBox().top();	
 	}
 	// we can always render namePara
@@ -260,7 +272,9 @@ struct renumber: public std::unary_function<const eListBoxEntryService&, void>
 
 	bool operator()(eListBoxEntryService& s)
 	{
-		if ( !(s.service.flags & eServiceReference::isDirectory) )
+		if (!s.service)
+			return 0;
+		if ( !(s.service.flags & (eServiceReference::isDirectory)) )
 	 		s.num = ++num;
 		return 0;
 	}
@@ -291,6 +305,8 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	services->beginAtomic();
 	services->clearList();
 
+	if (path.size() > 1)
+		new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
 	eServiceInterface *iface=eServiceInterface::getInstance();
 	ASSERT(iface);
 	
@@ -528,8 +544,22 @@ void eServiceSelector::EPGUpdated( const tmpMap *m)
 
 void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 {
-	if (entry && entry->service)
+	if (entry)
 	{
+		if (entry->flags & eListBoxEntryService::flagIsReturn)
+		{
+			if (path.size() > ( (style == styleCombiColumn) ? 2 : 1) )
+			{
+				services->beginAtomic();
+				eServiceReference last=path.current();
+				path.up();
+				actualize();
+				selectService( last );
+				services->endAtomic();
+			} else if (style == styleCombiColumn)
+				setFocus(bouquets);
+			return;
+		}
 		eServiceReference ref=entry->service;
 
 		if (movemode)
@@ -632,14 +662,18 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			{
 				services->beginAtomic();
 				if (style == styleCombiColumn)
-					bouquets->goPrev();
-				else
+				{
+					if (bouquets->goNext()->flags & eListBoxEntryService::flagIsReturn)
+						bouquets->goPrev();
+				} else
 				{
 					eServiceReference last=path.current();
 					path.up();
 					fillServiceList(path.current());
 					selectService( last );
 					eListBoxEntryService* p = services->goPrev();
+					if (p && (p->flags&eListBoxEntryService::flagIsReturn))
+						p=services->goPrev();
 					if (p)
 					{
 						path.down( p->service );
@@ -653,14 +687,18 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			{
 				services->beginAtomic();
 				if (style == styleCombiColumn)
-					bouquets->goNext();
-				else
+				{
+					if (bouquets->goNext()->flags & eListBoxEntryService::flagIsReturn)
+						bouquets->goNext();
+				} else
 				{
 					eServiceReference last=path.current();
 					path.up();
 					fillServiceList(path.current());
 					selectService( last );
 					eListBoxEntryService* p = services->goNext();
+					if (p && (p->flags&eListBoxEntryService::flagIsReturn))
+						p=services->goNext();
 					if (p)
 					{
 						path.down( p->service );
@@ -733,6 +771,10 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				/*emit*/ setMode(eZapMain::modeRadio);
 			else if (event.action == &i_serviceSelectorActions->modeFile && !movemode)
 				/*emit*/ setMode(eZapMain::modeFile);
+			else if (event.action == &i_serviceSelectorActions->gotoFirstService)
+				services->moveSelection(services->dirFirst);
+			else if (event.action == &i_serviceSelectorActions->gotoLastService)
+				services->moveSelection(services->dirLast);
 			else if (event.action == &i_cursorActions->cancel)
 			{
 				if (movemode)

@@ -13,5 +13,5 @@
 200301301950 6 * Language setup wizard
 200301301950 4 56 MPEG Player
 200301301950 7 * New Runlevels (for plugins)
-
-
+200302032000 4 56 improved readability of fonts
+200302032000 3 * implemented shortcuts in setup menu

@@ -358,7 +358,7 @@ void eDVBCI::clearCAIDs()
 	if(!sapi)
 		return;
 		
-	std::list<int>& availCA = sapi->availableCASystems;
+	std::set<int>& availCA = sapi->availableCASystems;
 
 	lock.lock();
 	availCA.clear();
@@ -378,12 +378,12 @@ void eDVBCI::pushCAIDs()
 	if(!sapi)
 		return;
 
-	std::list<int>& availCA = sapi->availableCASystems;
+	std::set<int>& availCA = sapi->availableCASystems;
 
 	lock.lock();	
 	eDebug("count for caids: %d",caidcount);
 	for(unsigned int i=0;i<caidcount;i++)
-		availCA.push_back(caids[i]);
+		availCA.insert(caids[i]);
 
 	lock.unlock();
 }

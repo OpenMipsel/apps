@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.10 2003/01/30 08:47:17 bernroth Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.11 2003/02/06 13:22:34 tmbinc Exp $
  */
 
 #include <enigma_setup.h>
@@ -26,7 +26,7 @@
 #include <setupnetwork.h>
 #include <setupvideo.h>
 #include <setup_audio.h>
-#include <setup_language.h>
+#include <wizard_language.h>
 #include <setup_osd.h>
 #include <setup_lcd.h>
 #include <setup_rc.h>
@@ -43,9 +43,9 @@
 #include "upgrade.h"
 
 eZapSetup::eZapSetup()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 12, 300, true)
+	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 8, 450, true)
 {
-	move(ePoint(150, 90));
+	move(ePoint(135, 120));
 	int havenetwork, haveci, haveharddisk, havelcd, haverfmod;
 	switch (atoi(eDVB::getInstance()->getInfo("mID").c_str()))
 	{
@@ -80,26 +80,33 @@ eZapSetup::eZapSetup()
 		haverfmod=0;
 	}
 	
-	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to main menu") ))->selected, eZapSetup::sel_close);
-	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), _("open channel setup") ))->selected, eZapSetup::sel_channels);
+	list.setColumns(2);
+	addActionMap(&i_shortcutActions->map);
+		
+	int entry=0;
+	
+	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), eString().sprintf("(%d) %s", ++entry, _("back to main menu")) ))->selected, eZapSetup::sel_close);
+	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), eString().sprintf("(%d) %s", ++entry, _("open channel setup")) ))->selected, eZapSetup::sel_channels);
 	if (havenetwork)
-		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), _("open network setup") ))->selected, eZapSetup::sel_network);
-	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), _("open OSD setup") ))->selected, eZapSetup::sel_osd);
+		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), eString().sprintf("(%d) %s", ++entry, _("open network setup")) ))->selected, eZapSetup::sel_network);
+	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), eString().sprintf("(%d) %s", ++entry, _("open OSD setup")) ))->selected, eZapSetup::sel_osd);
 	if (havelcd)
-		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open LCD setup") ))->selected, eZapSetup::sel_lcd);
-	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), _("open remote control setup") ))->selected, eZapSetup::sel_rc);
-	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), _("open video setup") ))->selected, eZapSetup::sel_video);
-	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), _("open audio setup") ))->selected, eZapSetup::sel_sound);
-	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), _("open skin selector") ))->selected, eZapSetup::sel_skin);
-	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), _("open language selector") ))->selected, eZapSetup::sel_language);
+		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), eString().sprintf("(%d) %s", ++entry, _("open LCD setup")) ))->selected, eZapSetup::sel_lcd);
+	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), eString().sprintf("(%d) %s", ++entry, _("open remote control setup")) ))->selected, eZapSetup::sel_rc);
+	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), eString().sprintf("(%d) %s", ++entry, _("open video setup")) ))->selected, eZapSetup::sel_video);
+	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), eString().sprintf("(%d) %s", ++entry, _("open audio setup")) ))->selected, eZapSetup::sel_sound);
+	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), eString().sprintf("(%d) %s", ++entry, _("open skin selector")) ))->selected, eZapSetup::sel_skin);
+	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
 	if (haveharddisk)
-		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), _("open harddisk setup") ))->selected, eZapSetup::sel_harddisk);
+		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), eString().sprintf("(%d) %s", ++entry, _("open harddisk setup")) ))->selected, eZapSetup::sel_harddisk);
 	if (haveci)
-		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), _("show CI Menu") ))->selected, eZapSetup::sel_ci);
+		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), eString().sprintf("(%d) %s", ++entry, _("show CI Menu")) ))->selected, eZapSetup::sel_ci);
 	if (havenetwork)
-		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), _("upgrade firmware") ))->selected, eZapSetup::sel_upgrade);
+		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), eString().sprintf("(%d) %s", ++entry, _("upgrade firmware")) ))->selected, eZapSetup::sel_upgrade);
 	if (haverfmod)
-		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), _("setup modulator") ))->selected, eZapSetup::sel_rfmod);
+		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapSetup::sel_rfmod);
+
+	list.selchanged(list.getCurrent());
 }
 
 eZapSetup::~eZapSetup()
@@ -209,13 +216,14 @@ void eZapSetup::sel_video()
 
 void eZapSetup::sel_language()
 {
-	hide();
+/*	hide();
 	eZapLanguageSetup setup;
 	setup.setLCD(LCDTitle, LCDElement);
 	setup.show();
 	setup.exec();
 	setup.hide();
-	show();
+	show(); */
+	eWizardLanguage::run();
 }
 
 void eZapSetup::sel_harddisk()
@@ -271,3 +279,64 @@ void eZapSetup::sel_rfmod()
 	setup.hide();
 	show();
 }
+
+class eZapSetupSelectN
+{
+	int n;
+public:
+	eZapSetupSelectN(int n): n(n) { }
+	bool operator()(eListBoxEntryMenu &e)
+	{
+		if (!n--)
+		{
+			e.selected();
+			return 1;
+		}
+		return 0;
+	}
+};
+
+void eZapSetup::sel_num(int n)
+{
+	list.forEachEntry(eZapSetupSelectN(n));
+}
+
+int eZapSetup::eventHandler(const eWidgetEvent &event)
+{
+	int num=-1;
+	switch (event.type)
+	{
+	case eWidgetEvent::evtAction:
+		if (event.action == &i_shortcutActions->number0)
+			num=9;
+		else if (event.action == &i_shortcutActions->number1)
+			num=0;
+		else if (event.action == &i_shortcutActions->number2)
+			num=1;
+		else if (event.action == &i_shortcutActions->number3)
+			num=2;
+		else if (event.action == &i_shortcutActions->number4)
+			num=3;
+		else if (event.action == &i_shortcutActions->number5)
+			num=4;
+		else if (event.action == &i_shortcutActions->number6)
+			num=5;
+		else if (event.action == &i_shortcutActions->number7)
+			num=6;
+		else if (event.action == &i_shortcutActions->number8)
+			num=7;
+		else if (event.action == &i_shortcutActions->number9)
+			num=8;
+		else if (event.action == &i_cursorActions->cancel)
+			close(0);
+		else
+			break;
+		if (num != -1)
+			sel_num(num);
+		return 1;
+	default:
+		break;
+	}
+	return eWidget::eventHandler(event);
+}
+

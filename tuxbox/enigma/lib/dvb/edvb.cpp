@@ -102,8 +102,8 @@ eDVB::eDVB()
 		// tuned-in handling
 	CONNECT(eFrontend::getInstance()->tunedIn, eDVB::tunedIn);
 
-		// decoder init
-	Decoder::Initialize();
+		// decoder init .... already done!
+//	Decoder::Initialize();
 	
 		// set to idle state
 	controller=0;
