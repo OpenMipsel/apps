@@ -1,4 +1,4 @@
-#undef USE_MULTI_EPG
+// #define USE_MULTI_EPG
 #include <algorithm>
 #include <list>
 
@@ -780,7 +780,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->showEPGSelector && !movemode && !editMode)
 			{
-#ifdef USE_MULTI_EPG
+#ifndef USE_MULTI_EPG
 				const eventMap* e=0;
 				if (selected.type == eServiceReference::idDVB)
 				 	e = eEPGCache::getInstance()->getEventMap((eServiceReferenceDVB&)selected);
