@@ -4135,8 +4135,11 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 					{
 						ePlaylist *pl = (ePlaylist*)eServiceInterface::getInstance()->addRef( p->getList().front().service );
 						std::list<ePlaylistEntry>::iterator it(pl->getList().begin());
+
 						for (; it != pl->getList().end(); it++ )
-							if (!--num)
+							if ( it->service.flags & eServiceReference::isMarker )
+								continue;
+							else if (!--num)
 								break;
 
 						if (!num)

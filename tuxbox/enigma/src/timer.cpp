@@ -254,7 +254,7 @@ void eTimerManager::timeChanged()
 {
 	writeToLogfile("--> timeChanged()");
 	if ( nextStartingEvent != timerlist->getConstList().end()
-		&& nextStartingEvent->type & ePlaylistEntry::stateWaiting )
+		&& !(nextStartingEvent->type & ePlaylistEntry::stateRunning) )
 	{
 		nextAction=setNextEvent;
 		actionTimer.start(0, true);
@@ -395,7 +395,6 @@ void eTimerManager::actionHandler()
 				writeToLogfile("reset all state Flags for repeated event");
 				nextStartingEvent->type &= ~(
 					ePlaylistEntry::stateError |
-					ePlaylistEntry::stateWaiting |
 					ePlaylistEntry::stateFinished |
 					ePlaylistEntry::statePaused |
 					ePlaylistEntry::errorNoSpaceLeft |
@@ -404,8 +403,7 @@ void eTimerManager::actionHandler()
 					ePlaylistEntry::errorOutdated );
 				nextStartingEvent->last_activation = getDate();
 			}
-			else
-				nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
+			nextStartingEvent->type &= ~ePlaylistEntry::stateWaiting;
 
 			nextStartingEvent->type |= ePlaylistEntry::stateRunning;
 
@@ -884,6 +882,8 @@ void eTimerManager::EITready( int error )
 
 						case 4:
 							eDebug("running");
+							// HERE WE MUST LATER HANDLE REPEATING EVENTS !!
+							// stateWaiting is removed, when the event was running once
 							if ( nextStartingEvent->type & ePlaylistEntry::stateWaiting )
 								nextAction=startEvent;
 							else if ( nextStartingEvent->type & ePlaylistEntry::statePaused )
@@ -1030,6 +1030,7 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 				str2 = _("Update event in timerlist");
 				str3 = _("Really update this event?");
 			}
+			// show messageBox blasel.. running event...
 			if ( &(*nextStartingEvent) == &entry && entry.type & ePlaylistEntry::stateRunning  )
 			{
 				eMessageBox box(str1, str2, eMessageBox::btOK|eMessageBox::iconWarning );
@@ -1052,7 +1053,7 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 						nextStartingEvent->type |= (ePlaylistEntry::stateError | ePlaylistEntry::errorUserAborted);
 						actionHandler();
 					}
-					else if ( nextStartingEvent->type & ePlaylistEntry::stateWaiting )
+					else if ( !(nextStartingEvent->type & ePlaylistEntry::stateRunning) )
 					{
 						nextAction=setNextEvent;
 						actionHandler();
@@ -1124,7 +1125,6 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 				overlap = msOverlap( entry, *i );
 			else overlap = ( !( i->type & (ePlaylistEntry::stateError|ePlaylistEntry::stateFinished) )
 									&& Overlap( entry.time_begin, entry.duration, i->time_begin, i->duration) );
-
 			if ( overlap )
 			{
 				if ( entry.type & ePlaylistEntry::doFinishOnly )
@@ -1154,8 +1154,8 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 	if (!exclude)
 	{
 		timerlist->getList().push_back( entry );
-		if ( ( ( nextStartingEvent != timerlist->getList().end() ) && (nextStartingEvent->type & ePlaylistEntry::stateWaiting) )
-				|| ( nextStartingEvent == timerlist->getList().end() ) )
+		if ( nextStartingEvent == timerlist->getList().end() ||
+				!(nextStartingEvent->type & ePlaylistEntry::stateRunning) )
 		{
 			nextAction = setNextEvent;
 			actionHandler();
