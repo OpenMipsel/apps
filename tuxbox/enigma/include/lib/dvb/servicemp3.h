@@ -53,6 +53,8 @@ class eMP3Decoder: public eThread, public eMainloop, public Object
 	eString metadata[2];
 	
 	void metaDataUpdated(eString metadata);
+	int getOutputDelay(int i); // in bytes
+	int getOutputRate(int i); // in bytes/s
 	
 	int error;
 	int outputbr;

@@ -65,7 +65,9 @@ int eMPEGDemux::decodeMore(int last, int maxsamples)
 	
 	while (written < maxsamples)
 	{
-		int scerr=0;
+#ifdef DEMUX_DEBUG
+		int scerr=0, v;
+#endif
 		while (1)	// search for start code.
 		{
 			if (input.size() < 4096)
@@ -73,11 +75,21 @@ int eMPEGDemux::decodeMore(int last, int maxsamples)
 				maxsamples=0;
 				break;
 			}
-			if (scerr++)
+#ifdef DEMUX_DEBUG
+			if (scerr++ == 1)
 				eDebug("startcode search!");
+#endif
 			syncBits();
+#ifdef DEMUX_DEBUG
+			if (v=getBits(8))
+			{
+				eDebugNoNewLine("%02x ", v);
+				continue;
+			}
+#else
 			if (getBits(8))
 				continue;
+#endif
 a:
 			if (getBits(8))
 				continue;
@@ -88,6 +100,10 @@ a:
 				continue;
 			break;
 		}
+#ifdef DEMUX_DEBUG
+		if (scerr > 1)
+			eDebug("skipped ~%d bytes", scerr-1);
+#endif
 		if (!maxsamples)
 			break;
 		unsigned int code=getBits(8);
@@ -96,8 +112,18 @@ a:
 			break;
 		else if (code == 0xba) // pack_start_code
 		{
-			if (getBits(2) != 1)
+			int type = getBits(2);
+			
+			if (type != 1)
+			{
+				getBits(6);
+				getBits(16);
+				getBits(16);
+				getBits(16);
+				getBits(8);
 				continue;
+			}
+				
 			int scr_base0, scr_base, scr_ext;
 			scr_base0=getBits(3);
 			scr_base=scr_base0<<30;
@@ -172,7 +198,8 @@ a:
 			}
 			getBits(32);
 #endif
-		} else  // if (((code & 0xE0) == 0xC0) || ((code & 0xF0)==0xE0))
+		} else if (code > 0xBC)
+		  // if (((code & 0xE0) == 0xC0) || ((code & 0xF0)==0xE0))
 		{
 //			eDebug("PES: %x", code);
 			int length=getBits(16);
@@ -208,7 +235,8 @@ a:
 				audio.write(buffer, p);
 				written+=p;
 			}
-		}
+		} else
+			eDebug("startcode %x unhandled!\n", code);
 	}
 	return written;
 }
@@ -225,7 +253,7 @@ int eMPEGDemux::getMinimumFramelength()
 
 int eMPEGDemux::getAverageBitrate()
 {
-	return 1234567;
+	return 3*1024*1024;
 }
 
 #endif // DISABLE_FILE

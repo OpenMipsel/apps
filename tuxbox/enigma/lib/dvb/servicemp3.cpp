@@ -290,6 +290,21 @@ void eMP3Decoder::metaDataUpdated(eString meta)
 	handler->messages.send(eServiceHandlerMP3::eMP3DecoderMessage(eServiceHandlerMP3::eMP3DecoderMessage::infoUpdated));
 }
 
+int eMP3Decoder::getOutputDelay(int i)
+{
+	int delay = 0;
+	if (::ioctl(dspfd[0], SNDCTL_DSP_GETODELAY, &delay) < 0)
+		eDebug("SNDCTL_DSP_GETODELAY failed");
+	else
+		eDebug("%d", delay);
+	return delay;
+}
+
+int eMP3Decoder::getOutputRate(int i)
+{
+	return pcmsettings.samplerate*pcmsettings.channels*2;
+}
+
 void eMP3Decoder::streamingDone(int err)
 {
 	if (err || !http || http->code != 200)
@@ -666,7 +681,29 @@ int eMP3Decoder::getPosition(int real)
 	recalcPosition();
 	eLocker l(poslock);
 	if (real)
-		return ::lseek(sourcefd, 0, SEEK_CUR)-input.size();
+	{
+			// our file pos
+		size_t real = ::lseek(sourcefd, 0, SEEK_CUR);
+			// minus bytes still in input buffer
+		real -= input.size();
+			// minus not yet played data in a.) output buffers and b.) dsp buffer
+		long long int nyp = output.size();
+		int obr = getOutputRate(0);
+		
+		if (obr > 0)
+		{
+			nyp += getOutputDelay(0);
+			eDebug("ODelay: %d bytes", (int)nyp);
+				// convert to input bitrate
+			eDebug("%d, %d", audiodecoder->getAverageBitrate()/8, obr);
+			nyp *= (long long int)audiodecoder->getAverageBitrate()/8;
+			nyp /= (long long int)obr;
+			eDebug("odelay: %d bytes", (int)nyp);
+		} else
+			nyp = 0;
+		
+		return real - nyp;
+	}
 	return position;
 }
 
