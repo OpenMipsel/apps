@@ -1,5 +1,5 @@
 /*
- * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/settings.h,v 1.8.2.1 2003/02/18 15:16:46 alexw Exp $
+ * $Header: /cvs/tuxbox/apps/dvb/zapit/include/zapit/settings.h,v 1.8.2.2 2003/03/24 10:29:30 alexw Exp $
  *
  * zapit's settings - d-box2 linux project
  *
@@ -36,8 +36,8 @@
 #define SERVICES_XML    CONFIGDIR "/zapit/services.xml"
 #define BOUQUETS_XML    CONFIGDIR "/zapit/bouquets.xml"
 
-#define CABLES_XML      "/etc/cables.xml"
-#define SATELLITES_XML  "/etc/satellites.xml"
+#define CABLES_XML      "/share/tuxbox/cables.xml"
+#define SATELLITES_XML  "/share/tuxbox/satellites.xml" 
 
 #define AUDIO_DEVICE    "/dev/dvb/card0/audio0"
 #define DEMUX_DEVICE    "/dev/dvb/card0/demux0"
