@@ -4,6 +4,9 @@
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
  ******************************************************************************
  * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.12  2003/07/25 11:53:32  ghostrider
+ * changes for dreambox PIG
+ *
  * Revision 1.37.2.11  2003/07/02 15:39:22  lazyt
  * fix language display
  *
@@ -51,7 +54,7 @@
 
 void plugin_exec(PluginParam *par)
 {
-	char cvs_revision[] = "$Revision: 1.37.2.11 $", versioninfo[16];
+	char cvs_revision[] = "$Revision: 1.37.2.12 $", versioninfo[16];
 
 	//show versioninfo
 
@@ -2182,7 +2185,7 @@ void SwitchScreenMode()
 
 	//clear backbuffer
 
-		memset(&backbuffer, black, sizeof(backbuffer));
+		memset(&backbuffer, screenmode?transp:black, sizeof(backbuffer));
 
 	//set mode
 
@@ -2820,8 +2823,11 @@ void CreateLine25()
 	int cancel_page;
 
 	char line25_1[] = "   ?00<      ??0<      >??0      >?00   ((((((((((1111111111AAAAAAAAAAXXXXXXXXXX";
+#ifndef DREAMBOX
 	char line25_2[] = " 瀔 w{hlen   嚦 anzeigen   黀 abbrechen 尹角中中中中尹角中中中中中尹角中中中中中";
-//	char line25_2[] = " 瀔 w{hlen   嚦 anzeigen   蘜 abbrechen 尹角中中中中尹角中中中中中尹角中中中中中";
+#else
+	char line25_2[] = " 瀔 w{hlen   嚦 anzeigen   蘜 abbrechen 尹角中中中中尹角中中中中中尹角中中中中中";
+#endif
 
 	//get prev 100th
 
