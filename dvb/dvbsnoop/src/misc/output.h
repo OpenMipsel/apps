@@ -1,14 +1,31 @@
 /*
-$Id: output.h,v 1.2.2.3 2003/11/17 07:07:44 coronas Exp $
+$Id: output.h,v 1.2.2.4 2003/11/26 20:38:08 coronas Exp $
 
-  dvbsnoop
-  (c) Rainer Scherg 2001-2003
+
+ DVBSNOOP
+
+ a dvb sniffer  and mpeg2 stream analyzer tool
+ mainly for me to learn about dvb streams, mpeg2, mhp, dsm-cc, ...
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
+
 
   Output Module
 
+
+
 $Log: output.h,v $
-Revision 1.2.2.3  2003/11/17 07:07:44  coronas
+Revision 1.2.2.4  2003/11/26 20:38:08  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.6  2003/11/26 19:55:33  rasc
+no message
+
+Revision 1.5  2003/11/26 16:27:46  rasc
+- mpeg4 descriptors
+- simplified bit decoding and output function
 
 Revision 1.4  2003/07/08 19:59:50  rasc
 restructuring... some new, some fixes,
@@ -16,6 +33,11 @@ trying to include DSM-CC, Well someone a ISO13818-6 and latest version of ISO 18
 
 
 */
+
+
+#ifndef __OUTPUT_H
+#define __OUTPUT_H 1
+
 
 void indent (int v);
 void setVerboseLevel (int v);
@@ -52,5 +74,9 @@ void print_indent(void);
 #define out_S2W_NL(v,str,hex,str2)   out_nl((v),"%s%u (0x%04x)  [= %s]",(str),(hex),(hex),(str2))
 #define out_S2B_NL(v,str,hex,str2)   out_nl((v),"%s%u (0x%02x)  [= %s]",(str),(hex),(hex),(str2))
 
+
+
+
+#endif
 
 

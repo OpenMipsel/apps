@@ -1,16 +1,27 @@
 /*
-$Id: dvb_descriptor.h,v 1.3.2.2 2003/11/17 07:07:42 coronas Exp $ 
+$Id: dvb_descriptor.h,v 1.3.2.3 2003/11/26 20:38:04 coronas Exp $ 
 
 
-  dvbsnoop
-  (c) Rainer Scherg 2001-2003
+ DVBSNOOP
 
-  DVB Descriptors  ETSI 300 468
+ a dvb sniffer  and mpeg2 stream analyzer tool
+ mainly for me to learn about dvb streams, mpeg2, mhp, dsm-cc, ...
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
+
+
+ -- DVB Descriptors  ETSI 300 468
+
 
 
 $Log: dvb_descriptor.h,v $
-Revision 1.3.2.2  2003/11/17 07:07:42  coronas
+Revision 1.3.2.3  2003/11/26 20:38:04  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.4  2003/11/26 19:55:32  rasc
+no message
 
 Revision 1.3  2003/10/25 19:11:49  rasc
 no message
@@ -24,6 +35,10 @@ trying to include DSM-CC, Well someone a ISO13818-6 and latest version of ISO 18
 
 
 */
+
+
+#ifndef _DVB_DESCRIPTOR_H
+#define _DVB_DESCRIPTOR_H 1
 
 
 int   descriptorDVB (u_char *b);
@@ -83,4 +98,7 @@ void  descriptorDVB_ApplicationSignalling(u_char *b);
 void  descriptorDVB_AdaptionFieldData(u_char *b);
 void  descriptorDVB_ServiceIdentifier(u_char *b);
 void  descriptorDVB_ServiceAvailability(u_char *b);
+
+
+#endif
 

@@ -1,21 +1,35 @@
 /*
-$Id: dvb_descriptor.c,v 1.12.2.2 2003/11/17 07:07:41 coronas Exp $ 
+$Id: dvb_descriptor.c,v 1.12.2.3 2003/11/26 20:38:04 coronas Exp $ 
 
 
-  dvbsnoop
-  (c) Rainer Scherg 2001-2003
+ DVBSNOOP
 
-  DVB Descriptors  ETSI 300 468
+ a dvb sniffer  and mpeg2 stream analyzer tool
+ mainly for me to learn about dvb streams, mpeg2, mhp, dsm-cc, ...
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
 
 
-  EN/ISO/TR document references in comments may habe been changed
-  during updates of documents by ETSI.
+
+ -- DVB Descriptors  ETSI 300 468
+ -- EN/ISO/TR document references in comments may habe been changed
+ -- during updates of documents by ETSI.
 
 
 
 $Log: dvb_descriptor.c,v $
-Revision 1.12.2.2  2003/11/17 07:07:41  coronas
+Revision 1.12.2.3  2003/11/26 20:38:04  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.18  2003/11/26 16:27:45  rasc
+- mpeg4 descriptors
+- simplified bit decoding and output function
+
+Revision 1.17  2003/11/24 23:52:16  rasc
+-sync option, some TS and PES stuff;
+dsm_addr inactive, may be wrong - due to missing ISO 13818-6
 
 Revision 1.16  2003/11/09 20:48:34  rasc
 pes data packet (DSM-CC)
@@ -1828,7 +1842,7 @@ void descriptorDVB_Teletext (u_char *b)
     len -= 5;
 
     out_nl     (4,"ISO639_language_code:  %3.3s", d2.ISO_639_language_code);
-    out_S2B_NL (4,"Teletext_tye: ", d2.teletext_type,
+    out_S2B_NL (4,"Teletext_type: ", d2.teletext_type,
 	dvbstrTeletext_TYPE (d2.teletext_type));
 
     out_SB_NL (4,"Teletext_magazine_number: ",d2.teletext_magazine_number);

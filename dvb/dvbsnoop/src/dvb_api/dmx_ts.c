@@ -1,16 +1,24 @@
 /*
-$Id: dmx_ts.c,v 1.3.2.3 2003/11/17 07:07:44 coronas Exp $
+$Id: dmx_ts.c,v 1.3.2.4 2003/11/26 20:38:07 coronas Exp $
 
- -- (c) 2001 rasc
  -- Transport Streams
  --  For more information please see:
  --  ISO 13818 (-1) and ETSI 300 468
 
- -- Verbose Level >= 1
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
+
+
 
 $Log: dmx_ts.c,v $
-Revision 1.3.2.3  2003/11/17 07:07:44  coronas
+Revision 1.3.2.4  2003/11/26 20:38:07  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.10  2003/11/24 23:52:16  rasc
+-sync option, some TS and PES stuff;
+dsm_addr inactive, may be wrong - due to missing ISO 13818-6
 
 Revision 1.9  2003/10/24 22:45:06  rasc
 code reorg...
@@ -58,6 +66,12 @@ dvbsnoop v0.7  -- Commit to CVS
 
 #define TS_BUF_SIZE  (256 * 1024)
 #define READ_BUF_SIZE (188)          /* TS RDSIZE is fixed !! */
+#define TS_SYNC_BYTE  (0x47)         /* SyncByte fuer TS  ISO 138181-1 */
+
+
+
+static long ts_SyncRead (int fd, u_char *buf, long buflen, long *skipped_bytes);
+
 
 
 
@@ -138,9 +152,14 @@ int  doReadTS (OPTION *opt)
   count = 0;
   while (1) {
     long   n;
+    long   skipped_bytes = 0;
 
 
-    n = read(fd_dvr,buf,sizeof(buf));
+    if (opt->packet_header_sync) {
+    	n = ts_SyncRead(fd_dvr,buf,sizeof(buf), &skipped_bytes);
+    } else {
+    	n = read(fd_dvr,buf,sizeof(buf));
+    }
 
 
     // -- error or eof?
@@ -150,7 +169,6 @@ int  doReadTS (OPTION *opt)
 	if (!fileMode) continue;	// DVRmode = no eof!
 	else break;			// filemode eof 
     }
-
 
 
     count ++;
@@ -169,6 +187,9 @@ int  doReadTS (OPTION *opt)
        out_nl (1,"TS-Packet: %08ld   PID: %u (0x%04x), Length: %d (0x%04x)",
 		count, opt->pid,opt->pid,n,n);
        out_receive_time (1, opt);
+       if (skipped_bytes) {
+          out_nl (1,"Syncing TS... (%ld bytes skipped)",skipped_bytes);
+       }
        out_nl (1,"---------------------------------------------------------");
 
 
@@ -215,6 +236,42 @@ int  doReadTS (OPTION *opt)
 
   close(fd_dvr);
   return 0;
+}
+
+
+
+/*
+ * -- sync read
+ * -- Seek TS sync-byte and read buffer
+ * -- return: equivalent to read();
+ */
+
+static long  ts_SyncRead (int fd, u_char *buf, long buflen, long *skipped_bytes)
+
+{
+    int    n = 0;
+
+
+    // -- simple TS sync...
+    // -- $$$ to be improved:
+    // -- $$$  (best would be: check if buf[188] is also a sync byte)
+
+    *skipped_bytes = 0;
+    while (1) {
+    	n = read(fd,buf,1);
+	if (n <= 0) return n;			// error or strange, abort
+
+	if (buf[0] == TS_SYNC_BYTE) break;
+	(*skipped_bytes)++;			// sync skip counter
+    }
+
+    // -- Sync found!
+    // -- read buffersize-1
+
+    n = read(fd,buf+1,buflen-1);		// read TS
+    if (n >=0) n++;				// we already read one byte...
+
+    return n;
 }
 
 

@@ -1,5 +1,5 @@
 /*
-$Id: dvbsnoop.h,v 1.4.2.3 2003/11/17 07:07:40 coronas Exp $
+$Id: dvbsnoop.h,v 1.4.2.4 2003/11/26 20:38:02 coronas Exp $
 
 
  DVBSNOOP
@@ -15,8 +15,11 @@ $Id: dvbsnoop.h,v 1.4.2.3 2003/11/17 07:07:40 coronas Exp $
 
 
 $Log: dvbsnoop.h,v $
-Revision 1.4.2.3  2003/11/17 07:07:40  coronas
+Revision 1.4.2.4  2003/11/26 20:38:02  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.15  2003/11/26 19:55:31  rasc
+no message
 
 Revision 1.14  2003/11/07 16:33:31  rasc
 no message
@@ -64,7 +67,8 @@ dvbsnoop v0.7  -- Commit to CVS
 
 */
 
-
+#ifndef __DVBSNOOP_H
+#define __DVBSNOOP_H 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -94,4 +98,8 @@ dvbsnoop v0.7  -- Commit to CVS
 #include "strings/dvb_str.h"
 #include "misc/helper.h"
 #include "misc/output.h"
+
+
+#endif
+
 

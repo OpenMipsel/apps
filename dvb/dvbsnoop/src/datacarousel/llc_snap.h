@@ -1,6 +1,4 @@
 /*
-$Id: ints.h,v 1.2.2.2 2003/11/26 20:38:02 coronas Exp $
-
 
  DVBSNOOP
 
@@ -11,19 +9,13 @@ $Id: ints.h,v 1.2.2.2 2003/11/26 20:38:02 coronas Exp $
 
  (c) 2001-2003   Rainer.Scherg@gmx.de
 
-
 */
 
 
-#ifndef __INTS_H
-#define __INTS_H 1
+#ifndef __LLC_SNAP
+#define __LLC_SNAP 1
 
-
-void  decode_INT_DSMCC (u_char *b, int len);
-int   pto_descriptor_loop (u_char *name, u_char *b);
-
+int  llc_snap (int verbosity, u_char *buf);
 
 #endif
-
-
 

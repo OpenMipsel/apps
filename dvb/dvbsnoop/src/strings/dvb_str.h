@@ -1,15 +1,26 @@
 /*
-$Id: dvb_str.h,v 1.5.2.3 2003/11/17 07:07:48 coronas Exp $ 
+$Id: dvb_str.h,v 1.5.2.4 2003/11/26 20:38:12 coronas Exp $ 
 
-  dvbsnoop
-  (c) Rainer Scherg 2001-2003
 
-  dvb decoder helper functions
+ DVBSNOOP
+
+ a dvb sniffer  and mpeg2 stream analyzer tool
+ mainly for me to learn about dvb streams, mpeg2, mhp, dsm-cc, ...
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
+
+ -- dvb decoder helper functions
+
 
 
 $Log: dvb_str.h,v $
-Revision 1.5.2.3  2003/11/17 07:07:48  coronas
+Revision 1.5.2.4  2003/11/26 20:38:12  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.14  2003/11/26 19:55:34  rasc
+no message
 
 Revision 1.13  2003/11/09 20:48:35  rasc
 pes data packet (DSM-CC)
@@ -38,6 +49,12 @@ trying to include DSM-CC, Well someone a ISO13818-6 and latest version of ISO 18
 
 
 */
+
+
+
+#ifndef __DVB_STR_H
+#define __DVB_STR_H 1
+
 
 char *dvbstrBouquetTable_ID (u_int i);
 char *dvbstrStreamContent_Component_TYPE (u_int i);
@@ -109,6 +126,11 @@ char *dvbstrPESDataIdentifier (u_int i);
 
 char *dvbstrCountryCode_ID (u_int i);
 char *dvbstrPrivateDataSpecifier_ID (u_int i);
+
+
+
+
+#endif
 
 
 

@@ -1,16 +1,26 @@
 /*
-$Id: helper.c,v 1.3.2.3 2003/11/17 07:07:44 coronas Exp $
+$Id: helper.c,v 1.3.2.4 2003/11/26 20:38:08 coronas Exp $
 
- -- dvbsnoop
- -- a dvb sniffer tool
- -- mainly for me to learn the dvb streams
 
- -- (c) rasc
+ DVBSNOOP
+
+ a dvb sniffer  and mpeg2 stream analyzer tool
+ mainly for me to learn about dvb streams, mpeg2, mhp, dsm-cc, ...
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
+
+
 
 
 $Log: helper.c,v $
-Revision 1.3.2.3  2003/11/17 07:07:44  coronas
+Revision 1.3.2.4  2003/11/26 20:38:08  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.12  2003/11/26 16:27:46  rasc
+- mpeg4 descriptors
+- simplified bit decoding and output function
 
 Revision 1.11  2003/10/24 22:17:19  rasc
 code reorg...
@@ -62,6 +72,74 @@ dvbsnoop v0.7  -- Commit to CVS
 #include "output.h"
 #include "strings/dvb_str.h"
 
+
+
+
+
+
+/*
+  -- output bits
+  -- get bits and print decode
+  -- return: (unsigned long) value
+ */
+
+u_long outBit_Sx (int verbosity, char *text, u_char *buf, int startbit, int bitlen)
+
+{
+   u_long value;
+
+   value =  getBits(buf,0,startbit,bitlen);
+
+   if (bitlen <= 9) {
+	 out_SB (verbosity,text,(int)value);
+   } else if (bitlen <=16) {
+	 out_SW (verbosity,text,(int)value);
+   } else {
+	 out_SL (verbosity,text,value);
+   }
+
+   return value;
+}
+
+
+u_long outBit_Sx_NL (int verbosity, char *text, u_char *buf, int startbit, int bitlen)
+
+{
+  u_long value;
+
+  value = outBit_Sx (verbosity,text,buf,startbit,bitlen);
+  out_NL (verbosity);
+  return value;
+
+}
+
+
+
+
+u_long outBit_S2x_NL (int verbosity, char *text, u_char *buf, int startbit, int bitlen, char *(*f)(u_int) )
+
+{
+   u_long value;
+
+   value =  getBits(buf,0,startbit,bitlen);
+
+   if (bitlen <= 9) {
+	 out_S2B_NL (verbosity,text,(int)value, (*f)(value));
+   } else if (bitlen <=16) {
+	 out_S2W_NL (verbosity,text,(int)value, (*f)(value));
+   } else {
+	 out_S2L_NL (verbosity,text,     value, (*f)(value));
+   }
+
+   return value;
+}
+
+
+
+
+/*
+  -----------------------------------------------------------------------------------
+ */
 
 
 /* 

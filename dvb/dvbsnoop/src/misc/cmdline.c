@@ -1,12 +1,30 @@
 /*
-$Id: cmdline.c,v 1.2.2.3 2003/11/17 07:07:44 coronas Exp $
+$Id: cmdline.c,v 1.2.2.4 2003/11/26 20:38:08 coronas Exp $
 
- -- (c) 2001 rasc
+
+ DVBSNOOP
+
+ a dvb sniffer  and mpeg2 stream analyzer tool
+ mainly for me to learn about dvb streams, mpeg2, mhp, dsm-cc, ...
+
+ http://dvbsnoop.sourceforge.net/
+
+ (c) 2001-2003   Rainer.Scherg@gmx.de
+
+
 
 
 $Log: cmdline.c,v $
-Revision 1.2.2.3  2003/11/17 07:07:44  coronas
+Revision 1.2.2.4  2003/11/26 20:38:08  coronas
 Compilefix rel-branch/Update from HEAD
+
+Revision 1.8  2003/11/26 16:27:46  rasc
+- mpeg4 descriptors
+- simplified bit decoding and output function
+
+Revision 1.7  2003/11/24 23:52:17  rasc
+-sync option, some TS and PES stuff;
+dsm_addr inactive, may be wrong - due to missing ISO 13818-6
 
 Revision 1.6  2003/11/01 17:05:46  rasc
 no message
@@ -68,9 +86,10 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
   opt->devDvr = DVR_DEVICE;
   opt->pid = 0xFFFF;		/* invaild PID */
   opt->filter = 0;
+  opt->mask = 0;
   opt->crc = 0;
   opt->packet_count = 0;
-  opt->mask = 0;
+  opt->packet_header_sync = 0;
   opt->packet_mode = SECT;
   opt->time_mode = FULL_TIME;
   opt->hide_copyright= 0;
@@ -91,6 +110,8 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
      else if (!strcmp (argv[i],"-m")) opt->mask = str2i(argv[++i]);
      else if (!strcmp (argv[i],"-crc")) opt->crc = 1;
      else if (!strcmp (argv[i],"-nocrc")) opt->crc = 0;
+     else if (!strcmp (argv[i],"-sync")) opt->packet_header_sync = 1;
+     else if (!strcmp (argv[i],"-nosync")) opt->packet_header_sync = 0;
      else if (!strcmp (argv[i],"-n")) opt->packet_count = str2i(argv[++i]);
      else if (!strcmp (argv[i],"-b")) opt->binary_out = 1;
      else if (!strcmp (argv[i],"-ph")) opt->printhex = str2i(argv[++i]);
@@ -152,6 +173,8 @@ int  cmdline_options (int argc, char **argv, OPTION *opt)
     printf("   -m mask:      maskvalue for 'sec' demux [-m 0]\n");
     printf("   -crc:         CRC check when reading 'sec'\n");
     printf("   -nocrc:       No CRC check when reading 'sec' [-nocrc]\n");
+    printf("   -sync:        Simple packet header sync when reading 'ts' or 'pes' [-nosnyc]\n");
+    printf("   -nosync:      No header sync when reading 'ts' or 'pes' [-nosnyc]\n");
     printf("   -n count:     receive count packets (0=no limit) [-n 0]\n");
     printf("   -b:           binary output of packets (disables other output)\n");
     printf("   -if:          input file, reads from binary file instead of demux device\n");
