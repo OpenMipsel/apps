@@ -302,6 +302,7 @@ void eDVBServiceController::PATready(int error)
 
 void eDVBServiceController::SDTready(int error)
 {
+	(void)error;
 	dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceGotSDT));
 	if (dvb.settings->getTransponders())
 	{
@@ -318,6 +319,7 @@ void eDVBServiceController::SDTready(int error)
 
 void eDVBServiceController::PMTready(int error)
 {
+	(void)error;
 	dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceGotPMT));
 }
 
