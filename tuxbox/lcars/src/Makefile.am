@@ -19,7 +19,7 @@ lcars_CFLAGS = -Werror
 
 lcars_LDADD = \
 	@CURL_LIBS@ \
-	@FREETYPE_LIBS@
+	@FREETYPE_LIBS@ \
 	-lpthread -ldl
 
 install-data-local:
