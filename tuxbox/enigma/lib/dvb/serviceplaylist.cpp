@@ -15,7 +15,7 @@
 		structure (ePlaylist)
 */
 
-ePlaylist::ePlaylist(): eService(0, "playlist")
+ePlaylist::ePlaylist(): eService("playlist")
 {
 	current=list.end();
 }

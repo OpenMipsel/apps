@@ -145,7 +145,7 @@ siPID::siPID(decoderParameters parms, eWidget *parent): eWidget(parent)
 	service_provider[0]->resize(eSize(140, fs+5));
 	
 	service_provider[1]=new eLabel(this);
-	service_provider[1]->setText(cservice?cservice->service_provider.c_str():"--");
+	service_provider[1]->setText((cservice && cservice->dvb)?cservice->dvb->service_provider.c_str():"--");
 	service_provider[1]->setFont(gFont("NimbusSansL-Regular Sans L Regular", fs));
 	service_provider[1]->move(ePoint(185, yOffs+2));
 	service_provider[1]->resize(eSize(260, fs+5));

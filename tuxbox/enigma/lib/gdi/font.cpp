@@ -474,10 +474,44 @@ int eTextPara::renderString(const eString &string, int rflags)
 	{
 		int isprintable=1;
 		int flags=0;
+		
+		unsigned int unicode=*p++;
+
+		if (unicode & 0x80) // we have (hopefully) UTF8 here, and we assume that the encoding is VALID
+		{
+			if ((unicode & 0xE0)==0xC0) // two bytes
+			{
+				unicode&=0x1F;
+				unicode<<=6;
+				if (p != string.end())
+					unicode|=(*p++)&0x3F;
+			} else if ((unicode & 0xF0)==0xE0) // three bytes
+			{
+				unicode&=0x0F;
+				unicode<<=6;
+				if (p != string.end())
+					unicode|=(*p++)&0x3F;
+				unicode<<=6;
+				if (p != string.end())
+					unicode|=(*p++)&0x3F;
+			} else if ((unicode & 0xF8)==0xF0) // four bytes
+			{
+				unicode&=0x07;
+				unicode<<=6;
+				if (p != string.end())
+					unicode|=(*p++)&0x3F;
+				unicode<<=6;
+				if (p != string.end())
+					unicode|=(*p++)&0x3F;
+				unicode<<=6;
+				if (p != string.end())
+					unicode|=(*p++)&0x3F;
+			}
+		}
 	
 		if (!(rflags&RS_DIRECT))
 		{
-			switch (*p)
+			switch (unicode)
 			{
 			case '\t':
 				isprintable=0;
@@ -492,12 +526,16 @@ int eTextPara::renderString(const eString &string, int rflags)
 					cursor+=ePoint(cursor.x()%current_font->tabwidth, 0);
 				}
 				break;
+			case 0x8A:
+			case 0xE08A:
 			case '\n':
 				isprintable=0;
 				newLine(rflags);
 				flags|=GS_ISFIRST;
 				break;
 			case '\r':
+			case 0x86: case 0xE086:
+			case 0x87: case 0xE087:
 				isprintable=0;
 				break;
 			case ' ':
@@ -510,14 +548,13 @@ int eTextPara::renderString(const eString &string, int rflags)
 		{
 			FT_UInt index;
 
-			index=(rflags&RS_DIRECT)? *p : FT_Get_Char_Index(current_face, *p);
+			index=(rflags&RS_DIRECT)? unicode : FT_Get_Char_Index(current_face, unicode);
 
 			if (!index)
-				eDebug("unicode %d ('%c') not present", *p, *p);
+				eDebug("unicode %d ('%c') not present", unicode, unicode);
 			else
 				appendGlyph(index, flags, rflags);
 		}
-		p++;
 	}
 	bboxValid=false;
 	calc_bbox();

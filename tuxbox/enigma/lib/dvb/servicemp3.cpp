@@ -35,6 +35,10 @@ eHTTPStream::eHTTPStream(eHTTPConnection *c, eIOBuffer &buffer): eHTTPDataSource
 	received=0;
 #endif
 	eDebug("HTTP stream sink created!");
+	metadatainterval=metadataleft=bytes=0;
+	if (c->remote_header.count("icy-metaint"))
+		metadatainterval=atoi(c->remote_header["icy-metaint"].c_str());
+	eDebug("metadata interval: %d", metadatainterval);
 }
 
 eHTTPStream::~eHTTPStream()
@@ -42,9 +46,66 @@ eHTTPStream::~eHTTPStream()
 	eDebug("HTTP stream sink deleted!");
 }
 
-void eHTTPStream::haveData(void *data, int len)
+void eHTTPStream::processMetaData()
 {
-	buffer.write(data, len);
+	metadata[metadatapointer]=0;
+	eDebug("processing metadata! %s", metadata);
+	
+	metadatapointer=0;
+}
+
+void eHTTPStream::haveData(void *vdata, int len)
+{
+	__u8 *data=(__u8*)vdata;
+	
+	while (len)
+	{
+		int valid=len;
+		
+		if (!metadataleft)
+		{
+				// not in metadata mode.. process mp3 data (stream to input buffer)
+
+				// are we just at the beginning of metadata? (pointer)
+			if (metadatainterval && (metadatainterval == bytes))
+			{
+						// enable metadata mode
+				metadataleft=*data++*16;
+				metadatapointer=0;
+				len--;
+				bytes=0;
+				continue;
+			} else if (metadatainterval < bytes)
+				eFatal("metadatainterval < bytes");
+
+				// otherwis there's really data.
+			if (metadatainterval)
+			{
+					// is metadata in our buffer?
+				if ((valid + bytes) > metadatainterval)
+					valid=metadatainterval-bytes;
+			}
+			buffer.write(data, valid);
+			data+=valid;
+			len-=valid;
+			bytes+=valid;
+		} else
+		{
+				// metadata ... process it.
+			int meta=len;
+			if (meta > metadataleft)
+				meta=metadataleft;
+			
+			memcpy(metadata+metadatapointer, data, meta);
+			metadatapointer+=meta;
+			data+=meta;
+			len-=meta;
+			metadataleft-=meta;
+			
+			if (!metadataleft)
+				processMetaData();
+		}
+	}
 	dataAvailable();
 }
 
@@ -55,7 +116,10 @@ eMP3Decoder::eMP3Decoder(const char *filename, eServiceHandlerMP3 *handler): han
 	http=0;
 	
 //	filename="http://205.188.209.193:80/stream/1003";
+
 //	filename="http://sik1.oulu.fi:8002/";
+//	filename="http://64.236.34.141:80/stream/1022";
+//	filename="http://ios.h07.org:8006/";
 	
 	if (strstr(filename, "://")) // assume streaming
 	{
@@ -74,6 +138,7 @@ eMP3Decoder::eMP3Decoder(const char *filename, eServiceHandlerMP3 *handler): han
 				CONNECT(http->transferDone, eMP3Decoder::streamingDone);
 				CONNECT(http->createDataSource, eMP3Decoder::createStreamSink);
 				http->local_header["User-Agent"]="enigma-mp3/1.0.0";
+				http->local_header["Icy-MetaData"]="1"; // enable ICY metadata
 				http->start();
 				eDebug("starting http streaming.");
 			}
@@ -526,7 +591,7 @@ eService *eServiceHandlerMP3::createService(const eServiceReference &service)
 	return new eService(eServiceID(0), description.c_str());
 #else
 	eString l=service.path.mid(service.path.rfind('/')+1);
-	return new eService(eServiceID(0), l.c_str());
+	return new eService(l.c_str());
 #endif
 }
 

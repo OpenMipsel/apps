@@ -2502,14 +2502,14 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		int num=-1;
 
-/*	 old code (but buggy, anyway?)
 		if (rservice)
 			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-		else if (service)
+		if ((num == -1) && service)
 			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-*/
-		if (service)
-			num=service->service_number;
+	
+		if ((num == -1) && service && service->dvb)
+			num=service->dvb->service_number;
+
 		if (num != -1)
 			ChannelNumber->setText(eString().sprintf("%d", num));
 		else

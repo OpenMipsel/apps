@@ -442,6 +442,7 @@ int eHTTPConnection::processRemoteState()
 				abort=1;
 				break;
 			}
+			eDebug("%s", line.c_str());
 			if (!line.length())
 			{
 				if (parent)
@@ -480,8 +481,10 @@ int eHTTPConnection::processRemoteState()
 					return -1;
 			} else
 			{
-				int del=line.find(": ");
-				eString name=line.left(del), value=line.mid(del+2);
+				int del=line.find(":");
+				eString name=line.left(del), value=line.mid(del+1);
+				if (value[0]==' ')
+					value=value.mid(1);
 				remote_header[std::string(name)]=std::string(value);
 			}
 			done=1;

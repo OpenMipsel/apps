@@ -263,6 +263,7 @@ int main(int argc, char **argv)
 
 	setlocale (LC_ALL, "");
 	bindtextdomain ("tuxbox-enigma", "/share/locale");
+	bind_textdomain_codeset("tuxbox-enigma", "UTF8");
 	textdomain ("tuxbox-enigma");
 	
 //	mtrace();

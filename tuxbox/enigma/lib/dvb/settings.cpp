@@ -166,13 +166,13 @@ void eDVBSettings::setTransponders(eTransponderList *tlist)
 	/*emit*/ dvb.serviceListChanged();
 }
 
-struct sortinChannel: public std::unary_function<const eService&, void>
+struct sortinChannel: public std::unary_function<const eServiceDVB&, void>
 {
 	eDVBSettings &edvb;
 	sortinChannel(eDVBSettings &edvb): edvb(edvb)
 	{
 	}
-	void operator()(eService &service)
+	void operator()(eServiceDVB &service)
 	{
 		eBouquet *b = edvb.createBouquet(beautifyBouquetName(service.service_provider) );
 		b->add(eServiceReferenceDVB(service.transport_stream_id, service.original_network_id, service.service_id, service.service_type));
@@ -188,14 +188,14 @@ void eDVBSettings::sortInChannels()
 	saveBouquets();
 }
 
-struct saveService: public std::unary_function<const eService&, void>
+struct saveService: public std::unary_function<const eServiceDVB&, void>
 {
 	FILE *f;
 	saveService(FILE *out): f(out)
 	{
 	 	fprintf(f, "services\n");
 	}
-	void operator()(eService& s)
+	void operator()(eServiceDVB& s)
 	{
 		fprintf(f, "%04x:%04x:%04x:%d:%d\n", s.service_id.get(), s.transport_stream_id.get(), s.original_network_id.get(), s.service_type, s.service_number);
 		fprintf(f, "%s\n", s.service_name.c_str());
@@ -317,7 +317,7 @@ void eDVBSettings::loadServices()
 
 		int service_id=-1, transport_stream_id=-1, original_network_id=-1, service_type=-1, service_number=-1;
 		sscanf(line, "%04x:%04x:%04x:%d:%d", &service_id, &transport_stream_id, &original_network_id, &service_type, &service_number);
-		eService &s=transponderlist->createService(
+		eServiceDVB &s=transponderlist->createService(
 				eServiceReferenceDVB(
 						eTransportStreamID(transport_stream_id), 
 						eOriginalNetworkID(original_network_id), 
