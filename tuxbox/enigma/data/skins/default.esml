@@ -505,7 +505,7 @@
 
 	<object name="eTimerView">
 		<eTimerView cposition="70:100" csize="590:420" text="EPG">
-			<eListbox name="events" position="10:10" size="e-10:e-220" loadDeco="" helptext="press ok to edit the selected event" shortcut="1" />
+			<eListbox name="events" position="10:10" size="e-10:e-220" loadDeco="" helptext="press ok to edit the selected event" />
 			<eComboBox name="b_year" openEntries="5" position="10:e-210" size="90:35" helptext="select year (ok)" loadDeco="" />
 			<eComboBox name="b_month" openEntries="6" position="110:e-210" size="150:35" helptext="select month (ok)" loadDeco="" />
 			<eComboBox name="b_day" openEntries="10" position="270:e-210" size="e-92:35" helptext="select day (ok)" loadDeco="" />
