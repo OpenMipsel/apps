@@ -259,6 +259,8 @@ shape (std::vector<unsigned long> &string, const std::vector<unsigned long> &tex
 	which = which % (curchar.numshapes);
 	curchar.basechar = charshape (curchar.basechar, which);
 
-	string.push_back(oldchar.basechar);
-	string.push_back(curchar.basechar);
+	if (oldchar.basechar != 0)
+		string.push_back(oldchar.basechar);
+	if (curchar.basechar != 0)
+		string.push_back(curchar.basechar);
 }
