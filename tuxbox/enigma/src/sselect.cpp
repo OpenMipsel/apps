@@ -1530,6 +1530,8 @@ void eServiceSelector::showMultiEPG()
 		result=&selected;
 		close(0);
 	}
+	else
+		show();
 }
 
 void eServiceSelector::doSPFlags(const eServiceReference &ref)
