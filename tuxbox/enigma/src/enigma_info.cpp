@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.1 2002/11/18 03:55:35 Ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.2 2002/11/18 04:07:42 tmbinc Exp $
  */
 
 #include <enigma_info.h>
