@@ -105,7 +105,7 @@ int fbClass::SetMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 		primary->Release(primary);
 
 	dsc.flags = DSDESC_CAPS;
-	dsc.caps  = DFBSurfaceCapabilities(DSCAPS_PRIMARY /* | DSCAPS_FLIPPING */);
+	dsc.caps  = DFBSurfaceCapabilities(DSCAPS_PRIMARY | DSCAPS_FLIPPING );
 
 	if (DirectFB->CreateSurface( DirectFB, &dsc, &primary ) != DFB_OK)
 	{

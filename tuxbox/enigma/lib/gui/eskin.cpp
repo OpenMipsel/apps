@@ -268,23 +268,22 @@ int eSkin::parseImages(XMLTreeNode *inode)
 			eDebug("Image with name %s already loaded, skip %s", name, src);
 			continue;
 		}
-		gPixmap *image=0;
 		eString filename=basepath + eString(src);
 		gDC *dc=0;
 		if (!node->GetAttributeValue("nomerge"))
 			dc=eSkin::getDCbyName("fb"); // todo, support simple "target=". IMPORTANT. nomerge is crap.
 
-		gPixmap image=loadPNG(filename.c_str(), dc ? dc->getPixmap() : 0);
+		gPixmap image;
 
 		if (abasepath[0] != '/')
 		{
 			// search first in CONFIGDIR
-			image=loadPNG((eString(CONFIGDIR)+filename).c_str());
+			image=loadPNG((eString(CONFIGDIR)+filename).c_str(), dc ? dc->getPixmap() : 0);
 			if (!image)
-				image=loadPNG((eString(DATADIR)+filename).c_str());
+				image=loadPNG((eString(DATADIR)+filename).c_str(), dc ? dc->getPixmap() : 0);
 		}
 		else // abs path
-			image=loadPNG(filename.c_str());
+			image=loadPNG(filename.c_str(), dc ? dc->getPixmap() : 0);
 
 		if (!image)
 		{
