@@ -277,6 +277,8 @@ void eTimerManager::actionHandler()
 
 		case startCountdown:
 			eDebug("[eTimerManager] startCountdown");
+			if ( conn.connected() )
+				conn.disconnect();
 			if ( nextStartingEvent->type & ePlaylistEntry::doFinishOnly &&
 				!nextStartingEvent->service )
 				; // don't change timer mode for sleeptimer
@@ -285,8 +287,6 @@ void eTimerManager::actionHandler()
 				eZapMain::getInstance()->toggleTimerMode();
 				// now in eZapMain the RemoteControl should be handled for TimerMode...
 				// any service change stops now the Running Event and set it to userAborted
-				if ( conn.connected() )
-					conn.disconnect();
 				conn = CONNECT( eDVB::getInstance()->leaveService, eTimerManager::leaveService );
 			}
 			if ( nextStartingEvent->type & ePlaylistEntry::isSmartTimer )
