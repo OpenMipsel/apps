@@ -95,7 +95,9 @@ eHelpWindow::eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID):
 					label->setFlags(RS_WRAP);
 					label->move(ePoint(xpos, ypos));
 					label->resize(eSize(visible->width()-xpos-20, 200));
-					label->setText(it->getDescription());
+							// since they are inited before language is set,
+							// call gettext again.
+					label->setText(gettext(it->getDescription()));
 					labelheight=label->getExtend().height();
 					label->resize(eSize(visible->width()-xpos-20, labelheight));
 
