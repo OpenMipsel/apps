@@ -757,7 +757,8 @@ void eServiceHandlerMP3::gotMessage(const eMP3DecoderMessage &message)
 	{
 		state=stateStopped;
 		serviceEvent(eServiceEvent(eServiceEvent::evtEnd));
-	} else if (message.type == eMP3DecoderMessage::status)
+	}
+	else if (message.type == eMP3DecoderMessage::status)
 		serviceEvent(eServiceEvent(eServiceEvent::evtStatus));
 	else if (message.type == eMP3DecoderMessage::infoUpdated)
 		serviceEvent(eServiceEvent(eServiceEvent::evtInfoUpdated));
@@ -778,7 +779,11 @@ int eServiceHandlerMP3::play(const eServiceReference &service)
 	else
 		state=stateError;
 
-	flags=flagIsSeekable|flagSupportPosition|flagIsTrack;
+	flags=flagIsSeekable|flagSupportPosition;
+
+	if ( service.data[0] != eMP3Decoder::codecMPG )
+		flags|=flagIsTrack;
+
 	serviceEvent(eServiceEvent(eServiceEvent::evtStart));
 	serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 

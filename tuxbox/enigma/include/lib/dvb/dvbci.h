@@ -116,7 +116,7 @@ protected:
 	void incoming(unsigned char *buffer,int len);
 	void dataAvailable(int what);
 	void poll();
-	void startTimer();
+	void startTimer(bool onlyDead=false);
 	void stopTimer();
 	void deadReset();
 	void updateCIinfo(unsigned char *buffer);
@@ -149,6 +149,8 @@ public:
 			mmi_answ,
 			mmi_menuansw,
 			getcaids,
+			suspendPoll,
+			restartPoll
 		};
 		int type;
 		unsigned char *data;

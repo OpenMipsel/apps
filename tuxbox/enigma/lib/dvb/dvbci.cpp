@@ -83,6 +83,9 @@ void eDVBCI::gotMessage(const eDVBCIMessage &message)
 {
 	switch (message.type)
 	{
+	case eDVBCIMessage::suspendPoll:
+		stopTimer();
+		break;
 	case eDVBCIMessage::start:
 		if (state == stateInit)
 		{
@@ -805,10 +808,12 @@ void eDVBCI::receiveTPDU(unsigned char tpdu_tag,unsigned int tpdu_len,unsigned c
 				}
 				else
 				{
-					eDebug("[DVBCI] unknown spdu-tag:%x",data[0]);	
+					eDebug("[DVBCI] unknown spdu-tag:%x",data[0]);
 				}
 			}
 			break;
+		default:
+			eDebug("unknown tpdu-tag:%x, len = %d", tpdu_tag, tpdu_len );
 	}		
 }
 
@@ -1050,9 +1055,10 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 }
 #endif
 
-void eDVBCI::startTimer()
+void eDVBCI::startTimer(bool onlyDead)
 {
-	pollTimer.start(200,true);
+	if ( !onlyDead )
+		pollTimer.start(250,true);
 	deadTimer.start(2000,true);
 } 
 
@@ -1067,7 +1073,6 @@ void eDVBCI::deadReset()
 	eDebug("CI timeoutet... do reset");
 	if (::ioctl(fd,CI_RESET)<0 )
 		eDebug("CI_RESET failed (%m)");
-	startTimer();
 }
 
 void eDVBCI::dataAvailable(int what)
@@ -1156,8 +1161,6 @@ void eDVBCI::poll()
 		eDebug("CI_GET_STATUS failed (%m)");
 
 	if(present)						//CI removed
-	{
 		sendTPDU(0xA0,0,1,0);
-	}	
 }
 

@@ -354,52 +354,26 @@ void eServiceSelector::setKeyDescriptions( bool editMode )
 		return;
 	}
 
-	int alt=0;
-	char *sstyle=0;
-	if (eConfig::getInstance()->getKey("/ezap/rc/sselect_style", sstyle) )
-		alt = 0;
-	else
+	switch (eZapMain::getInstance()->getMode())
 	{
-		alt = !strcmp(sstyle, "sselect_classic");
-		free(sstyle);
-	}
-
-	if (alt)
-	{
-		switch (eZapMain::getInstance()->getMode())
-		{
-			case eZapMain::modeTV:
-			case eZapMain::modeRadio:
-				key[0]->setText(_("All Services"));
-				if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
-					key[1]->setText(_("Satellites"));
-				else
-					key[1]->setText("");
-				key[2]->setText(_("Providers"));
-				key[3]->setText(_("Bouquets"));
-				break;
+		case eZapMain::modeTV:
+		case eZapMain::modeRadio:
+			key[0]->setText(_("All Services"));
+			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+				key[1]->setText(_("Satellites"));
+			else
+				key[1]->setText("");
+			key[2]->setText(_("Providers"));
+			key[3]->setText(_("Bouquets"));
+			break;
 #ifndef DISABLE_FILE
-			case eZapMain::modeFile:
-				key[0]->setText(_("Root"));
-				key[1]->setText(_("Movies"));
-				key[2]->setText(_("Playlist"));
-				key[3]->setText(_("Root"));
-				break;
+		case eZapMain::modeFile:
+			key[0]->setText(_("Root"));
+			key[1]->setText(_("Movies"));
+			key[2]->setText(_("Playlist"));
+			key[3]->setText(_("Root"));
+			break;
 #endif
-		}
-	}
-	else
-	{
-		key[0]->setText(_("Menu"));
-		key[1]->setText(_("Style"));
-		if (style == styleCombiColumn)
-			key[2]->setText(_("Column"));
-		else
-			key[2]->setText("");
-		if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-			key[3]->setText(_("Provider/Bouquets"));
-		else
-			key[3]->setText(_("Root/Playlist"));
 	}
 }
 
@@ -467,6 +441,7 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	services->beginAtomic();
 	services->clearList();
 
+/*
 	if (!movemode && style != styleCombiColumn )
 	{
 		int alt=0;
@@ -482,7 +457,7 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 			goUpEntry = new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
 		else
 			goUpEntry = 0;
-	}
+	}*/
 	
 	eServiceInterface *iface=eServiceInterface::getInstance();
 	ASSERT(iface);
@@ -1526,14 +1501,7 @@ eServiceSelector::eServiceSelector()
 	
 	key[0] = key[1] = key[2] = key[3] = 0;
 
-	char *style=0;
-	if (eConfig::getInstance()->getKey("/ezap/rc/sselect_style", style) )
-		eActionMapList::getInstance()->activateStyle("sselect_default");
-	else
-	{
-		eActionMapList::getInstance()->activateStyle(style);
-		free(style);
-	}
+	eActionMapList::getInstance()->activateStyle("sselect_default");
 }
 
 eServiceSelector::~eServiceSelector()

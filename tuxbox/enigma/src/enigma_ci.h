@@ -43,19 +43,17 @@ class enigmaCImmi: public eWindow
 	eDVBCI *DVBCI;
 
 private:
+	int eventHandler(const eWidgetEvent&);
 	void okPressed();
 	void entrySelected(eListBoxMenuEntry *choice);
 	void getmmi(const char *buffer);
 	long LengthField(unsigned char *lengthfield,long maxlength,int *fieldlen);
 	void answokPressed();
-
 	int ci_state;
 
 public:
 	enigmaCImmi(eDVBCI *DVBCI);
 	~enigmaCImmi();
-
-
 };
 
 class enigmaCI: public eWindow

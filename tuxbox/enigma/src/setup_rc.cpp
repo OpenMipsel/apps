@@ -82,26 +82,19 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	CONNECT( rcStyle->selchanged, eZapRCSetup::styleChanged );
 	eListBoxEntryText *current=0;
 	const std::set<eString> &activeStyles=eActionMapList::getInstance()->getCurrentStyles();
-	for (std::map<eString, eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin()); it != eActionMapList::getInstance()->getExistingStyles().end(); ++it)
+	for (std::map<eString, eString>::const_iterator it(eActionMapList::getInstance()->getExistingStyles().begin())
+		; it != eActionMapList::getInstance()->getExistingStyles().end(); ++it)
 	{
 		if (activeStyles.find(it->first) != activeStyles.end())
 		{
 			current = new eListBoxEntryText( *rcStyle, it->second, (void*) &it->first );
 			curstyle = it->first;
-		} else
+		}
+		else
 			new eListBoxEntryText( *rcStyle, it->second, (void*) &it->first );
 	}
 	if (current)
 		rcStyle->setCurrent( current );
-
-	sselect_style=new eCheckbox(this);
-	sselect_style->setName("sselect_style");
-	sselect_style->move(ePoint(20, 180));
-	sselect_style->resize(eSize(clientrect.width()-40, 35));
-	sselect_style->setText(_("other bouquet selection keys"));
-	sselect_style->setHelpText(_("use classic enigma bouquet selection keys"));
-	sselect_style_val=activeStyles.find("sselect_classic") != activeStyles.end();
-	sselect_style->setCheck(sselect_style_val);
 
 	lNextCharTimeout = new eLabel(this);
 	lNextCharTimeout->move(ePoint(20,220));
@@ -161,10 +154,7 @@ void eZapRCSetup::okPressed()
 {
 	// save current selected style
 	eConfig::getInstance()->setKey("/ezap/rc/style", curstyle.c_str());
-	eConfig::getInstance()->setKey("/ezap/rc/sselect_style",
-		sselect_style->isChecked() ? "sselect_classic" : "sselect_default");
-	if ((sselect_style_val) && !sselect_style->isChecked())
-		eZapMain::getInstance()->reloadPaths(1);	// reset paths
+
 	eZap::getInstance()->getServiceSelector()->setKeyDescriptions();
 	setStyle();
 
@@ -195,20 +185,9 @@ int eZapRCSetup::eventHandler( const eWidgetEvent & e )
 
 void eZapRCSetup::setStyle()
 {
-	char *style=0;
-	eActionMapList::getInstance()->deactivateStyle("sselect_classic");
-	eActionMapList::getInstance()->deactivateStyle("sselect_default");
-
-	if (eConfig::getInstance()->getKey("/ezap/rc/sselect_style", style) )
-		eActionMapList::getInstance()->activateStyle("sselect_default");
-	else
-	{
-		eActionMapList::getInstance()->activateStyle(style);
-		free(style);
-	}
-	
 	eActionMapList::getInstance()->deactivateStyle(curstyle);
 
+	char *style=0;
 	if (eConfig::getInstance()->getKey("/ezap/rc/style", style) )
 		eActionMapList::getInstance()->activateStyle("default");
 	else

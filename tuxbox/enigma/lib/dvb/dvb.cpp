@@ -157,6 +157,7 @@ eTransponder::eTransponder(eTransponderList &tplist): tplist(tplist), dvb_namesp
 
 void eTransponder::setSatellite(int frequency, int symbol_rate, int polarisation, int fec, int orbital_position, int inversion)
 {
+//	eDebug("setSatellite");
 	satellite.frequency=frequency;
 	satellite.symbol_rate=symbol_rate;
 	satellite.polarisation=polarisation;

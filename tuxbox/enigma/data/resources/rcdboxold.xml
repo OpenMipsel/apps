@@ -118,14 +118,6 @@
 
 		<actionmap name="serviceSelector" style="sselect_default">
 			<action name="showEPGSelector" key="?" flags="m" />
-			<action name="showMenu" key="red" flags="m" />
-			<action name="toggleStyle" key="green" flags="m" />
-			<action name="toggleFocus" key="yellow" flags="m" />
-			<action name="toggleRoot" key="blue" flags="m" />
-		</actionmap>
-
-		<actionmap name="serviceSelector" style="sselect_classic">
-			<action name="showEPGSelector" key="?" flags="m" />
 			<action name="showMenu" key="d-box" flags="m" />
 			<action name="showAll" key="red" flags="m" />
 			<action name="showSatellites" key="green" flags="m" />
@@ -137,6 +129,7 @@
 			<action name="delete" key="red" flags="m" />
 			<action name="mark" key="green" flags="m" />
 			<action name="rename" key="yellow" flags="m" />
+			<action name="marker" key="blue" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">

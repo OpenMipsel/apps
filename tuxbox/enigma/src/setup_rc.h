@@ -18,8 +18,6 @@ class eZapRCSetup: public eWindow
 	eLabel *lrrate, *lrdelay, *lrcStyle, *lNextCharTimeout;
 	eNumber *NextCharTimeout;
 	eStatusBar* statusbar;
-	eCheckbox* sselect_style;
-	int sselect_style_val;
 	eComboBox* rcStyle;
 	eString curstyle;
 

@@ -73,13 +73,7 @@ void eZapBouquetSetup::editModeSelected()
 		if ( ButtonsWasVisible ) // must show buttons
 			eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", (int)0 );
 
-		// disable current activated actions
-		char *style=0;
-		eConfig::getInstance()->getKey("/ezap/rc/sselect_style", style);
-		if ( style )
-			eActionMapList::getInstance()->deactivateStyle(style);
-		else
-			eActionMapList::getInstance()->deactivateStyle("sselect_default");
+		eActionMapList::getInstance()->deactivateStyle("sselect_default");
 
 		// save current serviceselector Path
 		eServicePath p = sel.getPath();
@@ -110,10 +104,7 @@ void eZapBouquetSetup::editModeSelected()
 		// set old path
 		sel.setPath(p,ref);
 
-		if ( style )
-			eActionMapList::getInstance()->activateStyle(style);
-		else
-			eActionMapList::getInstance()->activateStyle("sselect_default");
+		eActionMapList::getInstance()->activateStyle("sselect_default");
 	}
 	show();
 }
@@ -129,13 +120,7 @@ void eZapBouquetSetup::editSelected()
 		eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", (int)1 );
 	}
 
-	// disable current activated actions
-	char *style=0;
-	eConfig::getInstance()->getKey("/ezap/rc/sselect_style", style);
-	if ( style )
-		eActionMapList::getInstance()->deactivateStyle(style);
-	else
-		eActionMapList::getInstance()->deactivateStyle("sselect_default");
+	eActionMapList::getInstance()->deactivateStyle("sselect_default");
 
 	// enable edit actions
 	eActionMapList::getInstance()->activateStyle("sselect_edit");
@@ -177,13 +162,7 @@ void eZapBouquetSetup::editSelected()
 
 	// restore old actions
 	eActionMapList::getInstance()->deactivateStyle("sselect_edit");
-	if ( style )
-	{
-		eActionMapList::getInstance()->activateStyle(style);
-		free(style);
-	}
-	else
-		eActionMapList::getInstance()->activateStyle("sselect_default");
+	eActionMapList::getInstance()->activateStyle("sselect_default");
 
 	sel.setPath( p, ref );
 }
