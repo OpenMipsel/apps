@@ -69,6 +69,7 @@ public:
 	int setColorFormat(eAVColorFormat cf);
 	int setAspectRatio(eAVAspectRatio as);
 	void setVSystem(eVSystem system);
+	eVSystem getVSystem() { return system; }
 	int setActive(int active);
 	int setInput(int v);	// 0: dbox, 1: vcr
 	void changeVCRVolume(int abs, int vol);

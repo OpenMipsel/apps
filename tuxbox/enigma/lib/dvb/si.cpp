@@ -1117,7 +1117,7 @@ eTable *EIT::createNext()
 	if (ts != tsFaked)
 	{
 		int newversion = incrementVersion(version);
-		eDebug("oldversion=%d, newversion=%d\n",version, newversion);
+		eDebug("EIT oldversion=%d, newversion=%d\n",version, newversion);
 		return new EIT(type, service_id, ts, newversion);
 	}
 	return 0;

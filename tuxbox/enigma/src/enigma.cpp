@@ -186,7 +186,7 @@ eZap::eZap(int argc, char **argv)
 	httpd->addResolver(fileresolver);
 
 	serialhttpd=0;
-	bool SerialConsoleActivated=true;
+	bool SerialConsoleActivated=false;
 	FILE *f=fopen("/proc/cmdline", "rt");
 	if (f)
 	{

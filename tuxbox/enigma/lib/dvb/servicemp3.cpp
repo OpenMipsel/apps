@@ -540,10 +540,13 @@ void eMP3Decoder::decodeMore(int what)
 		return;
 	}
 
-	if (input.size() < audiodecoder->getMinimumFramelength())
+	while ( input.size() < audiodecoder->getMinimumFramelength()*15 )
 	{
 		if (input.fromfile(sourcefd, audiodecoder->getMinimumFramelength()) < audiodecoder->getMinimumFramelength())
+		{
 			flushbuffer=1;
+			break;
+		}
 	}
 	
 	checkFlow(flushbuffer);
@@ -614,7 +617,9 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 		// speed=message.parm;
 		if (message.parm == 0)
 		{
-			if ((state==stateBuffering) || (state==stateBufferFull) || (statePlaying))
+			if ((state==stateBuffering) ||
+				(state==stateBufferFull) ||
+				(statePlaying))
 			{
 				inputsn->stop();
 				outputsn[0]->stop();
@@ -647,18 +652,15 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 			break;
 		if (audiodecoder->getAverageBitrate() <= 0)
 			break;
-			
+
 		eDebug("seek/seekreal/skip, %d", message.parm);
-		
+
 		int offset=0;
-		
+
 		if (message.type != eMP3DecoderMessage::seekreal)
 		{
 			int br=audiodecoder->getAverageBitrate();
-			if ( type == codecMPG )
-				br/=128;
-			else
-				br/=128;
+			br/=128;
 			br*=message.parm;
 			offset=input.size();
 			input.clear();

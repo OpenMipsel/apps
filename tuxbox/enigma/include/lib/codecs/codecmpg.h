@@ -10,6 +10,8 @@
 class eMPEGDemux: public eAudioDecoder
 {
 	eIOBuffer &input, &video, &audio;
+	int minFrameLength;
+
 	unsigned long last, remaining;
 	unsigned long getLong();
 	void refill();

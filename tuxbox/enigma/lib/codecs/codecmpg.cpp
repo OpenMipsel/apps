@@ -53,7 +53,7 @@ void eMPEGDemux::syncBits()
 }
 
 eMPEGDemux::eMPEGDemux(eIOBuffer &input, eIOBuffer &video, eIOBuffer &audio)
-	: input(input), video(video), audio(audio)
+	: input(input), video(video), audio(audio), minFrameLength(4096)
 {
 	remaining=0;
 	memset(&pcmsettings, 0, sizeof(pcmsettings));
@@ -63,7 +63,7 @@ int eMPEGDemux::decodeMore(int last, int maxsamples)
 {
 	int written=0;
 	(void)last;
-	
+
 	while (written < maxsamples)
 	{
 #ifdef DEMUX_DEBUG
@@ -82,7 +82,7 @@ int eMPEGDemux::decodeMore(int last, int maxsamples)
 #endif
 			syncBits();
 #ifdef DEMUX_DEBUG
-			if (v=getBits(8))
+			if ((v=getBits(8)))
 			{
 				eDebugNoNewLine("%02x ", v);
 				continue;
@@ -109,136 +109,152 @@ a:
 			break;
 		unsigned int code=getBits(8);
 //		eDebug("startcode: %08x\n", code|0x100);
-		if (code == 0xb9) // MPEG_program_end_code
-			break;
-		else if (code == 0xba) // pack_start_code
+		switch(code)
 		{
-			int type = getBits(2);
-			
-			if (type != 1)
+			case 0xb9: // MPEG_program_end_code
+				goto finish;
+			case 0xba: // pack_start_code
 			{
-				getBits(6);
-				getBits(16);
-				getBits(16);
-				getBits(16);
-				getBits(8);
-				continue;
-			}
-				
-			int scr_base0, scr_base, scr_ext;
-			scr_base0=getBits(3);
-			scr_base=scr_base0<<30;
-			scr_base0>>=2;
-			if (!getBits(1))
-				continue;
-			scr_base|=getBits(15)<<15;
-			if (!getBits(1))
-				continue;
-			scr_base|=getBits(15);
-			if (!getBits(1))
-				continue;
-			scr_ext=getBits(9);
-			if (!getBits(1))
-				continue;
+				int type = getBits(2);
+
+				if (type != 1)
+				{
+					getBits(6);
+					getBits(16);
+					getBits(16);
+					getBits(16);
+					getBits(8);
+					continue;
+				}
+				int scr_base0, scr_base, scr_ext;
+				scr_base0=getBits(3);
+				scr_base=scr_base0<<30;
+				scr_base0>>=2;
+				if (!getBits(1))
+					continue;
+				scr_base|=getBits(15)<<15;
+				if (!getBits(1))
+					continue;
+				scr_base|=getBits(15);
+				if (!getBits(1))
+					continue;
+				scr_ext=getBits(9);
+				if (!getBits(1))
+					continue;
 			/* int program_mux_rate= */ getBits(22);
-			if (getBits(2) != 3)
-				continue;
-			getBits(5);
-			int pack_stuffing_length=getBits(3);
-			while (pack_stuffing_length--)
-				if (getBits(8) != 0xFF)
-					break;
-			if (pack_stuffing_length >= 0)
-				continue;
+				if (getBits(2) != 3)
+					continue;
+				getBits(5);
+				int pack_stuffing_length=getBits(3);
+				while (pack_stuffing_length--)
+					if (getBits(8) != 0xFF)
+						break;
+				if (pack_stuffing_length >= 0)
+					continue;
 //			eDebug("scr: %08x:%02d\n", scr_base, scr_ext);
-		} else if (code == 0xbb) // system_header_start_code
-		{
-//			eDebug("system_header");
-			int header_length=getBits(16);
-			while (header_length--)
-				getBits(8);
-#if 0
-		} else if (code == 0xbc) // program_stream_map
-		{
-			int program_stream_map_length=getBits(16);
-			eDebug("program stream map!\n");
-			int current_next_indicator=getBits(1);
-			getBits(2);
-			int program_stream_map_version=getBits(5);
-			getBits(7);
-			if (!getBits(1))
-				continue;
-			int program_stream_info_length=getBits(16);
-			for (int r=0; r<program_stream_info_length; )
-			{
-				int tag=getBits(8);
-				int length=getBits(8);
-				eDebug("tag: %02x %02x ", tag, length);
-				while (length--)
-					eDebug("%02lx ", getBits(8));
-				eDebug("\n");
-				r+=length+2;
+				break;
 			}
-			int elementary_stream_map_length=getBits(16);
-			for (int r=0; r < elementary_stream_map_length; )
+			case 0xbb: // system_header_start_code
 			{
-				int stream_type=getBits(8);
-				int elementary_stream_id=getBits(8);
-				int elementary_stream_info_length=getBits(16);
-				for (int a=0; a < elementary_stream_info_length; )
+//			eDebug("system_header");
+				int header_length=getBits(16);
+				while (header_length--)
+					getBits(8);
+				break;
+			}
+#if 0
+			case 0xbc: // program_stream_map
+			{
+				int program_stream_map_length=getBits(16);
+				eDebug("program stream map!\n");
+				int current_next_indicator=getBits(1);
+				getBits(2);
+				int program_stream_map_version=getBits(5);
+				getBits(7);
+				if (!getBits(1))
+					continue;
+				int program_stream_info_length=getBits(16);
+				for (int r=0; r<program_stream_info_length; )
 				{
 					int tag=getBits(8);
 					int length=getBits(8);
-					eDebug("elementary: %02x %02x ", tag, length);
+					eDebug("tag: %02x %02x ", tag, length);
 					while (length--)
-						eDebugNoNewLine("%02x ", getBits(8));
+						eDebug("%02lx ", getBits(8));
 					eDebug("\n");
+					r+=length+2;
 				}
-				
-				r+=elementary_stream_info_length+4;
+				int elementary_stream_map_length=getBits(16);
+				for (int r=0; r < elementary_stream_map_length; )
+				{
+					int stream_type=getBits(8);
+					int elementary_stream_id=getBits(8);
+					int elementary_stream_info_length=getBits(16);
+					for (int a=0; a < elementary_stream_info_length; )
+					{
+						int tag=getBits(8);
+						int length=getBits(8);
+						eDebug("elementary: %02x %02x ", tag, length);
+						while (length--)
+							eDebugNoNewLine("%02x ", getBits(8));
+						eDebug("\n");
+					}
+					r+=elementary_stream_info_length+4;
+				}
+				getBits(32);
+				break;
 			}
-			getBits(32);
 #endif
-		} else if (code > 0xBC)
 		  // if (((code & 0xE0) == 0xC0) || ((code & 0xF0)==0xE0))
-		{
-//			eDebug("PES: %x", code);
-			int length=getBits(16);
-//			eDebug("%d bytes!", length);
-			unsigned char buffer[65536+6];
-			int p=0;
-			
-			buffer[p++]=0;
-			buffer[p++]=0;
-			buffer[p++]=1;
-			buffer[p++]=code;
-			buffer[p++]=length>>8;
-			buffer[p++]=length&0xFF;
-			
+			case 0xBD ... 0xFF:
+			{
+//				eDebug("PES: %x", code);
+				int length=getBits(16);
+//				eDebug("%d bytes!", length);
+				unsigned char buffer[65536+6];
+				int p=0;
+
+				buffer[p++]=0;
+				buffer[p++]=0;
+				buffer[p++]=1;
+				buffer[p++]=code;
+				buffer[p++]=length>>8;
+				buffer[p++]=length&0xFF;
+
 					// empty bitbuffer
-			while (length && remaining)
-			{
-				buffer[p++]=getBits(8);
-				length--;
+				while (length && remaining)
+				{
+					buffer[p++]=getBits(8);
+					length--;
+				}
+
+				if ( minFrameLength < length )
+					minFrameLength = length;
+
+				// now we are synced (if still something to read)
+				if ( length )
+				{
+					if ( input.read(buffer+p, length) != length )
+						eDebug("read Error");
+					p+=length;
+				}
+				if (code == 0xE0)
+				{
+					video.write(buffer, p);
+					written+=p;
+				}
+				else if (code == 0xC0)
+				{
+					audio.write(buffer, p);
+					written+=p;
+				}
+				break;
 			}
-					// now we are synced (if still something to read)
-			if (length)
-				input.read(buffer+p, length);
-			p+=length;
-			
-			if (code == 0xE0)
-			{
-				video.write(buffer, p);
-				written+=p;
-			}
-			else if (code == 0xC0)
-			{
-				audio.write(buffer, p);
-				written+=p;
-			}
-		} else
-			eDebug("startcode %x unhandled!\n", code);
+			default:
+				eDebug("startcode %04x unhandled!\n", code);
+		}
 	}
+finish:
 	return written;
 }
 
@@ -249,7 +265,7 @@ void eMPEGDemux::resync()
 
 int eMPEGDemux::getMinimumFramelength()
 {
-	return 4096;
+	return minFrameLength;
 }
 
 int eMPEGDemux::getAverageBitrate()
