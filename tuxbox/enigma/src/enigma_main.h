@@ -250,9 +250,9 @@ public:
 	enum { messageGoSleep=2, messageShutdown=3 };
 
 private:
-	eLabel 	*ChannelNumber, *ChannelName, *Clock, *EINow, *EINext,
-		*EINowDuration, *EINextDuration, *EINowTime, *EINextTime,
-		*Description,
+	eLabel 	*ChannelNumber, *ChannelName, *Clock,
+		*EINow, *EINext, *EINowDuration, *EINextDuration,
+		*EINowTime, *EINextTime, *Description, *fileinfos,
 		*ButtonRedEn, *ButtonRedDis, 
 		*ButtonGreenEn, *ButtonGreenDis, 
 		*ButtonYellowEn, *ButtonYellowDis,
@@ -261,7 +261,7 @@ private:
 		mute, volume,
 		*DVRSpaceLeft;
 
-	eWidget *dvrFunctions, *nonDVRfunctions;
+	eWidget *dvrInfoBar, *dvbInfoBar, *fileInfoBar;
 	int dvrfunctions;
 
 	// eRecordingStatus *recstatus;
@@ -378,12 +378,12 @@ private:
 	enum { listAll, listSatellites, listProvider, listBouquets };
 	void showList(int list);
 
-	void showDVRFunctions(int show);
+	void showServiceInfobar(int show);
 
 	static eZapMain *instance;
 
-	eServicePath modeLast[modeEnd][3];
-	
+	eServicePath modeLast[modeEnd][2];
+
 	int mode,             // current mode .. TV, Radio, File
 			state;
 	void onRotorStart( int newPos );
@@ -449,6 +449,18 @@ public:
 	void getServiceSelectorPath(eServicePath &path);
 
 	void moveService(const eServiceReference &path, const eServiceReference &ref, const eServiceReference &after);
+
+	void loadPlaylist( bool create = false );
+	void savePlaylist( bool destory = false );
+
+	void loadRecordings( bool create = false );
+	void saveRecordings( bool destory = false );
+
+	void loadUserBouquets( bool destroy=true );  // this recreate always all user bouquets...
+
+	void destroyUserBouquets( bool save=false ); 
+
+	void saveUserBouquets();  // only save
 
 	eZapMain();
 	~eZapMain();

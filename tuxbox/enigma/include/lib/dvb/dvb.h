@@ -297,7 +297,7 @@ public:
 	eString service_provider;
 	
 	int service_number;		// nur fuer dvb, gleichzeitig sortierkriterium...
-	
+
 	enum
 	{
 		dxNoDVB=1,

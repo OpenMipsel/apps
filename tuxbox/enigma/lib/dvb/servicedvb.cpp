@@ -349,7 +349,7 @@ void eServiceHandlerDVB::startPlayback(const eString &filename)
 	stopPlayback();
 	decoder=new eDVRPlayerThread(filename.c_str(), this);
 	decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::start));
-	flags|=flagIsSeekable|flagSupportPosition;
+	flags=flagIsSeekable|flagSupportPosition;
 }
 
 void eServiceHandlerDVB::stopPlayback()
@@ -403,7 +403,7 @@ void eServiceHandlerDVB::aspectRatioChanged(int isanamorph)
 }
 
 eServiceHandlerDVB::eServiceHandlerDVB()
-	:eServiceHandler(eServiceReference::idDVB), messages(eApp, 0), decoder(0), flags(0), cache(*this)
+	:eServiceHandler(eServiceReference::idDVB), messages(eApp, 0), decoder(0), cache(*this)
 {
 	if (eServiceInterface::getInstance()->registerHandler(id, this)<0)
 		eFatal("couldn't register serviceHandler %d", id);
@@ -470,7 +470,7 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 	if (service.type != eServiceReference::idDVB)
 		return -1;
-	int oldflags=flags;
+//	int oldflags=flags;
 	decoder=0;
 
 	if (service.path.length())
@@ -478,8 +478,9 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	else
 		flags &= ~(flagIsSeekable|flagSupportPosition);
 
-	if (oldflags != flags)
-		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
+//	if (oldflags != flags)
+	serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
+
 	if (sapi)
 	{
 		eDebug("play -> switchService");
@@ -610,11 +611,6 @@ EIT *eServiceHandlerDVB::getEIT()
 	return eDVB::getInstance()->getEIT();
 }
 
-int eServiceHandlerDVB::getFlags()
-{
-	return flags;
-}
-
 int eServiceHandlerDVB::getAspectRatio()
 {
 	return aspect;
@@ -666,6 +662,9 @@ struct eServiceHandlerDVB_addService
 	}
 	void operator()(const eServiceReference &service)
 	{
+		eService *s = eTransponderList::getInstance()->searchService( service );
+		if ( s && s->spflags & eServiceDVB::dxDontshow )
+			return;
 		int t = ((eServiceReferenceDVB&)service).getServiceType();
 		int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;
 		if (t < 0)
@@ -674,8 +673,8 @@ struct eServiceHandlerDVB_addService
 			t=31;
 		if ( type & (1<<t) && // right dvb service type
 				 ( ( DVBNamespace == (int)0xFFFFFFFF) || // ignore namespace
-			  	 ( (DVBNamespace&(int)0xFFFF0000) == nspace ) // right satellite
-			   )
+				 ( (DVBNamespace&(int)0xFFFF0000) == nspace ) // right satellite
+				 )
 			 )
 			 callback(service);
 	}
@@ -698,6 +697,9 @@ void eServiceHandlerDVB::enterDirectory(const eServiceReference &ref, Signal1<vo
 				break;
 			for (std::list<eServiceReferenceDVB>::iterator i(b->list.begin());  i != b->list.end(); ++i)
 			{
+				eService *s = eTransponderList::getInstance()->searchService( *i );
+				if ( s && s->spflags & eServiceDVB::dxDontshow )
+					continue;
 				int t = i->getServiceType();
 				int nspace = ((eServiceReferenceDVB&)*i).getDVBNamespace().get()&0xFFFF0000;
 				if (t < 0)

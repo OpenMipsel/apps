@@ -465,11 +465,11 @@
 
 			<eLabel name="recStatus" position="476:34" size="18:18" pixmap="rec_symbol" alphatest="on" />
 
-			<eLabel name="dvrFunctions" position="210:68" size="433:62" pixmap="dvrtable">
+			<eLabel name="dvrInfoBar" position="210:68" size="433:62" pixmap="dvrtable" alphatest="on" >
 				<eLabel name="TimeLeft" position="316:0" size="150:57" backgroundColor="content" foregroundColor="white" wrap="on" />
 			</eLabel>
-			
-			<eWidget name="nonDVRfunctions" position="210:68" size="433:57">
+
+			<eWidget name="dvbInfoBar" position="210:68" size="433:57">
 				<!--Zeilen  -->
 				<eLabel position="0:0" size="55:30" font="Nimbus;22" name="e_now_time" backgroundColor="content" foregroundColor="white" />
 				<eLabel position="0:30" size="55:30" font="Nimbus;22" name="e_next_time" backgroundColor="content" foregroundColor="white" />
@@ -480,20 +480,11 @@
 				<eLabel position="345:0" size="70:26" font="Blue.Regular;26" name="e_now_duration" align="right" backgroundColor="content" foregroundColor="white" />
 				<eLabel position="345:30" size="70:26" font="Blue.Regular;26" name="e_next_duration" align="right" backgroundColor="content" foregroundColor="white" />
 			</eWidget>
+
+			<eWidget name="fileInfoBar" position="210:68" size="433:57">
+				<eLabel position="0:0" size="e:e" font="Blue.Regular;29" name="fileinfos" backgroundColor="content" foregroundColor="white" />
+			</eWidget>
   
-			<eLabel name="dvrFunctions" position="210:68" size="433:62" pixmap="dvrtable">
-				<!--
-				<eLabel text="FR " position="54:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Play " position="175:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Pause " position="280:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="FF " position="405:5" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Stop " position="54:35" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel text="Record " position="180:35" size="85:30" backgroundColor="light" foregroundColor="light+15" />
-				<eLabel name="TimeLeft" position="280:35" size="200:30" backgroundColor="light" foregroundColor="light+15" />
-			-->
-			</eLabel>
-			
-			
 		</eZapMain>
 	</object>
 

@@ -467,11 +467,11 @@
 
 			<eLabel name="recStatus" position="460:44" size="18:18" pixmap="rec_symbol" alphatest="on" />
 
-			<eLabel name="dvrFunctions" position="94:79" size="484:53" pixmap="dvrtable" alphatest="on">
+			<eLabel name="dvrInfoBar" position="94:79" size="484:53" pixmap="dvrtable" alphatest="on">
 				<eLabel name="TimeLeft" position="316:0" size="150:53" backgroundColor="content" foregroundColor="white" wrap="on" />
 			</eLabel>
-			
-			<eWidget name="nonDVRfunctions" position="94:79" size="484:57">
+
+			<eWidget name="dvbInfoBar" position="94:79" size="484:57">
 				<!--Zeilen   -->
 				<eLabel position="0:0" size="55:28" font="Nimbus;22" name="e_now_time" foregroundColor="white" backgroundColor="content" alphatest="on" />
 				<eLabel position="0:27" size="55:28" font="Nimbus;22" name="e_next_time" backgroundColor="content" foregroundColor="white" alphatest="on" />
@@ -482,6 +482,11 @@
 				<eLabel position="404:0" size="80:26" font="Blue.Regular;26" name="e_now_duration" align="right" backgroundColor="content" foregroundColor="white" alphatest="on" />
 				<eLabel position="404:27" size="80:26" font="Blue.Regular;26" name="e_next_duration" align="right" backgroundColor="content" foregroundColor="white" alphatest="on" />
 			</eWidget>
+
+			<eWidget name="fileInfoBar" position="94:79" size="484:57">
+				<eLabel position="0:0" size="e:e" font="Blue.Regular;29" name="fileinfos" backgroundColor="content" foregroundColor="white" alphatest="on" />
+			</eWidget>
+
 		</eZapMain>
 	</object>
 

@@ -179,8 +179,8 @@ siTags::siTags(const eService *service, eWidget *parent)
 
 	tags = new eLabel(this);
 	descr = new eLabel(this);
-	for (std::map<eString,eString>::const_iterator i(service->id3->tags.begin());
-			i != service->id3->tags.end(); ++i)
+	for (std::map<eString,eString>::const_iterator i(service->id3->getID3Tags().begin());
+			i != service->id3->getID3Tags().end(); ++i)
 	{
 		tagString+=getDescription(i->first)+'\n';
 		if ( i->first.find("TLEN") != eString::npos )

@@ -25,7 +25,6 @@ enigma_LDADD_WHOLE = \
 
 enigma_LDADD = \
 	@FREETYPE_LIBS@ \
-	@FRIBIDI_LIBS@ \
 	@ID3TAG_LIBS@ \
 	@MAD_LIBS@ \
 	@MD5SUM_LIBS@ \

@@ -704,7 +704,8 @@ int eServiceHandlerMP3::play(const eServiceReference &service)
 		state=statePlaying;
 	else
 		state=stateError;
-	
+
+	flags=flagIsSeekable|flagSupportPosition|flagIsTrack;
 	serviceEvent(eServiceEvent(eServiceEvent::evtStart));
 	serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 
@@ -802,11 +803,6 @@ void eServiceHandlerMP3::removeRef(const eServiceReference &service)
 	return eServiceFileHandler::getInstance()->removeRef(service);
 }
 
-int eServiceHandlerMP3::getFlags()
-{
-	return flagIsSeekable|flagSupportPosition|flagIsTrack;
-}
-
 int eServiceHandlerMP3::getState()
 {
 	return state;
@@ -847,12 +843,74 @@ eString eServiceHandlerMP3::getInfo(int id)
 	return decoder->getInfo(id);
 }
 
-eServiceMP3::eServiceMP3(const char *filename): eService("")
+std::map<eString,eString> &eServiceID3::getID3Tags()
 {
-	id3_file *file;
+	if ( state == NOTPARSED )
+	{
+		id3_file *file;
 
+		file=::id3_file_open(filename.c_str(), ID3_FILE_MODE_READONLY);
+		if (!file)
+			return tags;
+
+		id3_tag *tag=id3_file_tag(file);
+		if ( !tag )
+		{
+			state=NOTEXIST;
+			id3_file_close(file);
+			return tags;
+		}
+
+		struct id3_frame const *frame;
+		id3_ucs4_t const *ucs4;
+		id3_utf8_t *utf8;
+
+		for (unsigned int i=0; i<tag->nframes; ++i)
+		{
+			frame=tag->frames[i];
+			if ( !frame->nfields )
+				continue;
+			for ( unsigned int fr=0; fr < frame->nfields; fr++ )
+			{
+				union id3_field const *field;
+				field    = &frame->fields[fr];
+				if ( field->type != ID3_FIELD_TYPE_STRINGLIST )
+					continue;
+
+				unsigned int nstrings = id3_field_getnstrings(field);
+
+				for (unsigned int j = 0; j < nstrings; ++j)
+				{
+					ucs4 = id3_field_getstrings(field, j);
+					assert(ucs4);
+
+					if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
+						ucs4 = id3_genre_name(ucs4);
+
+					utf8 = id3_ucs4_utf8duplicate(ucs4);
+					if (utf8 == 0)
+						break;
+
+					tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
+					free(utf8);
+				}
+			}
+		}
+		id3_file_close(file);
+		state=PARSED;
+	}
+	return tags;
+}
+
+eServiceID3::eServiceID3( const eServiceID3 &ref )
+	:tags(ref.tags), filename(ref.filename), state(ref.state)
+{
+}
+
+eServiceMP3::eServiceMP3(const char *filename)
+: eService(""), id3tags(filename)
+{
 //	eDebug("*************** servicemp3.cpp FILENAME: %s", filename);
-
 	if (!strncmp(filename, "http://", 7))
 	{
 		if (!isUTF8(filename))
@@ -868,62 +926,12 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 		l=convertLatin1UTF8(l);
 	service_name=l;
 
-	file=::id3_file_open(filename, ID3_FILE_MODE_READONLY);
-	if (!file)
-		return;
-		
-	id3=&id3tags;
-
-	id3_tag *tag=id3_file_tag(file);
-	if ( !tag )
-	{
-		id3_file_close(file);
-		return;
-	}
-
-  struct id3_frame const *frame;
-  id3_ucs4_t const *ucs4;
-  id3_utf8_t *utf8;
-
-	for (unsigned int i=0; i<tag->nframes; ++i)
-	{
-		frame=tag->frames[i];
-		if ( !frame->nfields )
-			continue;
-		for ( unsigned int fr=0; fr < frame->nfields; fr++ )
-		{
-			union id3_field const *field;
-			field    = &frame->fields[fr];
-			if ( field->type != ID3_FIELD_TYPE_STRINGLIST )
-				continue;
-
-			unsigned int nstrings = id3_field_getnstrings(field);
-
-			for (unsigned int j = 0; j < nstrings; ++j)
-			{
-				ucs4 = id3_field_getstrings(field, j);
-				assert(ucs4);
-			
-				if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
-					ucs4 = id3_genre_name(ucs4);
-				
-				utf8 = id3_ucs4_utf8duplicate(ucs4);
-				if (utf8 == 0)
-					break;
-			
-				id3tags.tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
-				free(utf8);
-			}
-		}
-	}
-	
-	id3_file_close(file);
+	id3 = &id3tags;
 }
 
-eServiceMP3::eServiceMP3(const eServiceMP3 &c): eService(c)
+eServiceMP3::eServiceMP3(const eServiceMP3 &c)
+:eService(c), id3tags( c.id3tags )
 {
-	eDebug("BLA");
-	id3tags=c.id3tags;
 	id3=&id3tags;
 }
 

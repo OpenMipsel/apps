@@ -26,7 +26,7 @@ class eTimerManager: public Object
 ///////////////////////////
 
 // for multiple use timer and connection objects..
-	eTimer timer;					
+	eTimer timer;
 	Connection conn, conn2;
 
 // the timerlist self...
@@ -58,6 +58,8 @@ public:
 	bool addEventToTimerList( eWidget *sel, const eServiceReference *ref, const EITEvent *evt, int type = ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::stateWaiting );
 	bool addEventToTimerList( eWidget *sel, const ePlaylistEntry& entry );
 	void abortEvent(int err);
+	void loadTimerList();
+	void saveTimerList();
 	ePlaylistEntry* findEvent( eServiceReference *service, EITEvent *evt );
 	template <class Z>
 	void forEachEntry(Z ob)

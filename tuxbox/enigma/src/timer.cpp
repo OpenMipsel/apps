@@ -60,6 +60,21 @@ void eTimerManager::waitClock()
 	}
 }
 
+void eTimerManager::loadTimerList()
+{
+	timerlist->load(CONFIGDIR "/enigma/timer.epl");
+	if ( !(nextStartingEvent->type & ePlaylistEntry::stateRunning) )
+	{
+		nextAction = setNextEvent;
+		actionTimer.start(0,true);
+	}
+}
+
+void eTimerManager::saveTimerList()
+{
+	timerlist->save();
+}
+
 void eTimerManager::actionHandler()
 {
 	switch( nextAction )

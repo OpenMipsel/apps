@@ -15,6 +15,7 @@
 #include <linux/if_ether.h>
 
 #include <enigma.h>
+#include <timer.h>
 #include <enigma_main.h>
 #include <sselect.h>
 
@@ -930,9 +931,58 @@ static eString reload_settings(eString request, eString dirpath, eString opt, eH
 	{
 		eDVB::getInstance()->settings->loadServices();
 		eDVB::getInstance()->settings->loadBouquets();
+		eZap::getInstance()->getServiceSelector()->actualize();
 		return "+ok\n";
 	}
 	return "-no settings to load\n";
+}
+
+static eString load_recordings(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eZapMain::getInstance()->loadRecordings();
+	return "+ok\n";
+}
+
+static eString save_recordings(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eZapMain::getInstance()->saveRecordings();
+	return "+ok\n";
+}
+
+static eString load_timerList(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eTimerManager::getInstance()->loadTimerList();
+	return "+ok\n";
+}
+
+static eString save_timerList(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eTimerManager::getInstance()->saveTimerList();
+	return "+ok\n";
+}
+
+static eString load_playlist(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eZapMain::getInstance()->loadPlaylist();
+	return "+ok\n";
+}
+
+static eString save_playlist(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eZapMain::getInstance()->savePlaylist();
+	return "+ok\n";
+}
+
+static eString load_userBouquets(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eZapMain::getInstance()->loadUserBouquets();
+	return "+ok\n";
+}
+
+static eString save_userBouquets(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	eZapMain::getInstance()->saveUserBouquets();
+	return "+ok\n";
 }
 
 #define NAVIGATOR_PATH "/cgi-bin/navigator"
@@ -1138,6 +1188,14 @@ void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 	dyn_resolver->addDyn("GET", "/cgi-bin/streaminfo", getsi);
 	dyn_resolver->addDyn("GET", "/channels/getcurrent", channels_getcurrent);
 	dyn_resolver->addDyn("GET", "/cgi-bin/reloadSettings", reload_settings);
+	dyn_resolver->addDyn("GET", "/cgi-bin/reloadRecordings", load_recordings);
+	dyn_resolver->addDyn("GET", "/cgi-bin/saveRecordings", save_recordings);
+	dyn_resolver->addDyn("GET", "/cgi-bin/reloadPlaylist", load_playlist);
+	dyn_resolver->addDyn("GET", "/cgi-bin/savePlaylist", save_playlist);
+	dyn_resolver->addDyn("GET", "/cgi-bin/reloadUserBouquets", load_userBouquets);
+	dyn_resolver->addDyn("GET", "/cgi-bin/saveUserBouquets", save_userBouquets);
+	dyn_resolver->addDyn("GET", "/cgi-bin/reloadTimerList", load_timerList);
+	dyn_resolver->addDyn("GET", "/cgi-bin/saveTimerList", save_timerList);
 
 	dyn_resolver->addDyn("GET", "/control/zapto", neutrino_suck_zapto);
 	dyn_resolver->addDyn("GET", "/cgi-bin/screenshot", screenshot);

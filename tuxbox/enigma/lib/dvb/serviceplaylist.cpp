@@ -29,6 +29,7 @@ ePlaylist::~ePlaylist()
 int ePlaylist::load(const char *filename)
 {
 	eDebug("loading playlist... %s", filename);
+	list.clear();
 	this->filename=filename;
 	FILE *fp=fopen(filename, "rt");
 	eString path=filename;
@@ -250,7 +251,7 @@ void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signa
 		removeRef(dir);
 	}
 	std::pair<std::multimap<eServiceReference,eServiceReference>::const_iterator,std::multimap<eServiceReference,eServiceReference>::const_iterator>
-			range=playlists.equal_range(dir);
+		range=playlists.equal_range(dir);
 	while (range.first != range.second)
 	{
 		callback(range.first->second);
@@ -285,6 +286,8 @@ eServiceReference eServicePlaylistHandler::newPlaylist(const eServiceReference &
 			timeval now;
 			gettimeofday(&now,0);
 			uniqueNum = now.tv_usec;
+			if ( uniqueNum < 21 && uniqueNum >=0 )
+				continue;
 		}
 		while( usedUniqueIDs.find( uniqueNum ) != usedUniqueIDs.end() );
 		usedUniqueIDs.insert(uniqueNum);
@@ -302,6 +305,7 @@ void eServicePlaylistHandler::removePlaylist(const eServiceReference &service)
 		for (std::multimap<eServiceReference,eServiceReference>::iterator i(playlists.begin()); i != playlists.end(); i++)
 			if (i->second == service)
 			{
+				usedUniqueIDs.erase( service.data[1] );
 				found=1;
 				playlists.erase(i);
 				break;

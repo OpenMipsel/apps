@@ -3,6 +3,8 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
+int eServiceHandler::flags=0;
+
 eServiceHandler::eServiceHandler(int id): id(id)
 {
 }
@@ -48,7 +50,7 @@ EIT *eServiceHandler::getEIT()
 
 int eServiceHandler::getFlags()
 {
-	return 0;
+	return flags;
 }
 
 int eServiceHandler::getState()

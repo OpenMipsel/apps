@@ -102,7 +102,7 @@ class eServiceHandlerDVB: public eServiceHandler
 	void gotPMT(PMT *pmt);
 	void leaveService(const eServiceReferenceDVB &);
 	void aspectRatioChanged(int ratio);
-	int flags, state, aspect, error;
+	int state, aspect, error;
 
 	eServiceCache<eServiceHandlerDVB> cache;
 	void handleDVBEvent( const eDVBEvent& );
@@ -131,7 +131,6 @@ public:
 		// for DVB events, nvod, audio....
 	EIT *getEIT();
 	
-	int getFlags();
 	int getAspectRatio();
 	int getState();
 	int getErrorInfo();

@@ -45,8 +45,11 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 	time_t now = time(0)+eDVB::getInstance()->time_difference;
 
 	tmpMap::iterator it = temp.find( service );
-	if ( it != temp.end() && source == SCHEDULE )
-		temp[service] = std::pair< time_t, int> (now, source);
+	if ( it == temp.end() ||
+				( source == SCHEDULE &&
+					it->second.second == NOWNEXT )
+			)
+			temp[service] = std::pair< time_t, int> (now, source);
 
 	if ( TM > now-24*60*60 && TM < now+14*24*60*60 )
 	{
@@ -139,12 +142,20 @@ bool eEPGCache::finishEPG()
 
 		tmpMap::iterator It = temp.begin();
 
+//		eDebug("tempmap size=%d", temp.size() );
 		while (It != temp.end())
 		{
+//		eDebug("sid = %02x, onid = %02x, opos = %d", It->first.sid, It->first.onid, It->first.opos);
 			if ( It->second.second == SCHEDULE || ( It->second.second == NOWNEXT && !firstScheduleEvent.valid() ) )
+			{
+//				eDebug("ADD to last updated Map");
 				serviceLastUpdated[It->first]=It->second.first;
+			}
 			if ( eventDB.find( It->first ) == eventDB.end() )
+			{
+//				eDebug("REMOVE from update Map");
 				temp.erase(It++->first);
+			}
 			else
 				It++;
 		}

@@ -148,7 +148,6 @@ public:
 	
 	eString getInfo(int id);
 
-	int getFlags();
 	int getState();
 	int getErrorInfo();
 
@@ -163,9 +162,25 @@ public:
 
 class eServiceID3
 {
-public:
 		// tags are according to ID3v2
 	std::map<eString, eString> tags;
+
+	eString filename;
+
+	enum
+	{
+		NOTPARSED,
+		PARSED,
+		NOTEXIST
+	}state;
+public:
+	eServiceID3( const char *filename )
+		:filename(filename), state( NOTPARSED )
+	{
+	}
+	eServiceID3( const eServiceID3 &ref );
+	
+	std::map<eString, eString> &getID3Tags();
 };
 
 class eServiceMP3: public eService
