@@ -105,13 +105,12 @@
 			<action name="nextBouquet" key="+" flags="mr" />
 			<action name="prevBouquet" key="-" flags="mr" />
 			<action name="pathUp" key="d-box" flags="m" />
-			<action name="toggleStyle" key="mute" flags="m" />
+			<action name="showMenu" key="red" flags="m" />
+			<action name="toggleStyle" key="green" flags="m" />
 			<action name="toggleFocus" key="yellow" flags="m" />
+			<action name="showFavourite" key="blue" flags="m" />
 			<action name="pathUp" key="d-box" flags="m" />
 			<action name="showEPGSelector" key="?" flags="m" />
-			<action name="addService" key="green" flags="m" />
-			<action name="showMenu" key="red" flags="m" />
-			<action name="showFavourite" key="blue" flags="m" />
     </actionmap>
 
 		<actionmap name="numbers">

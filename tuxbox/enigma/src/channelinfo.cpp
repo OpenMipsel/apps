@@ -9,7 +9,10 @@
 #include <time.h>
 
 eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
-	:eDecoWidget(parent, 0, deco), ctime(this), cname(this), cdescr(this), cdolby(this), cstereo(this), cformat(this), cscrambled(this), eit(0)
+	:eDecoWidget(parent, 0, deco),
+	ctime(this), cname(this), cdescr(this),
+	cgenre(this), cdolby(this), cstereo(this),
+	cformat(this), cscrambled(this), eit(0)
 {
 	cflags = 0;
 
@@ -18,7 +21,13 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	cdescr.setFont( fn );
 	cdescr.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
 	cdescr.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
-	cdescr.setFlags( RS_WRAP | eLabel::flagVCenter );
+	cdescr.setFlags( RS_FADE | eLabel::flagVCenter );
+
+	fn.pointSize = 28;
+	cgenre.setFont( fn );
+	cgenre.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
+	cgenre.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
+	cgenre.setFlags( RS_FADE | eLabel::flagVCenter );
 
 	fn.pointSize = 30;
 	cname.setFont( fn );
@@ -119,7 +128,6 @@ const char *eChannelInfo::genresTableShort[256] =
 void eChannelInfo::ParseEITInfo(EITEvent *e)
 {
 		eString t;
-		eString genre;
 			
 		if(e->start_time!=0)
 		{
@@ -164,23 +172,20 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 				{
 					if(genresTableShort[ce->content_nibble_level_1*16+ce->content_nibble_level_2])
 					{
+						if ( !genre.length() )
+							genre+="GENRE:";
 						genre += gettext( genresTableShort[ce->content_nibble_level_1*16+ce->content_nibble_level_2] );
 						genre += " ";
 					}
 				}
 			}
 		}
-//		eDebug( "CINF: Genres found -> %s", genre.c_str() );
-		if((!genre.isNull()) && (genre.c_str()[0]))
-		{
-			descr += "\nGENRE: ";
-			descr += genre;
-		}
 		if(!t.isNull()) name += t;
 
 		int n = 0;
 		cname.setText( name );
 		cdescr.setText( descr );
+		cgenre.setText( genre );
 		ctime.setText( starttime );
 		n = LayoutIcon(&cdolby, (cflags & cflagDolby), n);
 		n = LayoutIcon(&cstereo, (cflags & cflagStereo), n);
@@ -274,10 +279,12 @@ void eChannelInfo::clear()
 {
 	name="";
 	descr="";
+	genre="";
 	starttime="";
 	cflags=0;
 	cname.setText("");
 	cdescr.setText("");
+	cgenre.setText("");
 	ctime.setText("");
 	cdolby.hide();
 	cstereo.hide();
@@ -344,7 +351,9 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 			cname.move( ePoint(clientrect.width() / 8 + 4, 0 ));
 			cname.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), clientrect.height()/3+2));
 			cdescr.move( ePoint(clientrect.width() / 8 + 4, clientrect.height() / 3 + 2 ));
-			cdescr.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)*2-2 ));
+			cdescr.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)-2 ));
+			cgenre.move( ePoint(clientrect.width() / 8 + 4, cdescr.getPosition().y() + cdescr.getSize().height()) );
+			cgenre.resize( eSize( clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)-2 ));
 			cdolby.resize( eSize(25,15) );
 			cstereo.resize( eSize(25,15) );
 			cformat.resize( eSize(25,15) );

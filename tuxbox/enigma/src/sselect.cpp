@@ -519,7 +519,8 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 		eServiceReference ref=entry->service;
 
 		if (movemode)
-      if (eListBoxEntryService::selectedToMove)
+		{
+			if (eListBoxEntryService::selectedToMove)
 			{
 				eListBoxEntryService *next=services->getNext();
 				/*emit*/moveEntry(path.current(), ref, next ? next->service : eServiceReference());
@@ -538,10 +539,28 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 				services->invalidateCurrent();
 				return;
 			}
+		}
 
 		if (ref.flags & eServiceReference::isDirectory)
 			enterDirectory(ref);
-		else if (!FavouriteMode)
+		else if (FavouriteMode)
+		{
+			eServiceReference &ref = services->getCurrent()->service;
+			std::map<eServiceReference, int>::iterator it = eListBoxEntryService::favourites.find( ref );
+			if ( it == eListBoxEntryService::favourites.end() )
+			{
+				/*emit*/ addServiceToFavourite(this, 1);
+				eListBoxEntryService::favourites[ref] = 1;
+			}
+			else
+			{
+				/*emit*/ removeServiceFromFavourite( ref );
+				eListBoxEntryService::favourites.erase( ref );
+			}
+			services->invalidateCurrent();
+			return;
+		}
+		else
 		{
 			result=&entry->service;
 			close(0);
@@ -691,27 +710,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_serviceSelectorActions->showFavourite && !movemode && !FavouriteMode)
 				/*emit*/ showFavourite(this);
 			else if (event.action == &i_serviceSelectorActions->addService && !movemode)
-			{
-				if (FavouriteMode)
-				{
-					eServiceReference &ref = services->getCurrent()->service;
-					std::map<eServiceReference, int>::iterator it = eListBoxEntryService::favourites.find( ref );
-					if ( it == eListBoxEntryService::favourites.end() )
-					{
-						/*emit*/ addServiceToFavourite(this, 1);
-						eListBoxEntryService::favourites[ref] = 1;
-					}
-					else
-					{
-						/*emit*/ removeServiceFromFavourite( ref );
-						eListBoxEntryService::favourites.erase( ref );
-					}
-					services->invalidateCurrent();
-
-					break;
-				}
 				/*emit*/ addServiceToList(selected);
-			}
 			else if (event.action == &i_serviceSelectorActions->addServiceToFavourite && !movemode)
 				/*emit*/ addServiceToFavourite(this, 0);
 			else if (event.action == &i_serviceSelectorActions->modeTV && !movemode)

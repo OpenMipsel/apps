@@ -48,14 +48,10 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 
 		if ( source == SCHEDULE )
 		{
-//			eDebug("beginTime = %d, event_id = %d, service.sid = %d, service.onid = %d", event.beginTime, event.event_id, event.service.sid, event.service.onid );
-//			eDebug("firstScheduleEvent beginTime = %d, event_id = %d, service.sid = %d, service.onid = %d", firstScheduleEvent.beginTime, firstScheduleEvent.event_id, firstScheduleEvent.service.sid, firstScheduleEvent.service.onid );
-
 			if ( !firstScheduleEvent.valid() )
 			{
-				firstScheduleEvent=event;
-//				eDebug("Schedule begin = %d, event_id = %d, service.sid = %d, service.onid = %d", event.beginTime, event.event_id, event.service.sid, event.service.onid );
-//				eDebug("Schedule begin = %d, %d, %d, %d, %d", eit_event->start_time_1, eit_event->start_time_2, eit_event->start_time_3, eit_event->start_time_4, eit_event->start_time_5 );
+				if ( (time(0)+eDVB::getInstance()->time_difference) < TM )
+					firstScheduleEvent=event;
 			}
 			else if ( firstScheduleEvent == event )  // epg around
 			{
@@ -66,14 +62,10 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 		}
 		else // if ( source == NOWNEXT )
 		{
-//			eDebug("beginTime = %d, event_id = %d, service.sid = %d, service.onid = %d", event.beginTime, event.event_id, event.service.sid, event.service.onid );
-//			eDebug("firstNowNexEvent beginTime = %d, event_id = %d, service.sid = %d, service.onid = %d", firstNowNextEvent.beginTime, firstNowNextEvent.event_id, firstNowNextEvent.service.sid, firstNowNextEvent.service.onid );
-
 			if ( !firstNowNextEvent.valid() )
 			{
-//				eDebug("NowNext begin = %d, %d, %d, %d, %d", eit_event->start_time_1, eit_event->start_time_2, eit_event->start_time_3, eit_event->start_time_4, eit_event->start_time_5 );
-//				eDebug("NowNext begin = %d, event_id = %d, service.sid = %d, service.onid = %d", event.beginTime, event.event_id, event.service.sid, event.service.onid );
-				firstNowNextEvent = event;
+				if ( (time(0)+eDVB::getInstance()->time_difference) < TM )
+					firstNowNextEvent = event;
 			}
 			else if ( firstNowNextEvent == event ) // now next ready
 			{
@@ -91,7 +83,7 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 
 			TM = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
 
-			if ( (time(0)+eDVB::getInstance()->time_difference) <= (TM+duration) )  // old events should not be cached
+			if ( (time(0)+eDVB::getInstance()->time_difference) <= (TM+duration) || TM == 3599 /*NVOD Service*/ )  // old events should not be cached
 			{
 				// hier wird immer eine eventMap zurück gegeben.. entweder eine vorhandene..
 				// oder eine durch [] erzeugte
@@ -107,8 +99,8 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 				servicemap.erase(TM);
 // ... dann neuen einfuegen.				
 					eventDB[service][TM] = new eventData(eit_event, eit_event_size, source );
-
 			}
+
 			ptr += eit_event_size;
 			((__u8*)eit_event)+=eit_event_size;
 		}

@@ -67,14 +67,18 @@ int eListBoxEntryEPG::getEntryHeight()
 eListBoxEntryEPG::eListBoxEntryEPG(const eit_event_struct* evt, eListBox<eListBoxEntryEPG> *listbox, eServiceReference &ref)
 		:eListBoxEntry((eListBox<eListBoxEntry>*)listbox), paraDate(0), paraTime(0), paraDescr(0), event(evt), service(ref)
 {	
+		start_time = *localtime(&event.start_time);
 		for (ePtrList<Descriptor>::iterator d(event.descriptor); d != event.descriptor.end(); ++d)
 		{
 			Descriptor *descriptor=*d;
 			if (descriptor->Tag()==DESCR_SHORT_EVENT)
 			{
-				start_time = *localtime(&event.start_time);
 				descr = ((ShortEventDescriptor*)descriptor)->event_name;
 				return;
+			}
+			else if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
+			{
+//				eDebug( ((TimeShiftedEventDescriptor*)descriptor)->toString().c_str() );
 			}
 		}
 		descr = "no event data avail";
