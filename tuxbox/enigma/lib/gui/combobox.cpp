@@ -108,7 +108,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 
 void eComboBox::onEntrySelected( eListBoxEntryText* e)
 {
- listbox.hide();
+	listbox.hide();
 	if (flags & flagShowEntryHelp)
 		setHelpText( oldHelpText );
 
@@ -116,6 +116,8 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 	{
 		setText( e->getText() );
 		setFocus( this );
+		if ( parent->LCDElement )
+			parent->LCDElement->setText("");
 		/* emit */ selchanged_id(this, e);
 		/* emit */ selchanged(e);
 	}

@@ -48,16 +48,17 @@ class eFrontend: public Object
 			SpectralInversion Inversion, eSatellite* sat, Modulation QAM);
 
 	void timeout();
-	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec );
-	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA );
+	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec);
+	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA, int newPos );
 	int noRotorCmd;
 public:
 //	double calcAzimuth( double Longitude, double Latitude, int OrbitalPos );
-	void disableRotor() { noRotorCmd = 1; }  // no more rotor cmd is sent when tune
-	void enableRotor() { noRotorCmd = 0; }  // rotor cmd is sent when tune
+	void disableRotor() { noRotorCmd = 1, lastcsw=0, lastRotorCmd=0; }  // no more rotor cmd is sent when tune
+	void enableRotor() { noRotorCmd = 0, lastcsw=0, lastRotorCmd=0; }  // rotor cmd is sent when tune
 	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
 
-	Signal0<void> rotorRunning, rotorStopped, rotorTimeout;
+	Signal1<void, int> rotorRunning;
+	Signal0<void> rotorStopped, rotorTimeout;
 	Signal2<void, eTransponder*, int> tunedIn;
 	~eFrontend();
 

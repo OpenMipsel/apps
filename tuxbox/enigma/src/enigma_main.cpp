@@ -27,6 +27,9 @@
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/iso639.h>
 #include <lib/dvb/servicemp3.h>
+#include <lib/dvb/servicestructure.h>
+#include <lib/dvb/serviceplaylist.h>
+#include <lib/dvb/frontend.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/eprogress.h>
@@ -41,8 +44,6 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/gdi/lcd.h>
 #include <lib/gdi/glcddc.h>
-#include <lib/dvb/servicestructure.h>
-#include <lib/dvb/serviceplaylist.h>
 
 		// bis waldi das in nen .h tut
 #define MOVIEDIR "/hdd/movie"
@@ -476,6 +477,25 @@ eServiceNumberWidget::~eServiceNumberWidget()
 
 eZapMain *eZapMain::instance;
 
+void eZapMain::onRotorStart( int newPos )
+{
+	if (!pRotorMsg)
+	{
+		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the rotor is driving to %d.%d°%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
+		pRotorMsg->show();
+	}
+}
+
+void eZapMain::onRotorStop()
+{
+	if (pRotorMsg)
+	{
+		pRotorMsg->hide();
+		delete pRotorMsg;
+		pRotorMsg=0;
+	}
+}
+
 void eZapMain::eraseBackground(gPainter *painter, const eRect &where)
 {
 }
@@ -484,7 +504,7 @@ eZapMain::eZapMain()
 	:eWidget(0, 1)
 	,mute( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
 	,volume( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
-	,VolumeBar( &volume ), pMsg(0), message_notifier(eApp, 0), timeout(eApp)
+	,VolumeBar( &volume ), pMsg(0), pRotorMsg(0), message_notifier(eApp, 0), timeout(eApp)
 	,clocktimer(eApp), messagetimeout(eApp), progresstimer(eApp)
 	,volumeTimer(eApp), recStatusBlink(eApp), wasSleeping(0), state( 0 )
 {
@@ -635,6 +655,9 @@ eZapMain::eZapMain()
 	CONNECT(volumeTimer.timeout, eZapMain::hideVolumeSlider );
 	CONNECT(recStatusBlink.timeout, eZapMain::blinkRecord);
 
+	CONNECT( eFrontend::getInstance()->rotorRunning, eZapMain::onRotorStart );
+	CONNECT( eFrontend::getInstance()->rotorStopped, eZapMain::onRotorStop );
+
 	actual_eventDisplay=0;
 
 //	clockUpdate();
@@ -736,7 +759,6 @@ eZapMain::eZapMain()
 	if (curlist->current != curlist->list.end())
 		playService(*curlist->current, psDontAdd);
 	startMessages();
-
 
 	dvrFunctions->zOrderRaise();
 	nonDVRfunctions->zOrderRaise();
@@ -1293,7 +1315,7 @@ void eZapMain::play()
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
 	} else if (handler->getState() == eServiceHandler::statePause)
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
-	else
+	else if ( handler->getState() != eServiceHandler::statePlaying )
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
 	updateProgress();
 }
@@ -1303,6 +1325,7 @@ void eZapMain::stop()
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
+	eDebug("stop");
 	handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
 	handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
 	updateProgress();
@@ -1313,6 +1336,7 @@ void eZapMain::pause()
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
+	eDebug("pause");
 	if (handler->getState() == eServiceHandler::statePause)
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
 	else
@@ -2864,7 +2888,7 @@ void eZapMain::nextMessage()
 	std::list<eZapMessage>::iterator i(messages.begin());
  	if (i != messages.end())
  	{
- 		msg=messages.front();
+		msg=messages.front();
 		messagelock.unlock();
 		int showonly=msg.getTimeout()>=0;
 		if (!showonly)

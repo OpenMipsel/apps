@@ -31,6 +31,7 @@ class tpPacket
 public:
 	std::string name;
 	int scanflags;
+	int orbital_position;
 	std::list<eTransponder> possibleTransponders;
 };
 

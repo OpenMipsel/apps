@@ -23,7 +23,6 @@ private:
 	void sel_bouquet();
 	void sel_satconfig();
 	void sel_rotorConfig();
-	void sel_rotorManual();
 	eLNB* getRotorLNB();
 public:
 	eZapScan();

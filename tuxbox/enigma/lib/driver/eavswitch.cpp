@@ -287,6 +287,8 @@ int eAVSwitch::setColorFormat(eAVColorFormat c)
 
 int eAVSwitch::setInput(int v)
 {	
+	eString s = eDVB::getInstance()->getInfo("mID");
+
 	eDebug("[eAVSwitch] setInput %d, avsfd=%d", v, avsfd);
 	switch (v)
 	{
@@ -300,7 +302,10 @@ int eAVSwitch::setInput(int v)
 		changeVolume(1, volume);  // set Volume to TV Volume
 		if (mute)
 		{
-			muteAvsAudio(1);
+			if ( s == "05" || s == "06" )
+				muteOstAudio(1);
+			else
+				muteAvsAudio(1);
 			sendVolumeChanged();
 		}
 		reloadSettings();						// reload ColorSettings
@@ -315,7 +320,12 @@ int eAVSwitch::setInput(int v)
 		ioctl(avsfd, AVSIOSVSW3, scart+4);
 		ioctl(avsfd, AVSIOSASW3, scart+5);
 		if (mute)
-			muteAvsAudio(0);
+		{
+			if ( s == "05" || s == "06" )
+				muteOstAudio(0);
+			else
+				muteAvsAudio(0);
+		}
 		changeVCRVolume(1, VCRVolume);
 		break;
 	}

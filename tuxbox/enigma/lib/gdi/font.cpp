@@ -508,7 +508,7 @@ int eTextPara::renderString(const eString &string, int rflags)
 					unicode|=(*p++)&0x3F;
 			}
 		}
-	
+
 		if (!(rflags&RS_DIRECT))
 		{
 			switch (unicode)

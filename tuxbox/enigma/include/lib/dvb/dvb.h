@@ -130,7 +130,7 @@ public:
 		int frequency, symbol_rate, polarisation, fec, inversion, orbital_position;
 		void set(const SatelliteDeliverySystemDescriptor *descriptor);
 		int tune(eTransponder *);
-		int isValid() { return valid; }
+		int isValid() const { return valid; }
 		bool operator == (const satellite &c) const
 		{
 			if (valid != c.valid)

@@ -188,7 +188,7 @@ private:
 	// eRecordingStatus *recstatus;
 
 	eProgress *Progress, VolumeBar;
-	eMessageBox *pMsg;
+	eMessageBox *pMsg, *pRotorMsg;
 
 	eLock messagelock;
 	std::list<eZapMessage> messages;
@@ -285,6 +285,8 @@ private:
 	eServicePath modeLast[modeEnd];
 	int mode, last_mode, state;
 	int hddDev;
+	void onRotorStart( int newPos );
+	void onRotorStop();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 private:

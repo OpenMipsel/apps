@@ -357,8 +357,8 @@ int Decoder::Set()
 				fd.demux_pcr=open(DEMUX_DEV, O_RDWR);
 				if (fd.demux_pcr<0)
 					eDebug("fd.demux_pcr couldn't be opened");
-			else
-					eDebug("fd.demux_pcr opened");
+/*			else
+					eDebug("fd.demux_pcr opened");*/
 			}
 			if ( current.pcrpid != -1 )
 			{
@@ -486,7 +486,7 @@ int Decoder::Set()
 		{
 			close(fd.demux_audio);
 			fd.demux_audio=-1;
-			eDebug("fd.demux_audio closed");
+//			eDebug("fd.demux_audio closed");
 		}
 		if ( (changed & 0x0F) != 2 )  //  only apid changed
 		{

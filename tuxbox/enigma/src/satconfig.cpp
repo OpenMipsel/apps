@@ -59,7 +59,7 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	new eListBoxEntryText( *combo_type, _("one single satellite"), (void*)0, 0, _("one directly connected LNB"));
 	new eListBoxEntryText( *combo_type, _("2 satellites via DiSEqC A/B"), (void*)1, 0, _("2 LNBs via Diseqc"));
 	new eListBoxEntryText( *combo_type, _("4 satellites via DiSEqC OPT A/B"), (void*)2, 0, _("3 LNBs via Diseqc"));
-	new eListBoxEntryText( *combo_type, _("non-standard user defined cofiguration..."), (void*)3, 0, _("special"));
+	new eListBoxEntryText( *combo_type, _("non-standard user defined configuration..."), (void*)3, 0, _("special"));
 	
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eSatelliteConfigurationManager"))
@@ -589,7 +589,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 		new eListBoxEntryText( *c, _("*delete*"), (void*) 0 );   // this is to delete an satellite*/
 	for (std::list<tpPacket>::const_iterator i(networks.begin()); i != networks.end(); ++i)
 		if ( i->possibleTransponders.size() )
-			new eListBoxEntryText( *c, i->name, (void*) i->possibleTransponders.begin()->satellite.orbital_position );
+			new eListBoxEntryText( *c, i->name, (void*) i->orbital_position );
 
 	int err;
 	if ( (err = c->setCurrent( (void*) s->getOrbitalPosition() ) ) )
@@ -654,7 +654,7 @@ void eSatelliteConfigurationManager::newPressed()
 		std::map< eSatellite*, SatelliteEntry > :: iterator it ( entryMap.begin() );
 		for ( ; it != entryMap.end(); it++)
 		{
-			if ( i->possibleTransponders.begin()->satellite.orbital_position == it->first->getOrbitalPosition() )
+			if ( i->orbital_position == it->first->getOrbitalPosition() )
 				break;  // test the next...
 		}
 		if ( it == entryMap.end() )  // all Entrys have been checked...
@@ -697,7 +697,7 @@ void eSatelliteConfigurationManager::newPressed()
 	else // we use the last lnb in the list for the new Satellite
 		lnb = &eTransponderList::getInstance()->getLNBs().back();
 
-	eSatellite *satellite = lnb->addSatellite( i->possibleTransponders.begin()->satellite.orbital_position );
+	eSatellite *satellite = lnb->addSatellite( i->orbital_position );
 	satellite->setDescription(i->name);
 	eSwitchParameter &sParams = satellite->getSwitchParams();
 	sParams.VoltageMode = eSwitchParameter::HV;

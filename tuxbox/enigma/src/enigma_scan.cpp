@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.6 2002/12/23 15:46:18 Ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.7 2002/12/30 02:50:05 Ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -43,7 +43,6 @@ eZapScan::eZapScan()
 	{
 		CONNECT((new eListBoxEntryMenu(&list, _("Satellites..."), _("goto satellite config")))->selected, eZapScan::sel_satconfig);
 		CONNECT((new eListBoxEntryMenu(&list, _("Rotor Setup..."), _("goto Rotor Setup")))->selected, eZapScan::sel_rotorConfig);
-//		CONNECT((new eListBoxEntryMenu(&list, _("Manual Rotor Menu"), _("set Limits, drive East, drive West, ...")))->selected, eZapScan::sel_rotorManual);
 	}
 //	CONNECT((new eListBoxEntryMenu(&list, _("Bouquets...")))->selected, eZapScan::sel_bouquet);	
 }
@@ -131,11 +130,6 @@ void eZapScan::sel_rotorConfig()
 		c.hide();
 		show();
 	}
-}
-
-void eZapScan::sel_rotorManual()
-{
-
 }
 
 eLNBSelector::eLNBSelector()

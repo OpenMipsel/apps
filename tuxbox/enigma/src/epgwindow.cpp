@@ -227,10 +227,10 @@ void eEPGSelector::fillEPGList()
 				}
 			}
 		}
-		((eListBox<eListBoxEntryEPG>*)events)->sort();
 	}
 	else for (It = evt->begin(); It != evt->end(); It++)
 		new eListBoxEntryEPG(*It->second, events, current);
+	((eListBox<eListBoxEntryEPG>*)events)->sort();		
 }
 
 void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)

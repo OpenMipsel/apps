@@ -326,7 +326,7 @@
 			<eNumber name="Latitude" position="320:145" size="100:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
 			<eComboBox name="LaDirection" position="430:145" size="100:35" helptext="choose direction" loadDeco="" />
 
-			<eListbox name="positions" position="10:100" size="170:175" helptext="choose entry to edit or remove" loadDeco="" />
+			<eListbox name="positions" position="10:100" size="170:180" helptext="choose entry to edit or remove" loadDeco="" />
 
 			<eLabel name="lStoredRotorNo" text="Number in Rotor:" position="190:100" size="e-110:35" vcenter="on" />
 			<eNumber name="StoredRotorNo" position="e-100:100" size="e-10:35" helptext="enter where this orbital position is (to) stored in Rotor" loadDeco="" />
@@ -337,21 +337,39 @@
 			<eLabel name="lDirection" text="Direction:" position="190:195" size="e-150:35" vcenter="on" />
 			<eComboBox name="Direction" position="e-140:195" size="e-10:35" helptext="choose direction" loadDeco="" />
 
-			<eButton name="add" text="add" position="190:235" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" />
-			<eButton name="remove" text="remove" position="370:235" size="170:40" helptext="remove selected entry" loadDeco="" />
+			<eButton name="add" text="add" position="190:240" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" />
+			<eButton name="remove" text="remove" position="370:240" size="170:40" helptext="remove selected entry" loadDeco="" />
 
 			<eButton name="save" text="save" position="10:e-80" size="170:40" helptext="save changes and use the selected lnb (in first page) for the choosen satellite" loadDeco="" shortcut="green" />
 			<eButton name="cancel" text="cancel" position="190:e-80" size="170:40" helptext="leave lnb-setup (no changes are saved)" loadDeco="" />
+			<eButton name="next" text="next page" position="370:e-80" size="170:40" helptext="goto advanced rotor setup" loadDeco="" shortcut="blue" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</RotorConfig>
 	</object>
 
-	<object name="eRotorPageManual">
-		<eRotorPageManual position="0:0" size="550:400" >
-			<eTranspondersettings name="transponder" position="0:0" size="400:160" />
-			<eFEStatus name="festatus" position="0:160" size="400:85" />
-			<eButton name="prev" text="go back" position="10:e-80" size="170:40" helptext="goto prev page" loadDeco="" />
-		</eRotorPageManual>
+	<object name="RotorManual">
+		<RotorManual text="Rotor Config" cposition="90:90" csize="540:410" >
+			<eLabel name="lMode" text="Mode:" position="10:10" size="250:35" vcenter="on" />
+			<eComboBox name="Mode" position="270:10" size="e-10:35" helptext="choose what you want to do" loadDeco="" />
+			<eLabel name="lSat" text="Satellite:" position="10:55" size="250:35" vcenter="on" />
+			<eComboBox name="Sat" position="270:55" size="e-10:35" helptext="choose the Satellite you wish to find" loadDeco="" />
+			<eNumber name="num" position="270:55" size="e-10:35" helptext="enter stored satellite pos" loadDeco="" />
+			<eLabel name="lTransponder" text="Transponder:" position="10:100" size="250:35" vcenter="on" />
+			<eComboBox name="Transponder" position="270:100" size="e-10:35" helptext="choose the Transponder you wish to find" loadDeco="" />
+			<eLabel name="lDirection" text="Direction:" position="10:145" size="250:35" vcenter="on" />
+			<eButton name="Direction" position="270:145" size="e-10:35" helptext="press left or right to move rotor" loadDeco="" />
+			<!--eLabel name="lRecalcParams" text="Recalc Params:" position="10:190" size="250:35" vcenter="on" />
+			<eNumber name="num1" position="e-210:190" size="60:35" helptext="calc param 1 (see your rotor manual or let it 00)" loadDeco="" />
+			<eNumber name="num2" position="e-140:190" size="60:35" helptext="calc param 2 (see your rotor manual or let it 00)" loadDeco="" />
+			<eNumber name="num3" position="e-70:190" size="60:35" helptext="calc param 3 (see your rotor manual or let it 00)" loadDeco="" /-->
+			<!--eLabel name="lCounter" text="Counter(Movement)" position="10:190" size="250:35" vcenter="on" />
+			<eLabel name="Counter" text="0" position="270:190" size="e-10:35" align="center" vcenter="on" loadDeco="eNumber" /-->
+			<eButton name="Exit" text="prev page" position="10:235" size="160:40" loadDeco="" helptext="close rotor setup" shortcut="yellow" />
+			<eButton name="Save" position="200:235" size="160:40" loadDeco="" helptext="save in rotor" shortcut="green" />
+			<eButton name="Search" text="search" position="370:235" size="160:40" loadDeco="" helptext="open Transponderscan" shortcut="blue" />
+			<eFEStatus name="Status" position="0:285" size="e-10:e-10" />
+			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
+		</RotorManual>
 	</object>  
   
 	<object name="tsSelectType">

@@ -254,7 +254,7 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 	secCommand cmd;
 
 	int cnt=0;
-	for ( unsigned int i=0; i < params.length() && i < 12; i+=4 )
+	for ( unsigned int i=0; i < params.length() && i < 6; i+=2 )
 		cmd.u.diseqc.params[cnt++] = strtol( params.mid(i, 2).c_str(), 0, 16 );
     
 	cmd.type = SEC_CMDTYPE_DISEQC_RAW;
@@ -283,6 +283,7 @@ int eFrontend::sendDiSEqCCmd( int addr, int Cmd, eString params, int frame )
 /*  else
 		eDebug("cmd send");*/
 
+	lastcsw = -1;
 	return 0;
 }
 
@@ -298,7 +299,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, int newPosition, double degP
 		return -1;
  	}
 
-	/* emit */ rotorRunning();
+	/* emit */ rotorRunning(newPosition);
 
 	if ( curRotorPos != 1000 ) // uninitialized  
 		usleep( (abs(newPosition - curRotorPos) * TimePerDegree * 100) + startDelay );
@@ -310,7 +311,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, int newPosition, double degP
 	return 0;
 }
 
-int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat, int DeltaA )
+int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat, int DeltaA, int newPos )
 {
 	secCommand *commands = (secCommand*) cmds;
 	int idlePowerInput=0;
@@ -388,7 +389,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 		}
 		else  // rotor is running
 		{
-			/* emit */ rotorRunning();          
+			/* emit */ rotorRunning( newPos );          
 			timeout=0;
 			break;  // leave endless loop
 		}
@@ -854,7 +855,7 @@ int eFrontend::tune(eTransponder *trans,
 			seq.voltage = SEC_VOLTAGE_18;
 
 			if ( lnb->getDiSEqC().useRotorInPower & 1 )
-				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat, (lnb->getDiSEqC().useRotorInPower & 0x0FFFFFFF) >> 8 );
+				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat, (lnb->getDiSEqC().useRotorInPower & 0x0FFFFFFF) >> 8, sat->getOrbitalPosition() );
 			else
 				RotorUseTimeout(seq, sat->getOrbitalPosition(), lnb->getDiSEqC().DegPerSec );
 

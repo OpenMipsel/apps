@@ -12,22 +12,21 @@
 #include <lib/dvb/dvb.h>
 
 class eFEStatusWidget;
-class eTransponderWidget;
 
-class RotorConfig: public eWindow, public existNetworks
+class RotorConfig: public eWindow
 {
-	friend class eLNBSetup;
 	eLNB *lnb;
 	eListBox<eListBoxEntryText> *positions;
 	eLabel *lLatitude, *lLongitude, *lOrbitalPosition, *lStoredRotorNo, *lDirection, *lDegPerSec, *lDeltaA;
 	eNumber *orbital_position, *number, *Latitude, *Longitude, *DegPerSec, *DeltaA;
-	eButton *add, *remove, *save, *cancel;
+	eButton *add, *remove, *save, *cancel, *next;
 	eCheckbox *useGotoXX, *useRotorInPower;
 	eComboBox *direction, *LaDirection, *LoDirection;
 	eStatusBar* statusbar;
 	void onAdd();
 	void onRemove();
 	void onSavePressed();
+	void onNextPressed();
 	void numSelected(int*);
 	void lnbChanged( eListBoxEntryText* );
 	void posChanged( eListBoxEntryText* );
@@ -37,6 +36,45 @@ class RotorConfig: public eWindow, public existNetworks
 	int eventHandler( const eWidgetEvent& e);
 public:
 	RotorConfig( eLNB *lnb );
+};
+
+class eRotorManual: public eWindow, public existNetworks
+{
+	eLabel *lSat, *lTransponder, *lDirection, *lMode, *lCounter
+							, *Counter, *lRecaclParams;
+	eButton *Direction;
+	eComboBox *Sat, *Transponder, *Mode;
+	eButton *Exit, *Save, *Search;
+	eNumber *num, *num1, *num2, *num3;
+	eFEStatusWidget *status;
+	eLNB *lnb;
+	eTimer *retuneTimer;
+	eTransponder* transponder;
+	int eventHandler( const eWidgetEvent& e);
+	void retune();
+	void onButtonPressed();
+	void onScanPressed();
+	void satChanged(eListBoxEntryText *sat);
+	void tpChanged(eListBoxEntryText *tp);
+	void modeChanged( eListBoxEntryText *e);
+	void nextfield(int*);
+public:
+	int changed;
+	eRotorManual(eLNB *lnb);
+	~eRotorManual();
+};
+
+class eStoreWindow: public eWindow
+{
+	eLabel *lStorageLoc;
+	eNumber *StorageLoc;
+	eButton *Store, *Cancel;
+	eLNB *lnb;
+	int orbital_pos;
+	void onStorePressed();
+	void nextfield(int*);
+public:
+	eStoreWindow(eLNB *lnb, int orbital_pos);
 };
 
 #endif
