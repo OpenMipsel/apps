@@ -626,6 +626,8 @@ double calcSatHourangle( double Azimuth, double Elevation, double Declination, d
 // Works for all azimuths (northern & sourhern hemisphere)
 						 returnvalue = 180 + Deg(std::atan2(a,b));
 
+	(void)Declination;
+
 	if ( Azimuth > 270 )
 	{
 		returnvalue = ( (returnvalue-180) + 360 );
