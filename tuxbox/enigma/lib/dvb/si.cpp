@@ -556,6 +556,8 @@ ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr): Descriptor(descr
 	int table=5;
 	if (!memcmp(language_code, "gre", 3))
 		table=3;
+	if (!memcmp(language_code, "ru", 2))
+		table=1;
 
 	event_name=convertDVBUTF8((unsigned char*)data+ptr, len, table);
 	ptr+=len;
@@ -672,6 +674,8 @@ ExtendedEventDescriptor::ExtendedEventDescriptor(descr_gen_t *descr): Descriptor
 	int table=5;
 	if (!memcmp(language_code, "gre", 3))
 		table=3;
+	if (!memcmp(language_code, "ru", 2))
+		table=1;
 
 	int ptr = sizeof(struct eit_extended_descriptor_struct);
 	__u8* data = (__u8*) descr;
