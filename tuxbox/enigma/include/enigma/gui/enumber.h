@@ -44,7 +44,8 @@ public:
 	{
 		flagDrawPoints=1,
 		flagDrawBoxes=2,
-		flagFillWithZeros=4
+		flagFillWithZeros=4,
+		flagTime=8
 	};
 	void setFlags(int flags);
 	void setBase(int base);
