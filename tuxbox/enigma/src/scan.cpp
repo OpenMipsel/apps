@@ -770,7 +770,7 @@ int TransponderScan::exec(int initial)
 			statusbar->setText(_("Scan is in finished, press ok to close window"));
 			finish.exec();
 			finish.hide();
-			eMessageBox mb(eString().sprintf(_("Do you want\n to scan another\n %s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
+			eMessageBox mb(eString().sprintf(_("Do you want\nto scan another\n%s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
 				_("Scan finished"),
 				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
 				eMessageBox::btYes );

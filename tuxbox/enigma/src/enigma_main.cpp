@@ -4810,7 +4810,7 @@ void eServiceContextMenu::entrySelected(eListBoxEntryText *test)
 }
 
 eSleepTimerContextMenu::eSleepTimerContextMenu()
-	: eListBoxWindow<eListBoxEntryText>(_("Shutdonw/Standby Menu"), 5)
+	: eListBoxWindow<eListBoxEntryText>(_("Shutdown/Standby Menu"), 5)
 {
 	move(ePoint(150, 200));
 	new eListBoxEntryText(&list, _("back"), (void*)0);
