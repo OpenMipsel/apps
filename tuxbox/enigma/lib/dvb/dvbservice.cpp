@@ -606,7 +606,8 @@ void eDVBServiceController::scanPMT()
 	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
 #endif
 
-	if ( ac3_audio && ( sac3default || (ac3pid != -1) ) )
+	if ( eDVB::getInstance()->getmID() >= 5  // DREAMBOX...
+		&& ac3_audio && ( sac3default || (ac3pid != -1) ) )
 	{
 		audiopid = ac3pid;
 		audio = ac3_audio;
@@ -637,8 +638,22 @@ void eDVBServiceController::scanPMT()
 		eDebug("CA %04x ECMPID %04x", i->casysid, i->ecmpid);
 	}
 
-	pmt->unlock();
 	setDecoder();
+
+	// AC3 DBOX2 Workaround... buggy drivers...
+	if ( eDVB::getInstance()->getmID() < 5 && ac3_audio && ( sac3default || (ac3pid != -1) ) )
+	{
+		audiopid = ac3pid;
+		audio = ac3_audio;
+
+		if ( audio && audiopid != audio->elementary_PID )
+		{
+			setPID(audio);
+			setDecoder();
+		}
+	}
+
+	pmt->unlock();
 }
 
 
