@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.31 2003/05/14 13:21:21 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.32 2003/05/14 18:53:29 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -219,15 +219,16 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 		/* ... tune to it if not in record mode ... */
 		if (currentMode & RECORD_MODE)
 			return -1;
-		
+			
 		if ((config.getInt32("diseqcType", NO_DISEQC) == DISEQC_1_2) && (frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
 		{
-			printf("[frontend] ATTENTION: this function is not working yet!\n");
-			printf("[frontend] tuneChannel: currentSatellitePosition = %d <> satellitePosition = %d => we need to position rotor now.\n", frontend->getCurrentSatellitePosition(), channel->getSatellitePosition());
+			printf("[zapit] ATTENTION: this function is not working yet!\n");
+			printf("[zapit] currentSatellitePosition = %d <> satellitePosition = %d => we need to position rotor now.\n", frontend->getCurrentSatellitePosition(), channel->getSatellitePosition());
+			printf("[zapit] motorPosition = %d\n", motorPositions[channel->getSatelliteName()]);
 			frontend->positionMotor(motorPositions[channel->getSatelliteName()]);
 		
 			waitForMotor = abs(channel->getSatellitePosition() - frontend->getCurrentSatellitePosition()) / 18; //assuming 1.8 degrees/second motor rotation speed for the time being...
-			printf("[frontend] tuneChannel: waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
+			printf("[zapit] waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
 			sleep(waitForMotor);
 		
 			frontend->setCurrentSatellitePosition(channel->getSatellitePosition());
@@ -1485,7 +1486,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.31 2003/05/14 13:21:21 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.32 2003/05/14 18:53:29 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
