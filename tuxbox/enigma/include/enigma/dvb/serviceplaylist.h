@@ -58,6 +58,9 @@ public:
 
 	int load(const char *filename);
 	int save(const char *filename);
+	
+	int deleteService(std::list<ePlaylistEntry>::iterator it);
+	int moveService(std::list<ePlaylistEntry>::iterator it, std::list<ePlaylistEntry>::iterator before);
 
 	ePlaylist();
 };
@@ -81,9 +84,6 @@ public:
 		// service list functions
 	void enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback);
 	void leaveDirectory(const eServiceReference &dir);
-
-	int deleteService(const eServiceReference &dir, const eServiceReference &ref);
-	int moveService(const eServiceReference &dir, const eServiceReference &ref, int dr);
 
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);
