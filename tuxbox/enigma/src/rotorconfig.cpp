@@ -140,6 +140,12 @@ RotorConfig::RotorConfig(eLNB *lnb )
 
 	if (lnb)
 		setLNBData(lnb);
+
+	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) < 05 )
+	{
+		eDebug("useRotorInputPower can only used on dreambox");
+		useRotorInPower->hide();
+	}
 }
 
 struct savePosition: public std::unary_function< eListBoxEntryText&, void>
@@ -179,11 +185,6 @@ void RotorConfig::onSavePressed()
 
 void RotorConfig::useRotorInPowerChanged( int state )
 {
-	if ( state && atoi( eDVB::getInstance()->getInfo("mID").c_str() ) < 05 )
-	{
-		eDebug("useRotorInputPower can only used on dreambox");
-		useRotorInPower->setCheck(0);
-	}
 	eDebug("useRotorInPowerChanged to %d", state);
 	if (state)
 	{
