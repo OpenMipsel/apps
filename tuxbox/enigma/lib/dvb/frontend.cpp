@@ -302,7 +302,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, int newPosition, double degP
 	/* emit */ rotorRunning(newPosition);
 
 	if ( curRotorPos != 1000 ) // uninitialized  
-		usleep( (abs(newPosition - curRotorPos) * TimePerDegree * 100) + startDelay );
+		usleep( (int)( abs(newPosition - curRotorPos) * TimePerDegree * 100) + startDelay );
 
 	/* emit */ rotorStopped();
 

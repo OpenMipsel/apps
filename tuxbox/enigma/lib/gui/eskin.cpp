@@ -238,7 +238,7 @@ int eSkin::parseImages(XMLTreeNode *inode)
 	eString basepath=eString("/enigma/pictures/");
 	if (abasepath[0] == '/') // allow absolute paths
 		basepath="";
-	basepath+=abasepath;
+CONFIOG	basepath+=abasepath;
 	if (basepath[basepath.length()-1]!='/')
 		basepath+="/";
 
@@ -271,7 +271,7 @@ int eSkin::parseImages(XMLTreeNode *inode)
 		gPixmap *image=loadPNG((eString(CONFIGDIR)+filename).c_str());
 		if (!image)
 		{
-			gPixmap *image=loadPNG((eString(DATADIR)+filename).c_str());
+			image=loadPNG((eString(DATADIR)+filename).c_str());
 			if (!image)
 			{
 				eDebug("image/img=\"%s\" - %s: file not found", name, filename.c_str());

@@ -361,7 +361,7 @@ void eDVBSettings::loadServices()
 					v=str.mid(2, c-2);
 					str=str.mid(c+1);
 				}
-				eDebug("%c ... %s", p, v.c_str());
+//				eDebug("%c ... %s", p, v.c_str());
 				if (p == 'p')
 					s.service_provider=v;
 				else if (p == 'f')

@@ -121,19 +121,19 @@ eZap::eZap(int argc, char **argv)
 
 	eDebug("[ENIGMA] loading default keymaps...");
 
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox.xml") == -1)
+	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdreambox.xml");
 
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox2.xml") == -1)
+	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox2.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdreambox2.xml");
 
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxold.xml") == -1)
+	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxold.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdboxold.xml");
 
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxnew.xml") == -1)
+	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxnew.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdboxnew.xml");
 
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxbuttons.xml") == -1)
+	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxbuttons.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdboxbuttons.xml");
 
 	char *language=0;
