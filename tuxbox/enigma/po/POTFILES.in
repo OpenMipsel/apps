@@ -124,3 +124,4 @@ src/tpeditwindow.cpp
 src/parentallock.cpp
 src/engrab.cpp
 src/setupengrab.cpp
+src/setup_timezone.cpp
