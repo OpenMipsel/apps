@@ -450,6 +450,7 @@ int Init()
 			else
 			{
 				vtxtpid = pid_table[0].vtxt_pid;
+				national_subset = GetNationalSubset(pid_table[0].country_code);
 
 				current_service = 0;
 				RenderMessage(ShowServiceName);
@@ -642,6 +643,22 @@ int GetTeletextPIDs()
 
 							pid_table[pids_found].vtxt_pid	 = (PMT[pmt_scan + 1]<<8 | PMT[pmt_scan + 2]) & 0x1FFF;
 							pid_table[pids_found].service_id = PMT[0x03]<<8 | PMT[0x04];
+							if (PMT[desc_scan + 1] >= 3)
+							{
+								pid_table[pids_found].country_code[0] = PMT[desc_scan + 2] | 0x20;
+								pid_table[pids_found].country_code[1] = PMT[desc_scan + 3] | 0x20;
+								pid_table[pids_found].country_code[2] = PMT[desc_scan + 4] | 0x20;
+								pid_table[pids_found].country_code[3] = 0;
+							}
+							else
+							{
+								pid_table[pids_found].country_code[0] = 0;
+							}
+							if (pid_table[pids_found].vtxt_pid == vtxtpid)
+							{
+								national_subset = GetNationalSubset(pid_table[pids_found].country_code);
+								printf("TuxTxt <Country code \"%s\">\n", pid_table[pids_found].country_code);
+							}
 							pids_found++;
 skip_pid:;
 						}
@@ -737,6 +754,76 @@ skip_pid:;
 		}
 
 	return 1;
+}
+
+/******************************************************************************
+ * GetNationalSubset                                                          *
+ ******************************************************************************/
+
+int GetNationalSubset(char *cc)
+{
+	if (cc[0] == 0) return 1;
+
+	if (memcmp(cc, "cze", 3) == 0 || memcmp(cc, "ces", 3) == 0 ||
+	    memcmp(cc, "slo", 3) == 0 || memcmp(cc, "slk", 3) == 0)
+	{
+		return 0;
+	}
+	if (memcmp(cc, "eng", 3) == 0)
+	{
+		return 1;
+	}
+	if (memcmp(cc, "est", 3) == 0)
+	{
+		return 2;
+	}
+	if (memcmp(cc, "fre", 3) == 0 || memcmp(cc, "fra", 3) == 0)
+	{
+		return 3;
+	}
+	if (memcmp(cc, "ger", 3) == 0 || memcmp(cc, "deu", 3) == 0)
+	{
+		return 4;
+	}
+	if (memcmp(cc, "ita", 3) == 0)
+	{
+		return 5;
+	}
+	if (memcmp(cc, "lav", 3) == 0 ||
+	    memcmp(cc, "lit", 3) == 0) 
+	{
+		return 6;
+	}
+	if (memcmp(cc, "pol", 3) == 0)
+	{
+		return 7;
+	}
+	if (memcmp(cc, "spa", 3) == 0 ||
+	    memcmp(cc, "por", 3) == 0)
+	{
+		return 8;
+	}
+	if (memcmp(cc, "rum", 3) == 0 || memcmp(cc, "ron", 3) == 0)
+	{
+		return 9;
+	}
+	if (memcmp(cc, "scc", 3) == 0 || memcmp(cc, "srp", 3) == 0 ||
+	    memcmp(cc, "scr", 3) == 0 || memcmp(cc, "hrv", 3) == 0 ||
+	    memcmp(cc, "slv", 3) == 0)
+	{
+		return 10;
+	}
+	if (memcmp(cc, "swe", 3) == 0 ||
+	    memcmp(cc, "fin", 3) == 0 ||
+	    memcmp(cc, "hun", 3) == 0)
+	{
+		return 11;
+	}
+	if (memcmp(cc, "tur", 3) == 0)
+	{
+		return 12;
+	}
+	return 4;
 }
 
 /******************************************************************************
@@ -1185,6 +1272,7 @@ void ConfigMenu(int Init)
 													//start demuxer with new vtxtpid
 
 														vtxtpid = pid_table[current_pid].vtxt_pid;
+														national_subset = GetNationalSubset(pid_table[current_pid].country_code);
 
 														dmx_flt.pid		= vtxtpid;
 														dmx_flt.input	= DMX_IN_FRONTEND;

@@ -184,6 +184,7 @@ void DecodePage();
 void UpdateLCD();
 void *CacheThread(void *arg);
 int  Init();
+int  GetNationalSubset(char *country_code);
 int  GetTeletextPIDs();
 int  GetRCCode();
 
@@ -233,7 +234,8 @@ struct _pid_table
 	int	 vtxt_pid;
 	int	 service_id;
 	int	 service_name_len;
-	char service_name[24];
+	char	 service_name[24];
+	char	 country_code[4];
 }pid_table[128];
 
 //national subsets
@@ -244,7 +246,7 @@ char countrystring[] =	"  CZ/SK  (#$@[\\]^_`{|}~)  "	/* czech, slovak */
 						"    FR (#$@[\\]^_`{|}~)    "	/* french */
 						"    DE (#$@[\\]^_`{|}~)    "	/* german */
 						"    IT (#$@[\\]^_`{|}~)    "	/* italian */
-						"  LV/LT  (#$@[\\]^_`{|}~)  "	/* lettish, lithuanian */
+						"  LV/LT  (#$@[\\]^_`{|}~)  "	/* latvian, lithuanian */
 						"    PL (#$@[\\]^_`{|}~)    "	/* polish */
 						"  PT/ES  (#$@[\\]^_`{|}~)  "	/* portuguese, spanish */
 						"    RO (#$@[\\]^_`{|}~)    "	/* rumanian */
