@@ -245,7 +245,7 @@ void eMP3Decoder::outputReady(int what)
 
 void eMP3Decoder::checkFlow(int last)
 {
-	eDebug("I: %d O: %d S: %d", input.size(), output.size(), state);
+//	eDebug("I: %d O: %d S: %d", input.size(), output.size(), state);
 	int i=input.size(), o=output.size();
 	
 	// states:
@@ -517,7 +517,6 @@ void eServiceHandlerMP3::gotMessage(const eMP3DecoderMessage &message)
 
 eService *eServiceHandlerMP3::createService(const eServiceReference &service)
 {
-
 	return new eServiceMP3(service.path.c_str());
 }
 
@@ -598,7 +597,9 @@ eServiceHandlerMP3::~eServiceHandlerMP3()
 
 void eServiceHandlerMP3::addFile(void *node, const eString &filename)
 {
-	if (filename.right(4).upper()==".MP3")
+	if (filename.left(7) == "http://")
+		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
+	else if (filename.right(4).upper()==".MP3")
 	{
 		struct stat s;
 		if (::stat(filename.c_str(), &s))
@@ -658,6 +659,13 @@ int eServiceHandlerMP3::getPosition(int what)
 eServiceMP3::eServiceMP3(const char *filename): eService("")
 {
 	id3_file *file;
+	
+	if (!strncmp(filename, "http://", 7))
+	{
+		service_name=filename;
+		return;
+	}
+	
 	eString f=filename;
 	eString l=f.mid(f.rfind('/')+1);
 	service_name=l;
