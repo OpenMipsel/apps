@@ -293,7 +293,7 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 			{
 				i->x-=offset.x();
 				i->y-=offset.y();
-				i->bbox->moveBy(-offset.x(), -offset.y());
+				i->bbox.moveBy(-offset.x(), -offset.y());
 				++i;
 			}
 			cursor+=ePoint(linelength, 0);	// put the cursor after that line
@@ -316,13 +316,12 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 		kern=delta.x>>6;
 	}
 
-  eRect* bbox = new eRect();
-	bbox->setLeft( (flags&GS_ISFIRST|glyphs.empty()?cursor.x():cursor.x()-1) + glyph->left );
-	bbox->setTop( cursor.y() - glyph->top );
-	bbox->setWidth( glyph->width );
-	bbox->setHeight( glyph->height );
-
 	pGlyph ng;
+
+	ng.bbox.setLeft( (flags&GS_ISFIRST|glyphs.empty()?cursor.x():cursor.x()-1) + glyph->left );
+	ng.bbox.setTop( cursor.y() - glyph->top );
+	ng.bbox.setWidth( glyph->width );
+	ng.bbox.setHeight( glyph->height );
 
 	xadvance+=kern;
 
@@ -334,7 +333,6 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 	ng.font->lock();
 	ng.glyph_index=glyphIndex;
 	ng.flags=flags;
-	ng.bbox=bbox;
 	glyphs.push_back(ng);
 
 	cursor+=ePoint(xadvance, 0);
@@ -352,14 +350,14 @@ void eTextPara::calc_bbox()
 
 	for (	glyphString::iterator i(glyphs.begin()); i != glyphs.end(); ++i)
 	{
-		if ( i->bbox->left() < boundBox.left() )
-			boundBox.setLeft( i->bbox->left() );
-		if ( i->bbox->top() < boundBox.top() )
-			boundBox.setTop( i->bbox->top() );
-		if ( i->bbox->right() > boundBox.right() )
-			boundBox.setRight( i->bbox->right() );
-		if ( i->bbox->bottom() > boundBox.bottom() )
-			boundBox.setBottom( i->bbox->bottom() );
+		if ( i->bbox.left() < boundBox.left() )
+			boundBox.setLeft( i->bbox.left() );
+		if ( i->bbox.top() < boundBox.top() )
+			boundBox.setTop( i->bbox.top() );
+		if ( i->bbox.right() > boundBox.right() )
+			boundBox.setRight( i->bbox.right() );
+		if ( i->bbox.bottom() > boundBox.bottom() )
+			boundBox.setBottom( i->bbox.bottom() );
 	}
 //	eDebug("boundBox left = %i, top = %i, right = %i, bottom = %i", boundBox.left(), boundBox.top(), boundBox.right(), boundBox.bottom() );
 	bboxValid=1;
@@ -524,13 +522,12 @@ int eTextPara::renderString(const eString &string, int rflags)
 		uc_string.push_back(unicode);
 	}
 
-		// now do the usual logical->visual reordering
-	int size=uc_string.size();
 	std::vector<unsigned long> uc_shape;
 
-		// apply special blaselfasel	
+		// character -> glyph conversion
 	shape(uc_shape, uc_string);
 	
+		// now do the usual logical->visual reordering
 #ifdef HAVE_FRIBIDI
 	uc_visual.resize(size);
 	FriBidiCharType dir=FRIBIDI_TYPE_ON;
@@ -777,7 +774,7 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 			while (begin != end)
 			{
 				begin->x+=offset;
-				begin->bbox->moveBy(offset,0);
+				begin->bbox.moveBy(offset,0);
 				++begin;
 			}
 			break;
@@ -801,7 +798,7 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 				if ((!spacemode) || (begin->flags&GS_ISSPACE))
 					doadd=1;
 				begin->x+=curoff>>8;
-				begin->bbox->moveBy(curoff>>8,0);
+				begin->bbox.moveBy(curoff>>8,0);
 				if (doadd)
 					curoff+=off;
 				++begin;
@@ -816,12 +813,6 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 void eTextPara::clear()
 {
 	eLocker lock(ftlock);
-
-	for (glyphString::iterator i(glyphs.begin()); i!=glyphs.end(); ++i)
-	{
-		i->font->unlock();
-		delete i->bbox;
-	}
 	glyphs.clear();
 }
 
