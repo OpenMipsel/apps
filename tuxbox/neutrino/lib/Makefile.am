@@ -1,4 +1,0 @@
-SUBDIRS = \
-	controldclient \
-	sectionsdclient \
-	timerdclient
