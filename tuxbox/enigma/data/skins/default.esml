@@ -201,6 +201,12 @@
 		<img name="key.23" src="button_help.png" />
 		<img name="key.24" src="button_arrow_left.png" />
 		<img name="key.25" src="button_arrow_right.png" />
+		<img name="key.26" src="button_+.png" />
+		<img name="key.27" src="button_-.png" />
+		<img name="key.28" src="button_?.png" />
+		<img name="key.29" src="button_dbox.png" />
+		<img name="key.30" src="button_home.png" />
+		<img name="key.31" src="button_mute.png" />
 	</images>
 
 	<colors>
