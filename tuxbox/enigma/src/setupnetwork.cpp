@@ -390,7 +390,6 @@ eZapNetworkSetup::eZapNetworkSetup():
 	lGateway->setText("Gateway:");
 	lGateway->move(ePoint(20, 180));
 	lGateway->resize(eSize(140, fd+4));
-	lGateway->hide();
 
 	eNumber::unpack(sgateway, de);
 	gateway=new eNumber(this, 4, 0, 255, 3, de, 0, l);
