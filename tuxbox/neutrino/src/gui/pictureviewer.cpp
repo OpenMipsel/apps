@@ -380,7 +380,7 @@ int CPictureViewerGui::show()
 			char str[11];
 			do
 			{
-				val = val * 10 + CRCInput::getNumericValue(msg);
+				val = val*10 + (msg - CRCInput::RC_0);
 				sprintf(str,"%d",val);
 				int w=g_Fonts->channel_num_zap->getRenderWidth(str);
 				frameBuffer->paintBoxRel(x1-7, y1-g_Fonts->channel_num_zap->getHeight()-5, w+14, 

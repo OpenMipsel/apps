@@ -47,7 +47,7 @@
 
 #include "gamelist.h"
 
-#if 0
+#if 1
  #define AVIA_VBI_START_VTXT	1
  #define AVIA_VBI_STOP_VTXT	2 
 #endif
@@ -292,7 +292,7 @@ void CPlugins::startPlugin(int number)
 	{
 		// cout << "With VTXTPID " << params.find(P_ID_VTXTPID)->second.c_str() << endl;
 		// versuche, den gtx/enx_vbi zu stoppen
-#if 0
+#if 1
         int fd = open("/dev/dbox/vbi0", O_RDWR);
 		if (fd > 0)
 		{
@@ -405,7 +405,7 @@ void CPlugins::startPlugin(int number)
     		frameBuffer->paintBackgroundBox(0,0,720,576);
     	}
 
-#if 0
+#if 1
     	if (plugin_list[number].vtxtpid)
     	{
     		int vtpid= atoi(params.find(P_ID_VTXTPID)->second.c_str());

@@ -45,7 +45,6 @@
 #include <basicserver.h>
 #include <configfile.h>
 #include <eventserver.h>
-#include <tuxbox.h>
 
 #include <controldclient/controldclient.h>
 #include <controldclient/controldMsg.h>
@@ -574,18 +573,21 @@ void disableVideoOutput(bool disable)
 
 void setBoxType()
 {
-	switch ( tuxbox_get_vendor() )
+	char strmID[40];
+	strcpy( strmID, getenv("mID") );
+	int mID = atoi(strmID);
+
+	switch ( mID )
 	{
-	case TUXBOX_VENDOR_SAGEM:	settings.boxtype= CControldClient::BOXTYPE_SAGEM;
+	case 3:	settings.boxtype= CControldClient::BOXTYPE_SAGEM;
 		break;
-	case TUXBOX_VENDOR_PHILIPS:	settings.boxtype= CControldClient::BOXTYPE_PHILIPS;
+	case 2:	settings.boxtype= CControldClient::BOXTYPE_PHILIPS;
 		break;
-	case TUXBOX_VENDOR_NOKIA:
 	default:
 		settings.boxtype= CControldClient::BOXTYPE_NOKIA;
 	}
 
-	printf("[controld] Boxtype detected: (%d, %d, %s %s)\n", tuxbox_get_vendor(), settings.boxtype, tuxbox_get_vendor_str(), tuxbox_get_model_str());
+	printf("[controld] Boxtype detected: (%s, %d, %d, %s)\n", strmID, mID, settings.boxtype, BoxNames[settings.boxtype]);
 }
 
 
@@ -783,7 +785,7 @@ int main(int argc, char **argv)
 {
 	CBasicServer controld_server;
 
-	printf("Controld  $Id: controld.cpp,v 1.90 2003/02/10 11:09:46 thegoodguy Exp $\n\n");
+	printf("Controld  $Id: controld.cpp,v 1.90.2.1 2003/02/18 16:21:06 alexw Exp $\n\n");
 
 	if (!controld_server.prepare(CONTROLD_UDS_NAME))
 		return -1;

@@ -45,8 +45,6 @@
 
 #include <sys/socket.h>
 
-#include <tuxbox.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -98,6 +96,8 @@
 #include "system/flashtool.h"
 
 
+using namespace std;
+
 // Globale Variablen - to use import global.h
 
 // I don't like globals, I would have hidden them in classes,
@@ -112,7 +112,7 @@ static void initGlobals(void)
 	g_RCInput       = NULL;
 	g_Controld      = NULL;
 	g_Timerd        = NULL;
-	g_Zapit         = new CZapitClient;
+	g_Zapit         = NULL;
 	g_RemoteControl = NULL;
 
 	g_EpgData       = NULL;
@@ -446,7 +446,7 @@ int CNeutrinoApp::loadSetup()
 	g_settings.network_nfs_automount[1] = configfile.getInt32( "network_nfs_automount_2", 0);
 	g_settings.network_nfs_automount[2] = configfile.getInt32( "network_nfs_automount_3", 0);
 	g_settings.network_nfs_automount[3] = configfile.getInt32( "network_nfs_automount_4", 0);
-	
+
 	//streaming (server + vcr)
 	g_settings.recording_type = configfile.getInt32( "recording_type", 0 );
 	g_settings.recording_stopplayback = configfile.getInt32( "recording_stopplayback", 0 );
@@ -548,9 +548,10 @@ int CNeutrinoApp::loadSetup()
 		erg = 2;
 	}
 
-	if (!scanSettings.loadSettings(scanSettingsFile, (g_info.delivery_system = g_Zapit->getDeliverySystem())))
+	if(!scanSettings.loadSettings(scanSettingsFile))
 	{
-		dprintf(DEBUG_NORMAL, "Loading of scan settings failed. Using defaults.\n");
+		dprintf(DEBUG_NORMAL,"error while loading scan-settings, using defaults!\n");
+		scanSettings.useDefaults();
 	}
 
 	return erg;
@@ -1072,7 +1073,7 @@ void CNeutrinoApp::InitScanSettings(CMenuWidget &settings)
 	ojBouquets->addOption( CZapitClient::BM_DONTTOUCHBOUQUETS, "scants.bouquet_leave");
 
 	//kabel-lnb-settings
-	if(g_info.delivery_system == DVB_S)
+	if(g_info.fe==1)
 	{
 		settings.addItem( new CMenuSeparator() );
 		settings.addItem( new CMenuForwarder("menu.back") );
@@ -1690,7 +1691,7 @@ void CNeutrinoApp::InitColorSettings(CMenuWidget &colorSettings, CMenuWidget &fo
 	colorSettings.addItem( new CMenuForwarder("colorstatusbar.head", true, "", colorSettings_statusbarColors) );
 
 	colorSettings.addItem( new CMenuSeparator(CMenuSeparator::LINE) );
-	if(tuxbox_get_vendor() != TUXBOX_VENDOR_NOKIA)
+	if (!strcmp( "ffffffff", getenv("gtxID") ))
 	{
 		//menuefaden nur bei enx-chips!
 		CMenuOptionChooser* oj = new CMenuOptionChooser("colormenu.fade", &g_settings.widget_fade, true );
@@ -2084,21 +2085,27 @@ int CNeutrinoApp::run(int argc, char **argv)
 
 	CLCD::getInstance()->init((fontFile + ".ttf").c_str(), fontName.c_str());
 
-	switch(tuxbox_get_vendor()) {
-		case TUXBOX_VENDOR_NOKIA:
-			g_info.box_Type = 1;
-			break;
-		case TUXBOX_VENDOR_PHILIPS:
-			g_info.box_Type = 2;
-			break;
-		case TUXBOX_VENDOR_SAGEM:
-			g_info.box_Type = 3;
-			break;
-		default:
-			g_info.box_Type = 3;
+	char* mID = getenv("mID");
+	if (mID == NULL)
+	{
+		dprintf( DEBUG_NORMAL, "[neutrino] Fatal Error: Environment variable mID not set. Bye.\n\n");
+		return 1;
 	}
-	
-	dprintf( DEBUG_DEBUG, "[neutrino] box_Type: %d (%s %s)\n", g_info.box_Type, tuxbox_get_vendor_str(), tuxbox_get_model_str());
+	g_info.box_Type = atoi(mID);
+
+	g_info.gtx_ID = -1;
+	if (!getEnvironment("gtxID", &g_info.gtx_ID))
+		return 1;
+
+	g_info.enx_ID = -1;
+	if (!getEnvironment("enxID", &g_info.enx_ID))
+		return 1;
+
+	g_info.fe = 0;
+	if (!getEnvironment("fe", &g_info.fe))
+		return 1;
+
+	dprintf( DEBUG_DEBUG, "[neutrino] box_Type: %d, gtxID: %d, enxID: %d, fe: %d\n", g_info.box_Type, g_info.gtx_ID, g_info.enx_ID, g_info.fe);
 
 
 
@@ -2119,7 +2126,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 
 	g_Locale = new CLocaleManager;
 	g_RCInput = new CRCInput;
-
+	g_Zapit = new CZapitClient;
 	g_Sectionsd = new CSectionsdClient;
 	g_Timerd = new CTimerdClient;
 
@@ -2223,9 +2230,9 @@ int CNeutrinoApp::run(int argc, char **argv)
 	g_Sectionsd->registerEvent(CSectionsdClient::EVT_GOT_CN_EPG, 222, NEUTRINO_UDS_NAME);
 
 	dprintf( DEBUG_NORMAL, "zapit event register\n");
+	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_FAILED, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_COMPLETE, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_COMPLETE_IS_NVOD, 222, NEUTRINO_UDS_NAME);
-	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_FAILED, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_SUB_COMPLETE, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_SUB_FAILED, 222, NEUTRINO_UDS_NAME);
 #ifndef SKIP_CA_STATUS
@@ -2233,14 +2240,13 @@ int CNeutrinoApp::run(int argc, char **argv)
 	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_CA_LOCK, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_ZAP_CA_FTA, 222, NEUTRINO_UDS_NAME);
 #endif
-	g_Zapit->registerEvent(CZapitClient::EVT_RECORDMODE_ACTIVATED, 222, NEUTRINO_UDS_NAME);
-	g_Zapit->registerEvent(CZapitClient::EVT_RECORDMODE_DEACTIVATED, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_SCAN_COMPLETE, 222, NEUTRINO_UDS_NAME);
-	g_Zapit->registerEvent(CZapitClient::EVT_SCAN_FAILED, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_SCAN_NUM_TRANSPONDERS, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_SCAN_SATELLITE, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_SCAN_NUM_CHANNELS, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_SCAN_PROVIDER, 222, NEUTRINO_UDS_NAME);
+	g_Zapit->registerEvent(CZapitClient::EVT_RECORDMODE_ACTIVATED, 222, NEUTRINO_UDS_NAME);
+	g_Zapit->registerEvent(CZapitClient::EVT_RECORDMODE_DEACTIVATED, 222, NEUTRINO_UDS_NAME);
 	g_Zapit->registerEvent(CZapitClient::EVT_BOUQUETS_CHANGED, 222, NEUTRINO_UDS_NAME);
 
 	dprintf( DEBUG_NORMAL, "timerd event register\n");
@@ -2491,70 +2497,67 @@ int CNeutrinoApp::handleMsg(uint msg, uint data)
 	}
 	else if( msg == CRCInput::RC_standby )
 	{
-		if (data == 0)
+		// trigger StandBy
+		struct timeval tv;
+		gettimeofday( &tv, NULL );
+		standby_pressed_at = (tv.tv_sec*1000000) + tv.tv_usec;
+
+		if( mode == mode_standby )
 		{
-			// trigger StandBy
-			struct timeval tv;
-			gettimeofday( &tv, NULL );
-			standby_pressed_at = (tv.tv_sec*1000000) + tv.tv_usec;
-			
-			if( mode == mode_standby )
-			{
-				g_RCInput->postMsg( NeutrinoMessages::STANDBY_OFF, 0 );
-			}
-			else if( !g_settings.shutdown_real )
-			{
-				int timeout = 5;
-				int timeout1 = 5;
-				
-				sscanf(g_settings.repeat_blocker, "%d", &timeout);
-				timeout = int(timeout/100.0) + 5;
-				sscanf(g_settings.repeat_genericblocker, "%d", &timeout1);
-				timeout1 = int(timeout1/100.0) + 5;
-				if(timeout1>timeout)
-					timeout=timeout1;
-
-				uint msg; uint data;
-				int diff = 0;
-				long long endtime;
-				
-				do
-				{
-					g_RCInput->getMsg( &msg, &data, timeout );
-					
-					if( msg != CRCInput::RC_timeout )
-					{
-						gettimeofday( &tv, NULL );
-						endtime = (tv.tv_sec*1000000) + tv.tv_usec;
-						diff = int((endtime - standby_pressed_at)/100000. );
-					}
-					
-				} while( ( msg != CRCInput::RC_timeout ) && ( diff < 10 ) );
-
-				g_RCInput->postMsg( ( diff >= 10 ) ? NeutrinoMessages::SHUTDOWN : NeutrinoMessages::STANDBY_ON, 0 );
-			}
-			else
-			{
-				g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
-			}
-			return messages_return::cancel_all | messages_return::handled;
+			g_RCInput->postMsg( NeutrinoMessages::STANDBY_OFF, 0 );
 		}
-		else /* data == 1: Standby button released */
+		else if( !g_settings.shutdown_real )
 		{
-			struct timeval tv;
-			gettimeofday( &tv, NULL );
-			long long endtime = (tv.tv_sec*1000000) + tv.tv_usec;
-			int diff = int((endtime - standby_pressed_at)/100000. );
-			if( diff >= 10 )
+			int timeout = 5;
+			int timeout1 = 5;
+
+			sscanf(g_settings.repeat_blocker, "%d", &timeout);
+			timeout = int(timeout/100.0) + 5;
+			sscanf(g_settings.repeat_genericblocker, "%d", &timeout1);
+			timeout1 = int(timeout1/100.0) + 5;
+			if(timeout1>timeout)
+				timeout=timeout1;
+
+			uint msg; uint data;
+			int diff = 0;
+			long long endtime;
+
+			do
 			{
-				g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
-				return messages_return::cancel_all | messages_return::handled;
-			}
+				g_RCInput->getMsg( &msg, &data, timeout );
+
+				if( msg != CRCInput::RC_timeout )
+				{
+					gettimeofday( &tv, NULL );
+					endtime = (tv.tv_sec*1000000) + tv.tv_usec;
+					diff = int((endtime - standby_pressed_at)/100000. );
+				}
+
+			} while( ( msg != CRCInput::RC_timeout ) && ( diff < 10 ) );
+
+			g_RCInput->postMsg( ( diff >= 10 ) ? NeutrinoMessages::SHUTDOWN : NeutrinoMessages::STANDBY_ON, 0 );
+		}
+		else
+		{
+			g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
+		}
+		return messages_return::cancel_all | messages_return::handled;
+	}
+	else if( msg == CRCInput::RC_standby_release )
+	{
+		struct timeval tv;
+		gettimeofday( &tv, NULL );
+		long long endtime = (tv.tv_sec*1000000) + tv.tv_usec;
+		int diff = int((endtime - standby_pressed_at)/100000. );
+		if( diff >= 10 )
+		{
+			g_RCInput->postMsg( NeutrinoMessages::SHUTDOWN, 0 );
+			return messages_return::cancel_all | messages_return::handled;
 		}
 	}
 	else if( msg == CRCInput::RC_plus ||
-		 msg == CRCInput::RC_minus )
-	{
+				msg == CRCInput::RC_minus )
+   {
 		//volume
 		setVolume( msg, ( mode != mode_scart ) );
 		return messages_return::handled;
@@ -3368,7 +3371,7 @@ bool CNeutrinoApp::changeNotify(std::string OptionName, void *Data)
 int main(int argc, char **argv)
 {
 	setDebugLevel(DEBUG_NORMAL);
-	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414 2003/02/17 14:37:25 thegoodguy Exp $\n\n");
+	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.1 2003/02/18 16:21:07 alexw Exp $\n\n");
 
 	//dhcp-client beenden, da sonst neutrino beim hochfahren stehenbleibt
 	system("killall -9 udhcpc >/dev/null 2>/dev/null");

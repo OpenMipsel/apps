@@ -4,7 +4,6 @@ INCLUDES = \
 	-I$(top_srcdir)/lib \
 	@CONNECTION_CFLAGS@ \
 	@EVENTSERVER_CFLAGS@ \
-	@TUXBOX_CFLAGS@ \
 	@ZAPIT_CFLAGS@
 
 bin_PROGRAMS = controld
@@ -15,9 +14,7 @@ controld_LDADD = \
 	@CONFIGFILE_LIBS@ \
 	@CONNECTION_LIBS@ \
 	@EVENTSERVER_LIBS@ \
-	@TUXBOX_LIBS@ \
 	@ZAPIT_LIBS@ \
-	-ltuxbox \
 	-lpthread
 
 controld_SOURCES = controld.cpp eventwatchdog.cpp
