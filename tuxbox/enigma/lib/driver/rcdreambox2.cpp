@@ -25,10 +25,8 @@ void eRCDeviceDreambox2::handleCode(int rccode)
 		timeout.stop();
 		repeattimer.stop();
 		timeOut();
-		ccode=rccode;
 		return;
 	}
-	
 	timeout.start(1500, 1);
 	int old=ccode;
 	ccode=rccode;
@@ -166,7 +164,6 @@ eRCDreamboxDriver2::eRCDreamboxDriver2(): eRCShortDriver("/dev/rawir2")
 void eRCDeviceDreamboxButton::handleCode(int code)
 {
 	code=(~code)&0x7;
-	
 	for (int i=0; i<4; i++)
 		if ((last&~code) & (1<<i))
 		{

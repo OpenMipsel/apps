@@ -50,7 +50,6 @@ class eRotorManual: public eWindow
 	eLNB *lnb;
 	eTimer *retuneTimer;
 	eTransponder* transponder;
-	timeval begTime;
 	bool running;
 	int eventHandler( const eWidgetEvent& e);
 	void retune();

@@ -449,8 +449,9 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	Sat = new eComboBox( this, 7, lSat );
 	Sat->setName("Sat");
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
-		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
-			new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
+		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
+			for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
+				new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
 	CONNECT(Sat->selchanged, eRotorManual::satChanged );
 	eTransponderList::getInstance()->reloadNetworks();
 	Sat->setCurrent(0);
@@ -774,8 +775,6 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 				{
 					if ( !running )
 					{
-						gettimeofday( &begTime, 0 );
-						begTime+=400;
 						running=true;
 						eDebug("east");
 						eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x68, "00" );
@@ -787,8 +786,6 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 				{
 					if ( !running )
 					{
-						gettimeofday( &begTime, 0 );
-						begTime+=400;
 						running=true;
 						eDebug("west");
 						eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x69, "00" );
@@ -798,7 +795,7 @@ int eRotorManual::eventHandler( const eWidgetEvent& e)
 				}
 				else if (e.action == &i_rotorMenuActions->eastStop || e.action == &i_rotorMenuActions->westStop )
 				{
-					if (running && timeout_usec(begTime) <= 0 )
+					if (running)
 					{
 							eDebug("send stop");
 							eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x60 );
