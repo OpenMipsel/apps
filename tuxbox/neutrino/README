@@ -11,7 +11,8 @@ patch -p0 < apps/tuxbox/neutrino/patch.HEAD.for.alexW
 Suitable other source code:
 ---------------------------
 
-apps/dvb/zapit      : rel_alexW
+apps/dvb/tools      : rel_1_0_0
+apps/dvb/zapit      : rel_alexW   (cf. README in apps/dvb/zapit)
 apps/misc/libs      : HEAD
 apps/tuxbox/lcd     : rel_1_0_0
 apps/tuxbox/neutrino: HEAD        (patched, see above)
