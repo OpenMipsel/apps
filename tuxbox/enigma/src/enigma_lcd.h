@@ -33,7 +33,7 @@ class eZapLCDMain: public eWidget
 	eProgress *Volume;
 	int cur_start,cur_duration;
 private:
-	void volumeUpdate(int);
+	void volumeUpdate(int mute_state, int vol);
 	void leaveService(const eServiceReferenceDVB &service);
 public:
 	eLabel *Clock;
@@ -56,7 +56,7 @@ class eZapLCDScart: public eWidget
 	eProgress* volume;
 public:
 	eZapLCDScart(eWidget *parent);
-	void volumeUpdate(int);
+	void volumeUpdate(int mute_state, int vol);
 };
 
 class eZapLCDStandby: public eWidget

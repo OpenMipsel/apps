@@ -132,14 +132,18 @@ int eAVSwitch::setVolume(int vol)
 
 			if ( fd == -1 )
 				fd = open( AUDIO_DEV, O_RDWR );
-	
-			if(ioctl(fd, AUDIO_SET_MIXER, &mix))
+
+			int ret=ioctl(fd, AUDIO_SET_MIXER, &mix);
+			if(ret)
 				perror("AUDIO_SET_MIXER");
 			
 			if (Decoder::getAudioDevice() == -1)
 				close(fd);
+
+			return ret;
 		}
 	}
+
 	return ioctl(avsfd, AVSIOSVOL, &vol);
 }
 
@@ -188,7 +192,7 @@ void eAVSwitch::changeVCRVolume(int abs, int vol)
 
 	setVolume( (63-VCRVolume) * 65536/64 );
 
-	/*emit*/ volumeChanged(VCRVolume);
+	/*emit*/ volumeChanged(mute, VCRVolume);
 }
 
 
@@ -210,28 +214,30 @@ void eAVSwitch::muteOstAudio(bool b)
 
 void eAVSwitch::sendVolumeChanged()
 {
-	/*emit*/ volumeChanged(mute?63:volume);
+	/*emit*/ volumeChanged(mute, volume);
 }
 
 void eAVSwitch::toggleMute()
 {
 	int mID = eDVB::getInstance()->getmID();
-	mute = !mute;
+
 	if (mute)
 	{
-//		setVolume(63);
-		if ( mID == 5 || mID == 6 )
-			muteOstAudio(1);
-		else
-			muteAvsAudio(1);
-	}
-	else
-	{
-//		changeVolume(1,volume);
 		if ( mID == 5 || mID == 6 )
 			muteOstAudio(0);
 		else
 			muteAvsAudio(0);
+
+		mute = 0;
+	}
+	else
+	{
+		if ( mID == 5 || mID == 6 )
+			muteOstAudio(1);
+		else
+			muteAvsAudio(1);
+
+		mute = 1;
 	}
 	sendVolumeChanged();
 }

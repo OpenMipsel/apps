@@ -67,8 +67,9 @@ eZapLCDMain::eZapLCDMain(eWidget *parent): eWidget(parent, 0)
 	CONNECT(eDVB::getInstance()->leaveService, eZapLCDMain::leaveService);
 }
 
-void eZapLCDMain::volumeUpdate(int vol)
+void eZapLCDMain::volumeUpdate(int mute_state, int vol)
 {
+	vol=mute_state?63:vol;
 	Volume->setPerc((63-vol)*100/63);
 }
 
@@ -112,8 +113,9 @@ eZapLCDMenu::eZapLCDMenu(eWidget *parent): eWidget(parent, 0)
 	ASSIGN(Element, eLabel, "element");
 }
 
-void eZapLCDScart::volumeUpdate(int vol)
+void eZapLCDScart::volumeUpdate(int mute_state, int vol)
 {
+	vol=mute_state?63:vol;
 	volume->setPerc((63-vol)*100/63);
 }
 

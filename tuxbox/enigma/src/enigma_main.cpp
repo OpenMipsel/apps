@@ -3529,23 +3529,20 @@ void eZapMain::clockUpdate()
 	updateProgress();
 }
 
-void eZapMain::updateVolume(int vol)
+void eZapMain::updateVolume(int mute_state, int vol)
 {
-	int show=(!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this);
+	//int show=(!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this);
 
-	if ( vol == 63 && !mute.isVisible() )
+	if (mute_state)
 	{
-		if ( volume.isVisible() )
-			volume.hide();
-		if (show)
-			mute.show();
-	}
-	else if ( mute.isVisible() )
-		mute.hide();
-	if (show)
-		VolumeBar.setPerc((63-vol)*100/63);
-	else
 		volume.hide();
+		mute.show();
+	}
+	else
+	{
+		VolumeBar.setPerc((63-vol)*100/63);
+		mute.hide();
+	}
 }
 
 void eZapMain::postMessage(const eZapMessage &message, int clear)

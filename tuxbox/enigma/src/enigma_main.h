@@ -370,7 +370,7 @@ private:
 	void timeOut();
 	void leaveService();
 	void clockUpdate();
-	void updateVolume(int vol);
+	void updateVolume(int mute_state, int vol);
 	void set16_9Logo(int aspect);
 	void setSmartcardLogo(bool b);
 	void setAC3Logo(bool b);

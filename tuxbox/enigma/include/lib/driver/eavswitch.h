@@ -38,7 +38,7 @@ protected:
 public:
 	eAVSwitch();
 	~eAVSwitch();
-	Signal1<void, int> volumeChanged;
+	Signal2<void, int, int> volumeChanged;
 
 	static eAVSwitch *getInstance();
 	int getVolume() { return volume; }
