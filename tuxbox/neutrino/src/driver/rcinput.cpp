@@ -1046,7 +1046,7 @@ void CRCInput::getMsg_us(uint *msg, uint *data, unsigned long long Timeout, bool
 							if (trkey!=RC_nokey)
 							{
 								*msg = trkey;
-								*data = 0;
+								*data = 0; /* <- button pressed */
 								return;
 							}
 						}
@@ -1058,10 +1058,10 @@ void CRCInput::getMsg_us(uint *msg, uint *data, unsigned long long Timeout, bool
 					// clear rc_last_key on keyup event
 					//printf("got keyup native key: %04x %04x, translate: %04x -%s-\n", ev.code, ev.code&0x1f, translate(ev.code), getKeyName(translate(ev.code)).c_str() );
 					rc_last_key = 0;
-					if (translate(ev.code) == RC_standby)
+					if (translate(rc_key) == RC_standby)
 					{
-						*msg = RC_standby_release;
-						*data = 0;
+						*msg = RC_standby;
+						*data = 1; /* <- button released */
 						return;
 					}
 				}
@@ -1149,10 +1149,10 @@ int CRCInput::getNumericValue(const unsigned int key)
 }
 
 /**************************************************************************
-*       transforms the rc-key to string
+*       transforms the rc-key to std::string
 *
 **************************************************************************/
-string CRCInput:: getKeyName(int code)
+std::string CRCInput:: getKeyName(int code)
 {
 	switch(code)
 	{
