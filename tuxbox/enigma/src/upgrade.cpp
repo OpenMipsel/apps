@@ -8,6 +8,7 @@
 #include <lib/dvb/decoder.h>
 #include <libmd5sum.h>
 #include <lib/dvb/edvb.h>
+#include <sys/mman.h>
 
 #define TMP_IMAGE "/var/tmp/root.cramfs"
 
@@ -413,7 +414,36 @@ void eUpgrade::flashImage(int checkmd5)
 				mb.show();
 				sync();
 				Decoder::Flush();
-				int res=system("/bin/eraseall /dev/mtd/0")>>8;
+				eString mtd;
+				switch (atoi(eDVB::getInstance()->getInfo("mID").c_str()))
+				{
+				case 1:		// d-box2
+				case 2:
+				case 3:
+					mtd="2";
+					break;
+				case 5:		// dreambox
+				case 6:
+					mtd="0";
+					break;
+				default:
+					mtd="../null";
+				}
+				{
+					int fd=open(eString("/dev/mtdblock/" + mtd).c_str(), O_RDONLY);
+					if ((fd < 0) || !mmap(0, 0x800000, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0))
+					{
+						eMessageBox mb(
+							_("upgrade failed with errorcode UD0"),
+							_("upgrade failed"),
+							eMessageBox::btOK|eMessageBox::iconError);
+						mb.show();
+						mb.exec();
+						mb.hide();
+						return;
+					}
+				}
+				int res=system(eString("/bin/eraseall /dev/mtd/" + mtd).c_str())>>8;
 				mb.hide();
 				if (!res)
 				{
@@ -421,7 +451,7 @@ void eUpgrade::flashImage(int checkmd5)
 						_("Writing software to flash...\nPlease do not switch off box now!"),
 						_("upgrade in progress"), eMessageBox::iconInfo);
 					mb.show();
-					res=system("cat " TMP_IMAGE " > /dev/mtd/0")>>8;
+					res=system(eString("cat " TMP_IMAGE " > /dev/mtd/" + mtd).c_str())>>8;
 					mb.hide();
 					if (!res)
 					{
@@ -433,6 +463,7 @@ void eUpgrade::flashImage(int checkmd5)
 						mb.exec();
 						mb.hide();
 						system("/sbin/reboot");
+						system("/bin/reboot");
 						exit(0);
 					}
 				}

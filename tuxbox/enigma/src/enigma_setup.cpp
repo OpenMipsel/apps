@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.5 2002/12/17 04:10:23 TripleDES Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.6 2002/12/23 02:32:56 tmbinc Exp $
  */
 
 #include <enigma_setup.h>
@@ -43,32 +43,49 @@
 eZapSetup::eZapSetup()
 	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 12, 300, true)
 {
-	move(ePoint(150, 90)); 
+	move(ePoint(150, 90));
+	int havenetwork, haveci, haveharddisk, havelcd;
+	switch (atoi(eDVB::getInstance()->getInfo("mID").c_str()))
+	{
+	case 1:
+	case 2:
+	case 3:
+		havenetwork=1;
+		haveci=0;
+		haveharddisk=0;
+		havelcd=1;
+		break;
+	case 5:
+		havenetwork=1;
+		haveci=1;
+		haveharddisk=1;
+		havelcd=1;
+		break;
+	case 6:
+		havenetwork=0;
+		haveci=1;
+		haveharddisk=0;
+		havelcd=0;
+		break;
+	}
+	
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to Mainmenu") ))->selected, eZapSetup::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), _("open channel setup") ))->selected, eZapSetup::sel_channels);
-	if (eDVB::getInstance()->getInfo("mID") != "06")
-	{
+	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), _("open network setup") ))->selected, eZapSetup::sel_network);
-	}	
 	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), _("open osd setup") ))->selected, eZapSetup::sel_osd);
-	if (eDVB::getInstance()->getInfo("mID") != "06")
-	{
+	if (havelcd)
 		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open lcd setup") ))->selected, eZapSetup::sel_lcd);
-	}	
 	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), _("open remotecontrol setup") ))->selected, eZapSetup::sel_rc);
 	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), _("open video setup") ))->selected, eZapSetup::sel_video);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), _("open skin selector") ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), _("open language selector") ))->selected, eZapSetup::sel_language);
-	if (eDVB::getInstance()->getInfo("mID") == "05")
-	{
+	if (haveharddisk)
 		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), _("initialize harddisc") ))->selected, eZapSetup::sel_harddisk);
+	if (haveci)
 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), _("show CI Menu") ))->selected, eZapSetup::sel_ci);
+	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), _("upgrade firmware") ))->selected, eZapSetup::sel_upgrade);
-	}
-	if (eDVB::getInstance()->getInfo("mID") == "06")
-	{
-		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), _("show CI Menu") ))->selected, eZapSetup::sel_ci);
-	}
 }
 
 eZapSetup::~eZapSetup()
