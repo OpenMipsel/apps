@@ -2262,7 +2262,11 @@ void eZapMain::standbyRelease()
 	if (b)
 	{
 		hide();
+#ifndef DISABLE_LCD
+		eSleepTimerContextMenu m( LCDTitle, LCDElement );
+#else
 		eSleepTimerContextMenu m;
+#endif
 		m.show();
 		int ret = m.exec();
 		m.hide();

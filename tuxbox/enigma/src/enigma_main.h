@@ -543,7 +543,7 @@ class eRecordContextMenu: public eListBoxWindow<eListBoxEntryText>
 	eServiceReference ref;
 	void entrySelected(eListBoxEntryText *s);
 public:
-	eRecordContextMenu();
+	eRecordContextMenu(eWidget *LCDTitle=0, eWidget *LCDElement=0);
 };
 
 class eRecTimeInput: public eShutdownStandbySelWindow
