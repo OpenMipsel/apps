@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.10 2003/05/18 11:50:55 digi_casi Exp $
+ * $Id: frontend.cpp,v 1.41.2.11 2003/05/18 15:37:21 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -512,7 +512,6 @@ void CFrontend::sendMotorCommand(uint8_t cmdtype, uint8_t address, uint8_t comma
 	secCommand cmd;
 	const secStatus *state;
 
-	printf("[frontend] sendMotorCommand: ATTENTION this function is not tested yet.\n");
 	printf("[frontend] sendMotorCommand: cmdtype   = %x, address = %x, cmd   = %x\n", cmdtype, address, command);
 	printf("[frontend] sendMotorCommand: num_parms = %d, parm1   = %x, parm2 = %x\n", num_parameters, parameter1, parameter2);
 	
