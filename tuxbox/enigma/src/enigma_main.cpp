@@ -2641,7 +2641,12 @@ void eZapMain::blinkRecord()
 				if (!(cnt++ % 7))
 					swp^=1;
 				if (swp)
-					DVRSpaceLeft->setText(eString().sprintf("%d.%02d GB\nfree", fds/1024, (int)(fds%1024)/10.34 ));
+				{
+					if (fds<1024)
+						DVRSpaceLeft->setText(eString().sprintf("%dMB free", fds));
+					else
+						DVRSpaceLeft->setText(eString().sprintf("%d.%02d GB\nfree", fds/1024, (int)((fds%1024)/10.34) ));
+				}
 				else
 				{
 					int min = fds/33;
@@ -2649,7 +2654,7 @@ void eZapMain::blinkRecord()
 					if (min<60)
 						DVRSpaceLeft->setText(eString().sprintf("~%d min free", min ));
 					else
-						DVRSpaceLeft->setText(eString().sprintf("~%dh%02d\nfree", min/60, min%60 ));
+						DVRSpaceLeft->setText(eString().sprintf("~%dh%02dmin\nfree", min/60, min%60 ));
 				}
 			}
 		}
