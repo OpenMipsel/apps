@@ -781,7 +781,8 @@ int TransponderScan::exec(int initial)
 			statusbar->setText(_("Scan is in finished, press ok to close window"));
 			finish.exec();
 			finish.hide();
-			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+			if ( oldstate == stateManual || 
+				eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 			{
 				eMessageBox mb(eString().sprintf(_("Do you want\nto scan another\n%s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
 					_("Scan finished"),
