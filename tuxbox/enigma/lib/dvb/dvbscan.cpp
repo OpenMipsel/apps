@@ -1,22 +1,22 @@
 #include <lib/dvb/dvbscan.h>
 
-int isValidONIDTSID(eOriginalNetworkID onid, eTransportStreamID tsid)
+inline int isValidONIDTSID(eOriginalNetworkID onid, eTransportStreamID tsid)
 {
-	if ((onid == 1) && (tsid > 1))
-		return 1;
-	if (onid == 1)
-		return 0;
-	if (onid == 0)
-		return 0;
-	if (onid == 0xFFFF)
-		return 0;
-	if (onid == 0x1111)
-		return 0;
-	if (onid == 0x00B1 && tsid == 0x00B0)
-		return 0;
-	if (onid == 0x0002 && tsid == 0x07E8)
-		return 0;
-	return 1;
+	switch( onid.get() )
+	{
+		case 0:
+		case 0xFFFF:
+		case 0x1111:
+			return 0;
+		case 1:
+			return tsid>1;
+		case 0x00B1:
+			return tsid != 0x00B0;
+		case 0x0002:
+			return tsid != 0x07E8;
+		default:
+			return 1;
+	}
 }
 
 		// work around for buggy transponders on hotbird (and maybe others)

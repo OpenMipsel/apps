@@ -1,4 +1,4 @@
-// #define TIMESHIFT
+#define TIMESHIFT
 		// intial time to lag behind live
 #define TIMESHIFT_GUARD (1024*1024)
 #include <lib/dvb/servicedvb.h>
@@ -63,7 +63,6 @@ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *ha
 			fileend = 0;
 		messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::seekreal, fileend));
 	}
-	
 
 	CONNECT(messages.recv_msg, eDVRPlayerThread::gotMessage);
 	
@@ -434,18 +433,23 @@ void eServiceHandlerDVB::startPlayback(const eString &filename, int livemode)
 	serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 }
 
-void eServiceHandlerDVB::stopPlayback()
+void eServiceHandlerDVB::stopPlayback( int waslivemode )
 {
 	if (decoder)
 	{
 			// reenable pcrpid
 		Decoder::parms.pcrpid = pcrpid;
 		Decoder::Set();
-		flags&=~(flagIsSeekable|flagSupportPosition);
+		if ( waslivemode )
+			flags&=~flagSupportPosition;
+		else
+			flags&=~(flagIsSeekable|flagSupportPosition);
 		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::exit));
 		delete decoder;
 		decoder=0;
+		if ( waslivemode )
+			flags&=~flagIsSeekable;
 	}
 }
 
@@ -619,6 +623,7 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			return -1;
 		break;
 	case eServiceCommand::cmdSetSpeed:
+	{
 		if (!decoder)
 		{
 #ifdef TIMESHIFT
@@ -644,6 +649,7 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			return -2;
 			}
 		break;
+	}
 	case eServiceCommand::cmdSkip:
 		if (!decoder)
 		{
@@ -728,7 +734,7 @@ int eServiceHandlerDVB::stop()
 
 	if (sapi)
 		sapi->switchService(eServiceReferenceDVB());
-		
+
 	stopPlayback();
 
 	return 0;
@@ -1025,7 +1031,7 @@ void eServiceHandlerDVB::gotMessage(const eDVRPlayerThreadMessage &message)
 		serviceEvent(eServiceEvent(eServiceEvent::evtEnd));
 	} else if (message.type == eDVRPlayerThreadMessage::liveeof)
 	{
-		stopPlayback();
+		stopPlayback(1);
 	}
 }
 

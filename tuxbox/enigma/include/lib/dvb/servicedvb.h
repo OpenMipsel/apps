@@ -117,7 +117,7 @@ class eServiceHandlerDVB: public eServiceHandler
 	
 			// (u.a.) timeshift:
 	void startPlayback(const eString &file, int livemode);
-	void stopPlayback();
+	void stopPlayback(int waslivemode=0);
 public:
 	int getID() const;
 	eServiceHandlerDVB();

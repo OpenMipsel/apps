@@ -3762,7 +3762,6 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		}
 		updateProgress();
 		showServiceInfobar(serviceFlags & eServiceHandler::flagIsSeekable);
-
 		break;
 	}
 	case eServiceEvent::evtAspectChanged:

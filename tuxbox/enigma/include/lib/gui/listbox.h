@@ -70,7 +70,7 @@ public:
 	void setActiveColor(gColor back, gColor front);
 	void beginAtomic();
 	void endAtomic();
-
+	void FakeFocus( int i ) { have_focus=i; }
 	void invalidateCurrent()
 	{
 		int n=0;
@@ -151,6 +151,7 @@ public:
 	}
 	virtual const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )=0;
 	void drawEntryRect(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state);
+	void drawEntryBorder(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF);
 	const eString &getHelpText() const { return helptext; }
 };
 

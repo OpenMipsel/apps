@@ -33,6 +33,7 @@ public:
 	void addPressed();
 	void editPressed();
 	void removePressed();
+	void focusChanged( const eWidget* w );
 	int eventHandler( const eWidgetEvent & e );
 };
 

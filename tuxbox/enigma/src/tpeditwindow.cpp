@@ -14,12 +14,17 @@ eListBoxEntryTransponder::eListBoxEntryTransponder( eListBox<eListBoxEntryTransp
 
 const eString& eListBoxEntryTransponder::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state)
 {
-	drawEntryRect( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state > 0 );
+	bool b = (state == 2);
+
+	drawEntryRect( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, b?0:state );
 
 	static eString text;
 	text.sprintf("%d / %d / %c", tp->satellite.frequency/1000, tp->satellite.symbol_rate/1000, tp->satellite.polarisation?'V':'H' );
 	rc->setFont(font);
 	rc->renderText( rect, text );
+
+	if ( b )
+		drawEntryBorder( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF );
 
 	return text;
 }
@@ -90,6 +95,8 @@ eTransponderEditWindow::eTransponderEditWindow()
 	satellites->setName("satlist");
 	transponders = new eListBox<eListBoxEntryTransponder>( this, 0, 0 );
 	transponders->setName("transponderlist");
+	transponders->FakeFocus( 0 );
+	satellites->FakeFocus( 1 );
 	if ( eSkin::getActive()->build( this, "TransponderWindow") )
 		eFatal("eTransponderEditWindow build failed");
 
@@ -116,6 +123,7 @@ eTransponderEditWindow::eTransponderEditWindow()
 	else
 		satellites->setCurrent(0);
 
+	CONNECT( eWidget::focusChanged, eTransponderEditWindow::focusChanged );
 	satSelChanged( satellites->getCurrent() );
 }
 
@@ -170,6 +178,19 @@ int eTransponderEditWindow::eventHandler( const eWidgetEvent & event )
 			break;
 	}
 	return eWindow::eventHandler( event );
+}
+
+void eTransponderEditWindow::focusChanged( const eWidget* w )
+{
+	static bool b = true;
+	if ( in_loop && b != (w->getName()=="sat") )
+	{
+		b=w->getName()=="sat";
+		transponders->FakeFocus( !b );
+		satellites->FakeFocus( b );
+		satellites->invalidateCurrent();
+		transponders->invalidateCurrent();
+	}
 }
 
 eTransponderEditWindow::~eTransponderEditWindow()

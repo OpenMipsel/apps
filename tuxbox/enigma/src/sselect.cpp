@@ -248,21 +248,7 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 	}
 
 	if (b)
-	{
-		rc->setForegroundColor(coActiveB);
-		rc->line( ePoint(rect.left(), rect.bottom()-1), ePoint(rect.right()-1, rect.bottom()-1) );
-		rc->line( ePoint(rect.left(), rect.top()), ePoint(rect.right()-1, rect.top()) );
-		rc->line( ePoint(rect.left(), rect.top()), ePoint(rect.left(), rect.bottom()-1) );
-		rc->line( ePoint(rect.right()-1, rect.top()), ePoint(rect.right()-1, rect.bottom()-1) );
-		rc->line( ePoint(rect.left()+1, rect.bottom()-2), ePoint(rect.right()-2, rect.bottom()-2) );
-		rc->line( ePoint(rect.left()+1, rect.top()+1), ePoint(rect.right()-2, rect.top()+1) );
-		rc->line( ePoint(rect.left()+1, rect.top()+2), ePoint(rect.left()+1, rect.bottom()-3) );
-		rc->line( ePoint(rect.right()-2, rect.top()+2), ePoint(rect.right()-2, rect.bottom()-3) );
-		rc->line( ePoint(rect.left()+2, rect.bottom()-3), ePoint(rect.right()-3, rect.bottom()-3) );
-		rc->line( ePoint(rect.left()+2, rect.top()+2), ePoint(rect.right()-3, rect.top()+2) );
-		rc->line( ePoint(rect.left()+2, rect.top()+3), ePoint(rect.left()+2, rect.bottom()-4) );
-		rc->line( ePoint(rect.right()-3, rect.top()+3), ePoint(rect.right()-3, rect.bottom()-4) );
-	}
+		drawEntryBorder(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF );
 
 	if ( pservice )
 		eServiceInterface::getInstance()->removeRef(service);
