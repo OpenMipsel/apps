@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2002-12-04 01:33+0100\n"
+"POT-Creation-Date: 2002-12-04 18:58+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: coronas@gmx.net\n"
 "Language-Team: Spanish <es@tuxbox.org>\n"
@@ -248,14 +248,14 @@ msgstr "cancelar"
 msgid "Progress:"
 msgstr "Progreso:"
 
+#: default.esml:241
+msgid "Threshold:"
+msgstr "Threshold:"
+
 # 
 #: default.esml:244
 msgid "save changes and use current selected lnb for the choosen satellite"
 msgstr "grabar cambios y utilzar LNB actual para el satélite elegido"
-
-#: default.esml:241
-msgid "Threshold:"
-msgstr "Threshold:"
 
 #: default.esml:280
 msgid "Number in Rotor:"
@@ -479,7 +479,7 @@ msgstr "Seleccione LNB para activar o cambiar"
 msgid "clear list before"
 msgstr "borrar lista antes"
 
-#: default.esml:444 default.esml:450 stone.esml:462
+#: stone.esml:462 default.esml:444 default.esml:450
 msgid "EPG"
 msgstr "EPG"
 
@@ -505,14 +505,14 @@ msgstr "Frecuencia cambio banda (0..9, OK)"
 msgid "set"
 msgstr "ajustes"
 
+#: stone.esml:463
+msgid "Bildregie"
+msgstr ""
+
 #: stone.esml:465
 #, fuzzy
 msgid "Videotext"
 msgstr "mostrar teletexto"
-
-#: stone.esml:463
-msgid "Bildregie"
-msgstr ""
 
 #: default.esml:240
 msgid "enter lnb highband offset frequency (0..9, ok)"

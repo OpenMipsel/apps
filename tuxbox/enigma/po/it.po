@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2002-12-04 01:33+0100\n"
+"POT-Creation-Date: 2002-12-04 18:58+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: unknown>\n"
 "Language-Team: German <it@tuxbox.org>\n"
@@ -261,14 +261,14 @@ msgstr "interrompere"
 msgid "Progress:"
 msgstr "Progresso:"
 
+#: default.esml:241
+msgid "Threshold:"
+msgstr ""
+
 #: default.esml:244
 #, fuzzy
 msgid "save changes and use current selected lnb for the choosen satellite"
 msgstr "attribuire l'LNB attualmente indicato al satellite selezionato"
-
-#: default.esml:241
-msgid "Threshold:"
-msgstr ""
 
 #: default.esml:280
 msgid "Number in Rotor:"
@@ -495,7 +495,7 @@ msgstr "Prego, selezionare l'LNB desiderato"
 msgid "clear list before"
 msgstr "Cancellare prima la lista"
 
-#: default.esml:444 default.esml:450 stone.esml:462
+#: stone.esml:462 default.esml:444 default.esml:450
 msgid "EPG"
 msgstr ""
 
@@ -521,14 +521,14 @@ msgstr "Inserire la frequenza Treshold dell' LNB (0..9, ok)"
 msgid "set"
 msgstr "Impostazioni"
 
+#: stone.esml:463
+msgid "Bildregie"
+msgstr ""
+
 #: stone.esml:465
 #, fuzzy
 msgid "Videotext"
 msgstr "Televideo"
-
-#: stone.esml:463
-msgid "Bildregie"
-msgstr ""
 
 #: default.esml:240
 msgid "enter lnb highband offset frequency (0..9, ok)"

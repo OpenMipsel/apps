@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2002-12-04 01:33+0100\n"
+"POT-Creation-Date: 2002-12-04 18:58+0100\n"
 "PO-Revision-Date: 2002-05-04 02:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: tr <tr@tuxbox.org>\n"
@@ -248,14 +248,14 @@ msgstr "iptalet"
 msgid "Progress:"
 msgstr "Programlama:"
 
+#: default.esml:241
+msgid "Threshold:"
+msgstr "kuvetlendirici:"
+
 #: default.esml:244
 #, fuzzy
 msgid "save changes and use current selected lnb for the choosen satellite"
 msgstr "use current selected lnb for the choosen satellite"
-
-#: default.esml:241
-msgid "Threshold:"
-msgstr "kuvetlendirici:"
 
 #: default.esml:280
 msgid "Number in Rotor:"
@@ -478,7 +478,7 @@ msgstr "choose the LNB you wish to apply or edit"
 msgid "clear list before"
 msgstr "listeyi ilk once silin"
 
-#: default.esml:444 default.esml:450 stone.esml:462
+#: stone.esml:462 default.esml:444 default.esml:450
 msgid "EPG"
 msgstr "EPG"
 
@@ -504,14 +504,14 @@ msgstr "lnb kuvetlendirici frakansini yaziniz (0..9, ok)"
 msgid "set"
 msgstr "Ayarlar"
 
+#: stone.esml:463
+msgid "Bildregie"
+msgstr ""
+
 #: stone.esml:465
 #, fuzzy
 msgid "Videotext"
 msgstr "Videotext goster"
-
-#: stone.esml:463
-msgid "Bildregie"
-msgstr ""
 
 #: default.esml:240
 msgid "enter lnb highband offset frequency (0..9, ok)"
