@@ -106,6 +106,11 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 {
 	switch (event.type)
 	{
+		case eWidgetEvent::changedText:
+			if ( maxChars < text.length() )
+				maxChars = text.length();
+			return eButton::eventHandler( event );
+		break;
 		case eWidgetEvent::evtAction:
 		{
 			int key = -1;
@@ -124,10 +129,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				}
 			}
 			else if (event.action == &i_cursorActions->right && editMode )
-			{
-				if ( curPos+1 < text.length()-1 )
-					nextChar();
-			}
+				nextChar();
 			else if (event.action == &i_cursorActions->ok)
 			{
 				if ( editMode )
