@@ -354,6 +354,18 @@ siPID::siPID(decoderParameters parms, const eService *cservice, eWidget *parent)
 	sid[1]->move(ePoint(280, yOffs));
 	sid[1]->resize(eSize(130, fs+5));
 	sid[1]->setFont(fontfixed);
+	yOffs+=fs+5;
+	
+	eLabel *l=new eLabel(this);
+	l->setText("Namespace:");
+	l->move(ePoint(10, yOffs));
+	l->resize(eSize(185, fs+5));
+	
+	l=new eLabel(this);
+	l->setText(eString().sprintf("%04xh", sapi->service.getDVBNamespace().get()));
+	l->move(ePoint(280, yOffs));
+	l->resize(eSize(130, fs+5));
+	l->setFont(fontfixed);
 }
 
 void siPID::redrawWidget()

@@ -81,7 +81,10 @@ void eListBoxEntryEPG::build()
 		else if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
 		{
 			// build parent Service Reference
-			eServiceReferenceDVB nvodService(service.data[2], service.data[3], ((TimeShiftedEventDescriptor*)descriptor)->reference_service_id, service.data[0] );
+			eServiceReferenceDVB nvodService(
+					((eServiceReferenceDVB&)service).getDVBNamespace(),
+					service.data[2], service.data[3], 
+					((TimeShiftedEventDescriptor*)descriptor)->reference_service_id, service.data[0] );
 			// get EITEvent from Parent...
 			EITEvent* evt = eEPGCache::getInstance()->lookupEvent(nvodService, ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id );
 			if (evt)
@@ -235,7 +238,7 @@ void eEPGSelector::fillEPGList()
 			{
 				for (std::list<NVODReferenceEntry>::const_iterator it( RefList->begin() ); it != RefList->end(); it++ )
 				{
-					eServiceReferenceDVB ref( it->transport_stream_id, it->original_network_id, it->service_id, 5 );
+					eServiceReferenceDVB ref( ((eServiceReferenceDVB&)current).getDVBNamespace(), it->transport_stream_id, it->original_network_id, it->service_id, 5 );
 					const eventMap *eMap = eEPGCache::getInstance()->getEventMap( ref );
 					if (eMap)
 					{

@@ -3,6 +3,7 @@
 #include <lib/gui/listbox.h>
 #include <lib/gdi/font.h>
 #include <lib/gdi/epng.h>
+#include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -140,7 +141,7 @@ eWizardLanguage::eWizardLanguage()
 		free(current);
 	fclose(f);
 
-	selchanged(cur);
+//	selchanged(cur);
 }
 
 void eWizardLanguage::selchanged(eLanguageEntry *entry)

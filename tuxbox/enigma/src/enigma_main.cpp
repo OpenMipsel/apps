@@ -333,9 +333,9 @@ void NVODStream::EITready(int error)
 		listbox->invalidate();
 }
 
-NVODStream::NVODStream(eListBox<NVODStream> *listbox, const NVODReferenceEntry *ref, int type)
+NVODStream::NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type)
 	: eListBoxEntryTextStream((eListBox<eListBoxEntryTextStream>*)listbox), 
-		service(eTransportStreamID(ref->transport_stream_id), eOriginalNetworkID(ref->original_network_id),
+		service(dvb_namespace, eTransportStreamID(ref->transport_stream_id), eOriginalNetworkID(ref->original_network_id),
 			eServiceID(ref->service_id), 5), eit(EIT::typeNowNext, ref->service_id, type)
 {
 	CONNECT(eit.tableReady, NVODStream::EITready);
@@ -369,7 +369,7 @@ void eNVODSelector::clear()
 	list.clearList();
 }
 
-void eNVODSelector::add(NVODReferenceEntry *ref)
+void eNVODSelector::add(eDVBNamespace dvb_namespace, NVODReferenceEntry *ref)
 {
 	eServiceReference &s=eServiceInterface::getInstance()->service;
 	if (s.type != eServiceReference::idDVB)
@@ -378,7 +378,7 @@ void eNVODSelector::add(NVODReferenceEntry *ref)
 
 	int type= ((service.getTransportStreamID()==eTransportStreamID(ref->transport_stream_id))
 			&&	(service.getOriginalNetworkID()==eOriginalNetworkID(ref->original_network_id))) ? EIT::tsActual:EIT::tsOther;
-	new NVODStream(&list, ref, type);
+	new NVODStream(&list, dvb_namespace, ref, type);
 }
 
 AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
@@ -481,9 +481,10 @@ void eAudioSelector::add(PMTEntry *pmt)
 	new AudioStream(&list, pmt);
 }
 
-SubService::SubService(eListBox<SubService> *listbox, const LinkageDescriptor *descr)
+SubService::SubService(eListBox<SubService> *listbox, eDVBNamespace dvb_namespace, const LinkageDescriptor *descr)
 	:eListBoxEntryText((eListBox<eListBoxEntryText>*) listbox),
-		service(eTransportStreamID(descr->transport_stream_id), 
+		service(dvb_namespace, 
+			eTransportStreamID(descr->transport_stream_id), 
 			eOriginalNetworkID(descr->original_network_id),
 			eServiceID(descr->service_id), 6)
 {
@@ -512,9 +513,9 @@ void eSubServiceSelector::clear()
 	list.clearList();
 }
 
-void eSubServiceSelector::add(const LinkageDescriptor *ref)
+void eSubServiceSelector::add(eDVBNamespace dvb_namespace, const LinkageDescriptor *ref)
 {
-	new SubService(&list, ref);
+	new SubService(&list, dvb_namespace, ref);
 }
 
 void eServiceNumberWidget::selected(int *res)
@@ -1116,7 +1117,8 @@ void eZapMain::setEIT(EIT *eit)
 		for (ePtrList<EITEvent>::iterator i(eit->events); i != eit->events.end(); ++i)
 		{
 			EITEvent *event=*i;
-			if ( ((eServiceReferenceDVB&)eServiceInterface::getInstance()->service).getServiceType() != 6 )
+			eServiceReferenceDVB &ref=(eServiceReferenceDVB&)eServiceInterface::getInstance()->service;
+			if ( ref.getServiceType() != 6 )
 			{
 				if ((event->running_status>=2) || ((!p) && (!event->running_status)))
 				{
@@ -1131,7 +1133,7 @@ void eZapMain::setEIT(EIT *eit)
 							LinkageDescriptor *ld=(LinkageDescriptor*)*d;
 							if (ld->linkage_type!=0xB0)
 								continue;
-								subservicesel.add(ld);
+							subservicesel.add(ref.getDVBNamespace(), ld);
 							flags|=ENIGMA_SUBSERVICES;
 						}
 				}
@@ -1301,7 +1303,7 @@ void eZapMain::handleNVODService(SDTEntry *sdtentry)
 	for (ePtrList<Descriptor>::iterator i(sdtentry->descriptors); i != sdtentry->descriptors.end(); ++i)
 		if (i->Tag()==DESCR_NVOD_REF)
 			for (ePtrList<NVODReferenceEntry>::iterator e(((NVODReferenceDescriptor*)*i)->entries); e != ((NVODReferenceDescriptor*)*i)->entries.end(); ++e)
-				nvodsel.add(*e);
+				nvodsel.add(((eServiceReferenceDVB&)eServiceInterface::getInstance()->service).getDVBNamespace(), *e);
 	eService *service=eServiceInterface::getInstance()->addRef(eServiceInterface::getInstance()->service);
 	if (service)
 		nvodsel.setText(service->service_name.c_str());

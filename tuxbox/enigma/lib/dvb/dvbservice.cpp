@@ -73,7 +73,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 				dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceFailed));
 				return;
 			}
-			eTransponder *n=dvb.settings->transponderlist->searchTS(service.getTransportStreamID(), service.getOriginalNetworkID());
+			eTransponder *n=dvb.settings->transponderlist->searchTS(service.getDVBNamespace(), service.getTransportStreamID(), service.getOriginalNetworkID());
 			if (!n)
 			{
 				eDebug("no transponder %x %x", service.getOriginalNetworkID().get(), service.getTransportStreamID().get());
@@ -290,7 +290,7 @@ void eDVBServiceController::SDTready(int error)
 		SDT *sdt=dvb.tSDT.ready()?dvb.tSDT.getCurrent():0;
 		if (sdt)
 		{
-			if (dvb.settings->transponderlist->handleSDT(sdt))
+			if (dvb.settings->transponderlist->handleSDT(sdt, service.getDVBNamespace()))
 				dvb.serviceListChanged();
 
 			sdt->unlock();

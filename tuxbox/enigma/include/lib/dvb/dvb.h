@@ -75,18 +75,41 @@ public:
 	bool operator > (const eOriginalNetworkID &c) const { return v > c.v; }
 };
 
-struct tsref: public std::pair<eTransportStreamID,eOriginalNetworkID>
+struct eDVBNamespace
 {
-	bool operator<(const tsref &c)
+private:
+	int v;
+public:
+	int get() const { return v; }
+	eDVBNamespace(int i): v(i) { }
+	eDVBNamespace(): v(-1) { }
+	bool operator == (const eDVBNamespace &c) const { return v == c.v; }
+	bool operator != (const eDVBNamespace &c) const { return v != c.v; }
+	bool operator < (const eDVBNamespace &c) const { return v < c.v; }
+	bool operator > (const eDVBNamespace &c) const { return v > c.v; }
+};
+
+struct tsref
+{
+	eDVBNamespace dvbnamespace;
+	eTransportStreamID tsid;
+	eOriginalNetworkID onid;
+	bool operator<(const tsref &c) const
 	{
-		if (second < c.second)
+		if (dvbnamespace < c.dvbnamespace)
 			return 1;
-		else if (second == c.second)
-			if (first < c.first)
+		else if (dvbnamespace == c.dvbnamespace)
+		{
+			if (onid < c.onid)
 				return 1;
+			else if (onid == c.onid)
+				if (tsid < c.tsid)
+					return 1;
+		}
 		return 0;
 	}
-	tsref(eTransportStreamID tsid, eOriginalNetworkID onid): std::pair<eTransportStreamID,eOriginalNetworkID>(tsid,onid)
+	tsref(eDVBNamespace dvbnamespace, eTransportStreamID tsid, eOriginalNetworkID onid): 
+			dvbnamespace(dvbnamespace), tsid(tsid), onid(onid)
 	{
 	}
 };
@@ -155,7 +178,7 @@ public:
 			return 1;
 		}
 	} satellite;
-	eTransponder(eTransponderList &tplist, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
+	eTransponder(eTransponderList &tplist, eDVBNamespace dvbnamespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
 	eTransponder(eTransponderList &tplist);
 	void setSatellite(SatelliteDeliverySystemDescriptor *descr) { satellite.set(descr); }
 	void setCable(CableDeliverySystemDescriptor *descr) { cable.set(descr); }
@@ -169,13 +192,18 @@ public:
 		state=ref.state;
 		transport_stream_id=ref.transport_stream_id;
 		original_network_id=ref.original_network_id;
+		dvb_namespace=ref.dvb_namespace;
 		return *this;
 	}
 	int tune();
-	int isValid(); 
+	int isValid();
 		
+	eDVBNamespace dvb_namespace;
 	eTransportStreamID transport_stream_id;
 	eOriginalNetworkID original_network_id;
+	
+	static eDVBNamespace buildNamespace(eOriginalNetworkID onid, eTransportStreamID tsid, int orbital_position, int freq);
+
 	enum
 	{
 		stateToScan, stateError, stateOK
@@ -240,13 +268,14 @@ public:
 	{
 		cVPID, cAPID, cTPID, cPCRPID, cAC3PID, cacheMax
 	};
-	eServiceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, const SDTEntry *sdtentry, int service_number=-1);
-	eServiceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number=-1);
+	eServiceDVB(eDVBNamespace dvb_namespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, const SDTEntry *sdtentry, int service_number=-1);
+	eServiceDVB(eDVBNamespace dvb_namespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number=-1);
 	eServiceDVB(eServiceID service_id, const char *name);
 	eServiceDVB(const eServiceDVB &c);
 
 	void update(const SDTEntry *sdtentry);
 	
+	eDVBNamespace dvb_namespace;
 	eTransportStreamID transport_stream_id;
 	eOriginalNetworkID original_network_id;
 	eServiceID service_id;
@@ -327,7 +356,7 @@ struct eServiceReference
 
 	inline int getSortKey() const { return (flags & hasSortKey) ? data[3] : ((flags & sort1) ? 1 : 0); }
 
-	int data[4];
+	int data[8];
 	eString path;
 
 	eServiceReference()
@@ -338,32 +367,33 @@ struct eServiceReference
 	eServiceReference(int type, int flags)
 		: type(type), flags(flags)
 	{
-		data[0]=data[1]=data[2]=data[3]=0;
+		memset(data, 0, sizeof(data));
 	}
 	eServiceReference(int type, int flags, int data0)
 		: type(type), flags(flags)
 	{
+		memset(data, 0, sizeof(data));
 		data[0]=data0;
-		data[1]=data[2]=data[3]=0;
 	}
 	eServiceReference(int type, int flags, int data0, int data1)
 		: type(type), flags(flags)
 	{
+		memset(data, 0, sizeof(data));
 		data[0]=data0;
 		data[1]=data1;
-		data[2]=data[3]=0;
 	}
 	eServiceReference(int type, int flags, int data0, int data1, int data2)
 		: type(type), flags(flags)
 	{
+		memset(data, 0, sizeof(data));
 		data[0]=data0;
 		data[1]=data1;
 		data[2]=data2;
-		data[3]=0;
 	}
 	eServiceReference(int type, int flags, int data0, int data1, int data2, int data3)
 		: type(type), flags(flags)
 	{
+		memset(data, 0, sizeof(data));
 		data[0]=data0;
 		data[1]=data1;
 		data[2]=data2;
@@ -372,7 +402,7 @@ struct eServiceReference
 	eServiceReference(int type, int flags, const eString &path)
 		: type(type), flags(flags), path(path)
 	{
-		data[0]=data[1]=data[2]=data[3]=0;
+		memset(data, 0, sizeof(data));
 	}
 	eServiceReference(const eString &string);
 	eString toString() const;
@@ -399,7 +429,7 @@ struct eServiceReference
 		if (flags > c.flags)
 			return 0; */
 
-		int r=memcmp(data, c.data, sizeof(int)*4);
+		int r=memcmp(data, c.data, sizeof(int)*8);
 		if (r)
 			return r < 0;
 		return path < c.path;
@@ -439,11 +469,15 @@ struct eServiceReferenceDVB: public eServiceReference
 	eOriginalNetworkID getOriginalNetworkID() const { return eOriginalNetworkID(data[3]); }
 	void setOriginalNetworkID(eOriginalNetworkID original_network_id) { data[3]=original_network_id.get(); }
 
-	eServiceReferenceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_type)
+	eDVBNamespace getDVBNamespace() const { return eDVBNamespace(data[4]); }
+	void setDVBNamespace(eDVBNamespace dvbnamespace) { data[4]=dvbnamespace.get(); }
+
+	eServiceReferenceDVB(eDVBNamespace dvbnamespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_type)
 		:eServiceReference(eServiceReference::idDVB, 0)
 	{
 		setTransportStreamID(transport_stream_id);
 		setOriginalNetworkID(original_network_id);
+		setDVBNamespace(dvbnamespace);
 		setServiceID(service_id);
 		setServiceType(service_type);
 	}
@@ -629,15 +663,15 @@ public:
 	void readLNBData();
 	void writeLNBData();
 
-	eTransponder &createTransponder(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
+	eTransponder &createTransponder(eDVBNamespace dvb_namespace,eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
 	eServiceDVB &createService(const eServiceReferenceDVB &service, int service_number=-1, bool *newService=0);
-	int handleSDT(const SDT *sdt, eOriginalNetworkID onid=-1, eTransportStreamID tsid=-1);
+	int handleSDT(const SDT *sdt, eDVBNamespace dvb_namespace, eOriginalNetworkID onid=-1, eTransportStreamID tsid=-1);
 	Signal1<void, eTransponder*> transponder_added;
 	Signal2<void, const eServiceReferenceDVB &, bool> service_found;
 
-	eTransponder *searchTS(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
+	eTransponder *searchTS(eDVBNamespace dvbnamespace, eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id);
 	eServiceDVB *searchService(const eServiceReference &service);
-	const eServiceReferenceDVB *searchService(eOriginalNetworkID original_network_id, eServiceID service_id);
+	const eServiceReferenceDVB *searchService(eDVBNamespace dvbnamespace, eOriginalNetworkID original_network_id, eServiceID service_id);
 	eServiceReferenceDVB searchServiceByNumber(int channel_number);
 	
 	template <class T> 

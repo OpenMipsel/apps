@@ -101,7 +101,7 @@ private:
 	void EITready(int error);
 	void buildText();
 public:
-	NVODStream(eListBox<NVODStream> *listbox, const NVODReferenceEntry *ref, int type);
+	NVODStream(eListBox<NVODStream> *listbox, eDVBNamespace dvb_namespace, const NVODReferenceEntry *ref, int type);
 	eServiceReferenceDVB service;
 	EIT eit;
 };
@@ -115,7 +115,7 @@ private:
 public:
 	eNVODSelector();
 	void clear();
-	void add(NVODReferenceEntry *ref);
+	void add(eDVBNamespace dvb_namespace, NVODReferenceEntry *ref);
 };
 
 class AudioStream: public eListBoxEntryText
@@ -152,7 +152,7 @@ class SubService: public eListBoxEntryText
 	friend class eListBox<SubService>;
 	friend class eSubServiceSelector;
 public:
-	SubService(eListBox<SubService> *listbox, const LinkageDescriptor *descr);
+	SubService(eListBox<SubService> *listbox, eDVBNamespace dvb_namespace, const LinkageDescriptor *descr);
 	eServiceReferenceDVB service;
 };
 
@@ -162,7 +162,7 @@ class eSubServiceSelector: public eListBoxWindow<SubService>
 public:
 	eSubServiceSelector();
 	void clear();
-	void add(const LinkageDescriptor *ref);
+	void add(eDVBNamespace dvb_namespace, const LinkageDescriptor *ref);
 };
 
 class eServiceNumberWidget: public eWindow
