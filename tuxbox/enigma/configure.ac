@@ -39,6 +39,7 @@ data/pictures/countries/Makefile
 data/pictures/neutrino/Makefile
 data/pictures/mainmenu/Makefile
 data/pictures/shortcut/Makefile
+data/pictures/small/Makefile
 data/pictures/keypics/Makefile
 data/resources/Makefile
 data/skins/Makefile
