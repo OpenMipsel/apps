@@ -40,8 +40,8 @@ void eCheckbox::gotFocus()
 		LCDTmp->setText(text);
 		LCDTmp->show();
 	}
-	setBackgroundColor(focusB, false);
-	setForegroundColor(focusF);
+	setForegroundColor(focusF, false);
+	setBackgroundColor(focusB);
 //	invalidate();
 }
 

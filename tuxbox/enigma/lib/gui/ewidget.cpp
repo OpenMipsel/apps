@@ -457,10 +457,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		break;
 
 	case eWidgetEvent::changedSize:
-	case eWidgetEvent::changedText:
 	case eWidgetEvent::changedFont:
-	case eWidgetEvent::changedForegroundColor:
-	case eWidgetEvent::changedBackgroundColor:
 	case eWidgetEvent::changedPosition:
 	case eWidgetEvent::changedPixmap:
 		invalidate();
@@ -746,8 +743,9 @@ void eWidget::setText(const eString &label, bool inv)
 	if (label != text)	// ein compare ist immer weniger arbeit als ein unnoetiges redraw
 	{
 		text=label;
+		event(eWidgetEvent(eWidgetEvent::changedText));
 		if (inv)
-			event(eWidgetEvent(eWidgetEvent::changedText));
+			invalidate();
 	}
 }
 
@@ -756,8 +754,9 @@ void eWidget::setBackgroundColor(const gColor& color, bool inv)
 	if (color!=backgroundColor)
 	{
 		backgroundColor=color;
+		event(eWidgetEvent(eWidgetEvent::changedBackgroundColor));
 		if (inv)
-			event(eWidgetEvent(eWidgetEvent::changedBackgroundColor));
+			invalidate();
 	}
 }
 
@@ -766,18 +765,19 @@ void eWidget::setForegroundColor(const gColor& color, bool inv)
 	if (color != foregroundColor)
 	{
 		foregroundColor=color;
-		if (inv)
 		event(eWidgetEvent(eWidgetEvent::changedForegroundColor));
+		if (inv)
+			invalidate();
 	}
 }
 
 void eWidget::setPixmap(gPixmap *pmap)
 {
-  if ( pixmap != pmap )
-  {
-    pixmap=pmap;
-  	event(eWidgetEvent(eWidgetEvent::changedPixmap));
-  }
+	if ( pixmap != pmap )
+	{
+		pixmap=pmap;
+		event(eWidgetEvent(eWidgetEvent::changedPixmap));
+	}
 }
 
 void eWidget::setTarget(gDC *newtarget)
