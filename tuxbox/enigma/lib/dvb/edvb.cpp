@@ -317,6 +317,7 @@ void eDVB::setMode(int mode)
 		break;
 	case controllerService:
 		controller = new eDVBServiceController(*this);
+		DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::getcaids));
 		break;
 	}
 }
