@@ -284,6 +284,7 @@ void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signa
 
 void eServicePlaylistHandler::leaveDirectory(const eServiceReference &dir)
 {
+	(void)dir;
 }
 
 int eServicePlaylistHandler::addNum( int uniqueID )

@@ -168,6 +168,8 @@ void eDVBCI::mmi_end()
 
 void eDVBCI::mmi_answ(unsigned char *buf,int len)
 {
+	(void)buf;
+	(void)len;
 //	eDebug("got mmi_answer");
 	unsigned char buffer[13];
 	memcpy(buffer,"\x90\x2\x0\x4\x9f\x88\x08\x05\x1\x0\x0\x0\x0",13);
@@ -1049,6 +1051,7 @@ void eDVBCI::dataAvailable(int what)
 	int present;
 	unsigned char buffer[256];
 	int size;
+	(void)what;
 
   pollTimer.stop();
 
