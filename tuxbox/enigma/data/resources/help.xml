@@ -6,7 +6,7 @@
 
 	<help>
 			<helptext id="1" text="This is the service selector. Here you can select the service you may want to view. Bla, bla, bla...." />
-			<helptext id="2" text="Test 2" />
+			<helptext id="2" text="The advanced mode doesn't ask you if you really want to do something. It just does what you wanted to do :) The option 'Hide error windows' permits you to switch off the annoying error messages when you zap." />
 			<helptext id="3" text="Test 3" />
 			<helptext id="4" text="Test 4" />
 			<helptext id="5" text="Test 5" />

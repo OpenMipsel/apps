@@ -149,8 +149,7 @@ struct enigmaStandbyActions
 	eAction wakeUp;
 	enigmaStandbyActions(): 
 		map("enigmaStandby", _("enigma standby")),
-		wakeUp(map, "wakeUp", _("wake up enigma"), eAction::prioDialog)
-	{
+		wakeUp(map, "wakeUp", _("wake up enigma"), eAction::prioDialog)	{
 	}
 };
 
@@ -1035,6 +1034,8 @@ eZapMain::eZapMain()
 
 	dvrFunctions->zOrderRaise();
 	nonDVRfunctions->zOrderRaise();
+
+	prepareNonDVRHelp();
 }
 
 eZapMain::~eZapMain()
@@ -1106,6 +1107,49 @@ eZapMain::~eZapMain()
 
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
 }
+
+void eZapMain::prepareDVRHelp()
+{
+	addActionToHelpList(&i_enigmaMainActions->startSkipReverse);
+	addActionToHelpList(&i_enigmaMainActions->play);
+	addActionToHelpList(&i_enigmaMainActions->pause);
+	addActionToHelpList(&i_enigmaMainActions->startSkipForward);
+
+	addActionToHelpList(&i_enigmaMainActions->stop);
+	addActionToHelpList(&i_enigmaMainActions->record);
+
+/*	addActionToHelpList(&i_enigmaMainActions->standby_press);
+	addActionToHelpList(&i_enigmaMainActions->showInfobar);
+	addActionToHelpList(&i_enigmaMainActions->hideInfobar);
+	addActionToHelpList(&i_enigmaMainActions->showInfobarEPG);
+	addActionToHelpList(&i_enigmaMainActions->showServiceSelector);
+	addActionToHelpList(&i_enigmaMainActions->playlistNextService);
+	addActionToHelpList(&i_enigmaMainActions->playlistPrevService);
+	addActionToHelpList(&i_enigmaMainActions->serviceListDown);
+	addActionToHelpList(&i_enigmaMainActions->serviceListUp);
+	addActionToHelpList(&i_enigmaMainActions->showBouquets);
+	addActionToHelpList(&i_enigmaMainActions->toggleIndexmark);*/
+}
+
+void eZapMain::prepareNonDVRHelp()
+{
+	addActionToHelpList(&i_enigmaMainActions->showMainMenu);
+	addActionToHelpList(&i_enigmaMainActions->showEPG);
+	addActionToHelpList(&i_enigmaMainActions->pluginVTXT);
+	addActionToHelpList(&i_enigmaMainActions->toggleDVRFunctions);
+	addActionToHelpList(&i_enigmaMainActions->modeTV);
+	addActionToHelpList(&i_enigmaMainActions->modeRadio);
+	addActionToHelpList(&i_enigmaMainActions->modeFile);
+
+	addActionToHelpList(&i_enigmaMainActions->showEPGList);
+	addActionToHelpList(&i_enigmaMainActions->showSubservices);
+	addActionToHelpList(&i_enigmaMainActions->showAudio);
+
+	addActionToHelpList(&i_enigmaMainActions->nextService);
+	addActionToHelpList(&i_enigmaMainActions->prevService);
+}
+
+
 
 void eZapMain::set16_9Logo(int aspect)
 {
@@ -1827,37 +1871,44 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 		DVRSpaceLeft->hide();
 		recStatusBlink.stop();
 		recstatus->hide();
+		
+		int profimode;
+		eConfig::getInstance()->getKey("/elitedvb/extra/profimode", profimode);
+
 		if (user)
 		{
-			eMessageBox mb(_("Show recorded movies?"), _("recording finished"),  eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
-			mb.show();
-			int ret = mb.exec();
-			mb.hide();
-			if ( ret == eMessageBox::btYes )
+			if (!profimode)
 			{
-				setMode(modeFile);
-				do
+				eMessageBox mb(_("Show recorded movies?"), _("recording finished"),  eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+				mb.show();
+				int ret = mb.exec();
+				mb.hide();
+				if ( ret == eMessageBox::btYes )
 				{
-					eServicePath p;
-					getServiceSelectorPath(p);
-					while (p.size() > 1 )
-						p.up();
+					setMode(modeFile);
+					do
+					{
+						eServicePath p;
+						getServiceSelectorPath(p);
+						while (p.size() > 1 )
+							p.up();
 
-					if( p.current() == eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile) )
-					{ // found file mode :) enter into recordings
-						p.down( recordingsref );
-						if ( !recordings->getConstList().size() )
-							p.down( eServiceReference() );
+						if( p.current() == eServiceStructureHandler::getRoot(eServiceStructureHandler::modeFile) )
+						{ // found file mode :) enter into recordings
+							p.down( recordingsref );
+							if ( !recordings->getConstList().size() )
+								p.down( eServiceReference() );
+							else
+								p.down( recordings->getConstList().back().service );
+							setServiceSelectorPath(p);
+							showServiceSelector(-1, 0);
+							break;
+						}
 						else
-							p.down( recordings->getConstList().back().service );
-						setServiceSelectorPath(p);
-						showServiceSelector(-1, 0);
-						break;
+							rotateRoot();
 					}
-					else
-						rotateRoot();
+					while( true );
 				}
-				while( true );
 			}
 		}
 		else
@@ -2016,16 +2067,22 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		// remove parent playlist ref...
 		eServiceInterface::getInstance()->removeRef(path);
 
+		int profimode;
+		eConfig::getInstance()->getKey("/elitedvb/extra/profimode", profimode);
+
 		if ( it->service.type == eServiceReference::idDVB )
 		{
-			if ( (it->type & (ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile))==(ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile) )
+			if (!profimode)
 			{
-				eMessageBox box(_("This is a recorded stream!\nReally delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
-				box.show();
-				int r=box.exec();
-				box.hide();
-				if (r != eMessageBox::btYes)
-					removeEntry=false;
+				if ( (it->type & (ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile))==(ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile) )
+				{
+					eMessageBox box(_("This is a recorded stream!\nReally delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+					box.show();
+					int r=box.exec();
+					box.hide();
+					if (r != eMessageBox::btYes)
+						removeEntry=false;
+				}
 			}
 		}
 		else if ( it->service.type == eServicePlaylistHandler::ID )
@@ -2626,7 +2683,7 @@ void eZapMain::showEPG()
 
 void eZapMain::showHelp( ePtrList<eAction>* actionHelpList, int helpID )
 {
-	if ( actionHelpList && actionHelpList->size() )
+	if ( (actionHelpList && actionHelpList->size()) || (helpID) )
 	{
 		eHelpWindow helpwin(*actionHelpList, helpID);
 
@@ -2640,6 +2697,10 @@ bool eZapMain::handleState(int justask)
 {
 	eString text, caption;
 	bool b=false;
+
+	int profimode;
+	eConfig::getInstance()->getKey("/elitedvb/extra/profimode", profimode);
+
 	if ( state & stateRecording )
 	{
 		if ( state & stateInTimerMode )
@@ -2671,10 +2732,13 @@ bool eZapMain::handleState(int justask)
 	else		// not timer event or recording in progress
 		return true;
 
-	eMessageBox box(text, _("Really do this?"), eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
-	box.show();
-	b = (box.exec() == eMessageBox::btYes);
-	box.hide();
+	if (!profimode)
+	{
+		eMessageBox box(text, _("Really do this?"), eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
+		box.show();
+		b = (box.exec() == eMessageBox::btYes);
+		box.hide();
+	} else b=true;
 
 	if (b && !justask)
 	{
@@ -2714,7 +2778,7 @@ void eZapMain::blinkRecord()
 				if (swp)
 				{
 					if (fds<1024)
-						DVRSpaceLeft->setText(eString().sprintf("%dMB free", fds));
+						DVRSpaceLeft->setText(eString().sprintf("%dMB\nfree", fds));
 					else
 						DVRSpaceLeft->setText(eString().sprintf("%d.%02d GB\nfree", fds/1024, (int)((fds%1024)/10.34) ));
 				}
@@ -2723,7 +2787,7 @@ void eZapMain::blinkRecord()
 					int min = fds/33;
 
 					if (min<60)
-						DVRSpaceLeft->setText(eString().sprintf("~%d min free", min ));
+						DVRSpaceLeft->setText(eString().sprintf("~%d min\nfree", min ));
 					else
 						DVRSpaceLeft->setText(eString().sprintf("~%dh%02dmin\nfree", min/60, min%60 ));
 				}
@@ -3238,6 +3302,11 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 		ChannelName->setText(name);
 
+		int hideerror;
+
+		if (eConfig::getInstance()->getKey("/elitedvb/extra/hideerror", hideerror))
+			hideerror=0;
+
 		switch (err)
 		{
 		case 0:
@@ -3249,11 +3318,14 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			postMessage(eZapMessage(0, _("switch"), _("One moment please...")), 1);
 			break;
 		case -ENOENT:
+			if (hideerror) break;
 			Description->setText(_("Service could not be found !"));
 			postMessage(eZapMessage(0, _("switch"), _("Service could not be found !")), 1);
 			break;
 		case -ENOCASYS:
 		{
+			if (hideerror) break;
+
 			int serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
 			if( serviceFlags & eServiceHandler::flagIsScrambled )
 			{
@@ -3264,11 +3336,13 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			break;
 		}
 		case -ENOSTREAM:
+			if (hideerror) break;
 			Description->setText(_("This service doesn't currently send a signal"));
 			postMessage(eZapMessage(0, _("switch"), _("This service doesn't currently send a signal"), 2), 1);
 			eDebug("This service doesn't currently send a signal");
 			break;
 		case -ENOSYS:
+			if (hideerror) break;
 			Description->setText(_("This content could not be displayed"));
 			eDebug("This content could not be displayed");
 			postMessage(eZapMessage(0, _("switch"), _("This content could not be displayed"), 2), 1);
@@ -3279,6 +3353,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			postMessage(eZapMessage(0, _("switch"), _("NVOD Service - please select a starttime"), 5), 1);
 			break;
 		default:
+			if (hideerror) break;
 			Description->setText(_("Unknown error!!"));
 			eDebug("Unknown error!!");
 			postMessage(eZapMessage(0, _("switch"), _("Unknown error!!")), 1);
@@ -3774,14 +3849,18 @@ void eZapMain::showDVRFunctions(int show)
 {
 	dvrfunctions=show;
 
+	clearHelpList();
+
 	if (dvrfunctions)
 	{
 		nonDVRfunctions->hide();
 		dvrFunctions->show();
+		prepareDVRHelp();
 	} else
 	{
 		dvrFunctions->hide();
 		nonDVRfunctions->show();
+		prepareNonDVRHelp();
 	}
 }
 

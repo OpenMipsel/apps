@@ -370,6 +370,8 @@ private:
 	void leaveService();
 	void clockUpdate();
 	void updateVolume(int mute_state, int vol);
+	void prepareDVRHelp();
+	void prepareNonDVRHelp();
 	void set16_9Logo(int aspect);
 	void setSmartcardLogo(bool b);
 	void setAC3Logo(bool b);

@@ -483,6 +483,7 @@ public:
 	void setShortcutFocus(eWidget *focus);
 	
 	void addActionToHelpList(eAction *action);
+	void clearHelpList();
 	void setHelpID(int fHelpID);
 };
 

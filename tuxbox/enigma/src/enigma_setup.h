@@ -22,6 +22,7 @@ private:
 	void sel_rfmod();
 	void sel_num(int n);
 	void sel_engrab();
+	void sel_extra();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:

@@ -44,6 +44,7 @@ eWidget::eWidget(eWidget *_parent, int takefocus):
 		
 	just_showing=0;
 
+	helpID=0;
 	addActionMap(&i_cursorActions->map);
 }
 
@@ -396,6 +397,11 @@ int eWidget::eventFilter(const eWidgetEvent &event)
 void eWidget::addActionToHelpList(eAction *action)
 {
 	actionHelpList.push_back( action );
+}
+
+void eWidget::clearHelpList()
+{
+ actionHelpList.clear();
 }
 
 void eWidget::setHelpID(int fHelpID)
