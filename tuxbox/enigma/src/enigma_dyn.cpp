@@ -411,11 +411,11 @@ static eString getVolBar()
 	result+="<td>";
 
 	if(eAVSwitch::getInstance()->getMute()==1) {
-		result+="<a class=\"mute\" href=\"javascript:unMute()\">";
-		result+="unmute";
-	} else {
 		result+="<a class=\"mute\" href=\"javascript:Mute()\">";
 		result+="mute";
+	} else {
+		result+="<a class=\"mute\" href=\"javascript:unMute()\">";
+		result+="unmute";
 	}
 	result+="</a></td>";
 	result+="</tr>";
