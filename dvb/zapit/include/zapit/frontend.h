@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.h,v 1.24.2.3 2003/05/08 18:22:47 digi_casi Exp $
+ * $Id: frontend.h,v 1.24.2.4 2003/05/09 09:25:18 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -60,7 +60,7 @@ class CFrontend
 		/* current diseqc position */
 		uint8_t currentDiseqc;
 		/* current satellite position */
-		uint32_t currentSatellitePosition;
+		int32_t currentSatellitePosition;
 		/* how often to repeat DiSEqC 1.1 commands */
 		uint32_t diseqcRepeats;
 		/* DiSEqC type of attached hardware */
