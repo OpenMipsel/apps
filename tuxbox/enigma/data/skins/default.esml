@@ -161,6 +161,33 @@
 		<img name="shortcut.escape" src="escape.png" />
 	</images>
 
+	<images basepath="keypics">
+		<img name="key.0" src="button_0.png" />
+		<img name="key.1" src="button_1.png" />
+		<img name="key.2" src="button_2.png" />
+		<img name="key.3" src="button_3.png" />
+		<img name="key.4" src="button_4.png" />
+		<img name="key.5" src="button_5.png" />
+		<img name="key.6" src="button_6.png" />
+		<img name="key.7" src="button_7.png" />
+		<img name="key.8" src="button_8.png" />
+		<img name="key.9" src="button_9.png" />
+		<img name="key.10" src="button_audio.png" />
+		<img name="key.11" src="button_video.png" />
+		<img name="key.12" src="button_info.png" />
+		<img name="key.13" src="button_dream.png" />
+		<img name="key.14" src="button_lame.png" />
+		<img name="key.15" src="button_tv.png" />
+		<img name="key.16" src="button_radio.png" />
+		<img name="key.17" src="button_red.png" />
+		<img name="key.18" src="button_green.png" />
+		<img name="key.19" src="button_yellow.png" />
+		<img name="key.20" src="button_blue.png" />
+		<img name="key.21" src="button_lame.png" />
+		<img name="key.22" src="button_text.png" />
+		<img name="key.23" src="button_help.png" />
+	</images>
+
 	<colors>
 		<color name="background" color="#ff000000" />
 		<color name="white_trans" color="#1effffff" />
