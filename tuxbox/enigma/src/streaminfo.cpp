@@ -86,6 +86,7 @@ static struct
 	{0x1500, 0xFF00, "IBM"}, 
 	{0x1600, 0xFF00, "Nera"}, 
 	{0x1702, 0xFFFF, "Betacrypt (Beta Technik) (C)"}, 
+	{0x1708, 0xFFFF, "Betacrypt 2 (Beta Technik)"}, 
 	{0x1722, 0xFFFF, "Betacrypt (Beta Technik) (D)"}, 
 	{0x1762, 0xFFFF, "Betacrypt (Beta Technik) (F)"}, 
 	{0x1700, 0xFF00, "Betacrypt (Beta Technik)"},
