@@ -103,7 +103,6 @@ src/satconfig.cpp
 src/satfind.cpp
 src/scan.cpp
 src/setup_harddisk.cpp
-src/setup_language.cpp
 src/setup_lcd.cpp
 src/setup_osd.cpp
 src/setup_rc.cpp
