@@ -18,12 +18,32 @@ class eDVBCI: private eThread, public eMainloop, public Object
 	int state;
 	int fd;
 	eSocketNotifier *ci;
+
+	int ci_state;
+	int buffersize;	
+		
+	eTimer pollTimer;
 	
+	void sendTPDU(unsigned char tpdu_tag,unsigned int len,unsigned char tc_id,unsigned char *data);
+	void help_manager(unsigned int session);
+	void app_manager(unsigned int session);
+	void ca_manager(unsigned int session);
+	
+	void handle_session(unsigned char *data,int len);
+	int service_available(unsigned long service_class);
+	void handle_spdu(unsigned int tpdu_tc_id,unsigned char *data,int len);	
+	void receiveTPDU(unsigned char tpdu_tag,unsigned int len,unsigned char tpdu_tc_id,unsigned char *data);
+	void incoming(unsigned char *buffer,int len);
+	void dataAvailable(int what);
+	void poll();
+		
+		
 public:
 	struct eDVBCIMessage
 	{
 		enum
 		{
+			start,
 			reset, 
 			init,
 			exit
@@ -36,11 +56,10 @@ public:
 	
 	void gotMessage(const eDVBCIMessage &message);
 
-	void dataAvailable(int what);
-	
 	eDVBCI();
 	~eDVBCI();
 	
 	void thread();
+
 };
 #endif
