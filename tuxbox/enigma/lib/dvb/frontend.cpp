@@ -639,7 +639,7 @@ int eFrontend::tune(eTransponder *trans,
 		// Rotor Support
 		if ( lnb->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 && !noRotorCmd )
 		{           
-			if ( lnb->getDiSEqC().useGotoXX )
+			if ( lnb->getDiSEqC().useGotoXX & 1 )
 			{
 				int pos = sat->getOrbitalPosition();
 				int satDir = pos < 0 ? eDiSEqC::WEST : eDiSEqC::EAST;
@@ -703,7 +703,7 @@ int eFrontend::tune(eTransponder *trans,
 				commands[cmdCount-1].u.diseqc.addr=0x31;     // normal positioner
 				commands[cmdCount-1].u.diseqc.cmdtype=0xE0;  // no replay... first transmission
 					
-				if ( lnb->getDiSEqC().useGotoXX )
+				if ( lnb->getDiSEqC().useGotoXX & 1 )
 				{
 					eDebug("Rotor DiSEqC Param = %04x (useGotoXX)", RotorCmd);
 					commands[cmdCount-1].u.diseqc.cmd=0x6E; // gotoXX Drive Motor to Angular Position

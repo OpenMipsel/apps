@@ -17,12 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.3 2002/12/20 23:15:28 Ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.4 2002/12/24 17:07:03 Ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
 #include <lib/gui/emessage.h>
 #include <sys/vfs.h> // for statfs
+
+// #define EXT3
 
 static int getCapacity(int dev)
 {

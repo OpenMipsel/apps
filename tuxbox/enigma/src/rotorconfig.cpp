@@ -87,7 +87,7 @@ RotorConfig::RotorConfig(eLNB *lnb )
 	lOrbitalPosition = new eLabel(this);
 	lOrbitalPosition->setName("lOrbitalPosition");
 	lOrbitalPosition->hide();
-	orbital_position = new eNumber( this, 1, 0, 360, 3, 0, 0, lOrbitalPosition);
+	orbital_position = new eNumber( this, 1, 0, 3600, 4, 0, 0, lOrbitalPosition);
 
 	orbital_position->setName("OrbitalPosition");
 	orbital_position->hide();
@@ -278,9 +278,9 @@ void RotorConfig::setLNBData( eLNB *lnb )
 		for ( std::map<int, int>::iterator it ( DiSEqC.RotorTable.begin() ); it != DiSEqC.RotorTable.end(); it++ )
 			new eListBoxEntryText( positions, eString().sprintf(" %d / %03d %c", it->second, abs(it->first), it->first > 0 ? 'E' : 'W'), (void*) it->first );
 
-		useGotoXX->setCheck( (int) lnb->getDiSEqC().useGotoXX ? 1 : 0 );
+		useGotoXX->setCheck( (int) (lnb->getDiSEqC().useGotoXX & 1 ? 1 : 0) );
 		useEastFix->setCheck( (int) (lnb->getDiSEqC().useGotoXX & 65536) ? 1 : 0 );
-		gotoXXChanged( (int) lnb->getDiSEqC().useGotoXX );
+		gotoXXChanged( (int) lnb->getDiSEqC().useGotoXX & 1 );
 		useRotorInPower->setCheck( (int) lnb->getDiSEqC().useRotorInPower & 1 );
 		useRotorInPowerChanged( (int) lnb->getDiSEqC().useRotorInPower & 1 );
 		Latitude->setFixedNum( lnb->getDiSEqC().gotoXXLatitude );
