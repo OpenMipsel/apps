@@ -204,11 +204,11 @@ eTimerManager::eTimerManager()
 	FILE *old = fopen("/var/timer.old", "r");
 	if ( old )
 	{
+		fseek(old, tmp.st_size-32768, SEEK_SET );
 		char buf[32768];
 		int rbytes=0;
 		if( ( rbytes = fread( buf, 1, 32768, old ) ) )
 			fwrite( buf, 1, rbytes, logfile );
-		fprintf(logfile,"\n");
 		fclose(old);
 		unlink("/var/timer.old");
 	}
