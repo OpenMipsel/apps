@@ -17,34 +17,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.24 2003/05/26 14:33:15 tmbinc Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.25 2003/05/30 22:36:54 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
 
 #include <enigma_scan.h>
 #include <setupnetwork.h>
-#include <setupvideo.h>
-#include <setup_audio.h>
 #include <wizard_language.h>
 #include <setup_timezone.h>
+#include <setup_av.h>
 #include <setup_osd.h>
 #include <setup_lcd.h>
 #include <setup_rc.h>
 #include <setup_harddisk.h>
-#include <setup_rfmod.h>
 #include <setup_extra.h>
 #include <enigma_ci.h>
 #include <enigma_scan.h>
 #include <setupskin.h>
 #include <setupengrab.h>
 #include <parentallock.h>
-#include <lib/gui/emessage.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
-#include <lib/gui/testpicture.h>
+#include <lib/gui/emessage.h>
 #include <upgrade.h>
 #include <enigma.h>
 
@@ -93,20 +90,19 @@ eZapSetup::eZapSetup()
 		
 	int entry=0;
 	
-	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), eString().sprintf("(%d) %s", ++entry, _("back to main menu")) ))->selected, eZapSetup::sel_close);
+	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), eString().sprintf("(%d) %s", ++entry, _("back to main menu")) ))->selected, eWidget::accept);
 	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), eString().sprintf("(%d) %s", ++entry, _("open channel setup")) ))->selected, eZapSetup::sel_channels);
+	CONNECT((new eListBoxEntryMenu(&list, _("A/V Setup..."), eString().sprintf("(%d) %s", ++entry, _("open audio/video setup")) ))->selected, eZapSetup::sel_setup_av);
 #ifndef DISABLE_NETWORK
 	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), eString().sprintf("(%d) %s", ++entry, _("open network setup")) ))->selected, eZapSetup::sel_network);
 #endif
-	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), eString().sprintf("(%d) %s", ++entry, _("open OSD setup")) ))->selected, eZapSetup::sel_osd);
+	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), eString().sprintf("(%d) %s", ++entry, _("open on screen display setup")) ))->selected, eZapSetup::sel_osd);
 #ifndef DISABLE_LCD
 	if (havelcd)
-		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), eString().sprintf("(%d) %s", ++entry, _("open LCD setup")) ))->selected, eZapSetup::sel_lcd);
+		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), eString().sprintf("(%d) %s", ++entry, _("open LC display setup")) ))->selected, eZapSetup::sel_lcd);
 #endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), eString().sprintf("(%d) %s", ++entry, _("open remote control setup")) ))->selected, eZapSetup::sel_rc);
-	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), eString().sprintf("(%d) %s", ++entry, _("open video setup")) ))->selected, eZapSetup::sel_video);
-	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), eString().sprintf("(%d) %s", ++entry, _("open audio setup")) ))->selected, eZapSetup::sel_sound);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), eString().sprintf("(%d) %s", ++entry, _("open skin selector")) ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
 	CONNECT((new eListBoxEntryMenu(&list, _("Time Zone..."), eString().sprintf("(%d) %s", ++entry, _("open time zone setup")) ))->selected, eZapSetup::sel_timezone);
@@ -120,24 +116,14 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), eString().sprintf("(%d) %s", ++entry, _("open harddisk setup")) ))->selected, eZapSetup::sel_harddisk);
 #endif
 	if (haveci)
-		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), eString().sprintf("(%d) %s", ++entry, _("show CI Menu")) ))->selected, eZapSetup::sel_ci);
+		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), eString().sprintf("(%d) %s", ++entry, _("open common interface menu")) ))->selected, eZapSetup::sel_ci);
 	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), eString().sprintf("(%d) %s", ++entry, _("upgrade firmware")) ))->selected, eZapSetup::sel_upgrade);
-#ifdef ENABLE_RFMOD
-	if (haverfmod)
-		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapSetup::sel_rfmod);
-#endif
-	CONNECT((new eListBoxEntryMenu(&list, _("Video calibration..."), eString().sprintf("(%d) %s", ++entry, _("show calibration picture")) ))->selected, eZapSetup::sel_test);
 	setupHook(this);
 }
 
 eZapSetup::~eZapSetup()
 {
-}
-
-void eZapSetup::sel_close()
-{
-	close(0);
 }
 
 void eZapSetup::sel_channels()
@@ -167,19 +153,6 @@ void eZapSetup::sel_network()
 	show();
 }
 #endif
-
-void eZapSetup::sel_sound()
-{
-	hide();
-	eZapAudioSetup setup;
-#ifndef DISABLE_LCD
-	setup.setLCD(LCDTitle, LCDElement);
-#endif
-	setup.show();
-	setup.exec();
-	setup.hide();
-	show();
-}
 
 void eZapSetup::sel_osd()
 {
@@ -242,19 +215,6 @@ void eZapSetup::sel_skin()
 	show();
 }
 
-void eZapSetup::sel_video()
-{
-	hide();
-	eZapVideoSetup setup;
-#ifndef DISABLE_LCD
-	setup.setLCD(LCDTitle, LCDElement);
-#endif
-	setup.show();
-	setup.exec();
-	setup.hide();
-	show();
-}
-
 #ifndef DISABLE_NETWORK
 void eZapSetup::sel_engrab()
 {
@@ -283,17 +243,21 @@ void eZapSetup::sel_extra()
 	show();
 }
 
-void eZapSetup::sel_language()
+void eZapSetup::sel_setup_av()
 {
-/*	hide();
-	eZapLanguageSetup setup;
+	hide();
+	eZapAVSetup setup;
 #ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
 #endif
 	setup.show();
 	setup.exec();
 	setup.hide();
-	show(); */
+	show(); 
+}
+
+void eZapSetup::sel_language()
+{
 	eWizardLanguage::run();
 }
 
@@ -364,21 +328,6 @@ void eZapSetup::sel_upgrade()
 	show();
 }
 
-#ifdef ENABLE_RFMOD
-void eZapSetup::sel_rfmod()
-{
-	hide();
-	eZapRFmodSetup setup;
-#ifndef DISABLE_LCD
-	setup.setLCD(LCDTitle, LCDElement);
-#endif
-	setup.show();
-	setup.exec();
-	setup.hide();
-	show();
-}
-#endif
-
 void eZapSetup::sel_parental()
 {
 	hide();
@@ -390,63 +339,6 @@ void eZapSetup::sel_parental()
 	setup.exec();
 	setup.hide();
 	show();
-}
-
-void eZapSetup::sel_test()
-{
-	hide();
-	{
-		eMessageBox msg(
-			// please don't translate, it's temporary only.
-			("Warning, these collection of testpictures are in no way \"certified\" "
-				"or checked by professionals. Don't use them for real calibration.\n"
-				"Please note that because of anti-flimmer filters, the multiburst shows "
-				"wrong results. Real bandwidth is higher.\n"
-				"In doubt, don't use them.\n"
-				"Otherwise: use 1..8 to cycle through the pictures, OK to abort."), "Calibration pictures",
-				eMessageBox::btOK|eMessageBox::iconInfo);
-		msg.show();
-		msg.exec();
-		msg.hide();
-	}
-	int curmode=eTestPicture::testFUBK;
-	while (curmode != -1)
-	{
-		switch (eTestPicture::display(curmode))
-		{
-		case 1: curmode = eTestPicture::testRed; break;
-		case 2: curmode = eTestPicture::testGreen; break;
-		case 3: curmode = eTestPicture::testBlue; break;
-		case 4: curmode = eTestPicture::testColorbar; break;
-		case 5: curmode = eTestPicture::testWhite; break;
-		case 6: curmode = eTestPicture::testFUBK; break;
-		case 7: curmode = eTestPicture::testGray; break;
-		case 8: curmode = eTestPicture::testBlack; break;
-		default: curmode = -1;
-		}
-	}
-	show();
-}
-
-class eZapSetupSelectN
-{
-	int n;
-public:
-	eZapSetupSelectN(int n): n(n) { }
-	bool operator()(eListBoxEntryMenu &e)
-	{
-		if (!n--)
-		{
-			e.selected();
-			return 1;
-		}
-		return 0;
-	}
-};
-
-void eZapSetup::sel_num(int n)
-{
-	list.forEachEntry(eZapSetupSelectN(n));
 }
 
 int eZapSetup::eventHandler(const eWidgetEvent &event)
@@ -488,3 +380,7 @@ int eZapSetup::eventHandler(const eWidgetEvent &event)
 	return eWidget::eventHandler(event);
 }
 
+void eZapSetup::sel_num(int n)
+{
+	list.forEachEntry(eZapSetupSelectN(n));
+}

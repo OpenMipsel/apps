@@ -11,8 +11,7 @@ private:
 #ifndef DISABLE_NETWORK
 	void sel_network();
 #endif
-	void sel_sound();
-	void sel_video();
+	void sel_setup_av();
 	void sel_language();
 	void sel_timezone();
 	void sel_skin();
@@ -26,9 +25,6 @@ private:
 #endif
 	void sel_ci();
 	void sel_upgrade();
-#ifdef ENABLE_RFMOD
-	void sel_rfmod();
-#endif
 	void sel_num(int n);
 #ifndef DISABLE_NETWORK
 	void sel_engrab();

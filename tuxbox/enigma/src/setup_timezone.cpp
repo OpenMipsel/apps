@@ -12,7 +12,7 @@
 #include <enigma_main.h>
 
 eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
-{									
+{
 	setText(_("Time Zone Setup"));
 	cmove(ePoint(110, 146));
 	cresize(eSize(530, 270));
