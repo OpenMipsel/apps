@@ -23,7 +23,16 @@ class eDVBCI: private eThread, public eMainloop, public Object
 	int buffersize;	
 		
 	eTimer pollTimer;
+
+	unsigned char CAPMT[256];
+	int CAPMTlen;
+	int CAPMTpos;
+	int CAPMTstate;
 	
+	void createCAPMT(int type,unsigned char *data);
+	void sendCAPMT();
+	void clearCAIDs();
+	void addCAID(int caid);	
 	void sendTPDU(unsigned char tpdu_tag,unsigned int len,unsigned char tc_id,unsigned char *data);
 	void help_manager(unsigned int session);
 	void app_manager(unsigned int session);
@@ -46,11 +55,25 @@ public:
 			start,
 			reset, 
 			init,
-			exit
+			exit,
+			flush,
+			addDescr,
+			addVideo,
+			addAudio,
+			es,
+			go,
 		};
 		int type;
+		union
+		{
+			unsigned char *data;
+			int pid;
+		};	
 		eDVBCIMessage() { }
 		eDVBCIMessage(int type): type(type) { }
+		eDVBCIMessage(int type,unsigned char *data): type(type),data(data) { }
+		eDVBCIMessage(int type,int pid): type(type),pid(pid) { }
+
 	};
 	eFixedMessagePump<eDVBCIMessage> messages;
 	
