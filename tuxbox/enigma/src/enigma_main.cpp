@@ -2197,7 +2197,7 @@ void eZapMain::playlistPrevService()
 		playlist->current--;
 		if ( playlist->current->service != ref && (extZap || ModeTypeEqual(ref, playlist->current->service) ) )
 		{
-			playService(*playlist->current, playlistmode?psDontAdd:psDontAdd|psSeekPos);
+			playService((eServiceReference&)(*playlist->current), playlistmode?psDontAdd:psDontAdd|psSeekPos);
 			return;
 		}
 	}
@@ -2220,7 +2220,7 @@ void eZapMain::playlistNextService()
 		}
 		if ( playlist->current->service != ref && (extZap || ModeTypeEqual(ref,playlist->current->service)) )
 		{
-			playService(*playlist->current, playlistmode?psDontAdd:psDontAdd|psSeekPos);
+			playService((eServiceReference&)(*playlist->current), playlistmode?psDontAdd:psDontAdd|psSeekPos);
 			return;
 		}
 	}
@@ -3248,7 +3248,7 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 		if (first)
 			playlist->current = playlist->getList().begin();
 		if (playlist->current != playlist->getConstList().end())
-			eServiceInterface::getInstance()->play(*playlist->current);
+			eServiceInterface::getInstance()->play((eServiceReference&)(*playlist->current));
 		else
 		{
 			Description->setText(_("This directory doesn't contain anything playable!"));
@@ -4110,7 +4110,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		if (playlist->current != playlist->getConstList().end() )
 		{
 			playlist->current->current_position=-1;		// start from beginning.
-			eServiceInterface::getInstance()->play(*playlist->current);
+			eServiceInterface::getInstance()->play((eServiceReference&)(*playlist->current));
 		}
 		else if (!playlistmode)
 			nextService(1);

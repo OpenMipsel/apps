@@ -295,7 +295,6 @@ void eMP3Decoder::metaDataUpdated(eString meta)
 int eMP3Decoder::getOutputDelay(int i)
 {
 	int delay = 0;
-	(void)i;
 	if (::ioctl(dspfd[0], SNDCTL_DSP_GETODELAY, &delay) < 0)
 		eDebug("SNDCTL_DSP_GETODELAY failed");
 	else
@@ -305,7 +304,6 @@ int eMP3Decoder::getOutputDelay(int i)
 
 int eMP3Decoder::getOutputRate(int i)
 {
-	(void)i;
 	return pcmsettings.samplerate*pcmsettings.channels*2;
 }
 
@@ -361,7 +359,6 @@ void eMP3Decoder::thread()
 
 void eMP3Decoder::outputReady(int what)
 {
-	(void)what;
 	if (type != codecMPG)
 	{
 		if ( ( pcmsettings.reconfigure 
@@ -385,7 +382,6 @@ void eMP3Decoder::outputReady(int what)
 
 void eMP3Decoder::outputReady2(int what)
 {
-	(void)what;
 	output2.tofile(dspfd[1], 65536);
 	checkFlow(0);
 }
@@ -530,7 +526,6 @@ void eMP3Decoder::decodeMoreHTTP()
 void eMP3Decoder::decodeMore(int what)
 {
 	int flushbuffer=0;
-	(void)what;
 	
 	if (state == stateFileEnd)
 	{
@@ -947,7 +942,7 @@ std::map<eString,eString> &eServiceID3::getID3Tags()
 				for (unsigned int j = 0; j < nstrings; ++j)
 				{
 					ucs4 = id3_field_getstrings(field, j);
-					assert(ucs4);
+					ASSERT(ucs4);
 
 					if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
 						ucs4 = id3_genre_name(ucs4);

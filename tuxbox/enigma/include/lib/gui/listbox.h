@@ -49,8 +49,8 @@ private:
 	void lostFocus();
 	void gotFocus();
 	void init();
-	inline virtual void SendSelected( eListBoxEntry* entry )=0;
-	inline virtual void SendSelChanged( eListBoxEntry* entry )=0;
+	virtual void SendSelected( eListBoxEntry* entry )=0;
+	virtual void SendSelChanged( eListBoxEntry* entry )=0;
 public:
 	~eListBoxBase();
 	enum	{		dirPageDown, dirPageUp, dirDown, dirUp, dirFirst, dirLast	};

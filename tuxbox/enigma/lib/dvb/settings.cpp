@@ -615,7 +615,7 @@ int eDVBSettings::importSatcoDX(eString line)
 		return -6;
 	}
 	
-	if (type == '_')
+	if (type[0] == '_')
 		return 0;
 	if (system.left(3) != "MPG")
 		return 0;
