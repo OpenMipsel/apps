@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.2 2003/03/27 09:59:10 thegoodguy Exp $
+ * $Id: frontend.cpp,v 1.41.2.3 2003/05/05 15:30:07 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -534,6 +534,12 @@ const bool CFrontend::tuneChannel (CZapitChannel *channel)
 	);
 }
 
+void positionMotor(uint8_t diseqc)
+{
+	// turn satellite dish to stored motor position indicated in diseqc
+	printf("[frontend] positionMotor: function not implemented yet.\n");
+}
+
 const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polarization, uint8_t diseqc)
 {
 	bool secChanged = false;
@@ -606,6 +612,17 @@ const bool CFrontend::tuneFrequency (FrontendParameters feparams, uint8_t polari
 		case DISEQC_1_1:
 			if ((currentVoltage != voltage) || (currentToneMode != toneMode) || (currentDiseqc != diseqc))
 			{
+				sendDiseqcCommand(toneMode, voltage, diseqc, diseqcRepeats);
+				secChanged = true;
+			}
+			break;
+			
+		case DISEQC_1_2:
+			if ((currentVoltage != voltage) || (currentToneMode != toneMode) || (currentDiseqc != diseqc))
+			{
+				if (currentDiseqc != diseqc)
+					positionMotor(diseqc);
+
 				sendDiseqcCommand(toneMode, voltage, diseqc, diseqcRepeats);
 				secChanged = true;
 			}
