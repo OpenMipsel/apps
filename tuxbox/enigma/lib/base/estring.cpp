@@ -319,12 +319,11 @@ eString convertDVBUTF8(unsigned char *data, int len)
 
 eString convertLatin1UTF8(const eString &string)
 {
-	unsigned int i;
-	unsigned int bytesneeded=0, t=0, s=i;
+	unsigned int bytesneeded=0, t=0, i;
 	
 	unsigned int len=string.size();
 	
-	for (; i<len; ++i)
+	for (i=0; i<len; ++i)
 	{
 		unsigned long code=string[i];
 		if (!code)
@@ -338,13 +337,13 @@ eString convertLatin1UTF8(const eString &string)
 		bytesneeded++;
 	}
 	
-	i=s;
+	i=0;
 	
 	unsigned char res[bytesneeded];
 	
 	while (i < len)
 	{
-		unsigned long code=string[i];
+		unsigned long code=string[i++];
 				// Unicode->UTF8 encoding
 		if (code < 0x80) // identity latin <-> utf8 mapping
 			res[t++]=char(code);
