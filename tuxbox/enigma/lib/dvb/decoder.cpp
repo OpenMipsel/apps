@@ -2,7 +2,6 @@
 #define AUDIO_DEV "/dev/dvb/card0/audio0"
 #define DEMUX_DEV "/dev/dvb/card0/demux0"
 
-#include <lib/dvb/service.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -60,10 +59,7 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 
 	char buffer[6][5];
 	eServiceReference &ref = eServiceInterface::getInstance()->service;
-	if ( ref.type == eServiceReference::idDVB )
-		sprintf(buffer[0], "%x", ((eServiceReferenceDVB&)ref).getServiceID().get() );
-	else
-		sprintf(buffer[0], "%x", vpid);
+	sprintf(buffer[0], "%x", vpid);
 	sprintf(buffer[1], "%x", apid);
 	sprintf(buffer[2], "%x", ecmpid);
 	sprintf(buffer[3], "%x", emmpid);
