@@ -8,6 +8,7 @@
 #include <lib/gui/eskin.h>
 #include <lib/gui/eprogress.h>
 #include <lib/gui/guiactions.h>
+#include <lib/system/init_num.h>
 
 struct enigmaEventViewActions
 {
@@ -19,7 +20,8 @@ struct enigmaEventViewActions
 	{
 	}
 };
-eAutoInitP0<enigmaEventViewActions> i_enigmaEventViewActions(5, "enigma event view actions");
+
+eAutoInitP0<enigmaEventViewActions> i_enigmaEventViewActions(eAutoInitNumbers::actions, "enigma event view actions");
 
 void eEventDisplay::nextEvent()
 {

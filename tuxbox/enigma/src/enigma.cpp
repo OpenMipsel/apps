@@ -22,6 +22,7 @@
 #include <lib/system/http_file.h>
 #include <lib/system/http_dyn.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/actions.h>
 #include <lib/driver/rc.h>
@@ -74,7 +75,7 @@ eZap::eZap(int argc, char **argv)
 	instance = this;
 
 	init = new eInit();
-	init->setRunlevel(8);
+	init->setRunlevel(eAutoInitNumbers::osd);
 #if 0
 	if(0)
 	{
@@ -231,7 +232,7 @@ eZap::eZap(int argc, char **argv)
 
 	eConfig::getInstance()->setKey("/elitedvb/system/bootCount", bootcount);
 
-	init->setRunlevel(10);
+	init->setRunlevel(eAutoInitNumbers::main);
 }
 
 eZap::~eZap()
@@ -274,6 +275,8 @@ int main(int argc, char **argv)
 	bindtextdomain ("tuxbox-enigma", "/share/locale");
 	bind_textdomain_codeset("tuxbox-enigma", "UTF8");
 	textdomain ("tuxbox-enigma");
+	
+	Decoder::displayIFrameFromFile("/iframe");
 	
 //	mtrace();
 //	mcheck(0);

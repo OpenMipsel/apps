@@ -4,6 +4,7 @@
 #include <lib/base/eerror.h>
 #include <lib/dvb/edvb.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/system/nconfig.h>
 
 eAction::eAction(eActionMap &map, char *identifier, char *description, int priority)
@@ -351,4 +352,4 @@ eActionMap *eActionMapList::findActionMap(const char *id) const
 	return i->second;
 }
 
-eAutoInitP0<eActionMapList> init_eActionMapList(1, "eActionMapList");
+eAutoInitP0<eActionMapList> init_eActionMapList(eAutoInitNumbers::lowlevel, "eActionMapList");

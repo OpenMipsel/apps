@@ -20,6 +20,7 @@
 #include <download.h>
 #include <lib/base/i18n.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
 #include <lib/dvb/servicedvb.h>
 #include <lib/dvb/epgcache.h>
@@ -116,7 +117,8 @@ struct enigmaMainActions
 	{
 	}
 };
-eAutoInitP0<enigmaMainActions> i_enigmaMainActions(5, "enigma main actions");
+
+eAutoInitP0<enigmaMainActions> i_enigmaMainActions(eAutoInitNumbers::actions, "enigma main actions");
 
 struct enigmaStandbyActions
 {
@@ -128,7 +130,8 @@ struct enigmaStandbyActions
 	{
 	}
 };
-eAutoInitP0<enigmaStandbyActions> i_enigmaStandbyActions(5, "enigma standby actions");
+
+eAutoInitP0<enigmaStandbyActions> i_enigmaStandbyActions(eAutoInitNumbers::actions, "enigma standby actions");
 
 class eZapStandby: public eWidget
 {

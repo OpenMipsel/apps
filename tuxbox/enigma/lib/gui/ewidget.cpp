@@ -10,6 +10,7 @@
 #include <lib/gui/ewidget.h>
 #include <lib/gui/guiactions.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 
 eWidget *eWidget::root;
 
@@ -1117,4 +1118,4 @@ void eDecoWidget::loadDeco()
 		event( eWidgetEvent::changedSize );
 }
 
-eAutoInitP0<eWidgetSkinInit> init_eWidgetSkinInit(3, "eWidget");
+eAutoInitP0<eWidgetSkinInit> init_eWidgetSkinInit(eAutoInitNumbers::guiobject, "eWidget");

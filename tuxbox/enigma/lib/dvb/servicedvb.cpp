@@ -2,6 +2,7 @@
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/driver/streamwd.h>
 #include <lib/dvb/servicestructure.h>
 #include <lib/dvb/servicefile.h>
@@ -890,4 +891,4 @@ int eServiceHandlerDVB::getPosition(int what)
 	}
 }
 
-eAutoInitP0<eServiceHandlerDVB> i_eServiceHandlerDVB(7, "eServiceHandlerDVB");
+eAutoInitP0<eServiceHandlerDVB> i_eServiceHandlerDVB(eAutoInitNumbers::service+2, "eServiceHandlerDVB");

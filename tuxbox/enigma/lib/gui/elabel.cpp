@@ -5,6 +5,7 @@
 #include <lib/gdi/lcd.h>
 #include <lib/gui/eskin.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 
 eLabel::eLabel(eWidget *parent, int flags, int takefocus, const char *deco ):
 	eDecoWidget(parent, takefocus, deco), blitFlags(0), flags(flags), para(0), align( eTextPara::dirLeft ), shortcutPixmap(0)
@@ -236,4 +237,4 @@ public:
 	}
 };
 
-eAutoInitP0<eLabelSkinInit> init_eLabelSkinInit(3, "eLabel");
+eAutoInitP0<eLabelSkinInit> init_eLabelSkinInit(eAutoInitNumbers::guiobject, "eLabel");

@@ -1,6 +1,7 @@
 #include <lib/gui/ebutton.h>
 #include <lib/gui/eskin.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/guiactions.h>
 
@@ -121,4 +122,4 @@ public:
 	}
 };
 
-eAutoInitP0<eButtonSkinInit> init_eButtonSkinInit(3, "eButton");
+eAutoInitP0<eButtonSkinInit> init_eButtonSkinInit(eAutoInitNumbers::guiobject, "eButton");

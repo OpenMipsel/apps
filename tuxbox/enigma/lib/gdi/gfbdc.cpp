@@ -2,6 +2,7 @@
 
 #include <lib/dvb/edvb.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
 
 gFBDC *gFBDC::instance;
@@ -162,4 +163,4 @@ void gFBDC::reloadSettings()
 	setPalette();
 }
 
-eAutoInitP0<gFBDC> init_gFBDC(1, "GFBDC");
+eAutoInitP0<gFBDC> init_gFBDC(eAutoInitNumbers::graphic+1, "GFBDC");

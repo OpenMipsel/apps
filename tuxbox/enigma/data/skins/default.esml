@@ -61,6 +61,8 @@
 		<map name="eFEStatus.values" font="Nimbus" size="20" />
 		<map name="eSatfind" font="Nimbus" size="30" />
 		<map name="eUpgradeChanges" font="Nimbus" size="20" />
+
+		<map name="head" font="Nimbus" size="40" />
 	</fontalias>
 
 	<images basepath="" target="fb">
@@ -112,6 +114,22 @@
 		<img name="ok_symbol" src="event_ok-fs8.png" />
 		<img name="failed_symbol" src="event_failed-fs8.png" />
 		<img name="dreamlogo" src="dreamlogo-fs8.png" />
+	</images>
+	
+	<images basepath="countries">
+		<img name="country_de" src="de.png" />
+		<img name="country_es" src="es.png" />
+		<img name="country_en" src="en.png" />
+		<img name="country_no" src="no.png" />
+		<img name="country_se" src="se.png" />
+		<img name="country_cz" src="cz.png" />
+		<img name="country_gr" src="gr.png" />
+		<img name="country_fr" src="fr.png" />
+		<img name="country_it" src="it.png" />
+		<img name="country_nl" src="nl.png" />
+		<img name="country_pl" src="pl.png" />
+		<img name="country_tr" src="tr.png" />
+		<img name="country_missing" src="missing.png" />
 	</images>
 
 	<images basepath="shortcut">
@@ -620,5 +638,13 @@
 			<eButton name="abort" position="40:40" size="150:50" text="abort" loadDeco="" />
 			<eLabel name="changes" position="10:200" size="e-10:e-30" font="eUpgradeChanges" />
 		</eUpgrade>
+	</object>
+	
+	<object name="eWizardLanguage">
+		<eWizardLanguage cposition="120:100" csize="500:400" text="Your language">
+			<eLabel name="head" position="40:50" size="e:50" font="head" />
+			<eLabel name="help" position="0:100" size="e:30" align="center" />
+			<eListbox name="list" position="50:140" size="e-50:e-50" loadDeco="" />
+		</eWizardLanguage>
 	</object>
 </eskin>

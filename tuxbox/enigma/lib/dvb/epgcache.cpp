@@ -3,6 +3,7 @@
 #include <time.h>
 #include <unistd.h>  // for usleep
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/dvb/lowlevel/dvb.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/service.h>
@@ -408,5 +409,5 @@ void eEPGCache::abortEPG(const eServiceReferenceDVB&)
 }
 
 
-eAutoInitP0<eEPGCache> init_eEPGCacheInit(5, "EPG cache");
+eAutoInitP0<eEPGCache> init_eEPGCacheInit(eAutoInitNumbers::dvb+1, "EPG cache");
 

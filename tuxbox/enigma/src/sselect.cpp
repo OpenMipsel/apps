@@ -17,6 +17,7 @@
 #include <lib/dvb/epgcache.h>
 #include <lib/driver/rc.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/dvb/service.h>
 #include <lib/gui/numberactions.h>
 #include <lib/dvb/serviceplaylist.h>
@@ -51,7 +52,7 @@ struct serviceSelectorActions
 	{
 	}
 };
-eAutoInitP0<serviceSelectorActions> i_serviceSelectorActions(5, "service selector actions");
+eAutoInitP0<serviceSelectorActions> i_serviceSelectorActions(eAutoInitNumbers::actions, "service selector actions");
 
 eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num)
 	:eListBoxEntry((eListBox<eListBoxEntry>*)lb),	numPara(0), namePara(0), descrPara(0), nameXOffs(0), flags(flags), num(num), service(service)

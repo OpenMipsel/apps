@@ -9,3 +9,9 @@
 200301160000 1 * New languages and fixes
 200301191844 2 * Czech EPG support
 200301200416 3 * Changelog support in upgrade
+200301301950 6 4 Removed old dreambox RC
+200301301950 6 * Language setup wizard
+200301301950 4 56 MPEG Player
+200301301950 7 * New Runlevels (for plugins)
+
+

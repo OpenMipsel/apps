@@ -2,6 +2,7 @@
 
 #include <enigma_main.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/servicestructure.h>
 #include <lib/gui/emessage.h>
@@ -576,7 +577,7 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *
 	return addEventToTimerList( sel, e );
 }
 
-eAutoInitP0<eTimerManager> init_eTimerManager(8, "Timer Manager");
+eAutoInitP0<eTimerManager> init_eTimerManager(eAutoInitNumbers::osd-1, "Timer Manager");
 
 gFont eListBoxEntryTimer::TimeFont;
 gFont eListBoxEntryTimer::DescrFont;
@@ -595,7 +596,7 @@ struct eTimerViewActions
 	{
 	}
 };
-eAutoInitP0<eTimerViewActions> i_TimerViewActions(5, "timer view actions");
+eAutoInitP0<eTimerViewActions> i_TimerViewActions(eAutoInitNumbers::actions, "timer view actions");
 
 eListBoxEntryTimer::~eListBoxEntryTimer()
 {

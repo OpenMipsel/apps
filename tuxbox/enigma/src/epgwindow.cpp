@@ -10,6 +10,7 @@
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/gdi/font.h>
+#include <lib/system/init_num.h>
 
 gFont eListBoxEntryEPG::TimeFont;
 gFont eListBoxEntryEPG::DescrFont;
@@ -29,7 +30,8 @@ struct epgSelectorActions
 	{
 	}
 };
-eAutoInitP0<epgSelectorActions> i_epgSelectorActions(5, "epg selector actions");
+
+eAutoInitP0<epgSelectorActions> i_epgSelectorActions(eAutoInitNumbers::actions, "epg selector actions");
 
 eListBoxEntryEPG::~eListBoxEntryEPG()
 {

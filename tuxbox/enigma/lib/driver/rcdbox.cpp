@@ -7,6 +7,7 @@
 
 #include <lib/base/ebase.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 
 	/* ----------------------- alte fernbedienung ---------------------- */
 void eRCDeviceDBoxOld::handleCode(int rccode)
@@ -347,4 +348,4 @@ public:
   }
 };
 
-eAutoInitP0<eDBoxRCHardware> init_rcdbox(2, "d-Box RC Hardware");
+eAutoInitP0<eDBoxRCHardware> init_rcdbox(eAutoInitNumbers::rc+1, "d-Box RC Hardware");

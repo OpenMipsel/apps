@@ -1,6 +1,7 @@
 #include <lib/base/eerror.h>
 #include <lib/system/econfig.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <sys/stat.h>
 
 eConfig *eConfig::instance;
@@ -37,4 +38,4 @@ eConfig::~eConfig()
 	close();
 }
 
-eAutoInitP0<eConfig> init_eRCConfig(0, "Configuration");
+eAutoInitP0<eConfig> init_eRCConfig(eAutoInitNumbers::configuration, "Configuration");

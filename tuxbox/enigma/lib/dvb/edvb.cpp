@@ -25,6 +25,7 @@
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/record.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
 #include <lib/dvb/dvbci.h>
 
@@ -446,4 +447,4 @@ eDVBScanController *eDVB::getScanAPI()
 	return (eDVBScanController*)controller;
 }
 
-eAutoInitP0<eDVB> init_dvb(4, "eDVB lib");
+eAutoInitP0<eDVB> init_dvb(eAutoInitNumbers::dvb, "eDVB lib");

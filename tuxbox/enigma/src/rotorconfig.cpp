@@ -1,6 +1,7 @@
 #include <rotorconfig.h>
 
 #include <lib/base/i18n.h>
+#include <lib/system/init_num.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/emessage.h>
@@ -409,7 +410,7 @@ struct rotorMenuActions
 	}
 };
 
-eAutoInitP0<rotorMenuActions> i_rotorMenuActions(3, "rotor menu actions");
+eAutoInitP0<rotorMenuActions> i_rotorMenuActions(eAutoInitNumbers::actions, "rotor menu actions");
 
 eRotorManual::eRotorManual(eLNB *lnb)
 	:lnb(lnb), retuneTimer(new eTimer(eApp)), transponder(0), changed(0)

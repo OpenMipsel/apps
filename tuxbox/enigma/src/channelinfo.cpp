@@ -1,6 +1,7 @@
 #include <channelinfo.h>
 #include <lib/base/i18n.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/gui/eskin.h>
 #include <lib/gdi/font.h>
 #include <lib/dvb/epgcache.h>
@@ -381,4 +382,4 @@ public:
 	}
 };
 
-eAutoInitP0<eChannelInfoSkinInit> init_eChannelInfoSkinInit(3, "eChannelInfo");
+eAutoInitP0<eChannelInfoSkinInit> init_eChannelInfoSkinInit(eAutoInitNumbers::guiobject, "eChannelInfo");

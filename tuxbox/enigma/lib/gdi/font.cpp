@@ -16,6 +16,7 @@
 #include <lib/gdi/grc.h>
 #include <lib/system/elock.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 
 #include <map>
 
@@ -802,4 +803,4 @@ void eTextPara::clear()
 	glyphs.clear();
 }
 
-eAutoInitP0<fontRenderClass> init_fontRenderClass(1, "Font Render Class");
+eAutoInitP0<fontRenderClass> init_fontRenderClass(eAutoInitNumbers::graphic-1, "Font Render Class");

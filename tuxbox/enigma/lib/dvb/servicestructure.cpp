@@ -1,5 +1,6 @@
 #include <lib/dvb/servicestructure.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/base/i18n.h>
 
 eServiceStructureHandler::eServiceStructureHandler(): eServiceHandler(eServiceReference::idStructure), cache(*this)
@@ -49,4 +50,4 @@ void eServiceStructureHandler::removeRef(const eServiceReference &c)
 	cache.removeRef(c);
 }
 
-eAutoInitP0<eServiceStructureHandler> i_eServiceStructureHandler(6, "eServiceStructureHandler");
+eAutoInitP0<eServiceStructureHandler> i_eServiceStructureHandler(eAutoInitNumbers::service+1, "eServiceStructureHandler");

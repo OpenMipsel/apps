@@ -1,6 +1,7 @@
 #include <lib/dvb/serviceplaylist.h>
 #include <lib/dvb/servicefile.h>
 #include <lib/system/init.h>
+#include <lib/system/init_num.h>
 #include <lib/base/i18n.h>
 #include <unistd.h>
 
@@ -271,4 +272,4 @@ void eServicePlaylistHandler::removePlaylist(const eServiceReference &service)
 	}
 }
 
-eAutoInitP0<eServicePlaylistHandler> i_eServicePlaylistHandler(7, "eServicePlaylistHandler");
+eAutoInitP0<eServicePlaylistHandler> i_eServicePlaylistHandler(eAutoInitNumbers::service+2, "eServicePlaylistHandler");
