@@ -19,6 +19,12 @@ public:
 	void leaveDirectory(const eServiceReference &dir);
 	eService* addRef(const eServiceReference&);
 	void removeRef(const eServiceReference&);
+	
+	enum { modeRoot, modeTV, modeRadio, modeFile };
+	static eServiceReference getRoot(int mode)
+	{
+		return eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory|eServiceReference::shouldSort, mode);
+	}
 };
 
 #endif

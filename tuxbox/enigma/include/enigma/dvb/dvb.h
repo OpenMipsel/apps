@@ -15,6 +15,7 @@ class eDVB;
 #include <functional>
 #include <string>
 #include <set>
+#include <stack>
 
 #ifndef MIN
 	#define MIN(a,b) (a < b ? a : b)
@@ -296,6 +297,7 @@ struct eServiceReference
 				services with sub-services have none of them, instead the have the "canDecsent" flag (as all of the above)
 		*/
 		canDescent=4,			// supports enterDirectory/leaveDirectory
+		flagDirectory=isDirectory|mustDescent|canDescent,
 		shouldSort=8,			// should be ASCII-sorted according to service_name. great for directories.
 		hasSortKey=16,		// has a sort key in data[3]. not having a sort key implies 0.
 		sort1=32					// sort key is 1 instead of 0
@@ -384,6 +386,20 @@ struct eServiceReference
 	{
 		return type != idInvalid;
 	}
+};
+
+class eServicePath
+{
+	std::stack<eServiceReference> path;
+public:
+	eServicePath()	{	}
+	eServicePath( const eString& data );
+	eServicePath(const eServiceReference &ref);
+	void setString( const eString& data );
+	eString toString();
+	void up();
+	void down(const eServiceReference &ref);
+	eServiceReference current();
 };
 
 struct eServiceReferenceDVB: public eServiceReference
