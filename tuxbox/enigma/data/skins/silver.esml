@@ -391,7 +391,7 @@
 
 	
 	<object name="eZapMainMenu">
-		<eWidget position="0:306" size="720:270" backgroundColor="-1" >
+		<eWidget position="0:306" size="720:270" backgroundColor="-2" >
 
 			<eLabel pixmap="mainmenu.background" position="0:0" size="e:e" name="background" />
 			<eLabel position="22:54" size="70:70" name="l3" alphatest="on" />
@@ -401,7 +401,7 @@
 			<eLabel position="443:22" size="70:70" name="r1" alphatest="on" />
 			<eLabel position="537:34" size="70:70" name="r2" alphatest="on" />
 			<eLabel position="629:54" size="70:70" name="r3" alphatest="on" />
-			<eLabel position="200:200" size="320:48" align="center" font="eWindow.TitleBar"	foregroundColor="white" backgroundColor="content"  name="description" alphatest="on" />
+			<eLabel position="200:200" size="320:48" align="center" font="eWindow.TitleBar"	foregroundColor="black" name="description" alphatest="on" />
 		
 		</eWidget>
 	</object>

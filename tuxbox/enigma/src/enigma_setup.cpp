@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.17 2003/04/13 13:03:07 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.18 2003/04/15 15:03:00 tmbinc Exp $
  */
 
 #include <enigma_setup.h>
@@ -47,7 +47,7 @@
 #include "upgrade.h"
 
 eZapSetup::eZapSetup()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 8, 450, true)
+	:eListBoxWindow<eListBoxEntryMenu>(_("Setup"), 9, 450, true)
 {
 	move(ePoint(135, 120));
 	int havenetwork, haveci, haveharddisk, havelcd, haverfmod;

@@ -587,7 +587,7 @@ void eWidget::redrawWidget(gPainter *target, const eRect &clip)
 
 void eWidget::eraseBackground(gPainter *target, const eRect &clip)
 {
-	if (((int)getBackgroundColor())!=-1)
+	if (((int)getBackgroundColor()) >= 0)
 		target->clear();
 }
 

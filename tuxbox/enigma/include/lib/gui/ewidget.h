@@ -197,7 +197,7 @@ public:
 	static void removeGlobalActionMap(eActionMap *map);
 	inline eWidget *getNonTransparentBackground()
 	{
-		if (backgroundColor != -1)
+		if (backgroundColor >= 0)
 			return this;
 		return parent?parent->getNonTransparentBackground():this;
 	}

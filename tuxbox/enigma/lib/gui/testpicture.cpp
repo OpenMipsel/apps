@@ -143,6 +143,7 @@ void eTestPicture::redrawWidget(gPainter *target, const eRect &area)
 	case testWhite:
 		target->setBackgroundColor(white);
 		target->clear();
+		break;
 	case testBlack:
 		target->setBackgroundColor(black);
 		target->clear();
@@ -158,6 +159,7 @@ eTestPicture::eTestPicture(int testmode): eWidget(0, 1), testmode(testmode), des
 	black = eSkin::getActive()->queryColor("std_black");
 	white = eSkin::getActive()->queryColor("std_white");
 	gray = eSkin::getActive()->queryColor("std_gray");
+	setBackgroundColor(-1);
 	
 	CONNECT(desctimer.timeout, eTestPicture::hideDesc);
 	

@@ -116,7 +116,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 			yOffs = 0;
 
 		eWidget *w;
-		if ((blitFlags & BF_ALPHATEST) && (transparentBackgroundColor != -1))
+		if ((blitFlags & BF_ALPHATEST) && (transparentBackgroundColor >= 0))
 		{
 			w=this;
 			target->setBackgroundColor(transparentBackgroundColor);
