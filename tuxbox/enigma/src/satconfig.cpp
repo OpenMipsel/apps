@@ -354,7 +354,9 @@ void eSatelliteConfigurationManager::newPressed()
 		lnb->getDiSEqC().uncommitted_switch=0;
 		lnb->getDiSEqC().uncommitted_gap=0;
 		lnb->getDiSEqC().useGotoXX=1;
-		lnb->getDiSEqC().rotorOffset=0;    
+		lnb->getDiSEqC().rotorOffset=0;
+		lnb->getDiSEqC().gotoXXLatitude=0;
+		lnb->getDiSEqC().gotoXXLongitude=0;
 	}
 	else // we use the last lnb in the list for the new Satellite
 		lnb = &eTransponderList::getInstance()->getLNBs().back();
@@ -486,6 +488,8 @@ void eLNBSetup::onSave()
 	p->getDiSEqC().uncommitted_gap = DiSEqCPage->uncommitted_gap->isChecked();
 	p->getDiSEqC().useGotoXX = RotorPage->useGotoXX->isChecked();
 	p->getDiSEqC().rotorOffset = RotorPage->RotorOffset->getNumber();
+	p->getDiSEqC().gotoXXLatitude = RotorPage->Latitude->getNumber();
+	p->getDiSEqC().gotoXXLongitude = RotorPage->Longitude->getNumber();	
 	p->getDiSEqC().RotorTable.clear();
 	RotorPage->positions->forEachEntry( savePosition( p->getDiSEqC().RotorTable ) );
                 
@@ -802,39 +806,68 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 	useGotoXX = new eCheckbox(this);
 	useGotoXX->setName("useGotoXX");
 
-	lRotorOffset = new eLabel( this );
+	lRotorOffset = new eLabel(this);
 	lRotorOffset->setName("lRotorOffset");
+	lRotorOffset->hide();
 
 	RotorOffset = new eNumber(this, 1, 0, 3600, 4, 0, 0, lRotorOffset );
 	RotorOffset->setFlags( eNumber::flagPosNeg );
 	RotorOffset->setName("RotorOffset");
+	RotorOffset->hide();
+
+	lLongitude = new eLabel(this);
+	lLongitude->setName("lLongitude");
+	lLongitude->hide();
+
+	Longitude = new eNumber(this, 1, 0, 3600, 4, 0, 0, lLongitude );
+/*	Longitude->setFlags( eNumber::flagPosNeg );*/
+	Longitude->setName("Longitude");
+	Longitude->hide();
+
+	lLatitude = new eLabel(this);
+	lLatitude->setName("lLatitude");
+	lLatitude->hide();
+
+	Latitude = new eNumber(this, 1, 0, 3600, 4, 0, 0, lLatitude );
+/*	Latitude->setFlags( eNumber::flagPosNeg );*/
+	Latitude->setName("Latitude");
+	Latitude->hide();
 
 	positions = new eListBox< eListBoxEntryText >( this );  
 	positions->setFlags( eListBoxBase::flagNoPageMovement );
 	positions->setName("positions");
+	positions->hide();
   
-	eLabel *l = new eLabel(this);
-	l->setName("lStoredRotorNo");
-	number = new eNumber( this, 1, 0, 255, 3, 0, 0, l);
+	lStoredRotorNo = new eLabel(this);
+	lStoredRotorNo->setName("lStoredRotorNo");
+	lStoredRotorNo->hide();
+	number = new eNumber( this, 1, 0, 255, 3, 0, 0, lStoredRotorNo);
 	number->setName("StoredRotorNo");
+	number->hide();
 
-	l = new eLabel(this);
-	l->setName("lOrbitalPosition");
-	orbital_position = new eNumber( this, 1, 0, 450, 3, 0, 0, l);
+	lOrbitalPosition = new eLabel(this);
+	lOrbitalPosition->setName("lOrbitalPosition");
+	lOrbitalPosition->hide();
+	orbital_position = new eNumber( this, 1, 0, 450, 3, 0, 0, lOrbitalPosition);
 	orbital_position->setName("OrbitalPosition");
+	orbital_position->hide();
   
-	l = new eLabel(this);
-	l->setName("lDirection");
-	direction = new eComboBox( this, 2, l );
+	lDirection = new eLabel(this);
+	lDirection->setName("lDirection");
+	lDirection->hide();
+	direction = new eComboBox( this, 2, lDirection );
 	direction->setName("Direction");
+	direction->hide();
 	new eListBoxEntryText( *direction, _("East"), (void*)0, 0, _("East") );
 	new eListBoxEntryText( *direction, _("West"), (void*)1, 0, _("West") );
-  
+
 	add = new eButton( this );
 	add->setName("add");
+	add->hide();
 
 	remove = new eButton ( this );
 	remove->setName("remove");
+	remove->hide();
   
 	prev = new eButton(this);
 	prev->setName("prev");
@@ -855,8 +888,52 @@ eRotorPage::eRotorPage( eWidget *parent, eSatellite *sat )
 	CONNECT( add->selected, eRotorPage::onAdd );
 	CONNECT( remove->selected, eRotorPage::onRemove );
 	CONNECT( positions->selchanged, eRotorPage::posChanged );
+	CONNECT( useGotoXX->checked, eRotorPage::gotoXXChanged );
   
 	addActionMap(&i_focusActions->map);
+}
+
+void eRotorPage::gotoXXChanged( int state )
+{
+	if ( state )
+	{
+		add->hide();
+		remove->hide();
+		lOrbitalPosition->hide();
+		orbital_position->hide();
+		lStoredRotorNo->hide();
+		number->hide();
+		lDirection->hide();
+		direction->hide();
+		positions->hide();
+		
+		lLongitude->show();
+		Longitude->show();
+		lLatitude->show();
+		Latitude->show();
+		lRotorOffset->show();
+		RotorOffset->show();
+	}
+	else
+	{
+		lLongitude->hide();
+		Longitude->hide();
+		lLatitude->hide();
+		Latitude->hide();
+		lRotorOffset->hide();
+		RotorOffset->hide();
+
+		positions->show();
+		add->show();
+		remove->show();
+		lOrbitalPosition->show();
+		orbital_position->show();
+		lStoredRotorNo->show();
+		number->show();
+		lDirection->show();
+		direction->show();
+		positions->show();
+	}
 }
 
 void eRotorPage::lnbChanged( eListBoxEntryText *lnb )

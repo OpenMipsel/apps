@@ -522,21 +522,23 @@ public:
 struct eDiSEqC
 {
 	enum { AA=0, AB=1, BA=2, BB=3 /* and 0xF0 .. 0xFF*/  }; // DiSEqC Parameter
-  int DiSEqCParam;
+	int DiSEqCParam;
   
-  enum tDiSEqCMode	{	NONE=0, V1_0=1, V1_1=2, V1_2=3, SMATV=4 }; // DiSEqC Mode
+	enum tDiSEqCMode	{	NONE=0, V1_0=1, V1_1=2, V1_2=3, SMATV=4 }; // DiSEqC Mode
 	tDiSEqCMode DiSEqCMode;
   
-  enum tMiniDiSEqCParam  { NO=0, A=1, B=2 };
-  tMiniDiSEqCParam MiniDiSEqCParam;
+	enum tMiniDiSEqCParam  { NO=0, A=1, B=2 };
+	tMiniDiSEqCParam MiniDiSEqCParam;
 
-  std::map< int, int > RotorTable; // used for Rotors does not support gotoXX Cmd
-  int DiSEqCRepeats;      // for cascaded switches
-  int SeqRepeat;          // send the complete DiSEqC Sequence dupe...
-  int uncommitted_switch; // send to uncommited switch
-  int uncommitted_gap;    // send uncommitted switch in DiSEqC Repeat gap
-  int useGotoXX;          // Rotor Support gotoXX Position ?
-  int rotorOffset;        // Rotor Offset in °
+	std::map< int, int > RotorTable; // used for Rotors does not support gotoXX Cmd
+	int DiSEqCRepeats;      // for cascaded switches
+	int SeqRepeat;          // send the complete DiSEqC Sequence dupe...
+	int uncommitted_switch; // send to uncommited switch
+	int uncommitted_gap;    // send uncommitted switch in DiSEqC Repeat gap
+	int useGotoXX;          // Rotor Support gotoXX Position ?
+	int rotorOffset;        // Rotor Offset in
+	int gotoXXLongitude;    // Longitude for gotoXX° Function
+	int gotoXXLatitude;     // Latitude for gotoXX° Function
 };
 
 class eLNB

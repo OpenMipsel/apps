@@ -36,7 +36,7 @@ eFrontend::eFrontend(int type, const char *demod, const char *sec)
 		perror(demod);
 		return;
 	}
-
+/*
 	FrontendInfo fe_info;
 
 	if ( ioctl(fd, FE_GET_INFO, fe_info) < 0 ) 
@@ -55,7 +55,9 @@ eFrontend::eFrontend(int type, const char *demod, const char *sec)
 		case FE_OFDM:
 			eDebug("terrestrical frontend detected");
 			type = feTerrestrical;
-	}
+		break;
+		default:
+	}*/
 
 	if (type==feSatellite)
 	{

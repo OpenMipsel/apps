@@ -276,7 +276,7 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	}
 	while ( ref != p.current() );
 	windowDescr.erase( windowDescr.rfind(">") );
-	setText( windowDescr );	
+	setText( windowDescr );
 
 	services->beginAtomic();
 	services->clearList();

@@ -269,25 +269,27 @@
 
 	<object name="eRotorPage">
 		<eRotorPage position="0:0" size="550:400" >
-			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use this" vcenter="on" />
-			<eLabel text="GotoXX offset" name="lRotorOffset" position="290:10" size="150:35" vcenter="on" />
-			<eNumber name="RotorOffset" position="e-100:10" size="e-10:35" helptext="enter Rotor Offset (0..9, +, -, ok)" loadDeco="" />
+			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use" vcenter="on" />
+			<eLabel text="GotoXX offset" name="lRotorOffset" position="10:55" size="150:35" vcenter="on" />
+			<eNumber name="RotorOffset" position="200:55" size="150:35" helptext="enter Rotor Offset (0..9, +, -, ok)" loadDeco="" />
+			<eLabel name="lLongitude" text="Longitude:" position="10:100" size="150:35" vcenter="on" />
+			<eNumber name="Longitude" position="200:100" size="90:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
+			<eLabel name="lLatitude" text="Latitude:" position="10:145" size="150:35" vcenter="on" />
+			<eNumber name="Latitude" position="200:145" size="90:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
 
-			<eLabel text="If your rotor doesn't support gotoXX, add all orbital positions with storage location below." position="10:55" size="e-10:70" wrap="on" />
-      
-			<eListbox name="positions" position="10:125" size="170:175" helptext="choose entry to edit or remove" loadDeco="" />
+			<eListbox name="positions" position="10:55" size="170:175" helptext="choose entry to edit or remove" loadDeco="" />
 
-			<eLabel name="lStoredRotorNo" text="Number in Rotor:" position="190:125" size="e-110:35" vcenter="on" />
-			<eNumber name="StoredRotorNo" position="e-100:125" size="e-10:35" helptext="enter where this orbital position is (to) stored in Rotor" loadDeco="" />
+			<eLabel name="lStoredRotorNo" text="Number in Rotor:" position="190:55" size="e-110:35" vcenter="on" />
+			<eNumber name="StoredRotorNo" position="e-100:55" size="e-10:35" helptext="enter where this orbital position is (to) stored in Rotor" loadDeco="" />
 
-			<eLabel name="lOrbitalPosition" text="Orbital Position:" position="190:170" size="e-110:35" vcenter="on" />
-			<eNumber name="OrbitalPosition" position="e-100:170" size="e-10:35" helptext="enter orbital position without dot (19.2° = 192)" loadDeco="" />
+			<eLabel name="lOrbitalPosition" text="Orbital Position:" position="190:105" size="e-110:35" vcenter="on" />
+			<eNumber name="OrbitalPosition" position="e-100:105" size="e-10:35" helptext="enter orbital position without dot (19.2° = 192)" loadDeco="" />
 
-			<eLabel name="lDirection" text="Direction:" position="190:215" size="e-150:35" vcenter="on" />
-			<eComboBox name="Direction" position="e-140:215" size="e-10:35" helptext="choose direction" loadDeco="" />
+			<eLabel name="lDirection" text="Direction:" position="190:145" size="e-150:35" vcenter="on" />
+			<eComboBox name="Direction" position="e-140:145" size="e-10:35" helptext="choose direction" loadDeco="" />
 
-			<eButton name="add" text="add" position="190:260" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" />
-			<eButton name="remove" text="remove" position="370:260" size="170:40" helptext="remove selected entry" loadDeco="" />
+			<eButton name="add" text="add" position="190:190" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" />
+			<eButton name="remove" text="remove" position="370:190" size="170:40" helptext="remove selected entry" loadDeco="" />
 
 			<eButton name="prev" text="prev. page" position="10:e-80" size="170:40" helptext="goto prev page (LNB)" loadDeco="" />
 			<eButton name="save" text="save" position="190:e-80" size="170:40" helptext="save changes and use the selected lnb (in first page) for the choosen satellite" loadDeco="" />

@@ -526,6 +526,12 @@ void eTransponderList::readLNBData()
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/rotorOffset").c_str(), tmpint );
 		lnb.getDiSEqC().rotorOffset = tmpint;
 
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/gotoXXLatitude").c_str(), tmpint );
+		lnb.getDiSEqC().gotoXXLatitude = tmpint;
+
+		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/gotoXXLongitude").c_str(), tmpint );
+		lnb.getDiSEqC().gotoXXLongitude = tmpint;
+
 		char* tmpStr=0;
 		eConfig::getInstance()->getKey( (basepath+eString().setNum(lnbread)+"/RotorTable").c_str(), tmpStr );    
 
@@ -584,6 +590,8 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().uncommitted_gap=0;
 			lnb.getDiSEqC().useGotoXX=1;
 			lnb.getDiSEqC().rotorOffset=0;
+			lnb.getDiSEqC().gotoXXLatitude=0;
+			lnb.getDiSEqC().gotoXXLongitude=0;
 			eSatellite *sat = lnb.addSatellite(192);
 			sat->setDescription("Astra 19.2E");
 			eSwitchParameter &sParams = sat->getSwitchParams();
@@ -606,6 +614,8 @@ void eTransponderList::readLNBData()
 			lnb.getDiSEqC().uncommitted_gap=0;
 			lnb.getDiSEqC().useGotoXX=1;
 			lnb.getDiSEqC().rotorOffset=0;
+			lnb.getDiSEqC().gotoXXLatitude=0;
+			lnb.getDiSEqC().gotoXXLongitude=0;
 			eSatellite *sat = lnb.addSatellite(130);
 			sat->setDescription("Eutelsat 13.0E");
 			eSwitchParameter &sParams = sat->getSwitchParams();
@@ -636,7 +646,8 @@ void eTransponderList::writeLNBData()
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/uncommitted_gap").c_str(), (int) it->getDiSEqC().uncommitted_gap );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/useGotoXX").c_str(), (int) it->getDiSEqC().useGotoXX );
 		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/rotorOffset").c_str(), (int) it->getDiSEqC().rotorOffset );    
-
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLatitude").c_str(), (int) it->getDiSEqC().gotoXXLatitude );
+		eConfig::getInstance()->setKey( (basepath+eString().setNum(lnbwrite)+"/gotoXXLongitude").c_str(), (int) it->getDiSEqC().gotoXXLongitude );
 		eString tmpStr;
 		for ( std::map<int,int>::iterator i( it->getDiSEqC().RotorTable.begin() ); i != it->getDiSEqC().RotorTable.end(); i++ )
 		{
