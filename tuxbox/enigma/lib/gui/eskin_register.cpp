@@ -4,7 +4,7 @@
 #include <lib/system/init.h>
 #include <lib/system/econfig.h>
 
-#define DEFAULTSKIN "chk_blue2.esml"
+#define DEFAULTSKIN "stone.esml"
 
 class eSkinInit
 {
