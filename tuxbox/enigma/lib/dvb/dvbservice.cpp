@@ -319,8 +319,10 @@ void eDVBServiceController::scanPMT()
 	Decoder::parms.vpid=Decoder::parms.apid=-1;
 	
 	int isca=0;
-	
-	calist.clear();
+
+	if ( dvb.getInfo("mID") == "05" )
+		calist.clear();
+
 	Decoder::parms.descriptor_length=0;
 	
 	DVBCI=eDVB::getInstance()->DVBCI;
