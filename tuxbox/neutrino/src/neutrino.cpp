@@ -112,7 +112,7 @@ static void initGlobals(void)
 	g_RCInput       = NULL;
 	g_Controld      = NULL;
 	g_Timerd        = NULL;
-	g_Zapit         = NULL;
+	g_Zapit         = new CZapitClient;
 	g_RemoteControl = NULL;
 
 	g_EpgData       = NULL;
@@ -548,12 +548,11 @@ int CNeutrinoApp::loadSetup()
 		erg = 2;
 	}
 
-	if(!scanSettings.loadSettings(scanSettingsFile))
+	if (!scanSettings.loadSettings(scanSettingsFile, (g_info.delivery_system = g_Zapit->getDeliverySystem())))
 	{
-		dprintf(DEBUG_NORMAL,"error while loading scan-settings, using defaults!\n");
-		scanSettings.useDefaults();
+		dprintf(DEBUG_NORMAL, "Loading of scan settings failed. Using defaults.\n");
 	}
-
+	
 	return erg;
 }
 
@@ -1073,7 +1072,7 @@ void CNeutrinoApp::InitScanSettings(CMenuWidget &settings)
 	ojBouquets->addOption( CZapitClient::BM_DONTTOUCHBOUQUETS, "scants.bouquet_leave");
 
 	//kabel-lnb-settings
-	if(g_info.fe==1)
+	if(g_info.delivery_system == DVB_S)
 	{
 		settings.addItem( new CMenuSeparator() );
 		settings.addItem( new CMenuForwarder("menu.back") );
@@ -2126,7 +2125,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 
 	g_Locale = new CLocaleManager;
 	g_RCInput = new CRCInput;
-	g_Zapit = new CZapitClient;
+
 	g_Sectionsd = new CSectionsdClient;
 	g_Timerd = new CTimerdClient;
 
@@ -3372,7 +3371,7 @@ bool CNeutrinoApp::changeNotify(std::string OptionName, void *Data)
 int main(int argc, char **argv)
 {
 	setDebugLevel(DEBUG_NORMAL);
-	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.3 2003/02/18 17:07:47 thegoodguy Exp $\n\n");
+	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.4 2003/02/18 17:17:54 thegoodguy Exp $\n\n");
 
 	//dhcp-client beenden, da sonst neutrino beim hochfahren stehenbleibt
 	system("killall -9 udhcpc >/dev/null 2>/dev/null");
