@@ -1,6 +1,8 @@
 SUBDIRS = mainmenu chk_stone chk_silver chk_v2 neutrino shortcut countries
 
-EXTRA_DIST = \
+installdir = $(DATADIR)/enigma/pictures
+
+install_DATA = \
 	checked.png format_on_small.png dolby_on.png \
 	lcdmenu.png unchecked.png video.png button_red.png button_blue.png \
 	button_yellow.png button_gray.png button_green.png checked_lcd.png \
@@ -10,7 +12,4 @@ EXTRA_DIST = \
 	folder-fs8.png clock-fs8.png clock_rec-fs8.png event_ok-fs8.png \
 	event_failed-fs8.png dreamlogo-fs8.png zahlen_w.png \
 	scan.mvi diseqc_0-fs8.png diseqc_1-fs8.png diseqc_2-fs8.png 
-	
-install-data-local:
-	install -d $(DATADIR)/enigma/pictures
-	install -m 0644 $(EXTRA_DIST) $(DATADIR)/enigma/pictures
+
