@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.18 2003/03/27 11:04:52 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.19 2003/03/27 14:35:43 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -890,7 +890,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 	{
 		CZapitMessages::commandInt msg;
 		CBasicServer::receive_data(connfd, &msg, sizeof(msg));
-		audioDecoder->selectChannel((audioChannelSelect_t) msg.val);
+		audioDecoder->setChannel((audio_channel_select_t) msg.val);
 		break;
 	}
 
@@ -1444,7 +1444,7 @@ int main(int argc, char **argv)
 {
 	CZapitClient::responseGetLastChannel test_lastchannel;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.18 2003/03/27 11:04:52 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.19 2003/03/27 14:35:43 thegoodguy Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {

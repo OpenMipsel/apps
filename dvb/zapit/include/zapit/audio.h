@@ -1,5 +1,5 @@
 /*
- * $Id: audio.h,v 1.12.2.1 2003/02/18 15:16:46 alexw Exp $
+ * $Id: audio.h,v 1.12.2.2 2003/03/27 14:35:43 thegoodguy Exp $
  *
  * (C) 2002 by Steffen Hehn 'McClean' &
  *	Andreas Oberritter <obi@tuxbox.org>
@@ -25,6 +25,9 @@
 
 /* nokia api */
 #include <ost/audio.h>
+#define audio_channel_select_t audioChannelSelect_t
+#define audio_stream_source_t audioStreamSource_t
+#define audio_status audioStatus
 
 class CAudio
 {
@@ -33,7 +36,7 @@ class CAudio
 		int fd;
 
 		/* current audio settings */
-		struct audioStatus status;
+		struct audio_status status;
 		struct audioMixer mixer;
 
 		/* internal methods */
@@ -45,34 +48,34 @@ class CAudio
 
 	public:
 		/* construct & destruct */
-		CAudio();
-		~CAudio();
+		CAudio(void);
+		~CAudio(void);
 
 		/* check if initialitation failed before rocking */
 		bool isInitialized () { return initialized; }
 
 		/* shut up */
-		int mute ();
-		int unmute ();
+		int mute(void);
+		int unmute(void);
 
 		/* bypass audio to external decoder */
-		int enableBypass ();
-		int disableBypass ();
+		int enableBypass(void);
+		int disableBypass(void);
 
 		/* volume, min = 0, max = 255 */
-		int setVolume (unsigned char left, unsigned char right);
+		int setVolume(unsigned char left, unsigned char right);
 
 		/* start and stop audio */
-		int start ();
-		int stop ();
+		int start(void);
+		int stop(void);
 
 		/* stream source */
-		audioStreamSource_t getSource () { return status.streamSource; }
-		int setSource (audioStreamSource_t source);
+		audio_stream_source_t getSource(void);
+		int setSource(audio_stream_source_t source);
 
 		/* select channels */
-		int selectChannel (audioChannelSelect_t sel);
-		audioChannelSelect_t getSelectedChannel ();
+		int setChannel(audio_channel_select_t channel);
+		audio_channel_select_t getChannel(void);
 };
 
 #endif /* __audio_h__ */
