@@ -880,8 +880,6 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 		id3_file_close(file);
 		return;
 	}
-	else
-		eDebug("id3tag version = %d", tag->version );
 
   struct id3_frame const *frame;
   id3_ucs4_t const *ucs4;
