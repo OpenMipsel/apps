@@ -8,6 +8,8 @@ class ePlaylist: public eService
 {
 public:
 	std::list<eServiceReference> list;
+	std::list<eServiceReference>::iterator current;
+
 	int load(const char *filename);
 	ePlaylist();
 };
@@ -18,6 +20,7 @@ class eServicePlaylistHandler: public eServiceHandler
 	void addFile(void *node, const eString &filename);
 
 public:
+	enum { ID = 0x1001 } ;
 	static eServicePlaylistHandler *getInstance() { return instance; }
 
 	eService *createService(const eServiceReference &node);

@@ -3,9 +3,80 @@
 
 #include <core/dvb/service.h>
 #include <core/dvb/servicecache.h>
+#include <core/base/thread.h>
+#include <core/base/buffer.h>
+#include <core/base/message.h>
+
+class eServiceHandlerDVB;
+
+class eDVRPlayerThread: public eThread, public eMainloop, public Object
+{
+	eServiceHandlerDVB *handler;
+	eIOBuffer buffer;
+	enum
+	{
+		stateInit, stateError, stateBuffering, stateBufferFull, statePlaying, statePause, stateFileEnd
+	};
+	int state;
+	int dvrfd;
+	int sourcefd;
+	int speed;
+	eSocketNotifier *inputsn, *outputsn;
+	void readMore(int what);
+	void outputReady(int what);
+	int maxBufferSize;
+	
+	void dvrFlush();
+public:
+	struct eDVRPlayerThreadMessage
+	{
+		enum
+		{
+			start, exit,
+			skip,
+			setSpeed, // 0..
+			seek	// 0..65536
+		};
+		int type;
+		int parm;
+		eDVRPlayerThreadMessage() { }
+		eDVRPlayerThreadMessage(int type): type(type) { }
+		eDVRPlayerThreadMessage(int type, int parm): type(type), parm(parm) { }
+	};
+	eFixedMessagePump<eDVRPlayerThreadMessage> messages;
+	
+	void gotMessage(const eDVRPlayerThreadMessage &message);
+	
+	eDVRPlayerThread(const char *filename, eServiceHandlerDVB *handler);
+	~eDVRPlayerThread();
+	
+	void thread();
+};
+
 
 class eServiceHandlerDVB: public eServiceHandler
 {
+	void addFile(void *node, const eString &filename);
+	friend class eDVRPlayerThread;
+
+	struct eDVRPlayerThreadMessage
+	{
+		enum
+		{
+			done,
+			status
+		};
+		int type;
+		int parm;
+		eDVRPlayerThreadMessage() { }
+		eDVRPlayerThreadMessage(int type): type(type) { }
+		eDVRPlayerThreadMessage(int type, int status): type(type), parm(parm) { }
+	};
+	eFixedMessagePump<eDVRPlayerThreadMessage> messages;
+	eDVRPlayerThread *decoder;
+	
+	void gotMessage(const eDVRPlayerThreadMessage &message);
+
 	void scrambledStatusChanged(bool);
 	void switchedService(const eServiceReferenceDVB &, int);
 	void gotEIT(EIT *eit, int);
@@ -23,6 +94,9 @@ public:
 	eService *lookupService(const eServiceReference &service);
 
 	int play(const eServiceReference &service);
+
+		// record	
+	int serviceCommand(const eServiceCommand &cmd);
 
 		// for DVB audio channels:
 	PMT *getPMT();

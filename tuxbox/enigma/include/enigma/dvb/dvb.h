@@ -286,8 +286,22 @@ struct eServiceReference
 	int flags;
 	enum
 	{
-		isDirectory=1,
+		isDirectory=1,		// SHOULD enter  (implies mustDescent)
+		mustDescent=2,		// cannot be played directly - often used with "isDirectory" (implies canDescent)
+		/*
+			for example:
+				normal services have none of them - they can be fed directly into the "play"-handler.
+				normal directories have both of them set - you cannot play a directory directly and the UI should descent into it.
+				playlists have "mustDescent", but not "isDirectory" - you don't want the user to browse inside the playlist (unless he really wants)
+				services with sub-services have none of them, instead the have the "canDecsent" flag (as all of the above)
+		*/
+		canDescent=4,			// supports enterDirectory/leaveDirectory
+		shouldSort=8,			// should be ASCII-sorted according to service_name. great for directories.
+		hasSortKey=16,		// has a sort key in data[3]. not having a sort key implies 0.
+		sort1=32					// sort key is 1 instead of 0
 	};
+
+	inline int getSortKey() const { return (flags & hasSortKey) ? data[3] : ((flags & sort1) ? 1 : 0); }
 
 	int data[4];
 	eString path;

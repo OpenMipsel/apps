@@ -40,6 +40,11 @@ public:
 	eServiceCommand(int type, int parm): type(type), parm(parm) { }
 	enum
 	{
+		cmdRecordOpen,
+		cmdRecordStart,
+		cmdRecordStop,
+		cmdRecordClose,
+
 		cmdSetSpeed,		// parm : ratio.. 1 normal, 0 pause, >1 fast forward, <0 reverse (if supported)
 		cmdSkip,				// parm : in ms (~)
 		cmdSeekAbsolute	// parm : percentage ~
