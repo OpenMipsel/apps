@@ -6,11 +6,9 @@
 class eRFmod: public Object
 {
 	static eRFmod *instance;
-	
-	unsigned char rfmodreg[4];
-	int SFD, PS, SO, AUX, SYSL, PWC, TPEN, OSC, ATT, DIV;
 
 	int rfmodfd;
+	int channel,soundsubcarrier,soundenable,finetune;
 
 public:
 	eRFmod();
@@ -20,17 +18,12 @@ public:
 
 	static eRFmod *getInstance();
 
-	int setSFD(int freq);
-	int setPS(int ratio);
-	int setSO(int SO);
-	int setAUX(int AUX);
-	int setSYSL(int SYSL);
-	int setPWC(int PWC);
-	int setTPEN(int TPEN);
-	int setOSC(int OSC);
-	int setATT(int ATT);
-	int setDivider(int DIV);
-	
-	int setRFmod(void);
+	int save();
+
+	int setChannel(int channel);
+	int setSoundSubCarrier(int val);
+	int setSoundEnable(int val);
+	int setFinetune(int val);
+	int setTestPattern(int val);
 };
 #endif

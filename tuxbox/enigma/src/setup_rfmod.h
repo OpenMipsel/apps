@@ -30,7 +30,7 @@ private:
 	void Channel_selected(eListBoxEntryText* entry);
 	void FineTune_selected(eListBoxEntryText* entry);
 
-	int SFD,SO,DIV;
+	int chan,soundenable,ssc,finetune;
 
 public:
 	eZapRFmodSetup();
