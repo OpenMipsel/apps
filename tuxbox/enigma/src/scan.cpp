@@ -274,7 +274,7 @@ void tsAutomatic::start()
 	} else
 	{
 		tpPacket *pkt=(tpPacket*)(l_network->getCurrent() -> getKey());
-		for (std::list<eTransponder>::iterator i(pkt->possibleTransponders.begin()); i != pkt->possibleTransponders.end(); ++i)
+		for (std::list<eTransponder>::iterator i(current_tp); i != pkt->possibleTransponders.end(); ++i)
 		{
 			if(snocircular)
 				i->satellite.polarisation&=1;   // CEDR
@@ -380,6 +380,9 @@ int tsAutomatic::nextTransponder(int next)
 
 	if (current_tp == last_tp)
 		return 1;
+
+	if(c_nocircular->isChecked())
+		current_tp->satellite.polarisation&=1;   // CEDR
 
 	return current_tp->tune();
 }

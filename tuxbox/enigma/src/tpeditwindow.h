@@ -4,8 +4,12 @@
 #include <lib/gui/listbox.h>
 
 class eButton;
+class eCheckbox;
+class eNumber;
+class eTextInputField;
 class eTransponder;
 class eTransponderWidget;
+class tpPacket;
 
 class eListBoxEntryTransponder: public eListBoxEntry
 {
@@ -45,6 +49,18 @@ class eTPEditDialog: public eWindow
 	void savePressed();
 public:
 	eTPEditDialog( eTransponder *tp );
+};
+
+class eSatEditDialog: public eWindow
+{
+	eTextInputField *name;
+	eNumber *OrbitalPos;
+	eCheckbox *skipKnowNit, *useBAT, *useONIT, *doNetworkSearch;
+	eButton *save, *cancel;
+	eTransponder *tp;
+	void savePressed();
+public:
+	eSatEditDialog( tpPacket *tp );
 };
 
 #endif // __SRC_TPEDITWINDOW_H_
