@@ -2,51 +2,11 @@
  *                      <<< TuxTxt - Teletext Plugin >>>                      *
  *                                                                            *
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
- *----------------------------------------------------------------------------*
- * History                                                                    *
- *                                                                            *
- *    V1.4x: fixes, add separated graphics & national subsets                 *
- *  x V1.42: follow v4l2 api changes by jolt                                  *
- *  x V1.41: new pig api by jolt                                              *
- *    V1.40: add color setup, use fontcaching                                 *
- *  x V1.39: ported to dvb api v3 by obi                                      *
- *    V1.38: some mods & fixes                                                *
- *    V1.37: fixing includes by woglinde                                      *
- *    V1.36: fix lcd-support                                                  *
- *    V1.35: add lcd-support                                                  *
- *    V1.34: add infoline for pagecatching                                    *
- *    V1.33: fix service-switch by wjoost                                     *
- *    V1.32: fix 16:9/4:3 (wss override)                                      *
- *    V1.31: damned infobar                                                   *
- *    V1.30: change infobar, fix servicescan (segfault on RTL Shop)           *
- *    V1.29: infobar improvements by AlexW                                    *
- *    V1.28: use devfs device names by obi                                    *
- *    V1.27: show cache-status on lcd                                         *
- *    V1.26: ups, forgot this one                                             *
- *    V1.25: fixed colors (color 0 transparent)                               *
- *    V1.2x: some mods by Homar                                               *
- *    V1.22: small zoom-fix                                                   *
- *    V1.21: cleanup                                                          *
- *    V1.20: show servicename instead of pid                                  *
- *    V1.19: added configmenu                                                 *
- *    V1.18: hide navbar in newsflash/subtitle mode, workaround for gtx-pig   *
- *    V1.17: some mods by AlexW                                               *
- *    V1.16: colorkeys fixed                                                  *
- *    V1.15: added colorkeys                                                  *
- *    V1.14: use videoformat-settings                                         *
- *    V1.13: some fixes                                                       *
- *    V1.12: added zoom, removed +/-10                                        *
- *    V1.11: added pagecatching, use 16:9 for text&picture mode               *
- *    V1.10: added conceal/hold mosaics/release mosaics                       *
- *    V1.09: enx fixed, subpage zapping fixed, tvmode reactivated             *
- *    V1.08: zap subpages, text&picture mode, subtitle fixed                  *
- *    V1.07: speedup?, neutrino look ;)                                       *
- *    V1.06: added transparency mode                                          *
- *    V1.05: added newsflash/subtitle support                                 *
- *    V1.04: skip not received pages on +/-10, some mods                      *
- *    V1.03: segfault fixed                                                   *
- *    V1.02: made it work under enigma by trh                                 *
- *    V1.01: added tuxtxt to cvs                                              *
+ ******************************************************************************
+ * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.4  2003/02/14 20:14:39  lazyt
+ * remove history
+ *
  ******************************************************************************/
 
 #include "tuxtxt.h"
@@ -59,7 +19,7 @@ void plugin_exec(PluginParam *par)
 {
 	//show versioninfo
 
-		printf("\nTuxTxt 1.4x - Copyright (c) Thomas \"LazyT\" Loewe and the TuxBox-Team\n\n");
+		printf("TuxTxt $Revision: 1.37.2.4 $\n");
 
 	//get params
 
