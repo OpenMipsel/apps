@@ -158,7 +158,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 			eServiceInterface::getInstance()->removeRef(service);
 		}
 
-		if (!nopmt) // if not a dvb service, don't even try to search a PAT, PMT etc.
+		if (!nopmt && service.getServiceID().get()) // if not a dvb service, don't even try to search a PAT, PMT etc.
 			dvb.tPAT.start(new PAT());
 
 		if (tdt)
@@ -174,7 +174,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		CONNECT(tdt->tableReady, eDVBServiceController::TDTready);
 		tdt->start();
 
-		if (nopmt)
+		if (nopmt || ( service.path.size() && !service.getServiceID().get() ) )
 		{
 			dvb.tEIT.start(new EIT(EIT::typeNowNext, service.getServiceID().get(), EIT::tsActual));
 			service_state=0;
@@ -185,6 +185,7 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		}
 
 		dvb.tSDT.start(new SDT());
+
 		switch (service.getServiceType())
 		{
 		case 1:	// digital television service

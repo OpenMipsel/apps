@@ -749,7 +749,6 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 			__u8 *descriptor=packet+0x13;
 			int len=descriptor[1];
 			dvb=new eServiceDVB(eServiceID((packet[0xf]<<8)|packet[0x10]), l.c_str());
-			dvb->dxflags |= eServiceDVB::dxNoPMT;
 			len-=6;
 			descriptor+=2+6; // skip tag, len, ENIGMA
 			for (int i=0; i<len; i+=descriptor[i+1]+2)

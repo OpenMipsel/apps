@@ -329,10 +329,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, void *cmds, int newPosition,
 		ioctl(secfd, SEC_SEND_SEQUENCE, &seq);  // then repeat the cmd
 	}
 	if ( lastLNB != lnb )
-	{
-		lastLNB = lnb;
 		usleep( 1000000 ); // wait 1sek
-	}
 	else
 		usleep( 100000 ); // wait 100ms
 
@@ -364,6 +361,7 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, void *cmds, int newPosition,
 
 int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat, int DeltaA, int newPos, eLNB *lnb )
 {
+	int ret=0;
 //	eDebug("RotorUseInputPower");
 	secCommand *commands = (secCommand*) cmds;
 	int idlePowerInput=0;
@@ -391,7 +389,8 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	if ( ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 	{
 		perror("SEC_SEND_SEQUENCE");
-		return -1;
+		::close(fp);
+		return -2;
 	}
 	else if ( SeqRepeat )   // Sequence Repeat selected ?
 	{
@@ -400,10 +399,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	}
 
 	if ( lastLNB != lnb )
-	{
-		lastLNB = lnb;
 		usleep( 1000000 ); // wait 1sek
-	}
 	else
 		usleep( 100000 ); // wait 100ms
 
@@ -411,6 +407,7 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &idlePowerInput )<0)
 	{
 		eDebug("FP_IOCTL_GET_LNB_CURRENT sucks.\n");
+		::close(fp);
 		return -1;
 	}
 //	eDebug("idle power input = %dmA", idlePowerInput );
@@ -425,7 +422,8 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 	if ( ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 	{
 		perror("SEC_SEND_SEQUENCE");
-		return -1;
+		::close(fp);
+		return -2;
 	}
 //	eDebug("Rotor Cmd is sent");
 
@@ -438,7 +436,8 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 		if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &runningPowerInput)<0)
 		{
 			eDebug("FP_IOCTL_GET_LNB_CURRENT sucks.\n");
-			return 2;
+			::close(fp);
+			return -1;
 		}
 //		eDebug("(%d) %d mA\n", cnt, runningPowerInput);
 //		cnt++;
@@ -455,9 +454,10 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 
 		if ( timeout <= time(0) )   // timeout
 		{
-//			eDebug("rotor has timeoutet :( ");
-			/* emit */ rotorTimeout();                                
-			break;
+			eDebug("rotor has timeoutet :( ");
+			/* emit */ rotorTimeout();
+			::close(fp);
+			return -3;
 		}
 	}
 
@@ -471,10 +471,11 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 			if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &runningPowerInput)<0)
 			{
 				printf("FP_IOCTL_GET_LNB_CURRENT sucks.\n");
-				return 2;
+				::close(fp);
+				return -1;
 			}
-//				eDebug("(%d) %d mA", cnt, runningPowerInput);
-//				cnt++;
+//			eDebug("(%d) %d mA", cnt, runningPowerInput);
+//			cnt++;
 
 			if ( abs( idlePowerInput-runningPowerInput ) > DeltaA ) // rotor stoped ?
 				usleep(50000);  // not... then wait 50ms
@@ -488,15 +489,14 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 			if ( timeout <= time(0) ) // Rotor has timouted
 			{
 //				eDebug("Rotor timeouted :-(");
-				/* emit */ rotorTimeout();                      
+				/* emit */ rotorTimeout();
+				ret = -3;
 				break;
 			}
 		}
-
 	}
 	::close(fp);
-
-	return 0;
+	return ret;
 }
 
 double Radians( double number )
@@ -970,6 +970,8 @@ int eFrontend::tune(eTransponder *trans,
 		lastcsw = csw;
 		lastucsw = ucsw;
 		lastToneBurst = ToneBurst;
+		lastLNB = lnb;  /* important.. for the right timeout
+		 between normal diseqc cmd and rotor cmd */
 
 		// delete allocated memory...
 		delete [] commands;
