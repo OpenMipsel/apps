@@ -452,6 +452,7 @@ void eSatelliteConfigurationManager::createControlElements()
 
 void eSatelliteConfigurationManager::lnbSelected(eButton* who)
 {
+	eDebug("lnb selected");
 	eLNBSetup sel( getSat4LnbButton(who), LCDTitle, LCDElement );
 
 	hide();
@@ -733,25 +734,26 @@ int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
 eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	:sat(sat)
 {
+	eDebug("bla1");
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eLNBSetup"))
 		eFatal("skin load of \"eLNBSetup\" failed");
-
+	eDebug("bla2");
 	DiSEqCPage = new eDiSEqCPage( this, sat );
 	DiSEqCPage->setLCD( lcdTitle, lcdElement );
 	LNBPage = new eLNBPage( this, sat );
 	LNBPage->setLCD( lcdTitle, lcdElement );
-    
+	eDebug("bla3");    
 	DiSEqCPage->hide();
 	LNBPage->hide();
 	mp.addPage(LNBPage);
 	mp.addPage(DiSEqCPage);
-
+	eDebug("bla4");
 // here we can not use the Makro CONNECT ... slot (*this, .... is here not okay..
 	LNBPage->lnb_list->selchanged.connect( slot( *LNBPage, &eLNBPage::lnbChanged) );
 	LNBPage->lnb_list->selchanged.connect( slot( *DiSEqCPage, &eDiSEqCPage::lnbChanged) );
-   
-	CONNECT( DiSEqCPage->next->selected, eLNBSetup::onNext );
+	eDebug("bla5");   
+//	CONNECT( DiSEqCPage->next->selected, eLNBSetup::onNext );
 	CONNECT( LNBPage->next->selected, eLNBSetup::onNext );
 	CONNECT( DiSEqCPage->prev->selected, eLNBSetup::onPrev );  
 	CONNECT( LNBPage->save->selected, eLNBSetup::onSave );
@@ -1035,7 +1037,7 @@ void eDiSEqCPage::DiSEqCModeChanged( eListBoxEntryText* e )
 	switch( (int) e->getKey() )
 	{
 		case eDiSEqC::V1_2:
-			next->show();
+//			next->show();
 		case eDiSEqC::V1_1:
 			lDiSEqCRepeats->show();
 			DiSEqCRepeats->show();
@@ -1060,7 +1062,7 @@ void eDiSEqCPage::DiSEqCModeChanged( eListBoxEntryText* e )
 			uncommitted->hide();
 			uncommitted_gap->hide();
 		case eDiSEqC::V1_1:
-			next->hide();
+//			next->hide();
 		case eDiSEqC::V1_2: // hide nothing
 		break;
   }

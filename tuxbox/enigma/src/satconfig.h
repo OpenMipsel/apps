@@ -115,7 +115,7 @@ class eDiSEqCPage : public eWidget
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
 	eButton *cancel; // close the window without apply changes
 	eButton *prev; // shows the LNB Configuration Dialog
-	eButton *next; // shows the Rotor Setup (for non GotoXX Rotors)
+//	eButton *next; // shows the Rotor Setup (for non GotoXX Rotors)
 	eLabel *lDiSEqCRepeats, *lDiSEqCParam;
 	eStatusBar *statusbar;
          
