@@ -3,6 +3,7 @@
 #include <enigma_main.h>
 #include <lib/system/init.h>
 #include <lib/dvb/dvbservice.h>
+#include <lib/dvb/servicestructure.h>
 #include <lib/gui/emessage.h>
 #include <lib/gdi/font.h>
 
@@ -29,7 +30,6 @@ void eTimerManager::waitClock()
 {
 	if (eDVB::getInstance()->time_difference)	
 	{
-		conn.disconnect();
 		eDebug("[eTimerManager] timeUpdated");	
 		nextAction = setNextEvent;
 		actionTimer.start(0, true);
@@ -86,10 +86,12 @@ void eTimerManager::actionHandler()
 		
 		case startCountdown:
 			eDebug("[eTimerManager] startCountdown");
-			eZapMain::getInstance()->setState( eZapMain::stateInTimerMode );
+			eZapMain::getInstance()->toggleTimerMode();
 			// now in eZapMain the RemoteControl should be handled for TimerMode...
 			// an service change now stop the Running Event and set it to userAborted
-	  	conn = CONNECT( eDVB::getInstance()->leaveService, eTimerManager::leaveService );
+			if ( conn.connected() )
+				conn.disconnect();
+			conn = CONNECT( eDVB::getInstance()->leaveService, eTimerManager::leaveService );
 			if ( nextStartingEvent->type & ePlaylistEntry::typeSmartTimer )
 			{
 				conn2 = CONNECT( eDVB::getInstance()->tEIT.tableReady, eTimerManager::EITready );
@@ -117,7 +119,7 @@ void eTimerManager::actionHandler()
 				break;	
 
 				case ePlaylistEntry::RecTimerEntry:
-					nextAction = toggleRecording;
+					nextAction = startRecording;
 					actionHandler();
 				break;
 			}
@@ -128,16 +130,14 @@ void eTimerManager::actionHandler()
 			}
 		break;
 
-  	case pauseEvent:
+		case pauseEvent:
 			eDebug("[eTimerManager] pauseEvent");
 			if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 			{
-			 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();	
-				if (!handler)
-					eFatal("no service Handler");
 				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
-				nextStartingEvent->type |= ePlaylistEntry::statePaused;	
-				handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStop));		
+				nextStartingEvent->type |= ePlaylistEntry::statePaused;
+				nextAction = pauseRecording;
+				actionHandler();
 			}
 		break;
 
@@ -156,12 +156,13 @@ void eTimerManager::actionHandler()
 			eDebug("[eTimerManager] stopEvent");
 			if( nextStartingEvent->type & ePlaylistEntry::stateRunning )
 			{
-    		nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
+				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
 				if ( !(nextStartingEvent->type & ePlaylistEntry::stateError) )
-					nextStartingEvent->type |= ePlaylistEntry::stateFinished;  // when no ErrorCode is set the we set the state to finished
+					nextStartingEvent->type |= ePlaylistEntry::stateFinished;
+          // when no ErrorCode is set the we set the state to finished
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 				{
-					nextAction=toggleRecording;
+					nextAction=stopRecording;
 					actionHandler();
 				}
 			}
@@ -228,44 +229,77 @@ void eTimerManager::actionHandler()
 		}
 		break;
 
-		case toggleRecording:
-			eZapMain::getInstance()->recordDVR(0);
-		break;
+		case startRecording:
+//			if (nextStartingEvent != timerlist->list.end())
+			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
+			{
+				eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->service.descr);
+			}
+			else  // insert lirc ( VCR start ) here
+			{
+
+			}
+			break;
+
+		case stopRecording:
+			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
+			{
+				eZapMain::getInstance()->toggleTimerMode();        
+				eZapMain::getInstance()->recordDVR(0, 0);
+			}
+			else  // insert lirc ( VCR stop ) here
+			{
+
+			}
+			break;
 
 		case restartRecording:
 		{
-		 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();	
-			if (!handler)
-				eFatal("no service Handler");
-			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStart));
+			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
+			{
+				eServiceHandler *handler=eServiceInterface::getInstance()->getService();
+				if (!handler)
+					eFatal("no service Handler");
+				handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStart));
+			}
+			else // insert lirc ( VCR START )
+			{
+        
+			}
 			eDebug("ok, recording...");
 		}
 		break;	
 
 		case pauseRecording:
 		{
-		 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();	
-			if (!handler)
-				eFatal("no service Handler");
-			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStop));		
+			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
+			{
+				eServiceHandler *handler=eServiceInterface::getInstance()->getService();
+				if (!handler)
+					eFatal("no service Handler");
+				handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStop));
+			}
+			else // insert lirc ( VCR PAUSE )
+			{
+
+			}
 		}
 
 		default:
 			eDebug("unhandled timer action");
 	}
-}
+}                                                                                                   
 
 void eTimerManager::serviceChanged( const eServiceReferenceDVB& ref )
 {
 	eDebug("[eTimerManager] serviceChanged");
 	if ( nextStartingEvent->service == (eServiceReference&)ref )
 	{
-		conn.disconnect();
 		actionTimer.stop(); // stop zapTimeout
 		nextStartingEvent->type &= ~(ePlaylistEntry::stateError|ePlaylistEntry::errorZapFailed);
 		nextStartingEvent->type |= ePlaylistEntry::stateWaiting;
 		nextAction=startCountdown;
-		actionHandler();
+		actionTimer.start(0,true);
 	}
 }
 
@@ -362,40 +396,18 @@ ePlaylistEntry* eTimerManager::findEvent( eServiceReference *service, EITEvent *
 {
 	for ( std::list<ePlaylistEntry>::iterator i( timerlist->list.begin() ); i != timerlist->list.end(); i++)
 		if ( ( evt->event_id != -1 && i->current_position == evt->event_id ) ||
-			   ( *service == i->service && evt->start_time == i->time_begin ) )
+				 ( *service == i->service && evt->start_time == i->time_begin ) )
 			return &*i;
-	
+
 	return 0;
 }
 
 bool Overlap( time_t beginTime1, int duration1, time_t beginTime2, int duration2 )
 {
-	time_t endTime1 = beginTime1 + duration1,
-				 endTime2 = beginTime2 + duration2;
+	eRect movie1( ePoint(beginTime1, 0), eSize( duration1, 10) );
+	eRect movie2( ePoint(beginTime2, 0), eSize( duration2, 10) );
 
-//	eDebug("Test Overlapp beginTime1 = %d, endTime1 = %d, beginTime2 = %d, endTime2 = %d", beginTime1, endTime1, beginTime2, endTime2);
-
-	if ( (beginTime2 >= beginTime1) && (beginTime2 <= endTime1) && (endTime2 >= endTime1) )
-	{
-//		eDebug("overlap 1");
-		return true;
-	}
-	else if ( (beginTime2 >= beginTime1) && (beginTime2 <= endTime1) && (endTime2 <= endTime1) )
-	{
-//		eDebug("overlap 2");
-		return true;
-	}
-	else if ( (beginTime2 < beginTime1) && (endTime2 >= beginTime1) )
-	{
-//		eDebug("overlap 3");
-		return true;
-	}
-	else if ( (beginTime2 <= beginTime1) && (endTime2 >= endTime1) )
-	{
-//		eDebug("overlap 4");
-		return true;
-	}
-	return false;
+	return movie1.intersects(movie2);
 }
 
 bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry& entry, int type )
@@ -411,19 +423,19 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 				str2 = _("Delete event from timerlist");
 				str3 = _("Really delete this event?");
 			}
-     	else if (type == update)
+			else if (type == update)
 			{
 				str1 = _("You would to update the running event.. this stops the timer mode (recording)!");
 				str2 = _("Update event in timerlist");
 				str3 = _("Really update this event?");
 			}
-	 		if ( &(*nextStartingEvent) == &entry )
+			if ( &(*nextStartingEvent) == &entry && entry.type & ePlaylistEntry::stateRunning  )
 			{
 				eMessageBox box(str1, str2, eMessageBox::btOK|eMessageBox::iconWarning );
 				box.show();
 				box.exec();
 				box.hide();
-	  	}
+			}
 			eMessageBox box(str3, str2, eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
 			box.show();
 			int r=box.exec();
@@ -431,7 +443,7 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 			if (r == eMessageBox::btYes)
 			{
 				timerlist->list.erase(i);
-		 		if ( &(*nextStartingEvent) == &entry )
+				if ( &(*nextStartingEvent) == &entry )
 				{
 					nextAction=stopEvent;
 					nextStartingEvent->type |= (ePlaylistEntry::stateError | ePlaylistEntry::errorUserAborted);
@@ -457,18 +469,18 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const eServiceRefere
 bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& entry )
 {
 	time_t nowTime = time(0)+eDVB::getInstance()->time_difference;
+	if ( entry.time_begin < nowTime )
+	{
+		eMessageBox box(_("This event already began.\nYou can not add this to timerlist"), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
+		sel->hide();
+		box.show();
+		box.exec();
+		box.hide();
+		sel->show();
+		return false;
+	}
 	for ( std::list<ePlaylistEntry>::iterator i( timerlist->list.begin() ); i != timerlist->list.end(); i++)
-		if ( entry.time_begin < nowTime )
-		{
-			eMessageBox box(_("This event already began.\nYou can not add this to timerlist"), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
-			sel->hide();
-			box.show();
-			box.exec();
-			box.hide();
-			sel->show();
-			return false;
-		}
-		else if ( ( entry.event_id != -1 && entry.event_id == i->event_id ) ||
+		if ( ( entry.event_id != -1 && entry.event_id == i->event_id ) ||
 			   ( entry.service == i->service && entry.time_begin == i->time_begin ) )
 		{
 			eMessageBox box(_("This event is already in the timerlist."), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
@@ -481,7 +493,7 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 		}
 		else if ( Overlap( entry.time_begin, entry.duration, i->time_begin, i->duration) )
 		{
-			eMessageBox box(_("This service can not added to the timerlist.\nThe event overlaps with another event in the timerlist\nPlease check manually the timerlist."), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
+			eMessageBox box(_("This event can not added to the timerlist.\nThe event overlaps with another event in the timerlist\nPlease check manually the timerlist."), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
 			sel->hide();
 			box.show();
 			box.exec();
@@ -530,7 +542,7 @@ int eListBoxEntryTimer::dateXSize=0;
 
 struct eTimerViewActions
 {
-  eActionMap map;
+	eActionMap map;
 	eAction removeTimerEntry;
 	eTimerViewActions():
 		map("timerView", _("timerView")),
@@ -589,12 +601,12 @@ eString eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColor coAct
 
 	if ( entry->type & ePlaylistEntry::stateFinished )
 	{
-  	int ypos = ( rect.height() - ok->y ) / 2;
+		int ypos = ( rect.height() - ok->y ) / 2;
 		rc->blit( *ok, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 	}
 	else if ( entry->type & ePlaylistEntry::stateError )
 	{
-  	int ypos = (rect.height() - failed->y) / 2;
+		int ypos = (rect.height() - failed->y) / 2;
 		rc->blit( *failed, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 	}
 	xpos+=24+10; // i think no people want to change the ok and false pixmaps....
@@ -689,30 +701,6 @@ struct addToView: public std::unary_function<ePlaylistEntry*, void>
 	}
 };
 
-struct addService: public std::unary_function<const eServiceReferenceDVB&, void>
-{
-	eComboBox* combo;
-	addService(eComboBox* combo):combo(combo)
-	{
-	}
-
-	bool operator()(const eServiceReferenceDVB& s)
-	{
-		eService *service =	eServiceInterface::getInstance()->addRef( s );
-		if (service)
-		{
-			int t = s.getServiceType();
-			if (t < 0)
-				t=0;
-			if ( t & ( 1 | 2 | 4) && (t <= 4) )
-				new eListBoxEntryText( *combo, service->service_name, (void*) &s, 0, 0, eListBoxEntryText::ptr );
-
-			eServiceInterface::getInstance()->removeRef( s );
-		}
-		return 0;
-	}
-};
-
 struct findService: public std::unary_function<const eListBoxEntryText&, void>
 {
 	eServiceReference service;
@@ -733,15 +721,6 @@ struct findService: public std::unary_function<const eListBoxEntryText&, void>
 	}
 };
 
-void eTimerView::selectServiceInCombo( const eServiceReference& ref )
-{
-	const void *tmp;
-	if ( services->forEachEntry( findService( ref, tmp ) ) == eListBoxBase::OK )
-		services->setCurrent( (void*) tmp );
-	else
-		services->setCurrent( 0 );
-}
-
 void eTimerView::fillTimerList()
 {
 	events->beginAtomic();
@@ -758,12 +737,15 @@ const char *monthStr[12] = { _("January"), _("February"), _("March"),
 													_("November"), _("December") };
 const char *dayStr[7] = { _("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"),
 											 _("Thursday"), _("Friday"), _("Saturday") };
+const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"),
+											 _("Thu"), _("Fri"), _("Sat") };
 
 int weekday (int d, int m, int y)
 {
-  static char table[13] = {0,0,3,2,5,0,3,5,1,4,6,2,4};
-  if (m<3) --y;
-  return (y+y/4-y/100+y/400+table[m]+d)%7;
+	static char table[13] = {0,0,3,2,5,0,3,5,1,4,6,2,4};
+	if (m<3)
+		--y;
+	return (y+y/4-y/100+y/400+table[m]+d)%7;
 }
 
 eTimerView::eTimerView( ePlaylistEntry* e)
@@ -804,8 +786,9 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	type = new eComboBox( this );
 	type->setName("type");
 
-	services = new eComboBox( this );
-	services->setName("services");
+	bSelectService = new eButton( this );
+	bSelectService->setName("select_service");
+	CONNECT( bSelectService->selected, eTimerView::showServiceSelector );
 
 	bclose = new eButton( this );
 	bclose->setName("close");
@@ -836,7 +819,7 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	CONNECT(eyear->selchanged_id, eTimerView::comboBoxClosed);
 	CONNECT(emonth->selchanged_id, eTimerView::comboBoxClosed);
 	CONNECT(eday->selchanged_id, eTimerView::comboBoxClosed);
-	CONNECT(services->selchanged_id, eTimerView::comboBoxClosed);
+	CONNECT(eWidget::focusChanged, eTimerView::focusChanged);
 
 	fillTimerList();
 
@@ -863,10 +846,9 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	for ( int i=0; i<=11; i++ )
 		new eListBoxEntryText( *emonth, monthStr[i], (void*) i );
 
-	eDVB::getInstance()->settings->getTransponders()->forEachServiceReference( addService( services ) );
-
 	new eListBoxEntryText( *type, _("switch"), (void*) ePlaylistEntry::SwitchTimerEntry );
-	new eListBoxEntryText( *type, _("record DVR"), (void*) ePlaylistEntry::RecTimerEntry );
+	new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
+//	new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );  
 
 	if ( events->getCount() )
 		selChanged( events->getCurrent() );
@@ -889,8 +871,8 @@ void eTimerView::updatePressed()
 		if ( events->getCount() && events->getCurrent()->entry )
 		{
 			time_t oldEventBegin = events->getCurrent()->entry->time_begin;
-	  	int oldEventDuration = events->getCurrent()->entry->duration;
-			if ( *((eServiceReference*)services->getCurrent()->getKey()) == events->getCurrent()->entry->service
+			int oldEventDuration = events->getCurrent()->entry->duration;
+			if ( tmpService == events->getCurrent()->entry->service
 				 	&& Overlap( newEventBegin, newEventDuration, oldEventBegin, oldEventDuration ) )
 			{ // we have a description...
 				descr = events->getCurrent()->entry->service.descr;
@@ -900,9 +882,9 @@ void eTimerView::updatePressed()
 				evt.event_id = -1;
 			eTimerManager::getInstance()->removeEventFromTimerList( this, *events->getCurrent()->entry, eTimerManager::update );
 		}
-		if ( eTimerManager::getInstance()->addEventToTimerList( this, (eServiceReference*)services->getCurrent()->getKey(), &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting ) )
+		if ( eTimerManager::getInstance()->addEventToTimerList( this, &tmpService, &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting ) )
 		{
-			ePlaylistEntry *entry = eTimerManager::getInstance()->findEvent( (eServiceReference*)services->getCurrent()->getKey(), &evt);
+			ePlaylistEntry *entry = eTimerManager::getInstance()->findEvent( &tmpService, &evt);
 			if (descr)
 				entry->service.descr=descr;
 			events->beginAtomic();
@@ -930,14 +912,14 @@ void eTimerView::erasePressed()
 
 bool eTimerView::getData( time_t &bTime, int &duration )
 {
-  beginTime.tm_year = (int)byear->getCurrent()->getKey();
+	beginTime.tm_year = (int)byear->getCurrent()->getKey();
 	beginTime.tm_mon = (int)bmonth->getCurrent()->getKey();
 	beginTime.tm_mday = (int)bday->getCurrent()->getKey();
 	beginTime.tm_hour = btime->getNumber(0);
 	beginTime.tm_min = btime->getNumber(1);
 	beginTime.tm_sec = 0;
 	bTime = mktime( &beginTime );
-  endTime.tm_year = (int)eyear->getCurrent()->getKey();
+	endTime.tm_year = (int)eyear->getCurrent()->getKey();
 	endTime.tm_mon = (int)emonth->getCurrent()->getKey();
 	endTime.tm_mday = (int)eday->getCurrent()->getKey();
 	endTime.tm_hour = etime->getNumber(0);
@@ -962,9 +944,9 @@ void eTimerView::addPressed()
 		evt.event_id = -1;
 		evt.running_status = -1;
 		evt.free_CA_mode = -1;
-		eTimerManager::getInstance()->addEventToTimerList( this, (eServiceReference*)services->getCurrent()->getKey(), &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting );
+		eTimerManager::getInstance()->addEventToTimerList( this, &tmpService, &evt, ((int)type->getCurrent()->getKey()) | ePlaylistEntry::stateWaiting );
 		if (descr)
-			eTimerManager::getInstance()->findEvent( (eServiceReference*)services->getCurrent()->getKey(), &evt)->service.descr=descr;
+			eTimerManager::getInstance()->findEvent( &tmpService, &evt)->service.descr=descr;
 		fillTimerList();
 	}
 	else
@@ -986,22 +968,39 @@ void eTimerView::selChanged( eListBoxEntryTimer *entry )
 		time_t tmp = entry->entry->time_begin + entry->entry->duration;
 		endTime = *localtime( &tmp );
 		updateDateTime( beginTime, endTime );
-		type->setCurrent( (void*) ( entry->entry->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry) ) );
-		selectServiceInCombo( entry->entry->service );
+		type->setCurrent( (void*) ( entry->entry->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::recVCR) ) );
+		eService *service = eServiceInterface::getInstance()->addRef( entry->entry->service );
+		if (service)
+		{
+			tmpService = entry->entry->service;
+			bSelectService->setText( service->service_name );
+			eServiceInterface::getInstance()->removeRef( eServiceInterface::getInstance()->service );
+		}
 	}
 	else
 	{
 		time_t now = time(0)+eDVB::getInstance()->time_difference;
 		tm tmp = *localtime( &now );
 		updateDateTime( tmp, tmp );
-		type->setCurrent( (void*)ePlaylistEntry::SwitchTimerEntry );
+		type->setCurrent( (void*)(ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 
 		eServiceReference ref = eServiceInterface::getInstance()->service;
-	
+
 		if (ref.type == eServiceReference::idDVB)
-			selectServiceInCombo( ref );
-		else
-			services->setCurrent(0);
+		{
+			eService *service = eServiceInterface::getInstance()->addRef( eServiceInterface::getInstance()->service );
+			if (service)
+			{
+				tmpService = ref;
+				bSelectService->setText( service->service_name );
+				eServiceInterface::getInstance()->removeRef( eServiceInterface::getInstance()->service );
+			}
+		}
+		else  // we have no service
+		{
+			bSelectService->setText( _("choose service") );
+			tmpService = eServiceReference();
+		}
 	}
 }
 
@@ -1019,8 +1018,8 @@ void eTimerView::updateDateTime( const tm& beginTime, const tm& endTime )
 		etime->setNumber( 0, endTime.tm_hour );
 		etime->setNumber( 1, endTime.tm_min );
 
-		eyear->setCurrent( (void*) beginTime.tm_year );
-		emonth->setCurrent( (void*) beginTime.tm_mon );
+		eyear->setCurrent( (void*) endTime.tm_year );
+		emonth->setCurrent( (void*) endTime.tm_mon );
 }
 
 void eTimerView::updateDay( eComboBox* dayCombo, int year, int month, int day )
@@ -1031,9 +1030,14 @@ void eTimerView::updateDay( eComboBox* dayCombo, int year, int month, int day )
 	days += (days == 28 && __isleap( year ) );
 	for ( int i = wday; i < wday+days; i++ )
 		new eListBoxEntryText( *dayCombo, eString().sprintf("%s, %02d", dayStr[i%7], i-wday+1), (void*) (i-wday+1) );
-	dayCombo->setCurrent( (void*) day );
+	dayCombo->setCurrent( day>days ? 0 : (void*) day );
 }
 
+void eTimerView::focusChanged( const eWidget *focus)
+{
+	if ( byear && focus && focus == events && !events->getCount())
+		setFocus( byear );
+}
 
 int eTimerView::eventHandler(const eWidgetEvent &event)
 {
@@ -1086,8 +1090,6 @@ void eTimerView::comboBoxClosed( eComboBox *combo,  eListBoxEntryText* )
 			updateDay( bday, (int) byear->getCurrent()->getKey()+1900, (int) bmonth->getCurrent()->getKey()+1, (int) bday->getCurrent()->getKey() );
 	else if ( combo == emonth || combo == eyear )
 			updateDay( eday, (int) eyear->getCurrent()->getKey()+1900, (int) emonth->getCurrent()->getKey()+1, (int) eday->getCurrent()->getKey() );
-
-	events->invalidate();
 }
 
 void eTimerView::invalidateEntry( eListBoxEntryTimer *e)
@@ -1100,4 +1102,31 @@ void eTimerView::invalidateEntry( eListBoxEntryTimer *e)
 void eTimerView::entrySelected(eListBoxEntryTimer *entry)
 {
 	setFocus( byear );
+}
+
+void eTimerView::showServiceSelector()
+{
+	eServiceSelector sel;
+	sel.setLCD(LCDTitle, LCDElement);
+	hide();
+	sel.setPath(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio),eServiceReference() );
+	sel.setStyle(eServiceSelector::styleSingleColumn);
+
+	if ( tmpService != eServiceReference() )
+		sel.selectServiceRecursive( tmpService );
+    
+	const eServiceReference *ref = sel.choose(-1);
+
+	if (ref)
+	{
+		if (tmpService != *ref)
+		{
+			tmpService = *ref;
+			eService *service =	eServiceInterface::getInstance()->addRef( tmpService );
+			bSelectService->setText(service->service_name);
+			eServiceInterface::getInstance()->removeRef( tmpService );
+		}
+	}
+	show();
+	setFocus(bSelectService);
 }

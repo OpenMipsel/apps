@@ -187,7 +187,7 @@ void eWidget::redraw(eRect area)		// area bezieht sich nicht auf die clientarea
 					cr.moveBy(-It->position.x(), -It->position.y());
 					It->redraw(cr);
 				}
-				It++;				
+				It++;
 			}
 		}
 	}
@@ -212,6 +212,7 @@ void eWidget::invalidate(eRect area, int force)
 		if (!w->parent)	// spaetestens fuers TLW sollte backgroundcolor aber non-transparent sein
 			break;
 		area.moveBy(w->position.x(), w->position.y());
+
 		w=w->parent;
 		area.moveBy(w->clientrect.x(), w->clientrect.y());
 	}
@@ -363,6 +364,9 @@ void eWidget::findAction(eActionPrioritySet &prio, const eRCKey &key, eWidget *c
 {
 	for (actionMapList::iterator i = actionmaps.begin(); i != actionmaps.end(); ++i)
 		(*i)->findAction(prio, key, context);
+		
+	if (focus && focus != this)
+		focus->findAction(prio, key, context);
 }
 
 int eWidget::eventFilter(const eWidgetEvent &event)
@@ -440,7 +444,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 	case eWidgetEvent::changedForegroundColor:
 	case eWidgetEvent::changedBackgroundColor:
 	case eWidgetEvent::changedPosition:
-	case eWidgetEvent::changedPixmap:
+  case eWidgetEvent::changedPixmap:
 		invalidate();
 		break;
 	default:
@@ -728,8 +732,11 @@ void eWidget::setForegroundColor(const gColor& color)
 
 void eWidget::setPixmap(gPixmap *pmap)
 {
-	pixmap=pmap;
-	event(eWidgetEvent(eWidgetEvent::changedPixmap));
+  if ( pixmap != pmap )
+  {  
+    pixmap=pmap;
+  	event(eWidgetEvent(eWidgetEvent::changedPixmap));
+  }
 }
 
 void eWidget::setTarget(gDC *newtarget)

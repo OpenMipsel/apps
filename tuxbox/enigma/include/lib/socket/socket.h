@@ -17,22 +17,24 @@
 class eSocket: public Object
 {
 	int mystate;
+	int issocket;
 private:
 	int socketdesc;
 	eIOBuffer readbuffer;
 	eIOBuffer writebuffer;
 	int writebusy;
+	sockaddr_in  serv_addr;
 protected:
 	eSocketNotifier	*rsn;
 	virtual void notifier(int);
 public:
 	eSocket();
-	eSocket(int socket);
+	eSocket(int socket, int issocket);
 	~eSocket();
 	int connectToHost(eString hostname, int port);
 	int getDescriptor();
 	int writeBlock(const char *data, unsigned int len);
-	int setSocket(int blub);
+	int setSocket(int socketfd, int issocket);
 	int bytesToWrite();
 	int readBlock(char *data, unsigned int maxlen);
 	int bytesAvailable();

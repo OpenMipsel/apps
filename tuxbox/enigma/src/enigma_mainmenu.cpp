@@ -6,6 +6,7 @@
 #include <enigma_info.h>
 #include <enigma_lcd.h>
 #include <enigma_vcr.h>
+#include <timer.h>
 
 #include <lib/gui/eskin.h>
 #include <lib/driver/eavswitch.h>
@@ -13,8 +14,6 @@
 #include <lib/dvb/epgcache.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/guiactions.h>
-
-#define MENU_ENTRIES	8
 
 void eMainMenu::setActive(int i)
 {
@@ -53,6 +52,8 @@ void eMainMenu::setActive(int i)
 	case 7:
 		description->setText(_("VCR"));
 		break;
+	case 8:
+		description->setText(_("Timer"));
 	}
 
 	if (LCDTitle)
@@ -90,7 +91,7 @@ eMainMenu::eMainMenu()
 	if (eSkin::getActive()->build(this, "eZapMainMenu"))
 		eFatal("unable to load main menu");
 	
-	char *pixmap_name[]={"tv", "radio", "file", "info", "shutdown", "setup", "games", "scart"};
+	char *pixmap_name[]={"tv", "radio", "file", "info", "shutdown", "setup", "games", "scart", "timer"};
 
 	for (int i=0; i<MENU_ENTRIES; i++)
 	{
@@ -101,6 +102,8 @@ eMainMenu::eMainMenu()
 		if (!pixmaps[i][1])
 			eFatal("error, mainmenu bug, mainmenu.%s.sel not defined", pixmap_name[i]);
 	}
+
+	setActive(active=eZapMain::getInstance()->getRealMode());		
 }
 
 void eMainMenu::sel_tv()
@@ -171,6 +174,18 @@ void eMainMenu::sel_plugins()
 	show();
 }
 
+void eMainMenu::sel_timer()
+{
+	eZapLCD *pLCD=eZapLCD::getInstance();
+	hide();
+	eTimerView setup;
+	setup.setLCD(pLCD->LCDTitle, pLCD->LCDElement);
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+
 void eMainMenu::sel_quit()
 {
 	close(1);
@@ -181,9 +196,11 @@ int eMainMenu::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 	case eWidgetEvent::willShow:
-		setActive(active=eZapMain::getInstance()->getRealMode());		
-	break;
-
+		if (LCDTitle)
+			LCDTitle->setText(_("Mainmenu"));
+		if (LCDElement)
+			LCDElement->setText( description->getText() );
+		break;
 	case eWidgetEvent::evtAction:
 		if (event.action == &i_cursorActions->left)
 		{
@@ -222,6 +239,9 @@ int eMainMenu::eventHandler(const eWidgetEvent &event)
 				break;
 			case 7:
 				sel_vcr();
+				break;
+			case 8:
+				sel_timer();
 				break;
 			}
 		} else if (event.action == &i_cursorActions->cancel)

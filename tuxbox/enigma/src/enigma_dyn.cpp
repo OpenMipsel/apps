@@ -24,10 +24,13 @@
 #include <lib/dvb/epgcache.h>
 #include <lib/system/econfig.h>
 #include <lib/gdi/fb.h>
+#include <lib/gdi/glcddc.h>
+#include <lib/gdi/gfbdc.h>
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/service.h>
 #include <lib/gui/emessage.h>
+#include <lib/gdi/epng.h>
 #include <lib/driver/eavswitch.h>
 #include <lib/dvb/service.h>
 
@@ -487,7 +490,6 @@ public:
 		iface.removeRef(e);
 
 		result+="</a></font></td></tr>\n";
-		eDebug("ok");
 		num++;
 	}
 };
@@ -502,7 +504,7 @@ static eString getWatchContent(eString mode, eString path)
 
 	int pos=0, lastpos=0, temp=0;
 
-	if((path.find(";", 0))==-1)
+	if((path.find(";", 0))==(unsigned)-1)
 		path=";"+path;
 
 	while((pos=path.find(";", lastpos))!=-1)
@@ -958,6 +960,19 @@ static eString record_on(eString request, eString dirpath, eString opt, eHTTPCon
 }
 */
 
+static eString reload_settings(eString request, eString dirpath, eString opt, eHTTPConnection *content)
+{
+	if (!eDVB::getInstance())
+		return "-no dvb\n";
+	if (eDVB::getInstance()->settings)
+	{
+		eDVB::getInstance()->settings->loadServices();
+		eDVB::getInstance()->settings->loadBouquets();
+		return "+ok\n";
+	}
+	return "-no settings to load\n";
+}
+
 #define NAVIGATOR_PATH "/cgi-bin/navigator"
 
 class eNavigatorListDirectory: public Object
@@ -1116,6 +1131,28 @@ static eString web_root(eString request, eString dirpath, eString opts, eHTTPCon
 	return result;
 }
 
+static eString screenshot(eString request, eString dirpath, eString opts, eHTTPConnection *content)
+{
+	std::map<eString,eString> opt=getRequestOptions(opts);
+	gPixmap *p=0;
+	if (opt["mode"]=="lcd")
+		p=&gLCDDC::getInstance()->getPixmap();
+	else
+		p=&gFBDC::getInstance()->getPixmap();
+	
+	if (!p)
+		return "no\n";
+	
+	if (!savePNG("/var/tmp/screenshot.png", p))
+	{
+		content->local_header["Location"]="/root/var/tmp/screenshot.png";
+		content->code=302;
+		return "ok\n";
+	}
+	
+	return "nixging\n";
+}
+
 void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 {
 	dyn_resolver->addDyn("GET", "/", web_root);
@@ -1128,6 +1165,7 @@ void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 	dyn_resolver->addDyn("GET", "/cgi-bin/audio", audio);
 	dyn_resolver->addDyn("GET", "/cgi-bin/getPMT", getPMT);
 	dyn_resolver->addDyn("GET", "/cgi-bin/message", message);
+	dyn_resolver->addDyn("GET", "/control/message", message);
 	dyn_resolver->addDyn("GET", "/cgi-bin/xmessage", xmessage);
 
 	dyn_resolver->addDyn("GET", NAVIGATOR_PATH, navigator);
@@ -1137,9 +1175,10 @@ void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 	dyn_resolver->addDyn("GET", "/cgi-bin/getcurrentepg", getcurepg);
 	dyn_resolver->addDyn("GET", "/cgi-bin/streaminfo", getsi);
 	dyn_resolver->addDyn("GET", "/channels/getcurrent", channels_getcurrent);
-
+	dyn_resolver->addDyn("GET", "/cgi-bin/reloadSettings", reload_settings);
 
 	dyn_resolver->addDyn("GET", "/control/zapto", neutrino_suck_zapto);
+	dyn_resolver->addDyn("GET", "/cgi-bin/screenshot", screenshot);
 
 /*
 	dyn_resolver->addDyn("GET", "/record/on", record_on);

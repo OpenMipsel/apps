@@ -25,6 +25,7 @@
 #include <lib/dvb/record.h>
 #include <lib/system/init.h>
 #include <lib/system/econfig.h>
+#include <lib/dvb/dvbci.h>
 
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/dvbscan.h>
@@ -61,6 +62,11 @@ eDVB::eDVB(): state(eDVBState::stateIdle)
 	if (instance)
 		eFatal("eDVB already initialized!");
 	instance=this;
+
+	DVBCI=new eDVBCI();
+	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::start));
+
+
 
 		// initialize frontend (koennte auch nochmal raus)
 	eString frontend=getInfo("fe");
@@ -130,8 +136,6 @@ eDVB::eDVB(): state(eDVBState::stateIdle)
 		// init dvb recorder
 	recorder=0;
 
-	DVBCI=new eDVBCI();
-	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::start));
 		
 	eDebug("eDVB::eDVB done.");
 }
@@ -147,6 +151,16 @@ eDVB::~eDVB()
 
 	eFrontend::close();
 	instance=0;
+}
+
+void eDVB::recMessage(int msg)
+{
+	switch (msg)
+	{
+	case eDVBRecorder::recWriteError:
+		event(eDVBEvent(eDVBEvent::eventRecordWriteError));
+		break;
+	}
 }
 
 eString eDVB::getInfo(const char *info)
@@ -233,6 +247,8 @@ void eDVB::configureNetwork()
 			if (system(buffer.c_str())>>8)
 				eDebug("'%s' failed", buffer.c_str());
 		}
+		system("killall nmbd");
+		system("/bin/nmbd -D");
 	}
 }
 
@@ -242,15 +258,28 @@ void eDVB::recBegin(const char *filename)
 		recEnd();
 	recorder=new eDVBRecorder();
 	recorder->open(filename);
-	if (Decoder::parms.apid != -1)		// todo! get pids from PMT
-		recorder->addPID(Decoder::parms.apid);
-	if (Decoder::parms.vpid != -1)
-		recorder->addPID(Decoder::parms.vpid);
-	if (Decoder::parms.tpid != -1)
-		recorder->addPID(Decoder::parms.tpid);
-	if (Decoder::parms.pcrpid != -1)
-		recorder->addPID(Decoder::parms.pcrpid);
-	recorder->addPID(0);
+	CONNECT(recorder->recMessage, eDVB::recMessage);
+	
+	PMT *pmt=getPMT();
+	if (!pmt)
+	{
+		if (Decoder::parms.apid != -1)
+			recorder->addPID(Decoder::parms.apid);
+		if (Decoder::parms.vpid != -1)
+			recorder->addPID(Decoder::parms.vpid);
+		if (Decoder::parms.tpid != -1)
+			recorder->addPID(Decoder::parms.tpid);
+		if (Decoder::parms.pcrpid != -1)
+			recorder->addPID(Decoder::parms.pcrpid);
+	} else
+	{
+		recorder->addPID(pmt->PCR_PID);
+		for (ePtrList<PMTEntry>::iterator i(pmt->streams); i != pmt->streams.end(); ++i)
+			recorder->addPID(i->elementary_PID);
+		pmt->unlock();
+	}
+	
+	recorder->addPID(0);	// PAT
 	if (Decoder::parms.pmtpid != -1)
 		recorder->addPID(Decoder::parms.pmtpid);
 }

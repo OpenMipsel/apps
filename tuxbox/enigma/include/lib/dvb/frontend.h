@@ -13,9 +13,10 @@
 #include <ost/video.h>
 
 #include <lib/base/ebase.h>
+#include <lib/base/estring.h>
 
 class eTransponder;
-class eLNB;
+class eSatellite;
 class eSwitchParameter;
 
 /**
@@ -27,22 +28,31 @@ class eFrontend: public Object
 {
 	int type;
 	int fd, secfd;
-	int lastcsw;
+
+	int lastcsw,
+			lastRotorCmd,
+			lastSmatvFreq,
+			curRotorPos;    // current Orbital Position
+      
 	enum { stateIdle, stateTuning };
 	int state;
 	eTransponder *transponder;
 	eFrontend(int type, const char *demod="/dev/dvb/card0/frontend0", const char *sec="/dev/dvb/card0/sec0");
 	static eFrontend *frontend;
-	eTimer *timer;
+	eTimer *timer, timer2;
 	int tries;
 	int tune(eTransponder *transponder, 
 			uint32_t Frequency, int polarisation,
 			uint32_t SymbolRate, CodeRate FEC_inner,
-			SpectralInversion Inversion, eLNB *lnb,
-			eSwitchParameter* switchParams, Modulation QAM);
-private:
+			SpectralInversion Inversion, eSatellite* sat, Modulation QAM);
+
 	void timeout();
+	int RotorUseTimeout(secCmdSequence& seq, int newPos );
+	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat );
 public:
+	int sendDiSEqCCmd( int addr, int cmd, eString params="", int frame=0xE0 );
+
+	Signal0<void> rotorRunning, rotorStopped, rotorTimeout;
 	Signal2<void, eTransponder*, int> tunedIn;
 	~eFrontend();
 
@@ -54,12 +64,14 @@ public:
 	static int open(int type) { if (!frontend) frontend=new eFrontend(type); if (frontend->fd<0) { close(); return frontend->fd; } return 0; }
 	static void close() { delete frontend; }
 	static eFrontend *getInstance() { return frontend; }
-	
+
 	int Type() { return type; }
 	
 	int Status();
 	int Locked() { return Status()&FE_HAS_LOCK; }
-	
+	void Reset();
+	void readInputPower();
+     	
 	uint32_t BER();
 	/**
 	 * \brief Returns the signal strength (or AGC).
@@ -86,8 +98,8 @@ public:
 			uint32_t SymbolRate, 		// symbolrate in symbols/s (e.g. 27500000)
 			uint8_t FEC_inner,			// FEC_inner according to ETSI (-1 for none, 0 for auto, but please don't use that)
 			int Inversion,					// spectral invesion on(1)/off(0)
-			eLNB &lnb,              // description in dvb.h
-			eSwitchParameter &swParams);  // description in dvb.h
+			eSatellite &sat);       // complete satellite data... diseqc.. lnb ..switch
+
 	int tune_qam(eTransponder *transponder,
 			uint32_t Frequency, 		// absolute frequency in kHz
 			uint32_t SymbolRate, 		// symbolrate in symbols/s (e.g. 6900000)

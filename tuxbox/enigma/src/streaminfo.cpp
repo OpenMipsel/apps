@@ -289,7 +289,6 @@ class siCA: public eWidget
 	eLabel *availca[2], *usedca[2];
 public:
 	siCA(eWidget *parent);
-	void redrawWidget();
 };
 
 siCA::siCA(eWidget *parent): eWidget(parent)
@@ -333,7 +332,7 @@ siCA::siCA(eWidget *parent): eWidget(parent)
 	int y=numsys*fs+fs*2+20;
 
 	usedca[0]=new eLabel(this);
-	usedca[0]->setText(_("by it uses:"));
+	usedca[0]->setText(_("in use:"));
 	usedca[0]->move(ePoint(10, y));
 	usedca[0]->resize(eSize(420, fs));
 
@@ -364,13 +363,8 @@ siCA::siCA(eWidget *parent): eWidget(parent)
 	usedca[1]->resize(eSize(420, numsys*fs+fs));
 }
 
-void siCA::redrawWidget()
-{
-}
-
 eStreaminfo::eStreaminfo(int mode, decoderParameters *parms): eWindow(1), statusbar(this)
 {
-	addActionMap(&i_cursorActions->map);
 	setText(mode?"Record mode - read manual":"Streaminfo");
 	cmove(ePoint(100, 80));
 	cresize(eSize(450, 450));

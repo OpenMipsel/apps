@@ -25,13 +25,15 @@ private:
 	int base;
 	eWidget* descr;
 	eLabel* tmpDescr; // used for description Label in LCD
+  bool neg;
 protected:
 	int getActive()	{ return active; }
 	int keyDown(int key);
 	void gotFocus();
 	void lostFocus();
 public:
-	Signal1<void, int*> selected;
+  void invalidateNum();
+  Signal1<void, int*> selected;
 	Signal0<void> numberChanged;
 	eNumber(eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive=0, eWidget* descr=0, int grabfocus=1, const char* deco="eNumber" );
 	~eNumber();
@@ -45,7 +47,9 @@ public:
 		flagDrawPoints=1,
 		flagDrawBoxes=2,
 		flagFillWithZeros=4,
-		flagTime=8
+		flagTime=8,
+    flagPosNeg=16,
+    flagHideInput=32
 	};
 	void setFlags(int flags);
 	void setBase(int base);

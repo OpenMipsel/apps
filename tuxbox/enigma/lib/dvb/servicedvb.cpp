@@ -33,9 +33,13 @@ eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *ha
 	
 	slice=0;
 	struct stat s;
-	while (!stat((filename + slice ? eString().sprintf(".%03d", slice) : eString("")).c_str(), &s))
+	filelength=0;
+	while (!stat((filename + (slice ? eString().sprintf(".%03d", slice) : eString(""))).c_str(), &s))
+	{
 		filelength+=s.st_size/1880;
-
+		slice++;
+	}
+		
 	if (openFile(slice=0))
 	{
 		state=stateError;
@@ -105,6 +109,7 @@ void eDVRPlayerThread::outputReady(int what)
 	}
 	if (buffer.empty())
 	{
+		eDebug("buffer empty, state %d", state);
 		outputsn->stop();
 		if (state!=stateFileEnd)
 			state=stateBuffering;
@@ -180,8 +185,8 @@ int eDVRPlayerThread::getPosition(int real)
 {
 	eLocker l(poslock);
 	if (real)
-		return (::lseek(sourcefd, 0, SEEK_CUR)-buffer.size() / 1880) + slice*(slicesize/1880);
-	return ((::lseek(sourcefd, 0, SEEK_CUR)-buffer.size() / 1880) + slice*(slicesize/1880)) / 250;
+		return ((::lseek(sourcefd, 0, SEEK_CUR)-buffer.size()) / 1880) + slice*(slicesize/1880);
+	return (((::lseek(sourcefd, 0, SEEK_CUR)-buffer.size()) / 1880) + slice*(slicesize/1880)) / 250;
 }
 
 int eDVRPlayerThread::getLength(int real)
@@ -197,6 +202,8 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 	switch (message.type)
 	{
 	case eDVRPlayerThreadMessage::start:
+		if (!(inputsn && outputsn))
+			break;
 		if (state == stateInit)
 		{
 			state=stateBuffering;
@@ -209,6 +216,8 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 		quit();
 		break;
 	case eDVRPlayerThreadMessage::setSpeed:
+		if (!(inputsn && outputsn))
+			break;
 		speed=message.parm;
 		if (message.parm == 0)
 		{
@@ -234,6 +243,8 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 		}
 		break;
 	case eDVRPlayerThreadMessage::seekmode:
+		if (!(inputsn && outputsn))
+			break;
 		switch (message.parm)
 		{
 		case 0:
@@ -252,6 +263,8 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 	case eDVRPlayerThreadMessage::skip:
 	case eDVRPlayerThreadMessage::seekreal:
 	{
+		if (!(inputsn && outputsn))
+			break;
 		if (seekbusy)
 			break;
 		seekbusy=256*1024; // next seek only after 128k (video) data
@@ -262,7 +275,7 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 			br/=8;
 			
 			br*=message.parm;
-			offset=-buffer.size();
+			offset=-(buffer.size()+1000*1000); // account for pvr buffer
 			buffer.clear();
 			offset+=br;
 			if (message.type == eDVRPlayerThreadMessage::skip)
@@ -399,6 +412,8 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 		);
 		
 	recording=0;
+	CONNECT(messages.recv_msg, eServiceHandlerDVB::gotMessage);
+	messages.start();
 }
 
 eServiceHandlerDVB::~eServiceHandlerDVB()
@@ -415,7 +430,7 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 	if (service.type != eServiceReference::idDVB)
 		return -1;
-	int oldflags=flags;
+//	int oldflags=flags;
 	if (service.path.length())
 	{
 		decoder=new eDVRPlayerThread(service.path.c_str(), this);
@@ -426,7 +441,7 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 		decoder=0;
 		flags &= ~(flagIsSeekable|flagSupportPosition);
 	}
-	if (oldflags != flags)
+//	if (oldflags != flags)
 		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
 	if (sapi)
 		return sapi->switchService((const eServiceReferenceDVB&)service);
@@ -645,6 +660,8 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 	{
 		eString path=node.path.mid(node.path.rfind('/')+1);
 		path=path.left(path.rfind('.'));
+		if (node.descr)
+			path=node.descr;
 		if (!path)
 			path="movie";
 
@@ -678,6 +695,12 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2 ));
 			break;
+    case eServiceStructureHandler::modeTvRadio:
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));
+      cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2 ));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1) ));
+      cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2 ));
+      break;
 		case eServiceStructureHandler::modeTV:
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1) ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1) ));

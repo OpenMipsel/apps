@@ -32,6 +32,7 @@ public:
 	void setFlags(int);
 	void removeFlags(int);
 	void invalidateEntry(int n){	invalidate(getEntryRect(n));}
+	void invalidateContent();
 	void setColumns(int col);
 	int getColumns() { return columns; }
 	void setMoveMode(int move) { movemode=move; }
@@ -104,7 +105,14 @@ public:
 		return ERROR;
 	}
 
-
+	void invalidateCurrent()
+	{
+		int n=0;
+		for (ePtrList_T_iterator i(top); i != bottom; ++i, n++)
+			if ( i == current )
+				invalidate(getEntryRect(n));    
+	}
+  
 	enum
 	{
 		dirPageDown, dirPageUp, dirDown, dirUp, dirFirst
@@ -267,7 +275,7 @@ inline void eListBox<T>::clearList()
 	if (!in_atomic)
 	{
 		selchanged(0);
-		invalidate();
+		invalidateContent();
 	} else
 	{
 		atomic_selchanged=1;
@@ -303,7 +311,7 @@ inline T* eListBox<T>::goPrev()
 
 template <class T>
 inline eListBox<T>::eListBox(eWidget *parent, const eWidget* descr)
-	 :eListBoxBase(parent, descr),
+	:eListBoxBase(parent, descr),
 		top(childs.end()), bottom(childs.end()), current(childs.end()), recalced(0)
 {
 	childs.setAutoDelete(false);	// machen wir selber
@@ -421,7 +429,7 @@ inline void eListBox<T>::init()
 		if (bottom == childs.end() )
 			break;	
 	if (!in_atomic)
-		invalidate();
+		invalidateContent();
 	else
 		atomic_redraw=arAll;
 }
@@ -430,7 +438,7 @@ template <class T>
 inline int eListBox<T>::moveSelection(int dir)
 {
 	int direction=0, forceredraw=0;
-	
+
 	if (childs.empty())
 		return 0;
 
@@ -545,7 +553,7 @@ inline int eListBox<T>::moveSelection(int dir)
 		default:
 			return 0;
 	}
-	
+
 	if (current != oldptr)  // current has changed
 	{
 		if (movemode)
@@ -556,7 +564,7 @@ inline int eListBox<T>::moveSelection(int dir)
 			typename std::list<T*>::iterator curi=current;
 			typename std::list<T*>::iterator oldi=oldptr;
 			int count=0;
-			
+
 			T* old=*o;
 
 			if (direction > 0)
@@ -591,7 +599,6 @@ inline int eListBox<T>::moveSelection(int dir)
 
 	if (flags & flagShowEntryHelp)
 	{
-		eDebug("showEntryHelp");
 		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
 	}
 
@@ -602,7 +609,7 @@ inline int eListBox<T>::moveSelection(int dir)
 			if (in_atomic)
 				atomic_redraw=arAll;
 			else
-				invalidate();
+				invalidateContent();
 		} else if ( current != oldptr)
 		{
 			int i=0;
@@ -746,7 +753,7 @@ inline int eListBox<T>::setCurrent(const T *c)
 		if (isVisible())
 		{
 			if (!in_atomic)
-				invalidate();   // Draw all
+				invalidateContent();   // Draw all
 			else
 				atomic_redraw=arAll;
 		}
@@ -797,7 +804,7 @@ void eListBox<T>::endAtomic()
 	if (!--in_atomic)
 	{
 		if (atomic_redraw == arAll)
-			invalidate();
+			invalidateContent();
 		else if (atomic_redraw == arCurrentOld)
 		{
 			if (atomic_new != -1)
@@ -836,9 +843,11 @@ inline eListBoxWindow<T>::eListBoxWindow(eString Title, int Entrys, int width, b
 	list.resize(eSize(getClientSize().width()-20, getClientSize().height()-(sbar?35:5) ));
 	if (sbar)
 	{
-		statusbar->move( ePoint(getClientRect().left(), getClientRect().bottom()-30) );
-		statusbar->resize( eSize( getClientRect().width(), 30) );
+		statusbar->setFlags(eStatusBar::flagVCenter);
+		statusbar->move( ePoint(0, getClientSize().height()-30) );
+		statusbar->resize( eSize( getClientSize().width(), 30) );
 		statusbar->loadDeco();
+		statusbar->show();
 	}
 }
 

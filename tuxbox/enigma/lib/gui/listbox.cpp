@@ -18,17 +18,18 @@ eListBoxBase::eListBoxBase(eWidget* parent, const eWidget* descr, const char *de
 		flags(0),
 		columns(1),
 		in_atomic(0),
-		movemode(0)
+		movemode(0),
+		MaxEntries(0)
 {
 }
 
 void eListBoxBase::setFlags(int _flags)	
-{		
+{
 	flags |= _flags;	
 }
 
 void eListBoxBase::removeFlags(int _flags)	
-{		
+{
 	flags &= ~_flags;	
 }
 
@@ -65,14 +66,14 @@ int eListBoxBase::setProperty(const eString &prop, const eString &value)
 {
 	if (prop == "noPageMovement")
 	{
-    if (value == "off")
+		if (value == "off")
 			flags |= ~flagNoPageMovement;
 		else
 			flags |= flagNoPageMovement;
 	}
 	else if (prop == "noUpDownMovement")
 	{
-    if (value == "off")
+		if (value == "off")
 			flags |= ~flagNoUpDownMovement;
 		else
 			flags |= flagNoUpDownMovement;
@@ -93,18 +94,15 @@ int eListBoxBase::setProperty(const eString &prop, const eString &value)
 
 void eListBoxBase::redrawBorder(gPainter *target, eRect& where)
 {
-	if ( where.contains( eRect( 0, 0, size.width(), size.height() ) ) )
+	if (deco_selected && have_focus)
 	{
-		if (deco_selected && have_focus)
-		{
-			deco_selected.drawDecoration(target, ePoint(width(), height()));
-			where = crect_selected;
-		}
-		else if (deco)
-		{
-			deco.drawDecoration(target, ePoint(width(), height()));
-			where = crect;
-		}
+		deco_selected.drawDecoration(target, ePoint(width(), height()));
+		where = crect_selected;
+	}
+	else if (deco)
+	{
+		deco.drawDecoration(target, ePoint(width(), height()));
+		where = crect;
 	}
 }
 
@@ -160,6 +158,16 @@ void eListBoxBase::gotFocus()
 			tmpDescr->setText( descr->getText() );
 			tmpDescr->show();
 		}
+}
+
+void eListBoxBase::invalidateContent()
+{
+	if ( have_focus && deco_selected )
+		invalidate( crect_selected );
+	else if ( deco )
+		invalidate( crect );
+	else
+		invalidate();
 }
 
 void eListBoxBase::lostFocus()
@@ -243,7 +251,7 @@ int calcFontHeight( const gFont& font)
 
 const eString& eListBoxEntryText::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state)
 {
-  bool b;
+	bool b;
 
 	if ( (b = (state == 2)) )
 		state = 0;

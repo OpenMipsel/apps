@@ -9,14 +9,19 @@ void eSocket::close()
 {
 	if (writebuffer.empty())
 	{
+		int wasconnected=(mystate==Connection) || (mystate==Closing);
 		delete rsn;
 		rsn=0;
 		::close(socketdesc);
 		socketdesc=-1;
 		mystate=Idle;
-		connectionClosed_();
+		if (wasconnected)
+			connectionClosed_();
 	} else
+	{
 		mystate=Closing;
+		rsn->setRequested(rsn->getRequested()|eSocketNotifier::Write);
+	}
 }
 
 eString eSocket::readLine()
@@ -56,22 +61,23 @@ int eSocket::state()
 	return mystate;
 }
 
-int eSocket::setSocket(int blub)
+int eSocket::setSocket(int s, int iss)
 {
-#if 0
-	eDebug("[SOCKET] setting socket to non-blocking");
-#endif
+	socketdesc=s;
+	issocket=iss;
 	fcntl(socketdesc, F_SETFL, O_NONBLOCK);
+
+	if (rsn)
+		delete rsn;
 	rsn=new eSocketNotifier(eApp, getDescriptor(), 
-		eSocketNotifier::Read|eSocketNotifier::Priority|
-		eSocketNotifier::Hungup);
+		eSocketNotifier::Read|eSocketNotifier::Hungup);
 	CONNECT(rsn->activated, eSocket::notifier);
 	return 0;
 }
 
 void eSocket::notifier(int what)
 {
-	if (what & eSocketNotifier::Read)
+	if ((what & eSocketNotifier::Read) && (mystate == Connection))
 	{
 		int bytesavail;
 		if (ioctl(getDescriptor(), FIONREAD, &bytesavail)<0)
@@ -90,36 +96,61 @@ void eSocket::notifier(int what)
 		}
 	} else if (what & eSocketNotifier::Write)
 	{
-		if (!writebuffer.empty())
+		if ((mystate == Connection) || (mystate == Closing))
 		{
-			bytesWritten_(writebuffer.tofile(getDescriptor(), 65536));
-			if (writebuffer.empty())
+			if (!writebuffer.empty())
 			{
-				rsn->setRequested(rsn->getRequested()&~eSocketNotifier::Write);
-				if (mystate == Closing)
+				bytesWritten_(writebuffer.tofile(getDescriptor(), 65536));
+				if (writebuffer.empty())
 				{
-					eDebug("ok, we can close down now.");
-					close();		// warning, we might get destroyed after close.
-					return;
+					rsn->setRequested(rsn->getRequested()&~eSocketNotifier::Write);
+					if (mystate == Closing)
+					{
+						close();		// warning, we might get destroyed after close.
+						return;
+					}
 				}
+			} else
+				eDebug("got ready to write, but nothin in buffer. strange.");
+			if (mystate == Closing)
+				close();
+		} else if (mystate == Connecting)
+		{
+			mystate=Connection;
+			rsn->setRequested(rsn->getRequested()&~eSocketNotifier::Write);
+			
+			int res;
+			socklen_t size=sizeof(res);
+			::getsockopt(getDescriptor(), SOL_SOCKET, SO_ERROR, &res, &size);
+			if (!res)
+				connected_();
+			else
+			{
+				close();
+				error_(res);
 			}
-		} else
-			eDebug("got ready to write, but nothin in buffer. strange.");
-	} else if (what & eSocketNotifier::Priority)
-	{
-		eDebug("socket: urgent data available!");
+		}
 	} else if (what & eSocketNotifier::Hungup)
 	{
-		eDebug("socket: hup");
-		writebuffer.clear();
-		close();
+		if (mystate == Connection)
+		{
+			writebuffer.clear();
+			close();
+		} else if (mystate == Connecting)
+		{
+			int res;
+			socklen_t size=sizeof(res);
+			::getsockopt(getDescriptor(), SOL_SOCKET, SO_ERROR, &res, &size);
+			close();
+			error_(res);
+		}
 	}
 }
 
 int eSocket::writeBlock(const char *data, unsigned int len)
 {
 	int w=len;
-	if (writebuffer.empty())
+	if (issocket && writebuffer.empty())
 	{
 		int tw=::send(getDescriptor(), data, len, MSG_NOSIGNAL);
 		if ((tw < 0) && (errno != EWOULDBLOCK))
@@ -145,19 +176,19 @@ int eSocket::getDescriptor()
 
 int eSocket::connectToHost(eString hostname, int port)
 {
-	struct sockaddr_in	serv_addr;
 	struct hostent		*server;
+	int res;
 
 	if(!socketdesc){
-		error_(-1);
+		error_(errno);
 		return(-1);
 	}
 	server=gethostbyname(hostname.c_str());
 	if(server==NULL)
 	{
 		eDebug("can't resolve %s", hostname.c_str());
-		error_(-1);
-		return(-1);
+		error_(errno);
+		return(-2);
 	}
 	bzero(	(char*)&serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family=AF_INET;
@@ -165,30 +196,39 @@ int eSocket::connectToHost(eString hostname, int port)
 		(char*)&serv_addr.sin_addr.s_addr,
 		server->h_length);
 	serv_addr.sin_port=htons(port);
-	if(connect(socketdesc, (const sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
+	res=::connect(socketdesc, (const sockaddr*)&serv_addr, sizeof(serv_addr));
+	if ((res < 0) && (errno != EINPROGRESS))
 	{
 		eDebug("can't connect to host: %s", hostname.c_str());
-		error_(-1);
-		return(-1);
+		close();
+		error_(errno);
+		return(-3);
 	}
-	mystate=Connection;
-	connected_();
+	if (res < 0)	// EINPROGRESS
+	{
+		rsn->setRequested(rsn->getRequested()|eSocketNotifier::Write);
+		mystate=Connecting;
+	} else
+	{
+		mystate=Connection;
+		connected_();
+	}
 	return(0);
 }
 
-eSocket::eSocket(): readbuffer(32768), writebuffer(32768)
+eSocket::eSocket(): readbuffer(32768), writebuffer(32768), rsn(0)
 {
-	socketdesc=socket(AF_INET, SOCK_STREAM, 0);
+	int s=socket(AF_INET, SOCK_STREAM, 0);
 #if 0
 	eDebug("[SOCKET]: initalized socket %d", socketdesc);
 #endif
-	setSocket(socketdesc);
+	mystate=Idle;
+	setSocket(s, 1);
 }
 
-eSocket::eSocket(int socket): readbuffer(32768), writebuffer(32768) 
+eSocket::eSocket(int socket, int issocket): readbuffer(32768), writebuffer(32768), rsn(0)
 {
-	socketdesc=socket;
-	setSocket(socketdesc);
+	setSocket(socket, issocket);
 	mystate=Connection;
 }
 
@@ -197,5 +237,7 @@ eSocket::~eSocket()
 	if (rsn)
 		delete rsn;
 	if(socketdesc>=0)
+	{
 		::close(socketdesc);
+	}
 }

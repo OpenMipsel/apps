@@ -37,6 +37,7 @@
 #include <lib/driver/eavswitch.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/gdi/lcd.h>
+#include <lib/gdi/glcddc.h>
 #include <lib/dvb/servicestructure.h>
 #include <lib/dvb/serviceplaylist.h>
 
@@ -54,7 +55,8 @@ struct enigmaMainActions
 		startSkipForward, repeatSkipForward, stopSkipForward, 
 		startSkipReverse, repeatSkipReverse, stopSkipReverse,
 		showBouquets, showFavourites,
-		modeTV, modeRadio, modeFile;
+		modeTV, modeRadio, modeFile,
+		toggleDVRFunctions;
 	enigmaMainActions(): 
 		map("enigmaMain", _("enigma Zapp")),
 		showMainMenu(map, "showMainMenu", _("show main menu"), eAction::prioDialog),
@@ -98,7 +100,9 @@ struct enigmaMainActions
 
 		modeTV(map, "modeTV", _("switch to TV mode"), eAction::prioDialog),
 		modeRadio(map, "modeRadio", _("switch to Radio mode"), eAction::prioDialog),
-		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog)
+		modeFile(map, "modeFile", _("switch to File mode"), eAction::prioDialog),
+
+		toggleDVRFunctions(map, "toggleDVRFunctions", _("toggle DVR panel"), eAction::prioDialog)
 	{
 	}
 };
@@ -118,11 +122,24 @@ eAutoInitP0<enigmaStandbyActions> i_enigmaStandbyActions(5, "enigma standby acti
 
 class eZapStandby: public eWidget
 {
+	static eZapStandby *instance;
 protected:
 	int eventHandler(const eWidgetEvent &);
 public:
+	void wakeUp();
+	static eZapStandby *getInstance() { return instance; }
 	eZapStandby();
+	~eZapStandby()
+	{
+		instance=0;
+	}
 };
+eZapStandby* eZapStandby::instance=0;
+
+void eZapStandby::wakeUp()
+{
+	close(0);  
+}
 
 int eZapStandby::eventHandler(const eWidgetEvent &event)
 {
@@ -142,8 +159,11 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		pLCD->lcdMain->hide();
 		pLCD->lcdStandby->show();
 		if (handler)
-			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
+			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
 		eAVSwitch::getInstance()->setInput(1);
+		system("/bin/sync");
+		system("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc");
+		system("/sbin/hdparm -y /dev/ide/host0/bus0/target1/lun0/disc");
 
 		break;
 	}
@@ -167,6 +187,10 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 eZapStandby::eZapStandby(): eWidget(0, 1)
 {
 	addActionMap(&i_enigmaStandbyActions->map);
+	if (!instance)
+		instance=this;
+	else
+		eFatal("more than ob eZapStandby instance is created!");
 }
 
 eString getISO639Description(char *iso)
@@ -264,10 +288,8 @@ void eNVODSelector::add(NVODReferenceEntry *ref)
 }
 
 AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
-	:eListBoxEntryText((eListBox<eListBoxEntryText>*)listbox), stream(stream)
+	:eListBoxEntryText((eListBox<eListBoxEntryText>*)listbox), isAC3(0), component_tag(-1), stream(stream)
 {
-	int isAC3=0;
-	int component_tag=-1;
 	for (ePtrList<Descriptor>::iterator c(stream->ES_info); c != stream->ES_info.end(); ++c)
 	{
 		if (c->Tag()==DESCR_AC3)
@@ -284,6 +306,8 @@ AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
 	}
 	if (!text)
 		text.sprintf("PID %04x", stream->elementary_PID);
+	if (isAC3)
+		text+=" (AC3)";
 	if (component_tag!=-1)
 	{
 		eServiceHandler *service=eServiceInterface::getInstance()->getService();
@@ -291,18 +315,43 @@ AudioStream::AudioStream(eListBox<AudioStream> *listbox, PMTEntry *stream)
 		{
 			EIT *eit=service->getEIT();
 			if (eit)
+				parseEIT(eit);
+			else
+				CONNECT( eDVB::getInstance()->tEIT.tableReady, AudioStream::EITready );
+		}
+	}
+}
+
+void AudioStream::parseEIT(EIT* eit)
+{
+	for (ePtrList<EITEvent>::iterator e(eit->events); e != eit->events.end(); ++e)
+	{
+		if ((e->running_status>=2)||(!e->running_status))		// currently running service
+		{
+			for (ePtrList<Descriptor>::iterator d(e->descriptor); d != e->descriptor.end(); ++d)
 			{
-				for (ePtrList<EITEvent>::iterator e(eit->events); e != eit->events.end(); ++e)
-					if ((e->running_status>=2)||(!e->running_status))		// currently running service
-						for (ePtrList<Descriptor>::iterator d(e->descriptor); d != e->descriptor.end(); ++d)
-							if (d->Tag()==DESCR_COMPONENT && ((ComponentDescriptor*)*d)->component_tag == component_tag)
-									text=((ComponentDescriptor*)*d)->text;
-	 			eit->unlock();
+				if (d->Tag()==DESCR_COMPONENT)
+				{
+					if (((ComponentDescriptor*)*d)->component_tag == component_tag )
+					{
+						text=((ComponentDescriptor*)*d)->text;
+						if (isAC3)
+							text+=" (AC3)";
+					}
+				}
 			}
 		}
 	}
-	if (isAC3)
-		text+=" (AC3)";
+	eit->unlock();  
+}
+
+void AudioStream::EITready(int error)
+{
+	if (!error)
+	{
+		EIT *eit=eDVB::getInstance()->tEIT.getCurrent();
+		parseEIT(eit);
+	}
 }
 
 void eAudioSelector::selected(AudioStream *l)
@@ -417,10 +466,6 @@ eServiceNumberWidget::~eServiceNumberWidget()
 
 eZapMain *eZapMain::instance;
 
-void eZapMain::redrawWidget(gPainter *painter, const eRect &where)
-{
-}
-
 void eZapMain::eraseBackground(gPainter *painter, const eRect &where)
 {
 }
@@ -431,7 +476,7 @@ eZapMain::eZapMain()
 	,volume( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
 	,VolumeBar( &volume ), pMsg(0), message_notifier(eApp, 0), timeout(eApp)
 	,clocktimer(eApp), messagetimeout(eApp), progresstimer(eApp)
-	,volumeTimer(eApp), state( stateNormal )
+	,volumeTimer(eApp), recStatusBlink(eApp), wasSleeping(0), state( 0 )
 {
 	if (!instance)
 		instance=this;
@@ -482,6 +527,16 @@ eZapMain::eZapMain()
 	VolumeBar.setLeftColor( eSkin::getActive()->queryColor("volume_left") );
 	VolumeBar.setRightColor( eSkin::getActive()->queryColor("volume_right") );
 	VolumeBar.setBorder(0);
+	
+	dvrFunctions=new eWidget(this);
+	dvrFunctions->setName("dvrFunctions");
+	dvrFunctions->hide();
+	
+	dvrfunctions=0;
+	
+	recstatus=new eLabel(this);
+	recstatus->setName("recStatus");
+	recstatus->hide();
 
 	isVT=0;
 	eSkin *skin=eSkin::getActive();
@@ -562,7 +617,8 @@ eZapMain::eZapMain()
 
 	CONNECT(message_notifier.recv_msg, eZapMain::gotMessage);
 
-	CONNECT( volumeTimer.timeout, eZapMain::hideVolumeSlider );
+	CONNECT(volumeTimer.timeout, eZapMain::hideVolumeSlider );
+	CONNECT(recStatusBlink.timeout, eZapMain::blinkRecord);
 
 	actual_eventDisplay=0;
 
@@ -571,8 +627,6 @@ eZapMain::eZapMain()
 	
 	skipcounter=0;
 	skipping=0;
-	
-	state = stateNormal;
 	
 	addActionMap(&i_enigmaMainActions->map);
 	addActionMap(&i_numberActions->map);
@@ -597,9 +651,9 @@ eZapMain::eZapMain()
 		char *descr="";
 		switch (i)
 		{
-		case modeTV: descr=_("TV"); break;
-		case modeRadio: descr=_("Radio"); break;
-		case modeFile: descr=_("File"); break;
+			case modeTV: descr=_("TV"); break;
+			case modeRadio: descr=_("Radio"); break;
+			case modeFile: descr=_("File"); break;
 		}
 		favourite[i]->service_name=eString(_("Favourites (")) + eString(descr) + ")";
 		favourite[i]->load(eString().sprintf( CONFIGDIR "/enigma/favourite.%d.epl", i).c_str());
@@ -617,7 +671,8 @@ eZapMain::eZapMain()
 
 	CONNECT(eZap::getInstance()->getServiceSelector()->addServiceToList, eZapMain::doPlaylistAdd);
 	CONNECT(eZap::getInstance()->getServiceSelector()->addServiceToFavourite, eZapMain::addServiceToFavourite);
-	CONNECT(eZap::getInstance()->getServiceSelector()->showMenu, eZapMain::showServiceMenu);
+	CONNECT(eZap::getInstance()->getServiceSelector()->removeServiceFromFavourite, eZapMain::removeServiceFromFavourite );
+  CONNECT(eZap::getInstance()->getServiceSelector()->showMenu, eZapMain::showServiceMenu);
 	CONNECT(eZap::getInstance()->getServiceSelector()->showFavourite, eZapMain::showFavourite);
 	CONNECT(eZap::getInstance()->getServiceSelector()->setMode, eZapMain::setModeD);
 	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
@@ -639,10 +694,13 @@ eZapMain::eZapMain()
 	}
 
 	int tmp;
-  // read last mode from registry
-  if ( eConfig::getInstance()->getKey("/ezap/ui/lastmode", tmp ) )
+	// read last mode from registry
+	if ( eConfig::getInstance()->getKey("/ezap/ui/lastmode", tmp ) )
 		tmp = 0;  // defaut TV Mode
-
+		
+	if (tmp < 0)
+		tmp=0;
+		
 	mode=-1;  // fake mode for first call of setMode
 	curlist->load(CONFIGDIR "/enigma/playlist.epl");
 
@@ -658,27 +716,27 @@ eZapMain::eZapMain()
 		playService(*curlist->current, psDontAdd);
 	startMessages();
 	
-	recstatus=new eRecordingStatus();
-	recstatus->hide();
+/*	recstatus=new eRecordingStatus();
+	recstatus->hide(); */
 
 }
 
 eZapMain::~eZapMain()
 {
 	if ( state & (stateRecording|recDVR) )
-		recordDVR(0);
+		recordDVR(0, 0);
 /*	else if ( state & (stateRecording|recVCR) )
 		recordVCR(0);*/
 	
-	delete recstatus;
-	recstatus=0;
+/*	delete recstatus;
+	recstatus=0; */
 
 	getPlaylistPosition();
 	if (mode != -1)
 		getServiceSelectorPath(modeLast[mode]);
 
   // save last mode to registry
- 	eConfig::getInstance()->setKey("ezap/ui/lastmode", (last_mode==-1) ? mode : last_mode);
+	eConfig::getInstance()->setKey("ezap/ui/lastmode", (last_mode==-1) ? mode : last_mode);
 
 	// save for all modes the servicePath to registry
 	mode=0;	
@@ -691,10 +749,10 @@ eZapMain::~eZapMain()
 		eServiceInterface::getInstance()->removeRef(favouriteref[i]);
 	}
 
-	curlist->save(CONFIGDIR "/enigma/playlist.epl");
+	curlist->save();
 	eServiceInterface::getInstance()->removeRef(playlistref);
 
-	recordings->save(MOVIEDIR "/recordings.epl");
+	recordings->save();
 	eServiceInterface::getInstance()->removeRef(recordingsref);
 	
 	if (instance == this)
@@ -702,7 +760,8 @@ eZapMain::~eZapMain()
 	eZapLCD *pLCD=eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdShutdown->show();
-//	eDBoxLCD::getInstance()->switchLCD(0);
+	gLCDDC::getInstance()->setUpdate(0);
+	eDBoxLCD::getInstance()->switchLCD(0); // BITTE lasst das doch einfach drin :/
 
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
 }
@@ -895,7 +954,7 @@ void eZapMain::setEIT(EIT *eit)
 
 void eZapMain::updateProgress()
 {
-	eZapLCD *pLCD=eZapLCD::getInstance();
+  eZapLCD *pLCD=eZapLCD::getInstance();
 	if (serviceFlags & eServiceHandler::flagSupportPosition)
 	{
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -935,16 +994,12 @@ void eZapMain::updateProgress()
 				pLCD->lcdMain->Progress->show();
 			} else
 			{
-				Progress->clear();
 				Progress->hide();
-				pLCD->lcdMain->Progress->clear();
 				pLCD->lcdMain->Progress->hide();
 			}
 		} else
 		{
-			Progress->clear();
 			Progress->hide();
-			pLCD->lcdMain->Progress->clear();
 			pLCD->lcdMain->Progress->hide();
 		}
 	}
@@ -989,7 +1044,7 @@ void eZapMain::handleNVODService(SDTEntry *sdtentry)
 	eServiceInterface::getInstance()->removeRef(eServiceInterface::getInstance()->service);
 }
 
-void eZapMain::showServiceSelector(int dir)
+void eZapMain::showServiceSelector(int dir, int selcurrent)
 {
 	hide();
 
@@ -1004,6 +1059,7 @@ void eZapMain::showServiceSelector(int dir)
 
 	getServiceSelectorPath(modeLast[mode]);
 
+	e->selectService(eServiceInterface::getInstance()->service);
 	const eServiceReference *service = e->choose(dir);	// reset path only when NOT showing specific list
 	
 	pLCD->lcdMain->show();
@@ -1095,11 +1151,8 @@ void eZapMain::volumeUp()
 	if (!volume.isVisible())
 	{
 		volume.show();
-		volumeTimer.start(5000, true);
+		volumeTimer.start(2000, true);
 	}
-//		if (!isVisible())
-//			show();
-//		timeout.start(1000, 1);
 }
 
 void eZapMain::volumeDown()
@@ -1110,9 +1163,6 @@ void eZapMain::volumeDown()
 		volume.show();
 		volumeTimer.start(2000, true);
 	}
-//		if (!isVisible())
-//			show();
-//		timeout.start(1000, 1);
 }
 
 void eZapMain::hideVolumeSlider()
@@ -1146,6 +1196,14 @@ void eZapMain::showMainMenu()
 	pLCD->lcdMain->show();
 }
 
+void eZapMain::toggleTimerMode()
+{
+	if ( state & stateInTimerMode)
+		state &= ~stateInTimerMode;
+	else
+		state |= stateInTimerMode;
+}
+
 void eZapMain::standbyPress()
 {
 	standbyTime = time(0);
@@ -1153,11 +1211,6 @@ void eZapMain::standbyPress()
 
 void eZapMain::standbyRepeat()
 {
-	if (standbyTime == -1)		// just waking up
-	{
-		state=stateNormal;
-		return;
-	}
 	int diff = time(0) - standbyTime;
 	if (diff > 2)
 		standbyRelease();
@@ -1165,24 +1218,25 @@ void eZapMain::standbyRepeat()
 
 void eZapMain::standbyRelease()
 {
-	if (standbyTime == -1)		// just waking up
-	{
-		state=stateNormal;
+	if ( standbyTime == -1) // we come from standby ?
 		return;
-	}
+
 	int diff = time(0) - standbyTime;
 	standbyTime=-1;
 	if (diff > 2)
-		eZap::getInstance()->quit();
-	else
+	{
+		if (handleState())
+			eZap::getInstance()->quit();
+	} else
 	{
 		eZapStandby standby;
 		if (isVisible())
 			hide();
 		standby.show();
-		state=stateSleeping;
+		state |= stateSleeping;
 		standby.exec();
 		standby.hide();
+		state &= ~stateSleeping;
 	}
 }
 
@@ -1242,46 +1296,49 @@ void eZapMain::pause()
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
 }
 
-void eZapMain::recordDVR(int user)
+int eZapMain::recordDVR(int onoff, int user, eString name)
 {
-	eDebug("record *g*");
-	eServiceReference ref=eServiceInterface::getInstance()->service;
-	if ( (ref.type != eServiceReference::idDVB) || 
-			(ref.data[0] < 0) || ref.path.size())
-	{
-		if (user)
-		{
-			eMessageBox box(_("Sorry, you cannot record this service."), _("record"), eMessageBox::iconWarning|eMessageBox::btOK );
-			box.show();
-			box.exec();
-			box.hide();
-		}
-		return;
-	}
-	
-#if 1	
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
-		return;
-		
-	if (!(state & (stateRecording|recDVR)))
+		return -1;
+	
+	if (onoff) //  start recording
 	{
+		if (state & stateRecording)
+			recordDVR(0, 0); // try to stop recording.. should not happen
+		if (state & stateRecording)
+			return -2; // already recording
+		eServiceReference ref=eServiceInterface::getInstance()->service;
+		if ( (ref.type != eServiceReference::idDVB) || 
+				(ref.data[0] < 0) || ref.path.size())
+		{
+			if (user)
+			{
+				eMessageBox box(_("Sorry, you cannot record this service."), _("record"), eMessageBox::iconWarning|eMessageBox::btOK );
+				box.show();
+				box.exec();
+				box.hide();
+			}
+			return -1; // cannot record this service
+		} 
+
 		eString filename;
+		eString cname="";
+		
+		for (unsigned int i=0; i<name.length(); ++i)
+		{
+			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-()", name[i]))
+				cname+=name[i];
+			else
+				cname+='_';
+		}
 		
 		int suffix=0;
 		struct stat s;
 		do
 		{
 			filename=MOVIEDIR "/";
-			eService *service=eServiceInterface::getInstance()->addRef(ref);
-			if (service)
-			{
-				filename+=service->service_name;
-				eServiceInterface::getInstance()->removeRef(ref);
-			} else
-				filename+="record";
-			if (cur_event_text != "")
-				filename+=" - " + cur_event_text;
+			filename+=cname;
 			if (suffix)
 				filename+=eString().sprintf(" [%d]", suffix);
 			suffix++;
@@ -1299,8 +1356,15 @@ void eZapMain::recordDVR(int user)
 			))
 		{
 			eDebug("couldn't record... :/");
+			return -3; // couldn't record... warum auch immer.
 		} else
 		{
+			if (state & stateSleeping)
+			{
+				wasSleeping=1;
+				eZapStandby::getInstance()->wakeUp();
+			}
+        
 			eServiceReference ref2=ref;
 			ref2.path=filename;
 			ePlaylistEntry en(ref2);
@@ -1309,22 +1373,35 @@ void eZapMain::recordDVR(int user)
 			recordings->save(MOVIEDIR "/recordings.epl");
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStart));
 			eDebug("ok, recording...");
-			state=stateRecording|recDVR;
+			state |= (stateRecording|recDVR);
 			recstatus->show();
+			recStatusBlink.start(500, 1);
 		}
-	} else
+		return 0;
+	}
+	else   // not on/off
 	{
+		if ( !(state & stateRecording) )
+			return -1; // not recording
+
+		state &= ~(stateRecording|recDVR);
+
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStop));
 		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordClose));
+		recStatusBlink.stop();
 		recstatus->hide();
-		state=stateNormal;
 		if (user)
 		{
 			setMode(modeFile);
 			showBouquetList(1);
 		}
+		else if (wasSleeping) // before record we was in sleep mode...
+		{
+			wasSleeping=0;
+			message_notifier.send(eZapMain::messageGoSleep);
+		}
+		return 0;
 	}
-#endif	
 }
 
 void eZapMain::startSkip(int dir)
@@ -1406,9 +1483,9 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	m.hide();
 	switch (res)
 	{
-	case 0:
+	case 0: // cancel
 		break;
-	case 1:
+	case 1: // delete service
 	{
 		if (eServiceInterface::getInstance()->service == ref)
 			eServiceInterface::getInstance()->stop();
@@ -1423,33 +1500,39 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			box.hide();
 			break;
 		}
-		eMessageBox box(_("Really delete this service?"), _("delete service"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+/*		eMessageBox box(_("Really delete this service?"), _("delete service"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
 		box.show();
 		int r=box.exec();
 		box.hide();
-		if (r == eMessageBox::btYes)
+		if (r == eMessageBox::btYes)*/
 		{
 			std::list<ePlaylistEntry>::iterator it=std::find(pl->list.begin(), pl->list.end(), ref);
 			pl->deleteService(it);
+			pl->save();
 			sel->actualize();
 		}
 		eServiceInterface::getInstance()->removeRef(path);
 		break;
 	}
-	case 2:
+	case 2: // move service
 	{
-/*		eMessageBox box(_("Sorry, not yet implemented."), _("move service"), eMessageBox::iconInfo|eMessageBox::btOK );
-		box.show();
-		box.exec();
-		box.hide(); */
-		sel->setMoveMode(1);
+		sel->toggleMoveMode();
 		break;
 	}
-	case 3:
+	case 3: // add service to playlist
 		doPlaylistAdd(sel->getSelected());
 		break;
-	case 4:
+	case 4: // add service to favourite
 		addServiceToFavourite(sel);
+	break;
+	case 5: // toggle FavouriteMode
+		sel->toggleFavouriteMode();
+		if (eListBoxEntryService::favourites.size())
+			eListBoxEntryService::favourites.clear();
+		else
+			for (std::list<ePlaylistEntry>::iterator i(favourite[mode]->list.begin()); i != favourite[mode]->list.end(); ++i)
+				eListBoxEntryService::favourites[*i]=0;
+	break;
 	}
 	sel->show();
 }
@@ -1552,33 +1635,47 @@ void eZapMain::doPlaylistAdd(const eServiceReference &service)
 		playService(service, psAdd);
 }
 
-void eZapMain::addServiceToFavourite(eServiceSelector *sel)
+void eZapMain::addServiceToFavourite(eServiceSelector *sel, int dontask)
 {
 	const eServiceReference &service=sel->getSelected();
 	if ((mode > modeFile) || (mode < 0))
 		return;
-	
-	for (std::list<ePlaylistEntry>::iterator i(favourite[mode]->list.begin()); i != favourite[mode]->list.end(); ++i)
-		if (i->service == service)
-		{
-			eMessageBox box(_("This service is already in your favourite list."), _("Add Channel to Favourite"), eMessageBox::iconWarning|eMessageBox::btOK);
-			sel->hide();
-			box.show();
-			box.exec();
-			box.hide();
-			sel->show();
-			return;
-		}
 
-	eMessageBox box(_("Really add this channel to your favourite list?"), _("Add Channel to Favourite"), eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo);
-	sel->hide();
-	box.show();
-	int res=box.exec();
-	box.hide();
-	sel->show();
-	
-	if ( res == eMessageBox::btYes )
-		favourite[mode]->list.push_back(service);
+	if (!dontask)
+	{	
+		for (std::list<ePlaylistEntry>::iterator i(favourite[mode]->list.begin()); i != favourite[mode]->list.end(); ++i)
+			if (i->service == service)
+			{
+				eMessageBox box(_("This service is already in your favourite list."), _("Add Channel to Favourite"), eMessageBox::iconWarning|eMessageBox::btOK);
+				sel->hide();
+				box.show();
+				box.exec();
+				box.hide();
+				sel->show();
+				return;
+			}
+
+		eMessageBox box(_("Really add this channel to your favourite list?"), _("Add Channel to Favourite"), eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo);
+		sel->hide();
+		box.show();
+		int res=box.exec();
+		box.hide();
+		sel->show();
+		if ( res != eMessageBox::btYes)
+			return;
+	}
+	favourite[mode]->list.push_back(service);
+	favourite[mode]->save();
+}
+
+void eZapMain::removeServiceFromFavourite( const eServiceReference &service)
+{
+	for (std::list<ePlaylistEntry>::iterator it( favourite[mode]->list.begin() ); it != favourite[mode]->list.end(); it++ )
+		if ( *it == service )
+		{
+			favourite[mode]->list.erase( it );
+			break;
+		}
 }
 
 void eZapMain::showSubserviceMenu()
@@ -1670,14 +1767,15 @@ void eZapMain::runVTXT()
 				eString aneedvtxtpid=getInfo(FileName.c_str(), "needvtxtpid");
 				eString aneedlcd=getInfo(FileName.c_str(), "needlcd");
 				// we search tuxtxt... this use lcd and vtxtpid... not perfekt... but i havo no other idea
-				if ( aneedvtxtpid.isNull()?false:atoi(aneedvtxtpid.c_str()) && aneedlcd.isNull()?false:atoi(aneedlcd.c_str()) )
+				if ((aneedvtxtpid.isNull() ? false : atoi(aneedvtxtpid.c_str())) &&
+            (aneedlcd.isNull() ? false : atoi(aneedlcd.c_str())) )
 				{
 					plugins.execPluginByName(namelist[count]->d_name);
-					executed++;
+					executed=1;
 				}
 			}
 			free(namelist[count]);
-	  }
+		}
 		free(namelist);
 	}
 }
@@ -1771,10 +1869,9 @@ void eZapMain::showEPG()
 	eServiceInterface::getInstance()->removeRef( eServiceInterface::getInstance()->service );
 }
 
-bool eZapMain::handleState()
+bool eZapMain::handleState(int justask)
 {
-/*	eString text, caption;
-	caption=_("Warning!");
+	eString text, caption;
 	bool b=false;
 	if ( state & (stateRecording|recDVR) )
 	{
@@ -1783,36 +1880,65 @@ bool eZapMain::handleState()
 		else
 			text=_("Currently an digital recording is in progress!");
 	}
-	else if ( state & (stateRecording|recVCR ) )
+	else if ( state & (stateRecording|recVCR) )
 		return false;  // we cancel all actions...
 	else if ( state & stateInTimerMode )
 		text=_("Currently an timer based event is in progress!");
-// show this message
-	{
-		eMessageBox box(text,caption, eMessageBox::iconWarning|eMessageBox::btOK );		
-		box.show();
-		box.exec();
-		box.hide();
-	}
-	caption=_("Really do this?");
+	else		// not recording
+		return true; 
 	if ( state & (stateRecording|recDVR) )
 	{
+		text+="\n";
 		if ( state & stateInTimerMode )
-			text=_("This stops the timer, and digital recording!");
+			text+=_("This stops the timer, and digital recording!");
 		else
-			text=_("This stops the recording!");
+			text+=_("This stops the recording!");
 	}
 	else
-		text=_("This stops the timer based event!");
-// show this message
 	{
-		eMessageBox box(text,caption, eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );		
-		box.show();
-		b = (box.exec() == eMessageBox::btYes);
-		box.hide();
+		text+="\n";
+		text+=_("This stops the timer based event!");
 	}
-	return b;*/
-	return true;
+	eMessageBox box(text, _("Really do this?"), eMessageBox::iconQuestion|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );		
+	box.show();
+	b = (box.exec() == eMessageBox::btYes);
+	box.hide();
+
+	if (b && !justask)
+	{
+		if (state & stateInTimerMode)
+		{
+			state &= ~stateInTimerMode;
+		}
+		if (state & stateRecording)
+		{
+			if (state & recDVR)
+			{
+				recordDVR(0,0);
+				state &= ~recDVR;
+			}
+			else // here send LIRC VCR Stop
+			{
+				state &= ~recVCR;        
+			}
+			state &= ~stateRecording;
+		}
+	}
+  
+	return b;
+}
+
+void eZapMain::blinkRecord()
+{
+	if (state & stateRecording)
+	{
+		if (isVisible())
+			if (recstatus->isVisible())
+				recstatus->hide();
+			else
+				recstatus->show();
+		recStatusBlink.start(500, 1);
+	}
 }
 
 int eZapMain::eventHandler(const eWidgetEvent &event)
@@ -1824,9 +1950,17 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		int num=0;
 		stopMessages();
 		if (event.action == &i_enigmaMainActions->showMainMenu)
+		{
+			int oldmode=mode;
 			showMainMenu();
-		else if (event.action == &i_enigmaMainActions->standby_press && handleState() )
-			standbyPress();
+			if (mode != oldmode)
+				showServiceSelector(-1, 0);
+		}
+		else if (event.action == &i_enigmaMainActions->standby_press)
+		{
+			if ( handleState() )
+				standbyPress();
+		}
 		else if (event.action == &i_enigmaMainActions->standby_repeat)
 			standbyRepeat();
 		else if (event.action == &i_enigmaMainActions->standby_release)
@@ -1835,53 +1969,105 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			showInfobar();
 		else if (isVisible() && (event.action == &i_enigmaMainActions->toggleInfobar))
 			hideInfobar();
-		else if (event.action == &i_enigmaMainActions->showServiceSelector && handleState())
-			showServiceSelector(-1);
-		else if (event.action == &i_enigmaMainActions->showSubservices && handleState())
-			showSubserviceMenu();
-		else if (event.action == &i_enigmaMainActions->showAudio && handleState())
-			showAudioMenu();
-		else if (event.action == &i_enigmaMainActions->pluginVTXT && handleState() )
-			runVTXT();
+		else if (event.action == &i_enigmaMainActions->showServiceSelector)
+		{
+			if (handleState())
+				showServiceSelector(-1, 1);
+		}
+		else if (event.action == &i_enigmaMainActions->showSubservices )
+		{
+			if ( handleState() )
+				showSubserviceMenu();
+		}
+		else if (event.action == &i_enigmaMainActions->showAudio)
+		{
+			if ( handleState() )
+				showAudioMenu();
+		}
+		else if (event.action == &i_enigmaMainActions->pluginVTXT)
+		{
+			if ( handleState() )
+				runVTXT();
+		}
 		else if (event.action == &i_enigmaMainActions->showEPGList)
 			showEPGList();
 		else if (event.action == &i_enigmaMainActions->nextService)
-			nextService();
+		{
+			if ( handleState() )
+				nextService();
+			 }
 		else if (event.action == &i_enigmaMainActions->prevService)
-			prevService();
+		{
+			if ( handleState() )
+				prevService();
+		}
 		else if (event.action == &i_enigmaMainActions->playlistNextService)
-			playlistNextService();
+		{
+			if ( handleState() )
+				playlistNextService();
+		}
 		else if (event.action == &i_enigmaMainActions->playlistPrevService)
-			playlistPrevService();
+		{
+			if ( handleState() )
+				playlistPrevService();
+		}
 		else if (event.action == &i_enigmaMainActions->serviceListDown)
-			showServiceSelector(eServiceSelector::dirDown);
+		{
+			if ( handleState() )      
+				showServiceSelector(eServiceSelector::dirDown, 1);
+		}
 		else if (event.action == &i_enigmaMainActions->serviceListUp)
-			showServiceSelector(eServiceSelector::dirUp);
+		{
+			if ( handleState() )    
+				showServiceSelector(eServiceSelector::dirUp, 1);
+		}
 		else if (event.action == &i_enigmaMainActions->volumeUp)
 			volumeUp();
 		else if (event.action == &i_enigmaMainActions->volumeDown)
 			volumeDown();
 		else if (event.action == &i_enigmaMainActions->toggleMute)
 			toggleMute();
-		else if (isSeekable() && event.action == &i_enigmaMainActions->play)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->play)
 			play();
-		else if (isSeekable() && event.action == &i_enigmaMainActions->stop)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->stop)
 			stop();
-		else if (isSeekable() && event.action == &i_enigmaMainActions->pause)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->pause)
 			pause();
-		else if (event.action == &i_enigmaMainActions->record)
-			recordDVR(1);
-		else if (isSeekable() && event.action == &i_enigmaMainActions->startSkipForward)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->record)
+		{
+			if ( handleState(1) )
+			{
+				if ( state & stateRecording)
+					recordDVR(0, 1);
+				else
+				{
+					eString name;
+					eServiceReference ref=eServiceInterface::getInstance()->service;
+					eService *service=eServiceInterface::getInstance()->addRef(ref);
+					if (service)
+					{
+						name=service->service_name;
+						eServiceInterface::getInstance()->removeRef(ref);
+					}
+					else
+						name+="record";
+					if (cur_event_text != "")
+						name+=" - " + cur_event_text;
+					recordDVR(1, 1, name);
+  			}
+			}
+		}
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->startSkipForward)
 			startSkip(skipForward);
-		else if (isSeekable() && event.action == &i_enigmaMainActions->repeatSkipForward)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->repeatSkipForward)
 			repeatSkip(skipForward);
-		else if (isSeekable() && event.action == &i_enigmaMainActions->stopSkipForward)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->stopSkipForward)
 			stopSkip(skipForward);
-		else if (isSeekable() && event.action == &i_enigmaMainActions->startSkipReverse)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->startSkipReverse)
 			startSkip(skipReverse);
-		else if (isSeekable() && event.action == &i_enigmaMainActions->repeatSkipReverse)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->repeatSkipReverse)
 			repeatSkip(skipReverse);
-		else if (isSeekable() && event.action == &i_enigmaMainActions->stopSkipReverse)
+		else if (dvrfunctions && event.action == &i_enigmaMainActions->stopSkipReverse)
 			stopSkip(skipReverse);
 		else if (event.action == &i_enigmaMainActions->showEPG)
 			showEPG();
@@ -1905,25 +2091,43 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			num=9;
 		else if (event.action == &i_enigmaMainActions->showBouquets)
 		{
-			showBouquetList(0);
-		} else if (event.action == &i_enigmaMainActions->showFavourites)
+			if ( handleState() )
+				showBouquetList(0);
+		}
+		else if (event.action == &i_enigmaMainActions->showFavourites)
 		{
-			showFavourites();
-		} else if (event.action == &i_enigmaMainActions->modeRadio)
+			if ( handleState() )
+				showFavourites();
+		}
+		else if (event.action == &i_enigmaMainActions->modeRadio)
 		{
-			setMode(modeRadio);
-			showServiceSelector(-1);
-		} else if (event.action == &i_enigmaMainActions->modeTV)
+			if ( handleState() )
+			{
+				setMode(modeRadio);
+				showServiceSelector(-1, 1);
+			}
+		}
+		else if (event.action == &i_enigmaMainActions->modeTV)
 		{
-			setMode(modeTV);
-			showServiceSelector(-1);
-		} else
+			if ( handleState() )
+			{
+				setMode(modeTV);
+				showServiceSelector(-1, 1);
+			}
+		}
+		else if (event.action == &i_enigmaMainActions->toggleDVRFunctions)
+		{
+			showDVRFunctions(!dvrfunctions);
+			if (!isVisible())
+				showInfobar();
+		}
+		else
 		{
 			startMessages();
 			break;
 		}
 		startMessages();
-		if ( num )
+		if ( num && handleState())
 		{
 			if (isVisible())
 				hide();
@@ -1960,16 +2164,19 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 	{
 		serviceFlags = eServiceInterface::getInstance()->getService()->getFlags();
 		setSmartcardLogo( serviceFlags & eServiceHandler::flagIsScrambled );
+		set16_9Logo(0);
 		if (serviceFlags & eServiceHandler::flagSupportPosition)
 		{
 			eDebug("support position query..");
 			progresstimer.start(1000);
+			updateProgress();
 		} else
 		{	
 			eDebug("doesn't support position query");
 			progresstimer.stop();
 		}
-		updateProgress();
+		showDVRFunctions(serviceFlags & eServiceHandler::flagIsSeekable);
+
 		break;
 	}
 	case eServiceEvent::evtAspectChanged:
@@ -2038,7 +2245,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		setVTButton(isVT);
 
 			// es wird nur dann versucht einen service als referenz-service zu uebernehmen, wenns den ueberhaupt
-			// gibt.
+	// gibt.
 
 		if (service)
 			switch (serviceref.getServiceType())
@@ -2197,7 +2404,6 @@ void eZapMain::gotEIT()
 	int old_event_id=cur_event_id;
 	
 	setEIT(eit);
-
 	if (eit)
 	{
 		int state=0;
@@ -2314,8 +2520,7 @@ void eZapMain::leaveService()
 	EINext->setText("");
 	EINextDuration->setText("");
 	EINextTime->setText("");
-	
-	Progress->clear();
+
 	Progress->hide();
 }
 
@@ -2384,6 +2589,13 @@ void eZapMain::postMessage(const eZapMessage &message, int clear)
 
 void eZapMain::gotMessage(const int &c)
 {
+	if ( c == eZapMain::messageGoSleep )
+	{
+		eDebug("goto Standby (sleep)");
+		standbyPress();
+		standbyRelease();
+		return;
+	}
 	if ((!c) && pMsg) // noch eine gueltige message vorhanden
 	{
 		return;
@@ -2476,20 +2688,20 @@ void eZapMain::setMode(int newmode, int user)
 			eEPGCache::getInstance()->pauseEPG();
 		else if ( mode == modeFile && mode != newmode && newmode != -1 )
 			eEPGCache::getInstance()->restartEPG();
-	
+
 		eDebug("setting mode to %d", newmode);
 		if (mode != -1)
 			getServiceSelectorPath(modeLast[mode]);
 		if (mode == newmode)
 			user=0;
-	
+
 		if (newmode == modePlaylist)
 			last_mode=mode;
 		else
 			last_mode=-1;
-	
+
 		mode=newmode;
-	
+
 		if (user)
 			playService(modeLast[mode].current(), psDontAdd);
 	
@@ -2497,7 +2709,7 @@ void eZapMain::setMode(int newmode, int user)
 			setServiceSelectorPath(modeLast[mode]);
 	}
 }
-	
+
 void eZapMain::setModeD(int newmode)
 {
 	setMode(newmode, 0);
@@ -2539,16 +2751,21 @@ void eZapMain::showBouquetList(int last)
 		return;
 	}
 	if ((!last) || (!recordings->list.size()))
-	{
-		eDebug("not last");
 		b.down( eServiceReference() );
-	} else
-	{
-		eDebug("selecting last...");
+	else
 		b.down( recordings->list.back().service);
-	}
 	setServiceSelectorPath(b);
-	showServiceSelector(-1);
+	showServiceSelector(-1, !last);
+}
+
+void eZapMain::showDVRFunctions(int show)
+{
+	dvrfunctions=show;
+
+	if (dvrfunctions)
+		dvrFunctions->show();
+	else
+		dvrFunctions->hide();
 }
 
 void eZapMain::showFavourites()
@@ -2559,7 +2776,7 @@ void eZapMain::showFavourites()
 	b.down( favouriteref[mode] );
 	b.down( eServiceReference() );
 	setServiceSelectorPath(b);
-	showServiceSelector(-1);
+	showServiceSelector(-1, 1);
 }
 
 void eZapMain::moveService(const eServiceReference &path, const eServiceReference &ref, const eServiceReference &afterref)
@@ -2573,13 +2790,14 @@ void eZapMain::moveService(const eServiceReference &path, const eServiceReferenc
 	std::list<ePlaylistEntry>::iterator 
 		it=std::find(pl->list.begin(), pl->list.end(), ref);
 	std::list<ePlaylistEntry>::iterator after;
-	
+
 	if (afterref)
 		after=std::find(pl->list.begin(), pl->list.end(), afterref);
 	else
 		after=pl->list.end();
 	
 	pl->moveService(it, after);
+	pl->save();
 
 	eServiceInterface::getInstance()->removeRef(path);
 }
@@ -2590,10 +2808,25 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 	new eListBoxEntryText(&list, _("back"), (void*)0);
 	if (path.type == eServicePlaylistHandler::ID)
 	{
-		new eListBoxEntryText(&list, _("move service"), (void*)2);
+		// move Mode ( only in Favourite lists... )
+		if ( eZap::getInstance()->getServiceSelector()->movemode )
+			new eListBoxEntryText(&list, _("disable move mode"), (void*)2);
+		else
+			new eListBoxEntryText(&list, _("enable move mode"), (void*)2);    
+		// delete Service ( only in Favourite lists... )    
 		new eListBoxEntryText(&list, _("delete service"), (void*)1);
 	}
-	new eListBoxEntryText(&list, _("add service to favourites"), (void*)4);
+	else
+	{
+		// Favourite Mode ( simple add services to favourite list )
+		if ( eZap::getInstance()->getServiceSelector()->FavouriteMode )
+			new eListBoxEntryText(&list, _("disable edit favourite mode"), (void*)5);    
+		else
+			new eListBoxEntryText(&list, _("enable edit favourite mode"), (void*)5);
+		// add current service to favourite
+		new eListBoxEntryText(&list, _("add service to favourites"), (void*)4);
+	}
+		// add current service to playlist
 	new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
 	CONNECT(list.selected, eServiceContextMenu::entrySelected);
 }
@@ -2606,9 +2839,11 @@ void eServiceContextMenu::entrySelected(eListBoxEntryText *test)
 		close((int)test->getKey());
 }
 
+/*
 eRecordingStatus::eRecordingStatus()
 {
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eRecordingStatus"))
 		eFatal("skin load of \"eRecordingStatus\" failed");
 }
+*/

@@ -2,7 +2,7 @@
 #include <lib/gdi/font.h>
 
 eComboBox::eComboBox( eWidget* parent, int OpenEntries, eLabel* desc, const char *deco )
-	:eButton(parent, 0, 1, deco), listbox(0), button( this, desc, 0), pm(0), entries(OpenEntries)
+	:eButton(parent, desc, 1, deco), listbox(0), button( this, 0, 0), pm(0), entries(OpenEntries)
 {
 	align=eTextPara::dirLeft;
 	button.loadDeco();
@@ -147,8 +147,8 @@ int eComboBox::setCurrent( eListBoxEntryText* le )
 	if (!le)
 		return E_INVALID_ENTRY;
 
-	int err;
-	if( (err = listbox.setCurrent( le )) )
+	int err = listbox.setCurrent( le );
+	if( err && err != E_ALLREADY_SELECTED )
 		return err;
 
 	setText( listbox.getCurrent()->getText() );
@@ -183,18 +183,13 @@ int eComboBox::setCurrent( int num )
 	if ( num > listbox.getCount() )
 		return E_INVALID_ENTRY;
 
-	int err;
-	if ( (err=listbox.forEachEntry( selectEntryByNum(num, &listbox ) ) ) )
-	{
-		if ( cur == listbox.getCurrent() )	
-			return E_ALLREADY_SELECTED;
-		else
-			return E_COULDNT_FIND;
-	}
+	int err = listbox.forEachEntry( selectEntryByNum(num, &listbox ) );
+	if ( err )
+		return E_COULDNT_FIND;
 
 	setText( listbox.getCurrent()->getText() );
 
-	return err;  // normal in err is now OK
+	return OK;
 }
 
 struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, void>
@@ -225,18 +220,19 @@ int eComboBox::setCurrent( void* key )
 
 	eListBoxEntryText* cur = listbox.getCurrent();
 
+  if ( cur && cur->getKey() == key )
+  {
+		setText( listbox.getCurrent()->getText() );
+		return OK;
+	}
+	
 	int err;
 	if ( (err=listbox.forEachEntry( selectEntryByKey(key, &listbox ) ) ) )
-	{
-		if ( cur == listbox.getCurrent() )	
-			return E_ALLREADY_SELECTED;
-		else
-			return E_COULDNT_FIND;
-	}
+		return E_COULDNT_FIND;
 
 	setText( listbox.getCurrent()->getText() );
 
-	return err;  // normal in err is now OK
+	return OK; 
 }
 
 eListBoxEntryText* eComboBox::getCurrent()
