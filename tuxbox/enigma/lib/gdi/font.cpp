@@ -18,6 +18,13 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
+#undef HAVE_FRIBIDI
+	// until we have it in the cdk
+
+#ifdef HAVE_FRIBIDI
+#include <fribidi/fribidi.h>
+#endif
+
 #include <map>
 
 fontRenderClass *fontRenderClass::instance;
@@ -258,23 +265,12 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 
 	int nx=cursor.x();
 
-	if (! (rflags & RS_RTL))
-		nx+=glyph->xadvance;
-	else
-	{
-		eDebug("RTL: glyph->xadvance: %d", glyph->xadvance);
-		nx-=glyph->xadvance;
-	}
+	nx+=glyph->xadvance;
 	
 	if (
 			(rflags&RS_WRAP) && 
-			(
-				(!(rflags & RS_RTL)) 
-					? 
-					(nx >= area.right()) : 
-					(nx < area.left())
-				)
-			)
+			(nx >= area.right())
+		)
 	{
 		int cnt = 0;
 		glyphString::iterator i(glyphs.end());
@@ -289,7 +285,6 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 		if (i != glyphs.begin() && ((i->flags&(GS_ISSPACE|GS_ISFIRST))==GS_ISSPACE) && (++i != glyphs.end()))		// skip space
 		{
 			int linelength=cursor.x()-i->x;
-				// RTL: linelength is negative
 			i->flags|=GS_ISFIRST;
 			ePoint offset=ePoint(i->x, i->y);
 			newLine(rflags);
@@ -331,10 +326,7 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 
 	xadvance+=kern;
 
-	if (!(rflags & RS_RTL))
-		ng.x=cursor.x()+kern;
-	else
-		ng.x=cursor.x()-xadvance;
+	ng.x=cursor.x()+kern;
 
 	ng.y=cursor.y();
 	ng.w=xadvance;
@@ -345,10 +337,7 @@ int eTextPara::appendGlyph(Font *current_font, FT_Face current_face, FT_UInt gly
 	ng.bbox=bbox;
 	glyphs.push_back(ng);
 
-	if (!(rflags & RS_RTL))
-		cursor+=ePoint(xadvance, 0);
-	else
-		cursor-=ePoint(xadvance, 0);
+	cursor+=ePoint(xadvance, 0);
 	previous=glyphIndex;
 	return 0;
 }
@@ -378,18 +367,10 @@ void eTextPara::calc_bbox()
 
 void eTextPara::newLine(int flags)
 {
-	if (!(flags & RS_RTL))
-	{
-		if (maximum.width()<cursor.x())
-			maximum.setWidth(cursor.x());
-		cursor.setX(left);
-		previous=0;
-	} else
-	{
-		if (maximum.width()<(area.right()-cursor.x()))
-			maximum.setWidth(area.right()-cursor.x());
-		cursor.setX(area.right());
-	}
+	if (maximum.width()<cursor.x())
+		maximum.setWidth(cursor.x());
+	cursor.setX(left);
+	previous=0;
 	int linegap=current_face->size->metrics.height-(current_face->size->metrics.ascender+current_face->size->metrics.descender);
 	cursor+=ePoint(0, (current_face->size->metrics.ascender+current_face->size->metrics.descender+linegap*1/2)>>6);
 	if (maximum.height()<cursor.y())
@@ -471,6 +452,9 @@ void eTextPara::setFont(Font *fnt, Font *replacement)
 	use_kerning=FT_HAS_KERNING(current_face);
 }
 
+void
+shape (std::vector<unsigned long> &string, const std::vector<unsigned long> &text);
+
 int eTextPara::renderString(const eString &string, int rflags)
 {
 	eLocker lock(ftlock);
@@ -480,21 +464,13 @@ int eTextPara::renderString(const eString &string, int rflags)
 
 	if (!current_font)
 		return -1;
-
+		
 	if (cursor.y()==-1)
 	{
-		if (!(rflags & RS_RTL))
-		{
-			cursor=ePoint(area.x(), area.y()+(current_face->size->metrics.ascender>>6));
-		} else
-		{
-			cursor=ePoint(area.right(), area.y()+(current_face->size->metrics.ascender>>6));
-		}
+		cursor=ePoint(area.x(), area.y()+(current_face->size->metrics.ascender>>6));
 		left=cursor.x();
 	}
 		
-	glyphs.reserve(glyphs.size()+string.length());
-
 	if (&current_font->font.font != cache_current_font)
 	{
 		if (FTC_Manager_Lookup_Size(fontRenderClass::instance->cacheManager, &current_font->font.font, &current_face, &current_font->size)<0)
@@ -505,13 +481,13 @@ int eTextPara::renderString(const eString &string, int rflags)
 		cache_current_font=&current_font->font.font;
 	}
 	
+	std::vector<unsigned long> uc_string, uc_visual;
+	uc_string.reserve(string.length());
+	
 	std::string::const_iterator p(string.begin());
 
 	while(p != string.end())
 	{
-		int isprintable=1;
-		int flags=0;
-		
 		unsigned int unicode=*p++;
 
 		if (unicode & 0x80) // we have (hopefully) UTF8 here, and we assume that the encoding is VALID
@@ -545,23 +521,40 @@ int eTextPara::renderString(const eString &string, int rflags)
 					unicode|=(*p++)&0x3F;
 			}
 		}
+		uc_string.push_back(unicode);
+	}
 
+		// now do the usual logical->visual reordering
+	int size=uc_string.size();
+	std::vector<unsigned long> uc_shape;
+
+		// apply special blaselfasel	
+	shape(uc_shape, uc_string);
+	
+#ifdef HAVE_FRIBIDI
+	uc_visual.resize(size);
+	FriBidiCharType dir=FRIBIDI_TYPE_ON;
+	fribidi_log2vis(&*uc_shape.begin(), uc_visual.size(), &dir, 
+		&*uc_visual.begin(), 0, 0, 0);
+#else
+	uc_visual=uc_shape;
+#endif
+
+	glyphs.reserve(uc_visual.size());
+	
+	for (std::vector<unsigned long>::const_iterator i(uc_visual.begin());
+		i != uc_visual.end(); ++i)
+	{
+		int isprintable=1;
+		int flags=0;
 		if (!(rflags&RS_DIRECT))
 		{
-			switch (unicode)
+			switch (*i)
 			{
 			case '\t':
 				isprintable=0;
-				if (!(rflags & RS_RTL))
-				{
-					cursor+=ePoint(current_font->tabwidth, 0);
-					cursor-=ePoint(cursor.x()%current_font->tabwidth, 0);
-				} else
-				{
-						// does this work?
-					cursor-=ePoint(current_font->tabwidth, 0);
-					cursor+=ePoint(cursor.x()%current_font->tabwidth, 0);
-				}
+				cursor+=ePoint(current_font->tabwidth, 0);
+				cursor-=ePoint(cursor.x()%current_font->tabwidth, 0);
 				break;
 			case 0x8A:
 			case 0xE08A:
@@ -585,15 +578,15 @@ int eTextPara::renderString(const eString &string, int rflags)
 		{
 			FT_UInt index;
 
-			index=(rflags&RS_DIRECT)? unicode : FT_Get_Char_Index(current_face, unicode);
+			index=(rflags&RS_DIRECT)? *i : FT_Get_Char_Index(current_face, *i);
 
 			if (!index)
 			{
 				if (replacement_face)
-					index=(rflags&RS_DIRECT)? unicode : FT_Get_Char_Index(replacement_face, unicode);
+					index=(rflags&RS_DIRECT)? *i : FT_Get_Char_Index(replacement_face, *i);
 
 				if (!index)
-					eDebug("unicode %d ('%c') not present", unicode, unicode);
+					eDebug("unicode %d ('%c') not present", *i, *i);
 				else
 					appendGlyph(replacement_font, replacement_face, index, flags, rflags);
 			} else
@@ -602,6 +595,10 @@ int eTextPara::renderString(const eString &string, int rflags)
 	}
 	bboxValid=false;
 	calc_bbox();
+#ifdef HAVE_FRIBIDI
+	if (dir & FRIBIDI_MASK_RTL)
+		realign(dirRight);
+#endif
 	return 0;
 }
 
