@@ -5,6 +5,7 @@
 #include <lib/dvb/servicedvb.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
+#include <lib/dvb/frontend.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 #include <lib/driver/streamwd.h>
@@ -558,14 +559,17 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ), // radio
 			new eService( _("DVB - Radio services"), eService::spfColMulti)
 		);
-	cache.addPersistentService(
+	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+	{
+		cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1)),
 			new eService( _("Satellites"), eService::spfColSingle)
 		);
-	cache.addPersistentService(
+		cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2),
 			new eService( _("Satellites"), eService::spfColSingle)
 		);
+	}
 #ifndef DISABLE_FILE
 	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
 	recording=0;
@@ -976,12 +980,14 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ));
 			break;
 		case eServiceStructureHandler::modeTV:
-			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
+			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+				cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1), 0xFFFFFFFF ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF ));
 			break;
 		case eServiceStructureHandler::modeRadio:
-			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));
+			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+				cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ));
 			break;

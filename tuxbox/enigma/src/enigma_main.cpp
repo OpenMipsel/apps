@@ -1495,9 +1495,9 @@ eZapMain::eZapMain()
 
 	CONNECT(delayedStandbyTimer.timeout, eZapMain::delayedStandby);
 
-	CONNECT( eFrontend::getInstance()->rotorRunning, eZapMain::onRotorStart );
-	CONNECT( eFrontend::getInstance()->rotorStopped, eZapMain::onRotorStop );
-	CONNECT( eFrontend::getInstance()->rotorTimeout, eZapMain::onRotorTimeout );
+	CONNECT( eFrontend::getInstance()->s_RotorRunning, eZapMain::onRotorStart );
+	CONNECT( eFrontend::getInstance()->s_RotorStopped, eZapMain::onRotorStop );
+	CONNECT( eFrontend::getInstance()->s_RotorTimeout, eZapMain::onRotorTimeout );
 
 	CONNECT( eWidget::showHelp, eZapMain::showHelp );
 
@@ -2764,7 +2764,7 @@ void eZapMain::handleStandby(int i)
 	if ( i )
 		wasSleeping = i;
 
-	if (state & stateSleeping)
+	if (state & stateSleeping && !wasSleeping)
 	{
 		wasSleeping=1;
 		eZapStandby::getInstance()->wakeUp(1);
@@ -4276,7 +4276,8 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		eZapLCD::getInstance()->lcdMain->setServiceName(name);
 #endif
 
-		if ( !serviceref.path.length() )  // no recorded movie
+		if ( !serviceref.path.length() &&   // no recorded movie
+				eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 		{
 			int opos=0;
 			if (rservice)
@@ -4627,8 +4628,6 @@ void eZapMain::clockUpdate()
 		if(eDVB::getInstance()->getmID() == 6  // DM5K6...
 			&& eZapStandby::getInstance() ) //  in standby
 		{
-			// TripleDES check here... when no time is avail...
-			// we set 9999
 			int num=9999;
 			eDebug("write number to led-display");
 			int fd=::open("/dev/dbox/fp0",O_RDWR);
@@ -4692,9 +4691,14 @@ void eZapMain::gotMessage(const int &c)
 {
 	if ( c == eZapMain::messageGoSleep )
 	{
-		eDebug("goto Standby (sleep)");
-		standbyPress(0);
-		standbyRelease();
+		if (!eZapStandby::getInstance())
+		{
+			eDebug("goto Standby (sleep)");
+			standbyPress(0);
+			standbyRelease();
+		}
+		else
+			eDebug("goto Standby... but already sleeping");
 		return;
 	}
 	else if ( c == eZapMain::messageShutdown )
@@ -5047,6 +5051,8 @@ void eZapMain::toggleScart( int state )
 				oldlcd = pLCD->lcdMenu;
 			else if ( pLCD->lcdMain->isVisible() )
 				oldlcd = pLCD->lcdMain;
+			else if ( pLCD->lcdStandby->isVisible() )
+				oldlcd = pLCD->lcdStandby;
 			if ( oldlcd )
 				oldlcd->hide();
 			pLCD->lcdScart->show();

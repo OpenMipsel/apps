@@ -264,7 +264,7 @@ void RotorConfig::setLNBData( eLNB *lnb )
 		Longitude->setFixedNum( lnb->getDiSEqC().gotoXXLongitude );
 		LoDirection->setCurrent( (void*) lnb->getDiSEqC().gotoXXLoDirection );
 		DegPerSec->setFixedNum( lnb->getDiSEqC().DegPerSec );
-		DeltaA->setNumber( (lnb->getDiSEqC().useRotorInPower & 0x0FFFFFFF) >> 8 );
+		DeltaA->setNumber( (lnb->getDiSEqC().useRotorInPower & 0x0000FF00) >> 8 );
 	}
 	else
 	{

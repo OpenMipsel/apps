@@ -619,7 +619,7 @@ int TransponderScan::exec(int initial)
 		state=stateAutomatic;
 
 	show();
-	Decoder::displayIFrameFromFile(DATADIR "/pictures/scan.mvi");
+	Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/scan.mvi");
 
 	eTransponder oldTp(*eDVB::getInstance()->settings->getTransponders());
 
@@ -780,7 +780,6 @@ int TransponderScan::exec(int initial)
 			break;
 		}
 	}
-
 	eDVB::getInstance()->setMode(eDVB::controllerService);  
 	hide();
 

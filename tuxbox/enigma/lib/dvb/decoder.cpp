@@ -606,44 +606,45 @@ int Decoder::displayIFrame(const char *frame, int len)
 {
 	(void)frame;
 	(void)len;
-/*	int fd=::open("/dev/video", O_WRONLY);
-	eDebug("opening /dev/video: %d", fd);
-	if (fd < 0)
+	int fdv=::open("/dev/video", O_WRONLY);
+	eDebug("opening /dev/video: %d", fdv);
+	if (fdv < 0)
 		return -1;
-	
-	write(fd, frame, len);
-	write(fd, frame, len);
-	write(fd, frame, len);
-	write(fd, frame, len);
-	parms.vpid=0x1fff;
+
+	parms.vpid=0x1FFF;
 	parms.pcrpid=-1;
 	Set();
-	startTrickmode();
-	write(fd, frame, len);
-	write(fd, frame, len);
-	write(fd, frame, len);
-	write(fd, frame, len);
 
-	close(fd); */
+	unsigned char buf[128];
+	memset(&buf, 0, 128);
+	for ( int i=0; i < 20; i++ )
+	{
+		write(fdv, frame, len);
+		write(fdv, &buf, 128);
+	}
+
+	if ( ioctl(fd.video, VIDEO_SET_BLANK, 0) < 0 )
+		perror("VIDEO_SET_BLANK");
+
+	close(fdv);
 	return 0;
 }
 
 int Decoder::displayIFrameFromFile(const char *filename)
 {
-	int fd=::open(filename, O_RDONLY);
-	if (fd < 0)
+	int file=::open(filename, O_RDONLY);
+	if (file < 0)
 		return -1;
-	int size=::lseek(fd, 0, SEEK_END);
-	::lseek(fd, 0, SEEK_SET);
+	int size=::lseek(file, 0, SEEK_END);
+	::lseek(file, 0, SEEK_SET);
 	if (size < 0)
 	{
-		::close(fd);
+		::close(file);
 		return -1;
 	}
-	char *buffer=new char[size];
-	::read(fd, buffer, size);
-
-	::close(fd);
+	char *buffer = new char[size];
+	::read(file, buffer, size);
+	::close(file);
 	int res=displayIFrame(buffer, size);
 	delete[] buffer;
 	return res;
