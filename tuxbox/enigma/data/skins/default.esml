@@ -311,17 +311,21 @@
 	
 	<object name="RotorConfig">
 		<RotorConfig text="Rotor Config" cposition="100:80" csize="550:400" >
-			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use" vcenter="on" />
-			<eCheckbox text="Use East Fix" name="useEastFix" position="290:10" size="200:35" helptext="check this when your Rotor do not drive to east" />
-			<eCheckbox text="Use Rotor Input Power" name="useRotorInPower" position="10:55" size="300:35" helptext="Use rotor input power for running detection.. else use timeout" />
-			<eNumber name="DegPerSec" position="e-170:55" size="100:35"  helptext="rotor drive speed, in degrees per second" loadDeco="" />
-			<eLabel name="lDegPerSec" text="°/sec" position="e-70:55" size="e-10:35" />
-			<eLabel name="lLongitude" text="Longitude:" position="10:100" size="185:35" vcenter="on" /> <!--shortcut="1" shortcutFocus="Longitude" /-->
-			<eNumber name="Longitude" position="200:100" size="100:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
-			<eComboBox name="LoDirection" position="310:100" size="100:35" helptext="choose direction" loadDeco="" />
-			<eLabel name="lLatitude" text="Latitude:" position="10:145" size="185:35" vcenter="on" /> <!--shortcut="2" shortcutFocus="Latitude" -->
-			<eNumber name="Latitude" position="200:145" size="100:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
-			<eComboBox name="LaDirection" position="310:145" size="100:35" helptext="choose direction" loadDeco="" />
+			<eCheckbox text="Use Rotor Input Power" name="useRotorInPower" position="10:10" size="300:35" helptext="Use rotor input power for running detection.. else use timeout" />
+			<eNumber name="DegPerSec" position="320:10" size="100:35" helptext="rotor drive speed, in degrees per second" loadDeco="" />
+			<eLabel name="lDegPerSec" text="°/sec" position="430:10" size="e-10:35" vcenter="on" />
+			<eNumber name="DeltaA" position="320:10" size="60:35" helptext="rotor power input difference between running and not running" loadDeco="" />
+			<eLabel name="lDeltaA" text="mA" position="390:10" size="e-10:35" vcenter="on" />
+
+			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:55" size="300:35" helptext="when the rotor support this, then use" vcenter="on" />
+			<eCheckbox text="Use East Fix" name="useEastFix" position="320:55" size="e-10:35" helptext="check this when your Rotor do not drive to east" />
+
+			<eLabel name="lLongitude" text="Longitude:" position="10:100" size="250:35" vcenter="on" /> <!--shortcut="1" shortcutFocus="Longitude" /-->
+			<eNumber name="Longitude" position="320:100" size="100:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
+			<eComboBox name="LoDirection" position="430:100" size="100:35" helptext="choose direction" loadDeco="" />
+			<eLabel name="lLatitude" text="Latitude:" position="10:145" size="250:35" vcenter="on" /> <!--shortcut="2" shortcutFocus="Latitude" -->
+			<eNumber name="Latitude" position="320:145" size="100:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
+			<eComboBox name="LaDirection" position="430:145" size="100:35" helptext="choose direction" loadDeco="" />
 
 			<eListbox name="positions" position="10:100" size="170:175" helptext="choose entry to edit or remove" loadDeco="" />
 
