@@ -22,7 +22,7 @@ public:
 	Signal1< void, eListBoxEntryText* > selchanged;	
 	Signal2< void, eComboBox*, eListBoxEntryText* > selchanged_id;
 	enum { /*flagVCenter=64 in eLabel*/ flagSorted=128, flagShowEntryHelp=256 };
-	eComboBox(eWidget* parent, int OpenEntries, const char *deco="eComboBox" );
+	eComboBox(eWidget* parent, int OpenEntries=5, const char *deco="eComboBox" );
 	void removeEntry( eListBoxEntryText* );
 	void removeEntry( int );
 	void removeEntry( void* );
