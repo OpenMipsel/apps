@@ -9,10 +9,9 @@ struct ePlaylistEntry
 	enum
 	{
 		PlaylistEntry=1, SwitchTimerEntry=2, RecTimerEntry=4,	
-		stateWaiting=64, stateRunning=128, statePaused=256,
-		stateFinished=512, stateEventOutdated=1024,	stateNoSpaceLeft=2048,
-		stateUserAborted=4096, stateZapFailed=8192, typeSmartTimer=32768,
-		boundFile=65536 // delete file together with playlist entry
+		stateWaiting=32, stateRunning=64,	statePaused=128, stateFinished=256, stateError=512,
+		errorNoSpaceLeft=1024, errorUserAborted=2048, errorZapFailed=4096, errorOutdated=8192,
+		boundFile=16384, typeSmartTimer=32768
 	};
 
 	eServiceReference service;
