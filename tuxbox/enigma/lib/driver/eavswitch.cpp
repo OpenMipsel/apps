@@ -45,6 +45,7 @@ eAVSwitch *eAVSwitch::instance=0;
 
 eAVSwitch::eAVSwitch()
 {
+	input=0;
 	active=0;
 	if (!instance)
 		instance=this;
@@ -314,6 +315,8 @@ int eAVSwitch::setInput(int v)
 {	
 	int mID = eDVB::getInstance()->getmID();
 
+	input = v;
+
 	eDebug("[eAVSwitch] setInput %d, avsfd=%d", v, avsfd);
 	switch (v)
 	{
@@ -363,13 +366,13 @@ int eAVSwitch::setAspectRatio(eAVAspectRatio as)
 	aspect=as;
 	saa = (aspect==r169) ? SAA_WSS_169F : SAA_WSS_43F;
 	ioctl(saafd,SAAIOSWSS,&saa);
-	return setTVPin8(active?((aspect==r169)?6:12):0);
+	return setTVPin8((active && (!input))?((aspect==r169)?6:12):0);
 }
 
 int eAVSwitch::setActive(int a)
 {
 	active=a;
-	return setTVPin8(active?((aspect==r169)?6:12):0);
+	return setTVPin8((active && (!input))?((aspect==r169)?6:12):0);
 }
 
 bool eAVSwitch::loadScartConfig()
