@@ -586,7 +586,17 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 		w->resize( s );
 		w->hide();
 
-		eTransponderWidget *t=new eTransponderWidget(w, 0, eTransponderWidget::deliverySatellite);
+		eTransponderWidget *t = 0;
+		switch ( eFrontend::getInstance()->Type() )
+		{
+			case eFrontend::feSatellite:
+				t = new eTransponderWidget(w, 0, eTransponderWidget::deliverySatellite);
+				break;
+			case eFrontend::feCable:
+			default:
+				t = new eTransponderWidget(w, 0, eTransponderWidget::deliveryCable);
+				break;
+		}
 		t->move(ePoint(0, 0));
 		t->resize(eSize(clientrect.width(), 200));
 		t->load();
