@@ -15,8 +15,10 @@ TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
 AC_OUTPUT([
 Makefile
 libavs/Makefile
+libavs/tuxbox-avs.pc
 liblcddisplay/Makefile
-tuxbox-avs.pc
-tuxbox-lcddisplay.pc
+liblcddisplay/tuxbox-lcddisplay.pc
+libtuxbox/Makefile
+libtuxbox/tuxbox.pc
 ])
 
