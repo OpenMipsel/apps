@@ -22,6 +22,11 @@ class eDVRPlayerThread: public eThread, public eMainloop, public Object
 	int sourcefd;
 	int speed;
 	int slice;
+
+	int filelength; // in 1880 packets
+	int position;
+	eLock poslock;
+
 	off64_t slicesize;
 	eString filename;
 	eSocketNotifier *inputsn, *outputsn;
@@ -57,6 +62,9 @@ public:
 	
 	eDVRPlayerThread(const char *filename, eServiceHandlerDVB *handler);
 	~eDVRPlayerThread();
+
+	int getPosition(int);
+	int getLength(int);
 	
 	void thread();
 };
@@ -94,7 +102,7 @@ class eServiceHandlerDVB: public eServiceHandler
 	void leaveService(const eServiceReferenceDVB &);
 	void aspectRatioChanged(int ratio);
 	int flags, state, aspect, error;
-	
+
 	eServiceCache<eServiceHandlerDVB> cache;
 public:
 	int getID() const;
@@ -132,6 +140,8 @@ public:
 
 	eService *addRef(const eServiceReference &service);
 	void removeRef(const eServiceReference &service);
+
+	int getPosition(int what);
 };
 
 #endif
