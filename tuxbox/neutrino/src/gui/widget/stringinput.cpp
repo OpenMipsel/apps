@@ -82,9 +82,9 @@ CStringInput::CStringInput(string Name, char* Value, int Size,  string Hint_1, s
 	selected = 0;
 }
 
-void CStringInput::key0_9Pressed(int key)
+void CStringInput::key0_9Pressed(const int numericvalue)
 {
-	value[selected]=validchars[key];
+	value[selected]=validchars[numericvalue];
 
 	if (selected < (size - 1))
 	{
@@ -206,9 +206,9 @@ int CStringInput::exec( CMenuTarget* parent, string )
 		{
 			keyRightPressed();
 		}
-		else if ( ( msg>= 0 ) && ( msg<= 9) )
+		else if (CRCInput::isNumeric(msg))
 		{
-			key0_9Pressed(msg);
+			key0_9Pressed(CRCInput::getNumericValue(msg));
 		}
 		else if (msg==CRCInput::RC_red)
 		{
@@ -392,6 +392,8 @@ CStringInputSMS::CStringInputSMS(string Name, char* Value, int Size, string Hint
 
 void CStringInputSMS::key0_9Pressed(int key)
 {
+	int numericvalue = CRCInput::getNumericValue(key);
+
 	if (lastKey != key)
 	{
 		if ((lastKey != -1) &&		// there is a last key
@@ -403,8 +405,8 @@ void CStringInputSMS::key0_9Pressed(int key)
 		keyCounter = 0;
 	}
 	else
-		keyCounter = (keyCounter + 1) % arraySizes[key];
-	value[selected] = Chars[key][keyCounter];
+		keyCounter = (keyCounter + 1) % arraySizes[numericvalue];
+	value[selected] = Chars[numericvalue][keyCounter];
 	paintChar(selected);
 	lastKey = key;
 }
@@ -488,7 +490,7 @@ int CPINInput::exec( CMenuTarget* parent, string )
 		{
 			keyRightPressed();
 		}
-		else if ( ( msg>= 0 ) && ( msg<= 9) )
+		else if (CRCInput::isNumeric(msg))
 		{
 			int old_selected = selected;
 			key0_9Pressed(msg);
