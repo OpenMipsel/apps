@@ -60,6 +60,8 @@
 		<map name="global.normal.background" color="content" />
 		<map name="global.normal.foreground" color="content+15" />
 
+		<map name="button.normal.background" color="content" />
+
 		<map name="global.selected.background" color="content_selected" />
 		<map name="global.selected.foreground" color="content_selected+15" />
 

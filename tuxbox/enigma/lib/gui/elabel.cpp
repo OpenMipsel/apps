@@ -10,7 +10,6 @@
 eLabel::eLabel(eWidget *parent, int flags, int takefocus, const char *deco ):
 	eDecoWidget(parent, takefocus, deco), blitFlags(0), flags(flags), para(0), align( eTextPara::dirLeft ), shortcutPixmap(0)
 {
-//	setForegroundColor(eSkin::getActive()->queryScheme("global.normal.foreground"));
 }
 
 eLabel::~eLabel()
@@ -31,11 +30,12 @@ void eLabel::setPixmapPosition( const ePoint &p )
 void eLabel::validate( const eSize* s )
 {
 	if (!para)
-  {
+	{
 		if (s)
-			para=new eTextPara( eRect(text_position.x(), text_position.y(), s->width() - text_position.x(), s->height() - text_position.y()));		
+			para=new eTextPara( eRect(text_position.x(), text_position.y(), s->width() - text_position.x(), s->height() - text_position.y()));
 		else
 			para=new eTextPara( eRect(text_position.x(), text_position.y(), size.width() - text_position.x(), size.height() - text_position.y()));
+
 		para->setFont(font);
 		para->renderString(text, flags);
 		para->realign(align);
@@ -49,7 +49,6 @@ void eLabel::invalidate()
 		para->destroy();
 		para=0;
 	}
-
 	if (isVisible())
 		eDecoWidget::invalidate();  // we must redraw...
 }
@@ -115,7 +114,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 			yOffs = ( (area.height() - para->getBoundBox().height() ) / 2 + 0) - para->getBoundBox().top();
 		else
 			yOffs = 0;
-			
+
 		eWidget *w;
 		if ((blitFlags & BF_ALPHATEST) && (transparentBackgroundColor != -1))
 		{

@@ -8,11 +8,13 @@
 
 eMessageBox::eMessageBox(eString message, eString caption, int flags, int def): eWindow(0), icon(0)
 {
+	setText(caption);	
 	int fontsize=eSkin::getActive()->queryValue("fontsize", 20);
-	setText(caption);
-	move(ePoint(100, 70));
+	int posx = eSkin::getActive()->queryValue("eMessageBox.pos.x", 100);
+	int posy = eSkin::getActive()->queryValue("eMessageBox.pos.y", 70);
+	move(ePoint(posx, posy));
 	resize(eSize(450, 430));
-	
+
 	if ( flags > 15 ) // we have to draw an icon
 	{
 		gPixmap *pm=0;

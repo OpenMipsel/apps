@@ -45,7 +45,6 @@ eRect eWindow::getTitleBarRect()
 	rc.setTop( titleOffsetTop );
 	rc.setRight( width() - ( deco.borderRight > titleOffsetRight ? deco.borderRight : titleOffsetRight ) );
 	rc.setBottom( rc.top() + (titleHeight?titleHeight:deco.borderTop) );  // deco.borderTop sucks...
-
 	return rc;
 }
 
@@ -53,7 +52,15 @@ void eWindow::redrawWidget(gPainter *target, const eRect &where)
 {
 	if ( deco )  // then draw Deco
 		deco.drawDecoration(target, ePoint(width(), height()));
-
+	else
+	{
+		gColor border = eSkin::getActive()->queryColor("eWindow.border");
+		target->setForegroundColor(border);
+		target->line( ePoint(0,0), ePoint(0, height()) );
+		target->line( ePoint(0,0), ePoint(width(), 0) );
+		target->line( ePoint(width()-1,0), ePoint(width()-1, height()-1) );
+		target->line( ePoint(0,height()-1), ePoint(width()-1, height()-1) );
+	}
 	drawTitlebar(target);
 }
 

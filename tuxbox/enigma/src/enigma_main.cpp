@@ -208,7 +208,6 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		system("/bin/sync");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target1/lun0/disc");
-
 		break;
 	}
 	case eWidgetEvent::execDone:
@@ -1684,9 +1683,14 @@ void eZapMain::setEIT(EIT *eit)
 			switch (p)
 			{
 			case 0:
-				EINowDuration->setText(duration);
+			{
+				int show_current_remaining=1;
+				eConfig::getInstance()->getKey("/ezap/osd/showCurrentRemaining", show_current_remaining);
+				if (!show_current_remaining || !eDVB::getInstance()->time_difference )
+					EINowDuration->setText(duration);
 				nowtime=start;
 				break;
+			}
 			case 1:
 				EINextDuration->setText(duration);
 				nexttime=start;
@@ -1727,41 +1731,38 @@ void eZapMain::setEIT(EIT *eit)
 
 void eZapMain::updateServiceNum( const eServiceReference &_serviceref )
 {
-		eService *rservice = eServiceInterface::getInstance()->addRef( refservice );
-		eService *service = eServiceInterface::getInstance()->addRef( _serviceref );
-		int num=-1;
+	eService *rservice = eServiceInterface::getInstance()->addRef( refservice );
+	eService *service = eServiceInterface::getInstance()->addRef( _serviceref );
+	int num=-1;
 
-		if (rservice)
-			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-		if ((num == -1) && service)
-			num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
-		if ((num == -1) && service && service->dvb)
-			num=service->dvb->service_number;
+	if (rservice)
+		num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
+	if ((num == -1) && service)
+		num=eZap::getInstance()->getServiceSelector()->getServiceNum(_serviceref);
+	if ((num == -1) && service && service->dvb)
+		num=service->dvb->service_number;
 
-		if ( num != -1)
+	if ( num != -1)
+	{
+		ChannelNumber->setText(eString().sprintf("%d", num));
+		if(eDVB::getInstance()->getmID() == 6)
 		{
-			ChannelNumber->setText(eString().sprintf("%d", num));
-			if(eDVB::getInstance()->getmID() == 6)
-			{
-				eDebug("write number to led-display");
-				int fd=::open("/dev/dbox/fp0",O_RDWR);
-				::ioctl(fd,4,&num);
-				::close(fd);
-			}
-			ChannelNumber->setText(eString().sprintf("%d", num));
+			eDebug("write number to led-display");
+			int fd=::open("/dev/dbox/fp0",O_RDWR);
+			::ioctl(fd,4,&num);
+			::close(fd);
 		}
-		else
-			ChannelNumber->setText(eString().sprintf(""));
+	}
 
-		if ( service )
-			eServiceInterface::getInstance()->removeRef( _serviceref );
-		if ( rservice )
-			eServiceInterface::getInstance()->removeRef( refservice );
+	if ( service )
+		eServiceInterface::getInstance()->removeRef( _serviceref );
+	if ( rservice )
+		eServiceInterface::getInstance()->removeRef( refservice );
 }
 
 void eZapMain::updateProgress()
 {
-  eZapLCD *pLCD=eZapLCD::getInstance();
+	eZapLCD *pLCD=eZapLCD::getInstance();
 	if (serviceFlags & eServiceHandler::flagSupportPosition)
 	{
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -1804,7 +1805,6 @@ void eZapMain::updateProgress()
 					EINowDuration->setText(eString().sprintf("+%d min", ((cur_start+cur_duration) - c) / 60));
 				else
 					EINowDuration->setText(eString().sprintf("%d min", cur_duration / 60));
-					
 				Progress->show();
 				pLCD->lcdMain->Progress->setPerc((c-cur_start)*100/cur_duration);
 				pLCD->lcdMain->Progress->show();
@@ -2566,8 +2566,8 @@ void eZapMain::stopSkip(int dir)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekEnd));
 	}
 
-/*	if (isVisible())
-		timeout.start(1000, 1);*/
+	if (isVisible())
+		timeout.start(2000, 1);
 }
 
 ePlaylist *eZapMain::addUserBouquet( ePlaylist *list, const eString &path, const eString &name, eServiceReference& ref, bool save )
@@ -4228,7 +4228,7 @@ void eZapMain::leaveService()
 	flags&=~(ENIGMA_NVOD|ENIGMA_SUBSERVICES|ENIGMA_AUDIO|ENIGMA_VIDEO);
 
 	ChannelName->setText("");
-	ChannelNumber->setText("");
+//	ChannelNumber->setText("");
 	Description->setText("");
 
 	EINow->setText("");
@@ -4534,9 +4534,6 @@ void eZapMain::showList(int list)
 
 void eZapMain::showServiceInfobar(int show)
 {
-	if ( show == dvrfunctions )
-		return;
-//	eDebug("showServiceInfoBar(%d)", show);
 	dvrfunctions=show;
 	clearHelpList();
 
@@ -4548,7 +4545,6 @@ void eZapMain::showServiceInfobar(int show)
 		prepareDVRHelp();
 	} else
 	{
-//		eDebug("bla");
 		dvrInfoBar->hide();
 		switch( eServiceInterface::getInstance()->getService()->getID() )
 		{

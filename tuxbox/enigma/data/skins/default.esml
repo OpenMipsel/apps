@@ -16,7 +16,9 @@
 	</fonts>
 
 	<values>
-		  <value name="mute.pos.x" value="100" />
+			<value name="eMessageBox.pos.x" value="100" />
+			<value name="eMessageBox.pos.y" value="70" />
+			<value name="mute.pos.x" value="100" />
 			<value name="mute.pos.y" value="50" />
 			<value name="volume.grafik.pos.x" value="450" />
 			<value name="volume.grafik.pos.y" value="50" />
@@ -28,6 +30,7 @@
 
 	<fontalias>
 		<map name="eStatusBar" font="Nimbus" size="16" />
+		<map name="eChannelInfo" font="Nimbus" size="16" />
 		<map name="global.normal" font="Nimbus" size="24" />
 		<map name="global.30" font="Nimbus" size="30" />
 		<map name="global.fixed" font="Nimbus" size="24" />
@@ -196,6 +199,7 @@
 
 	<colors>
 		<color name="background" color="#ff000000" />
+		<color name="eWindow.border" color="#000000" />
 		<color name="white_trans" color="#1effffff" />
 		<color name="white_blue" color="#1effffff" end="#1e0003f80" size="8" />
 
@@ -209,7 +213,7 @@
 		<color name="std_dmagenta" color="#c000c0" />
 		<color name="std_dred"     color="#c00000" />
 		<color name="std_dblue"    color="#0000c0" />
-		
+
 		<color name="std_gray"     color="#000000" end="#ffffff" size="8" />
 
 		<color name="blue_nontrans" color="#1e003f80" end="#00003f80" size="4" />

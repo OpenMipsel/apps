@@ -14,6 +14,7 @@
 	<fontalias>
 		<map name="eServiceSelector.Entry.Description" font="Blue.Regular" size="26" />
 		<map name="eStatusBar" font="Blue.Regular" size="24" />
+		<map name="eChannelInfo" font="Blue.Regular" size="28" />
 		<map name="eWindow.TitleBar" font="Blue.Bold" size="32" />
 		<map name="eWindow.Childs" font="Blue.Regular" size="30" />
 
@@ -245,6 +246,8 @@
 		<map name="global.normal.background" color="content" />
 		<map name="global.normal.foreground" color="white" />
 
+		<map name="button.normal.background" color="content" />
+
 		<map name="global.selected.background" color="selected" />
 		<map name="global.selected.foreground" color="white" />
 
@@ -390,16 +393,15 @@
 	
 	<object name="eZapMainMenu">
 		<eWidget position="0:306" size="720:270" backgroundColor="-1" >
-			<eLabel pixmap="mainmenu.background" position="0:0" size="e:e" name="background" />
+			<eLabel pixmap="mainmenu.background" position="0:0" size="e:e" name="background" backgroundColor="-1" />
 			<eLabel position="22:54" size="70:70" name="l3" alphatest="on" />
 			<eLabel position="114:34" size="70:70" name="l2" alphatest="on" />
 			<eLabel position="208:22" size="70:70" name="l1" alphatest="on" />
 			<eLabel position="312:5" size="100:100" name="m" alphatest="on" />
 			<eLabel position="443:22" size="70:70" name="r1" alphatest="on" />
 			<eLabel position="537:34" size="70:70" name="r2" alphatest="on" />
-
 			<eLabel position="629:54" size="70:70" name="r3" alphatest="on" />
-			<eLabel position="200:200" size="320:48" align="center" font="eWindow.TitleBar"	foregroundColor="white"  name="description" alphatest="on" />
+			<eLabel position="200:200" size="320:48" align="center" alphatest="on" font="eWindow.TitleBar" foregroundColor="white" name="description" />
 		</eWidget>
 	</object>
 	

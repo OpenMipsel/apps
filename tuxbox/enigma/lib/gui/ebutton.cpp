@@ -9,7 +9,7 @@ eButton::eButton(eWidget *parent, eLabel* desc, int takefocus, const char *deco)
 	:eLabel(parent, 0, takefocus, deco), tmpDescr(0),
 	focusB(eSkin::getActive()->queryScheme("global.selected.background")),
 	focusF(eSkin::getActive()->queryScheme("global.selected.foreground")),
-	normalB(eSkin::getActive()->queryScheme("global.normal.background")),
+	normalB(eSkin::getActive()->queryScheme("button.normal.background")),
 	normalF(eSkin::getActive()->queryScheme("global.normal.foreground")),
 	descr(desc)
 {

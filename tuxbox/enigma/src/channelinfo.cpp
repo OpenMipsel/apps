@@ -15,35 +15,36 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	cgenre(this), cdolby(this), cstereo(this),
 	cformat(this), cscrambled(this), eit(0)
 {
-	gFont fn = eSkin::getActive()->queryFont("eStatusBar");
-	fn.pointSize = 28;
+	foregroundColor=eSkin::getActive()->queryColor("eStatusBar.foreground");
+	backgroundColor=eSkin::getActive()->queryColor("eStatusBar.background");
+	gFont fn = eSkin::getActive()->queryFont("eChannelInfo");
+	gFont ft = fn;
+	ft.pointSize+=2;
+
 	cdescr.setFont( fn );
-	cdescr.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
-	cdescr.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
+	cdescr.setForegroundColor( foregroundColor );
+	cdescr.setBackgroundColor( backgroundColor );
 	cdescr.setFlags( RS_FADE | eLabel::flagVCenter );
 
-	fn.pointSize = 28;
 	cgenre.setFont( fn );
-	cgenre.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
-	cgenre.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
+	cgenre.setForegroundColor( foregroundColor );
+	cgenre.setBackgroundColor( backgroundColor );
 	cgenre.setFlags( RS_FADE | eLabel::flagVCenter );
 
-	fn.pointSize = 28;
 	copos.setFont( fn );
 	copos.setAlign( eTextPara::dirRight );
-	copos.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
-	copos.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
+	copos.setForegroundColor( foregroundColor );
+	copos.setBackgroundColor( backgroundColor );
 	copos.setFlags( RS_FADE );
 
-	fn.pointSize = 30;
-	cname.setFont( fn );
-	cname.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
-	cname.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
+	cname.setFont( ft );
+	cname.setForegroundColor( foregroundColor );
+	cname.setBackgroundColor( backgroundColor );
 	cname.setFlags( RS_FADE );
 
 	ctime.setFont( fn );
-	ctime.setForegroundColor ( eSkin::getActive()->queryColor("eStatusBar.foreground") );
-	ctime.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
+	ctime.setForegroundColor( foregroundColor );
+	ctime.setBackgroundColor( backgroundColor );
 	ctime.setFlags( RS_FADE );
 
 	gPixmap *pm=eSkin::getActive()->queryImage("sselect_dolby");

@@ -11,6 +11,7 @@
 	<fontalias>
 		<map name="eServiceSelector.Entry.Description" font="Nimbus" size="19" />
 		<map name="eStatusBar" font="Nimbus" size="19" />
+		<map name="eChannelInfo" font="Nimbus" size="20" />
 		<map name="eWindow.TitleBar" font="Nimbus" size="22" />
 		<map name="eWindow.Childs" font="Nimbus" size="19" />
 
@@ -109,6 +110,8 @@
 		<map name="global.normal.background" color="mittel" />
 		<map name="global.normal.foreground" color="mittel+15" />
 
+		<map name="button.normal.background" color="mittel" />
+
 		<map name="global.selected.background" color="hell" />
 		<map name="global.selected.foreground" color="hell+15" />
 
@@ -129,14 +132,16 @@
 	</colorscheme>
 
 	<values>
+		<value name="eMessageBox.pos.x" value="100" />
+		<value name="eMessageBox.pos.y" value="100" />
 		<value name="eWindow.titleFontSize" value="22" />
-		<value name="eWindow.borderLeft" value="30" />
-		<value name="eWindow.borderRight" value="20" />
-		<value name="eWindow.borderBottom" value="20" />
+		<value name="eWindow.borderLeft" value="0" />
+		<value name="eWindow.borderRight" value="0" />
+		<value name="eWindow.borderBottom" value="0" />
 		<value name="eWindow.borderTop" value="30" />  
-		<value name="eWindow.titleOffsetLeft" value="30" />
+		<value name="eWindow.titleOffsetLeft" value="0" />
 		<value name="eWindow.titleOffsetTop" value="0" />
-		<value name="eWindow.titleOffsetRight" value="20" />
+		<value name="eWindow.titleOffsetRight" value="0" />
 		<value name="eWindow.titleHeight" value="30" />
 		<value name="fontsize" value="19" />
 	</values>
@@ -218,9 +223,9 @@
 		<map name="eComboBox.right" img="line-v" />
 		<map name="eComboBox.bottomRight" img="corner" />
 		<map name="eComboBox.topRight" img="corner" />
-		<map name="eComboBox.bottomLeft" img="corner" />		
+		<map name="eComboBox.bottomLeft" img="corner" />
 
-		<map name="eComboBox.listbox.bottom" img="line-hk" />
+		<map name="eComboBox.listbox.bottom" img="line-h" />
 		<map name="eComboBox.listbox.right" img="line-v" />
 		<map name="eComboBox.listbox.bottomLeft" img="corner" />
 		<map name="eComboBox.listbox.top" img="line-h" />
@@ -273,7 +278,6 @@
 			<eLabel position="537:22" size="70:70" name="r2" alphatest="on" />
 			<eLabel position="629:22" size="70:70" name="r3" alphatest="on" />
 			<eLabel position="0:105" size="720:48" align="center" font="eWindow.TitleBar"	foregroundColor="mittel+15" backgroundColor="mittel"  name="description" />
-		
 		</eWidget>
 	</object>
 	
