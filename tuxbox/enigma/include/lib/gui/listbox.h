@@ -16,7 +16,7 @@ int calcFontHeight( const gFont& font );
 
 class eListBoxBase: public eDecoWidget
 {
-	gPixmap *iArrowUpDown, *iArrowUp, *iArrowDown, *iArrowLeft, *iArrowRight;
+	gPixmap iArrowUpDown, iArrowUp, iArrowDown, iArrowLeft, iArrowRight;
 protected:
 	const eWidget* descr;
 	eLabel* tmpDescr; // used for description Label in LCD

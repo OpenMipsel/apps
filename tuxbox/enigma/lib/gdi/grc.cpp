@@ -1,5 +1,5 @@
 // for debugging use:
-//#define SYNC_PAINT
+#define SYNC_PAINT
 #include <unistd.h>
 #ifndef SYNC_PAINT
 #include <pthread.h>
@@ -169,7 +169,7 @@ void gPainter::blit(gPixmap &pixmap, ePoint pos, eRect clip, int flags)
 	o.opcode=gOpcode::blit;
 	pos+=logicalZero;
 	clip.moveBy(logicalZero.x(), logicalZero.y());
-	o.parm.blit=new gOpcode::para::pblit(pixmap.lock(), pos, clip);
+	o.parm.blit=new gOpcode::para::pblit(pixmap, pos, clip);
 	o.flags=flags;
 	rc.submit(o);
 }
@@ -188,22 +188,19 @@ void gPainter::setPalette(gRGB *colors, int start, int len)
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::setPalette;
-	gPalette *p=new gPalette;
 	
-	p->data=new gRGB[len];
-	memcpy(p->data, colors, len*sizeof(gRGB));
-	p->start=start;
-	p->colors=len;
-	o.parm.setPalette=new gOpcode::para::psetPalette(p);
+	gRGB *data=data=new gRGB[len];
+	memcpy(data, colors, len*sizeof(gRGB));
+	o.parm.setPalette=new gOpcode::para::psetPalette(data, start, len);
 	rc.submit(o);
 }
 
-void gPainter::mergePalette(gPixmap &target)
+void gPainter::mergePalette(gPalette pal)
 {
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::mergePalette;
-	o.parm.mergePalette=new gOpcode::para::pmergePalette(target.lock());
+	o.parm.mergePalette=new gOpcode::para::pmergePalette(pal);
 	rc.submit(o);
 }
 
@@ -279,7 +276,7 @@ gPixmapDC::gPixmapDC(): pixmap(0)
 {
 }
 
-gPixmapDC::gPixmapDC(gPixmap *pixmap): pixmap(pixmap)
+gPixmapDC::gPixmapDC(gPixmap pixmap): pixmap(pixmap)
 {
 }
 
@@ -290,6 +287,12 @@ gPixmapDC::~gPixmapDC()
 
 void gPixmapDC::exec(gOpcode *o)
 {
+	if (!(void*)pixmap)
+	{
+		eDebug("no dc!");
+		return;
+	}
+	
 	switch(o->opcode)
 	{
 	case gOpcode::begin:
@@ -314,7 +317,7 @@ void gPixmapDC::exec(gOpcode *o)
 		break;
 	}
 	case gOpcode::fill:
-		pixmap->fill(o->parm.fill->area, o->parm.fill->color);
+		pixmap.fill(o->parm.fill->area, o->parm.fill->color);
 		delete o->parm.fill;
 		break;
 	case gOpcode::blit:
@@ -323,29 +326,28 @@ void gPixmapDC::exec(gOpcode *o)
 			o->parm.blit->clip=clip;
 		else
 			o->parm.blit->clip&=clip;
-		pixmap->blit(*o->parm.blit->pixmap, o->parm.blit->position, o->parm.blit->clip, o->flags);
-		o->parm.blit->pixmap->unlock();
+		pixmap.blit(o->parm.blit->pixmap, o->parm.blit->position, o->parm.blit->clip, o->flags);
 		delete o->parm.blit;
 		break;
 	}
 	case gOpcode::setPalette:
-		if (o->parm.setPalette->palette->start>pixmap->clut.colors)
-			o->parm.setPalette->palette->start=pixmap->clut.colors;
-		if (o->parm.setPalette->palette->colors>(pixmap->clut.colors-o->parm.setPalette->palette->start))
-			o->parm.setPalette->palette->colors=pixmap->clut.colors-o->parm.setPalette->palette->start;
-		if (o->parm.setPalette->palette->colors)
-			memcpy(pixmap->clut.data+o->parm.setPalette->palette->start, o->parm.setPalette->palette->data, o->parm.setPalette->palette->colors*sizeof(gRGB));
-		delete[] o->parm.setPalette->palette->data;
-		delete o->parm.setPalette->palette;
+	{
+		gPalette p;
+		pixmap->GetPalette(pixmap, &p.ptrref());
+		if (p)
+			p->SetEntries(p, o->parm.setPalette->data, o->parm.setPalette->len,  o->parm.setPalette->start);
+		delete[] o->parm.setPalette->data;
 		delete o->parm.setPalette;
 		break;
+	}
 	case gOpcode::mergePalette:
-		pixmap->mergePalette(*o->parm.blit->pixmap);
-		o->parm.blit->pixmap->unlock();
-		delete o->parm.blit;
+	{
+		pixmap.mergePalette(o->parm.mergePalette->pal);
+		delete o->parm.mergePalette;
 		break;
+	}
 	case gOpcode::line:
-		pixmap->line(o->parm.line->start, o->parm.line->end, o->parm.line->color);
+		pixmap.line(o->parm.line->start, o->parm.line->end, o->parm.line->color);
 		delete o->parm.line;
 		break;
 	case gOpcode::clip:
@@ -354,6 +356,7 @@ void gPixmapDC::exec(gOpcode *o)
 		break;
 	case gOpcode::end:
 		unlock();
+		break;
 	case gOpcode::flush:
 		break;
 	default:
@@ -363,14 +366,12 @@ void gPixmapDC::exec(gOpcode *o)
 
 gRGB gPixmapDC::getRGB(gColor col)
 {
-	if ((!pixmap) || (!pixmap->clut.data))
-		return gRGB(col, col, col);
-	if (col<0)
-	{
-		eFatal("bla transp");
-		return gRGB(0, 0, 0, 0xFF);
-	}
-	return pixmap->clut.data[col];
+	gPalette p;
+	gRGB res;
+	pixmap->GetPalette(pixmap, &p.ptrref());
+	if (p)
+		p->GetEntries(p, &res, 1, col);
+	return res;
 }
 
 eAutoInitP0<gRC> init_grc(1, "gRC");

@@ -28,6 +28,8 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/decoder.h>
 
+#include <lib/gdi/epng.h>
+
 #include <lib/system/xmlrpc.h>
 #include <enigma.h>
 #include <enigma_dyn.h>
@@ -62,8 +64,11 @@ void eZap::status()
 {
 }
 
+int __argc;
+char **__argv;
+
 eZap::eZap(int argc, char **argv)
-	: eApplication(/*argc, argv, 0*/)
+	: eApplication()
 {
 	int bootcount;
 
@@ -75,18 +80,65 @@ eZap::eZap(int argc, char **argv)
 
 	init = new eInit();
 	init->setRunlevel(8);
+
 #if 0
-	if(0)
+	if(1)
 	{
+		gPixmap pixmap=gFBDC::getInstance()->getPixmap();
+
+#if 1		
+		gPalette pal;
+		ASSERT(!pixmap->GetPalette(pixmap, &pal.ptrref())); // achtung geht nur im debug :)
+		unsigned int size;
+		ASSERT(!pal->GetSize(pal, &size));
+		eDebug("%d entries in palette.", size);
+		
+		DFBColor entries[size];
+		ASSERT(!pal->GetEntries(pal, entries, size, 0));
+		for (int i=0; i<size; ++i)
+			printf("%d: %d %d %d (%02x)\n", i, entries[i].r, entries[i].g, entries[i].b, entries[i].a);
+#endif
+
+#if 0
+		ASSERT(!pixmap->SetColorIndex(pixmap, 20));
+		ASSERT(!pixmap->FillRectangle(pixmap, 100, 100, 200, 200));
+		ASSERT(!pixmap->SetColorIndex(pixmap, 30));
+		ASSERT(!pixmap->FillRectangle(pixmap, 110, 110, 200, 200));
+		ASSERT(!pixmap->SetColorIndex(pixmap, 45));
+		ASSERT(!pixmap->FillRectangle(pixmap, 120, 120, 200, 200));
+		ASSERT(!pixmap->Flip(pixmap, 0, DSFLIP_BLIT));
+#endif
+
+#if 1
 		gDC &dc=*gFBDC::getInstance();
 
+	{
 		gPainter p(dc);
 		
 		p.clear();
-		p.flush();
-		p.setForegroundColor(gColor(0x13));
+		p.setForegroundColor(gColor(20));
 		p.fill(eRect(0, 0, 720, 576));
-		
+		p.setForegroundColor(gColor(23));
+		p.fill(eRect(130, 140, 20, 20));
+		p.setForegroundColor(gColor(25));
+		p.fill(eRect(134, 148, 20, 20));
+		gPixmap png=loadPNG("test.png", 0);
+		if (!png)
+			eDebug("shit kein png da..");
+		else
+			eDebug("braaav... %d x %d", png.getSize().width(), png.getSize().height());
+ 		p.blit(png, ePoint(100, 100));
+//		pixmap->Blit(pixmap, png, 0, 100, 100);
+	}
+		eDebug("FLUSH");
+/*		ASSERT(!pixmap->SetColorIndex(pixmap, 20));
+		ASSERT(!pixmap->FillRectangle(pixmap, 100, 100, 200, 200)); */
+		eDebug("FLIP!");
+//		ASSERT(!pixmap->Flip(pixmap, 0, DSFLIP_BLIT));
+		while (1);
+#endif
+
+#if 0		
 		eRect x(10, 10, 100, 50);
 		p.setFont(gFont("NimbusSansL-Regular Sans L Regular", 30));
 		for (int i=0; i<100; i++)
@@ -96,9 +148,11 @@ eZap::eZap(int argc, char **argv)
 			p.setForegroundColor(gColor(0x13^i));
 			p.renderText(x, "Hello world dies ist ein ganz langer text der auf den screen gepinselt wird du lieber mensch bla keine ahnung hallo was soll das");
 		}
-	}
 #endif
+	}
+	
 
+#endif
 	focus = 0;
 	CONNECT(eRCInput::getInstance()->keyEvent, eZap::keyEvent);
 
@@ -262,12 +316,13 @@ extern "C" void __mp_initsection();
 
 int main(int argc, char **argv)
 {
-	time_t t=0;
+//	time_t t=0;
+	__argc=argc; __argv=argv;
 	int res;
 //	signal(SIGSEGV, fault);
 //	printf("(secret data: %x)\n", __mp_initsection);
 
-	stime(&t);
+//	stime(&t);
 	eDebug("%s", copyright);
 
 	setlocale (LC_ALL, "");
@@ -279,7 +334,7 @@ int main(int argc, char **argv)
 //	mcheck(0);
 	
 	{
-		eZap ezap(argc, argv);
+		eZap ezap(__argc, __argv);
 		res=ezap.exec();
 	}
 	exit(res);

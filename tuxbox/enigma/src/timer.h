@@ -75,7 +75,7 @@ class eListBoxEntryTimer: public eListBoxEntry
 	friend class eTimerView;
 	friend struct _selectEvent;
 	static gFont TimeFont, DescrFont;
-	static gPixmap *ok, *failed;
+	static gPixmap ok, failed;
 	static int timeXSize, dateXSize;
 	int TimeYOffs, DescrYOffs;
 	eTextPara *paraDate, *paraTime, *paraDescr;

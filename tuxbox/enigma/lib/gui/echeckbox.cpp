@@ -33,7 +33,7 @@ void eCheckbox::gotFocus()
 		LCDTmp->move(ePoint(0,0));
 		LCDTmp->resize(eSize(s.width(), s.height()));
 		((eLabel*)LCDTmp)->setFlags(RS_WRAP);
-		gPixmap *pm=eSkin::getActive()->queryImage(ischecked?"eCheckboxLCD.checked":"eCheckboxLCD.unchecked");
+		gPixmap pm=eSkin::getActive()->queryImage(ischecked?"eCheckboxLCD.checked":"eCheckboxLCD.unchecked");
 		LCDTmp->setPixmap(pm);
 		((eLabel*)LCDTmp)->pixmap_position=ePoint(0, (size.height()-15)/2);
 		((eLabel*)LCDTmp)->text_position=ePoint(21, 0);
@@ -91,12 +91,12 @@ int eCheckbox::eventHandler(const eWidgetEvent &event)
 			text_position=ePoint(0,0);
 			eLabel::invalidate();
 			validate();
-			pixmap_position=ePoint( para->getBoundBox().right()+5, (size.height()-pixmap->y) / 2 );
+			pixmap_position=ePoint( para->getBoundBox().right()+5, (size.height()-pixmap.getSize().height()) / 2 );
 		}
 		else
 		{
-			pixmap_position=ePoint(0, (size.height()-pixmap->y)/2);
-			text_position=ePoint((int)(pixmap->x*1.25), 0);
+			pixmap_position=ePoint(0, (size.height()-pixmap.getSize().height())/2);
+			text_position=ePoint((int)(pixmap.getSize().width()*1.25), 0);
 		}
 		//return eButton::eventHandler(event); // changed Size must seen by eLabel...
 		break;

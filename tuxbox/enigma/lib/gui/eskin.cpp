@@ -53,6 +53,7 @@ int eSkin::parseColor(const eString &name, const char* color, gRGB &col)
 		col.g=(vcol>>8)&0xFF;
 		col.b=vcol&0xFF;
 		col.a=(vcol>>24)&0xFF;
+		col.a^=0xFF;
 	} else
 	{
 		eNamedColor *n=searchColor(color);
@@ -261,7 +262,7 @@ int eSkin::parseImages(XMLTreeNode *inode)
 			eDebug("image/img=\"%s\" no src given", name);
 			continue;
 		}
-		std::map<eString, gPixmap*>::iterator it = images.find(name);
+		std::map<eString, gPixmap>::iterator it = images.find(name);
 		if (it != images.end())
 		{
 			eDebug("Image with name %s already loaded, skip %s", name, src);
@@ -269,6 +270,12 @@ int eSkin::parseImages(XMLTreeNode *inode)
 		}
 		gPixmap *image=0;
 		eString filename=basepath + eString(src);
+		gDC *dc=0;
+		if (!node->GetAttributeValue("nomerge"))
+			dc=eSkin::getDCbyName("fb"); // todo, support simple "target=". IMPORTANT. nomerge is crap.
+
+		gPixmap image=loadPNG(filename.c_str(), dc ? dc->getPixmap() : 0);
+
 		if (abasepath[0] != '/')
 		{
 			// search first in CONFIGDIR
@@ -284,14 +291,15 @@ int eSkin::parseImages(XMLTreeNode *inode)
 			eDebug("image/img=\"%s\" - %s: file not found", name, filename.c_str());
 			continue;
 		}
-
-		if (paldummy && !node->GetAttributeValue("nomerge"))
+/*		if (!node->GetAttributeValue("nomerge"))
 		{
 			gPixmapDC mydc(image);
+			gPalette pal;
+			
 			gPainter p(mydc);
-			p.mergePalette(*paldummy);
-		}
-		images[name] = image;
+			p.mergePalette(gPalette(palette, maxcolors));
+		} */
+		images[name] = image; 		
 	}
 	return 0;
 }
@@ -318,7 +326,7 @@ int eSkin::parseImageAlias(XMLTreeNode *xvalues)
 			eDebug("imagealias %s does exist, skip make alias for image %s", name, img);
 			continue;
 		}
-		std::map<eString, gPixmap*>::iterator i = images.find(img);
+		std::map<eString, gPixmap>::iterator i = images.find(img);
 		if (i == images.end())
 		{
 			eDebug("image %s not found, skip make alias %s", img , name);
@@ -466,11 +474,6 @@ eSkin::eSkin()
 
 	palette=new gRGB[maxcolors];
 	
-	memset(palette, 0, sizeof(gRGB)*maxcolors);
-	paldummy=new gImage(eSize(1, 1), 8);
-	paldummy->clut.data=palette;
-	paldummy->clut.colors=maxcolors;
-
 	colorused=new int[maxcolors];
 	memset(colorused, 0, maxcolors*sizeof(int));
 }
@@ -484,11 +487,8 @@ eSkin::~eSkin()
 
 	delete colorused;
 
-	for (std::map<eString, gPixmap*>::iterator it(images.begin()); it != images.end(); it++)
+	for (std::map<eString, gPixmap>::iterator it(images.begin()); it != images.end(); it++)
 		delete it->second;	
-
-	if (paldummy)
-		delete paldummy;
 }
 
 int eSkin::load(const char *filename)
@@ -540,7 +540,9 @@ void eSkin::parseSkins()
 		for (node=node->GetChild(); node; node=node->GetNext())
 			if (!strcmp(node->GetType(), "colors"))
 				parseColors(node);
-	 }
+	}
+	
+	setPalette((gPixmapDC*)getDCbyName("fb"));
 
 	for (ePtrList<XMLTreeParser>::reverse_iterator it(parsers); it != parsers.rend(); it++)
 	{
@@ -665,7 +667,7 @@ gColor eSkin::queryScheme(const eString& name) const
 	return gColor(0);
 }
 
-gPixmap *eSkin::queryImage(const eString& name) const
+gPixmap eSkin::queryImage(const eString& name) const
 {
 	eString img;
 
@@ -676,7 +678,7 @@ gPixmap *eSkin::queryImage(const eString& name) const
 	else
 		img = name;
 
-	std::map<eString, gPixmap*>::const_iterator it = images.find(img);
+	std::map<eString, gPixmap>::const_iterator it = images.find(img);
 
 	if (it != images.end())
 		return it->second;

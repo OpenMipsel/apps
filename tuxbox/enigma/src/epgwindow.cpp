@@ -48,8 +48,8 @@ int eListBoxEntryEPG::getEntryHeight()
 	{
 		DescrFont = eSkin::getActive()->queryFont("eEPGSelector.Entry.Description");
 		TimeFont = eSkin::getActive()->queryFont("eEPGSelector.Entry.DateTime");
-		inTimer = eSkin::getActive()->queryImage("timer_symbol");
-		inTimerRec = eSkin::getActive()->queryImage("timer_rec_symbol");
+		inTimer = new gPixmap(eSkin::getActive()->queryImage("timer_symbol"));
+		inTimerRec = new gPixmap(eSkin::getActive()->queryImage("timer_rec_symbol"));
 		eTextPara* tmp = new eTextPara( eRect(0, 0, 200, 30) );
 		tmp->setFont( TimeFont );
 		tmp->renderString( "00:00" );
@@ -149,15 +149,15 @@ eString eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiv
 	if ( (p = eTimerManager::getInstance()->findEvent( &service, &event )) )
 		if ( p->type & ePlaylistEntry::SwitchTimerEntry )
 		{
-	  	int ypos = (rect.height() - inTimer->y) / 2;
+	  	int ypos = (rect.height() - inTimer->getSize().height()) / 2;
 			rc->blit( *inTimer, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
-			xpos+=paraTime->getBoundBox().height()+inTimer->x;
+			xpos+=paraTime->getBoundBox().height()+inTimer->getSize().width();
 		}
 		else if ( p->type & ePlaylistEntry::RecTimerEntry )
 		{
-	  	int ypos = (rect.height() - inTimerRec->y) / 2;
+	  	int ypos = (rect.height() - inTimerRec->getSize().height()) / 2;
 			rc->blit( *inTimerRec, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
-			xpos+=paraTime->getBoundBox().height()+inTimerRec->x;
+			xpos+=paraTime->getBoundBox().height()+inTimerRec->getSize().width();
 		}
 	
 	if (!paraDescr)

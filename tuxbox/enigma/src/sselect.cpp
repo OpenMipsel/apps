@@ -125,11 +125,11 @@ eString eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coA
 	if ( it != favourites.end() )
 		rc->setForegroundColor( eSkin::getActive()->queryColor("eServiceSelector.entryInFavourite") );
 
-	if ( service.flags & eServiceReference::isDirectory && folder )  // we draw the folder pixmap
+	if ( service.flags & eServiceReference::isDirectory && folder && *folder )  // we draw the folder pixmap
 	{
-		nameXOffs = folder->x + 20;
-		int ypos = (rect.height() - folder->y) / 2;
-		rc->blit( *folder, ePoint(10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
+		nameXOffs = folder->getSize().width() + 20;
+		int ypos = (rect.height() - folder->getSize().height()) / 2;
+		rc->blit( *folder, ePoint(10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 	}
 	else if (flags & flagShowNumber)
 	{
@@ -855,7 +855,7 @@ void eServiceSelector::setStyle(int newStyle)
 			}
 			if (newStyle == styleSingleColumn)
 			{
-				eListBoxEntryService::folder = eSkin::getActive()->queryImage("sselect_folder");
+				eListBoxEntryService::folder = new gPixmap(eSkin::getActive()->queryImage("sselect_folder"));
 				eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Number");
 				eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Name");
 			}

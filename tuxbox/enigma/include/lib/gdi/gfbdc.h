@@ -13,7 +13,7 @@ class gFBDC: public gPixmapDC
 	unsigned char ramp[256], rampalpha[256]; // RGB ramp 0..255
 	int brightness, gamma, alpha;
 	void calcRamp();
-	void setPalette();
+//	void setPalette();
 public:
 	void reloadSettings();
 	void setAlpha(int alpha);

@@ -20,7 +20,7 @@ protected:
 	void redrawWidget(gPainter *target, const eRect &area);
 	int setProperty(const eString &prop, const eString &value);
 	int yOffs;
-	gPixmap *shortcutPixmap; // shortcut pixmap to be displayed right after description
+	gPixmap shortcutPixmap; // shortcut pixmap to be displayed right after description
 public:
 	void invalidate();
 	enum { flagVCenter = 64 };

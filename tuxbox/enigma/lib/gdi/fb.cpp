@@ -6,29 +6,48 @@
 #include <sys/mman.h>
 #include <memory.h>
 #include <linux/kd.h>
+#include <argp.h>
+
+#include <lib/system/init.h>
+
+#include <directfb.h>
 
 #include <lib/system/econfig.h>
 #include <lib/gdi/fb.h>
 
 fbClass *fbClass::instance;
 
+IDirectFB *DirectFB;
+
 fbClass *fbClass::getInstance()
 {
 	return instance;
 }
 
-fbClass::fbClass(const char *fb)
+extern char **__argv;
+extern int __argc;
+
+fbClass::fbClass()
 {
 	instance=this;
 	locked=0;
 	available=0;
-	cmap.start=0;
-	cmap.len=256;
-	cmap.red=red;
-	cmap.green=green;
-	cmap.blue=blue;
-	cmap.transp=trans;
-
+	
+	if (DirectFBInit(&__argc, &__argv) != DFB_OK) // todo: argc, argv
+	{
+		eWarning("DirectFBInit failed!");
+		goto nolfb;
+	}
+	
+	if (DirectFBCreate(&DirectFB) != DFB_OK)
+	{
+		eWarning("DirectFBCreate failed!");
+		goto nolfb;
+	}
+	
+	DirectFB->SetCooperativeLevel (DirectFB, DFSCL_FULLSCREEN);
+	
+#if 0	
 	int state=0;
 	eConfig::getInstance()->getKey("/ezap/osd/showConsoleOnFB", state);
 
@@ -44,31 +63,19 @@ fbClass::fbClass(const char *fb)
 		goto nolfb;
 	}
 	
-	memcpy(&oldscreen, &screeninfo, sizeof(screeninfo));
-
-	fb_fix_screeninfo fix;
-	if (ioctl(fd, FBIOGET_FSCREENINFO, &fix)<0)
-	{
-		perror("FBIOGET_FSCREENINFO");
-		goto nolfb;
-	}
-
-	available=fix.smem_len;
-	eDebug("%dk video mem", available/1024);
-	lfb=(unsigned char*)mmap(0, available, PROT_WRITE|PROT_READ, MAP_SHARED, fd, 0);
-	if (!lfb)
-	{
-		perror("mmap");
-		goto nolfb;
-	}
-
 	showConsole(state);
+#endif
+
+	available=1;
+	
+	eDebug("successfully setup directfb mode..");
+
 	return;
 nolfb:
 	printf("framebuffer not available.\n");
-	lfb=0;
 }
 
+#if 0
 int fbClass::showConsole(int state)
 {
 	int fd=open("/dev/vc/0", O_RDWR);
@@ -82,103 +89,51 @@ int fbClass::showConsole(int state)
 	}
 	return 0;
 }
+#endif
 
 int fbClass::SetMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 {
-	screeninfo.xres_virtual=screeninfo.xres=nxRes;
-	screeninfo.yres_virtual=screeninfo.yres=nyRes;
-	screeninfo.xoffset=screeninfo.yoffset=0;
-	screeninfo.bits_per_pixel=nbpp;
-	if (ioctl(fd, FBIOPUT_VSCREENINFO, &screeninfo)<0)
+	if (DirectFB->SetVideoMode(DirectFB, nxRes, nyRes, nbpp))
 	{
-		perror("FBIOPUT_VSCREENINFO");
-		printf("fb failed\n");
+		eWarning("DirectFB: couldn't set video mode!");
 		return -1;
 	}
-	if ((screeninfo.xres!=nxRes) && (screeninfo.yres!=nyRes) && (screeninfo.bits_per_pixel!=nbpp))
+	
+	DFBSurfaceDescription dsc;
+	
+	if (primary)
+		primary->Release(primary);
+
+	dsc.flags = DSDESC_CAPS;
+	dsc.caps  = DFBSurfaceCapabilities(DSCAPS_PRIMARY /* | DSCAPS_FLIPPING */);
+
+	if (DirectFB->CreateSurface( DirectFB, &dsc, &primary ) != DFB_OK)
 	{
-		eDebug("SetMode failed: wanted: %dx%dx%d, got %dx%dx%d",
-			nxRes, nyRes, nbpp,
-			screeninfo.xres, screeninfo.yres, screeninfo.bits_per_pixel);
+		eWarning("dfb->CreateSurface failed!");
+		return -1;
 	}
-	xRes=screeninfo.xres;
-	yRes=screeninfo.yres;
-	bpp=screeninfo.bits_per_pixel;
-	fb_fix_screeninfo fix;
-	if (ioctl(fd, FBIOGET_FSCREENINFO, &fix)<0)
-	{
-		perror("FBIOGET_FSCREENINFO");
-		printf("fb failed\n");
-	}
-	stride=fix.line_length;
-	memset(lfb, 0, stride*yRes);
+	
+	eDebug("CreateSurface success!");
+	eDebug("get size .. %x", primary->GetSize);
+
 	return 0;
 }
 
 fbClass::~fbClass()
 {
-	if (available)
-		ioctl(fd, FBIOPUT_VSCREENINFO, &oldscreen);
-	if (lfb)
-		munmap(lfb, available);
-}
-
-int fbClass::PutCMAP()
-{
-	return ioctl(fd, FBIOPUTCMAP, &cmap);
-}
-
-void fbClass::Box(int x, int y, int width, int height, int color, int backcolor)
-{
-	if (width<=2)
-		return;
-	int offset=y*stride+x/2;
-	int first=0xF0|((color&0xF0)>>4);
-	int last= 0xF0|((backcolor&0xF0)>>4);
-	color=(color&0xF)*0x11;
-	for (int ay=y; ay<(y+height); ay++)
-	{
-		lfb[offset]=first;
-		memset(lfb+offset+1, color, width/2-2);
-		lfb[offset+width/2-1]=last;
-		offset+=stride;
-	}
-}
-
-void fbClass::NBox(int x, int y, int width, int height, int color)
-{
-	int offset=y*stride+x/2;
-	
-	for (int ay=y; ay<(y+height); ay++)
-	{
-		memset(lfb+offset, color, width/2);
-		offset+=stride;
-	}
-}
-
-void fbClass::VLine(int x, int y, int sy, int color)
-{
-	int offset=y*stride+x/2;
-	while (sy--)
-	{
-		lfb[offset]=color;
-		offset+=stride;
-	}
+	if (primary)
+		primary->Release(primary);
 }
 
 int fbClass::lock()
 {
-	if (locked)
-		return -1;
-	locked=1;
-	return fd;
+	eDebug("FRAMEBUFFER LOCK .. nye");
+	return -1;
 }
 
 void fbClass::unlock()
 {
-	if (!locked)
-		return;
-	locked=0;
-	SetMode(xRes, yRes, bpp);
-	PutCMAP();
+	eDebug("FRAMEBUFFER UNLOCK .. nye");
 }
+
+eAutoInitP0<fbClass> init_fbClass(0, "DirectFB");

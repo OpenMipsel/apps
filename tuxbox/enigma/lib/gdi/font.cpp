@@ -564,6 +564,8 @@ int eTextPara::renderString(const eString &string, int rflags)
 void eTextPara::blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background, const gRGB &foreground)
 {
 	eLocker lock(ftlock);
+	
+	eDebug("dc: %x", &dc);
 
 	if (&current_font->font.font != cache_current_font)
 	{
@@ -575,55 +577,68 @@ void eTextPara::blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background
 		cache_current_font=&current_font->font.font;
 	}
 
-	gPixmap &target=dc.getPixmap();
+	gPixmap target=dc.getPixmap();
 
 	register int opcode;
+
 	gColor *lookup8=0;
 	__u32 lookup32[16];
-		
-	if (target.bpp == 8)
+	
+	DFBSurfacePixelFormat pixelformat;
+	if (target->GetPixelFormat(target, &pixelformat))
+		return;
+	
+	if (pixelformat == DSPF_LUT8)
 	{
-		if (target.clut.data)
-		{
-			lookup8=getColor(target.clut, background, foreground).lookup;
-			opcode=0;
-		} else
-			opcode=1;
-	} else if (target.bpp == 32)
+		gPalette pal;
+		target->GetPalette(target, &pal.ptrref());
+		if (pal)
+			lookup8=getColor(pal, background, foreground).lookup;
+		opcode=0;
+	} else if (pixelformat == DSPF_A8)
+		opcode=1;
+	else if (pixelformat == DSPF_ARGB)
 	{
+#if 0
 		opcode=3;
 		if (target.clut.data)
 		{
 			lookup8=getColor(target.clut, background, foreground).lookup;
 			for (int i=0; i<16; ++i)
-				lookup32[i]=((target.clut.data[lookup8[i]].a<<24)|
-					(target.clut.data[lookup8[i]].r<<16)|
-					(target.clut.data[lookup8[i]].g<<8)|
-					(target.clut.data[lookup8[i]].b))^0xFF000000;
+				pixmap.
 		} else
 		{
 			for (int i=0; i<16; ++i)
 				lookup32[i]=(0x010101*i)|0xFF000000;
 		}
+#endif
+		eWarning("textrender to 32bit disabled. remove this code completely and use IDirectFBFont");
+		return;
 	} else
 	{
-		eWarning("can't render to %dbpp", target.bpp);
+		eWarning("can't render to unknown target");
 		return;
 	}
 	
-	eRect clip(0, 0, target.x, target.y);
+	eSize size=target.getSize();
+	eRect clip(0, 0, size.width(), size.height());
 	clip&=dc.getClip();
 
-	int buffer_stride=target.stride;
+	int buffer_stride;
+	
+	void *targetptr;
 
+	if (target->Lock(target, DSLF_WRITE, &targetptr, &buffer_stride))
+		return;
+		
 	for (glyphString::iterator i(glyphs.begin()); i != glyphs.end(); ++i)
 	{
-		static FTC_SBit glyph_bitmap;
+		FTC_SBit glyph_bitmap=0;
 		if (fontRenderClass::instance->getGlyphBitmap(&i->font->font, i->glyph_index, &glyph_bitmap))
 			continue;
 		int rx=i->x+glyph_bitmap->left + offset.x();
 		int ry=i->y-glyph_bitmap->top  + offset.y();
-		__u8 *d=(__u8*)(target.data)+buffer_stride*ry+rx*target.bypp;
+		__u8 *d=(__u8*)(targetptr)+buffer_stride*ry+rx; // 32bpp mode missing!
 		__u8 *s=glyph_bitmap->buffer;
 		register int sx=glyph_bitmap->width;
 		int sy=glyph_bitmap->height;
@@ -637,7 +652,7 @@ void eTextPara::blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background
 			s+=diff;
 			sx-=diff;
 			rx+=diff;
-			d+=diff*target.bypp;
+			d+=diff; // -> *target.bypp;
 		}
 		if (ry < clip.top())
 		{
@@ -655,7 +670,7 @@ void eTextPara::blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background
 					register __u8 *td=d;
 					register int ax;
 					for (ax=0; ax<sx; ax++)
-					{	
+					{
 						register int b=(*s++)>>4;
 						if(b)
 							*td++=lookup8[b];
@@ -688,6 +703,7 @@ void eTextPara::blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background
 				d+=buffer_stride;
 			}
 	}
+	target->Unlock(target);
 }
 
 void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.

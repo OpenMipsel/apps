@@ -2,31 +2,27 @@
 #define __gpixmap_h
 
 #include <pthread.h>
+#include <directfb.h>
+
 #include <lib/base/estring.h>
 #include <lib/base/erect.h>
-#include <lib/gdi/fb.h>
-#include <lib/system/elock.h>
 
-struct gColor
-{
-	int color;
-	gColor(int color): color(color)
-	{
-	}
-	gColor(): color(0)
-	{
-	}
-	operator int() const { return color; }
-	int operator ==(const gColor &o) const { return o.color==color; }
-};
+typedef unsigned int gColor;
 
-struct gRGB
+#ifndef DFB_COLOR_EQUAL
+#define DFB_COLOR_EQUAL(x,y)  ((x).a == (y).a &&  \
+                               (x).r == (y).r &&  \
+                               (x).g == (y).g &&  \
+                               (x).b == (y).b)
+#endif
+
+struct gRGB: public DFBColor
 {
-	int b, g, r, a;
-	gRGB(int r, int g, int b, int a=0): b(b), g(g), r(r), a(a)
+	gRGB(int _r, int _g, int _b, int _a=255)
 	{
+		r=_r; g=_g; b=_b; a=_a;
 	}
-	gRGB(unsigned long val): b(val&0xFF), g((val>>8)&0xFF), r((val>>16)&0xFF), a((val>>24)&0xFF)		// ARGB
+	gRGB(unsigned long val) // : b(val&0xFF), g((val>>8)&0xFF), r((val>>16)&0xFF), a((val>>24)&0xFF)		// ARGB
 	{
 	}
 	gRGB()
@@ -52,14 +48,60 @@ struct gRGB
 	}
 	bool operator==(const gRGB &c) const
 	{
-		return (b == c.b) && (g == c.g) && (r == c.r) && (a == c.a);
+		return DFB_COLOR_EQUAL(*this, c);
 	}
 };
 
-struct gPalette
+template <class T>
+class gSmartPtr
 {
-	int start, colors;
-	gRGB *data;
+	T *ptr;
+protected:
+	T &operator*() { return *ptr; }
+public:
+	gSmartPtr(): ptr(0)
+	{
+	}
+	gSmartPtr(T *c): ptr(c)
+	{
+		if (c)
+			c->AddRef(c);
+	}
+	gSmartPtr(const gSmartPtr<T> &c)
+	{
+		ptr=c.ptr;
+		if (ptr)
+			ptr->AddRef(ptr);
+	}
+	gSmartPtr &operator=(const gSmartPtr<T> &c)
+	{
+		ptr=c.ptr;
+		if (ptr)
+			ptr->AddRef(ptr);
+	}
+	
+	~gSmartPtr()
+	{
+		if (ptr)
+			ptr->Release(ptr);
+	}
+	T* &ptrref() { ASSERT(!ptr); return ptr; }
+	T* operator->() { ASSERT(ptr); return ptr; }
+	const T* operator->() const { ASSERT(ptr); return ptr; }
+	operator T*() const { return ((gSmartPtr<T>*)this)->ptr; }
+};
+
+
+struct gPalette: gSmartPtr<IDirectFBPalette>
+{
+	gPalette() { }
+	gPalette(IDirectFBPalette *p): gSmartPtr<IDirectFBPalette>(p) { }
+	gPalette(const gPalette &p): gSmartPtr<IDirectFBPalette>(p) { }
+	gPalette(gRGB *data, int len);
+	
+	gPalette copy();
+	
+	~gPalette();
 	gColor findColor(const gRGB &rgb) const;
 };
 
@@ -100,39 +142,27 @@ struct gFont
 };
 
 
-struct gPixmap
+struct gPixmap: gSmartPtr<IDirectFBSurface>
 {
-	int x, y, bpp, bypp, stride;
-	void *data;
-	
-	gPalette clut;
-	
-	eLock contentlock;
-	int final;
-	
-	gPixmap *lock();
-	void unlock();
-	
-	eSize getSize() const { return eSize(x, y); }
+	eSize getSize() const { unsigned int width, height; ASSERT((gPixmap*)this); (*(gPixmap*)this)->GetSize(*(gPixmap*)this, &width, &height); return eSize(width, height); }
 	
 	void fill(const eRect &area, const gColor &color);
-	
 	enum
 	{
 		blitAlphaTest=1
 	};
 	void blit(const gPixmap &src, ePoint pos, const eRect &clip=eRect(), int flags=0);
-	
-	void mergePalette(const gPixmap &target);
+	void mergePalette(const gPalette &pal);
 	void line(ePoint start, ePoint end, gColor color);
-	void finalLock();
+		
+	gPixmap(IDirectFBSurface*);
 	gPixmap();
 	virtual ~gPixmap();
 };
 
 struct gImage: gPixmap
 {
-	gImage(eSize size, int bpp);
+	gImage(eSize size, int dspf);
 	~gImage();
 };
 

@@ -513,7 +513,7 @@ eZapMain::eZapMain()
 		instance=this;
 
 // Mute Symbol
-	gPixmap *pm = eSkin::getActive()->queryImage("mute_symbol");
+	gPixmap pm = eSkin::getActive()->queryImage("mute_symbol");
 	int x = eSkin::getActive()->queryValue("mute.pos.x", 0),
 		  y = eSkin::getActive()->queryValue("mute.pos.y", 0);
 
@@ -521,7 +521,7 @@ eZapMain::eZapMain()
 	{
 		mute.setPixmap(pm);
 		mute.move( ePoint(x, y) );
-		mute.resize( eSize( pm->x, pm->y ) );
+		mute.resize( pm.getSize() );
 		mute.pixmap_position = ePoint(0,0);
 		mute.hide();
 		mute.setBlitFlags( BF_ALPHATEST );
@@ -536,7 +536,7 @@ eZapMain::eZapMain()
 	{
 		volume.setPixmap(pm);
 		volume.move( ePoint(x, y) );
-		volume.resize( eSize( pm->x, pm->y ) );
+		volume.resize( pm.getSize() );
 		volume.pixmap_position = ePoint(0,0);
 		volume.hide();
 		volume.setBlitFlags( BF_ALPHATEST );
@@ -1546,6 +1546,8 @@ void eZapMain::repeatSkip(int dir)
 			time=20000;
 		else if (skipcounter > 30)
 			time=120000;
+		else if (skipcounter > 40)
+			time=5*60*1000;
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip, (dir == skipForward)?time:-time));

@@ -3,14 +3,15 @@
 
 #include <lib/base/erect.h>
 #include <lib/base/estring.h>
-class gPixmap;
+#include <lib/gdi/gpixmap.h>
+
 class gPainter;
 
 class eDecoration
 {
-	gPixmap *iTopLeft, *iTop,
-			*iTopRight, *iLeft, *iRight, 
-			*iBottomLeft, *iBottom, *iBottomRight;
+	gPixmap iTopLeft, iTop,
+			iTopRight, iLeft, iRight, 
+			iBottomLeft, iBottom, iBottomRight;
 
 	eString	basename;
 public:

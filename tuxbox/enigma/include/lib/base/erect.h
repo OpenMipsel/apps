@@ -3,7 +3,7 @@
 
 #include <lib/base/esize.h>
 #include <lib/base/epoint.h>
-
+#include <directfb.h>
 
 // x2 = x1 + width  (AND NOT, NEVER, NEVER EVER +1 or -1 !!!!)
 
@@ -14,6 +14,27 @@ public:
 	eRect( const ePoint &topleft, const ePoint &bottomright );
 	eRect( const ePoint &topleft, const eSize &size );
 	eRect( int left, int top, int width, int height );
+	
+	
+	operator DFBRectangle() const
+	{
+		DFBRectangle res;
+		res.x=x1;
+		res.y=y1;
+		res.w=width();
+		res.h=height();
+		return res;
+	}
+	
+	operator DFBRegion() const
+	{
+		DFBRegion res;
+		res.x1=x1;
+		res.y1=y1;
+		res.x2=x2;
+		res.y2=y2;
+		return res;
+	}
 
 	bool isNull()	const;
 	bool isEmpty()	const;

@@ -8,7 +8,7 @@ class eComboBox: public eButton
 {
 	eListBox<eListBoxEntryText> listbox;
 	eLabel button; // the small buttin with arrow png...
-	gPixmap *pm;
+	gPixmap pm;
 	int entries;
 	eListBoxEntryText *current;
 	void onOkPressed();

@@ -11,7 +11,7 @@ class eLabel;
 
 class eMainMenu: public eWidget
 {
-	gPixmap *pixmaps[MENU_ENTRIES][2];
+	gPixmap pixmaps[MENU_ENTRIES][2];
 	eLabel *label[7], *description;
 	int active;
 	void setActive(int i);

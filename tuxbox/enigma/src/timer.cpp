@@ -580,8 +580,8 @@ eAutoInitP0<eTimerManager> init_eTimerManager(8, "Timer Manager");
 
 gFont eListBoxEntryTimer::TimeFont;
 gFont eListBoxEntryTimer::DescrFont;
-gPixmap *eListBoxEntryTimer::ok=0;
-gPixmap *eListBoxEntryTimer::failed=0;
+gPixmap eListBoxEntryTimer::ok=0;
+gPixmap eListBoxEntryTimer::failed=0;
 int eListBoxEntryTimer::timeXSize=0;
 int eListBoxEntryTimer::dateXSize=0;
 
@@ -646,13 +646,13 @@ eString eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColor coAct
 
 	if ( entry->type & ePlaylistEntry::stateFinished )
 	{
-		int ypos = ( rect.height() - ok->y ) / 2;
-		rc->blit( *ok, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
+		int ypos = ( rect.height() - ok.getSize().height() ) / 2;
+		rc->blit( ok, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 	}
 	else if ( entry->type & ePlaylistEntry::stateError )
 	{
-		int ypos = (rect.height() - failed->y) / 2;
-		rc->blit( *failed, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
+		int ypos = (rect.height() - failed.getSize().height()) / 2;
+		rc->blit( failed, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 	}
 	xpos+=24+10; // i think no people want to change the ok and false pixmaps....
 

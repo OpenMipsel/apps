@@ -81,23 +81,24 @@ struct gOpcode
 
 		struct psetPalette
 		{
-			gPalette *palette;
-			psetPalette(gPalette *palette): palette(palette) { }
+			gRGB *data;
+			int start, len;
+			psetPalette(gRGB *data, int start, int len): data(data), start(start), len(len) { }
 		} *setPalette;
 		
 		struct pblit
 		{
-			gPixmap *pixmap;
+			gPixmap pixmap;
 			ePoint position;
 			eRect clip;
-			pblit(gPixmap *pixmap, const ePoint &position, const eRect &clip)
+			pblit(gPixmap pixmap, const ePoint &position, const eRect &clip)
 				: pixmap(pixmap), position(position), clip(clip) { }
 		} *blit;
 
 		struct pmergePalette
 		{
-			gPixmap *target;
-			pmergePalette(gPixmap *target): target(target) { }
+			gPalette pal;
+			pmergePalette(gPalette pal): pal(pal) { }
 		} *mergePalette;
 		
 		struct pline
@@ -171,7 +172,7 @@ public:
 	void blit(gPixmap &src, ePoint pos, eRect clip=eRect(), int flags=0);
 
 	void setPalette(gRGB *colors, int start=0, int len=256);
-	void mergePalette(gPixmap &target);
+	void mergePalette(gPalette pal);
 	
 	void line(ePoint start, ePoint end);
 
@@ -191,7 +192,7 @@ protected:
 	eLock dclock;
 public:
 	virtual void exec(gOpcode *opcode)=0;
-	virtual gPixmap &getPixmap()=0;
+	virtual gPixmap getPixmap()=0;
 	virtual eSize getSize()=0;
 	virtual const eRect &getClip()=0;
 	virtual gRGB getRGB(gColor col)=0;
@@ -203,18 +204,18 @@ public:
 class gPixmapDC: public gDC
 {
 protected:
-	gPixmap *pixmap;
+	gPixmap pixmap;
 	eRect clip;
 
 	void exec(gOpcode *opcode);
 	gPixmapDC();
 public:
-	gPixmapDC(gPixmap *pixmap);
+	gPixmapDC(gPixmap pixmap);
 	virtual ~gPixmapDC();
-	gPixmap &getPixmap() { return *pixmap; }
+	gPixmap getPixmap() { return pixmap; }
 	gRGB getRGB(gColor col);
 	const eRect &getClip() { return clip; }
-	virtual eSize getSize() { return eSize(pixmap->x, pixmap->y); }
+	virtual eSize getSize() { return pixmap.getSize(); }
 };
 
 #endif

@@ -38,13 +38,13 @@ bool eDecoration::load(const eString& base)
 		borderLeft=borderTop=borderRight=borderBottom=0;
 	
 		if (iTop)
-			borderTop = iTop->y;
+			borderTop = iTop.getSize().height();
 		if (iLeft)
-			borderLeft = iLeft->x;
+			borderLeft = iLeft.getSize().width();
 		if (iRight)
-			borderRight = iRight->x;
+			borderRight = iRight.getSize().width();
 		if (iBottom)
-			borderBottom = iBottom->y;
+			borderBottom = iBottom.getSize().height();
 	}
 	return operator bool();
 }
@@ -55,22 +55,22 @@ void eDecoration::drawDecoration(gPainter *target, ePoint size)
 
 	if (iTopLeft)
 	{
-		target->blit(*iTopLeft, ePoint(0, 0) );
-		x+=iTopLeft->x;
+		target->blit(iTopLeft, ePoint(0, 0) );
+		x+=iTopLeft.getSize().width();
 	}
 
 	if (iTopRight)
 	{
-		xm-=iTopRight->x;
-		target->blit(*iTopRight, ePoint(xm, 0), eRect(x, 0, size.x()-x, size.y()));
+		xm-=iTopRight.getSize().width();
+		target->blit(iTopRight, ePoint(xm, 0), eRect(x, 0, size.x()-x, size.y()));
 	}
 
 	if (iTop)
 	{
 		while (x<xm)
 		{
-			target->blit(*iTop, ePoint(x, 0), eRect(x, 0, xm-x, size.y()));
-			x+=iTop->x;
+			target->blit(iTop, ePoint(x, 0), eRect(x, 0, xm-x, size.y()));
+			x+=iTop.getSize().width();
 		}
   }
 
@@ -79,52 +79,50 @@ void eDecoration::drawDecoration(gPainter *target, ePoint size)
 
 	if (iBottomLeft)
 	{
-    target->blit(*iBottomLeft, ePoint(0, size.y()-iBottomLeft->y));
-		x+=iBottomLeft->x;
+    target->blit(iBottomLeft, ePoint(0, size.y()-iBottomLeft.getSize().height()));
+		x+=iBottomLeft.getSize().width();
 	}
 
 	if (iBottomRight)
 	{
-		xm-=iBottomRight->x;
-		target->blit(*iBottomRight, ePoint(xm, size.y()-iBottomRight->y), eRect(x, size.y()-iBottomRight->y, size.x()-x, iBottomRight->y));
+		xm-=iBottomRight.getSize().width();
+		target->blit(iBottomRight, ePoint(xm, size.y()-iBottomRight.getSize().height()), eRect(x, size.y()-iBottomRight.getSize().height(), size.x()-x, iBottomRight.getSize().height()));
 	}
 	
 	if (iBottom)
 	{
     while (x<xm)
 		{
-			target->blit(*iBottom, ePoint(x, size.y()-iBottom->y), eRect(x, size.y()-iBottom->y, xm-x, iBottom->y));
-			x+=iBottom->x;
+			target->blit(iBottom, ePoint(x, size.y()-iBottom.getSize().height()), eRect(x, size.y()-iBottom.getSize().height(), xm-x, iBottom.getSize().height()));
+			x+=iBottom.getSize().width();
 		}
 	}
 	
 	y=0; ym=size.y();
 	
 	if (iTopLeft)
-		y=iTopLeft->y;
+		y=iTopLeft.getSize().height();
 	if (iBottomLeft)
-		ym=size.y()-iBottomLeft->y;
+		ym=size.y()-iBottomLeft.getSize().height();
 	if (iLeft)
   {
     while (y<ym)
 		{
-      target->blit(*iLeft, ePoint(0, y), eRect(0, y, iLeft->x, ym-y));
-			y+=iLeft->y;
+      target->blit(iLeft, ePoint(0, y), eRect(0, y, iLeft.getSize().width(), ym-y));
+			y+=iLeft.getSize().height();
 		}
   }
 
 	if (iTopRight)
-		y=iTopRight->y;
+		y=iTopRight.getSize().height();
 	if (iBottomRight)
-		ym=size.y()-iBottomRight->y;
+		ym=size.y()-iBottomRight.getSize().height();
 	if (iRight)
   {
     while (y<ym)
 		{
-			target->blit(*iRight, ePoint(size.x()-iRight->x, y), eRect(size.x()-iRight->x, y, iRight->x, ym-y));
-			y+=iRight->y;
+			target->blit(iRight, ePoint(size.x()-iRight.getSize().width(), y), eRect(size.x()-iRight.getSize().width(), y, iRight.getSize().width(), ym-y));
+			y+=iRight.getSize().height();
 		}
-  }
-	
-	target->flush();
+	}
 }

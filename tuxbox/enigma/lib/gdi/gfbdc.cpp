@@ -9,31 +9,21 @@ gFBDC *gFBDC::instance;
 gFBDC::gFBDC()
 {
 	instance=this;
-	fb=new fbClass;
-
+	fb = fbClass::getInstance();
 	if (!fb->Available())
 		eFatal("no framebuffer available");
 
 	fb->SetMode(720, 576, 8);
-	for (int y=0; y<576; y++)																		 // make whole screen transparent
-		memset(fb->lfb+y*fb->Stride(), 0x00, fb->Stride());
 
-	pixmap=new gPixmap();
-	pixmap->x=720;
-	pixmap->y=576;
-	pixmap->bpp=8;
-	pixmap->bypp=1;
-	pixmap->stride=fb->Stride();
-	pixmap->data=fb->lfb;
+	eDebug("grabbing primary...");
+	pixmap=fb->grabPrimary();
 	
-	pixmap->clut.colors=256;
-	pixmap->clut.data=new gRGB[pixmap->clut.colors];
+	eDebug("is %x", (void*)pixmap);
 	reloadSettings();
 }
 
 gFBDC::~gFBDC()
 {
-	delete pixmap;
 	delete fb;
 	instance=0;
 }
@@ -80,23 +70,6 @@ void gFBDC::calcRamp()
 	rampalpha[255]=255; // transparent BLEIBT bitte so.
 }
 
-void gFBDC::setPalette()
-{
-	if (!pixmap->clut.data)
-		return;
-	
-	for (int i=0; i<256; ++i)
-	{
-		fb->CMAP()->red[i]=ramp[pixmap->clut.data[i].r]<<8;
-		fb->CMAP()->green[i]=ramp[pixmap->clut.data[i].g]<<8;
-		fb->CMAP()->blue[i]=ramp[pixmap->clut.data[i].b]<<8;
-		fb->CMAP()->transp[i]=rampalpha[pixmap->clut.data[i].a]<<8;
-		if (!fb->CMAP()->red[i])
-			fb->CMAP()->red[i]=0x100;
-	}
-	fb->PutCMAP();
-}
-
 void gFBDC::exec(gOpcode *o)
 {
 	switch (o->opcode)
@@ -104,10 +77,12 @@ void gFBDC::exec(gOpcode *o)
 	case gOpcode::setPalette:
 	{
 		gPixmapDC::exec(o);
-		setPalette();
 		break;
 	}
-	default:
+	case gOpcode::flush:
+		eDebug("flush!");
+		pixmap->Flip(pixmap, 0, DSFLIP_BLIT);
+	default:		// (fall through...)
 		gPixmapDC::exec(o);
 		break;
 	}
@@ -123,7 +98,7 @@ void gFBDC::setAlpha(int a)
 	alpha=a;
 
 	calcRamp();
-	setPalette();
+//	setPalette();
 }
 
 void gFBDC::setBrightness(int b)
@@ -131,7 +106,7 @@ void gFBDC::setBrightness(int b)
 	brightness=b;
 
 	calcRamp();
-	setPalette();
+//	setPalette();
 }
 
 void gFBDC::setGamma(int g)
@@ -139,7 +114,7 @@ void gFBDC::setGamma(int g)
 	gamma=g;
 
 	calcRamp();
-	setPalette();
+//	setPalette();
 }
 
 void gFBDC::saveSettings()
@@ -159,7 +134,7 @@ void gFBDC::reloadSettings()
 		brightness=128;
 
 	calcRamp();
-	setPalette();
+//	setPalette();
 }
 
 eAutoInitP0<gFBDC> init_gFBDC(1, "GFBDC");

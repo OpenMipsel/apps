@@ -40,7 +40,7 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	ctime.setBackgroundColor ( eSkin::getActive()->queryColor("eStatusBar.background") );
 	ctime.setFlags( RS_FADE );
 
-	gPixmap *pm=eSkin::getActive()->queryImage("sselect_dolby");
+	gPixmap pm=eSkin::getActive()->queryImage("sselect_dolby");
 	cdolby.setPixmap(pm);
 	cdolby.pixmap_position = ePoint(0,0);
 	cdolby.hide();

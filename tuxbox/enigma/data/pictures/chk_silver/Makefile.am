@@ -20,4 +20,3 @@ install_DATA = \
 	mainmenu/radio-fs8.png mainmenu/radio_sel-fs8.png mainmenu/rectime-fs8.png mainmenu/rectime_sel-fs8.png\
 	mainmenu/scart-fs8.png mainmenu/scart_sel-fs8.png mainmenu/setup-fs8.png mainmenu/setup_sel-fs8.png\
 	mainmenu/shutdown-fs8.png mainmenu/shutdown_sel-fs8.png mainmenu/tv-fs8.png mainmenu/tv_sel-fs8.png
-

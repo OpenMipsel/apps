@@ -15,7 +15,7 @@ eMessageBox::eMessageBox(eString message, eString caption, int flags, int def): 
 	
 	if ( flags > 15 ) // we have to draw an icon
 	{
-		gPixmap *pm=0;
+		gPixmap pm=0;
 		switch ( flags & ~15 )
 		{
 			case iconInfo:
@@ -36,7 +36,7 @@ eMessageBox::eMessageBox(eString message, eString caption, int flags, int def): 
 			icon = new eLabel(this);
 			icon->setPixmap( pm );
 			icon->pixmap_position=ePoint(0,0);
-			icon->resize( eSize(pm->x, pm->y) );
+			icon->resize( pm.getSize() );
 			icon->setBlitFlags( BF_ALPHATEST );
 		}
 	}

@@ -90,7 +90,7 @@ eDVB::eDVB(): state(eDVBState::stateIdle)
 		}
 	}
 	if (eFrontend::open(fe)<0)
-		eFatal("couldn't open frontend");
+		eDebug("couldn't open frontend");
 
 	settings = new eDVBSettings(*this);
 		// tuned-in handling

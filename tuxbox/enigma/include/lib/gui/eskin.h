@@ -40,7 +40,6 @@ class eSkin
 	
 	gRGB *palette;
 	int maxcolors;
-	gImage *paldummy;
 	int *colorused;
 	
 	static std::map< eString, tWidgetCreator > widget_creator;
@@ -48,7 +47,7 @@ class eSkin
 	
 	std::list<eNamedColor> colors;
 	std::map<eString, gColor> scheme;
-	std::map<eString, gPixmap*> images;
+	std::map<eString, gPixmap> images;
 	std::map<eString, int> values;
 	std::map<eString, eString> fonts;
 	std::map<eString, gFont> fontAlias;
@@ -72,7 +71,7 @@ public:
 
 	gColor queryColor(const eString &name);
 	gColor queryScheme(const eString &name) const;
-	gPixmap *queryImage(const eString &name) const;
+	gPixmap queryImage(const eString &name) const;
 	int queryValue(const eString &name, int d) const;
 	gFont queryFont(const eString &name);
 	

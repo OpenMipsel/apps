@@ -80,7 +80,7 @@ eDVBCI::eDVBCI()
 	memset(appName,0,sizeof(appName));
 	tempPMTentrys=0;		
 
-  run();
+//  run();
 }
 
 void eDVBCI::thread()

@@ -58,7 +58,6 @@ void eWindow::eraseBackground(gPainter *target, const eRect &clip)
 {
 	target->clip(getClientRect());
 	target->clear();
-	target->flush();
 	target->clippop();
 }
 
@@ -70,7 +69,6 @@ void eWindow::drawTitlebar(gPainter *target)
 	{
 		target->setForegroundColor(titleBarColor);
 		target->fill( rc );
-		target->flush();
 	}
 
 	eTextPara *p = new eTextPara( rc );
@@ -79,7 +77,6 @@ void eWindow::drawTitlebar(gPainter *target)
 	target->setBackgroundColor(titleBarColor);
 	target->setForegroundColor(fontColor);
 	target->renderPara( *p );
-	target->flush();
 	p->destroy();
   target->clippop();
 }

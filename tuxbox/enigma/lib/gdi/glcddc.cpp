@@ -9,26 +9,18 @@ gLCDDC::gLCDDC(eLCD *lcd): lcd(lcd)
 	
 	update=1;
 
-	pixmap=new gPixmap();
-	pixmap->x=lcd->size().width();
-	pixmap->y=lcd->size().height();
-	pixmap->bpp=8;
-	pixmap->bypp=1;
-	pixmap->stride=lcd->stride();
-	pixmap->data=lcd->buffer();
-	
-	pixmap->clut.colors=256;
-	pixmap->clut.data=0;
+	pixmap=gImage(lcd->size(), DSPF_A8);
 }
 
 gLCDDC::~gLCDDC()
 {
-	delete pixmap;
 	instance=0;
 }
 
 void gLCDDC::exec(gOpcode *o)
 {
+	if (!pixmap)
+		return;
 	switch (o->opcode)
 	{
 	case gOpcode::flush:

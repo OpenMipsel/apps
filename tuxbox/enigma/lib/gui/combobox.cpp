@@ -84,7 +84,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 		{
 			eListBoxEntryText* cur = listbox.getCurrent();
 			listbox.resize( eSize( getSize().width(), eListBoxEntryText::getEntryHeight()*entries+listbox.getDeco().borderBottom+listbox.getDeco().borderTop ) );
-			int smButtonDeco = eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth", pm?pm->x:0 );
+			int smButtonDeco = eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth", pm?pm.getSize().width():0 );
 			if (deco)
 			{
 				button.resize( eSize(smButtonDeco, crect.height()) );
@@ -96,7 +96,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 				button.move( ePoint( position.x()+size.width()-smButtonDeco, 0 ) );
 			}
 			if (pm)
-				button.pixmap_position = ePoint( (button.getSize().width() - pm->x) / 2, (button.getSize().height() - pm->y) / 2 );
+				button.pixmap_position = ePoint( (button.getSize().width() - pm.getSize().width()) / 2, (button.getSize().height() - pm.getSize().height()) / 2 );
 			if (cur)
 				listbox.setCurrent(cur);
 		}

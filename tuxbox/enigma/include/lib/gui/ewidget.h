@@ -185,9 +185,11 @@ protected:
 	eString text;
 	gColor backgroundColor, foregroundColor;
 	
-	gPixmap *pixmap;
+	gPixmap pixmap;
 
 	eString descr;
+	
+	int atomic_counter;
 public:
 	inline eWidget *getNonTransparentBackground()
 	{
@@ -418,7 +420,7 @@ public:
 	const	eString& getText() const { return text; }
 	void setBackgroundColor(const gColor& color);
 	void setForegroundColor(const gColor& color);
-	void setPixmap(gPixmap *pmap);
+	void setPixmap(gPixmap pmap);
 	void setTarget(gDC *target);
 	gDC *getTarget() { return target; }
 	void setLCD(eWidget *lcdtitle, eWidget *lcdelement);
@@ -475,6 +477,12 @@ public:
 	 */
 	void setShortcut(const eString &shortcut);
 	void setShortcutFocus(eWidget *focus);
+	
+	/**
+	 * \brief Begin atomic.
+	 */
+	void beginAtomic();
+	void endAtomic();
 };
 
 class eDecoWidget:public eWidget
