@@ -27,7 +27,7 @@ void eTextInputField::updated()
 {
 	unsigned char c[4096];
 	strcpy((char *)c,isotext.c_str());
-		
+
 	text=convertDVBUTF8(c,strlen((char*)c));
 	eLabel::invalidate();
 	drawCursor();
@@ -169,7 +169,8 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 		case eWidgetEvent::evtAction:
 		{
 			int key = -1;
-			if ( event.action == &i_cursorActions->capslock && editMode){
+			if ( event.action == &i_cursorActions->capslock && editMode)
+			{
 				capslock^=1;
 				eLabel::invalidate();
 				drawCursor();
@@ -185,18 +186,24 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 					}
 				  isotext += *pc1;
 				}
-				else{
+				else
+				{
 					const char *pc2=strchr( pc1, isotext[curPos] );
-					if(!pc2 || !pc2[0]){ pc2=pc1; }
-					if(event.action == &i_cursorActions->up){
+
+					if( !pc2 || !pc2[0] )
+						pc2=pc1;
+
+					if(event.action == &i_cursorActions->up)
+					{
 						pc2++;
-						if(!pc2[0])pc2=pc1;
+						if(!pc2[0])
+							pc2=pc1;
 					}
-					else{
+					else
+					{
 						if(pc2==pc1)
-						{
-							while(*pc2)pc2++;
-						}
+							while(*pc2)
+								pc2++;
 						pc2--;
 					}
 					isotext[curPos] = *pc2;
@@ -246,6 +253,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				if ( editMode )
 				{
 					setHelpText(oldHelpText);
+
 					if(isotext.length()>0)
 						while ( isotext[isotext.length()-1] == ' ' )
 							isotext.erase( isotext.length()-1 );

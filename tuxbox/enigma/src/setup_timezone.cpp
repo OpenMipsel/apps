@@ -89,7 +89,8 @@ void eZapTimeZoneSetup::okPressed()
 			eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()));
 		}
 		eConfig::getInstance()->flush();
-		setTimeZone();
+		setTimeZone();                         
+		/* emit */ eDVB::getInstance()->timeUpdated();
 	}
 	close(1);
 }

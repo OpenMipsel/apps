@@ -249,7 +249,6 @@ int eNumber::keyDown(int key)
 			else
 				max=oldmax;
 		}
-		eDebug("active=%d, digit=%d, min = %d, max = %d", active, digit, min, max);
 		if (nn>=min && nn<=max)
 		{
 			number[active]=nn;

@@ -108,8 +108,6 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	lNextCharTimeout->setText(_("Next Char Timeout:"));
 
 	unsigned int t;
-	eConfig::getInstance()->delKey("/ezap/rc/TextInputField/nextCharTimeout");
-	eConfig::getInstance()->delKey("/ezap/rc/TextInputField/nextCharTimeout");
 	if (eConfig::getInstance()->getKey("/ezap/rc/TextInputField/nextCharTimeout", t) )
 		t=0;
 	NextCharTimeout = new eNumber(this,1,0,3999,4,0,0,lNextCharTimeout);

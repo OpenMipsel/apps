@@ -17,12 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.25 2003/05/30 22:36:54 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.26 2003/05/31 18:35:08 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
 
 #include <enigma_scan.h>
+#include <enigma_main.h>
 #include <setupnetwork.h>
 #include <wizard_language.h>
 #include <setup_timezone.h>
@@ -39,6 +40,7 @@
 #include <parentallock.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
+#include <lib/dvb/dvbservice.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/emessage.h>
@@ -106,6 +108,7 @@ eZapSetup::eZapSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), eString().sprintf("(%d) %s", ++entry, _("open skin selector")) ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
 	CONNECT((new eListBoxEntryMenu(&list, _("Time Zone..."), eString().sprintf("(%d) %s", ++entry, _("open time zone setup")) ))->selected, eZapSetup::sel_timezone);
+	CONNECT((new eListBoxEntryMenu(&list, _("Time Correction..."), eString().sprintf("(%d) %s", ++entry, _("open time correction window")) ))->selected, eZapSetup::sel_timeCorrection);
 #ifndef DISABLE_NETWORK
 	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab..."), eString().sprintf("(%d) %s", ++entry, _("open ngrab config")) ))->selected, eZapSetup::sel_engrab);
 #endif
@@ -339,6 +342,43 @@ void eZapSetup::sel_parental()
 	setup.exec();
 	setup.hide();
 	show();
+}
+
+void eZapSetup::sel_timeCorrection()
+{
+	eDVBServiceController *sapi = eDVB::getInstance()->getServiceAPI();
+	if (sapi && sapi->transponder)
+  {
+		tsref ref = *sapi->transponder;
+		hide();
+		eTimeCorrectionEditWindow w(ref);
+#ifndef DISABLE_LCD
+		w.setLCD(LCDTitle, LCDElement);
+#endif
+		w.show();
+		if (!w.exec())
+		{
+			std::map<tsref, int> &map =
+				eTransponderList::getInstance()->TimeOffsetMap;
+			int tCorrection=0;
+			std::map<tsref, int>::iterator it = map.find(ref);
+			if ( it != map.end() )
+				tCorrection = it->second;
+			map.clear();
+			map[ref] = tCorrection;
+		}
+		w.hide();
+		show();
+	}
+	else
+	{
+		hide();
+		eMessageBox mb( _("To change time correction you must tune first to any transponder"), _("time correction change error"), eMessageBox::btOK|eMessageBox::iconInfo );
+		mb.show();
+		mb.exec();
+		mb.hide();
+		show();
+	}
 }
 
 int eZapSetup::eventHandler(const eWidgetEvent &event)
