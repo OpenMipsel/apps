@@ -586,12 +586,11 @@ int eFrontend::tune(eTransponder *trans,
 							loops = cmdCount = ( lnb->getDiSEqC().DiSEqCRepeats << 1 ) + 1;
 						else // then we add repeats + 1
 							loops = cmdCount = lnb->getDiSEqC().DiSEqCRepeats + 1;
-
-						// allocate memory for all DiSEqC commands
-						commands = new secCommand[cmdCount];
 					}
 					else // send only one DiSEqC Command
 						loops = cmdCount = 1;
+					// allocate memory for all DiSEqC commands
+					commands = new secCommand[cmdCount];
 				}
 				
 				for ( int i = 0; i < loops;)  // fill commands...
