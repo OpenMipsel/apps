@@ -625,7 +625,7 @@ int TransponderScan::exec(int initial)
 		stateScan,
 		stateDone,
 		stateEnd
-	} state;
+	} state = stateMenu;
 	
 	if (initial == initialMenu)
 		state=stateMenu;

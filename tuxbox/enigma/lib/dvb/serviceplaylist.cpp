@@ -16,7 +16,7 @@
 		structure (ePlaylist)
 */
 
-ePlaylist::ePlaylist(): eService("playlist"), changed(-1)
+ePlaylist::ePlaylist(): eService("playlist"), changed(255)
 {
 	current=list.end();
 }
@@ -116,7 +116,7 @@ int ePlaylist::load(const char *filename)
 		service_name += eString().sprintf(_(" (%d entries)"), entries);
 	fclose(fp);
 
-	if (changed != -1)
+	if (changed != 255)
 		changed=0;
 	return 0;
 }

@@ -2242,7 +2242,7 @@ void eZapMain::addService(const eServiceReference &service)
 	if (service.flags & eServiceReference::mustDescent) // recursive add services..
 	{
 		Signal1<void,const eServiceReference&> signal;
-		CONNECT(&signal, eZapMain::addService);
+		CONNECT( signal, eZapMain::addService);
 		eServiceInterface::getInstance()->enterDirectory(service, signal);
 		eServiceInterface::getInstance()->leaveDirectory(service);
 	} else

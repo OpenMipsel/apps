@@ -662,8 +662,8 @@ struct eServiceHandlerDVB_addService
 		if (t >= 31)
 			t=31;
 		if ( type & (1<<t) && // right dvb service type
-				 ( ( DVBNamespace == 0xFFFFFFFF) || // ignore namespace
-			  	 ( (DVBNamespace&0xFFFF0000) == nspace ) // right satellite
+				 ( ( DVBNamespace == (int)0xFFFFFFFF) || // ignore namespace
+			  	 ( (DVBNamespace&(int)0xFFFF0000) == nspace ) // right satellite
 			   )
 			 )
 			 callback(service);
@@ -694,8 +694,8 @@ void eServiceHandlerDVB::enterDirectory(const eServiceReference &ref, Signal1<vo
 				if (t >= 31)
 					t=31;
 				if ( ref.data[1] & (1<<t) && // right dvb service type
-						 ( ( ref.data[3] == 0xFFFFFFFF) || // ignore namespace
-							 ( (ref.data[3]&0xFFFF0000) == nspace ) // right satellite
+						 ( ( ref.data[3] == (int)0xFFFFFFFF) || // ignore namespace
+							 ( (ref.data[3]&(int)0xFFFF0000) == nspace ) // right satellite
 						 )
 					 )
 					 callback(*i);
@@ -869,8 +869,8 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 					if (t >= 31)
 						t=31;
 					if ( ref.data[1] & (1<<t) && // right dvb service type
-							 ( ( ref.data[2] == 0xFFFFFFFF) || // ignore namespace
-								 ( (ref.data[2]&0xFFFF0000) == nspace ) // right satellite
+							 ( ( ref.data[2] == (int)0xFFFFFFFF) || // ignore namespace
+								 ( (ref.data[2]&(int)0xFFFF0000) == nspace ) // right satellite
 							 )
 						 )
 						 {

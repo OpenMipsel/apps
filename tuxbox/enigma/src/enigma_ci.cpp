@@ -156,10 +156,10 @@ void enigmaCImmi::getmmi(const char *data)
 	const unsigned char TAG_MMI_MENU_LAST[]={0x9F,0x88,0x09};
 	const unsigned char TAG_MMI_MENU_MORE[]={0x9F,0x88,0x0A};
 	const unsigned char TAG_MMI_LIST_LAST[]={0x9F,0x88,0x0C};
-	const unsigned char TAG_MMI_LIST_MORE[]={0x9F,0x88,0x0D};
-	const unsigned char TAG_MMI_MENU_ANSW[]={0x9F,0x88,0x0B};
+//	const unsigned char TAG_MMI_LIST_MORE[]={0x9F,0x88,0x0D};
+//	const unsigned char TAG_MMI_MENU_ANSW[]={0x9F,0x88,0x0B};
 	const unsigned char TAG_MMI_TEXT_LAST[]={0x9F,0x88,0x03};
-	const unsigned char TAG_MMI_TEXT_MORE[]={0x9F,0x88,0x04};
+//	const unsigned char TAG_MMI_TEXT_MORE[]={0x9F,0x88,0x04};
 	const unsigned char TAG_MMI_ENQ[]      ={0x9F,0x88,0x07};
 
 	int rp=5;
@@ -279,7 +279,7 @@ void enigmaCImmi::getmmi(const char *data)
 				if(currElement>3)
 				{
 					lentrys->beginAtomic();	
-					eListBoxMenuEntry *e=new eListBoxMenuEntry(lentrys,text,currElement-3);
+//					eListBoxMenuEntry *e=new eListBoxMenuEntry(lentrys,text,currElement-3);
 					lentrys->endAtomic();	
 				}
 				rp += size;
