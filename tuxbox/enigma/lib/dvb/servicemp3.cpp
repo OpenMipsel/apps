@@ -739,12 +739,17 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 	
 	if (!strncmp(filename, "http://", 7))
 	{
-		service_name=filename;
+		if (!isUTF8(filename))
+			service_name=convertLatin1UTF8(filename);
+		else
+			service_name=filename;
 		return;
 	}
 	
 	eString f=filename;
 	eString l=f.mid(f.rfind('/')+1);
+	if (!isUTF8(l))
+		l=convertLatin1UTF8(l);
 	service_name=l;
 
 	file=::id3_file_open(filename, ID3_FILE_MODE_READONLY);

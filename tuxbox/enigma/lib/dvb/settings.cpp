@@ -489,6 +489,7 @@ void eDVBSettings::removeOrbitalPosition(int orbital_position)
 
 eDVBSettings::~eDVBSettings()
 {
+	saveServices();
 	if (transponderlist)
 		delete transponderlist;
 }
