@@ -610,10 +610,10 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *
 			break;
 		}
 	}
-	eDebug("e.service.descr = %s", e.service.descr.c_str() );
-	eDebug("descr = %s", descr.c_str() );
+//	eDebug("e.service.descr = %s", e.service.descr.c_str() );
+//	eDebug("descr = %s", descr.c_str() );
 	eString tmp = getLeft(e.service.descr, '/');
-	eDebug("tmp = %s", tmp.c_str() );	
+//	eDebug("tmp = %s", tmp.c_str() );	
 	e.service.descr = tmp + '/' + descr;
 
 	return addEventToTimerList( sel, e );
