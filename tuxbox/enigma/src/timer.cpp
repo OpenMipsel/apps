@@ -1675,6 +1675,13 @@ bool eTimerEditView::getData( time_t &bTime, int &duration )
 	endTime.tm_min = etime->getNumber(1);
 	endTime.tm_sec = 0;
 
+	if ( multiple->isChecked() &&   // endTime after 0:00
+			( endTime.tm_hour < beginTime.tm_hour ||
+				endTime.tm_min < beginTime.tm_min ) )
+	{
+		endTime.tm_mday++;
+	}
+
 	bTime = mktime( &beginTime );
 	time_t tmp = mktime( &endTime );
 	duration = tmp - bTime;

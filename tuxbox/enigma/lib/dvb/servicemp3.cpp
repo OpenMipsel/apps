@@ -116,7 +116,9 @@ void eHTTPStream::haveData(void *vdata, int len)
 	dataAvailable();
 }
 
-eMP3Decoder::eMP3Decoder(int type, const char *filename, eServiceHandlerMP3 *handler): handler(handler), input(8*1024), output(256*1024), output2(256*1024), type(type), messages(this, 1)
+eMP3Decoder::eMP3Decoder(int type, const char *filename, eServiceHandlerMP3 *handler)
+: handler(handler), input(8*1024), output(256*1024),
+	output2(256*1024), type(type), outputbr(0), messages(this, 1)
 {
 	state=stateInit;
 	
@@ -377,7 +379,7 @@ void eMP3Decoder::outputReady(int what)
 //			eDebug("reconfigured audio interface...");
 		}
 	}
-	
+
 	output.tofile(dspfd[0], 65536);
 	
 	checkFlow(0);
@@ -653,12 +655,17 @@ void eMP3Decoder::gotMessage(const eMP3DecoderMessage &message)
 		if (message.type != eMP3DecoderMessage::seekreal)
 		{
 			int br=audiodecoder->getAverageBitrate();
-			br/=8;
-		
+			if ( type == codecMPG )
+				br/=128;
+			else
+				br/=128;
 			br*=message.parm;
 			offset=input.size();
 			input.clear();
-			offset+=br/1000;
+			if ( type == codecMPG )
+				offset+=br/125;
+			else
+				offset+=br/1000;
 			eDebug("skipping %d bytes (br: %d)..", offset, br);
 			if (message.type == eMP3DecoderMessage::skip)
 				offset+=::lseek(sourcefd, 0, SEEK_CUR);
