@@ -813,6 +813,10 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 void eTextPara::clear()
 {
 	eLocker lock(ftlock);
+
+	for (glyphString::iterator i(glyphs.begin()); i!=glyphs.end(); ++i)
+		i->font->unlock();
+
 	glyphs.clear();
 }
 
