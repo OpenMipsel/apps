@@ -509,13 +509,13 @@ enigmaCI::~enigmaCI()
 void enigmaCI::updateCIinfo(const char *buffer)
 {
 	eDebug("new info %s",buffer);
-	app->setText(_(buffer));
+	app->setText(buffer);
 }
 
 void enigmaCI::updateCI2info(const char *buffer)
 {
 	eDebug("new info %s",buffer);
-	app2->setText(_(buffer));
+	app2->setText(buffer);
 }
 
 void enigmaCI::okPressed()

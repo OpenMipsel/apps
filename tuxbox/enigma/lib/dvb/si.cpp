@@ -128,28 +128,27 @@ Descriptor *Descriptor::create(descr_gen_t *descr)
 	}
 }
 
-UnknownDescriptor::UnknownDescriptor(descr_gen_t *descr): Descriptor(descr->descriptor_tag)
+eString Descriptor::toXML()
 {
-	data=new __u8[len=descr->descriptor_length+2];
-	memcpy(data, descr, len);
+	return "<descriptor><parsed>" + toString() + "</parsed></descriptor>\n";
+}
+
+UnknownDescriptor::UnknownDescriptor(descr_gen_t *descr): Descriptor(descr)
+{
 }
 
 UnknownDescriptor::~UnknownDescriptor()
 {
-	delete data;
 }
 
+#ifdef SUPPORT_XML
 eString UnknownDescriptor::toString()
 {
-	std::stringstream res;
-	res << "UnknownDescriptor: " << decode_descr(data[0]) << " (" << std::hex << std::setfill('0') << std::setw(4) << (int)data[0] << ")\n" << "	rawData:";
-	for (int i=0; i<len; i++)
-		res << std::setw(2) << data[i];
-	res << std::endl;
-	return res.str();
+	return "";
 }
+#endif
 
-ServiceDescriptor::ServiceDescriptor(sdt_service_desc *descr): Descriptor(CTag())
+ServiceDescriptor::ServiceDescriptor(sdt_service_desc *descr): Descriptor((descr_gen_t*)descr)
 {
 	int spl=descr->service_provider_name_length;
 	service_type=descr->service_type;
@@ -163,19 +162,22 @@ ServiceDescriptor::~ServiceDescriptor()
 {
 }
 
+#ifdef SUPPORT_XML
 eString ServiceDescriptor::toString()
 {
-	eString res="ServiceDescriptor\n	service_type: " + qHex(service_type) + " (" + decode_service_type(service_type) + ")";
-	res+="	service_provider: ";
+	eString res=
+	"<ServiceDescriptor>"
+	"<service_type>" + qHex(service_type);
+	res+="</service_type><service_provider>";
 	res+=service_provider;
-	res+='\n';
-	res+="	service_name: ";
+	res+="</service_provider><service_name>";
 	res+=service_name;
-	res+='\n';
+	res+="</service_name></ServiceDescriptor>";
 	return res;
 }
+#endif
 
-CAIdentifierDescriptor::CAIdentifierDescriptor(descr_gen_t *descr): Descriptor(DESCR_CA_IDENT)
+CAIdentifierDescriptor::CAIdentifierDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	CA_system_ids=descr->descriptor_length/2;
 	CA_system_id=new __u16[CA_system_ids];
@@ -183,21 +185,23 @@ CAIdentifierDescriptor::CAIdentifierDescriptor(descr_gen_t *descr): Descriptor(D
 		CA_system_id[i]=(((__u8*)(descr+1))[i*2]<<8)|(((__u8*)(descr+1))[i*2+1]);
 }
 
+#ifdef SUPPORT_XML
 eString CAIdentifierDescriptor::toString()
 {
-	eString res="CAIdentifier\n	CA_system_id:";
+	eString res="<CAIdentifier>";
 	for (int i=0; i<CA_system_ids; i++)
-		res+=" "+qHex(CA_system_id[i]);
-	res+="\n";
+		res+="<ca_system_id>"+qHex(CA_system_id[i])+"</ca_system_id>";
+	res+="</CAIdentifier>";
 	return res;
 }
+#endif
 
 CAIdentifierDescriptor::~CAIdentifierDescriptor()
 {
 	delete[] CA_system_id;
 }
 
-LinkageDescriptor::LinkageDescriptor(descr_linkage_struct *descr): Descriptor(DESCR_LINKAGE)
+LinkageDescriptor::LinkageDescriptor(descr_linkage_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	private_data=0;
 	priv_len=0;
@@ -247,32 +251,35 @@ LinkageDescriptor::~LinkageDescriptor()
 		delete[] private_data;
 }
 
+#ifdef SUPPORT_XML
 eString LinkageDescriptor::toString()
 {
-	eString res="LinkageDescriptor\n";
-	res+="	transport_stream_id: "+qHex(transport_stream_id)+"\n";
-	res+="	original_network_id: "+qHex(original_network_id)+"\n";
-	res+="	service_id: "+qHex(service_id)+"\n";
-	res+="	linkage_type: "+qHex(linkage_type)+"\n";
+	eString res="<LinkageDescriptor>";
+	res+="<transport_stream_id>"+qHex(transport_stream_id)+"</transport_stream_id>";
+	res+="<original_network_id>"+qHex(original_network_id)+"</original_network_id>";
+	res+="<service_id>"+qHex(service_id)+"</service_id>";
+	res+="<linkage_type>"+qHex(linkage_type)+"</linkage_type>";
 	if (linkage_type==8)
 	{
-		res+="	hand-over_type: " + qHex(handover_type) + "\n";
-		res+="	origin_type: " + qHex(origin_type) + "\n";
+		res+="<handover_type>" + qHex(handover_type) + "</handover_type>";
+		res+="<origin_type>" + qHex(origin_type) + "</handover_type>";
 		if (!origin_type)
 		{
-			res+="	network_id: " + qHex(network_id)  + "\n";
-			res+="	intial_service_id: " + qHex(initial_service_id)  + "\n";
+			res+="<network_id>" + qHex(network_id)  + "</network_id>";
+			res+="<initial_service_id>" + qHex(initial_service_id)  + "</intial_service_id>";
 		}
 	}
 	if (priv_len)
 	{
-		res+="	private data:";
+		res+="<private>";
 		for (int i=0; i<priv_len; i++)
 			res+=eString().sprintf(" %02x", private_data[i]);
-		res+="\n";
+		res+="</private>";
 	}
+	res+="</LinkageDescriptor>";
 	return res;
 }
+#endif
 
 NVODReferenceEntry::NVODReferenceEntry(__u16 transport_stream_id, __u16 original_network_id, __u16 service_id):
 	transport_stream_id(transport_stream_id), original_network_id(original_network_id), service_id(service_id)
@@ -283,7 +290,7 @@ NVODReferenceEntry::~NVODReferenceEntry()
 {
 }
 
-NVODReferenceDescriptor::NVODReferenceDescriptor(descr_gen_t *descr): Descriptor(DESCR_NVOD_REF)
+NVODReferenceDescriptor::NVODReferenceDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	entries.setAutoDelete(true);
 	int len=descr->descriptor_length;
@@ -296,59 +303,71 @@ NVODReferenceDescriptor::~NVODReferenceDescriptor()
 {
 }
 
+#ifdef SUPPORT_XML
 eString NVODReferenceDescriptor::toString()
 {
 	eString res;
-	res="NVODReferenceDescriptor\n";
+	res="<NVODReferenceDescriptor>";
 	for (ePtrList<NVODReferenceEntry>::iterator i(entries); i != entries.end(); ++i)
 	{
-		res+="	NVODReferenceEntry\n";
-		res+="		transport_stream_id: " + qHex(i->transport_stream_id) + "\n";
-		res+="		original_network_id: " + qHex(i->original_network_id) + "\n";
-		res+="		service_id: " + qHex(i->service_id) + "\n";
+		res+="<NVODReferenceEntry>";
+		res+="<transport_stream_id>" + qHex(i->transport_stream_id) + "</transport_stream_id>";
+		res+="<original_network_id>" + qHex(i->original_network_id) + "</original_network_id>";
+		res+="<service_id>" + qHex(i->service_id) + "</service_id>";
 	}
+	res+="</NVODReferenceDescriptor>";
 	return res;
 }
+#endif
 
-TimeShiftedServiceDescriptor::TimeShiftedServiceDescriptor(descr_time_shifted_service_struct *descr): Descriptor(DESCR_TIME_SHIFTED_SERVICE)
+TimeShiftedServiceDescriptor::TimeShiftedServiceDescriptor(descr_time_shifted_service_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	reference_service_id=HILO(descr->reference_service_id);
 }
 
+#ifdef SUPPORT_XML
 eString TimeShiftedServiceDescriptor::toString()
 {
-	eString res="TimeShiftedServiceDescriptor\n";
-	res+="	reference_service_id: " + qHex(reference_service_id) + "\n";
+	eString res="<TimeShiftedServiceDescriptor>";
+	res+="<reference_service_id>" + qHex(reference_service_id) + "</reference_service_id>";
+	res+="</TimeShiftedServiceDescriptor>";
 	return res;
 }
+#endif
 
-TimeShiftedEventDescriptor::TimeShiftedEventDescriptor(descr_time_shifted_event_struct *descr): Descriptor(DESCR_TIME_SHIFTED_EVENT)
+TimeShiftedEventDescriptor::TimeShiftedEventDescriptor(descr_time_shifted_event_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	reference_service_id=HILO(descr->reference_service_id);
 	reference_event_id=HILO(descr->reference_event_id);
 }
 
+#ifdef SUPPORT_XML
 eString TimeShiftedEventDescriptor::toString()
 {
-	eString res="TimeShiftedEventDescriptor\n";
-	res+="	reference_service_id: " + qHex(reference_service_id) + "\n";
-	res+="	reference_event_id: " + qHex(reference_event_id) + "\n";	
+	eString res="<TimeShiftedEventDescriptor>";
+	res+="<reference_service_id>" + qHex(reference_service_id) + "</reference_service_id>";
+	res+="<reference_event_id>" + qHex(reference_event_id) + "</reference_event_id>";
+	res+="</TimeShiftedEventDescriptor>";
 	return res;
 }
+#endif
 
-StreamIdentifierDescriptor::StreamIdentifierDescriptor(descr_stream_identifier_struct *descr): Descriptor(DESCR_STREAM_ID)
+StreamIdentifierDescriptor::StreamIdentifierDescriptor(descr_stream_identifier_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	component_tag=descr->component_tag;
 }
 
+#ifdef SUPPORT_XML
 eString StreamIdentifierDescriptor::toString()
 {
-	eString res="StreamIdentifierDescriptor\n";
-	res+="	component_tag: " + qHex(component_tag) + "\n";
+	eString res="<StreamIdentifierDescriptor>";
+	res+="<component_tag>" + qHex(component_tag) + "</component_tag>";
+	res+="</StreamIdentifierDescriptor>";
 	return res;
 }
+#endif
 
-CADescriptor::CADescriptor(ca_descr_t *descr): Descriptor(9)
+CADescriptor::CADescriptor(ca_descr_t *descr): Descriptor((descr_gen_t*)descr)
 {
 	data=new __u8[descr->descriptor_length+2];
 	memcpy(data, descr, descr->descriptor_length+2);
@@ -361,15 +380,17 @@ CADescriptor::~CADescriptor()
 	delete[] data;
 }
 
+#ifdef SUPPORT_XML
 eString CADescriptor::toString()
 {
-	eString res="CADescriptor\n";
-	res+="	CA_system_ID: "+qHex(CA_system_ID)+"\n";
-	res+="	CA_PID: "+qHex(CA_PID)+"\n";
+	eString res="<CADescriptor>";
+	res+="<CA_system_ID>"+qHex(CA_system_ID)+"</CA_system_ID>";
+	res+="<CA_PID>"+qHex(CA_PID)+"</CA_PID></CADescriptor>";
 	return res;
 }
+#endif
 
-NetworkNameDescriptor::NetworkNameDescriptor(descr_gen_t *descr): Descriptor(DESCR_NW_NAME)
+NetworkNameDescriptor::NetworkNameDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	int len=descr->descriptor_length;
 	network_name=convertDVBUTF8((unsigned char*)descr+1, len);
@@ -379,14 +400,17 @@ NetworkNameDescriptor::~NetworkNameDescriptor()
 {
 }
 
+#ifdef SUPPORT_XML
 eString NetworkNameDescriptor::toString()
 {
-	eString res="NetworkNameDescriptor\n";
-	res+="  network_name: " + eString(network_name) + "\n";
+	eString res="<NetworkNameDescriptor>";
+	res+="<network_name>" + eString(network_name) + "</network_name>";
+	res+="</NetworkNameDescriptor>";
 	return res;
 }
+#endif
 
-CableDeliverySystemDescriptor::CableDeliverySystemDescriptor(descr_cable_delivery_system_struct *descr): Descriptor(DESCR_CABLE_DEL_SYS)
+CableDeliverySystemDescriptor::CableDeliverySystemDescriptor(descr_cable_delivery_system_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	frequency= (descr->frequency1>>4) *1000000;
 	frequency+=(descr->frequency1&0xF)*100000;
@@ -412,18 +436,21 @@ CableDeliverySystemDescriptor::~CableDeliverySystemDescriptor()
 {
 }
 
+#ifdef SUPPORT_XML
 eString CableDeliverySystemDescriptor::toString()
 {
-	eString res="CableDeliverySystemDescriptor\n";
-	res+=eString().sprintf("  frequency: %d\n", frequency);
-	res+=eString().sprintf("  FEC_outer: %d\n", FEC_outer);
-	res+=eString().sprintf("  modulation: QAM%d\n", 8<<modulation);
-	res+=eString().sprintf("  symbol_rate: %d\n", symbol_rate);
-	res+=eString().sprintf("  FEC_inner: %d\n", FEC_inner);
+	eString res="<CableDeliverySystemDescriptor>";
+	res+=eString().sprintf("<frequency>%d</frequency>\n", frequency);
+	res+=eString().sprintf("<FEC_outer>%d</FEC_outer>", FEC_outer);
+	res+=eString().sprintf("<modulation>QAM%d</modulation>", 8<<modulation);
+	res+=eString().sprintf("<symbol_rate>%d</symbol_rate>", symbol_rate);
+	res+=eString().sprintf("<FEC_inner>%d</FEC_inner>", FEC_inner);
+	res+="</CableDeliverySystemDescriptor>";
 	return res;
 }
+#endif
 
-SatelliteDeliverySystemDescriptor::SatelliteDeliverySystemDescriptor(descr_satellite_delivery_system_struct *descr): Descriptor(DESCR_SAT_DEL_SYS)
+SatelliteDeliverySystemDescriptor::SatelliteDeliverySystemDescriptor(descr_satellite_delivery_system_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	frequency= (descr->frequency1>>4) *100000000;
 	frequency+=(descr->frequency1&0xF)*10000000;
@@ -454,25 +481,26 @@ SatelliteDeliverySystemDescriptor::~SatelliteDeliverySystemDescriptor()
 {
 }
 
+#ifdef SUPPORT_XML
 eString SatelliteDeliverySystemDescriptor::toString()
 {
-	eString res;
-	res+=eString().sprintf("SatelliteDeliverySystemDescriptor\n");
-	res+=eString().sprintf("  frequency: %d\n", frequency);
-	res+=eString().sprintf("  orbital_position: %3d.%d%c\n", orbital_position/10, orbital_position%10, west_east_flag?'E':'W');
-	res+="  polarisation: ";
+	eString res="<SatelliteDeliverySystemDescriptor>";
+	res+=eString().sprintf("<frequency>%d</frequency>", frequency);
+	res+=eString().sprintf("<orbital_position>%3d.%d%c</orbital_position>", orbital_position/10, orbital_position%10, west_east_flag?'E':'W');
+	res+="<polarisation>";
 	switch (polarisation)
 	{
-	case 0: res+=eString().sprintf("linear - horizontal\n"); break;
-	case 1: res+=eString().sprintf("linear - vertical\n"); break;
-	case 2: res+=eString().sprintf("circular - left (*cool*)\n"); break;
-	case 3: res+=eString().sprintf("circular - right (*cool*)\n"); break;
+	case 0: res+="horizontal\n"; break;
+	case 1: res+="vertical\n"; break;
+	case 2: res+="left\n"; break;
+	case 3: res+="right"; break;
   }
-	res+=eString().sprintf("  modulation: %d\n", modulation);
-	res+=eString().sprintf("  symbol_rate: %d\n", symbol_rate);
-	res+=eString().sprintf("  FEC_inner: %d/%d\n", FEC_inner, FEC_inner+1);
+	res+=eString().sprintf("</polarisation><modulation>%d</modulation>", modulation);
+	res+=eString().sprintf("<symbol_rate>%d</symbol_rate>", symbol_rate);
+	res+=eString().sprintf("<FEC_inner>%d/%d</FEC_inner></SatelliteDeliverySystemDescriptor>", FEC_inner, FEC_inner+1);
 	return res;
 }
+#endif
 
 ServiceListDescriptorEntry::ServiceListDescriptorEntry(__u16 service_id, __u8 service_type):
 	service_id(service_id), service_type(service_type)
@@ -484,7 +512,7 @@ ServiceListDescriptorEntry::~ServiceListDescriptorEntry()
 {
 }
 
-ServiceListDescriptor::ServiceListDescriptor(descr_gen_t *descr): Descriptor(DESCR_SERVICE_LIST)
+ServiceListDescriptor::ServiceListDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	entries.setAutoDelete(true);
 	int len=descr->descriptor_length;
@@ -496,19 +524,23 @@ ServiceListDescriptor::~ServiceListDescriptor()
 {
 }
 
+#ifdef SUPPORT_XML
 eString ServiceListDescriptor::toString()
 {
-	eString res="ServiceListDescriptor\n";
+	eString res="<ServiceListDescriptor>";
 	for (ePtrList<ServiceListDescriptorEntry>::iterator i(entries); i != entries.end(); ++i)
 	{
-		res+=eString().sprintf("	ServiceListDescriptorEntry\n");
-		res+=eString().sprintf("		service_id: %04x\n", i->service_id);
-		res+=eString().sprintf("		service_type: %04x\n", i->service_type);
+		res+=eString().sprintf("<ServiceListDescriptorEntry>");
+		res+=eString().sprintf("<service_id>%04x</service_id>", i->service_id);
+		res+=eString().sprintf("<service_type>%04x</service_type>", i->service_type);
+		res+="</ServiceListDescriptorEntry>";
 	}
+	res+="</ServiceListDescriptor>";
 	return res;
 }
+#endif
 
-ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr): Descriptor(DESCR_SHORT_EVENT)
+ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	__u8 *data=(__u8*)descr;
 	memcpy(language_code, data+2, 3);
@@ -539,31 +571,36 @@ ShortEventDescriptor::ShortEventDescriptor(descr_gen_t *descr): Descriptor(DESCR
 	text=convertDVBUTF8((unsigned char*) data+ptr, len, table);
 }
 
+#ifdef SUPPORT_XML
 eString ShortEventDescriptor::toString()
 {
-	eString res="ShortEventDescriptor\n";
-	res+="  event_name: "+event_name+'\n';
-	res+="  text: "+text+'\n';
+	eString res="<ShortEventDescriptor>";
+	res+="<event_name>"+event_name+"</event_name>";
+	res+="<text>"+text+"</text>";
+	res+="</ShortEventDescriptor>";
 	return res;
 }
+#endif
 
-ISO639LanguageDescriptor::ISO639LanguageDescriptor(descr_gen_t *descr): Descriptor(DESCR_ISO639_LANGUAGE)
+ISO639LanguageDescriptor::ISO639LanguageDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	__u8 *data=(__u8*)descr;
 	memcpy(language_code, data+2, 3);
 	audio_type=data[5];
 }
 
+#ifdef SUPPORT_XML
 eString ISO639LanguageDescriptor::toString()
 {
 	eString res;
-	res+=eString().sprintf("ISO639LangugageDescriptor\n");
-	res+=eString().sprintf("  language_code: %c%c%c\n", language_code[0], language_code[1], language_code[2]);
-	res+=eString().sprintf("  audio_type: %d\n", audio_type);
+	res+=eString().sprintf("<ISO639LangugageDescriptor>");
+	res+=eString().sprintf("<language_code>%c%c%c</language_code>\n", language_code[0], language_code[1], language_code[2]);
+	res+=eString().sprintf("<audio_type>%d</audio_type></ISO639LangugageDescriptor>", audio_type);
 	return res;
 }
+#endif
 
-AC3Descriptor::AC3Descriptor(descr_gen_t *descr): Descriptor(DESCR_AC3)
+AC3Descriptor::AC3Descriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	__u8 *data=(__u8*)descr;
 	data+=2;
@@ -586,21 +623,24 @@ AC3Descriptor::AC3Descriptor(descr_gen_t *descr): Descriptor(DESCR_AC3)
 		asvc=-1;
 }
 
+#ifdef SUPPORT_XML
 eString AC3Descriptor::toString()
 {
-	eString res="AC3Descriptor\n";
+	eString res="<AC3Descriptor>";
 	if (AC3_type!=-1)
-		res+=eString().sprintf("  AC3_type: %d", AC3_type);
+		res+=eString().sprintf("<AC3_type>%d</AC3_type>", AC3_type);
 	if (bsid!=-1)
-		res+=eString().sprintf("  bsid: %d", bsid);
+		res+=eString().sprintf("<bsid>%d</asvc>", bsid);
 	if (mainid!=-1)
-		res+=eString().sprintf("  mainid: %d", mainid);
+		res+=eString().sprintf("<mainid>%d</asvc>", mainid);
 	if (asvc!=-1)
-		res+=eString().sprintf("  asvc: %d", asvc);
+		res+=eString().sprintf("<asvc>%d</asvc>", asvc);
+	res+="</AC3Descriptor>";
 	return res;
 }
+#endif
 
-BouquetNameDescriptor::BouquetNameDescriptor(descr_gen_t *descr): Descriptor(DESCR_BOUQUET_NAME)
+BouquetNameDescriptor::BouquetNameDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	__u8 *data=(__u8*)descr;
 	int len=descr->descriptor_length;
@@ -610,14 +650,16 @@ BouquetNameDescriptor::BouquetNameDescriptor(descr_gen_t *descr): Descriptor(DES
 		name+=*data++;
 }
 
+#ifdef SUPPORT_XML
 eString BouquetNameDescriptor::toString()
 {
-	eString res="BouquetNameDescriptor\n";
-	res+="  name: "+name+"\n";
+	eString res="<BouquetNameDescriptor>";
+	res+="<name>"+name+"</name></BouquetNameDescriptor>";
 	return res;
 }
+#endif
 
-ExtendedEventDescriptor::ExtendedEventDescriptor(descr_gen_t *descr): Descriptor(DESCR_EXTENDED_EVENT)
+ExtendedEventDescriptor::ExtendedEventDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	struct eit_extended_descriptor_struct *evt=(struct eit_extended_descriptor_struct *)descr;
 	descriptor_number = evt->descriptor_number;
@@ -636,17 +678,18 @@ ExtendedEventDescriptor::ExtendedEventDescriptor(descr_gen_t *descr): Descriptor
 	item_description=convertDVBUTF8((unsigned char*)data+ptr, item_description_length, table);
 }
 
+#ifdef SUPPORT_XML
 eString ExtendedEventDescriptor::toString()
 {
-	eString res="ExtendedEventDescriptor\n";
-	res+=eString().sprintf("  language_code: %c%c%c\n", language_code[0], language_code[1], language_code[2]);
-	res+=eString().sprintf("  descriptor %i / %i\n", descriptor_number, last_descriptor_number);
-	res+=eString().sprintf("  description length: %i\n", item_description_length);
-	res+="  description : "+item_description+"\n";
+	eString res="<ExtendedEventDescriptor>";
+	res+=eString().sprintf("<language_code>%c%c%c</language_code>", language_code[0], language_code[1], language_code[2]);
+	res+=eString().sprintf("<descriptor>%i</descriptor><last_descriptor_number>%i</last_descriptor_number>\n", descriptor_number, last_descriptor_number);
+	res+="<description>"+item_description+"</description></ExtendedEventDescriptor>";
 	return res;
 }
+#endif
 
-ComponentDescriptor::ComponentDescriptor(descr_component_struct *descr): Descriptor(DESCR_COMPONENT)
+ComponentDescriptor::ComponentDescriptor(descr_component_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	int len=descr->descriptor_length+2;
 	stream_content=descr->stream_content;
@@ -662,17 +705,19 @@ ComponentDescriptor::ComponentDescriptor(descr_component_struct *descr): Descrip
 		text+=*p++;
 }
 
+#ifdef SUPPORT_XML
 eString ComponentDescriptor::toString()
 {
-	eString res="ComponentDescriptor\n";
-	res+=eString().sprintf("  stream_content: %d\n", stream_content);
-	res+=eString().sprintf("  component_type: %d\n", component_type);
-	res+=eString().sprintf("  component_tag: %d\n", component_tag);
-	res+="  text: "+text+'\n';
+	eString res="<ComponentDescriptor>";
+	res+=eString().sprintf("<stream_content>%d</stream_content>", stream_content);
+	res+=eString().sprintf("<component_type>%d</component_type>", component_type);
+	res+=eString().sprintf("<component_tag>%d</component_tag>\n", component_tag);
+	res+="<text>"+text+"</text></ComponentDescriptor>";
 	return res;
 }
+#endif
 
-ContentDescriptor::ContentDescriptor(descr_gen_t *descr):Descriptor(DESCR_CONTENT)
+ContentDescriptor::ContentDescriptor(descr_gen_t *descr): Descriptor(descr)
 {
 	int len=descr->descriptor_length;
 	contentList.setAutoDelete(true);
@@ -688,16 +733,19 @@ ContentDescriptor::ContentDescriptor(descr_gen_t *descr):Descriptor(DESCR_CONTEN
 	}
 }
 
+#ifdef SUPPORT_XML
 eString ContentDescriptor::toString()
 {
-	eString res="ContentDescriptor\n";
+	eString res="<ContentDescriptor>";
 	for (ePtrList<descr_content_entry_struct>::iterator it( contentList.begin() ); it != contentList.end(); it++)
 		res+=eString().sprintf("nibble1 = %02x, nibble2 = %02x, user1 = %02x, user2 = %02x\n",
 																	it->content_nibble_level_1, it->content_nibble_level_2, it->user_nibble_1, it->user_nibble_2 );
+	res+="<!-- don't ask --></ContentDescriptor>";
 	return res;
 }	
+#endif
 
-LesRadiosDescriptor::LesRadiosDescriptor(descr_lesradios_struct *descr): Descriptor(DESCR_LESRADIOS)
+LesRadiosDescriptor::LesRadiosDescriptor(descr_lesradios_struct *descr): Descriptor((descr_gen_t*)descr)
 {
 	int len=descr->descriptor_length+2;
 	id=descr->id;
@@ -708,35 +756,39 @@ LesRadiosDescriptor::LesRadiosDescriptor(descr_lesradios_struct *descr): Descrip
 		name+=*lname++;
 }
 
+#ifdef SUPPORT_XML
 eString LesRadiosDescriptor::toString()
 {
 	eString res;
-	res="LesRadioDescriptor\n";
-	res+=eString().sprintf("  id: %d\n", id);
-	res+="  name";
+	res="<LesRadioDescriptor>";
+	res+=eString().sprintf("<id>%d</id>", id);
+	res+="<name>";
 	res+=name;
-	res+="\n";
+	res+="</name></LesRadioDescriptor>";
 	return res;
 }
+#endif
 
 MHWDataDescriptor::MHWDataDescriptor(descr_mhw_data_struct *descr)
-	: Descriptor(DESCR_MHW_DATA)
+	: Descriptor((descr_gen_t*)descr)
 {
 	memcpy(type, descr->type, 8);
 }
 
+#ifdef SUPPORT_XML
 eString MHWDataDescriptor::toString()
 {
 	eString res;
-	res="MHWDataDescriptor\n  ";
+	res="<MHWDataDescriptor><data>";
 	for (int i=0; i<8; i++)
 		res+=type[i];
-	res+="\n";
+	res+="</data></MHWDataDescriptor>\n";
 	return res;
 }
+#endif
 
 ParentalRatingDescriptor::ParentalRatingDescriptor( descr_gen_struct *descr)
-	: Descriptor(DESCR_PARENTAL_RATING)
+	: Descriptor((descr_gen_t*)descr)
 {
   const char *data = ((char*)descr)+sizeof(struct descr_gen_struct);
 	const char *work = data;
@@ -749,16 +801,21 @@ ParentalRatingDescriptor::ParentalRatingDescriptor( descr_gen_struct *descr)
   }
 }
 
+#ifdef SUPPORT_XML
 eString ParentalRatingDescriptor::toString()
 {
-	eString res="ParentalRatingDescriptor";
+	eString res="<ParentalRatingDescriptor>";
 	for ( std::map<eString,int>::iterator it(entryMap.begin()); it != entryMap.end(); it++)
-		res += eString().sprintf("\n  Country: %s, Age: %i",it->first.c_str(), it->second);
+	{
+		res += eString().sprintf("<entry><country>%s</country><age>%i</age></entry>",it->first.c_str(), it->second);
+	}
+	res+="</ParentalRatingDescriptor>";
 	return res;
 }
+#endif
 
 RegistrationDescriptor::RegistrationDescriptor( descr_gen_struct *descr)
-	: Descriptor(DESCR_REGISTRATION)
+	: Descriptor(descr)
 {
   const char *data = ((char*)(descr+1));
 	int len=descr->descriptor_length;
@@ -768,15 +825,17 @@ RegistrationDescriptor::RegistrationDescriptor( descr_gen_struct *descr)
 	additional_identification_info.assign(data+4, len-4);
 }
 
+#ifdef SUPPORT_XML
 eString RegistrationDescriptor::toString()
 {
-	eString res="RegistrationDescriptor\n  format_identifier: ";
+	eString res="<RegistrationDescriptor><format_identifier>";
 	res+=eString().assign(format_identifier, 4);
-	res+="\n  additional_identification_info: ";
+	res+="</format_identifier><additional_identification_info>";
 	res+=additional_identification_info;
-	res+="\n";
+	res+="</additional_identification_info></RegistrationDescriptor>";
 	return res;
 }
+#endif
 
 PAT::PAT(): eTable(PID_PAT, TID_PAT)
 {

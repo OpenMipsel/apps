@@ -65,6 +65,8 @@ void eZap::status()
 
 #include <lib/base/ringbuffer.h>
 
+extern void ezapInitializeWeb(eHTTPDynPathResolver *dyn_resolver);
+
 eZap::eZap(int argc, char **argv)
 	: eApplication(/*argc, argv, 0*/)
 {
@@ -140,6 +142,7 @@ eZap::eZap(int argc, char **argv)
 
 	dyn_resolver = new eHTTPDynPathResolver();
 	ezapInitializeDyn(dyn_resolver);
+	ezapInitializeWeb(dyn_resolver);	
 
 	fileresolver = new eHTTPFilePathResolver();
   fileresolver->addTranslation("/var/tuxbox/htdocs", "/www", 2); /* TODO: make user configurable */

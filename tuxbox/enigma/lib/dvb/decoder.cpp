@@ -193,8 +193,7 @@ int Decoder::Set()
 	parms.flushbuffer=0;
 	
 	eDebug(" ------------> changed! %x", changed);
-
-
+	
 	if (changed & 4)
 	{
 #ifdef OLD_VBI // for old drivers in alexW Image...
@@ -459,8 +458,21 @@ int Decoder::Set()
 
 	if (changed & 0x100 && parms.audio_type != current.audio_type )
 	{
-		eDebugNoNewLine("AUDIO_SET_BYPASS_MODE to %d - ", (parms.audio_type==DECODE_AUDIO_MPEG)? 1 : 0 );
-		if ( ioctl( fd.audio , AUDIO_SET_BYPASS_MODE, (parms.audio_type == DECODE_AUDIO_MPEG) ? 1 : 0 ) < 0)
+		int bypass=0;
+		switch (parms.audio_type)
+		{
+		case DECODE_AUDIO_MPEG:
+			bypass=1;
+			break;
+		case DECODE_AUDIO_AC3:
+			bypass=0;
+			break;
+		case DECODE_AUDIO_DTS:
+			bypass=2;
+			break;
+		}
+		eDebugNoNewLine("AUDIO_SET_BYPASS_MODE to %d - ", bypass);
+		if ( ioctl( fd.audio , AUDIO_SET_BYPASS_MODE, bypass ) < 0)
 			perror("failed");
 		else
 			eDebug("ok");

@@ -19,7 +19,7 @@ struct enigmaEventViewActions
 		map("enigmaEventView", _("enigma event view")),
 		addDVRTimerEvent(map, "addDVRTimerEvent", _("add this event as DVR Event to timer list"), eAction::prioDialog ),
 		addNGRABTimerEvent(map, "addNGRABTimerEvent", _("add this event as NGRAB Event to timer list"), eAction::prioDialog ),
-		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simpel Switch Event to timer list"), eAction::prioDialog ),
+		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simple Switch Event to timer list"), eAction::prioDialog ),
 		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog ),
 		close(map, "close", _("closes the Event View"), eAction::prioDialog)
 	{

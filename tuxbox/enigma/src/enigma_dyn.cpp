@@ -56,7 +56,7 @@ static int getHex(int c)
 	return c;
 }
 
-static eString httpUnescape(const eString &string)
+eString httpUnescape(const eString &string)
 {
 	eString ret="";
 	for (unsigned int i=0; i<string.length(); ++i)
@@ -88,7 +88,7 @@ static eString httpUnescape(const eString &string)
 	return ret;
 }
 
-static eString httpEscape(const eString &string)
+eString httpEscape(const eString &string)
 {
 	eString ret="";
 	for (unsigned int i=0; i<string.length(); ++i)
@@ -114,7 +114,7 @@ static eString httpEscape(const eString &string)
 	return ret;
 }
 
-static std::map<eString,eString> getRequestOptions(eString opt)
+std::map<eString,eString> getRequestOptions(eString opt)
 {
 	std::map<eString,eString> result;
 	
@@ -343,12 +343,12 @@ static eString read_file(eString filename)
 	return result;
 }
 
-static eString ref2string(const eServiceReference &r)
+eString ref2string(const eServiceReference &r)
 {
 	return httpEscape(r.toString());
 }
 
-static eServiceReference string2ref(const eString &service)
+eServiceReference string2ref(const eString &service)
 {
 	eString str=httpUnescape(service);
 	return eServiceReference(str);
@@ -1183,7 +1183,7 @@ static eString screenshot(eString request, eString dirpath, eString opts, eHTTPC
 	if (!savePNG("/var/tmp/screenshot.png", p))
 	{
 		content->local_header["Location"]="/root/var/tmp/screenshot.png";
-		content->code=302;
+		content->code=307;
 		return "ok\n";
 	}
 	

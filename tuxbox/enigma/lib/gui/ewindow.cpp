@@ -73,7 +73,7 @@ void eWindow::drawTitlebar(gPainter *target)
 		target->setForegroundColor(titleBarColor);
 		target->fill( rc );
 	}
-
+	rc.setWidth(rc.width()-10);
 	eTextPara *p = new eTextPara( rc );
 	p->setFont( eSkin::getActive()->queryFont("eWindow.TitleBar") );
 	p->renderString( text );

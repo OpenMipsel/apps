@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#define SUPPORT_XML
 #include <lib/dvb/esection.h>
 #include <lib/base/estring.h>
 #include <lib/base/eerror.h>
@@ -20,22 +21,39 @@ int fromBCD(int bcd);
 
 class Descriptor
 {
+		// better this fixed length or heap memory? don't know :/
+  __u8 data[256];
+  int len;
 public:
-	inline Descriptor(int tag):tag(tag){};
+	inline Descriptor(descr_gen_t *descr)
+	{
+		len = descr->descriptor_length;
+		memcpy(data, descr, len);
+	};
 	inline virtual ~Descriptor(){};
 
 	static Descriptor *create(descr_gen_t *data);
-	int Tag() { return tag; }
-	virtual eString toString()=0;
+	int Tag() { return data[0]; }
 
-	int tag;
+#ifdef SUPPORT_XML	
+	eString toXML();
+	/*
+		<descriptor>
+			<raw>...</raw>
+			<parsed>
+				<ComponentDescriptor>
+					...
+				</ComponentDescriptor>
+			</parsed>
+		</descriptor>
+	*/
+  virtual eString toString()=0;
+#endif
 };
 
 class UnknownDescriptor: public Descriptor
 {
 public:
-  __u8 *data;
-  int len;
   UnknownDescriptor(descr_gen_t *descr);
   ~UnknownDescriptor();                                     	
   eString toString();
@@ -202,7 +220,7 @@ class ShortEventDescriptor: public Descriptor
 {
 public:
 	ShortEventDescriptor(descr_gen_t *descr);
-	ShortEventDescriptor(): Descriptor(DESCR_SHORT_EVENT) { };
+	ShortEventDescriptor(): Descriptor((descr_gen_t*)"\x4d") { };
 	eString toString();
 	char language_code[3];
 	eString event_name;

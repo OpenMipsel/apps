@@ -458,9 +458,9 @@
 			<eLabel position="540:131" size="27:12" pixmap="button_gray" name="button_blue_disabled" alphatest="on" />
 
 			<eLabel text="EPG" position="246:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
-			<eLabel text="Bildregie" position="353:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
-			<eLabel text="Tonwahl" position="462:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
-			<eLabel text="Videotext" position="569:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
+			<eLabel text="subservices" position="353:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
+			<eLabel text="audio track" position="462:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
+			<eLabel text="videotext" position="569:129" font="Blue.Bold;17" size="80:15" foregroundColor="white" />
 
 			<eLabel name="recStatus" position="476:34" size="18:18" pixmap="rec_symbol" alphatest="on" />
 

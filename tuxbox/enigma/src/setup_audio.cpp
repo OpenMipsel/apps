@@ -26,7 +26,7 @@ eZapAudioSetup::eZapAudioSetup():
 	sac3default=eAudio::getInstance()->getAC3default();
 
 	ac3default=new eCheckbox(this, sac3default, 1);
-	ac3default->setText("AC3 default output");
+	ac3default->setText(_("AC3 default output"));
 	ac3default->move(ePoint(20, 20));
 	ac3default->resize(eSize(fd+4+240, fd+4));
 	ac3default->setHelpText(_("enable/disable ac3 default output (ok)"));

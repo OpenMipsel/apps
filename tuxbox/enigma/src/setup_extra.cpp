@@ -23,10 +23,10 @@ eZapExtraSetup::eZapExtraSetup():
 	loadSettings();
 
 	profimode=new eCheckbox(this, sprofimode, 1);
-	profimode->setText(_("Not ask anything"));
+	profimode->setText(_("Skip Confirmations"));
 	profimode->move(ePoint(20, 20));
 	profimode->resize(eSize(fd+4+240, fd+4));
-	profimode->setHelpText(_("enable/disable safety asking (ok)"));
+	profimode->setHelpText(_("enable/disable confirmations (ok)"));
 
 	hideerror=new eCheckbox(this, shideerror, 1);
 	hideerror->setText(_("Hide error windows"));

@@ -196,7 +196,21 @@
 	<colors>
 		<color name="background" color="#ff000000" />
 		<color name="white_trans" color="#1effffff" />
-		<color name="white_blue" color="#1effffff" end="#1e0003f80" size="16" />
+		<color name="white_blue" color="#1effffff" end="#1e0003f80" size="8" />
+
+		<color name="std_red"    color="#ff0000" />
+		<color name="std_green"  color="#00ff00" />
+		<color name="std_blue"   color="#0000ff" />
+
+		<color name="std_dyellow"  color="#c0c000" />
+		<color name="std_dcyan"    color="#00c0c0" />
+		<color name="std_dgreen"   color="#00c000" />
+		<color name="std_dmagenta" color="#c000c0" />
+		<color name="std_dred"     color="#c00000" />
+		<color name="std_dblue"    color="#0000c0" />
+		
+		<color name="std_gray"     color="#000000" end="#ffffff" size="8" />
+
 		<color name="blue_nontrans" color="#1e003f80" end="#00003f80" size="4" />
 		<color name="icons1" color="#1eeeeeee" end="#1e7b7b7b" size="4" />
 		<color name="icons2" color="#1eafafee" end="#1e0000ff" size="4" />		
@@ -217,6 +231,8 @@
 	<colorscheme>
 		<map name="volume_left" color="volume4" />
 		<map name="volume_right" color="volume2" />
+		<map name="std_black" color="std_gray" />
+		<map name="std_white" color="std_gray+7" />
 	</colorscheme>
 
 	<object name="eZapMainMenu">
@@ -352,7 +368,7 @@
 			<eLabel name="luSwitch4" text="U-Switch 4:" position="290:275" size="150:35" vcenter="on" shortcut="0" shortcutFocus="uSwitch4" />
 			<eButton name="next" text="Motor Setup" position="10:270" size="e-10:40" helptext="opens the motor setup" loadDeco="" shortcut="blue" /-->
 			<eButton name="prev" text="prev. page" position="10:e-80" size="170:40" helptext="goto prev page (LNB)" loadDeco="" shortcut="yellow" />
-			<eButton name="save" text="save" position="190:e-80" size="170:40" helptext="save changes and use the selected LNB (in first page) for the choosen satellite" loadDeco="" shortcut="green" />
+			<eButton name="save" text="save" position="190:e-80" size="170:40" helptext="save changes" loadDeco="" shortcut="green" />
 			<eButton name="cancel" text="cancel" position="370:e-80" size="170:40" helptext="ignore changes and return" loadDeco="" shortcut="escape" />
 		</eDiSEqCPage>
 	</object>

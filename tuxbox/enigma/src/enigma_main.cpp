@@ -1718,6 +1718,7 @@ void eZapMain::updateProgress()
 				pLCD->lcdMain->Progress->show();
 			} else
 			{
+				EINowDuration->setText(eString().sprintf("%d min", cur_duration / 60));
 				Progress->hide();
 				pLCD->lcdMain->Progress->hide();
 			}

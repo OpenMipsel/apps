@@ -4,6 +4,7 @@
 		// all kind of decoding-related stuff
 #define DECODE_AUDIO_MPEG	0
 #define DECODE_AUDIO_AC3	1
+#define DECODE_AUDIO_DTS  2
 
 struct decoderParameters
 {

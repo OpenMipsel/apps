@@ -10,7 +10,8 @@ enigma_SOURCES = \
 	enigma_mainmenu.cpp satconfig.cpp epgwindow.cpp setup_language.cpp enigma_info.cpp \
 	enigma_scan.cpp setupskin.cpp setup_osd.cpp timer.cpp setup_lcd.cpp enigma_vcr.cpp \
 	setup_rc.cpp channelinfo.cpp setup_harddisk.cpp enigma_ci.cpp upgrade.cpp satfind.cpp setup_extra.cpp \
-	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp wizard_scan.cpp engrab.cpp setupengrab.cpp helpwindow.cpp
+	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp wizard_scan.cpp engrab.cpp setupengrab.cpp helpwindow.cpp \
+	enigma_web.cpp
 
 enigma_LDADD_WHOLE = \
 	$(top_builddir)/lib/driver/libenigma_driver.a \

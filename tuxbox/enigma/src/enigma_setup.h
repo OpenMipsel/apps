@@ -23,6 +23,7 @@ private:
 	void sel_num(int n);
 	void sel_engrab();
 	void sel_extra();
+	void sel_test();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:

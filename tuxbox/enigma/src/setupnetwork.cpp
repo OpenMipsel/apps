@@ -88,7 +88,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	CONNECT(gateway->selected, eZapNetworkSetup::fieldSelected);
 
 	dosetup=new eCheckbox(this, sdosetup, 1);
-	dosetup->setText("Configure Network");
+	dosetup->setText(_("Configure Network"));
 	dosetup->move(ePoint(100, 183));
 	dosetup->resize(eSize(fd+4+240, fd+4));
 	dosetup->setHelpText(_("enable/disable network config (ok)"));

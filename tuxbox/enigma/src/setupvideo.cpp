@@ -33,7 +33,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	cresize(eSize(390, 200));
 
 	eLabel *l=new eLabel(this);
-	l->setText("Colorformat:");
+	l->setText(_("Color Format:"));
 	l->move(ePoint(10, 20));
 	l->resize(eSize(200, fd+4));
 
@@ -43,7 +43,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	colorformat->move(ePoint(160, 20));
 	colorformat->resize(eSize(120, 35));
 	eListBoxEntryText* entrys[3];
-	entrys[0]=new eListBoxEntryText(colorformat, _("FBAS"), (void*)1);
+	entrys[0]=new eListBoxEntryText(colorformat, _("CVBS"), (void*)1);
 	entrys[1]=new eListBoxEntryText(colorformat, _("RGB"), (void*)2);
 	entrys[2]=new eListBoxEntryText(colorformat, _("SVideo"), (void*)3);
 	entrys[3]=new eListBoxEntryText(colorformat, _("YPbPr"), (void*)4);
@@ -51,7 +51,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	colorformat->setHelpText(_("choose colour format ( left, right )"));
 
   l=new eLabel(this);
-	l->setText("Aspect Ratio:");
+	l->setText(_("Aspect Ratio:"));
 	l->move(ePoint(10, 65));
 	l->resize(eSize(150, fd+4));
 	

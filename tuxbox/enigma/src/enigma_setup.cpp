@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.15 2003/02/28 21:55:06 bernroth Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.16 2003/04/08 22:00:04 tmbinc Exp $
  */
 
 #include <enigma_setup.h>
@@ -42,6 +42,7 @@
 #include <lib/dvb/edvb.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
+#include <lib/gui/testpicture.h>
 #include "upgrade.h"
 
 eZapSetup::eZapSetup()
@@ -109,6 +110,7 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), eString().sprintf("(%d) %s", ++entry, _("upgrade firmware")) ))->selected, eZapSetup::sel_upgrade);
 	if (haverfmod)
 		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapSetup::sel_rfmod);
+	CONNECT((new eListBoxEntryMenu(&list, _("Video calibration..."), eString().sprintf("(%d) %s", ++entry, _("show calibration picture")) ))->selected, eZapSetup::sel_test);
 }
 
 eZapSetup::~eZapSetup()
@@ -301,6 +303,42 @@ void eZapSetup::sel_rfmod()
 	setup.show();
 	setup.exec();
 	setup.hide();
+	show();
+}
+
+void eZapSetup::sel_test()
+{
+	hide();
+	{
+		eMessageBox msg(
+			// please don't translate, it's temporary only.
+			("Warning, these collection of testpictures are in no way \"certified\" "
+				"or checked by professionals. Don't use them for real calibration.\n"
+				"Please note that because of anti-flimmer filters, the multiburst shows "
+				"wrong results. Real bandwidth is higher.\n"
+				"In doubt, don't use them.\n"
+				"Otherwise: use 1..8 to cycle through the pictures, OK to abort."), "Calibration pictures",
+				eMessageBox::btOK|eMessageBox::iconInfo);
+		msg.show();
+		msg.exec();
+		msg.hide();
+	}
+	int curmode=eTestPicture::testFUBK;
+	while (curmode != -1)
+	{
+		switch (eTestPicture::display(curmode))
+		{
+		case 1: curmode = eTestPicture::testRed; break;
+		case 2: curmode = eTestPicture::testGreen; break;
+		case 3: curmode = eTestPicture::testBlue; break;
+		case 4: curmode = eTestPicture::testColorbar; break;
+		case 5: curmode = eTestPicture::testWhite; break;
+		case 6: curmode = eTestPicture::testFUBK; break;
+		case 7: curmode = eTestPicture::testGray; break;
+		case 8: curmode = eTestPicture::testBlack; break;
+		default: curmode = -1;
+		}
+	}
 	show();
 }
 
