@@ -1062,6 +1062,62 @@ void eZapMain::loadUserBouquets( bool destroy )
 		eZap::getInstance()->getServiceSelector()->actualize();
 }
 
+void eZapMain::reloadPaths(int reset)
+{
+	// read for all modes last servicePaths from registry
+	for (int m=modeTV; m < modeEnd; m++)
+	{
+		char* str;
+		// normale dvb bouquet pathes...
+		if ((!reset) && !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path0", m).c_str(), str)
+				&& eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", m).c_str(), str) )
+		{
+			modeLast[m][0].setString(str);
+			//			eDebug(str);
+			free(str);
+		}
+		else  // no path in registry... create default..
+		{
+			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
+			// 3 roots rotiert wird ( history ).. kann irgendwann wieder raus..
+			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", m ).c_str() );
+
+			modeLast[m][0]=eServiceStructureHandler::getRoot(m+1);
+			modeLast[m][0].down( eServiceReference() );
+		}
+		if ((!reset) && !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path1", m).c_str(), str)
+				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", m).c_str(), str) )
+		{
+			modeLast[m][1].setString(str);
+			//			eDebug(str);
+			free(str);
+		}
+		else  // no path in registry... create default..
+		{
+			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
+			// 3 roots rotiert wird ( history )
+			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", m ).c_str());
+
+			modeLast[m][1]=(m==modeTV)?userTVBouquetsRef:(m==modeRadio)?userRadioBouquetsRef:playlistref;
+			modeLast[m][1].down( eServiceReference() );
+		}
+	}
+
+	// set serviceSelector style
+	int style;
+	if (reset || eConfig::getInstance()->getKey("/ezap/ui/serviceSelectorStyle", style ) )
+		style=eServiceSelector::styleSingleColumn;  // default we use single Column Style
+
+	eZap::getInstance()->getServiceSelector()->setStyle(style);
+		
+	if (reset)
+	{
+		int oldm=mode;
+		mode=-1;
+		setMode(oldm);
+	}
+}
+
 eZapMain::eZapMain()
 	:eWidget(0, 1)
 	,mute( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
@@ -1268,51 +1324,7 @@ eZapMain::eZapMain()
 	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
 	CONNECT(eZap::getInstance()->getServiceSelector()->showList, eZapMain::showList);
 
-	// read for all modes last servicePaths from registry
-	for (mode=modeTV; mode < modeEnd; mode++)
-	{
-		char* str;
-		// normale dvb bouquet pathes...
-		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path0", mode).c_str(), str)
-				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode).c_str(), str) )
-		{
-			modeLast[mode][0].setString(str);
-			//			eDebug(str);
-			free(str);
-		}
-		else  // no path in registry... create default..
-		{
-			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
-			// 3 roots rotiert wird ( history ).. kann irgendwann wieder raus..
-			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode ).c_str() );
-
-			modeLast[mode][0]=eServiceStructureHandler::getRoot(mode+1);
-			modeLast[mode][0].down( eServiceReference() );
-		}
-		if ( !eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path1", mode).c_str(), str)
-				&&eConfig::getInstance()->getKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode).c_str(), str) )
-		{
-			modeLast[mode][1].setString(str);
-			//			eDebug(str);
-			free(str);
-		}
-		else  // no path in registry... create default..
-		{
-			// workaround wenn vorher ein inoffizielles image auf der box war, wo über
-			// 3 roots rotiert wird ( history )
-			eConfig::getInstance()->delKey( eString().sprintf("/ezap/ui/modes/%d/path2", mode ).c_str());
-
-			modeLast[mode][1]=(mode==modeTV)?userTVBouquetsRef:(mode==modeRadio)?userRadioBouquetsRef:playlistref;
-			modeLast[mode][1].down( eServiceReference() );
-		}
-	}
-
-	// set serviceSelector style
-	int style;
-	if ( eConfig::getInstance()->getKey("/ezap/ui/serviceSelectorStyle", style ) )
-		style=eServiceSelector::styleSingleColumn;  // default we use single Column Style
-
-	eZap::getInstance()->getServiceSelector()->setStyle(style);
+	reloadPaths();
 
 	mode=-1;  // fake mode for first call of setMode
 

@@ -12,6 +12,7 @@
 #include <lib/base/i18n.h>
 #include <lib/dvb/dvbwidgets.h>
 #include <lib/driver/rc.h>
+#include <enigma_main.h>
 
 void eZapRCSetup::repeatChanged( int i )
 {
@@ -100,8 +101,8 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	sselect_style->resize(eSize(clientrect.width()-40, 35));
 	sselect_style->setText(_("other bouquet selection keys"));
 	sselect_style->setHelpText(_("use classic enigma bouquet selection keys"));
-	sselect_style->setCheck(activeStyles.find("sselect_classic") != activeStyles.end());
-	sselect_style->hide();
+	sselect_style_val=activeStyles.find("sselect_classic") != activeStyles.end();
+	sselect_style->setCheck(sselect_style_val);
 
 	ok=new eButton(this);
 	ok->setText(_("save"));
@@ -149,6 +150,8 @@ void eZapRCSetup::okPressed()
 	eConfig::getInstance()->setKey("/ezap/rc/style", curstyle.c_str());
 	eConfig::getInstance()->setKey("/ezap/rc/sselect_style",
 		sselect_style->isChecked() ? "sselect_classic" : "sselect_default");
+	if ((sselect_style_val) && !sselect_style->isChecked())
+		eZapMain::getInstance()->reloadPaths(1);	// reset paths
 	setStyle();
 	
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);

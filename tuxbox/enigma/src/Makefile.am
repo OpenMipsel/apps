@@ -27,10 +27,11 @@ enigma_LDADD = \
 	@FREETYPE_LIBS@ \
 	@ID3TAG_LIBS@ \
 	@MAD_LIBS@ \
-	@MD5SUM_LIBS@ \
+	/dbox2/cdkroot/lib/libmd5sum.a \
 	@PNG_LIBS@ \
 	@SIGC_LIBS@ \
 	@XMLTREE_LIBS@ \
+	/dbox2/cdkroot/lib/libfribidi.a \
 	-ldl -lpthread -lcrypt -lresolv
 
 enigma$(EXEEXT): $(enigma_OBJECTS) $(enigma_DEPENDENCIES) $(enigma_LDADD_WHOLE)

@@ -205,6 +205,8 @@
 			<action name="showProvider" key="yellow" flags="m" />
 			<action name="showBouquets" key="blue" flags="m" />
 			<action name="showMenu" key="dream" flags="m" />
+			<action name="toggleStyle" key="video" flags="m" />
+			<action name="toggleFocus" key="audio" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">

@@ -461,6 +461,8 @@ public:
 	void destroyUserBouquets( bool save=false ); 
 
 	void saveUserBouquets();  // only save
+	
+	void reloadPaths(int reset=0);
 
 	eZapMain();
 	~eZapMain();
