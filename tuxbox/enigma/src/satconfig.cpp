@@ -424,7 +424,6 @@ void eSatelliteConfigurationManager::repositionWidgets()
 	}
 }
 
-
 void eSatelliteConfigurationManager::createControlElements()
 {
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.2 2002/12/17 22:14:06 Ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.3 2002/12/20 23:15:28 Ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -224,6 +224,9 @@ void eHarddiskMenu::s_format()
 		int bus=!!(dev&2);
 		int target=!!(dev&1);
 
+// kill samba server... (exporting /hdd)
+		system("killall -9 smbd");
+
 		system(
 				eString().sprintf(
 				"/bin/umount /dev/ide/host%d/bus%d/target%d/lun0/part*", host, bus, target).c_str());
@@ -287,7 +290,8 @@ void eHarddiskMenu::s_format()
 		}
 		readStatus();
 	} while (0);
-	
+	// restart samba...
+	system("/bin/smbd -D");
 	show();
 }
 

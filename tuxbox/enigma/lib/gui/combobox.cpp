@@ -1,8 +1,8 @@
 #include <lib/gui/combobox.h>
 #include <lib/gdi/font.h>
 
-eComboBox::eComboBox( eWidget* parent, int OpenEntries, eLabel* desc, const char *deco )
-:eButton(parent, desc, 1, deco), listbox(0), button( this, 0, 0, eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth",0)?"eButton":""), pm(0), entries(OpenEntries)
+eComboBox::eComboBox( eWidget* parent, int OpenEntries, eLabel* desc, int takefocus, const char *deco )
+:eButton(parent, desc, takefocus, deco), listbox(0, 0, takefocus), button( this, 0, 0, eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth",0)?"eButton":""), pm(0), entries(OpenEntries)
 {
 	align=eTextPara::dirLeft;
 	if ( eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth",0) )

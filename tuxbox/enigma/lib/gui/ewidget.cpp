@@ -609,7 +609,7 @@ void eWidget::focusNext(int dir)
 			m1+=ePoint(i->getSize().width()/2, i->getSize().height()/2);
 			ePoint m2=_focusList.current()->getPosition();
 			m2+=ePoint(_focusList.current()->getSize().width()/2, _focusList.current()->getSize().height()/2);
-			
+
 			int xd=m1.x()-m2.x();
 			int yd=m1.y()-m2.y();
 #if 0
@@ -635,7 +635,7 @@ void eWidget::focusNext(int dir)
 					eff=1<<30;
 				break;
 			}
-			
+
 			if (eff < difference)
 			{
 				difference=eff;
@@ -644,7 +644,7 @@ void eWidget::focusNext(int dir)
 #else
 			int ldir=focusDirN;
 			int mydiff=0;
-			
+
 			if (xd > mydiff)	// rechts
 			{
 				mydiff=xd;
@@ -749,7 +749,7 @@ void eWidget::setForegroundColor(const gColor& color)
 void eWidget::setPixmap(gPixmap *pmap)
 {
   if ( pixmap != pmap )
-  {  
+  {
     pixmap=pmap;
   	event(eWidgetEvent(eWidgetEvent::changedPixmap));
   }
@@ -776,11 +776,11 @@ gPainter *eWidget::getPainter(eRect area)
 	eRect myclip=eRect(getAbsolutePosition(), size);
 	if (parent)
 		myclip&=parent->clientclip;
-	
+
 	eWidget *r=this;
 	while (r && !r->target)
 		r = r->parent;
-		
+
 	ASSERT(r);
 	ASSERT(r->target);
 
@@ -872,7 +872,7 @@ int eWidget::setProperty(const eString &prop, const eString &value)
 		}
 		int err=parse(value.c_str(), v, e, 2);
 		if (err)
-			return err;		
+			return err;
 		resize(eSize(v[0], v[1]));
 	}
 	else if (prop=="csize")
@@ -892,7 +892,7 @@ int eWidget::setProperty(const eString &prop, const eString &value)
 	else if (prop=="text")
 /*	{
 		eString text;
-		
+
 		std::string::const_iterator p(value.begin());
 
 		while(*p)
@@ -923,7 +923,7 @@ int eWidget::setProperty(const eString &prop, const eString &value)
 			}
 			else
 				text+=*p;
-	
+
 			p++;
 		}
 		setText(text);
@@ -932,7 +932,7 @@ int eWidget::setProperty(const eString &prop, const eString &value)
 	else if (prop=="helptext")
 		setHelpText(::gettext(value.c_str()));
 	else if (prop=="font")
-		setFont(eSkin::getActive()->queryFont(value));	
+		setFont(eSkin::getActive()->queryFont(value));
 	else if (prop=="name")
 		name=value;
 	else if (prop=="pixmap")
@@ -957,7 +957,7 @@ eWidget *eWidget::search(const eString &sname)
 {
 	if (name==sname)
 		return this;
-		
+
 	if (!childlist.empty())
 	{
 		std::list<eWidget*>::iterator It = childlist.begin();
@@ -1047,12 +1047,12 @@ int eDecoWidget::setProperty( const eString &prop, const eString &value)
 	{
 		if ( value != "" )
 			strDeco=value;
-	
+
 		loadDeco();
 	}
 	else
 		return eWidget::setProperty( prop, value );
-	
+
 	return 0;
 }
 

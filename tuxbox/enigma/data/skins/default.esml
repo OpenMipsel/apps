@@ -256,9 +256,9 @@
 		<eLNBPage position="0:0" size="550:400" >
 			<eListbox name="lnblist" helptext="choose the LNB you wish to apply or edit" position="10:10" size="100:e-95" loadDeco="" />
 			<eNumber name="lofL" position="350:10" size="e-10:35" helptext="enter lnb lowband offset frequency (0..9, ok)" loadDeco="" />
-			<eLabel text="LOF/L:" name="lLofL" position="130:10" size="200:35" vcenter="on" shortcut="1" shortcutFocus="lofL" />
+			<eLabel text="LOF/L:" name="lLofL" position="130:10" size="200:35" vcenter="on" />
 			<eNumber name="lofH" position="350:55" size="e-10:35" helptext="enter lnb highband offset frequency (0..9, ok)" loadDeco="" />
-			<eLabel text="LOF/H:" name="lLofH" position="130:55" size="200:35" vcenter="on" shortcut="2" shortcutFocus="lofH" />
+			<eLabel text="LOF/H:" name="lLofH" position="130:55" size="200:35" vcenter="on" />
 			<eLabel text="Threshold:" name="lThreshold" position="130:100" size="200:35" vcenter="on"/>
 			<eNumber name="threshold" position="350:100" size="e-10:35" helptext="enter lnb threshold frequency (0..9, ok)" loadDeco="" />
 			<eCheckbox name="increased_voltage" text="increased voltage" position="130:145" size="e-10:30" helptext="0,5V higher LNB Voltage (for long cables) (ok)" loadDeco="" />
@@ -278,9 +278,9 @@
 			<eLabel text="DiSEqC Parameter:" name="lDiSEqCParam" position="10:100" size="290:35" vcenter="on" shortcut="3" shortcutFocus="DiSEqCParam" />
 			<eComboBox name="DiSEqCRepeats" position="310:145" size="e-10:35" helptext="select DiSEqC repeats (ok)" loadDeco="" />
 			<eLabel text="DiSEqC Repeats:" name="lDiSEqCRepeats" position="10:145" size="290:35" vcenter="on" shortcut="4" shortcutFocus="DiSEqCRepeats" />
-			<eCheckbox text="Sequence repeat" name="SeqRepeat" position="10:190" size="290:30" helptext="send the complete DiSEqC sequence dupe" shortcut="5" />
-			<eCheckbox text="Uncommitted switch" name="uncommitted" position="10:230" size="290:30" helptext="send to an uncommitted DiSEqC switch" shortcut="6" />
-			<eCheckbox text="Uncommitted gap" name="uncommitted_gap" position="310:230" size="e-10:30" helptext="fill DiSEqC repeat gap with uncommitted command" shortcut="7" />
+			<eCheckbox text="Sequence repeat" name="SeqRepeat" position="10:190" size="290:30" helptext="send the complete DiSEqC sequence dupe" /> <!--  shortcut="5" swaptxtpixmap="on" -->
+			<eCheckbox text="Uncommitted switch" name="uncommitted" position="10:230" size="290:30" helptext="send to an uncommitted DiSEqC switch" /> <!-- shortcut="6" swaptxtpixmap="on" /-->
+			<eCheckbox text="Uncommitted gap" name="uncommitted_gap" position="310:230" size="e-10:30" helptext="fill DiSEqC repeat gap with uncommitted command" /> <!-- shortcut="7" swaptxtpixmap="on" /-->
 			<eButton name="next" text="Rotor Setup" position="10:270" size="e-10:40" helptext="opens the Rotor Setup" loadDeco="" shortcut="blue" />
 			<eButton name="prev" text="prev. page" position="10:e-80" size="170:40" helptext="goto prev page (LNB)" loadDeco="" shortcut="yellow" />
 			<eButton name="save" text="save" position="190:e-80" size="170:40" helptext="save changes and use the selected lnb (in first page) for the choosen satellite" loadDeco="" shortcut="green" />
@@ -313,10 +313,10 @@
 			<eLabel name="lOrbitalPosition" text="Orbital Position:" position="190:100" size="e-110:35" vcenter="on" />
 			<eNumber name="OrbitalPosition" position="e-100:100" size="e-10:35" helptext="enter orbital position without dot (19.2° = 192)" loadDeco="" />
 			<eCheckbox text="Use gotoXX Function" name="useGotoXX" position="10:10" size="270:35" helptext="when the rotor support this, then use" vcenter="on" />
-			<eLabel name="lLongitude" text="Longitude:" position="10:55" size="150:35" vcenter="on" />
+			<eLabel name="lLongitude" text="Longitude:" position="10:55" size="185:35" vcenter="on" shortcut="1" shortcutFocus="Longitude" />
 			<eNumber name="Longitude" position="200:55" size="100:35" helptext="enter your longitude (0..9, +, -, ok)" loadDeco="" />
 			<eComboBox name="LoDirection" position="310:55" size="100:35" helptext="choose direction" loadDeco="" />
-			<eLabel name="lLatitude" text="Latitude:" position="10:100" size="150:35" vcenter="on" />
+			<eLabel name="lLatitude" text="Latitude:" position="10:100" size="185:35" vcenter="on" /> <!--shortcut="2" shortcutFocus="Latitude" -->
 			<eNumber name="Latitude" position="200:100" size="100:35" helptext="enter your latitude (0..9, +, -, ok)" loadDeco="" />
 			<eComboBox name="LaDirection" position="310:100" size="100:35" helptext="choose direction" loadDeco="" />
 
@@ -398,7 +398,7 @@
 	
 	<object name="setup.skins">
 		<eSkinSetup cposition="100:100" csize="400:300" text="Skin Setup">
-			<eLabel text="Skins:" position="20:10" size="100:30" shortcut="1" shortcutFocus="skins" />
+			<eLabel text="Skins:" position="20:10" size="100:30"/> <!-- shortcut="1" shortcutFocus="skins" -->
 			<eListbox name="skins" position="120:10" size="e-20:e-90" helptext="select skin and press ok or choose save" loadDeco="" />
 			<eButton text="save" name="accept" position="20:e-80" size="170:40" helptext="close skin setup and save changes" loadDeco="" shortcut="green" />
 			<eButton text="abort" name="reject" position="210:e-80" size="170:40" helptext="abort skin setup ( no changes are saved )" loadDeco="" shortcut="escape" />
