@@ -4,6 +4,7 @@
 #include <set>
 
 #include <lib/dvb/dvb.h>
+#include <lib/dvb/edvb.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/frontend.h>
 #include <lib/system/econfig.h>
@@ -52,7 +53,6 @@ void eTransponder::satellite::set(const SatelliteDeliverySystemDescriptor *descr
 int eTransponder::satellite::tune(eTransponder *trans)
 {
 	eDebug("[TUNE] tuning to %d/%d/%s/%d@%d", frequency, symbol_rate, polarisation?"V":"H", fec, orbital_position);
-	int inv=0;
 
 	std::multimap< int, eSatellite* >::iterator it ( trans->tplist.begin() );
 
@@ -261,6 +261,190 @@ eSatellite* eLNB::takeSatellite( eSatellite *satellite)
 void eLNB::deleteSatellite(eSatellite *satellite)
 {
 	satellites.remove(satellite);
+}
+
+existNetworks::existNetworks()
+:networksLoaded(false), fetype( eFrontend::getInstance()->Type() )
+{
+
+}
+
+const std::list<tpPacket>& existNetworks::getNetworks()
+{
+	if (!networksLoaded)
+	{
+		reloadNetworks();
+		networksLoaded=true;
+	}
+	return networks;
+}
+
+const std::map<int,tpPacket>& existNetworks::getNetworkNameMap()
+{
+	if (!networksLoaded)
+	{
+		reloadNetworks();
+		networksLoaded=true;
+	}
+	return names;
+}
+
+int existNetworks::reloadNetworks()
+{
+	names.clear();
+	networks.clear();
+	XMLTreeParser parser("ISO-8859-1");
+
+	int done=0;
+	const char *filename=0;
+
+	switch (fetype)
+	{
+	case eFrontend::feSatellite:
+		filename="/etc/satellites.xml";
+		break;
+	case eFrontend::feCable:
+		filename="/etc/cables.xml";
+		break;
+	default:
+		break;
+	}
+
+	if (!filename)
+		return -1;
+
+	FILE *in=fopen(filename, "rt");
+	if (!in)
+	{
+		eWarning("unable to open %s", filename);
+		return -1;
+	}
+
+	do
+	{
+		char buf[2048];
+		unsigned int len=fread(buf, 1, sizeof(buf), in);
+		done=len<sizeof(buf);
+		if (!parser.Parse(buf, len, done))
+		{
+			eDebug("parse error: %s at line %d",
+				parser.ErrorString(parser.GetErrorCode()),
+				parser.GetCurrentLineNumber());
+			fclose(in);
+			return -1;
+		}
+	} while (!done);
+
+	fclose(in);
+
+	XMLTreeNode *root=parser.RootNode();
+
+	if (!root)
+		return -1;
+
+	for (XMLTreeNode *node = root->GetChild(); node; node = node->GetNext())
+		if (!strcmp(node->GetType(), "cable"))
+		{
+			tpPacket pkt;
+			if (!addNetwork(pkt, node, eFrontend::feCable))
+				networks.push_back(pkt);
+		} else if (!strcmp(node->GetType(), "sat"))
+		{
+			tpPacket pkt;
+			if (!addNetwork(pkt, node, eFrontend::feSatellite))
+			{
+				networks.push_back(pkt);
+				names[pkt.orbital_position]=networks.back();
+			}
+		} else
+			eFatal("unknown packet %s", node->GetType());
+
+	return 0;
+}
+
+int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
+{
+	const char *name=node->GetAttributeValue("name");
+	if (!name)
+	{
+		eFatal("no name");
+		return -1;
+	}
+	packet.name=name;
+
+	const char *flags=node->GetAttributeValue("flags");
+	if (flags)
+	{
+		packet.scanflags=atoi(flags);
+//		eDebug("name = %s, scanflags = %i", name, packet.scanflags );
+	}
+	else
+	{
+		packet.scanflags=1; // default use Network ??
+//		eDebug("packet has no scanflags... we use default scanflags (1)");
+	}
+
+	const char *position=node->GetAttributeValue("position");
+	if (!position)
+		position="0";
+
+	int orbital_position=atoi(position);
+	packet.orbital_position = orbital_position;
+
+	for (node=node->GetChild(); node; node=node->GetNext())
+	{
+		eTransponder t(*eDVB::getInstance()->settings->getTransponders());
+		switch (type)
+		{
+		case eFrontend::feCable:
+		{
+			const char *afrequency=node->GetAttributeValue("frequency"),
+					*asymbol_rate=node->GetAttributeValue("symbol_rate"),
+					*ainversion=node->GetAttributeValue("inversion"),
+					*amodulation=node->GetAttributeValue("modulation");
+			if (!afrequency)
+				continue;
+			if (!asymbol_rate)
+				asymbol_rate="6900000";
+			if (!ainversion)
+				ainversion="0";
+			if (!amodulation)
+				amodulation="3";
+			int frequency=atoi(afrequency)/1000,
+					symbol_rate=atoi(asymbol_rate),
+					inversion=atoi(ainversion),
+					modulation=atoi(amodulation);
+			t.setCable(frequency, symbol_rate, inversion, modulation );
+			break;
+		}
+		case eFrontend::feSatellite:
+		{
+			const char *afrequency=node->GetAttributeValue("frequency"),
+					*asymbol_rate=node->GetAttributeValue("symbol_rate"),
+					*apolarisation=node->GetAttributeValue("polarization"),
+					*afec_inner=node->GetAttributeValue("fec_inner"),
+					*ainversion=node->GetAttributeValue("inversion");
+			if (!afrequency)
+				continue;
+			if (!asymbol_rate)
+				continue;
+			if (!apolarisation)
+				continue;
+			if (!afec_inner)
+				continue;
+			if (!ainversion)
+				ainversion="0";
+			int frequency=atoi(afrequency), symbol_rate=atoi(asymbol_rate),
+					polarisation=atoi(apolarisation), fec_inner=atoi(afec_inner), inversion=atoi(ainversion);
+			t.setSatellite(frequency, symbol_rate, polarisation, fec_inner, orbital_position, inversion);
+			break;
+		}
+		default:
+			continue;
+		}
+		packet.possibleTransponders.push_back(t);
+	}
+	return 0;
 }
 
 eTransponderList::eTransponderList()
@@ -742,7 +926,13 @@ eServiceReference::eServiceReference(const eString &string)
 	const char *c=string.c_str();
 	int pathl=-1;
 	
-	sscanf(c, "%d:%d:%x:%x:%x:%x:%x:%x:%x:%x:%n", &type, &flags, &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6], &data[7], &pathl);
+	if ( sscanf(c, "%d:%d:%x:%x:%x:%x:%x:%x:%x:%x:%n", &type, &flags, &data[0], &data[1], &data[2], &data[3], &data[4], &data[5], &data[6], &data[7], &pathl) < 8 )
+	{
+		memset( data, 0, sizeof(data) );
+		eDebug("find old format eServiceReference string");
+		sscanf(c, "%d:%d:%x:%x:%x:%x:%n", &type, &flags, &data[0], &data[1], &data[2], &data[3], &pathl);
+	}
+
 	if (pathl)
 		path=c+pathl;
 }

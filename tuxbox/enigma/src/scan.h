@@ -26,15 +26,6 @@ public:
 	tsSelectType(eWidget *parent);
 };
 
-class tpPacket
-{
-public:
-	std::string name;
-	int scanflags;
-	int orbital_position;
-	std::list<eTransponder> possibleTransponders;
-};
-
 class tsManual: public eWidget
 {
 	eTransponder transponder;
@@ -52,17 +43,7 @@ public:
 	tsManual(eWidget *parent, const eTransponder &transponder, eWidget* LCDTitle, eWidget* LCDElement);
 };
 
-class existNetworks
-{
-protected:
-	int fetype;
-	existNetworks();
-	std::list<tpPacket> networks;
-	int parseNetworks();
-	int addNetwork(tpPacket &p, XMLTreeNode *node, int type);
-};
-
-class tsAutomatic: public existNetworks, public eWidget
+class tsAutomatic: public eWidget
 {
 	eButton *b_start, *b_abort;
 	eComboBox *l_network;

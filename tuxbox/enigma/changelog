@@ -1,9 +1,15 @@
+200212300350 3 * Add manual rotor setup
+200212300350 5 * Add rotor running message
 200212300350 5 56 Fix mute bug
 200212300350 7 * Fix EPG sort bug
 200301021610 7 * Some speedups
 200301022024 3 5 Support for checking harddisks
+200301100415 8 * Many gui speed fixes
 200301050512 2 * Fix timer bugs
 200301070622 5 * Fix skinsetup
+200301090533 6 * Add Scrollbar in even info window (now we display the complete event information)
+200301110314 6 * Fix audio stream description
+200301110314 6 * Show short description is OSD on nvod subservices ( prem direkt )
 200301130158 5 * TS files contains SIT and default PIDs
 200301130158 2 * Selected language in recording will be default while playing
 200301160000 1 * New languages and fixes
@@ -13,5 +19,19 @@
 200301301950 6 * Language setup wizard
 200301301950 4 56 MPEG Player
 200301301950 7 * New Runlevels (for plugins)
-200302032000 4 56 improved readability of fonts
-200302032000 3 * implemented shortcuts in setup menu
+200301300947 5 * Added default AC3 sound option
+200301301956 7 * Added language Wizzard on first enigma start
+200302032000 4 56 Improved readability of fonts
+200302032000 3 * Implemented shortcuts in setup menu
+200302040332 4 * Add support for multiple favourite lists ( user bouquets )
+200302040332 4 * Add lastchannel zapping with Key 0
+200302072045 8 * Show short service names in LCD when avail
+200302072045 8 * Fix handy style browsing in original sorted DVB bouquets
+200302082206 6 * Add support to rename recorded movies ( not the filenames ) 
+200302082206 8 * Show filename of recorded movies in channelinfo
+200302091843 5 * Extended Event Info is now working on subservices and nvod channels
+200302112339 2 * New format for services bouquets and favourite lists this is important for better support of services with non unique tsid/onid combinations ( feed and SCPCs )
+200302112101 5 * Show correct free diskspace on mounted nfs shares
+200302112101 5 * Add partitioncheck support for reiserfs partitions
+200302112101 3 * Add for each satellit two new folders in serviceselector ( on contains all services of ths satellite, and the other contains all bouquets of ths satellite )
+

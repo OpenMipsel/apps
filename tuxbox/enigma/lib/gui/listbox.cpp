@@ -15,11 +15,11 @@ eListBoxBase::eListBoxBase(eWidget* parent, const eWidget* descr, int takefocus,
 		tmpDescr(0),
 		colorActiveB(eSkin::getActive()->queryScheme("global.selected.background")),
 		colorActiveF(eSkin::getActive()->queryScheme("global.selected.foreground")),
+		movemode(0),
+		MaxEntries(0),
 		flags(0),
 		columns(1),
-		in_atomic(0),
-		movemode(0),
-		MaxEntries(0)
+		in_atomic(0)
 {
 }
 

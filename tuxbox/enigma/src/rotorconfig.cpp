@@ -451,7 +451,7 @@ eRotorManual::eRotorManual(eLNB *lnb)
 		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
 			new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
 	CONNECT(Sat->selchanged, eRotorManual::satChanged );
-	parseNetworks();
+	eTransponderList::getInstance()->reloadNetworks();
 	Sat->setCurrent(0);
 
 	Transponder = new eComboBox(this, 5 );
@@ -641,9 +641,9 @@ void eRotorManual::satChanged( eListBoxEntryText *sat)
 	if (sat && sat->getKey())
 	{
 		eSatellite *Sat = (eSatellite*) (sat->getKey());
-		for ( std::list<tpPacket>::iterator i( networks.begin() ); i != networks.end(); i++ )
+		for ( std::list<tpPacket>::const_iterator i( eTransponderList::getInstance()->getNetworks().begin() ); i != eTransponderList::getInstance()->getNetworks().end(); i++ )
 			if ( i->orbital_position == Sat->getOrbitalPosition() )
-				for (std::list<eTransponder>::iterator it( i->possibleTransponders.begin() ); it != i->possibleTransponders.end(); it++)
+				for (std::list<eTransponder>::const_iterator it( i->possibleTransponders.begin() ); it != i->possibleTransponders.end(); it++)
 					new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
 
 		if (Transponder->getCount())

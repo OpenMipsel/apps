@@ -21,7 +21,7 @@ struct SatelliteEntry
 	eButton *lnb;
 };
 
-class eSatelliteConfigurationManager: public eWindow, public existNetworks
+class eSatelliteConfigurationManager: public eWindow
 {
 	eTimer* refresh;
 	eWidget *buttonWidget;

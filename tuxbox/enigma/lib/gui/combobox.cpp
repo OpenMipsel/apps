@@ -71,13 +71,6 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 {
 	switch (event.type)
 	{
-		case eWidgetEvent::evtAction:
-			if (event.action == &i_cursorActions->cancel)
-				eDebug("CANCEL");
-			else
-				return eButton::eventHandler( event );
-		break;
-
 		case eWidgetEvent::evtShortcut:
 			onOkPressed();
 			break;
@@ -145,7 +138,7 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 
 void eComboBox::onSelChanged(eListBoxEntryText* le)
 {
-	if (flags & flagShowEntryHelp )	
+	if (flags & flagShowEntryHelp )
 		setHelpText( le->getHelpText() );
 	if ( parent->getFocus() == &listbox )
 	{

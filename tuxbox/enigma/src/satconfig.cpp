@@ -72,7 +72,7 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	w_buttons->resize( s );
 	w_buttons->move( ePoint(0,0) );
 
-	parseNetworks();  // load all networks from satellite.xml or cable.xml
+	eTransponderList::getInstance()->reloadNetworks();  // load all networks from satellite.xml or cable.xml
 	createControlElements();
 
 	complexity=checkComplexity();
@@ -597,7 +597,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 
 /*	if (complexity == 3)
 		new eListBoxEntryText( *c, _("*delete*"), (void*) 0 );   // this is to delete an satellite*/
-	for (std::list<tpPacket>::const_iterator i(networks.begin()); i != networks.end(); ++i)
+	for (std::list<tpPacket>::const_iterator i(eTransponderList::getInstance()->getNetworks().begin()); i != eTransponderList::getInstance()->getNetworks().end(); ++i)
 		if ( i->possibleTransponders.size() )
 			new eListBoxEntryText( *c, i->name, (void*) i->orbital_position );
 
@@ -656,10 +656,10 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 
 void eSatelliteConfigurationManager::newPressed()
 {
-	std::list<tpPacket>::const_iterator i(networks.begin());
+	std::list<tpPacket>::const_iterator i( eTransponderList::getInstance()->getNetworks().begin());
 	// we search the next unused Satellite in list...
 	int found=0;
-	for (; i != networks.end(); ++i)
+	for (; i != eTransponderList::getInstance()->getNetworks().end(); ++i)
 	{
 		std::map< eSatellite*, SatelliteEntry > :: iterator it ( entryMap.begin() );
 		for ( ; it != entryMap.end(); it++)

@@ -16,6 +16,7 @@ class eDVB;
 #include <string>
 #include <set>
 #include <stack>
+#include <xmltree.h>
 
 #include <lib/system/elock.h>
 
@@ -399,6 +400,16 @@ struct eServiceReference
 		data[2]=data2;
 		data[3]=data3;
 	}
+	eServiceReference(int type, int flags, int data0, int data1, int data2, int data3, int data4)
+		: type(type), flags(flags)
+	{
+		memset(data, 0, sizeof(data));
+		data[0]=data0;
+		data[1]=data1;
+		data[2]=data2;
+		data[3]=data3;
+		data[4]=data4;
+	}
 	eServiceReference(int type, int flags, const eString &path)
 		: type(type), flags(flags), path(path)
 	{
@@ -632,7 +643,32 @@ public:
 	ePtrList<eSatellite> &getSatelliteList() { return satellites; }
 };
 
-class eTransponderList
+class tpPacket
+{
+public:
+	std::string name;
+	int scanflags;
+	int orbital_position;
+	std::list<eTransponder> possibleTransponders;
+};
+
+class existNetworks
+{
+	bool networksLoaded;
+public:
+	const std::list<tpPacket>& getNetworks();
+	const std::map<int,tpPacket>& getNetworkNameMap();
+	int reloadNetworks();
+	void invalidateNetworks() { networksLoaded=false; }
+protected:
+	int fetype;
+	existNetworks();
+	std::list<tpPacket> networks;
+	std::map<int, tpPacket> names;
+	int addNetwork(tpPacket &p, XMLTreeNode *node, int type);
+};
+
+class eTransponderList: public existNetworks
 {
 	static eTransponderList* instance;
 	std::map<tsref,eTransponder> transponders;
@@ -644,6 +680,7 @@ class eTransponderList
 	friend class eLNB;
 	friend class eSatellite;
 public:
+
 	void clearAllServices()	{	services.clear(); }
 	void clearAllTransponders()	{	transponders.clear(); }
 	

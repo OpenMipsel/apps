@@ -2105,7 +2105,14 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 				hide();
 				wnd.setText(_("Rename recorded movie"));
 				wnd.show();
-				wnd.setEditText(it->service.descr);
+				if ( it->service.descr.length() )
+					wnd.setEditText(it->service.descr);
+				else
+				{
+					int i = it->service.path.rfind('/');
+					++i;
+					wnd.setEditText(it->service.path.mid( i, it->service.path.length()-i ));
+				}
 				wnd.setMaxChars(50);
 				int ret = wnd.exec();
 				wnd.hide();
@@ -2935,6 +2942,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		eServiceHandler *sapi=eServiceInterface::getInstance()->getService();
 		if (!sapi)
 			return;
+		eDebug("evtStatus");
 		showDVRFunctions(0);
 		EINow->setText(sapi->getInfo(0));
 		break;
@@ -2944,6 +2952,7 @@ void eZapMain::handleServiceEvent(const eServiceEvent &event)
 		eServiceHandler *sapi=eServiceInterface::getInstance()->getService();
 		if (!sapi)
 			return;
+		eDebug("evtInfoUpdated");
 		showDVRFunctions(0);
 		EINow->setText(sapi->getInfo(1));
 		EINext->setText(sapi->getInfo(2));
@@ -2961,7 +2970,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 	eService *service=eServiceInterface::getInstance()->addRef(_serviceref);
 
-	if (_serviceref.type == eServiceReference::idDVB)
+	if (_serviceref.type == eServiceReference::idDVB && !_serviceref.path.length() )
 	{
 		isVT = Decoder::parms.tpid != -1;
 
@@ -2983,10 +2992,17 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			}
 
 		eService *rservice=0;
-		if (refservice != serviceref)
+		if ( refservice != serviceref && !( refservice.flags & eServiceReference::flagDirectory ) )
+		{
 			rservice=eDVB::getInstance()->settings->getTransponders()->searchService(refservice);
 
-		if (refservice.getServiceType()==4) // nvod ref service
+			if (refservice.getServiceType()==4) // nvod ref service
+				flags|=ENIGMA_NVOD;
+			else
+				flags&=~ENIGMA_NVOD;
+		}
+
+		if (serviceref.getServiceType()==4) // nvod ref service
 			flags|=ENIGMA_NVOD;
 		else
 			flags&=~ENIGMA_NVOD;
@@ -3002,19 +3018,30 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		eString name="";
 
 		if (rservice)
+		{
 			name=rservice->service_name;
-
-		if (service)
-			name+=service->service_name;
-		else if (serviceref.getServiceType() == 6)  // linkage service..
-			name+=" - " + serviceref.descr;
+			if (serviceref.getServiceType() == 6)  // linkage service..
+				name+=" - " + serviceref.descr;
+		}
+		else if (service)
+			name=service->service_name;
 
 		if (!name.length())
 			name="unknown service";
 
+		eZapLCD::getInstance()->lcdMain->setServiceName(name);
+
+		if ( !serviceref.path.length() )  // no recorded movie
+		{
+			int opos=0;
+			if (rservice)
+				opos = refservice.data[4]>>16;
+			else
+				opos = serviceref.data[4]>>16;
+			name+=eString().sprintf(" (%d.%d°%c)", abs(opos / 10), abs(opos % 10), opos>0?'E':'W');
+		}
+
 		ChannelName->setText(name);
-	        eZapLCD* pLCD = eZapLCD::getInstance();
-	        pLCD->lcdMain->setServiceName(name);
 
 		switch (err)
 		{
@@ -3145,7 +3172,8 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 
 	if (!eZap::getInstance()->focus)
 	{
-		showDVRFunctions(0);
+		eDebug("!eZap::getInstance()->focus");
+//		showDVRFunctions(0);
 		show();
 	}
 
@@ -3539,14 +3567,17 @@ void eZapMain::showBouquetList(int last)
 
 void eZapMain::showDVRFunctions(int show)
 {
+	eDebug("show = %d", show);
 	dvrfunctions=show;
 
 	if (dvrfunctions)
 	{
+		eDebug("show DVRFunctions");
 		nonDVRfunctions->hide();
 		dvrFunctions->show();
 	} else
 	{
+		eDebug("hide DVRFunctions");
 		dvrFunctions->hide();
 		nonDVRfunctions->show();
 	}

@@ -287,7 +287,7 @@ void tsAutomatic::abort()
 void tsAutomatic::networkSelected(eListBoxEntryText *l)
 {
 	if (nextNetwork(-1)) // if "automatic" selected,
- {
+	{
 		automatic=1;
 		nextNetwork();  // begin with first
 	} else
@@ -319,176 +319,17 @@ void tsAutomatic::dvbEvent(const eDVBEvent &event)
 	}
 }
 
-existNetworks::existNetworks()
-:fetype( eFrontend::getInstance()->Type() )
-{
-
-}
-
-int existNetworks::parseNetworks()
-{
-	XMLTreeParser parser("ISO-8859-1");
-	
-	int done=0;
-	const char *filename=0;
-	
-	switch (fetype)
-	{
-	case eFrontend::feSatellite:
-		filename="/etc/satellites.xml";
-		break;
-	case eFrontend::feCable:
-		filename="/etc/cables.xml";
-		break;
-	default:
-		break;
-	}
-	
-	if (!filename)
-		return -1;
-		
-	FILE *in=fopen(filename, "rt");
-	if (!in)
-	{
-		eWarning("unable to open %s", filename);
-		return -1;
-	}
-	
-	do
-	{
-		char buf[2048];
-		unsigned int len=fread(buf, 1, sizeof(buf), in);
-		done=len<sizeof(buf);
-		if (!parser.Parse(buf, len, done))
-		{
-			eDebug("parse error: %s at line %d",
-				parser.ErrorString(parser.GetErrorCode()),
-				parser.GetCurrentLineNumber());
-			fclose(in);
-			return -1;
-		}
-	} while (!done);
-	
-	fclose(in);
-	
-	XMLTreeNode *root=parser.RootNode();
-	
-	if (!root)
-		return -1;
-	
-	for (XMLTreeNode *node = root->GetChild(); node; node = node->GetNext())
-		if (!strcmp(node->GetType(), "cable"))
-		{
-			tpPacket pkt;
-			if (!addNetwork(pkt, node, eFrontend::feCable))
-				networks.push_back(pkt);
-		} else if (!strcmp(node->GetType(), "sat"))
-		{
-			tpPacket pkt;
-			if (!addNetwork(pkt, node, eFrontend::feSatellite))
-				networks.push_back(pkt);
-		} else
-			eFatal("unknown packet %s", node->GetType());
-
-	return 0;
-}
-
-int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
-{
-	const char *name=node->GetAttributeValue("name");
-	if (!name)
-	{
-		eFatal("no name");
-		return -1;
-	}
-	packet.name=name;
-
-	const char *flags=node->GetAttributeValue("flags");
-	if (flags)
-	{
-		packet.scanflags=atoi(flags);
-		eDebug("name = %s, scanflags = %i", name, packet.scanflags );
-	}
-	else
-	{
-		packet.scanflags=1; // default use Network ??
-		eDebug("packet has no scanflags... we use default scanflags (1)");
-	}
-	
-	const char *position=node->GetAttributeValue("position");
-	if (!position)
-		position="0";
-
-	int orbital_position=atoi(position);
-	packet.orbital_position = orbital_position;
-	
-	for (node=node->GetChild(); node; node=node->GetNext())
-	{
-		eTransponder t(*eDVB::getInstance()->settings->getTransponders());
-		switch (type)
-		{
-		case eFrontend::feCable:
-		{
-			const char *afrequency=node->GetAttributeValue("frequency"),
-					*asymbol_rate=node->GetAttributeValue("symbol_rate"),
-					*ainversion=node->GetAttributeValue("inversion"),
-					*amodulation=node->GetAttributeValue("modulation");
-			if (!afrequency)
-				continue;
-			if (!asymbol_rate)
-				asymbol_rate="6900000";
-			if (!ainversion)
-				ainversion="0";
-			if (!amodulation)
-				amodulation="3";
-			int frequency=atoi(afrequency)/1000,
-					symbol_rate=atoi(asymbol_rate),
-					inversion=atoi(ainversion),
-					modulation=atoi(amodulation);
-			t.setCable(frequency, symbol_rate, inversion, modulation );
-			break;
-		}
-		case eFrontend::feSatellite:
-		{
-			const char *afrequency=node->GetAttributeValue("frequency"),
-					*asymbol_rate=node->GetAttributeValue("symbol_rate"),
-					*apolarisation=node->GetAttributeValue("polarization"),
-					*afec_inner=node->GetAttributeValue("fec_inner"),
-					*ainversion=node->GetAttributeValue("inversion");
-			if (!afrequency)
-				continue;
-			if (!asymbol_rate)
-				continue;
-			if (!apolarisation)
-				continue;
-			if (!afec_inner)
-				continue;
-			if (!ainversion)
-				ainversion="0";
-			int frequency=atoi(afrequency), symbol_rate=atoi(asymbol_rate),
-					polarisation=atoi(apolarisation), fec_inner=atoi(afec_inner), inversion=atoi(ainversion);
-			t.setSatellite(frequency, symbol_rate, polarisation, fec_inner, orbital_position, inversion);
-			break;
-		}
-		default:
-			continue;
-		}
-		packet.possibleTransponders.push_back(t);
-	}
-	return 0;
-}
-
 int tsAutomatic::loadNetworks()
 {
 	int err;
 
-	if(	(err = existNetworks::parseNetworks()) )
+	if(	(err = eTransponderList::getInstance()->reloadNetworks()) )
 		return err;
 
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
 		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
-			for (std::list<tpPacket>::const_iterator i(networks.begin()); i != networks.end(); ++i)
-				if ( ( i->orbital_position == s->getOrbitalPosition() ) || (fetype == eFrontend::feCable) )
+			for ( std::list<tpPacket>::const_iterator i(eTransponderList::getInstance()->getNetworks().begin()); i != eTransponderList::getInstance()->getNetworks().end(); ++i)
+				if ( ( i->orbital_position == s->getOrbitalPosition() ) || (eFrontend::getInstance()->Type() == eFrontend::feCable) )
 					new eListBoxEntryText(*l_network, i->name, (void*)&*i, eTextPara::dirCenter);
 
 	return 0;

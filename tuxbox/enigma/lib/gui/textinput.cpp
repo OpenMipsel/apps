@@ -117,10 +117,18 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 		case eWidgetEvent::evtAction:
 		{
 			int key = -1;
-			if (event.action == &i_cursorActions->up && editMode)
-				;
-			else if (event.action == &i_cursorActions->down && editMode)
-				;
+			if (event.action == &i_cursorActions->up && editMode && text.length()<maxChars)
+			{
+				text.insert( curPos, " ");
+				eLabel::invalidate();
+				drawCursor();
+			}
+			else if (event.action == &i_cursorActions->down && editMode && text.length())
+			{
+				text.erase( curPos, 1 );
+				eLabel::invalidate();
+				drawCursor();
+			}
 			else if (event.action == &i_cursorActions->left && editMode )
 			{
 				nextCharTimer.stop();

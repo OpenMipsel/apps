@@ -33,7 +33,7 @@ public:
 
 	void saveBouquets();
 	void loadBouquets();
-	
+
 	void clearList();
 	void removeOrbitalPosition(int orbital_position);
 	int importSatcoDX(eString line);

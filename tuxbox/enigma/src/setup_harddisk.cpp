@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.12 2003/02/12 21:01:18 bernroth Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.13 2003/02/12 22:08:27 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -482,7 +482,26 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 			}
 			else if ( fs == "reiserfs" )
 			{
-				
+				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/reiserfsck --fix-fixable /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
+
+				if ( !fsck->running() )
+				{
+					eMessageBox msg(
+						_("sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."),
+						_("check filesystem..."),
+						eMessageBox::btOK|eMessageBox::iconError);
+					msg.show();
+					msg.exec();
+					msg.hide();
+					close(-1);
+				}
+				else
+				{
+					eDebug("reiserfsck opened");
+					CONNECT( fsck->dataAvail, ePartitionCheck::getData );
+					CONNECT( fsck->appClosed, ePartitionCheck::fsckClosed );
+					fsck->write("Yes\n");
+				}
 			}
 			else
 			{
@@ -542,4 +561,6 @@ void ePartitionCheck::getData( eString str )
 	
 	if ( str.find("<y>") != eString::npos )
 		fsck->write("y");
+	else if ( str.find("[N/Yes]") != eString::npos )
+		fsck->write("Yes");
 }
