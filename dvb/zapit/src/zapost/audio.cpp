@@ -1,5 +1,5 @@
 /*
- * $Id: audio.cpp,v 1.12.2.1 2003/02/18 15:16:47 alexw Exp $
+ * $Id: audio.cpp,v 1.12.2.2 2003/03/18 19:27:47 thegoodguy Exp $
  *
  * (C) 2002 by Steffen Hehn 'McClean' &
  *	Andreas Oberritter <obi@tuxbox.org>
@@ -186,7 +186,7 @@ int CAudio::stop ()
 
 int CAudio::selectChannel (audioChannelSelect_t sel)
 {
-	if (ioctl(fd, AUDIO_CHANNEL_SELECT, &sel) < 0)
+	if (ioctl(fd, AUDIO_CHANNEL_SELECT, sel) < 0)
 	{
 		ERROR("AUDIO_CHANNEL_SELECT");
 		return -1;
