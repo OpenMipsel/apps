@@ -14,6 +14,7 @@ private:
 	void sel_sound();
 	void sel_video();
 	void sel_language();
+	void sel_timezone();
 	void sel_skin();
 	void sel_osd();
 #ifndef DISABLE_LCD
