@@ -240,7 +240,7 @@ class eServiceDVB: public eService
 public:
 	enum cacheID
 	{
-		cVPID, cAPID, cTPID, cPCRPID, cacheMax
+		cVPID, cAPID, cTPID, cPCRPID, cAC3PID, cacheMax
 	};
 	eServiceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, const SDTEntry *sdtentry, int service_number=-1);
 	eServiceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number=-1);

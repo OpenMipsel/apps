@@ -131,7 +131,15 @@ void eDVBServiceController::handleEvent(const eDVBEvent &event)
 		  			nodvb=1;
 		  		// set cached pids...
 		  		Decoder::parms.vpid=sp->dvb->get(eServiceDVB::cVPID);
-		  		Decoder::parms.apid=sp->dvb->get(eServiceDVB::cAPID);
+		  		if (sp->dvb->get(eServiceDVB::cAC3PID) != -1)
+		  		{
+		  			Decoder::parms.audio_type=DECODE_AUDIO_AC3;
+			  		Decoder::parms.apid=sp->dvb->get(eServiceDVB::cAC3PID);
+					} else
+					{
+		  			Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
+			  		Decoder::parms.apid=sp->dvb->get(eServiceDVB::cAPID);
+			  	}
 		  		Decoder::parms.tpid=sp->dvb->get(eServiceDVB::cTPID);
 		  		Decoder::parms.pcrpid=sp->dvb->get(eServiceDVB::cPCRPID);
 		  		Decoder::Set();
@@ -335,6 +343,11 @@ int eDVBServiceController::switchService(const eServiceReferenceDVB &newservice)
 	/*emit*/ dvb.leaveService(service);
 	
 	service=newservice;
+
+	dvb.tPAT.start(0);		// clear tables.
+	dvb.tPMT.start(0);
+	dvb.tSDT.start(0);
+	dvb.tEIT.start(0);
 	
 	if (service)
 		dvb.event(eDVBServiceEvent(eDVBServiceEvent::eventServiceSwitch));
@@ -510,13 +523,27 @@ void eDVBServiceController::setPID(const PMTEntry *entry)
 		}
 
 	  eService *sp=eServiceInterface::getInstance()->addRef(service);
-	  if (sp)
 		if (isaudio)
 		{
-			Decoder::parms.audio_type=isAC3?DECODE_AUDIO_AC3:DECODE_AUDIO_MPEG;
-			Decoder::parms.apid=entry->elementary_PID;
-			if (sp && sp->dvb)
-				sp->dvb->set(eServiceDVB::cAPID, entry->elementary_PID);
+			if (isAC3)
+			{
+				Decoder::parms.audio_type=DECODE_AUDIO_AC3;
+				Decoder::parms.apid=entry->elementary_PID;
+				if (sp && sp->dvb)
+				{
+					sp->dvb->set(eServiceDVB::cAC3PID, entry->elementary_PID);
+					sp->dvb->set(eServiceDVB::cAPID, -1);
+				}
+			} else
+			{
+				Decoder::parms.audio_type=DECODE_AUDIO_MPEG;
+				Decoder::parms.apid=entry->elementary_PID;
+				if (sp && sp->dvb)
+				{
+					sp->dvb->set(eServiceDVB::cAC3PID, -1);
+					sp->dvb->set(eServiceDVB::cAPID, entry->elementary_PID);
+				}
+			}
 		}
 		if (isvideo)
 		{
