@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.36 2003/05/20 21:52:55 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.37 2003/05/21 18:55:20 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -218,7 +218,7 @@ int zapit(const t_channel_id channel_id, bool in_nvod)
 		channel = &(cit->second);
 	
 	/* have motor move satellite dish to satellite's position if necessary */
-	if (diseqcType == DISEQC_1_2)
+	if ((diseqcType == DISEQC_1_2) && (motorPositions[channel->getSatelliteName()] != 0))
 	{
 		if (firstZapAfterBoot || (frontend->getCurrentSatellitePosition() != channel->getSatellitePosition()))
 		{
@@ -1521,7 +1521,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.36 2003/05/20 21:52:55 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.37 2003/05/21 18:55:20 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
