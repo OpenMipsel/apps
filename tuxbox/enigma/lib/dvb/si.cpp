@@ -24,7 +24,7 @@ int fromBCD(int bcd)
 {
 	if ((bcd&0xF0)>=0xA0)
 		return -1;
-	if ((bcd&0xF)>=0xA0)
+	if ((bcd&0xF)>=0xA)
 		return -1;
 	return ((bcd&0xF0)>>4)*10+(bcd&0xF);
 }
