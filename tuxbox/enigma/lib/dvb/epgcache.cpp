@@ -347,7 +347,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 					return new EITEvent( *i->second );
 			}
 		}
-/*    
+
 		for ( eventMap::iterator i( It->second.first.begin() ); i != It->second.first.end(); i++)
 		{
 			const eit_event_struct* eit_event = i->second->get();
@@ -355,7 +355,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 			time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
 			if ( t >= begTime && t <= begTime+duration) // then we have found
 				return new EITEvent( *i->second );
-		}*/
+		}
 	}
 	return 0;
 }

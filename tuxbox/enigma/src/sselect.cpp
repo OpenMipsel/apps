@@ -1,4 +1,4 @@
-// #define USE_MULTI_EPG
+#define USE_MULTI_EPG
 #include <algorithm>
 #include <list>
 
@@ -800,19 +800,21 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 #else
 				hide();
 				std::list<eServiceReferenceDVB> s;
-				int n=5;
 				eServiceReference o=services->getCurrent()->service;
-				s.push_back((eServiceReferenceDVB&)o);
-				while (--n)
+				eListBoxEntryService *p = services->getCurrent();
+				do
 				{
-					eListBoxEntryService *p = services->goNext();
 					if (!p)
 						break;
-					
-					if ((p->service.flags&eListBoxEntryService::flagIsReturn) || (p->service.type != eServiceReference::idDVB))
-						continue;
-					s.push_back((eServiceReferenceDVB&)p->service);
+					if (!(p->service.flags&eListBoxEntryService::flagIsReturn) && p->service.type == eServiceReference::idDVB )
+					{
+						const timeMap *e = eEPGCache::getInstance()->getTimeMap( (eServiceReferenceDVB&)p->service );
+						if ( e && e->size() )
+							s.push_back((eServiceReferenceDVB&)p->service);
+					}
+					p = services->goNext();
 				}
+				while ( s.size() != 5 && p && p->service != o );
 				selectService(o);
 				showMultiEPG(s);
 				show();

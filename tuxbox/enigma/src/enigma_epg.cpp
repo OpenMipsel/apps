@@ -110,14 +110,31 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 			if (eventvalid)
 				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &current_service->service, current_service->current_entry->event ) )
             current_service->current_entry->invalidate();
-		} else if (event.action == &i_focusActions->left)
+		}
+		else if (event.action == &i_focusActions->left)
+		#ifdef DIR_V
 			selService(-1);
-		else if (event.action == &i_focusActions->right)
-			selService(+1);
-		else if (event.action == &i_focusActions->up)
+		#else
 			selEntry(-1);
-		else if (event.action == &i_focusActions->down)
+		#endif
+		else if (event.action == &i_focusActions->right)
+		#ifdef DIR_V
+			selService(+1);
+		#else
 			selEntry(+1);
+		#endif
+		else if (event.action == &i_focusActions->up)
+		#ifdef DIR_V
+			selEntry(-1);
+		#else
+			selService(-1);
+		#endif
+		else if (event.action == &i_focusActions->down)
+		#ifdef DIR_V
+			selEntry(+1);
+		#else
+			selService(+1);
+		#endif
 		else if ((event.action == &i_cursorActions->ok) && eventvalid)
 		{
 			eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current_service->service);
@@ -184,11 +201,13 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 	timeMap::const_iterator ibegin = evmap->lower_bound(start);
 	if ((ibegin != evmap->end()) && (ibegin != evmap->begin()))
 		--ibegin;
-		
+	else
+		ibegin=evmap->begin();
+
 	timeMap::const_iterator iend = evmap->upper_bound(end);
 	if (iend != evmap->end())
 		++iend;
-	
+
 	for (timeMap::const_iterator event(ibegin); event != iend; ++event)
 	{
 		EITEvent *ev = new EITEvent(*event->second);
@@ -240,6 +259,7 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 					const ShortEventDescriptor *s=(const ShortEventDescriptor*)*d;
 					e->title=s->event_name;
 					e->description=s->text;
+					break;
 				}
 			e->event = ev;
 		} else
@@ -375,10 +395,21 @@ void eZapEPG::buildPage(time_t start, time_t end)
 #endif
 		
 		eService *sv=eServiceInterface::getInstance()->addRef(*i);
-		if (sv)
-			header->setText(sv->service_name);
-		eServiceInterface::getInstance()->removeRef(*i);
-
+		if ( sv )
+		{
+			static char stropen[3] = { 0xc2, 0x86, 0x00 };
+			static char strclose[3] = { 0xc2, 0x87, 0x00 };
+			unsigned int open=eString::npos-1;
+			eString shortname;
+			while ( (open = sv->service_name.find(stropen, open+2)) != eString::npos )
+			{
+				unsigned int close = sv->service_name.find(strclose, open);
+				if ( close != eString::npos )
+					shortname+=sv->service_name.mid( open+2, close-(open+2) );
+			}
+			header->setText(shortname?shortname:sv->service_name);
+			eServiceInterface::getInstance()->removeRef(*i);
+		}
 		service.service = *i;
 		
 		buildService(service, start, end);

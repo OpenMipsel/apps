@@ -4848,14 +4848,33 @@ void eZapMain::moveService(const eServiceReference &path, const eServiceReferenc
 void eZapMain::showMultiEPG(const std::list<eServiceReferenceDVB> &list)
 {
 	eZapEPG epg(list);
-	
+
 	time_t now=time(0)+eDVB::getInstance()->time_difference;
-	
+	time_t end=now+4*3600;
+	time_t lastEndTime=now;
+	for (std::list<eServiceReferenceDVB>::const_iterator s(list.begin()); s != list.end(); s++ )
+	{
+		const timeMap *t = eEPGCache::getInstance()->getTimeMap( *s );
+		if ( t && t->size() )
+		{
+			EITEvent evt = t->rbegin()->second->get();
+			time_t tmp = evt.start_time+evt.duration;
+			if ( tmp >= end )
+			{
+				lastEndTime=end;
+				break;
+			}
+			else if ( tmp > now && tmp > lastEndTime)
+				lastEndTime=tmp;
+		}
+	}
+
 	epg.move(ePoint(50, 50));
 	epg.resize(eSize(620, 470));
-	
-	epg.buildPage(now, now + 4 * 3600);
-	
+
+//	eDebug("lastEndTime-now = %d min", (lastEndTime-now) / 60 );	
+	epg.buildPage(now, lastEndTime);
+
 	epg.show();
 	epg.exec();
 	epg.hide();
