@@ -559,7 +559,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 
 	int index=entryMap.size()+1;
 	sat.fixed=new eLabel(w_buttons);
-	sat.fixed->setText(eString().sprintf(_("Sat %d"), index));
+//	sat.fixed->setText(eString().sprintf(_("Sat %d"), index));
 		// don't ask...
 	sat.fixed->setShortcut(eString().sprintf("%d", index));
 	sat.fixed->setShortcutFocus(sat.sat);

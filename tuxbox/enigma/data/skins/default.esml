@@ -114,16 +114,16 @@
 	</images>
 
 	<images basepath="shortcut">
-		<img name="shortcut.0" src="0.png" />
-		<img name="shortcut.1" src="1.png" />
-		<img name="shortcut.2" src="2.png" />
-		<img name="shortcut.3" src="3.png" />
-		<img name="shortcut.4" src="4.png" />
-		<img name="shortcut.5" src="5.png" />
-		<img name="shortcut.6" src="6.png" />
-		<img name="shortcut.7" src="7.png" />
-		<img name="shortcut.8" src="8.png" />
-		<img name="shortcut.9" src="9.png" />
+		<img name="shortcut.0" src="button_0.png" />
+		<img name="shortcut.1" src="button_1.png" />
+		<img name="shortcut.2" src="button_2.png" />
+		<img name="shortcut.3" src="button_3.png" />
+		<img name="shortcut.4" src="button_4.png" />
+		<img name="shortcut.5" src="button_5.png" />
+		<img name="shortcut.6" src="button_6.png" />
+		<img name="shortcut.7" src="button_7.png" />
+		<img name="shortcut.8" src="button_8.png" />
+		<img name="shortcut.9" src="button_9.png" />
 		<img name="shortcut.red" src="red.png" />
 		<img name="shortcut.green" src="green.png" />
 		<img name="shortcut.yellow" src="yellow.png" />
