@@ -1,8 +1,23 @@
 /*
- * $Id: getservices.cpp,v 1.67.2.1 2003/02/18 15:16:46 alexw Exp $
+ * $Id: getservices.cpp,v 1.67.2.2 2003/03/26 17:09:29 thegoodguy Exp $
+ *
+ * (C) 2002, 2003 by Andreas Oberritter <obi@tuxbox.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
  */
-
-#include <stdio.h>
 
 #include <zapit/bouquets.h>
 #include <zapit/channel.h>
@@ -21,10 +36,6 @@ void ParseTransponders(xmlNodePtr node, const uint8_t DiSEqC)
 	t_original_network_id original_network_id;
 	FrontendParameters feparams;
 	uint8_t polarization = 0;
-	uint8_t tmp;
-
-	/* FIXME: get inversion from services list */
-	feparams.Inversion = INVERSION_AUTO;
 
 	/* read all transponders */
 	while ((node = xmlGetNextOccurence(node, "transponder")) != NULL)
@@ -33,23 +44,19 @@ void ParseTransponders(xmlNodePtr node, const uint8_t DiSEqC)
 		transport_stream_id = xmlGetNumericAttribute(node, "id", 16);
 		original_network_id = xmlGetNumericAttribute(node, "onid", 16);
 		feparams.Frequency = xmlGetNumericAttribute(node, "frequency", 0);
+		feparams.Inversion = (SpectralInversion) xmlGetNumericAttribute(node, "inversion", 0);
 
 		/* cable */
-		if (DiSEqC == 0xFF)
-		{
+		if (DiSEqC == 0xFF) {
 			feparams.u.qam.SymbolRate = xmlGetNumericAttribute(node, "symbol_rate", 0);
-			sscanf(xmlGetAttribute(node, "fec_inner"), "%hhu", &tmp);
-			feparams.u.qam.FEC_inner = CFrontend::getFEC(tmp);
-			sscanf(xmlGetAttribute(node, "modulation"), "%hhu", &tmp);
-			feparams.u.qam.QAM = CFrontend::getModulation(tmp);
+			feparams.u.qam.FEC_inner = CFrontend::getFEC(xmlGetNumericAttribute(node, "fec_inner", 0));
+			feparams.u.qam.QAM = CFrontend::getModulation(xmlGetNumericAttribute(node, "modulation", 0));
 		}
 
 		/* satellite */
-		else
-		{
+		else {
 			feparams.u.qpsk.SymbolRate = xmlGetNumericAttribute(node, "symbol_rate", 0);
-			sscanf(xmlGetAttribute(node, "fec_inner"), "%hhu", &tmp);
-			feparams.u.qpsk.FEC_inner = CFrontend::getFEC(tmp);
+			feparams.u.qpsk.FEC_inner = CFrontend::getFEC(xmlGetNumericAttribute(node, "fec_inner", 0));
 			polarization = xmlGetNumericAttribute(node, "polarization", 0);
 		}
 
@@ -93,10 +100,10 @@ void ParseChannels(xmlNodePtr node, const t_transport_stream_id transport_stream
 		service_type = xmlGetNumericAttribute(node, "service_type", 16);
 
 		switch (service_type) {
-		case DIGITAL_TELEVISION_SERVICE:
-		case NVOD_REFERENCE_SERVICE:
-		case NVOD_TIME_SHIFTED_SERVICE:
-		case DIGITAL_RADIO_SOUND_SERVICE:
+		case ST_DIGITAL_TELEVISION_SERVICE:
+		case ST_NVOD_REFERENCE_SERVICE:
+		case ST_NVOD_TIME_SHIFTED_SERVICE:
+		case ST_DIGITAL_RADIO_SOUND_SERVICE:
 			allchans.insert
 			(
 				std::pair <t_channel_id, CZapitChannel>
@@ -137,6 +144,9 @@ void FindTransponder(xmlNodePtr search)
 
 		else if (!(strcmp(xmlGetName(search), "sat")))
 			DiSEqC = xmlGetNumericAttribute(search, "diseqc", 0);
+
+		else if (!(strcmp(xmlGetName(search), "terrestrial")))
+			DiSEqC = 0xfe;
 
 		else {
 			search = search->xmlNextNode;
