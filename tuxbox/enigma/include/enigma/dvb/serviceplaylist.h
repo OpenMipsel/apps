@@ -11,6 +11,8 @@ public:
 	std::list<eServiceReference>::iterator current;
 
 	int load(const char *filename);
+	int save(const char *filename);
+
 	ePlaylist();
 };
 
