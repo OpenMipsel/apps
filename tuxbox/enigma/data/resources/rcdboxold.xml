@@ -117,6 +117,7 @@
 		</actionmap>
 
 		<actionmap name="serviceSelector" style="sselect_default">
+			<action name="toggleStyle" key="mute" flags="m" />
 			<action name="showEPGSelector" key="?" flags="m" />
 			<action name="showMenu" key="d-box" flags="m" />
 			<action name="showAll" key="red" flags="m" />
