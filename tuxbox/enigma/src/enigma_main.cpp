@@ -1883,11 +1883,7 @@ void eZapMain::nextService(int add)
 	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
 
 	if ( p.size() && p.current() == playlistref )
-	{
-		if ( !playlistmode )
-			getPlaylistPosition();
 		playlistNextService();
-	}
 	else
 	{
 		const eServiceReference *service=eZap::getInstance()->getServiceSelector()->next();
@@ -1909,11 +1905,7 @@ void eZapMain::prevService()
 	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
 
 	if ( p.size() && p.current() == playlistref )
-	{
-		if ( !playlistmode )
-			getPlaylistPosition();
 		playlistPrevService();
-	}
 	else
 	{
 		const eServiceReference *service=eZap::getInstance()->getServiceSelector()->prev();
@@ -1935,6 +1927,8 @@ void eZapMain::playlistPrevService()
 	int extZap=0;
 	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
 	eServiceReference ref = eServiceInterface::getInstance()->service;
+	if ( playlist->current != playlist->getConstList().end() && ref == playlist->current->service )
+		getPlaylistPosition();
 	while ( playlist->current != playlist->getConstList().begin())
 	{
 		playlist->current--;
@@ -1951,6 +1945,8 @@ void eZapMain::playlistNextService()
 	int extZap=0;
 	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
 	eServiceReference ref = eServiceInterface::getInstance()->service;
+	if ( playlist->current != playlist->getConstList().end() && ref == playlist->current->service )
+		getPlaylistPosition();
 	while (playlist->current != playlist->getConstList().end())
 	{
 		playlist->current++;
