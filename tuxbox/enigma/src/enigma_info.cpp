@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.22 2003/06/26 21:33:16 ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.23 2003/07/03 20:32:19 ghostrider Exp $
  */
 
 #include <enigma_info.h>
@@ -41,7 +41,7 @@ eZapInfo::eZapInfo()
 	:eListBoxWindow<eListBoxEntryMenu>(_("Infos"), 8, 320)
 {
 	move(ePoint(150, 136));
-	CONNECT((new eListBoxEntryMenu(&list, _("back"), _("back to mainmenu")))->selected, eZapInfo::sel_close);
+	CONNECT((new eListBoxEntryMenu(&list, _("back"), _("back to mainmenu")))->selected, eWidget::accept);
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT((new eListBoxEntryMenu(&list, _("Streaminfo"), _("open the Streaminfo")))->selected, eZapInfo::sel_streaminfo);
 	if ( eDVB::getInstance()->getmID() < 5 )
@@ -52,11 +52,6 @@ eZapInfo::eZapInfo()
 
 eZapInfo::~eZapInfo()
 {
-}
-
-void eZapInfo::sel_close()
-{
-	close(0);
 }
 
 void eZapInfo::sel_satfind()

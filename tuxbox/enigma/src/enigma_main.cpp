@@ -1196,6 +1196,7 @@ void eZapMain::loadUserBouquets( bool destroy )
 	ASSERT(userTVBouquets);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot), userTVBouquetsRef);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio), userTVBouquetsRef);
+	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeBouquets), userTVBouquetsRef);
 	userTVBouquets->service_name=_("Bouquets (TV)");
 	userTVBouquets->load((eplPath+"/userbouquets.tv.epl").c_str());
 
@@ -1206,6 +1207,7 @@ void eZapMain::loadUserBouquets( bool destroy )
 	ASSERT(userRadioBouquets);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot), userRadioBouquetsRef);
 	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio), userRadioBouquetsRef);
+	eServicePlaylistHandler::getInstance()->newPlaylist(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeBouquets), userRadioBouquetsRef);
 	userRadioBouquets->service_name=_("Bouquets (Radio)");
 	userRadioBouquets->load((eplPath+"/userbouquets.radio.epl").c_str());
 
@@ -1530,17 +1532,21 @@ eZapMain::eZapMain()
 	loadPlaylist(true);
 	loadUserBouquets( false );
 
-	CONNECT(eZap::getInstance()->getServiceSelector()->addServiceToPlaylist, eZapMain::doPlaylistAdd);
-	CONNECT(eZap::getInstance()->getServiceSelector()->addServiceToUserBouquet, eZapMain::addServiceToUserBouquet);
+	eServiceSelector *sel = eZap::getInstance()->getServiceSelector();
+	CONNECT(sel->addServiceToPlaylist, eZapMain::doPlaylistAdd);
+	CONNECT(sel->addServiceToUserBouquet, eZapMain::addServiceToUserBouquet);
 	CONNECT(subservicesel.addToUserBouquet, eZapMain::addServiceToUserBouquet );
-	CONNECT(eZap::getInstance()->getServiceSelector()->removeServiceFromUserBouquet, eZapMain::removeServiceFromUserBouquet );
-	CONNECT(eZap::getInstance()->getServiceSelector()->showMenu, eZapMain::showServiceMenu);
-	CONNECT_2_1(eZap::getInstance()->getServiceSelector()->setMode, eZapMain::setMode, 0);
-	CONNECT(eZap::getInstance()->getServiceSelector()->rotateRoot, eZapMain::rotateRoot);
-	CONNECT(eZap::getInstance()->getServiceSelector()->moveEntry, eZapMain::moveService);
-	CONNECT(eZap::getInstance()->getServiceSelector()->showMultiEPG, eZapMain::showMultiEPG);
-	CONNECT(eZap::getInstance()->getServiceSelector()->showEPGList, eZapMain::showEPGList);
-	CONNECT(eZap::getInstance()->getServiceSelector()->getRoot, eZapMain::getRoot);
+	CONNECT(sel->removeServiceFromUserBouquet, eZapMain::removeServiceFromUserBouquet );
+	CONNECT(sel->showMenu, eZapMain::showServiceMenu);
+	CONNECT_2_1(sel->setMode, eZapMain::setMode, 0);
+	CONNECT(sel->rotateRoot, eZapMain::rotateRoot);
+	CONNECT(sel->moveEntry, eZapMain::moveService);
+	CONNECT(sel->showMultiEPG, eZapMain::showMultiEPG);
+	CONNECT(sel->showEPGList, eZapMain::showEPGList);
+	CONNECT(sel->getRoot, eZapMain::getRoot);
+	CONNECT(sel->deletePressed, eZapMain::deleteService );
+	CONNECT(sel->renameService, eZapMain::renameService );
+	CONNECT(sel->renameBouquet, eZapMain::renameBouquet );
 
 	reloadPaths();
 
@@ -1660,7 +1666,6 @@ void eZapMain::prepareNonDVRHelp()
 	addActionToHelpList(&i_enigmaMainActions->showMainMenu);
 	addActionToHelpList(&i_enigmaMainActions->showEPG);
 	addActionToHelpList(&i_enigmaMainActions->pluginVTXT);
-	addActionToHelpList(&i_enigmaMainActions->pluginExt);
 	addActionToHelpList(&i_enigmaMainActions->toggleDVRFunctions);
 	addActionToHelpList(&i_enigmaMainActions->modeTV);
 	addActionToHelpList(&i_enigmaMainActions->modeRadio);
@@ -1673,6 +1678,7 @@ void eZapMain::prepareNonDVRHelp()
 	addActionToHelpList(&i_enigmaMainActions->showEPGList);
 	addActionToHelpList(&i_enigmaMainActions->showSubservices);
 	addActionToHelpList(&i_enigmaMainActions->showAudio);
+	addActionToHelpList(&i_enigmaMainActions->pluginExt);
 }
 
 void eZapMain::set16_9Logo(int aspect)
@@ -2329,7 +2335,6 @@ void eZapMain::standbyRelease()
 	timeval now;
 	gettimeofday(&now,0);
 	bool b = standbyTime < now;
-	standbyTime.tv_sec=-1;
 	if (b)
 	{
 		hide();
@@ -2391,6 +2396,7 @@ standby:
 		hide();
 		standby.show();
 		state |= stateSleeping;
+		standbyTime.tv_sec=-1;
 		standby.exec();   // this blocks all main actions...
 /*
 	  ...... sleeeeeeeep
@@ -2762,14 +2768,18 @@ void eZapMain::stopSkip(int dir)
 void eZapMain::handleStandby(int i)
 {
 	if ( i )
+	{
+		if ( state & stateSleeping )  // we are already sleeping
+			return;
 		wasSleeping = i;
+	}
 
-	if (state & stateSleeping && !wasSleeping)
+	if (state & stateSleeping)
 	{
 		wasSleeping=1;
 		eZapStandby::getInstance()->wakeUp(1);
 		// this breakes the eZapStandby mainloop...
-		// and enigma wake up
+		// and enigma wakes up
 	}
 	else switch(wasSleeping) // before record we was in sleep mode...
 	{
@@ -2782,7 +2792,6 @@ void eZapMain::handleStandby(int i)
 		case 2: // complete Shutdown
 			// we do hardly shutdown the box..
 			// any pending timers are ignored
-			wasSleeping=0;
 			message_notifier.send(eZapMain::messageShutdown);
 			break;
 		case 3: // immediate go to standby
@@ -2821,12 +2830,265 @@ ePlaylist *eZapMain::addUserBouquet( ePlaylist *list, const eString &path, const
 
 extern bool checkPin( int pin, const char * text );
 
-void eZapMain::showServiceMenu(eServiceSelector *sel)
+void eZapMain::renameService( eServiceSelector *sel )
+{
+	eServiceReference ref=sel->getSelected();
+	eServiceReference path=sel->getPath().current();
+	ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(path);
+	if ( !p )
+		return;
+
+	std::list<ePlaylistEntry>::iterator it=std::find(p->getList().begin(), p->getList().end(), ref);
+	if (it == p->getList().end())
+	{
+		eServiceInterface::getInstance()->removeRef(path);
+		return;
+	}
+
+	if ( it->service.type == eServiceReference::idDVB )
+	{
+		TextEditWindow wnd(_("Enter new name:"));
+		wnd.setText(_("Rename entry"));
+		wnd.show();
+		if ( it->service.descr.length() )
+			wnd.setEditText(it->service.descr);
+		else if ( it->type & ePlaylistEntry::boundFile )
+		{
+			int i = it->service.path.rfind('/');
+			++i;
+			wnd.setEditText(it->service.path.mid( i, it->service.path.length()-i ));
+		}
+		else
+		{
+			eService* s = eServiceInterface::getInstance()->addRef(it->service);
+			if ( s )
+			{
+				wnd.setEditText(s->service_name);
+				eServiceInterface::getInstance()->removeRef( it->service );
+			}
+		}
+		wnd.setMaxChars(50);
+		int ret = wnd.exec();
+		wnd.hide();
+		if ( !ret )
+		{
+			if ( it->service.descr != wnd.getEditText() )
+			{
+				it->service.descr = wnd.getEditText();
+				sel->invalidateCurrent(it->service);
+				p->save();
+			}
+		}
+	}
+	eServiceInterface::getInstance()->removeRef(path);
+}
+
+void eZapMain::deleteService( eServiceSelector *sel )
 {
 	eServiceReference ref=sel->getSelected();
 	eServiceReference path=sel->getPath().current();
 
-	sel->hide();
+	printf("path: '%s', ref: '%s', pathtype: %d, reftype: %d\n",path.toString().c_str(),ref.toString().c_str(),path.type,ref.type);
+
+/*  i think is not so good to delete normal providers
+		if (ref.data[0]==-3) // Provider
+		{
+			eDVB::getInstance()->settings->removeDVBBouquet(ref.data[2]);
+			eDVB::getInstance()->settings->saveBouquets();
+			sel->actualize();
+			break;
+		}*/
+
+	ePlaylist *pl=0;
+	if (path.type == eServicePlaylistHandler::ID)
+		pl=(ePlaylist*)eServiceInterface::getInstance()->addRef(path);
+	if (!pl)
+	{
+		eMessageBox box(_("Sorry, you cannot delete this service."), _("delete service"), eMessageBox::iconWarning|eMessageBox::btOK );
+		box.show();
+		box.exec();
+		box.hide();
+		return;
+	}
+	bool removeEntry=true;
+
+	std::list<ePlaylistEntry>::iterator it=std::find(pl->getList().begin(), pl->getList().end(), ref);
+	if (it == pl->getList().end())
+		return;
+
+	// remove parent playlist ref...
+	eServiceInterface::getInstance()->removeRef(path);
+
+	int profimode=0;
+	eConfig::getInstance()->getKey("/elitedvb/extra/profimode", profimode);
+
+	// recorded stream selected ( in recordings.epl )
+	if ( it->service.type == eServiceReference::idDVB )
+	{
+		if (!profimode)
+		{
+			if ( (it->type & (ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile))==(ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile) )
+			{
+				eMessageBox box(_("This is a recorded stream!\nReally delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+				box.show();
+				int r=box.exec();
+				box.hide();
+				if (r != eMessageBox::btYes)
+					removeEntry=false;
+			}
+		}
+		// delete running service ?
+		if (removeEntry && eServiceInterface::getInstance()->service == ref)
+			eServiceInterface::getInstance()->stop();
+	} // bouquet (playlist) selected
+	else if ( it->service.type == eServicePlaylistHandler::ID )
+	{
+		if (!profimode)
+		{
+			if ( (it->type & (ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile))==(ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile) )
+			{
+				eMessageBox box(
+					_("This is a complete Bouquet!\nReally delete?"),
+					_("Delete bouquet"),
+					eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+				box.show();
+				int r=box.exec();
+				box.hide();
+				if (r != eMessageBox::btYes)
+					removeEntry=false;
+			}
+		}
+	}
+	if (removeEntry) // remove service.. and linked files..
+	{
+		eServicePlaylistHandler::getInstance()->removePlaylist( it->service );
+
+		if (ref.type == eServicePlaylistHandler::ID)
+			eServiceInterface::getInstance()->removeRef(ref);
+
+		// move selection to prev entry... when exist...
+		std::list<ePlaylistEntry>::iterator i = it;
+		i++;
+		if ( i == pl->getList().end() )
+		{
+			i=it;  
+			i--;
+			sel->removeCurrent(false);
+		}
+		else
+			sel->removeCurrent(true);
+		sel->updateNumbers();
+		// remove the entry in playlist
+		pl->deleteService(it);
+		// save playlist
+		pl->save();
+		// enter new into the current path
+	}
+}
+
+void eZapMain::renameBouquet( eServiceSelector *sel)
+{
+	eServiceReference ref=sel->getSelected();
+	eServiceReference path=sel->getPath().current();
+	ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(ref);
+	TextEditWindow wnd(_("Enter new name for the bouquet:"));
+	wnd.setText(_("Rename bouquet"));
+	wnd.show();
+	wnd.setEditText(p->service_name);
+	wnd.setMaxChars(50);
+	int ret = wnd.exec();
+	wnd.hide();
+	if ( !ret )
+	{
+		// name changed?
+		if ( p->service_name != wnd.getEditText() )
+		{
+			p->service_name=wnd.getEditText();
+/*			if (ref.data[0]==-3) // dont rename provider
+			{
+				eDVB::getInstance()->settings->renameDVBBouquet(ref.data[2],p->service_name);
+				eDVB::getInstance()->settings->saveBouquets();
+			}*/
+			p->save();
+			sel->invalidateCurrent();
+		}
+	}
+	eServiceInterface::getInstance()->removeRef(ref);
+}
+
+void eZapMain::createEmptyBouquet(int mode)
+{
+	TextEditWindow wnd(_("Enter name for the new bouquet:"));
+	wnd.setText(_("Add new bouquet"));
+	wnd.show();
+	wnd.setEditText(eString(""));
+	wnd.setMaxChars(50);
+	int ret = wnd.exec();
+	wnd.hide();
+	if ( !ret )
+	{
+		eServiceReference newList=
+			eServicePlaylistHandler::getInstance()->newPlaylist();
+		switch ( mode )
+		{
+			case modeTV:
+				addUserBouquet( userTVBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.tv",newList.data[1]), wnd.getEditText(), newList, true );
+				break;
+			case modeRadio:
+				addUserBouquet( userRadioBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.radio",newList.data[1]), wnd.getEditText(), newList, true );
+				break;
+		}
+	}
+}
+
+void eZapMain::copyProviderToBouquets(eServiceSelector *sel)
+{
+	eServiceReference ref=sel->getSelected();
+	eServiceReference path=sel->getPath().current();
+
+	// create new user bouquet
+	currentSelectedUserBouquetRef = eServicePlaylistHandler::getInstance()->newPlaylist();
+
+	// get name of the source bouquet
+	eString name;
+
+	const eService *pservice=eServiceInterface::getInstance()->addRef(ref);
+	if (pservice)
+	{
+		if ( pservice->service_name.length() )
+			name = pservice->service_name;
+		else
+			name = _("unnamed bouquet");
+		eServiceInterface::getInstance()->removeRef(ref);
+	}
+
+	switch ( mode )
+	{
+		case modeTV:
+			currentSelectedUserBouquet = addUserBouquet( userTVBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.tv",currentSelectedUserBouquetRef.data[1]), name, currentSelectedUserBouquetRef, false );
+			break;
+		case modeRadio:
+			currentSelectedUserBouquet = addUserBouquet( userRadioBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.radio",currentSelectedUserBouquetRef.data[1]), name, currentSelectedUserBouquetRef, false );
+			break;
+	}
+
+	Signal1<void,const eServiceReference&> signal;
+	CONNECT(signal, eZapMain::addServiceToCurUserBouquet);
+
+	eServicePath safe = sel->getPath();
+	sel->enterDirectory(ref);
+	sel->forEachServiceRef(signal, true);
+	sel->setPath( safe, ref );
+
+	currentSelectedUserBouquet->save();
+	currentSelectedUserBouquet=0;
+	currentSelectedUserBouquetRef = eServiceReference();
+}
+
+void eZapMain::showServiceMenu(eServiceSelector *sel)
+{
+	eServiceReference ref=sel->getSelected();
+	eServiceReference path=sel->getPath().current();
 #ifndef DISABLE_LCD
 	eServiceContextMenu m(ref, path, LCDTitle, LCDElement);
 #else
@@ -2840,96 +3102,8 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 	case 0: // cancel
 		break;
 	case 1: // delete service
-	{
-		if (eServiceInterface::getInstance()->service == ref)
-			eServiceInterface::getInstance()->stop();
-		ePlaylist *pl=0;
-		printf("path: '%s', ref: '%s', pathtype: %d, reftype: %d\n",path.toString().c_str(),ref.toString().c_str(),path.type,ref.type);
-
-/*  i think is not so good to delete normal providers
-		if (ref.data[0]==-3) // Provider
-		{
-			eDVB::getInstance()->settings->removeDVBBouquet(ref.data[2]);
-			eDVB::getInstance()->settings->saveBouquets();
-			sel->actualize();
-			break;
-		}*/
-
-		if (path.type == eServicePlaylistHandler::ID)
-			pl=(ePlaylist*)eServiceInterface::getInstance()->addRef(path);
-		if (!pl)
-		{
-			eMessageBox box(_("Sorry, you cannot delete this service."), _("delete service"), eMessageBox::iconWarning|eMessageBox::btOK );
-			box.show();
-			box.exec();
-			box.hide();
-			break;
-		}
-		bool removeEntry=true;
-
-		std::list<ePlaylistEntry>::iterator it=std::find(pl->getList().begin(), pl->getList().end(), ref);
-		if (it == pl->getList().end())
-			break;
-
-		// remove parent playlist ref...
-		eServiceInterface::getInstance()->removeRef(path);
-
-		int profimode=0;
-		eConfig::getInstance()->getKey("/elitedvb/extra/profimode", profimode);
-
-		// recorded stream selected ( in recordings.epl )
-		if ( it->service.type == eServiceReference::idDVB )
-		{
-			if (!profimode)
-			{
-				if ( (it->type & (ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile))==(ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile) )
-				{
-					eMessageBox box(_("This is a recorded stream!\nReally delete?"), _("Delete recorded stream"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
-					box.show();
-					int r=box.exec();
-					box.hide();
-					if (r != eMessageBox::btYes)
-						removeEntry=false;
-				}
-			}
-		}
-		// bouquet (playlist) selected
-		else if ( it->service.type == eServicePlaylistHandler::ID )
-			eServicePlaylistHandler::getInstance()->removePlaylist( it->service );
-
-		if (removeEntry) // remove service.. and linked files..
-		{
-			if (ref.type == eServicePlaylistHandler::ID)
-				eServiceInterface::getInstance()->removeRef(ref);
-
-			// move selection to prev entry... when exist...
-			std::list<ePlaylistEntry>::iterator i = it;
-			i++;
-			if ( i == pl->getList().end() )
-			{
-				i=it;
-				i--;
-				if ( i != pl->getList().end() )
-					sel->prev();
-			}
-			else //  move selection to the next entry
-				sel->next();
-
-			// save current ssel path and save selected entry
-			eServicePath p;
-			getServiceSelectorPath(p);
-			eServiceReference ref = p.current();
-			p.up();
-
-			// remove the entry
-			pl->deleteService(it);
-			// save playlist
-			pl->save();
-			// enter new into the current path
-			sel->setPath( p, ref );
-		}
+		deleteService(sel);
 		break;
-	}
 	case 2: // enable/disable movemode
 		toggleMoveMode(sel);
 		break;
@@ -2941,170 +3115,30 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		break;
 	case 4: // add service to bouquet
 		addServiceToUserBouquet(&ref);
-	break;
+		break;
 	case 5: // toggle edit User Bouquet Mode
 		toggleEditMode(sel);
 		break;
 	case 6: // add new bouquet
 	{
-		TextEditWindow wnd(_("Enter name for the new bouquet:"));
-		wnd.setText(_("Add new bouquet"));
-		wnd.show();
-		wnd.setEditText(eString(""));
-		wnd.setMaxChars(50);
-		int ret = wnd.exec();
-		wnd.hide();
-		if ( !ret )
-		{
-			int actualize=0;
-			eServicePath path = sel->getPath();
-			path.up();
-			eServiceReference newList = eServicePlaylistHandler::getInstance()->newPlaylist();
-			switch ( mode )
-			{
-				case modeTV:
-				{
-					addUserBouquet( userTVBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.tv",newList.data[1]), wnd.getEditText(), newList, true );
-					actualize = (path.current() == userTVBouquetsRef);
-				}
-				break;
-				case modeRadio:
-				{
-					addUserBouquet( userRadioBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.radio",newList.data[1]), wnd.getEditText(), newList, true );
-					actualize = (path.current() == userRadioBouquetsRef);
-				}
-				break;
-			}
-			if (actualize)
-				sel->actualize();
-		}
+		eServicePath path=sel->getPath();
+		path.up();
+		createEmptyBouquet(mode);
+		if ( mode == modeTV && path.current() == userTVBouquetsRef )
+			sel->actualize();
+		else if ( mode == modeRadio && path.current() == userRadioBouquetsRef )
+			sel->actualize();
+		break;
 	}
-	break;
-
 	case 7: // rename user bouquet
-	{
-		ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(ref);
-		TextEditWindow wnd(_("Enter new name for the bouquet:"));
-		wnd.setText(_("Rename bouquet"));
-		wnd.show();
-		wnd.setEditText(p->service_name);
-		wnd.setMaxChars(50);
-		int ret = wnd.exec();
-		wnd.hide();
-		if ( !ret )
-		{
-			// name changed?
-			if ( p->service_name != wnd.getEditText() )
-			{
-				p->service_name=wnd.getEditText();
-
-/*			if (ref.data[0]==-3) // dont rename provider
-				{
-					eDVB::getInstance()->settings->renameDVBBouquet(ref.data[2],p->service_name);
-					eDVB::getInstance()->settings->saveBouquets();
-				}*/
-				p->save();
-				sel->actualize();
-			}
-		}
-		eServiceInterface::getInstance()->removeRef(ref);
-	}
-	break;
-
+		renameBouquet(sel);
+		break;
 	case 8: // duplicate normal bouquet as user bouquet
-	{
-		// create new user bouquet
-		currentSelectedUserBouquetRef = eServicePlaylistHandler::getInstance()->newPlaylist();
-
-		// get name of the source bouquet
-		eString name;
-
-		const eService *pservice=eServiceInterface::getInstance()->addRef(ref);
-		if (pservice)
-		{
-			if ( pservice->service_name.length() )
-				name = pservice->service_name;
-			else
-				name = _("unnamed bouquet");
-			eServiceInterface::getInstance()->removeRef(ref);
-		}
-
-		switch ( mode )
-		{
-			case modeTV:
-				currentSelectedUserBouquet = addUserBouquet( userTVBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.tv",currentSelectedUserBouquetRef.data[1]), name, currentSelectedUserBouquetRef, false );
-			break;
-			case modeRadio:
-				currentSelectedUserBouquet = addUserBouquet( userRadioBouquets, eplPath+'/'+eString().sprintf("userbouquet.%x.radio",currentSelectedUserBouquetRef.data[1]), name, currentSelectedUserBouquetRef, false );
-			break;
-		}
-
-		Signal1<void,const eServiceReference&> signal;
-		CONNECT(signal, eZapMain::addServiceToCurUserBouquet);
-
-		eServicePath safe = sel->getPath();
-		sel->enterDirectory(ref);
-		sel->forEachServiceRef(signal, true);
-		sel->setPath( safe, ref );
-
-		currentSelectedUserBouquet->save();
-		currentSelectedUserBouquet=0;
-		currentSelectedUserBouquetRef = eServiceReference();
-	}
-	break;
-
+		copyProviderToBouquets(sel);
+		break;
 	case 9: // rename service
-	{
-		ePlaylist *p=(ePlaylist*)eServiceInterface::getInstance()->addRef(path);
-		if ( !p )
-			break;
-
-		std::list<ePlaylistEntry>::iterator it=std::find(p->getList().begin(), p->getList().end(), ref);
-		if (it == p->getList().end())
-		{
-			eServiceInterface::getInstance()->removeRef(path);
-			break;
-		}
-
-		if ( it->service.type == eServiceReference::idDVB )
-		{
-			TextEditWindow wnd(_("Enter new name:"));
-			wnd.setText(_("Rename entry"));
-			wnd.show();
-			if ( it->service.descr.length() )
-				wnd.setEditText(it->service.descr);
-			else if ( it->type & ePlaylistEntry::boundFile )
-			{
-				int i = it->service.path.rfind('/');
-				++i;
-				wnd.setEditText(it->service.path.mid( i, it->service.path.length()-i ));
-			}
-			else
-			{
-				eService* s = eServiceInterface::getInstance()->addRef(it->service);
-				if ( s )
-				{
-					wnd.setEditText(s->service_name);
-					eServiceInterface::getInstance()->removeRef( it->service );
-				}
-			}
-			wnd.setMaxChars(50);
-			int ret = wnd.exec();
-			wnd.hide();
-			if ( !ret )
-			{
-				if ( it->service.descr != wnd.getEditText() )
-				{
-					it->service.descr = wnd.getEditText();
-					p->save();
-					sel->actualize();
-				}
-			}
-		}
-		eServiceInterface::getInstance()->removeRef(path);
-	}
-	break;
-
+		renameService(sel);
+		break;
 	case 10: // lock service ( parental locking )
 	{
 		if ( handleState() )
@@ -3117,12 +3151,10 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			break;
 		}
 	}
-
 	case 11:  // unlock service ( parental locking )
 		ref.unlock();
 		sel->actualize();
-	break;
-
+		break;
 	case 12:  // show / hide locked service ( parental locking )
 	{
 		if ( handleState() )
@@ -3139,7 +3171,6 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		}
 	}
 	}
-	sel->show();
 }
 
 void eZapMain::toggleMoveMode( eServiceSelector* sel )
@@ -3158,7 +3189,7 @@ void eZapMain::toggleMoveMode( eServiceSelector* sel )
 	}
 }
 
-void eZapMain::toggleEditMode( eServiceSelector *sel )
+int eZapMain::toggleEditMode( eServiceSelector *sel )
 {
 	if ( sel->toggleEditMode() ) // toggleMode.. and get new state !!!
 	{
@@ -3172,9 +3203,13 @@ void eZapMain::toggleEditMode( eServiceSelector *sel )
 			currentSelectedUserBouquet = (ePlaylist*)eServiceInterface::getInstance()->addRef( s.curSel );
 			for (std::list<ePlaylistEntry>::const_iterator i(currentSelectedUserBouquet->getConstList().begin()); i != currentSelectedUserBouquet->getConstList().end(); ++i)
 				eListBoxEntryService::hilitedEntrys.insert(*i);
+			return 0;
 		}
 		else  // no user bouquet is selected...
+		{
 			sel->toggleEditMode();  // disable edit mode
+			return -1;
+		}
 	}
 	else
 	{
@@ -3184,6 +3219,7 @@ void eZapMain::toggleEditMode( eServiceSelector *sel )
 		eServiceInterface::getInstance()->removeRef( currentSelectedUserBouquetRef );
 		currentSelectedUserBouquetRef=eServiceReference();
 	}
+	return 0;
 }
 
 void eZapMain::addServiceToCurUserBouquet(const eServiceReference& service)
@@ -5086,6 +5122,18 @@ void eZapMain::ShowTimeCorrectionWindow( tsref ref )
 	wnd.hide();
 }
 
+void eZapMain::startNGrabRecord()
+{
+	state |= (stateRecording|recDVR);	
+	ENgrab::getNew()->sendstart();
+}
+
+void eZapMain::stopNGrabRecord()
+{
+	state &= ~(stateRecording|recDVR);
+	ENgrab::getNew()->sendstop();
+}
+
 eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path, eWidget *lcdTitle, eWidget *lcdElement)
 : eListBoxWindow<eListBoxEntryText>(_("Service Menu"), 14), ref(ref)
 {
@@ -5093,25 +5141,27 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 	setLCD(lcdTitle,lcdElement);
 #endif
 	move(ePoint(150, 80));
+
+	eListBoxEntry *prev=0;
+
 	new eListBoxEntryText(&list, _("back"), (void*)0);
 
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 
 	if ( !(ref.flags & eServiceReference::isDirectory)
 		&& ( ref.type == 0x1000 // mp3
 		|| ( ref.flags & eServiceReference::mustDescent )
 		|| ( ref.type == eServiceReference::idDVB && ref.path ) ) )
-			new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
+			prev = new eListBoxEntryText(&list, _("add service to playlist"), (void*)3);
 
 	eListBoxEntryText *sel=0;
-
 	/* i think it is not so good to rename normal providers
 	if ( ref.data[0]==-3 ) // rename Provider
 		new eListBoxEntryText(&list, _("rename"), (void*)7);*/
 
 	// create new bouquet
 	if ( eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-		new eListBoxEntryText(&list, _("create new bouquet"), (void*)6);
+		prev = new eListBoxEntryText(&list, _("create new bouquet"), (void*)6);
 
 	if (path.type == eServicePlaylistHandler::ID)
 	{
@@ -5120,30 +5170,30 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		{
 			// copy complete provider to bouquets
 			if ( ref.flags & eServiceReference::flagDirectory )
-				new eListBoxEntryText(&list, _("duplicate bouquet"), (void*)8);
+				prev = new eListBoxEntryText(&list, _("duplicate bouquet"), (void*)8);
 			else // add dvb service to specific bouquet
-				new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
-			new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+				prev = new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
+			prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 		}
 
 		// rename bouquet
 		if ( (ref.type == eServicePlaylistHandler::ID) )
-			new eListBoxEntryText(&list, _("rename"), (void*)7);
+			prev = new eListBoxEntryText(&list, _("rename"), (void*)7);
 
 		// rename dvb service
 		if ( ref.type == eServiceReference::idDVB )
-			new eListBoxEntryText(&list, _("rename"), (void*)9);
+			prev = new eListBoxEntryText(&list, _("rename"), (void*)9);
 
 		// all what contain in a playlists is deleteable
-		new eListBoxEntryText(&list, _("delete"), (void*)1);
+		prev = new eListBoxEntryText(&list, _("delete"), (void*)1);
 
-		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 
 		// move mode in playlists
 		if ( eZap::getInstance()->getServiceSelector()->movemode )
-			sel = new eListBoxEntryText(&list, _("disable move mode"), (void*)2);
+			prev = sel = new eListBoxEntryText(&list, _("disable move mode"), (void*)2);
 		else
-			new eListBoxEntryText(&list, _("enable move mode"), (void*)2);
+			prev = new eListBoxEntryText(&list, _("enable move mode"), (void*)2);
 	}
 	else  // not in a playlist
 	{
@@ -5152,11 +5202,16 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		{
 			// add current service to favourite
 			if ( !(ref.flags & eServiceReference::flagDirectory) )
-				new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
+			{
+				prev = new eListBoxEntryText(&list, _("add to specific bouquet"), (void*)4);
+				prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+			}
 			// copy provider to bouquet list
 			else if (ref.data[0] == -2 || ref.data[0] == -3 )
-				new eListBoxEntryText(&list, _("copy to bouquet list"), (void*)8);
-			new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+			{
+				prev = new eListBoxEntryText(&list, _("copy to bouquet list"), (void*)8);
+				prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );				
+			}
 		}
 	}
 
@@ -5165,14 +5220,15 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 	{
 		// edit Mode ( simple add services to any bouquet(playlist)
 		if ( eZap::getInstance()->getServiceSelector()->editMode )
-			sel = new eListBoxEntryText(&list, _("disable edit mode"), (void*)5);
+			prev = sel = new eListBoxEntryText(&list, _("disable edit mode"), (void*)5);
 		else
-			new eListBoxEntryText(&list, _("enable edit mode"), (void*)5);
+			prev = new eListBoxEntryText(&list, _("enable edit mode"), (void*)5);
 	}
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	// options for activated parental locking
 	if ( eConfig::getInstance()->getParentalPin() )
 	{
+		if ( prev->isSelectable() )
+			new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 		if ( ref.isLocked() )
 			new eListBoxEntryText(&list, _("unlock"), (void*)11);
 		else

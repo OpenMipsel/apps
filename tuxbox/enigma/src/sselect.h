@@ -96,7 +96,7 @@ private:
 	void updateCi();
 	void doSPFlags(const eServiceReference &ref);
 public:
-	void setKeyDescriptions();
+	void setKeyDescriptions(bool editMode=false);
 	void forEachServiceRef( Signal1<void,const eServiceReference&>, bool );
 	int movemode;
 	int editMode;
@@ -118,7 +118,9 @@ public:
 
 	Signal1<void,eServiceSelector*>	removeServiceFromUserBouquet, // remove service from selected User Bouquet
 																	showMenu, // shows the contextmenu
-																	toggleStyle; // switch service selector style
+																	toggleStyle, // switch service selector style
+																	renameService, renameBouquet,
+																	deletePressed;
 
 	Signal3<void,
 		const eServiceReference &, 		// path
@@ -126,7 +128,8 @@ public:
 		const eServiceReference &			// service AFTER moved service
 		> moveEntry;
 
-	Signal0<void>showMultiEPG;
+	Signal0<void> showMultiEPG;
+	
 	Signal1<void,eServiceReferenceDVB>showEPGList;
 
 	const eServicePath &getPath() { return path; }
@@ -146,6 +149,9 @@ public:
 	const eServiceReference *choose(int irc=-1);
 	const eServiceReference *next();
 	const eServiceReference *prev();
+	void removeCurrent(bool=false);
+	void invalidateCurrent(eServiceReference ref=eServiceReference());
+	void updateNumbers();
 
 	int toggleMoveMode();  // enable / disable move entry Mode ( only in userBouquets )
 	int toggleEditMode();  // enable / disable edit UserBouquet Mode

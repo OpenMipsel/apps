@@ -80,7 +80,7 @@ void eFrontend::InitDiSEqC()
 	lastcsw = lastSmatvFreq = lastRotorCmd = lastucsw = lastToneBurst = -1;
 	lastLNB=0;
 	sendDiSEqCCmd( 0, 0 );
-	usleep(100000);
+	usleep(150000);
 }
 
 void eFrontend::timeout()
@@ -99,7 +99,7 @@ void eFrontend::timeout()
 			{
 				eDebug("FE_GET_FRONTEND OK");
 				eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
-				if (sat)
+				if (sat && eDVB::getInstance()->getmID() > 4)
 				{
 					eLNB *lnb = sat->getLNB();
 					if (lnb)
@@ -712,7 +712,7 @@ int eFrontend::tune(eTransponder *trans,
 	if (needreset)
 	{
 		ioctl(fd, FE_SET_POWER_STATE, FE_POWER_ON);
-
+		usleep(150000);
 		// reset all diseqc devices
 		if (type==feSatellite)
 			InitDiSEqC();
@@ -1104,20 +1104,20 @@ send:
 int eFrontend::tune_qpsk(eTransponder *transponder, 
 		uint32_t Frequency, 		// absolute frequency in kHz
 		int polarisation, 			// polarisation (polHor, polVert, ...)
-		uint32_t SymbolRate, 		// symbolrate in symbols/s (e.g. 27500000)
+		uint32_t SymbolRate,		// symbolrate in symbols/s (e.g. 27500000)
 		uint8_t FEC_inner,			// FEC_inner (-1 for none, 0 for auto, but please don't use that)
 		int Inversion,					// spectral inversion, INVERSION_OFF / _ON / _AUTO (but please...)
-    eSatellite &sat)        // Satellite Data.. LNB, DiSEqC, switch..
+		eSatellite &sat)				// Satellite Data.. LNB, DiSEqC, switch..
 {
 	return tune(transponder, Frequency, polarisation, SymbolRate, getFEC(FEC_inner), Inversion==2?INVERSION_AUTO:Inversion?INVERSION_ON:INVERSION_OFF, &sat, QPSK);
 }
 
 int eFrontend::tune_qam(eTransponder *transponder, 
-		uint32_t Frequency, 		// absolute frequency in kHz
-		uint32_t SymbolRate, 		// symbolrate in symbols/s (e.g. 6900000)
-		uint8_t FEC_inner, 			// FEC_inner (-1 for none, 0 for auto, but please don't use that). normally -1.
-		int Inversion,	// spectral inversion, INVERSION_OFF / _ON / _AUTO (but please...)
-		int QAM)					// Modulation, QAM_xx
+		uint32_t Frequency,			// absolute frequency in kHz
+		uint32_t SymbolRate,		// symbolrate in symbols/s (e.g. 6900000)
+		uint8_t FEC_inner,			// FEC_inner (-1 for none, 0 for auto, but please don't use that). normally -1.
+		int Inversion,					// spectral inversion, INVERSION_OFF / _ON / _AUTO (but please...)
+		int QAM)								// Modulation, QAM_xx
 {
 	return tune(transponder, Frequency, 0, SymbolRate, getFEC(FEC_inner), Inversion==2?INVERSION_AUTO:Inversion?INVERSION_ON:INVERSION_OFF, 0, getModulation(QAM));
 }

@@ -14,6 +14,7 @@ eServiceStructureHandler::eServiceStructureHandler(): eServiceHandler(eServiceRe
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeFile), new eService(_("File Mode")));
 #endif
 	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeTvRadio), new eService(_("TV/Radio")));
+	cache.addPersistentService(eServiceReference(eServiceReference::idStructure, eServiceReference::flagDirectory, modeBouquets), new eService(_("Bouquets")));
 }
 
 eServiceStructureHandler::~eServiceStructureHandler()

@@ -188,24 +188,4 @@ void ENgrab::sending()
 	}
 }
 
-void ENgrabWnd::onBackSelected()
-{
-	close(0);
-}
-
-ENgrabWnd::ENgrabWnd()
-	:eWindow(1), lb(this)
-{
-	move( ePoint(100,100));  // Fenster verschieben
-	cresize( eSize(400, 200 )); // Grösse festlegen
-	lb.cmove( ePoint(0,0));
-	lb.cresize( eSize( 400,200 ));
-	setText(_("ngrab recording"));
-
-	CONNECT((new eListBoxEntryMenu(&lb, _("[close]"), _("close Window") ))->selected, ENgrabWnd::onBackSelected);
-	CONNECT((new eListBoxEntryMenu(&lb, _("start recording"), _("start manual recording") ))->selected, ENgrabWnd::manualStart);
-	CONNECT((new eListBoxEntryMenu(&lb, _("stop recording"), _("stop manual recording") ))->selected, ENgrabWnd::manualStop);
-	lb.moveSelection(eListBox<eListBoxEntryMenu>::dirFirst);
-}
-
 #endif // DISABLE_NETWORK

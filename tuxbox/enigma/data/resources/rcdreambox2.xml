@@ -199,13 +199,13 @@
 			<action name="pathUp" key="0" flags="m" />
 			<action name="gotoFirstService" key="prev" flags="m" />
 			<action name="gotoLastService" key="next" flags="m" />
+		</actionmap>
+
+		<actionmap name="serviceSelector" style="sselect_default">
 			<action name="showEPGSelector" key="info" flags="m" />
 			<action name="modeTV" key="tv" flags="m" />
 			<action name="modeRadio" key="radio" flags="m" />
 			<action name="modeFile" key="text" flags="m" />
-		</actionmap>
-
-		<actionmap name="serviceSelector" style="sselect_default">
 			<action name="showMenu" key="red" flags="m" />
 			<action name="toggleStyle" key="green" flags="m" />
 			<action name="toggleFocus" key="yellow" flags="m" />
@@ -213,6 +213,10 @@
 		</actionmap>
 
 		<actionmap name="serviceSelector" style="sselect_classic">
+			<action name="showEPGSelector" key="info" flags="m" />
+			<action name="modeTV" key="tv" flags="m" />
+			<action name="modeRadio" key="radio" flags="m" />
+			<action name="modeFile" key="text" flags="m" />
 			<action name="showAll" key="red" flags="m" />
 			<action name="showSatellites" key="green" flags="m" />
 			<action name="showProvider" key="yellow" flags="m" />
@@ -220,6 +224,12 @@
 			<action name="showMenu" key="dream" flags="m" />
 			<action name="toggleStyle" key="video" flags="m" />
 			<action name="toggleFocus" key="audio" flags="m" />
+		</actionmap>
+
+		<actionmap name="serviceSelector" style="sselect_edit">
+			<action name="delete" key="red" flags="m" />
+			<action name="mark" key="green" flags="m" />
+			<action name="rename" key="yellow" flags="m" />
 		</actionmap>
 
 		<actionmap name="numbers">

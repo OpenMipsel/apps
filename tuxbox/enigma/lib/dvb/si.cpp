@@ -794,15 +794,15 @@ eString MHWDataDescriptor::toString()
 ParentalRatingDescriptor::ParentalRatingDescriptor( descr_gen_struct *descr)
 	: Descriptor((descr_gen_t*)descr)
 {
-  const char *data = ((char*)descr)+sizeof(struct descr_gen_struct);
+	const char *data = ((char*)descr)+sizeof(struct descr_gen_struct);
 	const char *work = data;
 	int len=descr->descriptor_length;
 
-  while( work < data+len )
+	while( work < data+len )
 	{
-    entryMap[ eString(work, 3) ] = *(work+3)+3;
-    work+=4;
-  }
+		entryMap[ eString(work, 3) ] = *(work+3)+3;
+		work+=4;
+	}
 }
 
 #ifdef SUPPORT_XML

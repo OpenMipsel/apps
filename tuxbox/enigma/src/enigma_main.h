@@ -3,6 +3,7 @@
 
 #include <src/sselect.h>
 #include <src/enigma_lcd.h>
+#include <src/engrab.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/edvb.h>
@@ -483,6 +484,11 @@ private:
 	void redrawIndexmarks();
 #endif // DISABLE_FILE
 public:
+	void deleteService(eServiceSelector *);
+	void renameBouquet(eServiceSelector *);
+	void renameService(eServiceSelector *);
+	void createEmptyBouquet(int mode);
+	void copyProviderToBouquets(eServiceSelector *);
 	void toggleScart( int state );
 	void postMessage(const eZapMessage &message, int clear=0);
 	void gotMessage(const int &);
@@ -509,12 +515,17 @@ public:
 	const eServiceReference& getRecordingsref() { return recordingsref; }
 #endif
 
+#ifndef DISABLE_NETWORK
+	void startNGrabRecord();
+	void stopNGrabRecord();
+#endif
+
 	void setMode(int mode, int user=0); // user made change?
 	int getMode() { return mode; }
 
 	void rotateRoot();
 	void toggleTimerMode();
-	void toggleEditMode(eServiceSelector *);
+	int toggleEditMode(eServiceSelector *);
 	void toggleMoveMode(eServiceSelector *);
 	void handleStandby(int i=0);
 

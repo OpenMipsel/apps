@@ -12,7 +12,7 @@ enigma_SOURCES = \
 	setup_rc.cpp channelinfo.cpp setup_harddisk.cpp enigma_ci.cpp upgrade.cpp satfind.cpp setup_extra.cpp \
 	rotorconfig.cpp setup_rfmod.cpp wizard_language.cpp wizard_scan.cpp engrab.cpp setupengrab.cpp \
 	helpwindow.cpp tpeditwindow.cpp enigma_web.cpp enigma_epg.cpp wizard_timezone.cpp setup_av.cpp \
-	elirc.cpp hotplug.cpp
+	elirc.cpp hotplug.cpp enigma_bouquet.cpp
 
 enigma_LDADD_WHOLE = \
 	$(top_builddir)/lib/driver/libenigma_driver.a \
@@ -37,4 +37,4 @@ enigma_LDADD = \
 
 enigma$(EXEEXT): $(enigma_OBJECTS) $(enigma_DEPENDENCIES) $(enigma_LDADD_WHOLE)
 	@rm -f enigma$(EXEEXT)
-	$(CXXLINK) $(enigma_LDFLAGS) $(enigma_OBJECTS) -Wl,--export-dynamic -Wl,--whole-archive $(enigma_LDADD_WHOLE) -Wl,--no-whole-archive $(enigma_LDADD) $(LIBS)
+	$(CXXLINK) -Wl,--export-dynamic $(enigma_LDFLAGS) $(enigma_OBJECTS) -Wl,--whole-archive $(enigma_LDADD_WHOLE) -Wl,--no-whole-archive $(enigma_LDADD) $(LIBS)

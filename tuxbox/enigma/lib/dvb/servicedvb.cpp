@@ -963,6 +963,8 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 	case eServiceReference::idStructure:
 		switch (ref.data[0])
 		{
+		case eServiceStructureHandler::modeBouquets:
+			break;
 		case eServiceStructureHandler::modeRoot:
 /*			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));

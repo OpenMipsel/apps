@@ -27,16 +27,6 @@ public:
 	void sendstop();
 };
 
-class ENgrabWnd:public eWindow
-{
-	eListBox<eListBoxEntryMenu> lb;	
-	void onBackSelected();
-	void manualStart() { ENgrab::getNew()->sendstart(); }
-	void manualStop() { ENgrab::getNew()->sendstop(); }
-public:
-	ENgrabWnd();
-};
-
 #endif
 
 #endif // DISABLE_NETWORK

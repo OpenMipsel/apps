@@ -94,7 +94,8 @@ struct serviceSelectorActions
 	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
 			toggleRoot, addService, addServiceToUserBouquet, modeTV, modeRadio,
 			modeFile, toggleStyle, toggleFocus, gotoFirstService, gotoLastService,
-			showAll, showSatellites, showProvider, showBouquets;
+			showAll, showSatellites, showProvider, showBouquets, deletePressed,
+			markPressed, renamePressed;
 	serviceSelectorActions():
 		map("serviceSelector", _("service selector")),
 		nextBouquet(map, "nextBouquet", _("switch to next bouquet"), eAction::prioDialogHi),
@@ -116,7 +117,11 @@ struct serviceSelectorActions
 		showAll(map, "showAll", _("show all services"), eAction::prioDialog),
 		showSatellites(map, "showSatellites", _("show satellite list"), eAction::prioDialog),
 		showProvider(map, "showProvider", _("show provider list"), eAction::prioDialog),
-		showBouquets(map, "showBouquets", _("show bouquet list"), eAction::prioDialog)
+		showBouquets(map, "showBouquets", _("show bouquet list"), eAction::prioDialog),
+
+		deletePressed(map, "delete", _("delete selected entry"), eAction::prioDialog),
+		markPressed(map, "mark", _("mark selected entry for move"), eAction::prioDialog),
+		renamePressed(map, "rename", _("rename selected entry"), eAction::prioDialog)
 	{
 	}
 };
@@ -317,10 +322,19 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 	return sort;
 }
 
-void eServiceSelector::setKeyDescriptions()
+void eServiceSelector::setKeyDescriptions( bool editMode )
 {
 	if (!(key[0] && key[1] && key[2] && key[3]))
 		return;
+
+	if ( editMode )
+	{
+		key[0]->setText(_("delete"));
+		key[1]->setText(_("mark"));
+		key[2]->setText(_("rename"));
+		key[3]->setText(_(""));
+		return;
+	}
 
 	int alt=0;
 	char *sstyle=0;
@@ -331,7 +345,7 @@ void eServiceSelector::setKeyDescriptions()
 		alt = !strcmp(sstyle, "sselect_classic");
 		free(sstyle);
 	}
-	
+
 	if (alt)
 	{
 		switch (eZapMain::getInstance()->getMode())
@@ -386,7 +400,9 @@ void eServiceSelector::addBouquet(const eServiceReference &ref)
 struct renumber: public std::unary_function<const eListBoxEntryService&, void>
 {
 	int &num;
-	renumber(int &num):num(num)
+	bool invalidate;
+	renumber(int &num, bool invalidate=false)
+		:num(num), invalidate(invalidate)
 	{
 	}
 
@@ -395,7 +411,11 @@ struct renumber: public std::unary_function<const eListBoxEntryService&, void>
 		if (!s.service)
 			return 0;
 		if ( !(s.service.flags & (eServiceReference::isDirectory)) )
-	 		s.num = ++num;
+		{
+			s.num = ++num;
+			s.invalidate();
+		}
+
 		return 0;
 	}
 };
@@ -479,6 +499,15 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	else */
 		eListBoxEntryService::maxNumSize=45;
 
+	services->endAtomic();
+}
+
+void eServiceSelector::updateNumbers()
+{
+	int num=0;
+	services->beginAtomic();
+	services->forEachEntry( renumber(num, true) );
+	services->invalidateContent();
 	services->endAtomic();
 }
 
@@ -719,6 +748,9 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 
 		if (movemode)
 		{
+			const std::set<eString> &styles =
+				eActionMapList::getInstance()->getCurrentStyles();
+
 			if (eListBoxEntryService::selectedToMove)
 			{
 				eListBoxEntryService *next=services->getNext();
@@ -729,6 +761,8 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 				actualize();
 				selectService(ref);
 				services->endAtomic();
+				if ( styles.find("sselect_edit") != styles.end() )
+					eZapMain::getInstance()->toggleMoveMode(this);
 				return;
 			}
 			else
@@ -980,7 +1014,11 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 						setFocus( services );
 			}
 			else if (event.action == &i_serviceSelectorActions->showMenu && focus != bouquets )
+			{
+				hide();
 				/*emit*/ showMenu(this);
+				show();
+			}
 			else if (event.action == &i_serviceSelectorActions->toggleRoot && !movemode )
 				/*emit*/ rotateRoot();
 			else if (event.action == &i_serviceSelectorActions->addService && !movemode && !editMode)
@@ -1034,6 +1072,35 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				if (editMode)
 					eZapMain::getInstance()->toggleEditMode(this);
 				break;
+			}
+			else if ( event.action == &i_serviceSelectorActions->markPressed )
+			{
+				if ( !services->getCurrent() || services->getCurrent()->flags & eListBoxEntryService::flagIsReturn )
+					break;
+				if (path.current().type == eServicePlaylistHandler::ID)
+				{
+					if ( movemode )
+					{
+						eZapMain::getInstance()->toggleMoveMode(this);
+						updateNumbers();
+					}
+					else
+					{
+						eZapMain::getInstance()->toggleMoveMode(this);
+						serviceSelected( services->getCurrent() );
+					}
+				}
+			}
+			else if ( event.action == &i_serviceSelectorActions->deletePressed )
+				/*emit*/ deletePressed( this );
+			else if ( event.action == &i_serviceSelectorActions->renamePressed )
+			{
+				hide();
+				if ( selected.type == eServicePlaylistHandler::ID )
+					/*emit*/ renameBouquet( this );
+				else
+					/*emit*/ renameService( this );
+				show();
 			}
 			else
 				break;
@@ -1257,7 +1324,7 @@ void eServiceSelector::setStyle(int newStyle, bool force)
 		if ( services->isVisible() )
 			setFocus(services);
 		setKeyDescriptions();
-	}
+ }
 	ci->show();
 }
 
@@ -1318,6 +1385,9 @@ eServiceSelector::eServiceSelector()
 	addActionMap(&i_numberActions->map);
 
 	setHelpID(33);
+	addActionToHelpList(&i_serviceSelectorActions->deletePressed);
+	addActionToHelpList(&i_serviceSelectorActions->markPressed);
+	addActionToHelpList(&i_serviceSelectorActions->renamePressed);
 	addActionToHelpList(&i_serviceSelectorActions->showAll);
 	addActionToHelpList(&i_serviceSelectorActions->showSatellites);
 	addActionToHelpList(&i_serviceSelectorActions->showProvider);
@@ -1350,7 +1420,6 @@ eServiceSelector::eServiceSelector()
 
 eServiceSelector::~eServiceSelector()
 {
-	eDebug("~eServiceSelector");
 }
 
 void eServiceSelector::enterDirectory(const eServiceReference &ref)
@@ -1478,6 +1547,31 @@ void eServiceSelector::setPath(const eServicePath &newpath, const eServiceRefere
 		selectService(select);
 		services->endAtomic();
 	}
+}
+
+void eServiceSelector::removeCurrent(bool selNext)
+{
+	services->beginAtomic();
+	eListBoxEntryService *cur = services->getCurrent();
+	if ( !cur )
+		return;
+	if ( selNext )
+		services->goNext();
+	else
+		services->goPrev();
+	services->remove( cur, true );
+	services->endAtomic();
+}
+
+void eServiceSelector::invalidateCurrent( eServiceReference ref )
+{
+	eListBoxEntryService *cur = services->getCurrent();
+	if ( !cur )
+		return;
+	if ( ref )
+		cur->service = ref;
+	cur->invalidate();
+	services->invalidateCurrent();
 }
 
 int eServiceSelector::toggleMoveMode()

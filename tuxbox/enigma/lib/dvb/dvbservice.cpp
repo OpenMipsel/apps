@@ -643,14 +643,8 @@ void eDVBServiceController::scanPMT()
 	// AC3 DBOX2 Workaround... buggy drivers...
 	if ( eDVB::getInstance()->getmID() < 5 && ac3_audio && ( sac3default || (ac3pid != -1) ) )
 	{
-		audiopid = ac3pid;
-		audio = ac3_audio;
-
-		if ( audio && audiopid != audio->elementary_PID )
-		{
-			setPID(audio);
-			setDecoder();
-		}
+		setPID(ac3_audio);
+		setDecoder();
 	}
 
 	pmt->unlock();

@@ -18,7 +18,6 @@ class eLNBSelector: public eListBoxWindow<eListBoxEntryText>
 class eZapScan: public eListBoxWindow<eListBoxEntryMenu>
 {
 private:
-	void sel_close();
 	void sel_scan();
 	void sel_bouquet();
 	void sel_satconfig();

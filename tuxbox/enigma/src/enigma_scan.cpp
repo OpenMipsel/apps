@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.17 2003/06/26 21:33:17 ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.18 2003/07/03 20:32:21 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -26,6 +26,7 @@
 #include <rotorconfig.h>
 #include <scan.h>
 #include <tpeditwindow.h>
+#include <enigma_bouquet.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gui/ewindow.h>
@@ -35,29 +36,25 @@
 #include <lib/base/i18n.h>
 
 eZapScan::eZapScan()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Channels"), 7, 300, true)
+	:eListBoxWindow<eListBoxEntryMenu>(_("Channels"), 9, 300, true)
 {
-	move(ePoint(150, 136));
-	CONNECT((new eListBoxEntryMenu(&list, _("back"), _("back to main menu")))->selected, eZapScan::sel_close);
+	move(ePoint(180, 100));
+	CONNECT((new eListBoxEntryMenu(&list, _("back"), _("back to main menu")))->selected, eWidget::accept );
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-	CONNECT((new eListBoxEntryMenu(&list, _("Transponder scan"), _("goto transponder scan")))->selected, eZapScan::sel_scan);	
+	CONNECT((new eListBoxEntryMenu(&list, _("Transponder scan"), _("goto transponder scan")))->selected, eZapScan::sel_scan);
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )  // only when a sat box is avail we shows a satellite config
 	{
 		CONNECT((new eListBoxEntryMenu(&list, _("Transponders..."), _("goto transponder edit dialog")))->selected, eZapScan::sel_tpeditdlg);
 		CONNECT((new eListBoxEntryMenu(&list, _("Satellites..."), _("goto satellite config")))->selected, eZapScan::sel_satconfig);
 		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup..."), _("goto Motor Setup")))->selected, eZapScan::sel_rotorConfig);
 	}
-	
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	CONNECT((new eListBoxEntryMenu(&list, _("Bouquets..."), _("open Bouquet Setup")))->selected, eZapScan::sel_bouquet);
 //	CONNECT((new eListBoxEntryMenu(&list, _("SID...")))->selected, eZapScan::sel_bouquet);
 }
 
 eZapScan::~eZapScan()
 {
-}
-
-void eZapScan::sel_close()
-{
-	close(0);
 }
 
 void eZapScan::sel_scan()
@@ -74,7 +71,7 @@ void eZapScan::sel_scan()
 
 void eZapScan::sel_bouquet()
 {
-	FILE *f=fopen("/scheissteil.sdx", "rt");
+/*	FILE *f=fopen("/scheissteil.sdx", "rt");
 
 	int parsed=0, error=0;
 	if (f)
@@ -93,7 +90,16 @@ void eZapScan::sel_bouquet()
 		}
 		eDebug("parsed %d lines ok, %d errornous.", parsed, error);
 		fclose(f);
-	}
+	}*/
+	hide();
+	eZapBouquetSetup s;
+#ifndef DISABLE_LCD
+	s.setLCD(LCDTitle, LCDElement);
+#endif
+	s.show();
+	s.exec();
+	s.hide();
+	show();
 }
 
 void eZapScan::sel_satconfig()
