@@ -74,7 +74,12 @@ void eZapLCDMain::volumeUpdate(int vol)
 
 void eZapLCDMain::setServiceName(eString name)
 {
-	static char stropen[3] = { 0xc2, 0x86, 0x00 };
+	static char strfilter[4] = { 0xC2, 0x87, 0x86, 0x00 };
+	// filter short name brakets...
+	for (eString::iterator it(name.begin()); it != name.end();)
+		strchr( strfilter, *it ) ? it = name.erase(it) : it++;
+
+/*	static char stropen[3] = { 0xc2, 0x86, 0x00 };
 	static char strclose[3] = { 0xc2, 0x87, 0x00 };
 	unsigned int open=eString::npos-1;
 	eString shortname;
@@ -87,7 +92,7 @@ void eZapLCDMain::setServiceName(eString name)
 	}
 	if (shortname)
 		ServiceName->setText( shortname );
-	else
+	else*/
 		ServiceName->setText(name);
 }
 

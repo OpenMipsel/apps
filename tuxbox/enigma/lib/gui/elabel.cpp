@@ -22,6 +22,12 @@ eLabel::~eLabel()
 	}
 }
 
+void eLabel::setPixmapPosition( const ePoint &p )
+{
+	pixmap_position = p;
+	invalidate();
+}
+
 void eLabel::validate( const eSize* s )
 {
 	if (!para)

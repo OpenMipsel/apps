@@ -51,7 +51,7 @@ static eString getEPGTitle()
 
 
 ENgrab::ENgrab()
-	:sd(0)
+	:sd(0), timeout(eApp)
 {
 }
 
@@ -61,8 +61,6 @@ ENgrab::~ENgrab()
  
 eString ENgrab::startxml()
 {
- eDebug("Start xml wird erstellt");
-
 	eString xmlstart;
 
 	xmlstart+="<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n";
@@ -86,7 +84,6 @@ eString ENgrab::startxml()
 	xmlstartf.open(Name0,ios::out);
 	xmlstartf<<xmlstart<<endl;
 	xmlstartf.close();
-	eDebug("Start xml wird abgespeichert");
 #endif
 
 	return xmlstart;
@@ -94,8 +91,6 @@ eString ENgrab::startxml()
 
 eString ENgrab::stopxml()
 {
-	eDebug("Stop xml wird erstellt");
-
 	eString xmlstop;
 
 	xmlstop+="<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n";
@@ -118,36 +113,46 @@ eString ENgrab::stopxml()
 	xmlstopf.open(Name0,ios::out);
 	xmlstopf<<xmlstop<<endl;
 	xmlstopf.close();
-	eDebug("Stop xml wird abgespeichert");
 #endif
 	return xmlstop;
 }
 
 void ENgrab::sendstart()
 {
+	eDebug("ngrab sendstart requested");
 	sendStr = startxml();
 	sending();
 }
 
 void ENgrab::sendstop()
 {
+	eDebug("ngrab sendstop requested");
 	sendStr = stopxml();
 	sending();
 }
 
 void ENgrab::connected()
 {
+	eDebug("connection to ngrab established");
 	sd->writeBlock(sendStr.c_str(), sendStr.length());	
 }
 
 void ENgrab::dataWritten( int bytes )
 {
+	eDebug("all data to ngrab written...close connection");
 	if ( !sd->bytesToWrite() )
 		sd->close();
 }
 
+void ENgrab::connectionTimeouted()
+{
+	eDebug("could not connect to ngrab server...connection timeout");
+	connectionClosed();
+}
+
 void ENgrab::connectionClosed()
 {
+	eDebug("ngrab connection closed");
 	delete sd;
 	delete this;
 }
@@ -166,10 +171,13 @@ void ENgrab::sending()
 
 	if (!sd)
 	{
+		timeout.start(120000,true); // connection timeout
+		CONNECT( timeout.timeout, ENgrab::connectionTimeouted );
 		sd=new eSocket(eApp);
 		CONNECT( sd->connected_, ENgrab::connected );
 		CONNECT( sd->connectionClosed_, ENgrab::connectionClosed );
 		CONNECT( sd->bytesWritten_, ENgrab::dataWritten );
+		eDebug("connect to ngrab server at %s:%d", hostname.c_str(), port);
 		sd->connectToHost(hostname, port);
 	}
 }

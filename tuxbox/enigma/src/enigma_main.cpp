@@ -7,6 +7,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/vfs.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 
@@ -1340,15 +1341,18 @@ void eZapMain::showServiceSelector(int dir, int selcurrent)
 	if (*service == eServiceInterface::getInstance()->service)
 		return;
 
-	getServiceSelectorPath(modeLast[mode][0]);
-
-	if (eZap::getInstance()->getServiceSelector()->getPath().current() != playlistref)
+	if ( handleState() )
 	{
-		if (!entered_playlistmode)
-			playlistmode=0;
-		playService(*service, playlistmode?psAdd:0);
-	} else
-		playService(*service, psDontAdd);
+		getServiceSelectorPath(modeLast[mode][0]);
+
+		if (eZap::getInstance()->getServiceSelector()->getPath().current() != playlistref)
+		{
+			if (!entered_playlistmode)
+				playlistmode=0;
+			playService(*service, playlistmode?psAdd:0);
+		} else
+			playService(*service, psDontAdd);
+	}
 }
 
 void eZapMain::nextService(int add)
@@ -1576,7 +1580,16 @@ void eZapMain::record()
 		recordDVR(1, 1);
 }
 
-extern int freeDiskspace(int dev, eString mp="");
+int freeRecordSpace()
+{
+	struct statfs s;
+	int free;
+	if (statfs(MOVIEDIR, &s)<0)
+		free=-1;
+	else
+		free=s.f_bfree/1000*s.f_bsize/1000;
+	return free;
+}
 
 int eZapMain::recordDVR(int onoff, int user, int event_id)
 {
@@ -1702,40 +1715,25 @@ int eZapMain::recordDVR(int onoff, int user, int event_id)
 			state |= (stateRecording|recDVR);
 			recstatus->show();
 
-// DETECT HARDDISC
-			hddDev=-1;
-			for (int host=0; host<1; host++)
+// DETECT HARDDISC or NFS mount
+			FILE *f=fopen("/proc/mounts", "r");
+			char line[1024];
+			int ok=0;
+			if (!f)
+				return -3;
+			while (fgets(line, 1024, f))
 			{
-				for (int bus=0; bus<1; bus++)
+				if ( (strstr(line, "/dev/ide/host") || strstr(line, "nfs rw")) &&
+					strstr(line, "/hdd") )
 				{
-					for (int target=0; target<1; target++)
-					{
-						int num=target+bus*2+host*4;
-
-						int c='a'+num;
-
-						char line[1024];
-						int ok=1;
-						FILE *f=fopen(eString().sprintf("/proc/ide/hd%c/media", c).c_str(), "r");
-						if (!f)
-							continue;
-						if ((!fgets(line, 1024, f)) || strcmp(line, "disk\n"))
-							ok=0;
-						fclose(f);
-
-						if (ok)
-						{
-							if ( freeDiskspace(num, "/hdd" ) != -1 )
-							{
-								hddDev = num;
-								bus=host=target=0; // found... leave all for loops...
-								DVRSpaceLeft->show();
-							}
-						}
-					}
+					ok=1;
+					break;
 				}
 			}
-			recStatusBlink.start(500, 1);
+			if ( ok )
+				recStatusBlink.start(500, 1);
+			else
+				return -3;
 		}
 		return 0;
 	}
@@ -2546,7 +2544,7 @@ void eZapMain::blinkRecord()
 			{
 				static int cnt=0;
 				static int swp=0;
-				int fds=freeDiskspace( hddDev, "/hdd" );
+				int fds=freeRecordSpace();
 				if (!(cnt++ % 7))
 					swp^=1;
 				if (swp)
@@ -3574,17 +3572,14 @@ void eZapMain::showBouquetList(int last)
 
 void eZapMain::showDVRFunctions(int show)
 {
-	eDebug("show = %d", show);
 	dvrfunctions=show;
 
 	if (dvrfunctions)
 	{
-		eDebug("show DVRFunctions");
 		nonDVRfunctions->hide();
 		dvrFunctions->show();
 	} else
 	{
-		eDebug("hide DVRFunctions");
 		dvrFunctions->hide();
 		nonDVRfunctions->show();
 	}

@@ -31,7 +31,7 @@ ENgrabSetup::ENgrabSetup():
 	if ( eConfig::getInstance()->getKey("/elitedvb/network/nserver", sinet_address.s_addr) )
 		sinet_address.s_addr = 0xC0A80028; // 192.168.0.40
 	if ( eConfig::getInstance()->getKey("/elitedvb/network/nservport", nsrvport ) )
-		nsrvport = 40;	
+		nsrvport = 4000;
 
 	eLabel *l=new eLabel(this);
 	l->setText("Srv IP:");
@@ -101,11 +101,11 @@ void ENgrabSetup::okPressed()
 	eNumber::pack(sinet_address.s_addr, einet_address);
 
 	nsrvport = srvport->getNumber();
-	
+
+	eDebug("write ip = %04x, port = %d", sinet_address.s_addr, nsrvport );
 	eConfig::getInstance()->setKey("/elitedvb/network/nserver", sinet_address.s_addr );
 	
 	eConfig::getInstance()->setKey("/elitedvb/network/nservport", nsrvport);
-		nsrvport=4000;
 
 	close(0);
 }

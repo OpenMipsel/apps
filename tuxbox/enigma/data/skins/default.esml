@@ -70,6 +70,8 @@
 	</fontalias>
 
 	<images basepath="" target="fb">
+		<img name="arrow_up" src="arrow_up.png"/>
+		<img name="arrow_down" src="arrow_down.png"/>
 		<img name="eCheckbox.checked" src="checked.png" />
 		<img name="eCheckbox.unchecked" src="unchecked.png" />
 		<img name="eCheckboxLCD.checked" src="checked_lcd.png" nomerge="yes" />
@@ -621,9 +623,10 @@
 			<eLabel name="bus" position="160:70" size="e:30" />
 			<eLabel text="status:" position="10:110" size="70:30" />
 			<eLabel name="status" position="80:110" size="e:30" />
-			<eButton name="close" text="close" position="10:170" size="170:40" loadDeco="" helptext="close harddisk menu" />
-			<eButton name="format" text="format" position="190:170" size="170:40" loadDeco="" helptext="initialize the disk for use with the dreambox" shortcut="red" />
-			<eButton name="check" text="check" position="370:170" size="170:40" loadDeco="" helptext="do a filesystem check" shortcut="yellow" />
+			<eButton name="format" text="format" position="10:170" size="225:40" loadDeco="" helptext="initialize the disk for use with the dreambox" shortcut="red" />
+			<eButton name="check" text="check" position="245:170" size="225:40" loadDeco="" helptext="do a filesystem check" shortcut="yellow" />
+			<eButton name="ext" position="480:170" size="60:40" loadDeco="" helptext="show extended configuration" alphatest="on" />
+			<eCombobox name="fs" position="e-210:220" size="e-10:35" loadDeco="" helptext="select filsystem to format" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eHarddiskMenu>
 	</object>

@@ -335,12 +335,7 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	iface->leaveDirectory(ref);	// we have a copy.
 
 	if (ref.flags & eServiceReference::shouldSort)
-	{
-		eDebug("sort");
 		services->sort();
-	}
-	else
-		eDebug("not sort");
 
 	if (serviceentryflags & eListBoxEntryService::flagOwnNumber)
 	{
@@ -1132,10 +1127,7 @@ int eServiceSelector::toggleMoveMode()
 		eListBoxEntryService::selectedToMove=0;
 		services->setMoveMode(0);
 		if ( goUpEntry )
-		{
 			services->append( goUpEntry, true );
-			services->sort();
-		}
 	}
 	else if ( goUpEntry )
 		services->remove(goUpEntry, true);

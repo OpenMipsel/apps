@@ -13,8 +13,10 @@ class ENgrab: public Object
 	void sending();
 	void connected();
 	void connectionClosed();
+	void connectionTimeouted();
 	void dataWritten( int );
 	eSocket *sd;
+	eTimer timeout;
 	ENgrab();
 	~ENgrab();
 public:

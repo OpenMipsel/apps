@@ -901,12 +901,6 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 
 	fillTimerList();
 
-	if (e)
-	{
-		selectEvent(e);
-		setFocus( byear );
-	}
-
 	addActionMap( &i_TimerViewActions->map );
 	
 	time_t tmp = time(0)+eDVB::getInstance()->time_difference;
@@ -928,12 +922,18 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 	if(eDVB::getInstance()->getInfo("mID") != "06")
 	{
 		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
-//	new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );  
 		new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
+//	new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );  
+	}
+
+	if (e)
+	{
+		selectEvent(e);
+		setFocus( byear );
 	}
 
 	if ( events->getCount() )
-		selChanged( events->getCurrent() );
+  selChanged( events->getCurrent() );
 	else
 		selChanged(0);
 }
@@ -1070,7 +1070,7 @@ void eTimerView::selChanged( eListBoxEntryTimer *entry )
 		time_t tmp = entry->entry->time_begin + entry->entry->duration;
 		endTime = *localtime( &tmp );
 		updateDateTime( beginTime, endTime );
-		type->setCurrent( (void*) ( entry->entry->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::recVCR) ) );
+		type->setCurrent( (void*) ( entry->entry->type & (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::SwitchTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::recVCR|ePlaylistEntry::recNgrab ) ) );
 		eService *service = eServiceInterface::getInstance()->addRef( entry->entry->service );
 		if (service)
 		{
@@ -1086,10 +1086,12 @@ void eTimerView::selChanged( eListBoxEntryTimer *entry )
 		time_t now = time(0)+eDVB::getInstance()->time_difference;
 		tm tmp = *localtime( &now );
 		updateDateTime( tmp, tmp );
-    if (eDVB::getInstance()->getInfo("mID") != "06" )
+		if (eDVB::getInstance()->getInfo("mID") == "06" )
+			type->setCurrent( (void*)ePlaylistEntry::SwitchTimerEntry );
+		else if (eDVB::getInstance()->getInfo("mID") == "05" )
 			type->setCurrent( (void*)(ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 		else
-			type->setCurrent( (void*)ePlaylistEntry::SwitchTimerEntry );
+			type->setCurrent( (void*)(ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
 
 		eServiceReference ref = eServiceInterface::getInstance()->service;
 

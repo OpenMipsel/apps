@@ -317,9 +317,10 @@ void eDVBServiceController::EITready(int error)
 					if (d->Tag()==DESCR_LINKAGE)
 					{
 						LinkageDescriptor *ld=(LinkageDescriptor*)*d;
+						//eDebug("linkage descriptor avail.. type = %d", ld->linkage_type );
 						if (ld->linkage_type!=0xB0)
 							continue;
-						eDebug("Linkage found");
+						//eDebug("Linkage found");
 						goto bla;
 					}
 			}
