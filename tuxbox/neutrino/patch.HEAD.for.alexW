@@ -1,19 +1,36 @@
+diff -Naur apps/tuxbox/neutrino/daemons/controld/controld.cpp apps/tuxbox/neutrino.rel_alexW/daemons/controld/controld.cpp
+--- apps/tuxbox/neutrino/daemons/controld/controld.cpp	Wed Mar  5 20:28:12 2003
++++ apps/tuxbox/neutrino.rel_alexW/daemons/controld/controld.cpp	Wed Mar  5 20:41:35 2003
+@@ -21,7 +21,11 @@
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
+-#define USE_LIBTUXBOX 1
++/* latest alexW doesn't use libtuxbox
++ *
++ * #define USE_LIBTUXBOX 1
++ *
++ */
+ 
+ #include <config.h>
+ 
 diff -Naur apps/tuxbox/neutrino/src/driver/rcinput.cpp apps/tuxbox/neutrino.rel_alexW/src/driver/rcinput.cpp
---- apps/tuxbox/neutrino/src/driver/rcinput.cpp	2003-02-20 18:01:56.000000000 +0100
-+++ apps/tuxbox/neutrino.rel_alexW/src/driver/rcinput.cpp	2003-02-20 18:02:35.000000000 +0100
-@@ -59,6 +59,8 @@
+--- apps/tuxbox/neutrino/src/driver/rcinput.cpp	Tue Mar  4 17:03:09 2003
++++ apps/tuxbox/neutrino.rel_alexW/src/driver/rcinput.cpp	Wed Mar  5 20:42:59 2003
+@@ -59,6 +59,9 @@
  #include <global.h>
  #include <neutrino.h>
  
++/* alexW images are based on the old API: */
 +#define OLD_RC_API 1
 +
  #ifdef OLD_RC_API
  #define RC_EVENT_DEVICE "/dev/dbox/rc0"
  #define RC_standby_release (KEY_MAX + 1)
 diff -Naur apps/tuxbox/neutrino/src/gui/gamelist.cpp apps/tuxbox/neutrino.rel_alexW/src/gui/gamelist.cpp
---- apps/tuxbox/neutrino/src/gui/gamelist.cpp	2003-02-20 12:20:07.000000000 +0100
-+++ apps/tuxbox/neutrino.rel_alexW/src/gui/gamelist.cpp	2003-02-20 12:22:27.000000000 +0100
-@@ -47,9 +47,9 @@
+--- apps/tuxbox/neutrino/src/gui/gamelist.cpp	Tue Mar  4 21:09:35 2003
++++ apps/tuxbox/neutrino.rel_alexW/src/gui/gamelist.cpp	Wed Mar  5 20:42:03 2003
+@@ -47,9 +47,8 @@
  
  #include "gamelist.h"
  
@@ -22,7 +39,6 @@ diff -Naur apps/tuxbox/neutrino/src/gui/gamelist.cpp apps/tuxbox/neutrino.rel_al
 - */
 +/* for alexW images with old drivers: */
 +#define USE_VBI_INTERFACE 1
-+/* */
  
  #ifdef USE_VBI_INTERFACE
   #define AVIA_VBI_START_VTXT	1
