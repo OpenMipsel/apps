@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.17 2003/03/27 10:00:58 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.18 2003/03/27 11:04:52 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -108,6 +108,7 @@ tallchans allchans;             //  tallchans defined in "bouquets.h"
 std::map <uint32_t, transponder>transponders;
 pthread_t scan_thread;
 extern int found_transponders;
+extern int processed_transponders;
 extern int found_channels;
 extern short curr_sat;
 extern short scan_runs;
@@ -394,10 +395,6 @@ void unsetRecordMode(void)
 	eventServer->sendEvent(CZapitClient::EVT_RECORDMODE_DEACTIVATED, CEventServer::INITID_ZAPIT );
 }
 
-/*
- * return 0 on success
- * return -1 otherwise
- */
 int prepare_channels(void)
 {
 	// for the case this function is NOT called for the first time (by main())
@@ -406,14 +403,11 @@ int prepare_channels(void)
 	transponders.clear();
 	bouquetManager->clearAll();
 	allchans.clear();  // <- this invalidates all bouquets, too!
-
 	if (LoadServices() < 0)
 		return -1;
 
 	INFO("LoadServices: success");
-
 	bouquetManager->loadBouquets();
-
 	return 0;
 }
 
@@ -424,11 +418,11 @@ void parseScanInputXml(void)
 	case FE_QPSK:
 		scanInputParser = parseXmlFile(string(SATELLITES_XML));
 		break;
-		
+
 	case FE_QAM:
 		scanInputParser = parseXmlFile(string(CABLES_XML));
 		break;
-		
+
 	default:
 		WARN("Unknown type %d", frontend->getInfo()->type);
 		return;
@@ -443,7 +437,6 @@ int start_scan(void)
 {
 	if (!scanInputParser) {
 		parseScanInputXml();
-
 		if (!scanInputParser) {
 			WARN("scan not configured");
 			return -1;
@@ -453,16 +446,13 @@ int start_scan(void)
 	transponders.clear();
 	bouquetManager->clearAll();
 	allchans.clear();  // <- this invalidates all bouquets, too!
+	stopPlayBack();
 
 	found_transponders = 0;
 	found_channels = 0;
-
-	stopPlayBack();
-
 	scan_runs = 1;
 
-	if (pthread_create(&scan_thread, 0, start_scanthread, NULL))
-	{
+	if (pthread_create(&scan_thread, 0, start_scanthread, NULL)) {
 		ERROR("pthread_create");
 		scan_runs = 0;
 		return -1;
@@ -492,7 +482,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		zapTo(msgZapto.bouquet, msgZapto.channel);
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_ZAPTO_CHANNELNR:
 	{
 		CZapitMessages::commandZaptoChannelNr msgZaptoChannelNr;
@@ -520,7 +510,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		zapTo_ChannelID(msgZaptoServiceID.channel_id, (rmsg.cmd == CZapitMessages::CMD_ZAPTO_SUBSERVICEID_NOWAIT));
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_GET_LAST_CHANNEL:
 	{
 		CZapitClient::responseGetLastChannel responseGetLastChannel;
@@ -528,7 +518,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		CBasicServer::send_data(connfd, &responseGetLastChannel, sizeof(responseGetLastChannel)); // bouquet & channel number are already starting at 0!
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_SET_AUDIOCHAN:
 	{
 		CZapitMessages::commandSetAudioChannel msgSetAudioChannel;
@@ -536,7 +526,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		change_audio_pid(msgSetAudioChannel.channel);
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_SET_MODE:
 	{
 		CZapitMessages::commandSetMode msgSetMode;
@@ -547,7 +537,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 			setRadioMode();
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_GET_MODE:
 	{
 		CZapitMessages::responseGetMode msgGetMode;
@@ -555,7 +545,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		CBasicServer::send_data(connfd, &msgGetMode, sizeof(msgGetMode));
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_GET_CURRENT_SERVICEID:
 	{
 		CZapitMessages::responseGetCurrentServiceID msgCurrentSID;
@@ -563,7 +553,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		CBasicServer::send_data(connfd, &msgCurrentSID, sizeof(msgCurrentSID));
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_GET_CURRENT_SERVICEINFO:
 	{
 		CZapitClient::CCurrentServiceInfo msgCurrentServiceInfo;
@@ -583,7 +573,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		CBasicServer::send_data(connfd, &msgCurrentServiceInfo, sizeof(msgCurrentServiceInfo));
 		break;
 	}
-
+	
 	case CZapitMessages::CMD_GET_DELIVERY_SYSTEM:
 	{
 		CZapitMessages::responseDeliverySystem response;
@@ -665,6 +655,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		CZapitMessages::responseIsScanReady msgResponseIsScanReady;
 		msgResponseIsScanReady.satellite = curr_sat;
 		msgResponseIsScanReady.transponder = found_transponders;
+		msgResponseIsScanReady.processed_transponder = processed_transponders;
 		msgResponseIsScanReady.services = found_channels;
 		if (scan_runs > 0)
 			msgResponseIsScanReady.scanReady = false;
@@ -1259,9 +1250,9 @@ int startPlayBack(CZapitChannel *thisChannel)
 	return 0;
 }
 
-int stopPlayBack()
+int stopPlayBack(void)
 {
-	if (playbackStopForced == true)
+	if (playbackStopForced)
 		return -1;
 
         if (videoDemux)
@@ -1285,8 +1276,7 @@ int stopPlayBack()
 
 void enterStandby(void)
 {
-	if (standby)
-	{
+	if (standby) {
 		sleep(1);
 		return;
 	}
@@ -1294,7 +1284,6 @@ void enterStandby(void)
 	standby = true;
 
 	saveSettings(true);
-
 	stopPlayBack();
 
         if (audioDemux) {
@@ -1324,17 +1313,14 @@ void enterStandby(void)
 		delete audioDecoder;
 		audioDecoder = NULL;
 	}
-
 	if (cam) {
 		delete cam;
 		cam = NULL;
 	}
-
 	if (frontend) {
 		delete frontend;
 		frontend = NULL;
 	}
-
 	if (videoDecoder) {
 		delete videoDecoder;
 		videoDecoder = NULL;
@@ -1347,15 +1333,12 @@ void leaveStandby(void)
 		audioDecoder = new CAudio();
 		audioDecoder->unmute();
 	}
-
 	if (!cam) {
 		cam = new CCam();
 	}
-
 	if (!frontend) {
 		frontend = new CFrontend();
 	}
-
 	if (!videoDecoder) {
 		videoDecoder = new CVideo();
 	}
@@ -1388,21 +1371,19 @@ void leaveStandby(void)
 
 unsigned zapTo(const unsigned int bouquet, const unsigned int channel)
 {
-	if (bouquet >= bouquetManager->Bouquets.size())
-	{
+	if (bouquet >= bouquetManager->Bouquets.size()) {
 		WARN("Invalid bouquet %d", bouquet);
 		return CZapitClient::ZAP_INVALID_PARAM;
 	}
 
-	ChannelList* channels;
+	ChannelList *channels;
 
 	if (currentMode & RADIO_MODE)
 		channels = &(bouquetManager->Bouquets[bouquet]->radioChannels);
 	else
 		channels = &(bouquetManager->Bouquets[bouquet]->tvChannels);
 
-	if (channel >= channels->size())
-	{
+	if (channel >= channels->size()) {
 		WARN("Invalid channel %d in bouquet %d", channel, bouquet);
 		return CZapitClient::ZAP_INVALID_PARAM;
 	}
@@ -1446,15 +1427,16 @@ unsigned zapTo(const unsigned int channel)
 		return 0;
 }
 
-void signal_handler (int signum)
+void signal_handler(int signum)
 {
 	switch (signum) {
 	case SIGUSR1:
 		debug = !debug;
 		break;
 	default:
-		enterStandby();
-		exit(0);
+                CZapitClient zapit;
+                zapit.shutdown();
+                break;
 	}
 }
 
@@ -1462,7 +1444,7 @@ int main(int argc, char **argv)
 {
 	CZapitClient::responseGetLastChannel test_lastchannel;
 
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.17 2003/03/27 10:00:58 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.18 2003/03/27 11:04:52 thegoodguy Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
@@ -1559,9 +1541,6 @@ int main(int argc, char **argv)
 	{
 		videoDecoder->setBlank(true);
 	}
-
-	/* initialize cam */
-	cam = new CCam();
 
 	signal(SIGHUP, signal_handler);
 	signal(SIGTERM, signal_handler);
