@@ -37,6 +37,8 @@ tuxtxt/Makefile
 tuxtxt/font/Makefile
 enigma/Makefile
 enigma/demo/Makefile
+enigma/ngrabstart/Makefile
+enigma/ngrabstop/Makefile
 tuxbox-plugins.pc
 ])
 
