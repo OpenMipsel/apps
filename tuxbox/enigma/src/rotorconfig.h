@@ -19,8 +19,8 @@ class RotorConfig: public eWindow, public existNetworks
 	friend class eLNBSetup;
 	eLNB *lnb;
 	eListBox<eListBoxEntryText> *positions;
-	eLabel *lLatitude, *lLongitude, *lOrbitalPosition, *lStoredRotorNo, *lDirection, *lDegPerSec;
-	eNumber *orbital_position, *number, *Latitude, *Longitude, *DegPerSec;
+	eLabel *lLatitude, *lLongitude, *lOrbitalPosition, *lStoredRotorNo, *lDirection, *lDegPerSec, *lDeltaA;
+	eNumber *orbital_position, *number, *Latitude, *Longitude, *DegPerSec, *DeltaA;
 	eButton *add, *remove, *save, *cancel;
 	eCheckbox *useGotoXX, *useRotorInPower, *useEastFix;
 	eComboBox *direction, *LaDirection, *LoDirection;
