@@ -46,7 +46,7 @@ class eFrontend: public Object
 			uint32_t Frequency, int polarisation,
 			uint32_t SymbolRate, CodeRate FEC_inner,
 			SpectralInversion Inversion, eSatellite* sat, Modulation QAM);
-
+	Signal1<void, eTransponder*> tpChanged;
 	void timeout();
 	int RotorUseTimeout(secCmdSequence& seq, int newPos, double DegPerSec);
 	int RotorUseInputPower(secCmdSequence& seq, void *commands, int seqRepeat, int DeltaA, int newPos );

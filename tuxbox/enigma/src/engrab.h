@@ -2,25 +2,35 @@
 #define __engrab_h
 
 #include <lib/gui/listbox.h>
+#include <lib/gui/ewindow.h>
 #include <lib/socket/socket.h>
 
- class ENgrab: public eWindow
- {
-		 eListBox<eListBoxEntryMenu> lb;
-         void onBackSelected();
-         eString startxml();
-         eString stoppxml();
-        // void nsetup();
-		 void sending(eString sxml);
-		 void userxmls();
-		 void NgrabMenue();
- public:
- 		 void sendstart();
- 		 void sendstopp();
-		 ENgrab();
-         ~ENgrab();
-		 eSocket *sd;
+class ENgrab: public Object
+{
+	eString sendStr;
+	eString startxml();
+	eString stopxml();
+	void sending();
+	void connected();
+	void connectionClosed();
+	void dataWritten( int );
+	eSocket *sd;
+	ENgrab();
+	~ENgrab();
+public:
+	static ENgrab *getNew() { return new ENgrab(); }
+	void sendstart();
+	void sendstop();
+};
 
- };
+class ENgrabWnd:public eWindow
+{
+	eListBox<eListBoxEntryMenu> lb;	
+	void onBackSelected();
+	void manualStart() { ENgrab::getNew()->sendstart(); }
+	void manualStop() { ENgrab::getNew()->sendstop(); }
+public:
+	ENgrabWnd();
+};
 
 #endif

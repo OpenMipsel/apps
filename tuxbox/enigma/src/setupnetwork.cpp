@@ -13,19 +13,6 @@
 #include <lib/driver/rc.h>
 #include <lib/system/econfig.h>
 
-static void unpack(__u32 l, int *t)
-{
-	for (int i=0; i<4; i++)
-		*t++=(l>>((3-i)*8))&0xFF;
-}
-
-static void pack(__u32 &l, int *t)
-{
-	l=0;
-	for (int i=0; i<4; i++)
-		l|=(*t++)<<((3-i)*8);
-}
-
 eZapNetworkSetup::eZapNetworkSetup():
 	eWindow(0)
 {
@@ -49,7 +36,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	l->move(ePoint(10, 20));
 	l->resize(eSize(150, fd+4));
 
-	unpack(sip, de);
+	eNumber::unpack(sip, de);
 	ip=new eNumber(this, 4, 0, 255, 3, de, 0, l);
 	ip->move(ePoint(160, 20));
 	ip->resize(eSize(200, fd+10));
@@ -63,7 +50,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	l->move(ePoint(10, 60));
 	l->resize(eSize(150, fd+4));
 
-	unpack(snetmask, de);
+	eNumber::unpack(snetmask, de);
 	netmask=new eNumber(this, 4, 0, 255, 3, de, 0, l);
 	netmask->move(ePoint(160, 60));
 	netmask->resize(eSize(200, fd+10));
@@ -77,7 +64,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	l->move(ePoint(10, 100));
 	l->resize(eSize(150, fd+4));
 
-	unpack(sdns, de);
+	eNumber::unpack(sdns, de);
 	dns=new eNumber(this, 4, 0, 255, 3, de, 0, l);
 	dns->move(ePoint(160, 100));
 	dns->resize(eSize(200, fd+10));
@@ -91,7 +78,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	l->move(ePoint(10, 140));
 	l->resize(eSize(150, fd+4));
 
-	unpack(sgateway, de);
+	eNumber::unpack(sgateway, de);
 	gateway=new eNumber(this, 4, 0, 255, 3, de, 0, l);
 	gateway->move(ePoint(160, 140));
 	gateway->resize(eSize(200, fd+10));
@@ -153,10 +140,10 @@ void eZapNetworkSetup::okPressed()
 		eGateway[i]=gateway->getNumber(i);
 		eDNS[i]=dns->getNumber(i);
 	}
-	pack(sip, eIP);
-	pack(snetmask, eMask);
-	pack(sdns, eDNS);
-	pack(sgateway, eGateway);
+	eNumber::pack(sip, eIP);
+	eNumber::pack(snetmask, eMask);
+	eNumber::pack(sdns, eDNS);
+	eNumber::pack(sgateway, eGateway);
 
 	eDebug("IP: %d.%d.%d.%d, Netmask: %d.%d.%d.%d, gateway %d.%d.%d.%d, DNS: %d.%d.%d.%d",
 		eIP[0], eIP[1],  eIP[2], eIP[3],

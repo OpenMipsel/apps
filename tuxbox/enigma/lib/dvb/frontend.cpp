@@ -95,7 +95,7 @@ void eFrontend::timeout()
 	{
 		eDebug("+");
 		state=stateIdle;
-/*
+
 		if ( transponder->satellite.valid )
 		{
 			FrontendParameters front;
@@ -104,7 +104,7 @@ void eFrontend::timeout()
 			else
 			{
 				eDebug("FE_GET_FRONTEND OK");
-				eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
+/*				eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
 				if (sat)
 				{
 					eLNB *lnb = sat->getLNB();
@@ -116,9 +116,10 @@ void eFrontend::timeout()
 					}
 				}
 				transponder->satellite.fec = front.u.qpsk.FEC_inner;
-				transponder->satellite.symbol_rate = front.u.qpsk.SymbolRate;
+				transponder->satellite.symbol_rate = front.u.qpsk.SymbolRate;*/
+				transponder->satellite.inversion = front.Inversion;
 			}
-		}*/
+		}
 
 		/*emit*/ tunedIn(transponder, 0);
 	}
@@ -132,13 +133,13 @@ void eFrontend::timeout()
 		{
 			eDebug("couldn't lock. (state: %x)", Status());
 			state=stateIdle;
-			if ( transponder->satellite.inversion )
+//			if ( transponder->satellite.inversion )
 				/*emit*/ tunedIn(transponder, -ETIMEDOUT);
-			else
+/*			else
 			{
 				transponder->satellite.inversion = 1;
 				transponder->tune();
-			}
+			}*/
 		}
 }
 
@@ -950,8 +951,9 @@ int eFrontend::tune(eTransponder *trans,
 	eDebug("FE_SET_FRONTEND OK");
 	eDebug("Symbolrate = %d", SymbolRate );
 	state=stateTuning;
-	tries=30000000*2 / SymbolRate; // 1.0 second timeout
-	tries=tries<5?5:tries;
+//	tries=30000000*2 / SymbolRate; // 1.0 second timeout
+//	tries=tries<5?5:tries;
+	tries=30;
 	eDebug("tries=%d", tries);
 	timer->start(50, true);
 

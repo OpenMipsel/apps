@@ -7,6 +7,7 @@
 #include <lib/dvb/servicestructure.h>
 #include <lib/gui/emessage.h>
 #include <lib/gdi/font.h>
+#include <engrab.h>
 
 eTimerManager* eTimerManager::instance=0;
 
@@ -258,12 +259,14 @@ void eTimerManager::actionHandler()
 				{
 					eZapMain::getInstance()->recordDVR(1, 0, nextStartingEvent->event_id );
 				}
+				else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
+				{
+					eDebug("Starte Ngrab aufnahme");
+					ENgrab::getNew()->sendstart();
+				}
 				else
 				{
 					// insert lirc ( VCR start ) here
-					eDebug("Starte Ngrab aufnahme");
-					ENgrab ngrab;
-					ngrab.sendstart();
 				}
 			}
 			else
@@ -275,12 +278,13 @@ void eTimerManager::actionHandler()
 			{
 				eZapMain::getInstance()->recordDVR(0, 0);
 			}
-			else  // insert lirc ( VCR stop ) here
+			else if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
 			{
 				eDebug("Stope Ngrab aufnahme");
-				ENgrab ngrab;
-				ngrab.sendstopp();
-
+				ENgrab::getNew()->sendstop();
+			}
+			else  // insert lirc ( VCR stop ) here
+			{
 			}
 			break;
 
@@ -922,9 +926,11 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 
 	new eListBoxEntryText( *type, _("switch"), (void*) ePlaylistEntry::SwitchTimerEntry );
 	if(eDVB::getInstance()->getInfo("mID") != "06")
+	{
 		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 //	new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );  
 		new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
+	}
 
 	if ( events->getCount() )
 		selChanged( events->getCurrent() );

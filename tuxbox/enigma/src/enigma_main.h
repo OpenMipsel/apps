@@ -214,7 +214,7 @@ class eZapMain: public eWidget
 	friend class eEPGSelector;
 public:
 	enum { modeTV, modeRadio, modeFile, modeEnd };
-	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32 };
+	enum { stateSleeping=2, stateInTimerMode=4, stateRecording=8, recDVR=16, recVCR=32, recNgrab=64 };
 	enum { messageGoSleep=2, messageShutdown=3 };
 
 private:

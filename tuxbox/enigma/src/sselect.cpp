@@ -335,7 +335,12 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	iface->leaveDirectory(ref);	// we have a copy.
 
 	if (ref.flags & eServiceReference::shouldSort)
+	{
+		eDebug("sort");
 		services->sort();
+	}
+	else
+		eDebug("not sort");
 
 	if (serviceentryflags & eListBoxEntryService::flagOwnNumber)
 	{
