@@ -1974,6 +1974,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		wnd.setText(_("Add new user bouquet"));
 		wnd.show();
 		wnd.setEditText(" ");
+		wnd.setMaxChars(50);
 		int ret = wnd.exec();
 		wnd.hide();
 		show();
@@ -2018,6 +2019,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		wnd.setText(_("Rename user bouquet"));
 		wnd.show();
 		wnd.setEditText(p->service_name);
+		wnd.setMaxChars(50);		
 		int ret = wnd.exec();
 		wnd.hide();
 		show();
@@ -2092,6 +2094,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 				wnd.setText(_("Rename recorded movie"));
 				wnd.show();
 				wnd.setEditText(it->service.descr);
+				wnd.setMaxChars(50);
 				int ret = wnd.exec();
 				wnd.hide();
 				show();

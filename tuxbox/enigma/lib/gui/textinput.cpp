@@ -23,6 +23,8 @@ void eTextInputField::nextChar()
 		++curPos;
 		eLabel::invalidate();
 		drawCursor();
+		if ( curPos > text.length() )
+			text+=' ';
 	}
 	lastKey=-1;
 }
@@ -83,7 +85,7 @@ void eTextInputField::drawCursor()
 			else // we are behind the last character
 			{
 				const eRect &bbox = para->getGlyphBBox(text.length()-1);
-				rc.setLeft( bbox.right()+2 );
+				rc.setLeft( bbox.right() + ( ( curPos-text.length() ) * 10 ) + 2 );
 				rc.setWidth( 10 );
 			}
 		}
@@ -92,6 +94,7 @@ void eTextInputField::drawCursor()
 			rc.setLeft( 2 );
 			rc.setWidth( 10 );
 		}
+		rc.moveBy( (deco_selected?crect_selected.left():crect.left())+1, 0 );
 		gPainter *painter = getPainter( deco_selected?crect_selected:crect );
 		painter->clip( rc );
 		painter->setForegroundColor( getForegroundColor() );
@@ -120,6 +123,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				;
 			else if (event.action == &i_cursorActions->left && editMode )
 			{
+				nextCharTimer.stop();
 				if ( curPos > 0 )
 				{
 					--curPos;
@@ -128,10 +132,14 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 					lastKey=-1;
 				}
 			}
-			else if (event.action == &i_cursorActions->right && editMode )
+			else if (event.action == &i_cursorActions->right && editMode)
+			{
+				nextCharTimer.stop();
 				nextChar();
+			}
 			else if (event.action == &i_cursorActions->ok)
 			{
+				nextCharTimer.stop();
 				if ( editMode )
 				{
 					setHelpText(oldHelpText);
@@ -155,6 +163,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			}
 			else if ( editMode && event.action == &i_cursorActions->cancel)
 			{
+				nextCharTimer.stop();
 				editMode=false;
 				setText(oldText,false);
 				invalidate();

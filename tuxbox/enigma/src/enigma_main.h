@@ -196,6 +196,7 @@ public:
 	TextEditWindow( const char *InputFieldDescr, const char* useableChar=0 );
 	const eString& getEditText() { return input->getText(); }
 	void setEditText( const eString& str ) { input->setText( str ); }
+	void setMaxChars( int maxChars ) { input->setMaxChars( maxChars ); }
 };
 
 class UserBouquetSelector: public eListBoxWindow<eListBoxEntryText>
