@@ -449,7 +449,7 @@ class eSatellite
 	int orbital_position;
 	eString description;
 	eSwitchParameter switchParams;
-	eLNB &lnb;
+	eLNB *lnb;
 	friend class eLNB;
 	std::map<int,eSatellite*>::iterator tpiterator;
 public:
@@ -476,9 +476,14 @@ public:
 		return switchParams;
 	}	
 
-	eLNB &getLNB() const
+	eLNB *getLNB() const
 	{
 		return lnb;
+	}
+
+	void setLNB( eLNB* _lnb )
+	{
+		lnb = _lnb;
 	}
 	
 	void setOrbitalPosition(int orbital_position)
@@ -497,12 +502,12 @@ public:
 	}
 };
 
-struct eDISEqC
+struct eDiSEqC
 {
-	enum tDISEqCParam	{	AA=0, AB=1, BA=2, BB=3, USER=4 }; // DISEqC Parameter
-	enum tDISEqCMode	{	MINI=0, V1_0=1, V1_1=2, V1_2=3 }; // DISEqC Mode
-	tDISEqCParam DISEqCParam;
-	tDISEqCMode DISEqCMode;
+	enum tDiSEqCParam	{	AA=0, AB=1, BA=2, BB=3, USER=4 }; // DiSEqC Parameter
+	enum tDiSEqCMode	{	MINI=0, V1_0=1, V1_1=2, V1_2=3 }; // DiSEqC Mode
+	tDiSEqCParam DiSEqCParam;
+	tDiSEqCMode DiSEqCMode;
 };
 
 class eLNB
@@ -510,7 +515,7 @@ class eLNB
 	unsigned int lof_hi, lof_lo, lof_threshold;
 	ePtrList<eSatellite> satellites;
 	eTransponderList &tplist;
-	eDISEqC DISEqC;
+	eDiSEqC DiSEqC;
 public:
 
 	eLNB(eTransponderList &tplist): tplist(tplist)
@@ -524,7 +529,7 @@ public:
 	unsigned int getLOFHi() const { return lof_hi; }
 	unsigned int getLOFLo() const { return lof_lo; }
 	unsigned int getLOFThreshold() const { return lof_threshold; }
-	eDISEqC& getDISEqC() { return DISEqC; }	
+	eDiSEqC& getDiSEqC() { return DiSEqC; }	
 	eSatellite *addSatellite(int orbital_position);
 	void deleteSatellite(eSatellite *satellite);
 	void addSatellite( eSatellite *satellite);
