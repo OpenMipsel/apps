@@ -30,6 +30,7 @@ data/Makefile
 data/fonts/Makefile
 data/htdocs/Makefile
 data/htdocs/stylesheets/Makefile
+data/lirc/Makefile
 data/pictures/Makefile
 data/pictures/chk_stone/Makefile
 data/pictures/chk_stone/mainmenu/Makefile

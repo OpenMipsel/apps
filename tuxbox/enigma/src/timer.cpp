@@ -5,6 +5,7 @@
 
 #include <timer.h>
 #include <engrab.h>
+#include <elirc.h>
 #include <enigma_main.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -16,7 +17,6 @@
 #include <lib/gui/enumber.h>
 #include <lib/gui/combobox.h>
 #include <lib/gui/echeckbox.h>
-#include <engrab.h>
 
 static const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 static const char *monthStr[12] = { _("January"), _("February"), _("March"),
@@ -548,7 +548,16 @@ void eTimerManager::actionHandler()
 			else
 #endif // defined(DISABLE_FILE) + defined(DISABLE_NETWORK) < 2
 			{
-				// insert lirc ( VCR start ) here
+#ifndef DISABLE_LIRC
+				if (nextStartingEvent->type & ePlaylistEntry::recVCR)
+				{
+					eDebug("[eTimerManager] start VCR-Lirc-Recording");
+					ELirc::getNew()->sendstart();
+				}
+#else
+				{
+				}
+#endif			
 			}
 			break;
 
@@ -571,6 +580,11 @@ void eTimerManager::actionHandler()
 			else  // insert lirc ( VCR stop ) here
 #endif
 			{
+				if (nextStartingEvent->type & ePlaylistEntry::recVCR)
+	                        {
+        	                        eDebug("[eTimerManager] stop VCR-Lirc-Recording");
+                	                ELirc::getNew()->sendstop();
+                        	}
 			}
 			break;
 
@@ -1412,7 +1426,9 @@ void eTimerEditView::createWidgets()
 #ifndef DISABLE_NETWORK
 	new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
 #endif
-//		new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );
+#ifndef DISABLE_LIRC
+	new eListBoxEntryText( *type, _("Record VCR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recVCR) );
+#endif
 	addActionMap( &i_TimerEditActions->map );
 }
 
