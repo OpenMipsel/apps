@@ -18,6 +18,8 @@
 #include <lib/gui/combobox.h>
 #include <lib/gui/echeckbox.h>
 
+#define TIMER_LOGFILE "/var/timer.log"
+
 static const unsigned char monthdays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 /* bug fix - at localization, 
    macro the type _ ("xxxxx") for a constant does not work, 
@@ -56,16 +58,16 @@ static time_t getNextEventStartTime( time_t t, int duration, int type, bool notT
 											i*=2,
 											tmp.tm_mday++ )
 	{
-		if ( i > ePlaylistEntry::Sa )
+		if ( i > ePlaylistEntry::Sa )  // wrap around..
 			i = ePlaylistEntry::Su;
 
 		if ( type & i )
 		{
-			if ( !d ) // this is today
+			if ( !d ) // if this today ?
 			{
 				int begTimeSec = tmp2.tm_hour*3600+tmp2.tm_min*60+tmp2.tm_sec;
 				int nowTimeSec = tmp.tm_hour*3600+tmp.tm_min*60+tmp.tm_sec;
-				// but event has already ended
+
 				if ( nowTimeSec > begTimeSec+duration || notToday )
 					continue;
 			}
@@ -82,7 +84,6 @@ static time_t getNextEventStartTime( time_t t, int duration, int type, bool notT
 	return mktime(&tmp);
 }
 
-
 static eString getRight(const eString& str, char c )
 {
 	unsigned int found = str.find(c);
@@ -96,11 +97,11 @@ static eString getRight(const eString& str, char c )
 static time_t getDate()
 {
 	static time_t tmp = time(0)+eDVB::getInstance()->time_difference;
-	tm *now = localtime(&tmp);
-	now->tm_min=0;
-	now->tm_hour=0;
-	now->tm_sec=0;
-	return mktime(now);
+	tm now = *localtime(&tmp);
+	now.tm_min=0;
+	now.tm_hour=0;
+	now.tm_sec=0;
+	return mktime(&now);
 }
 
 static eString getLeft( const eString& str, char c )
@@ -134,6 +135,47 @@ static const eString& getEventDescrFromEPGCache( const eServiceReference &_ref, 
 	return descr;
 }
 
+static eString buildDayString(int type)
+{
+	eString tmp;
+	if ( type & ePlaylistEntry::isRepeating )
+	{
+		const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat") };
+		int mask = ePlaylistEntry::Su;
+		for ( int i = 0; i < 7; i++ )
+		{
+			if ( type & mask )
+			{
+				tmp+=dayStrShort[i];
+				if ( i != 2 && i != 3 && i != 4 )
+					tmp.erase( tmp.length()-1 );
+				tmp+=' ';
+			}
+			mask*=2;
+		}
+		if ( tmp )
+			tmp.erase(tmp.length()-1);
+	}
+	return tmp;
+}
+
+void eTimerManager::writeToLogfile( const char *str )
+{
+	if ( logfile && str )
+	{
+		time_t tmp = time(0)+eDVB::getInstance()->time_difference;
+		tm now = *localtime( &tmp );
+		fprintf(logfile, "%02d.%02d, %02d:%02d - %s\n", now.tm_mday, now.tm_mon+1, now.tm_hour, now.tm_min, str );
+		fflush(logfile);
+	}
+}
+
+void eTimerManager::writeToLogfile( eString str )
+{
+	if ( str.length() )
+		writeToLogfile( str.c_str() );
+}
+
 eTimerManager::eTimerManager()
 	:actionTimer(eApp), timer(eApp)
 {
@@ -149,6 +191,28 @@ eTimerManager::eTimerManager()
 	CONNECT( actionTimer.timeout, eTimerManager::actionHandler );
 	conn = CONNECT( timer.timeout, eTimerManager::waitClock );
 	waitClock();
+
+	struct stat tmp;
+	if ( stat( TIMER_LOGFILE, &tmp ) != -1 )
+	{
+		eDebug("timer logfile is bigger than 100Kbyte.. shrink to 32kByte");
+		if ( tmp.st_size > 102400 )
+			rename(TIMER_LOGFILE, "/var/timer.old");
+	}
+	logfile = fopen(TIMER_LOGFILE, "a" );
+
+	FILE *old = fopen("/var/timer.old", "r");
+	if ( old )
+	{
+		char buf[32768];
+		int rbytes=0;
+		if( ( rbytes = fread( buf, 1, 32768, old ) ) )
+			fwrite( buf, 1, rbytes, logfile );
+		fprintf(logfile,"\n");
+		fclose(old);
+		unlink("/var/timer.old");
+	}
+	writeToLogfile("Timer is comming up");
 }
 
 // called only once... at start of eTimerManager
@@ -157,6 +221,7 @@ void eTimerManager::waitClock()
 	if (eDVB::getInstance()->time_difference)
 	{
 		eDebug("[eTimerManager] timeUpdated");
+		writeToLogfile("Time is updated");
 		nextAction = setNextEvent;
 		actionTimer.start(0, true);
 	}
@@ -169,31 +234,32 @@ void eTimerManager::waitClock()
 
 void eTimerManager::loadTimerList()
 {
+	writeToLogfile("--> loadTimerList()");
 	timerlist->load(CONFIGDIR "/enigma/timer.epl");
 	if ( !(nextStartingEvent->type & ePlaylistEntry::stateRunning) )
 	{
 		nextAction = setNextEvent;
 		actionTimer.start(0,true);
 	}
+	writeToLogfile("<-- loadTimerList()");
 }
 
 void eTimerManager::saveTimerList()
 {
+	writeToLogfile("saveTimerlist()");
 	timerlist->save();
 }
 
 void eTimerManager::timeChanged()
 {
-	eDebug("timeChanged");
+	writeToLogfile("--> timeChanged()");
 	if ( nextStartingEvent != timerlist->getConstList().end()
 		&& nextStartingEvent->type & ePlaylistEntry::stateWaiting )
 	{
-		eDebug("update");
 		nextAction=setNextEvent;
 		actionTimer.start(0, true);
 	}
-	else
-		eDebug("not update");	
+	writeToLogfile("<-- timeChanged()");
 }
 
 #define WOL_PREPARE_TIME 240
@@ -202,16 +268,22 @@ void eTimerManager::timeChanged()
 
 void eTimerManager::actionHandler()
 {
+	static int calldepth=0;
 	switch( nextAction )
 	{
 		case zap:
 			eDebug("[eTimerManager] zapToChannel");
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d zap", ++calldepth));
 			if ( !(nextStartingEvent->type&ePlaylistEntry::doFinishOnly) )
+			{
+				writeToLogfile("call eZapMain::getInstance()->handleStandby()");
 				eZapMain::getInstance()->handleStandby();
+			}
 			if ( nextStartingEvent->service &&
 					eServiceInterface::getInstance()->service != nextStartingEvent->service )
 			{
 				eDebug("[eTimerManager] change to the right service");
+				writeToLogfile("must zap to new service");
 				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
 				eString save = nextStartingEvent->service.descr;
 				nextStartingEvent->service.descr = getLeft( nextStartingEvent->service.descr, '/' );
@@ -220,56 +292,75 @@ void eTimerManager::actionHandler()
 				int pLockActive = eConfig::getInstance()->pLockActive() && nextStartingEvent->service.isLocked();
 
 				if ( pLockActive ) // P Locking is active ?
+				{
+					writeToLogfile("Parentallocking is active.. disable");
 					eConfig::getInstance()->locked=false;  // then disable for zap
+				}
 
 				// switch to service
 				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psSetMode );
 
 				if ( pLockActive )  // reenable Parental locking
+				{
+					writeToLogfile("reenable parentallocking");
 					eConfig::getInstance()->locked=true;
+				}
 
 				nextStartingEvent->service.descr=save;
 			}
 			else
 			{
+				writeToLogfile("we are always on the correct service");
 				eDebug("[eTimerManager] we are always on the right service... do not change service");
 				nextAction=startCountdown;
 				actionTimer.start(0, true);
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d", calldepth--));
 			break;
 
 #ifndef DISABLE_NETWORK
 		case prepareEvent:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d prepareEvent", ++calldepth));
 			eDebug("[eTimerManager] prepareEvent");
 			if ( nextStartingEvent->type & ePlaylistEntry::recNgrab )
 			{
+				writeToLogfile("recNgrab");
 				char *serverMAC=0;
 				if ( !eConfig::getInstance()->getKey("/elitedvb/network/hwaddress", serverMAC ) )
 				{
 					if ( system( eString().sprintf("etherwake -i eth0 %s", serverMAC ).c_str() ) )
+					{
+						writeToLogfile("could not execute etherwake");
 						eDebug("[eTimerManager] could not execute etherwake");
+					}
 					else
+					{
+						writeToLogfile("Wake On Lan sent...");
 						eDebug("[eTimerManager] Wake On Lan sent to %s", serverMAC );
+					}
 					free( serverMAC );
 				}
 				long t = getSecondsToBegin();
 				t -= ZAP_BEFORE_TIME;
 				eDebug("[eTimerManager] zap in %d seconds", t );
+				writeToLogfile(eString().sprintf("zap in %d seconds",t));
 				nextAction=zap;
 				actionTimer.start( t*1000, true );
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d prepareEvent", calldepth--));
 			break;
 #endif
 
 		case startCountdown:
-			eDebug("[eTimerManager] startCountdown");
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d startCountdown", ++calldepth));
 			if ( conn.connected() )
 				conn.disconnect();
 			if ( nextStartingEvent->type & ePlaylistEntry::doFinishOnly &&
 				!nextStartingEvent->service )
-				; // don't change timer mode for sleeptimer
+				writeToLogfile("this is Sleeptimer... don't toggle TimerMode");
 			else
 			{
+				writeToLogfile("call eZapMain::getInstance()->toggleTimerMode()");
 				eZapMain::getInstance()->toggleTimerMode();
 				// now in eZapMain the RemoteControl should be handled for TimerMode...
 				// any service change stops now the Running Event and set it to userAborted
@@ -277,6 +368,7 @@ void eTimerManager::actionHandler()
 			}
 			if ( nextStartingEvent->type & ePlaylistEntry::isSmartTimer )
 			{
+				writeToLogfile("is smarttimer event");
 				conn2 = CONNECT( eDVB::getInstance()->tEIT.tableReady, eTimerManager::EITready );
 				EITready(0);  // check current eit now !
 			}
@@ -285,21 +377,31 @@ void eTimerManager::actionHandler()
 				long t = getSecondsToBegin();
 				nextAction=startEvent;
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
+				{
+					writeToLogfile("attend HDD_PREPARE_TIME");
 					t -= HDD_PREPARE_TIME;  // for HDD Wakeup or whatever
+				}
 				actionTimer.start( t*1000 , true );
+				writeToLogfile(eString().sprintf("startEvent in %d seconds",t));
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d startCountdown", calldepth--));
 			break;
 
 		case startEvent:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d startEvent", ++calldepth));
 			eDebug("[eTimerManager] startEvent");
 			if ( nextStartingEvent->type & ePlaylistEntry::isRepeating )
 			{
+				writeToLogfile("reset all state Flags for repeated event");
 				nextStartingEvent->type &= ~(
 					ePlaylistEntry::stateError |
+					ePlaylistEntry::stateWaiting |
 					ePlaylistEntry::stateFinished |
+					ePlaylistEntry::statePaused |
 					ePlaylistEntry::errorNoSpaceLeft |
 					ePlaylistEntry::errorUserAborted |
-					ePlaylistEntry::errorZapFailed );
+					ePlaylistEntry::errorZapFailed|
+					ePlaylistEntry::errorOutdated );
 				nextStartingEvent->last_activation = getDate();
 			}
 			else
@@ -308,7 +410,10 @@ void eTimerManager::actionHandler()
 			nextStartingEvent->type |= ePlaylistEntry::stateRunning;
 
 			if (nextStartingEvent->type & ePlaylistEntry::doFinishOnly )
+			{
+				writeToLogfile("only Finish an running event");
 				eDebug("[eTimerManager] only Finish an running event");
+			}
 			else if (nextStartingEvent->type & ePlaylistEntry::RecTimerEntry)
 			{
 				nextAction = startRecording;
@@ -316,17 +421,20 @@ void eTimerManager::actionHandler()
 			}
 			else if (nextStartingEvent->type & ePlaylistEntry::SwitchTimerEntry)
 			{
-
+				writeToLogfile("SwitchTimerEvent... do nothing");
 			}
 
 			if ( !(nextStartingEvent->type & ePlaylistEntry::isSmartTimer) )
 			{
 				nextAction = stopEvent;
 				actionTimer.start( getSecondsToEnd() * 1000, true );
+				writeToLogfile(eString().sprintf("stopEvent in %d seconds", getSecondsToEnd()) );
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d startEvent", calldepth--));
 			break;
 
 		case pauseEvent:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d pauseEvent", ++calldepth));
 			eDebug("[eTimerManager] pauseEvent");
 			if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 			{
@@ -335,9 +443,11 @@ void eTimerManager::actionHandler()
 				nextAction = pauseRecording;
 				actionHandler();
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d pauseEvent", calldepth--));
 			break;
 
 		case restartEvent:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d restartEvent", ++calldepth));
 			eDebug("[eTimerManager] restartEvent");
 			if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 			{
@@ -346,16 +456,21 @@ void eTimerManager::actionHandler()
 				nextAction=restartRecording;
 				actionHandler();
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d restartEvent", calldepth--));
 			break;
 
 		case stopEvent:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d stopEvent", ++calldepth));
 			eDebug("[eTimerManager] stopEvent");
 			if( nextStartingEvent->type & ePlaylistEntry::stateRunning )
 			{
 				nextStartingEvent->type &= ~ePlaylistEntry::stateRunning;
 				// when no ErrorCode is set the we set the state to finished
 				if ( !(nextStartingEvent->type & ePlaylistEntry::stateError) )
+				{
+					writeToLogfile("set to stateFinished");
 					nextStartingEvent->type |= ePlaylistEntry::stateFinished;
+				}
 				if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 				{
 					nextAction=stopRecording;
@@ -363,6 +478,7 @@ void eTimerManager::actionHandler()
 				}
 				else // SwitchTimer
 				{
+					writeToLogfile("SwitchTimer... do nothing");
 				}
 
 				int i=0;
@@ -370,22 +486,31 @@ void eTimerManager::actionHandler()
 					i = 2;
 				else if ( nextStartingEvent->type&ePlaylistEntry::doGoSleep )
 					i = 3;
+				writeToLogfile(eString().sprintf("call eZapMain::handleStandby(%d)",i));
 				eZapMain::getInstance()->handleStandby(i);
 
 				if ( nextStartingEvent->type & ePlaylistEntry::doFinishOnly
 					&& !nextStartingEvent->service )
-					; // dont change Timer Mode for Sleeptimers
+					writeToLogfile("this is a Sleeptimer... dont toggle TimerMode");
 				else
+				{
+					writeToLogfile("call eZapMain::getInstance()->toggleTimerMode()");
 					eZapMain::getInstance()->toggleTimerMode();
+				}
 			}
 			if ( eConfig::getInstance()->pLockActive() && eServiceInterface::getInstance()->service.isLocked() )
+			{
+				writeToLogfile("this service is parentallocked... stop service now");
 				eServiceInterface::getInstance()->stop();
+			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d stopEvent", calldepth--));
 			nextAction=setNextEvent;	// we set the Next Event... a new beginning *g*
 			actionTimer.start(0, true);
 			break;
 
 		case setNextEvent:
 		{
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d setNextEvent", ++calldepth));
 			eDebug("[eTimerManager] setNextEvent");
 			if (conn.connected() )
 				conn.disconnect();
@@ -396,30 +521,42 @@ void eTimerManager::actionHandler()
 			// parse events... invalidate old, set nextEvent Timer
 			for ( std::list< ePlaylistEntry >::iterator i(timerlist->getList().begin()); i != timerlist->getList().end(); )
 			{
+				writeToLogfile(eString().sprintf("(%d), descr = %s",count, i->service.descr.c_str()));
 				time_t nowTime=time(0)+eDVB::getInstance()->time_difference;
 				if ( i->type & ePlaylistEntry::isRepeating )
 				{
 					time_t tmp = getNextEventStartTime( i->time_begin, i->duration, i->type, getDate() == i->last_activation );
+					tm evtTime = *localtime( &tmp );
+					writeToLogfile(eString().sprintf(" - isRepeating event (days %s)", buildDayString(i->type).c_str() ));
+					writeToLogfile(eString().sprintf(" - starts at %d (%02d.%02d, %02d:%02d)", tmp, evtTime.tm_mday, evtTime.tm_mon+1, evtTime.tm_hour, evtTime.tm_min));
 					if ( tmp-nowTime < timeToNextEvent && nowTime < tmp+i->duration )
 					{
 						nextStartingEvent=i;
 						timeToNextEvent = tmp-nowTime;
+						writeToLogfile(eString().sprintf(" - is our new nextEvent... timeToNextEvent is %d", timeToNextEvent));
 					}
 					count++;
 				}
 				else if ( i->type & ePlaylistEntry::stateWaiting )
 				{
+					tm tmp = *localtime(&i->time_begin);
+					writeToLogfile(" - is Single Event");
+					writeToLogfile(eString().sprintf(" - starts at %d (%02d.%02d, %02d:%02d)", i->time_begin, tmp.tm_mday, tmp.tm_mon+1, tmp.tm_hour, tmp.tm_min));
+					writeToLogfile(" - have stateWaiting");
 					if ( i->type & ePlaylistEntry::stateError )
 					{
+						writeToLogfile(" - have stateError... unset stateWaiting");
 						i->type &= ~ePlaylistEntry::stateWaiting;
 					}
 					else if ( i->time_begin+i->duration < nowTime ) // old event found
 					{
+						writeToLogfile(" - is an outdated event... set to stateError");
 						i->type &= ~ePlaylistEntry::stateWaiting;
 						i->type |= (ePlaylistEntry::stateError|ePlaylistEntry::errorOutdated);
 					}
 					else if ( i->type & ePlaylistEntry::doFinishOnly )
 					{
+						writeToLogfile(" - is doFinishOnly.. use this... dont check other events");
 						nextStartingEvent=i;
 						timeToNextEvent = i->time_begin - nowTime;
 						// dont check the other events...
@@ -429,13 +566,18 @@ void eTimerManager::actionHandler()
 					{
 						nextStartingEvent=i;
 						timeToNextEvent = i->time_begin - nowTime;
+						writeToLogfile(eString().sprintf(" - is our new nextEvent... timeToNextEvent is %d", timeToNextEvent));
 						count++;
 					}
 					else
+					{
 						count++;
+						writeToLogfile(" - is not the nextEvent... ignore");
+					}
 				}
 				else if ( i->type & ePlaylistEntry::doFinishOnly )
 				{
+					writeToLogfile(" - is an old doFinishOnly Event... remove this");
 					eDebug("old doFinishOnly");
 					// all timers they only finish a running action/event
 					// are remove from the list after they ended
@@ -448,16 +590,26 @@ void eTimerManager::actionHandler()
 			timerlist->save();
 			if ( nextStartingEvent != timerlist->getList().end() )
 			{
-				tm* evtTime=0;
+				tm evtTime;
+				writeToLogfile("our new nextStartingEvent:");
 				if ( nextStartingEvent->type & ePlaylistEntry::isRepeating )
 				{
+					writeToLogfile(" - is a repeating event");
+					if ( nextStartingEvent->last_activation != -1 )
+					{
+						tm tmp = *localtime( (const time_t*)&nextStartingEvent->last_activation );
+						writeToLogfile(eString().sprintf(" - lastActivation was at %02d.%02d.%04d", tmp.tm_mday, tmp.tm_mon+1, 1900+tmp.tm_year ));
+					}
 					time_t tmp = getNextEventStartTime( nextStartingEvent->time_begin, nextStartingEvent->duration, nextStartingEvent->type, getDate() == nextStartingEvent->last_activation );
 					if ( tmp )
-						evtTime = localtime( &tmp );
+						evtTime=*localtime( &tmp );
 				}
 				else
-					evtTime = localtime( &nextStartingEvent->time_begin );
-				eDebug("[eTimerManager] next event starts at %02d.%02d, %02d:%02d", evtTime->tm_mday, evtTime->tm_mon+1, evtTime->tm_hour, evtTime->tm_min );
+					evtTime=*localtime( &nextStartingEvent->time_begin );
+				eDebug("[eTimerManager] next event starts at %02d.%02d, %02d:%02d", evtTime.tm_mday, evtTime.tm_mon+1, evtTime.tm_hour, evtTime.tm_min );
+				writeToLogfile(eString().sprintf(" - descr/service is %s",nextStartingEvent->service.descr.length()?nextStartingEvent->service.descr.c_str():"" ));
+				writeToLogfile(eString().sprintf(" - starts at %02d.%02d, %02d:%02d", evtTime.tm_mday, evtTime.tm_mon+1, evtTime.tm_hour, evtTime.tm_min));
+				writeToLogfile(eString().sprintf(" - event type is %d, %08X", nextStartingEvent->type, nextStartingEvent->type ));
 				long t = getSecondsToBegin();
 /*				int prepareTime = 0;
 				if ( nextStartingEvent->type & ePlaylistEntry::isSmartTimer )
@@ -478,33 +630,46 @@ void eTimerManager::actionHandler()
 					nextAction=zap;
 					if ( nextStartingEvent->type & ePlaylistEntry::RecTimerEntry )
 					{
+						writeToLogfile(" - is a RecTimerEnty");
 #ifndef DISABLE_NETWORK
 						if ( nextStartingEvent->type & ePlaylistEntry::recNgrab )
 						{
+							writeToLogfile(" - is a recNgrab Event.. attend WOL_PREPARE_TIME");
 							t -= WOL_PREPARE_TIME; // for send WOL Signal
 							nextAction=prepareEvent;
+							writeToLogfile("nextAction = prepareEvent");
 						}
 						else
 #endif
+						{
 							t -= ZAP_BEFORE_TIME;
+							writeToLogfile("nextAction = zap");
+						}
 					}
+					else
+						writeToLogfile("nextAction = zap");
 					// set the Timer to eventBegin
+					writeToLogfile(eString().sprintf("   starts in %d seconds", t ));
 					actionTimer.start( t * 1000, true );
 				}
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d setNextEvent", calldepth--));
 		}
 		break;
 
 		case startRecording:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d startRecording", ++calldepth));
 			eDebug("[eTimerManager] start recording");
 #if ( defined(DISABLE_FILE) + defined(DISABLE_NETWORK) ) < 2
 			if ( nextStartingEvent->type & (ePlaylistEntry::recDVR|ePlaylistEntry::recNgrab) )
 			{
+				writeToLogfile("recDVR or Ngrab");
 //				eDebug("nextStartingEvent->service.data[0] = %d", nextStartingEvent->service.data[0] );
 //				eDebug("nextStartingEvent->service.descr = %s", nextStartingEvent->service.descr.c_str() );
 				eString recordDescr;
 				if ( nextStartingEvent->type & ePlaylistEntry::isRepeating )
 				{
+					writeToLogfile("repeating");
 					time_t tmp = getNextEventStartTime( nextStartingEvent->time_begin, nextStartingEvent->duration, nextStartingEvent->type, false );
 					const eString &descr=getEventDescrFromEPGCache( nextStartingEvent->service, tmp+nextStartingEvent->duration/2 );
 					if ( descr ) // build Episode Information
@@ -515,8 +680,8 @@ void eTimerManager::actionHandler()
 					}
 					if ( !recordDescr )
 					{  // build date instead of epoisode information
-						tm *evtTime = localtime(&tmp);
-						recordDescr.sprintf(" - %02d.%02d.%02d,", evtTime->tm_mday, evtTime->tm_mon+1, evtTime->tm_year%100 );
+						tm evtTime = *localtime(&tmp);
+						recordDescr.sprintf(" - %02d.%02d.%02d,", evtTime.tm_mday, evtTime.tm_mon+1, evtTime.tm_year%100 );
 					}
 				}
 				eString descr = getRight( nextStartingEvent->service.descr, '/');
@@ -525,6 +690,7 @@ void eTimerManager::actionHandler()
 #ifndef DISABLE_FILE
 				if ( nextStartingEvent->type & ePlaylistEntry::recDVR )
 				{
+					writeToLogfile(eString().sprintf("call eZapMain::getInstance()->recordDVR(1,0,%s)",descr.length()?descr.c_str():""));
 					eDebug("[eTimerManager] start DVR");
 					eZapMain::getInstance()->recordDVR(1, 0, descr.length()?descr.c_str():0 );
 				}
@@ -534,6 +700,7 @@ void eTimerManager::actionHandler()
 				if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
 				{
 					eDebug("[eTimerManager] start Ngrab");
+					writeToLogfile(eString().sprintf("call ENgrab::getNew()->sendStart(%s)",descr.length()?descr.c_str():""));
 					ENgrab::getNew()->sendstart(descr.length()?descr.c_str():0);
 				}
 #else
@@ -547,6 +714,7 @@ void eTimerManager::actionHandler()
 #ifndef DISABLE_LIRC
 				if (nextStartingEvent->type & ePlaylistEntry::recVCR)
 				{
+					writeToLogfile("call eLirc::getNew()->sendStart()");
 					eDebug("[eTimerManager] start VCR-Lirc-Recording");
 					ELirc::getNew()->sendstart();
 				}
@@ -555,13 +723,16 @@ void eTimerManager::actionHandler()
 				}
 #endif			
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d startRecording", calldepth--));
 			break;
 
 		case stopRecording:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d stopRecording", ++calldepth));
 			eDebug("[eTimerManager] stop recording");
 #ifndef DISABLE_FILE
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
+				writeToLogfile("call eZapMain::getInstance()->recordDVR(0,0)");
 				eDebug("[eTimerManager] stop DVR");
 				eZapMain::getInstance()->recordDVR(0, 0);
 			}
@@ -570,6 +741,7 @@ void eTimerManager::actionHandler()
 #ifndef DISABLE_NETWORK
 			if (nextStartingEvent->type & ePlaylistEntry::recNgrab)
 			{
+				writeToLogfile("call ENgrab::getNew()->sendstop()");
 				eDebug("[eTimerManager] stop Ngrab");
 				ENgrab::getNew()->sendstop();
 			}
@@ -577,16 +749,20 @@ void eTimerManager::actionHandler()
 #endif
 			if (nextStartingEvent->type & ePlaylistEntry::recVCR)
 			{
+				writeToLogfile("call ELirc::getNew()->sendstop()");
 				eDebug("[eTimerManager] stop VCR-Lirc-Recording");
 				ELirc::getNew()->sendstop();
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d stopRecording", calldepth--));
 			break;
 
 		case restartRecording:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d restartRecording", ++calldepth));
 			eDebug("[eTimerManager] restart recording");
 #ifndef DISABLE_FILE
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
+				writeToLogfile("recDVR");
 				eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 				if (!handler)
 					eFatal("no service Handler");
@@ -595,14 +771,17 @@ void eTimerManager::actionHandler()
 			else // insert lirc ( VCR START )
 #endif
 			{
-
+				writeToLogfile("recVCR... not Implemented !!");
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d restartRecording", calldepth--));
 			break;
 
 		case pauseRecording:
+			writeToLogfile(eString().sprintf("--> actionHandler() calldepth=%d pauseRecording", ++calldepth));
 #ifndef DISABLE_FILE
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
 			{
+				writeToLogfile("recDVR");
 				eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 				if (!handler)
 					eFatal("no service Handler");
@@ -611,39 +790,51 @@ void eTimerManager::actionHandler()
 			else // insert lirc ( VCR PAUSE )
 #endif
 			{
-
+				writeToLogfile("not implemented...");
 			}
+			writeToLogfile(eString().sprintf("<-- actionHandler() calldepth=%d pauseRecording", calldepth--));
 			break;
 		default:
-			eDebug("unhandled timer action");
+		{
+			writeToLogfile(eString().sprintf("unhandled timer action %d !!!", nextAction));
+			eDebug("unhandled timer action %d", nextAction);
+		}
 	}
 }
 
 void eTimerManager::switchedService( const eServiceReferenceDVB &ref, int err)
 {
+	writeToLogfile("--> switchedService()");
 	if ( err == -ENOSTREAM || nextStartingEvent->service != (eServiceReference&)ref )
 	{
+		writeToLogfile("call abortEvent");
 		abortEvent( ePlaylistEntry::errorZapFailed );
 	}
 	else  // zap okay
 	{
+		writeToLogfile("call startCountdown");
 		nextAction=startCountdown;
 		actionTimer.start(0,true);
 	}
+	writeToLogfile("<-- switchedService()");
 }
 
 void eTimerManager::abortEvent( int err )
 {
+	writeToLogfile(eString().sprintf("--> abortEvent(err %d)",err));
 	eDebug("[eTimerManager] abortEvent");
 	nextAction=stopEvent;
 	nextStartingEvent->type |= (ePlaylistEntry::stateError|err);
 	actionHandler();
+	writeToLogfile("<-- abortEvent");
 }
 
 void eTimerManager::leaveService( const eServiceReferenceDVB& ref )
 {
+	writeToLogfile(eString().sprintf("--> leaveService %s", ref.toString().c_str() ));
 	eDebug("[eTimerManager] leaveService");
 	abortEvent( ePlaylistEntry::errorUserAborted );
+	writeToLogfile("<-- leaveService");
 }
 
 void eTimerManager::EITready( int error )
@@ -753,6 +944,7 @@ eTimerManager::~eTimerManager()
 			close(fd);
 		}
 	}
+	writeToLogfile("~eTimerManager()");
 	eDebug("[eTimerManager] down ( %d events in list )", timerlist->getList().size() );
 	if (this == instance)
 		instance = 0;
@@ -847,12 +1039,19 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 			if (r == eMessageBox::btYes)
 			{
 				timerlist->getList().erase(i);
-				if ( &(*nextStartingEvent) == &entry &&
-					nextStartingEvent->type & ePlaylistEntry::stateRunning )
+				if ( &(*nextStartingEvent) == &entry )
 				{
-					nextAction=stopEvent;
-					nextStartingEvent->type |= (ePlaylistEntry::stateError | ePlaylistEntry::errorUserAborted);
-					actionHandler();
+					if ( nextStartingEvent->type & ePlaylistEntry::stateRunning )
+					{
+						nextAction=stopEvent;
+						nextStartingEvent->type |= (ePlaylistEntry::stateError | ePlaylistEntry::errorUserAborted);
+						actionHandler();
+					}
+					else if ( nextStartingEvent->type & ePlaylistEntry::stateWaiting )
+					{
+						nextAction=setNextEvent;
+						actionHandler();
+					}
 				}
 				sel->show();
 				return true;
@@ -1066,7 +1265,6 @@ eListBoxEntryTimer::eListBoxEntryTimer( eListBox<eListBoxEntryTimer> *listbox, e
 
 const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
-	const char *dayStrShort[7] = { _("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat") };
 	drawEntryRect(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, hilited);
 
 	int xpos=rect.left()+10;
@@ -1101,25 +1299,8 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 	{
 		paraDate = new eTextPara( eRect( 0, 0, entry->type&ePlaylistEntry::isRepeating?200:dateXSize, rect.height()/2) );
 		paraDate->setFont( TimeFont );
-		eString tmp;
-		if ( entry->type & ePlaylistEntry::isRepeating )
-		{
-			int mask = ePlaylistEntry::Su;
-			for ( int i = 0; i < 7; i++ )
-			{
-				if ( entry->type & mask )
-				{
-					tmp+=dayStrShort[i];
-					if ( i != 2 && i != 3 && i != 4 )
-						tmp.erase( tmp.length()-1 );
-					tmp+=' ';
-				}
-				mask*=2;
-			}
-			if ( tmp.length() )
-				tmp.erase( tmp.length()-1 );
-		}
-		else
+		eString tmp = buildDayString( entry->type );
+		if ( !tmp )
 			tmp.sprintf("%02d.%02d,", start_time.tm_mday, start_time.tm_mon+1);
 		paraDate->renderString( tmp );
 		TimeYOffs = ((rect.height()/2 - paraDate->getBoundBox().height()) / 2 ) - paraDate->getBoundBox().top();

@@ -24,7 +24,7 @@ class eCheckbox;
 class eTimerManager: public Object
 {
 	static eTimerManager *instance;
-
+	FILE *logfile;
 // eTimerManager actionHandler stuff
 	enum
 	{
@@ -61,6 +61,8 @@ class eTimerManager: public Object
 
 // handle all eit related timer stuff ( for smart Timers)
 	void EITready(int);
+	void writeToLogfile( const char *str );
+	void writeToLogfile( eString str );
 public:
 	enum { erase, update };
 	eTimerManager();

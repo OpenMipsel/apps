@@ -3873,9 +3873,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			if ( state & stateRecording )
 			{
 				if ( handleState(1) )
-				{
 					record();
-				}
 			}
 			else
 				stop();
