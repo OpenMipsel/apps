@@ -3400,7 +3400,12 @@ void eZapMain::addServiceToUserBouquet(eServiceReference *service, int dontask)
 
 	if (currentSelectedUserBouquet)
 	{
-		currentSelectedUserBouquet->getList().push_back(*service);
+		std::list<ePlaylistEntry> &list =
+			currentSelectedUserBouquet->getList();
+
+		if ( std::find( list.begin(), list.end(), ePlaylistEntry(*service) ) == list.end() )
+			list.push_back(*service);
+
 		if (!dontask)
 		{
 			currentSelectedUserBouquet->save();
