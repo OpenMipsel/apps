@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.40 2003/05/25 08:03:39 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.41 2003/05/28 19:08:46 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -85,6 +85,7 @@ CDemux *videoDemux = NULL;
 std::map<uint8_t, std::string> scanProviders;
 /* the map which stores the diseqc 1.2 motor positions */
 extern std::map <string, uint8_t> motorPositions;
+extern std::map <string, int32_t> satellitePositions;
 
 /* current zapit mode */
 enum {
@@ -690,28 +691,32 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 
 	case CZapitMessages::CMD_SCANGETSATLIST:
 	{
-		if (!scanInputParser) {
+		if (!scanInputParser) 
+		{
 			parseScanInputXml();
 			if (!scanInputParser)
 				break;
 		}
 
-		uint32_t   satnamelength;
-		char *     satname;
-		xmlNodePtr search       = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
-		char *     frontendname = getFrontendName();
+		uint32_t satlength;
+		char * satname;
+		xmlNodePtr search = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
+		char * frontendname = getFrontendName();
+		CZapitClient::responseGetSatelliteList sat;
 
 		if (frontendname != NULL)
 			while ((search = xmlGetNextOccurence(search, frontendname)) != NULL)
 			{
 				satname = xmlGetAttribute(search, "name");
-				satnamelength = strlen(satname);
-				CBasicServer::send_data(connfd, &satnamelength, sizeof(satnamelength));
-				CBasicServer::send_data(connfd, satname, satnamelength);
+				strncpy(sat.satName, satname, 29);
+				sat.satPosition = satellitePositions[satname];
+				satlength = sizeof(sat);
+				CBasicServer::send_data(connfd, &satlength, sizeof(satlength));
+				CBasicServer::send_data(connfd, (char *)&sat, satlength);
 				search = search->xmlNextNode;
 			}
-		satnamelength = SATNAMES_END_MARKER;
-		CBasicServer::send_data(connfd, &satnamelength, sizeof(satnamelength));
+		satlength = SATNAMES_END_MARKER;
+		CBasicServer::send_data(connfd, &satlength, sizeof(satlength));
 		break;
 	}
 
@@ -1518,7 +1523,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.40 2003/05/25 08:03:39 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.41 2003/05/28 19:08:46 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
