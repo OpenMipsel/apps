@@ -94,6 +94,7 @@ private:
 	void updateCi();
 	void doSPFlags(const eServiceReference &ref);
 public:
+	void forEachServiceRef( Signal1<void,const eServiceReference&>, bool );
 	int movemode;
 	int editMode;
 	enum { styleInvalid, styleCombiColumn, styleSingleColumn, styleMultiColumn };
@@ -122,9 +123,7 @@ public:
 		const eServiceReference &			// service AFTER moved service
 		> moveEntry;
 
-	Signal1<void,
-		const std::list<eServiceReferenceDVB> &>
-			showMultiEPG;
+	Signal0<void>showMultiEPG;
 
 	const eServicePath &getPath()	{	return path; }
 	void setPath(const eServicePath &path, const eServiceReference &select=eServiceReference());

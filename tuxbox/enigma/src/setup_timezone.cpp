@@ -29,8 +29,8 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 	timeZone->resize(eSize(clientrect.width()-40, 35));
 	timeZone->setHelpText(_("select your time zone (ok)"));
 	timeZone->loadDeco();
-		
-	if(loadTimeZones())
+
+	if(loadTimeZones() && in_loop)
 		close(0);
 	
 	int cuseDst;

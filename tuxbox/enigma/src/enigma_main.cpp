@@ -2951,8 +2951,12 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 		Signal1<void,const eServiceReference&> signal;
 		CONNECT(signal, eZapMain::addServiceToCurUserBouquet);
 
-		iface->enterDirectory(ref, signal);
-		iface->leaveDirectory(ref);	// we have a copy
+		eServiceSelector *ssel = eZap::getInstance()->getServiceSelector();
+		eServicePath safe = ssel->getPath();
+		eServiceReference _ref = ssel->getSelected();
+		ssel->enterDirectory(ref);
+		ssel->forEachServiceRef(signal, true);
+		ssel->setPath( safe, _ref );
 
 		currentSelectedUserBouquet->save();
 		currentSelectedUserBouquet=0;
@@ -4845,39 +4849,22 @@ void eZapMain::moveService(const eServiceReference &path, const eServiceReferenc
 	currentSelectedUserBouquet->moveService(it, after);
 }
 
-void eZapMain::showMultiEPG(const std::list<eServiceReferenceDVB> &list)
+void eZapMain::showMultiEPG()
 {
-	eZapEPG epg(list);
-
-	time_t now=time(0)+eDVB::getInstance()->time_difference;
-	time_t end=now+4*3600;
-	time_t lastEndTime=now;
-	for (std::list<eServiceReferenceDVB>::const_iterator s(list.begin()); s != list.end(); s++ )
-	{
-		const timeMap *t = eEPGCache::getInstance()->getTimeMap( *s );
-		if ( t && t->size() )
-		{
-			EITEvent evt = t->rbegin()->second->get();
-			time_t tmp = evt.start_time+evt.duration;
-			if ( tmp >= end )
-			{
-				lastEndTime=end;
-				break;
-			}
-			else if ( tmp > now && tmp > lastEndTime)
-				lastEndTime=tmp;
-		}
-	}
+	eZapEPG epg;
 
 	epg.move(ePoint(50, 50));
 	epg.resize(eSize(620, 470));
 
-//	eDebug("lastEndTime-now = %d min", (lastEndTime-now) / 60 );	
-	epg.buildPage(now, lastEndTime);
-
-	epg.show();
-	epg.exec();
-	epg.hide();
+	int direction = 1;
+	do
+	{
+		epg.buildPage(direction);
+		epg.show();
+		direction = epg.exec();
+		epg.hide();
+	}
+	while ( direction != -1 );
 }
 
 #ifndef DISABLE_FILE
@@ -4945,6 +4932,9 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 		else
 			new eListBoxEntryText(&list, _("enable move mode"), (void*)2);
 		// delete Service ( only in Favourite lists... )
+		if ( ref.flags & eServiceReference::flagDirectory &&
+				eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+				new eListBoxEntryText(&list, _("copy to user bouquets"), (void*)8);
 	}
 	else
 	{

@@ -1,6 +1,12 @@
 #define DIR_V
 #include "enigma_epg.h"
-#include <enigma_lcd.h>
+#include "enigma.h"
+#include "sselect.h"
+#include "enigma_lcd.h"
+#include "epgactions.h"
+#include "timer.h"
+#include "enigma_event.h"
+
 #include <lib/dvb/epgcache.h>
 #include <lib/dvb/service.h>
 #include <lib/dvb/si.h>
@@ -8,17 +14,32 @@
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/guiactions.h>
+#include <lib/gui/statusbar.h>
 #include <lib/gdi/font.h>
-#include "epgactions.h"
-#include "timer.h"
-#include "enigma_event.h"
 
 gPixmap *eZapEPG::entry::inTimer=0;
 gPixmap *eZapEPG::entry::inTimerRec=0;
 
-eZapEPG::eZapEPG(const std::list<eServiceReferenceDVB> &services): 
-	eWindow(1), services(services)
+static eString buildShortName( const eString &str )
 {
+	eString tmp;
+	static char stropen[3] = { 0xc2, 0x86, 0x00 };
+	static char strclose[3] = { 0xc2, 0x87, 0x00 };
+	unsigned int open=eString::npos-1;
+
+	while ( (open = str.find(stropen, open+2)) != eString::npos )
+	{
+		unsigned int close = str.find(strclose, open);
+		if ( close != eString::npos )
+			tmp+=str.mid( open+2, close-(open+2) );
+	}
+	return tmp;
+}
+
+eZapEPG::eZapEPG(): 
+	eWindow(1), offs(0), focusColumn(0), hours(3), numservices(5)
+{
+	setText(_("Programm Guide"));
 	timeFont = eSkin::getActive()->queryFont("epg.time");
 	titleFont = eSkin::getActive()->queryFont("epg.title");
 	descrFont = eSkin::getActive()->queryFont("epg.description");
@@ -29,10 +50,22 @@ eZapEPG::eZapEPG(const std::list<eServiceReferenceDVB> &services):
 	addActionMap( &i_epgSelectorActions->map );
 	addActionMap( &i_focusActions->map );
 	addActionMap( &i_cursorActions->map );
+	Signal1<void,const eServiceReference& > callback;
+	CONNECT( callback, eZapEPG::addToList );
+	eZap::getInstance()->getServiceSelector()->forEachServiceRef( callback, false );
+	curS = curE = services.begin();
+	sbar = new eStatusBar(this);
+}
+
+void eZapEPG::addToList( const eServiceReference& ref )
+{
+	if ( ref.type == eServiceReference::idDVB )
+		services.push_back( (const eServiceReferenceDVB&) ref );
 }
 
 eZapEPG::entry::entry(eWidget *parent, gFont &timeFont, gFont &titleFont, 
-	gFont &descrFont, gColor entryColor, gColor entryColorSelected): eWidget(parent), timeFont(timeFont),
+	gFont &descrFont, gColor entryColor, gColor entryColorSelected)
+	: eWidget(parent), timeFont(timeFont),
 	titleFont(titleFont), descrFont(descrFont), entryColor(entryColor), 
 	entryColorSelected(entryColorSelected)
 {
@@ -72,7 +105,8 @@ void eZapEPG::entry::redrawWidget(gPainter *target, const eRect &area)
 
 void eZapEPG::entry::gotFocus()
 {
-//	setForegroundColor(focusF,false);
+	parent->setHelpText(helptext);
+	parent->event( eWidgetEvent::childChangedHelpText );
 	setBackgroundColor(entryColorSelected);
 }
 
@@ -86,6 +120,11 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
+	case eWidgetEvent::execBegin:
+		sbar->move( ePoint(0, clientrect.height()-30) );
+		sbar->resize( eSize( clientrect.width(), 30) );
+		sbar->loadDeco();
+		break;
 	case eWidgetEvent::evtAction:
 	{
 		int addtype=-1;
@@ -261,6 +300,15 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 					e->description=s->text;
 					break;
 				}
+			tm *begin=ev->start_time!=-1?localtime(&ev->start_time):0;
+			e->setHelpText( eString().sprintf("%02d.%02d %02d:%02d %s - %s",
+				begin->tm_mday,
+				begin->tm_mon+1,
+				begin->tm_hour,
+				begin->tm_min,
+				e->title.c_str(),
+				e->description.c_str() ) );
+
 			e->event = ev;
 		} else
 			delete ev;
@@ -280,14 +328,25 @@ void eZapEPG::selService(int dir)
 		if (current_service == serviceentries.end())
 		{
 			--current_service;
+			focusColumn=0;
+			close(1);
 			return;
 		}
+		else
+			++focusColumn;
 	} else if (dir == -1)
 	{
 		if (current_service != serviceentries.begin())
+		{
+			--focusColumn;
 			--current_service;
+		}
 		else
+		{
+			close(0);
+			focusColumn=numservices-1;
 			return;
+		}
 	}
 
 	time_t last_time=0;
@@ -340,12 +399,21 @@ void eZapEPG::selEntry(int dir)
 		if (current_service->current_entry == current_service->entries.end())
 		{
 			--current_service->current_entry;
+			offs += hours*3600;
+			close(3);
 			return;
 		}
 	} else
 	{
 		if (current_service->current_entry == current_service->entries.begin())
+		{
+			if ( offs >= hours*3600 )
+			{
+				offs -= hours*3600;
+				close(2);
+			}
 			return;
+		}
 		--current_service->current_entry;
 	}
 	if (l != current_service->entries.end())
@@ -353,71 +421,115 @@ void eZapEPG::selEntry(int dir)
 	current_service->current_entry->gotFocus();
 }
 
-void eZapEPG::buildPage(time_t start, time_t end)
+void eZapEPG::buildPage(int direction)
 {
-	if (start >= end)
-		return;
+	/*
+			direction 0  ->  left
+			direction 1  ->  right
+			direction 2  ->  up
+			direction 3  ->  down  */
+	serviceentries.clear();
 
-#ifdef DIR_V	
-	int height = clientrect.height();
-#else
-	int width = clientrect.width();
-#endif
-	int numservices = services.size();
-	if (!numservices)
-		return;
-	
-	if (numservices > 10)
-		numservices = 10;
+	time_t now=time(0)+eDVB::getInstance()->time_difference+offs,
+				 end=now+hours*3600;
+
+	if ( direction == 0 )
+		// go left.. we must count "numservices" back
+	{
+		std::list<eServiceReferenceDVB>::iterator s(curS);
+		unsigned int cnt=0;
+		do
+		{
+			if ( s == services.end() )
+				break;
+			const EITEvent *e = eEPGCache::getInstance()->lookupEvent( *s, now );
+			if ( e )
+			{
+				delete e;
+				if ( ++cnt > numservices )
+					break;
+			}
+			if ( s != services.begin() )
+				--s;
+			else
+				s = --services.end();
+		}
+		while( s != curS );
+		curS=curE=s;
+	}
+	else if ( direction == 1 ) // right
+		curS=curE;
+	else if ( direction > 1 )  // up or down
+		curE=curS;
+
 #ifdef DIR_V
+	int height = clientrect.height()-30; // sub statusbar height
 	int servicewidth = clientrect.width() / numservices;
 #else
+	int width = clientrect.width();
 	int serviceheight = clientrect.height() / numservices;
 #endif
 
 	int p = 0;
-	
-	for (std::list<eServiceReferenceDVB>::const_iterator i(services.begin());
-			i != services.end(); ++i, ++p)
+	do
 	{
-		serviceentries.push_back(serviceentry());
-		serviceentry &service = serviceentries.back();
-
-		eLabel *header = new eLabel(this);
-#ifdef DIR_V
-		header->move(ePoint(p * servicewidth, 0));
-		header->resize(eSize(servicewidth, 30));
-		service.pos = eRect(p * servicewidth, 30, servicewidth, height - 30);
-#else
-		header->move(ePoint(0, p * serviceheight));
-		header->resize(eSize(100, serviceheight));
-		service.pos = eRect(100, p * serviceheight, width - 100, serviceheight);
-#endif
-		
-		eService *sv=eServiceInterface::getInstance()->addRef(*i);
-		if ( sv )
+		if ( curE == services.end() )
+			break;
+		const EITEvent *e = eEPGCache::getInstance()->lookupEvent( *curE, now );
+		if ( e )
 		{
-			static char stropen[3] = { 0xc2, 0x86, 0x00 };
-			static char strclose[3] = { 0xc2, 0x87, 0x00 };
-			unsigned int open=eString::npos-1;
-			eString shortname;
-			while ( (open = sv->service_name.find(stropen, open+2)) != eString::npos )
+			delete e;
+			serviceentries.push_back(serviceentry());
+			serviceentry &service = serviceentries.back();
+			service.header = new eLabel(this);
+#ifdef DIR_V
+			service.header->move(ePoint(p * servicewidth, 0));
+			service.header->resize(eSize(servicewidth, 30));
+			service.pos = eRect(p++ * servicewidth, 30, servicewidth, height - 30);
+#else
+			service.header->move(ePoint(0, p * serviceheight));
+			service.header->resize(eSize(100, serviceheight));
+			service.pos = eRect(100, p++ * serviceheight, width - 100, serviceheight);
+#endif
+			eString stext;
+			if ( curE->descr )   // have changed service name?
+				stext=service.service.descr;  // use this...
+			else
 			{
-				unsigned int close = sv->service_name.find(strclose, open);
-				if ( close != eString::npos )
-					shortname+=sv->service_name.mid( open+2, close-(open+2) );
+				eService *sv=eServiceInterface::getInstance()->addRef(*curE);
+				if ( sv )
+				{
+					eString shortname = buildShortName( sv->service_name );
+					stext=shortname?shortname:sv->service_name;
+					eServiceInterface::getInstance()->removeRef(*curE);
+				}
 			}
-			header->setText(shortname?shortname:sv->service_name);
-			eServiceInterface::getInstance()->removeRef(*i);
+			service.service = *curE;
+
+			// set column service name
+			service.header->setText(stext);
+
+			buildService(service, now, end);
+
+   // set focus line
+			if ( direction == 2 )  // up pressed
+    // set focus to last line
+				service.current_entry = --service.entries.end();
+			else  // set focus to first line
+				service.current_entry = service.entries.begin();
 		}
-		service.service = *i;
-		
-		buildService(service, start, end);
-		service.current_entry = service.entries.begin();
+		if ( ++curE == services.end() )  // need wrap ?
+			curE = services.begin();
 	}
+	while( serviceentries.size() < numservices && curE != curS );
+
 	if (!p)
 		return;
+
+ // set column focus
 	current_service = serviceentries.begin();
+	for (unsigned int i=0; i < focusColumn; i++ )
+		current_service++;
 	if (current_service == serviceentries.end())
 		return;
 	if (current_service->current_entry != current_service->entries.end())

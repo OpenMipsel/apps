@@ -659,6 +659,32 @@ void eServiceSelector::updateCi()
 	ci->update((const eServiceReferenceDVB&)selected);
 }
 
+void eServiceSelector::forEachServiceRef( Signal1<void,const eServiceReference&> callback, bool fromBeg )
+{
+	eListBoxEntryService *safe = services->getCurrent(),
+											 *p, *beg;
+	if ( fromBeg )
+	{
+		services->moveSelection( eListBoxBase::dirFirst );
+		beg = services->getCurrent();
+	}
+	else
+		beg = safe;
+	p = beg;
+	do
+	{
+		if (!p)
+			break;
+		if ( !(p->flags & eListBoxEntryService::flagIsReturn) )
+			callback(p->service);
+		p=services->goNext();
+	}
+	while ( p && p != beg );
+
+	if ( fromBeg )
+		services->setCurrent(safe);
+}
+
 int eServiceSelector::eventHandler(const eWidgetEvent &event)
 {
 	int num=0;
@@ -799,24 +825,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				}
 #else
 				hide();
-				std::list<eServiceReferenceDVB> s;
-				eServiceReference o=services->getCurrent()->service;
-				eListBoxEntryService *p = services->getCurrent();
-				do
-				{
-					if (!p)
-						break;
-					if (!(p->service.flags&eListBoxEntryService::flagIsReturn) && p->service.type == eServiceReference::idDVB )
-					{
-						const timeMap *e = eEPGCache::getInstance()->getTimeMap( (eServiceReferenceDVB&)p->service );
-						if ( e && e->size() )
-							s.push_back((eServiceReferenceDVB&)p->service);
-					}
-					p = services->goNext();
-				}
-				while ( s.size() != 5 && p && p->service != o );
-				selectService(o);
-				showMultiEPG(s);
+				showMultiEPG();
 				show();
 #endif
 			}

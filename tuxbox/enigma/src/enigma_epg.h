@@ -3,14 +3,18 @@
 
 #include <lib/gui/ewidget.h>
 #include <lib/gui/ewindow.h>
+#include <lib/gui/elabel.h>
 #include <lib/dvb/dvb.h>
 
 class EITEvent;
+class eStatusBar;
 
 class eZapEPG: public eWindow
 {
 	gFont timeFont, titleFont, descrFont;
 	gColor entryColor, entryColorSelected;
+	unsigned int offs, focusColumn, hours, numservices;
+	eStatusBar *sbar;
 	struct serviceentry;
 	struct entry: public eWidget
 	{
@@ -36,12 +40,15 @@ class eZapEPG: public eWindow
 	struct serviceentry
 	{
 		eRect pos;
+		eLabel *header;
 		eServiceReferenceDVB service;
 		ePtrList<entry> entries;
 		ePtrList<entry>::iterator current_entry;
-		serviceentry() : current_entry(entries.end()) { }
+		serviceentry() : header(0), current_entry(entries.end()) { }
+		~serviceentry() { delete header; }
 	};
 	std::list<eServiceReferenceDVB> services;
+	std::list<eServiceReferenceDVB>::iterator curS, curE;
 	std::list<serviceentry> serviceentries;
 	std::list<serviceentry>::iterator current_service;
 	int eventHandler(const eWidgetEvent &event);
@@ -49,8 +56,9 @@ class eZapEPG: public eWindow
 	void selService(int dir);
 	void selEntry(int dir);
 public:
-	eZapEPG(const std::list<eServiceReferenceDVB> &services);
-	void buildPage(time_t start, time_t end);
+	void addToList( const eServiceReference& ref );
+	eZapEPG();
+	void buildPage(int direction);
 };
 
 #endif
