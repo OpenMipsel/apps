@@ -1,5 +1,5 @@
 /*
- * $Id: frontend.cpp,v 1.41.2.7 2003/05/11 11:36:18 digi_casi Exp $
+ * $Id: frontend.cpp,v 1.41.2.8 2003/05/14 13:21:39 digi_casi Exp $
  *
  * (C) 2002 by Andreas Oberritter <obi@tuxbox.org>
  *
@@ -545,7 +545,6 @@ void CFrontend::positionMotor(uint8_t motorPosition)
 const bool CFrontend::tuneChannel (CZapitChannel *channel)
 {
 	bool noNit = false;
-	int waitForMotor = 0;
 
 	if (transponders.find(channel->getTsidOnid()) == transponders.end())
 	{
@@ -559,19 +558,6 @@ const bool CFrontend::tuneChannel (CZapitChannel *channel)
 		{
 			return false;
 		}
-	}
-	
-	if ((diseqcType == DISEQC_1_2) && (currentSatellitePosition != channel->getSatellitePosition()))
-	{
-		printf("[frontend] ATTENTION: this function is not working yet!\n");
-		printf("[frontend] tuneChannel: currentSatellitePosition = %d <> satellitePosition = %d => we need to position rotor now.\n", currentSatellitePosition, channel->getSatellitePosition());
-		positionMotor(motorPositions[channel->getSatelliteName()]);
-		
-		waitForMotor = abs(channel->getSatellitePosition() - currentSatellitePosition) / 18; //assuming 1.8 degrees/second motor rotation speed for the time being...
-		printf("[frontend] tuneChannel: waiting %d seconds for motor to turn satellite dish.\n", waitForMotor);
-		sleep(waitForMotor);
-		
-		currentSatellitePosition = channel->getSatellitePosition();
 	}
 
 	currentTsidOnid = noNit ? currentTsidOnid : channel->getTsidOnid();
