@@ -1,2 +1,3 @@
-sbin_PROGRAMS = hotplug
+sbin_PROGRAMS = hotplug evtest
 hotplug = hotplug.c
+evtest = evtest.c
