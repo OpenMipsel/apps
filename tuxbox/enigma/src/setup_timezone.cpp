@@ -29,9 +29,8 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 	timeZone->resize(eSize(clientrect.width()-40, 35));
 	timeZone->setHelpText(_("select your time zone (ok)"));
 	timeZone->loadDeco();
-
-	if(loadTimeZones() && in_loop)
-		close(0);
+	
+	errLoadTimeZone = loadTimeZones();
 	
 	int cuseDst;
 	if ( eConfig::getInstance()->getKey("/elitedvb/useDst", cuseDst) )
@@ -76,20 +75,22 @@ eZapTimeZoneSetup::~eZapTimeZoneSetup()
 
 void eZapTimeZoneSetup::okPressed()
 {
-
-	// save current selected time zone
-	if ( eConfig::getInstance()->setKey("/elitedvb/timezone", ((eString*) timeZone->getCurrent()->getKey())->c_str()))
+	if (!errLoadTimeZone)
 	{
-		eConfig::getInstance()->delKey("/elitedvb/timezone");
-		eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/timezone", ((eString*) timeZone->getCurrent()->getKey())->c_str()));
+		// save current selected time zone
+		if ( eConfig::getInstance()->setKey("/elitedvb/timezone", ((eString*) timeZone->getCurrent()->getKey())->c_str()))
+		{
+			eConfig::getInstance()->delKey("/elitedvb/timezone");
+			eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/timezone", ((eString*) timeZone->getCurrent()->getKey())->c_str()));
+		}
+		if ( eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()))
+		{
+			eConfig::getInstance()->delKey("/elitedvb/timezone");
+			eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()));
+		}
+		eConfig::getInstance()->flush();
+		setTimeZone();
 	}
-	if ( eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()))
-	{
-		eConfig::getInstance()->delKey("/elitedvb/timezone");
-		eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()));
-	}
-	eConfig::getInstance()->flush();
-	setTimeZone();
 	close(1);
 }
 

@@ -12,6 +12,8 @@ class eCheckbox;
 
 class eZapTimeZoneSetup: public eWindow
 {
+	int errLoadTimeZone;
+	
 	eLabel *ltimeZone;
 	eStatusBar* statusbar;
 	eComboBox* timeZone;
