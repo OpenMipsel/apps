@@ -28,7 +28,10 @@
 #include <map>
 
 fontRenderClass *fontRenderClass::instance;
-static eLock ftlock;
+
+static pthread_mutex_t ftlock=PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t refcntlck=PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+
 static FTC_Font cache_current_font=0;
 
 struct fntColorCacheKey
@@ -123,7 +126,7 @@ eString fontRenderClass::AddFont(const eString &filename, const eString &name, i
 
 	n->scale=scale;
 	FT_Face face;
-	eLocker lock(ftlock);
+	singleLock s(ftlock);
 
 	if ((error=FT_New_Face(library, filename.c_str(), 0, &face)))
 		eFatal(" failed: %s", strerror(error));
@@ -192,7 +195,7 @@ float fontRenderClass::getLineHeight(const gFont& font)
 	Font *fnt = getFont( font.family.c_str(), font.pointSize);
 	if (!fnt)
 		return 0;
-	eLocker lock(ftlock);
+	singleLock s(ftlock);
 	FT_Face current_face;
 	if (FTC_Manager_Lookup_Size(cacheManager, &fnt->font.font, &current_face, &fnt->size)<0)
 	{
@@ -208,7 +211,7 @@ float fontRenderClass::getLineHeight(const gFont& font)
 
 fontRenderClass::~fontRenderClass()
 {
-	ftlock.lock();
+	singleLock s(ftlock);
 //	auskommentiert weil freetype und enigma die kritische masse des suckens ueberschreiten. 
 //	FTC_Manager_Done(cacheManager);
 //	FT_Done_FreeType(library);
@@ -376,8 +379,6 @@ void eTextPara::newLine(int flags)
 	previous=0;
 }
 
-static eLock refcntlck;
-
 eTextPara::~eTextPara()
 {
 	clear();
@@ -387,7 +388,7 @@ eTextPara::~eTextPara()
 
 void eTextPara::destroy()
 {
-	eLocker lock(refcntlck);
+	singleLock s(refcntlck);
 
 	if (!refcnt--)
 		delete this;
@@ -395,7 +396,7 @@ void eTextPara::destroy()
 
 eTextPara *eTextPara::grab()
 {
-	eLocker lock(refcntlck);
+	singleLock s(refcntlck);
 
 	refcnt++;
 	return this;
@@ -424,7 +425,7 @@ void eTextPara::setFont(Font *fnt, Font *replacement)
 		delete current_font;
 	current_font=fnt;
 	replacement_font=replacement;
-	eLocker lock(ftlock);
+	singleLock s(ftlock);
 
 			// we ask for replacment_font first becauseof the cache
 	if (replacement_font)
@@ -455,7 +456,7 @@ shape (std::vector<unsigned long> &string, const std::vector<unsigned long> &tex
 
 int eTextPara::renderString(const eString &string, int rflags)
 {
-	eLocker lock(ftlock);
+	singleLock s(ftlock);
 	
 	if (refcnt)
 		eFatal("mod. after lock");
@@ -601,7 +602,7 @@ int eTextPara::renderString(const eString &string, int rflags)
 
 void eTextPara::blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background, const gRGB &foreground)
 {
-	eLocker lock(ftlock);
+	singleLock s(ftlock);
 	
 	if (!current_font)
 		return;
@@ -812,7 +813,7 @@ void eTextPara::realign(int dir)	// der code hier ist ein wenig merkwuerdig.
 
 void eTextPara::clear()
 {
-	eLocker lock(ftlock);
+	singleLock s(ftlock);
 
 	for (glyphString::iterator i(glyphs.begin()); i!=glyphs.end(); ++i)
 		i->font->unlock();

@@ -3,12 +3,12 @@
 #include <limits.h>
 #include <lib/system/elock.h>
 
-static eLock lock;
+static pthread_mutex_t lock=PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 ///////////////////////////////////////// eString sprintf /////////////////////////////////////////////////
 eString& eString::sprintf(char *fmt, ...)
 {
-	eLocker locker(lock);
+	singleLock s(lock);
 // Implements the normal sprintf method, to use format strings with eString
 // The max length of the result string is 1024 char.
 	static char buf[1024];
