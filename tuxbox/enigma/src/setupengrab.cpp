@@ -23,8 +23,8 @@ ENgrabSetup::ENgrabSetup():
 	eWindow(0)
 {
 	setText(_("Ngrab Server"));
-	cmove(ePoint(170, 186));
-	cresize(eSize(390, 270));
+	cmove(ePoint(170, 176));
+	cresize(eSize(390, 290));
 
 	struct in_addr sinet_address;
 	int nsrvport;
@@ -38,8 +38,8 @@ ENgrabSetup::ENgrabSetup():
 
 	eLabel *l=new eLabel(this);
 	l->setText("Srv IP:");
-	l->move(ePoint(10, 20));
-	l->resize(eSize(150, fd+4));
+	l->move(ePoint(20, 20));
+	l->resize(eSize(140, fd+4));
 
 	eNumber::unpack(sinet_address.s_addr, de);
 	inet_address=new eNumber(this, 4, 0, 255, 3, de, 0, l);
@@ -51,8 +51,8 @@ ENgrabSetup::ENgrabSetup():
 
 	l=new eLabel(this);
 	l->setText("Srv Port:");
-	l->move(ePoint(10, 60));
-	l->resize(eSize(150, fd+4));
+	l->move(ePoint(20, 60));
+	l->resize(eSize(140, fd+4));
 
 	srvport=new eNumber(this, 1, 0, 9999, 4, &nsrvport, 0, l);
 	srvport->move(ePoint(160, 60));
@@ -63,8 +63,8 @@ ENgrabSetup::ENgrabSetup():
 
 	l=new eLabel(this);
 	l->setText("Srv MAC:");
-	l->move(ePoint(10,100));
-	l->resize(eSize(150, fd+4));
+	l->move(ePoint(20,100));
+	l->resize(eSize(140, fd+4));
 
 	serverMAC=new eTextInputField(this);
 	serverMAC->move(ePoint(160,100));
@@ -84,8 +84,8 @@ ENgrabSetup::ENgrabSetup():
 	}
 
 	bServerMAC=new eButton(this);
-	bServerMAC->move(ePoint(10,140));
-	bServerMAC->resize(eSize(360,40));
+	bServerMAC->move(ePoint(20,150));
+	bServerMAC->resize(eSize(340,40));
 	bServerMAC->setShortcut("blue");
 	bServerMAC->setShortcutPixmap("blue");
 	bServerMAC->setText(_("detect MAC Adress"));
@@ -97,7 +97,7 @@ ENgrabSetup::ENgrabSetup():
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(10, 190));
+	ok->move(ePoint(20, 210));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();

@@ -1553,7 +1553,7 @@ eZapMain::eZapMain()
 
 	eServiceReference::loadLockedList( (eplPath+"/services.locked").c_str() );
 	eTransponderList::getInstance()->readTimeOffsetData( (eplPath+"/timeOffsetMap").c_str() );
-	CONNECT( eEPGCache::getInstance()->timeNotValid, eZapMain::ShowTimeCorrectionWindow );
+//	CONNECT( eEPGCache::getInstance()->timeNotValid, eZapMain::ShowTimeCorrectionWindow );
 
 	mode=-1;  // fake mode for first call of setMode
 
@@ -5209,10 +5209,6 @@ eServiceContextMenu::eServiceContextMenu(const eServiceReference &ref, const eSe
 
 	eListBoxEntry *prev=0;
 
-	new eListBoxEntryText(&list, _("back"), (void*)0);
-
-	prev = new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-
 	if ( !(ref.flags & eServiceReference::isDirectory)
 		&& ( ref.type == 0x1000 // mp3
 		|| ( ref.flags & eServiceReference::mustDescent )
@@ -5330,8 +5326,6 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 	setLCD(lcdTitle, lcdElement);
 #endif
 	move(ePoint(150, 200));
-	new eListBoxEntryText(&list, _("back"), (void*)0);
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	if ( eDVB::getInstance()->getmID() != 6 )
 	{
 		new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
@@ -5449,8 +5443,6 @@ eRecordContextMenu::eRecordContextMenu( eWidget *LCDTitle, eWidget *LCDElement )
 	setLCD(LCDTitle, LCDElement);
 #endif
 	move(ePoint(150, 200));
-	new eListBoxEntryText(&list, _("back"), (void*)0);
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryText(&list, _("stop record now"), (void*)1);
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryText(&list, _("set record duration"), (void*)2);
@@ -5556,8 +5548,6 @@ UserBouquetSelector::UserBouquetSelector( std::list<ePlaylistEntry>&list )
 {
 	move(ePoint(100,80));
 
-	new eListBoxEntryText( &this->list, _("back"), (void*) 0 );
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&this->list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	for (std::list<ePlaylistEntry>::iterator it( SourceList.begin() ); it != SourceList.end(); it++)
 	{
 		ePlaylist *pl = (ePlaylist*)eServiceInterface::getInstance()->addRef( it->service );

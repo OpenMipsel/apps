@@ -48,7 +48,7 @@ class eUpgrade: public eWindow
 	{
 		eString date;
 		eString machines;
-		int priority;		
+		int priority;
 		eString text;
 	};
 	std::list<changelogEntry> changelogentries;

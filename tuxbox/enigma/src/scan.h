@@ -100,10 +100,19 @@ class TransponderScan: public eWindow
 	eWidget *LCDElement, *LCDTitle;
 #endif
 public:
-	enum { initialMenu, initialAutomatic };
+	enum tState
+	{
+		stateMenu,
+		stateManual,
+		stateAutomatic,
+		stateScan,
+		stateDone,
+		stateEnd
+	};
+
 	TransponderScan( eWidget* LCDTitle=0, eWidget* LCDElement=0 );
 	~TransponderScan();
-	int exec(int initial=initialMenu);
+	int exec(tState initial=stateMenu);
 	int eventHandler(const eWidgetEvent&);
 };
 

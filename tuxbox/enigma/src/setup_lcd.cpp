@@ -77,21 +77,21 @@ eZapLCDSetup::eZapLCDSetup(): eWindow(0)
 	p_brightness=new eSlider(this, bbrightness, 0, LCD_BRIGHTNESS_MAX );
 	p_brightness->setName("brightness");
 	p_brightness->move(ePoint(140, 20));
-	p_brightness->resize(eSize(220, fd+4));
+	p_brightness->resize(eSize(240, fd+4));
 	p_brightness->setHelpText(_("set LCD brightness ( left / right )"));
 	CONNECT( p_brightness->changed, eZapLCDSetup::brightnessChanged );
 
 	p_contrast=new eSlider(this, bcontrast, 0, LCD_CONTRAST_MAX );
 	p_contrast->setName("contrast");
 	p_contrast->move(ePoint(140, 60));
-	p_contrast->resize(eSize(220, fd+4));
+	p_contrast->resize(eSize(240, fd+4));
 	p_contrast->setHelpText(_("set LCD contrast ( left / right )"));
 	CONNECT( p_contrast->changed, eZapLCDSetup::contrastChanged );
 
 	p_standby=new eSlider(this, bstandby, 0, LCD_BRIGHTNESS_MAX );
 	p_standby->setName("standby");
 	p_standby->move(ePoint(140, 100));
-	p_standby->resize(eSize(220, fd+4));
+	p_standby->resize(eSize(240, fd+4));
 	p_standby->setHelpText(_("set LCD brightness for Standby Mode ( left / right )"));
 	CONNECT( p_standby->changed, eZapLCDSetup::standbyChanged );
 

@@ -290,7 +290,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 
 	eLabel *l=new eLabel(this);
 	l->setText("IP:");
-	l->move(ePoint(10, 20));
+	l->move(ePoint(20, 20));
 	l->resize(eSize(150, fd+4));
 
 	eNumber::unpack(sip, de);
@@ -304,7 +304,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 
 	l=new eLabel(this);
 	l->setText("Netmask:");
-	l->move(ePoint(10, 60));
+	l->move(ePoint(20, 60));
 	l->resize(eSize(150, fd+4));
 
 	eNumber::unpack(snetmask, de);
@@ -318,8 +318,8 @@ eZapNetworkSetup::eZapNetworkSetup():
 
 	l=new eLabel(this);
 	l->setText("Type:");
-	l->move(ePoint(10, 100));
-	l->resize(eSize(150, fd+4));
+	l->move(ePoint(20, 100));
+	l->resize(eSize(140, fd+4));
 
 	eListBoxEntryText *sel=0;
 	combo_type=new eComboBox(this, 3, l);
@@ -353,8 +353,8 @@ eZapNetworkSetup::eZapNetworkSetup():
 
 	lNameserver=new eLabel(this);
 	lNameserver->setText("Nameserver:");
-	lNameserver->move(ePoint(10, 140));
-	lNameserver->resize(eSize(150, fd+4));
+	lNameserver->move(ePoint(20, 140));
+	lNameserver->resize(eSize(140, fd+4));
 
 	eNumber::unpack(sdns, de);
 	dns=new eNumber(this, 4, 0, 255, 3, de, 0, lNameserver);
@@ -368,8 +368,8 @@ eZapNetworkSetup::eZapNetworkSetup():
 #ifdef ENABLE_PPPOE
 	lLogin=new eLabel(this);
 	lLogin->setText(_("Login:"));
-	lLogin->move(ePoint(10, 140));
-	lLogin->resize(eSize(150, fd+4));
+	lLogin->move(ePoint(20, 140));
+	lLogin->resize(eSize(140, fd+4));
 	lLogin->hide();
 
 	char *strLogin=0;
@@ -388,8 +388,8 @@ eZapNetworkSetup::eZapNetworkSetup():
 
 	lGateway=new eLabel(this);
 	lGateway->setText("Gateway:");
-	lGateway->move(ePoint(10, 180));
-	lGateway->resize(eSize(150, fd+4));
+	lGateway->move(ePoint(20, 180));
+	lGateway->resize(eSize(140, fd+4));
 	lGateway->hide();
 
 	eNumber::unpack(sgateway, de);
@@ -404,7 +404,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 #ifdef ENABLE_PPPOE
 	lPassword=new eLabel(this);
 	lPassword->setText(_("Password:"));
-	lPassword->move(ePoint(10, 180));
+	lPassword->move(ePoint(20, 180));
 	lPassword->resize(eSize(150, fd+4));
 
 	password=new eTextInputField(this,lPassword);
@@ -427,28 +427,28 @@ eZapNetworkSetup::eZapNetworkSetup():
 	int flags = getRejectFlags();
 	rejectWWW=new eCheckbox(this, flags&1, 1);
 	rejectWWW->setText("WWW");
-	rejectWWW->move(ePoint(10,260));
+	rejectWWW->move(ePoint(20,260));
 	rejectWWW->resize(eSize(90, fd+4));
 	rejectWWW->setHelpText(_("reject incoming connections on port 80"));
 	rejectWWW->hide();
 
 	rejectTelnet=new eCheckbox(this, flags&2, 1);
 	rejectTelnet->setText("Telnet");
-	rejectTelnet->move(ePoint(120,260));
+	rejectTelnet->move(ePoint(130,260));
 	rejectTelnet->resize(eSize(90, fd+4));
 	rejectTelnet->setHelpText(_("reject incoming connections on port 23"));
 	rejectTelnet->hide();
 
 	rejectSamba=new eCheckbox(this, flags&4, 1);
 	rejectSamba->setText("Samba");
-	rejectSamba->move(ePoint(230,260));
+	rejectSamba->move(ePoint(240,260));
 	rejectSamba->resize(eSize(100, fd+4));
 	rejectSamba->setHelpText(_("reject incoming connections on ports 137,138,139"));
 	rejectSamba->hide();
 
 	rejectFTP=new eCheckbox(this, flags&8, 1);
 	rejectFTP->setText("FTP");
-	rejectFTP->move(ePoint(350,260));
+	rejectFTP->move(ePoint(360,260));
 	rejectFTP->resize(eSize(70, fd+4));
 	rejectFTP->setHelpText(_("reject incoming connections on ports 21"));
 	rejectFTP->hide();
@@ -458,7 +458,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(10, 310));
+	ok->move(ePoint(20, 310));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();

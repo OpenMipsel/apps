@@ -1,29 +1,19 @@
 #ifndef __setup_extra_h
 #define __setup_extra_h
 
-#include <lib/gui/ewindow.h>
-#include <lib/gui/statusbar.h>
+#include <setup_window.h>
 
-class eButton;
-class eCheckbox;
-
-class eZapExtraSetup: public eWindow
+class eExpertSetup: public eSetupWindow
 {
-	eButton *ok;
-	eCheckbox *profimode, *hideerror, *extZap, *showHelpButtons;
-	eStatusBar *statusbar;
-
-	int sprofimode;
-	int shideerror;
-	int sextzap;
-	int shelpbuttons;
-private:
-	void okPressed();
-	void loadSettings();
-	void saveSettings();
+#ifndef DISABLE_NETWORK
+	void communication_setup();
+	void ngrab_setup();
+	void software_update();
+#endif
+	void rc_setup();
+	void skin_setup();
 public:
-	eZapExtraSetup();
-	~eZapExtraSetup();
+	eExpertSetup();
 };
 
 #endif

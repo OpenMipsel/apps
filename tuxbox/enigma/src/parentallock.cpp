@@ -43,20 +43,20 @@ eParentalSetup::eParentalSetup():
 {
 	setText(_("Parental setup"));
 	cmove(ePoint(170, 186));
-	cresize(eSize(390, 245));
+	cresize(eSize(400, 210));
 
 	loadSettings();
 
 	parentallock=new eCheckbox(this, sparentallock, 1);
 	parentallock->setText(_("Parental lock"));
-	parentallock->move(ePoint(10, 20));
+	parentallock->move(ePoint(20, 20));
 	parentallock->resize(eSize(200, 30));
 	parentallock->setHelpText(_("enable/disable parental lock"));
 	CONNECT(parentallock->checked, eParentalSetup::plockChecked );
 
 	changeParentalPin = new eButton(this);
 	changeParentalPin->setText(_("change PIN"));
-	changeParentalPin->move( ePoint( 220, 15 ) );
+	changeParentalPin->move( ePoint( 230, 15 ) );
 	changeParentalPin->resize( eSize(160, 40) );
 	changeParentalPin->setHelpText(_("change Parental PIN (ok)"));
 	changeParentalPin->loadDeco();
@@ -66,14 +66,14 @@ eParentalSetup::eParentalSetup():
   
 	setuplock=new eCheckbox(this, ssetuplock, 1);
 	setuplock->setText(_("Setup lock"));
-	setuplock->move(ePoint(10, 70));
+	setuplock->move(ePoint(20, 70));
 	setuplock->resize(eSize(200, 30));
 	setuplock->setHelpText(_("enable/disable setup lock"));
 	CONNECT(setuplock->checked, eParentalSetup::slockChecked );
 
 	changeSetupPin = new eButton(this);
 	changeSetupPin->setText(_("change PIN"));
-	changeSetupPin->move( ePoint( 220, 65 ) );
+	changeSetupPin->move( ePoint( 230, 65 ) );
 	changeSetupPin->resize( eSize(160, 40) );
 	changeSetupPin->setHelpText(_("change Setup PIN (ok)"));
 	changeSetupPin->loadDeco();
@@ -81,21 +81,11 @@ eParentalSetup::eParentalSetup():
 	if ( !ssetuplock )
 		changeSetupPin->hide();
 
-	lockunlock = new eButton(this);
-	lockunlock->setText(_("Lock/Unlock Services"));
-	lockunlock->move( ePoint( 10, 115 ) );
-	lockunlock->resize( eSize( 370, 40 ) );
-	lockunlock->loadDeco();
-	lockunlock->setHelpText(_("press ok to lock/unlock many services"));
-	CONNECT(lockunlock->selected, eParentalSetup::lockunlockPressed );
-	if ( !parentalpin )
-		lockunlock->hide();
-
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(10, 165));
+	ok->move(ePoint(20, 125));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -113,17 +103,13 @@ eParentalSetup::eParentalSetup():
 void eParentalSetup::plockChecked(int i)
 {
 	if ( i && !changeParentalPin->isVisible() )
-	{
-		lockunlock->show();
 		changeParentalPin->show();
-	}
 	else
 	{
 		if ( checkPin( parentalpin, _("parental") ) )
 		{
 			parentalpin=0;
 			changeParentalPin->hide();
-			lockunlock->hide();
 		}
 		else
 			parentallock->setCheck(1);
@@ -264,14 +250,4 @@ bool checkPin( int pin, const char * text )
 	}
 	while ( ret != pin );
 	return true;
-}
-
-void eParentalSetup::lockunlockPressed()
-{
-	if ( checkPin( parentalpin, _("parental")) )
-	{
-		eZap::getInstance()->getServiceSelector()->plockmode = 1;
-		eZap::getInstance()->getServiceSelector()->choose(-1);
-		eZap::getInstance()->getServiceSelector()->plockmode = 0;
-	}
 }

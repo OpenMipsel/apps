@@ -1,14 +1,14 @@
 #ifndef __setup_bouquet_h
 #define __setup_bouquet_h
 
-#include <lib/gui/listbox.h>
-#include <lib/gui/statusbar.h>
+#include <setup_window.h>
 
-class eZapBouquetSetup: public eListBoxWindow<eListBoxEntryMenu>
+class eZapBouquetSetup: public eSetupWindow
 {
 	void editSelected();
 	void createNewEmptyBouquet();
 	void editModeSelected();
+	void lockUnlockServices();
 public:
 	eZapBouquetSetup();
 };

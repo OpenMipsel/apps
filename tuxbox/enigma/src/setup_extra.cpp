@@ -1,105 +1,127 @@
+/*
+ * setup_extra.cpp
+ *
+ * Copyright (C) 2003 Andreas Monzner <ghostrider@tuxbox.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id: setup_extra.cpp,v 1.1.2.9 2003/07/31 16:44:53 ghostrider Exp $
+ */
+
 #include <setup_extra.h>
-
 #include <enigma.h>
-#include <lib/base/i18n.h>
-#include <lib/gui/elabel.h>
-#include <lib/gui/ebutton.h>
-#include <lib/gui/enumber.h>
-#include <lib/gui/echeckbox.h>
-#include <lib/gui/eskin.h>
-#include <lib/system/econfig.h>
+#include <setupengrab.h>
+#include <setupnetwork.h>
+#include <software_update.h>
+#include <setupskin.h>
+#include <setup_rc.h>
+#include <lib/gui/emessage.h>
 
-eZapExtraSetup::eZapExtraSetup():
-	eWindow(0)
+eExpertSetup::eExpertSetup()
+	:eSetupWindow(_("Expert Setup"), 10, 400)
 {
-	setText(_("Extra setup"));
-	cmove(ePoint(170, 186));
-	cresize(eSize(390, 270));
+	cmove(ePoint(170, 166));
 
-	int fd=eSkin::getActive()->queryValue("fontsize", 20);
-
-	loadSettings();
-
-	profimode=new eCheckbox(this, sprofimode, 1);
-	profimode->setText(_("Skip Confirmations"));
-	profimode->move(ePoint(20, 20));
-	profimode->resize(eSize(fd+4+340, fd+4));
-	profimode->setHelpText(_("enable/disable confirmations (ok)"));
-
-	hideerror=new eCheckbox(this, shideerror, 1);
-	hideerror->setText(_("Hide error windows"));
-	hideerror->move(ePoint(20, 60));
-	hideerror->resize(eSize(fd+4+340, fd+4));
-	hideerror->setHelpText(_("enable/disable showing the zap error messages(ok)"));
-
-	extZap=new eCheckbox(this, sextzap, 1);
-	extZap->setText(_("Advanced zap mode"));
-	extZap->move(ePoint(20, 100));
-	extZap->resize(eSize(fd+4+340, fd+4));
-	extZap->setHelpText(_("enable/disable advanced zap mode"));
-
-	showHelpButtons=new eCheckbox(this, shelpbuttons, 1);
-	showHelpButtons->setText(_("Serviceselector help buttons"));
-	showHelpButtons->move(ePoint(20, 140));
-	showHelpButtons->resize(eSize(fd+4+340, fd+4));
-	showHelpButtons->setHelpText(_("show/hide service selector (color) help buttons"));
-
-	ok=new eButton(this);
-	ok->setText(_("save"));
-	ok->setShortcut("green");
-	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 180));
-	ok->resize(eSize(220, 40));
-	ok->setHelpText(_("save changes and return"));
-	ok->loadDeco();
-	
-	CONNECT(ok->selected, eZapExtraSetup::okPressed);
-
-	statusbar=new eStatusBar(this);
-	statusbar->move( ePoint(0, clientrect.height()-30 ) );
-	statusbar->resize( eSize( clientrect.width(), 30) );
-	statusbar->loadDeco();
-
+	int entry=0;
+#ifndef DISABLE_NETWORK
+	CONNECT((new eListBoxEntryMenu(&list, _("Communication Setup"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eExpertSetup::communication_setup);
+	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab Streaming Setup"), eString().sprintf("(%d) %s", ++entry, _("open on screen display settings")) ))->selected, eExpertSetup::ngrab_setup);
+	CONNECT((new eListBoxEntryMenu(&list, _("Software Update"), eString().sprintf("(%d) %s", ++entry, _("open on software update")) ))->selected, eExpertSetup::software_update);
+#endif
+	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control"), eString().sprintf("(%d) %s", ++entry, _("open on audio/video settings")) ))->selected, eExpertSetup::rc_setup);
+	CONNECT((new eListBoxEntryMenu(&list, _("Skin Setup"), eString().sprintf("(%d) %s", ++entry, _("open skin setup")) ))->selected, eExpertSetup::skin_setup);
+	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Skip confirmations"), "/elitedvb/extra/profimode", _("enable/disable confirmations"));
+	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Hide error windows"), "/elitedvb/extra/hideerror", _("enable/disable showing the zap error messages"));
+	new eListBoxEntryCheck( (eListBox<eListBoxEntry>*)&list, _("Serviceselector help buttons"), "/ezap/serviceselector/showButtons", _("show/hide service selector (color) help buttons"));
 	setHelpID(92);
 }
 
-void eZapExtraSetup::loadSettings()
+#ifndef DISABLE_NETWORK
+void eExpertSetup::communication_setup()
 {
-	if (eConfig::getInstance()->getKey("/elitedvb/extra/profimode", sprofimode))
-		sprofimode=0;
-
-	if (eConfig::getInstance()->getKey("/elitedvb/extra/hideerror", shideerror))
-		shideerror=0;
-
-	if (eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", sextzap))
-		sextzap=0;
-
-	if (eConfig::getInstance()->getKey("/ezap/serviceselector/showButtons", shelpbuttons ))
-		shelpbuttons=0;
+	hide();
+	eZapNetworkSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
 }
 
-void eZapExtraSetup::saveSettings()
+void eExpertSetup::ngrab_setup()
 {
-	if ( shelpbuttons != showHelpButtons->isChecked() )
-		eZap::getInstance()->getServiceSelector()->toggleButtons();
-	sprofimode=profimode->isChecked();
-	shideerror=hideerror->isChecked();
-	sextzap=extZap->isChecked();
-	shelpbuttons=showHelpButtons->isChecked();
-
-	eConfig::getInstance()->setKey("/elitedvb/extra/profimode", sprofimode);
-	eConfig::getInstance()->setKey("/elitedvb/extra/hideerror", shideerror);
-	eConfig::getInstance()->setKey("/elitedvb/extra/extzapping", sextzap);
-	eConfig::getInstance()->setKey("/ezap/serviceselector/showButtons", shelpbuttons );
-	eConfig::getInstance()->flush();
+	hide();
+	ENgrabSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
 }
 
-eZapExtraSetup::~eZapExtraSetup()
+void eExpertSetup::software_update()
 {
+	hide();
+	eSoftwareUpdate setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
 }
 
-void eZapExtraSetup::okPressed()
+#endif
+
+void eExpertSetup::rc_setup()
 {
-	saveSettings();
-	close(1);
+	hide();
+	eZapRCSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+
+void eExpertSetup::skin_setup()
+{
+	hide();
+	eSkinSetup setup;
+	int res;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	res=setup.exec();
+	setup.hide();
+	if (!res)
+	{
+		eMessageBox msg(_("You have to restart enigma to apply the new skin\nRestart now?"), _("Skin changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
+		msg.show();
+		if ( msg.exec() == eMessageBox::btYes )
+			eZap::getInstance()->quit(2);
+		msg.hide();
+	}
+	show();
 }

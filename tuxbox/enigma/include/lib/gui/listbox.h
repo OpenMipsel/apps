@@ -136,10 +136,10 @@ class eListBoxEntry: public Object
 protected:
 	eListBox<eListBoxEntry>* listbox;
 	eString helptext;
-	bool selectable;
+	int selectable;
 public:
-	bool isSelectable() const { return selectable; }
-	eListBoxEntry(eListBox<eListBoxEntry>* parent, eString hlptxt=0, bool selectable=true)
+	int isSelectable() const { return selectable; }
+	eListBoxEntry(eListBox<eListBoxEntry>* parent, eString hlptxt=0, int selectable=3 )
 		:listbox(parent), helptext(hlptxt?hlptxt:eString(" ")),
 		selectable(selectable)
 	{
@@ -168,7 +168,7 @@ class eListBoxEntrySeparator: public eListBoxEntry
 	bool alphatest;
 public:
 	eListBoxEntrySeparator( eListBox<eListBoxEntry> *lb, gPixmap *pm, __u8 distance, bool alphatest=false )
-		:eListBoxEntry(lb, 0, false), pm(pm), distance(distance), alphatest(alphatest)
+		:eListBoxEntry(lb, 0, 0), pm(pm), distance(distance), alphatest(alphatest)
 	{
 	}
 	const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
@@ -259,6 +259,18 @@ public:
 		if (t == this)
 			/* emit */ selected();
 	}
+};
+
+class eListBoxEntryCheck: public eListBoxEntryText
+{
+	gPixmap *pm;
+	eString regKey;
+	int checked;
+
+	void LBSelected(eListBoxEntry* t);
+public:
+	eListBoxEntryCheck( eListBox<eListBoxEntry> *lb, const char* text, const char* regkey, const eString& hlptxt="" );
+	const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 };
 
 template <class T>

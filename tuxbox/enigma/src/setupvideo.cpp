@@ -4,6 +4,7 @@
 
 #include <lib/driver/eavswitch.h>
 #include <lib/dvb/edvb.h>
+#include <lib/dvb/eaudio.h>
 #include <lib/driver/rc.h>
 #include <lib/driver/streamwd.h>
 #include <lib/gui/elabel.h>
@@ -11,8 +12,7 @@
 #include <lib/gui/eskin.h>
 #include <lib/gui/echeckbox.h>
 #include <lib/system/econfig.h>
-
-
+                                               
 eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 {
 /*	eSkin *skin=eSkin::getActive();
@@ -33,19 +33,19 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
-	setText(_("Video Setup"));
-	move(ePoint(160, 146));
-	cresize(eSize(390, 250));
+	setText(_("A/V Settings"));
+	move(ePoint(160, 116));
+	cresize(eSize(390, 290));
 
 	eLabel *l=new eLabel(this);
 	l->setText(_("Color Format:"));
-	l->move(ePoint(10, 20));
-	l->resize(eSize(200, fd+4));
+	l->move(ePoint(20, 20));
+	l->resize(eSize(150, fd+4));
 
 	colorformat=new eListBox<eListBoxEntryText>(this, l);
 	colorformat->loadDeco();
 	colorformat->setFlags(eListBox<eListBoxEntryText>::flagNoUpDownMovement);
-	colorformat->move(ePoint(160, 20));
+	colorformat->move(ePoint(180, 20));
 	colorformat->resize(eSize(120, 35));
 	eListBoxEntryText* entrys[3];
 	entrys[0]=new eListBoxEntryText(colorformat, _("CVBS"), (void*)1);
@@ -56,19 +56,19 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 		entrys[3]=new eListBoxEntryText(colorformat, _("YPbPr"), (void*)4);
 
 	colorformat->setCurrent(entrys[v_colorformat-1]);
-	colorformat->setHelpText(_("choose colour format ( left, right )"));
+	colorformat->setHelpText(_("choose color format ( left, right )"));
 	CONNECT( colorformat->selchanged, eZapVideoSetup::CFormatChanged );
 
   l=new eLabel(this);
 	l->setText(_("Aspect Ratio:"));
-	l->move(ePoint(10, 65));
+	l->move(ePoint(20, 65));
 	l->resize(eSize(150, fd+4));
 	
 	pin8=new eListBox<eListBoxEntryText>(this, l);
 	pin8->loadDeco();	
 	pin8->setFlags(eListBox<eListBoxEntryText>::flagNoUpDownMovement);
 	
-	pin8->move(ePoint(160, 65));
+	pin8->move(ePoint(180, 65));
 	pin8->resize(eSize(170, 35));
 	pin8->setHelpText(_("choose aspect ratio ( left, right )"));
 	entrys[0]=new eListBoxEntryText(pin8, _("4:3 letterbox"), (void*)0);
@@ -78,17 +78,27 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	CONNECT( pin8->selchanged, eZapVideoSetup::VPin8Changed );
 
 	c_disableWSS = new eCheckbox(this, v_disableWSS, 1);
-	c_disableWSS->move(ePoint(10,110));
+	c_disableWSS->move(ePoint(20,110));
 	c_disableWSS->resize(eSize(350,30));
 	c_disableWSS->setText(_("Disable WSS on 4:3"));
 	c_disableWSS->setHelpText(_("don't send WSS signal when A-ratio is 4:3"));
 	CONNECT( c_disableWSS->checked, eZapVideoSetup::VDisableWSSChanged );
 
+	int sac3default = 0;
+	sac3default=eAudio::getInstance()->getAC3default();
+
+	ac3default=new eCheckbox(this, sac3default, 1);
+	ac3default->setText(_("AC3 default output"));
+	ac3default->move(ePoint(20, 150));
+	ac3default->resize(eSize(350, 30));
+	ac3default->setHelpText(_("enable/disable ac3 default output (ok)"));
+	CONNECT( ac3default->checked, eZapVideoSetup::ac3defaultChanged );
+
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 160));
+	ok->move(ePoint(20, 205));
 	ok->resize(eSize(220, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
@@ -113,6 +123,7 @@ void eZapVideoSetup::okPressed()
 	eConfig::getInstance()->setKey("/elitedvb/video/colorformat", v_colorformat );
 	eConfig::getInstance()->setKey("/elitedvb/video/pin8", v_pin8 );
 	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", v_disableWSS );
+	eAudio::getInstance()->saveSettings();
 	eConfig::getInstance()->flush();
 	close(1);
 }
@@ -124,6 +135,7 @@ int eZapVideoSetup::eventHandler( const eWidgetEvent &e)
 		case eWidgetEvent::execDone:
 			eAVSwitch::getInstance()->reloadSettings();
 			eStreamWatchdog::getInstance()->reloadSettings();
+			eAudio::getInstance()->reloadSettings();
 			break;
 		default:
 			return eWindow::eventHandler( e );
@@ -169,3 +181,7 @@ void eZapVideoSetup::VDisableWSSChanged( int i )
 	eConfig::getInstance()->setKey("/elitedvb/video/disableWSS", old );
 }
 
+void eZapVideoSetup::ac3defaultChanged( int i )
+{
+	eAudio::getInstance()->setAC3default( i );
+}

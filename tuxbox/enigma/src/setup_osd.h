@@ -2,32 +2,28 @@
 #define __setuposd_h
 
 #include <lib/gui/ewindow.h>
-#include <lib/gui/statusbar.h>
-#include <lib/gui/slider.h>
 
 class eCheckbox;
 class eButton;
+class eStatusBar;
+class eSlider;
 
 class eZapOsdSetup: public eWindow
 {
 	eSlider *sAlpha, *sBrightness, *sGamma;
-	eCheckbox* showOSDOnEITUpdate;
-	eCheckbox* showConsoleOnFB;
-	eCheckbox* showCurrentRemaining;
-	eCheckbox* anableAutohideOSDOn;
-	eStatusBar* statusbar;
+	eCheckbox *export_mode, *hide_error_windows;
+	eStatusBar *statusbar;
 
-	eButton *ok, *pluginoffs;
+	eButton *pluginoffs, *menu_language, *ok;
 	int alpha, brightness, gamma;
 private:
 	int eventHandler(const eWidgetEvent&);
-	void consoleStateChanged( int );
+	void menuLanguagePressed();
 	void alphaChanged( int );
 	void brightnessChanged( int );
 	void gammaChanged( int );
-	void fieldSelected(int *number);
+	void pluginPositionPressed();
 	void okPressed();
-	void PluginOffsetPressed();
 public:
 	eZapOsdSetup();
 	~eZapOsdSetup();

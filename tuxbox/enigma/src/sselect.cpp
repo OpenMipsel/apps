@@ -1498,6 +1498,7 @@ eServiceSelector::eServiceSelector()
 	addActionToHelpList(&i_serviceSelectorActions->deletePressed);
 	addActionToHelpList(&i_serviceSelectorActions->markPressed);
 	addActionToHelpList(&i_serviceSelectorActions->renamePressed);
+	addActionToHelpList(&i_serviceSelectorActions->newMarkerPressed);
 	addActionToHelpList(&i_serviceSelectorActions->showAll);
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 		addActionToHelpList(&i_serviceSelectorActions->showSatellites);

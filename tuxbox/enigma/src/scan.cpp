@@ -27,17 +27,13 @@ tsSelectType::tsSelectType(eWidget *parent)
 {
 	list=new eListBox<eListBoxEntryText>(this);
 	list->setName("menu");
-	list->move(ePoint(100, 100));
-	list->resize(eSize(100, 100));
-	
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "tsSelectType"))
 		eFatal("skin load of \"tsSelectType\" failed");
 
 	list->setFlags(eListBox<eListBoxEntryText>::flagShowEntryHelp);
-	new eListBoxEntryText(list, _("auto scan"), (void*)1, 0, _("open automatic transponder scan") );
-	new eListBoxEntryText(list, _("manual scan.."), (void*)2, 0, _("open manual transponder scan") );
-	list->setCurrent( new eListBoxEntryText(list, _("abort"), (void*)0, 0, _("leave transponder scan") ) );
+	new eListBoxEntryText(list, _("auto scan"), (void*)2, 0, _("open automatic transponder scan") );
+	new eListBoxEntryText(list, _("manual scan.."), (void*)1, 0, _("open manual transponder scan") );
 
 	CONNECT(list->selected, tsSelectType::selected);
 }
@@ -47,7 +43,7 @@ void tsSelectType::selected(eListBoxEntryText *entry)
 	if (entry && entry->getKey())
 		close((int)entry->getKey());
 	else
-		close(0);
+		close((int)TransponderScan::stateEnd);
 }
 
 int tsSelectType::eventHandler(const eWidgetEvent &event)
@@ -623,27 +619,14 @@ void showPic()
 		Decoder::displayIFrameFromFile(DATADIR "/enigma/pictures/scan.mvi" );
 }
 
-int TransponderScan::exec(int initial)
+int TransponderScan::exec(tState initial)
 {
+	tState state=initial;
+
 	eSize size=getClientSize()-eSize(0,30);
 	int scanok=0;
 
 	eString text;
-
-	enum
-	{
-		stateMenu,
-		stateManual,
-		stateAutomatic,
-		stateScan,
-		stateDone,
-		stateEnd
-	} state = stateMenu, oldstate = stateEnd;
-	
-	if (initial == initialMenu)
-		state=stateMenu;
-	else if (initial == initialAutomatic)
-		state=stateAutomatic;
 
 	show();
 
@@ -652,11 +635,6 @@ int TransponderScan::exec(int initial)
 	while (state != stateEnd)
 	{
 		showPic();
-		int total=stateEnd;
-		
-		if (total<2)
-			total=2;
-		total--;
 
 		switch (state)
 		{
@@ -668,18 +646,8 @@ int TransponderScan::exec(int initial)
 #endif
 			current = &select;
 			select.show();
-			switch (select.exec())
-			{
-			case 0:
-				state=stateEnd;
-				break;
-			case 1:
-				state=stateAutomatic;
-				break;
-			case 2:
-				state=stateManual;
-				break;
-			}
+			state = (tState) select.exec();
+			eDebug("state = %d", (int) state);
 			current=0;
 			select.hide();
 			break;
@@ -689,7 +657,7 @@ int TransponderScan::exec(int initial)
 			eTransponder transponder(*eDVB::getInstance()->settings->getTransponders());
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 
-			if ( oldstate==stateManual )
+			if ( initial==stateManual )
 				transponder=oldTp;
 			else if (sapi && sapi->transponder)
 				transponder=*sapi->transponder;
@@ -714,7 +682,6 @@ int TransponderScan::exec(int initial)
 #else
 			tsManual manual_scan(this, transponder);
 #endif
-			oldstate=stateManual;
 			manual_scan.show();
 			current = &manual_scan;
 			switch (manual_scan.exec())
@@ -723,7 +690,10 @@ int TransponderScan::exec(int initial)
 				state=stateScan;
 				break;
 			case 1:
-				state=stateMenu;
+				if ( initial == stateMenu )
+					state=stateMenu;
+				else
+					state=stateEnd;
 				break;
 			}
 			manual_scan.hide();
@@ -742,7 +712,6 @@ int TransponderScan::exec(int initial)
 			automatic_scan.setLCD( LCDTitle, LCDElement);
 #endif
 			automatic_scan.show();
-			oldstate=stateAutomatic;
 			current = &automatic_scan;
 			switch (automatic_scan.exec())
 			{
@@ -750,7 +719,10 @@ int TransponderScan::exec(int initial)
 				state=stateScan;
 				break;
 			case 1:
-				state=stateMenu;
+				if ( initial == stateMenu )
+					state=stateMenu;
+				else
+					state=stateEnd;
 				break;
 			}
 			automatic_scan.hide();
@@ -790,10 +762,10 @@ int TransponderScan::exec(int initial)
 			statusbar->setText(_("Scan is in finished, press ok to close window"));
 			finish.exec();
 			finish.hide();
-			if ( oldstate == stateManual || 
+			if ( initial == stateManual || 
 				eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 			{
-				eMessageBox mb(eString().sprintf(_("Do you want\nto scan another\n%s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
+				eMessageBox mb(eString().sprintf(_("Do you want\nto scan another\n%s?"),initial==stateAutomatic?_("Satellite"):_("Transponder")),
 					_("Scan finished"),
 					eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
 					eMessageBox::btYes );
@@ -805,7 +777,7 @@ int TransponderScan::exec(int initial)
 						state=stateEnd;
 						break;
 					default:
-						state=oldstate;
+						state=initial;
 				}
 				mb.hide();
 				break;

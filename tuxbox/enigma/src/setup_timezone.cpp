@@ -15,17 +15,17 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 {
 	setText(_("Time Zone Setup"));
 	cmove(ePoint(110, 146));
-	cresize(eSize(530, 270));
+	cresize(eSize(530, 250));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	ltimeZone=new eLabel(this);
-	ltimeZone->move(ePoint(20, 30));
+	ltimeZone->move(ePoint(20, 20));
 	ltimeZone->resize(eSize(220, fd+4));
 	ltimeZone->setText(_("Time Zone:"));
 		
 	timeZone=new eComboBox(this, 8, ltimeZone);
-	timeZone->move(ePoint(20, 70));
+	timeZone->move(ePoint(20, 60));
 	timeZone->resize(eSize(clientrect.width()-40, 35));
 	timeZone->setHelpText(_("select your time zone (ok)"));
 	timeZone->loadDeco();
@@ -39,7 +39,7 @@ eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
 	useDst=new eCheckbox(this);
 	useDst->setName("useDst");
 	useDst->setText(_("use automatically daylight saving time"));
-	useDst->move(ePoint(20, 120));
+	useDst->move(ePoint(20, 110));
 	useDst->resize(eSize(clientrect.width()-40, 35));
 	useDst->setHelpText(_("Automatically adjust clock for daylight saving changes"));
 	useDst->setCheck(cuseDst);

@@ -1,3 +1,5 @@
+#ifndef ENABLE_RFMOD
+
 #ifndef __setuprfmod_h
 #define __setuprfmod_h
 
@@ -36,5 +38,7 @@ public:
 	eZapRFmodSetup();
 	~eZapRFmodSetup();
 };
+
+#endif
 
 #endif

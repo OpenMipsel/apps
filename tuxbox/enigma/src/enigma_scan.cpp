@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.18 2003/07/03 20:32:21 ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.19 2003/07/31 16:44:53 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -26,7 +26,6 @@
 #include <rotorconfig.h>
 #include <scan.h>
 #include <tpeditwindow.h>
-#include <enigma_bouquet.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gui/ewindow.h>
@@ -36,28 +35,22 @@
 #include <lib/base/i18n.h>
 
 eZapScan::eZapScan()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Channels"), 9, 300, true)
+	:eSetupWindow(_("Service Searching"), 7, 400)
 {
+	int entry=0;
 	move(ePoint(180, 100));
-	CONNECT((new eListBoxEntryMenu(&list, _("back"), _("back to main menu")))->selected, eWidget::accept );
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-	CONNECT((new eListBoxEntryMenu(&list, _("Transponder scan"), _("goto transponder scan")))->selected, eZapScan::sel_scan);
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )  // only when a sat box is avail we shows a satellite config
 	{
-		CONNECT((new eListBoxEntryMenu(&list, _("Transponders..."), _("goto transponder edit dialog")))->selected, eZapScan::sel_tpeditdlg);
-		CONNECT((new eListBoxEntryMenu(&list, _("Satellites..."), _("goto satellite config")))->selected, eZapScan::sel_satconfig);
-		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup..."), _("goto Motor Setup")))->selected, eZapScan::sel_rotorConfig);
+		CONNECT((new eListBoxEntryMenu(&list, _("Satellite Configuration"), eString().sprintf("(%d) %s", ++entry, _("open satellite config"))))->selected, eZapScan::sel_satconfig);
+		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup"), eString().sprintf("(%d) %s", ++entry, _("goto Motor Setup"))))->selected, eZapScan::sel_rotorConfig);
+		CONNECT((new eListBoxEntryMenu(&list, _("Transponder Edit"), eString().sprintf("(%d) %s", ++entry, _("for automatic transponder scan"))))->selected, eZapScan::sel_transponderEdit);
+		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	}
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-	CONNECT((new eListBoxEntryMenu(&list, _("Bouquets..."), _("open Bouquet Setup")))->selected, eZapScan::sel_bouquet);
-//	CONNECT((new eListBoxEntryMenu(&list, _("SID...")))->selected, eZapScan::sel_bouquet);
+	CONNECT((new eListBoxEntryMenu(&list, _("Automatic Transponder Scan"), eString().sprintf("(%d) %s", ++entry, _("open automatic transponder scan"))))->selected, eZapScan::sel_autoScan);
+	CONNECT((new eListBoxEntryMenu(&list, _("Manual Transponder Scan"), eString().sprintf("(%d) %s", ++entry, _("open automatic transponder scan"))))->selected, eZapScan::sel_manualScan);
 }
 
-eZapScan::~eZapScan()
-{
-}
-
-void eZapScan::sel_scan()
+void eZapScan::sel_autoScan()
 {
 #ifndef DISABLE_LCD
 	TransponderScan setup(LCDTitle, LCDElement);
@@ -65,40 +58,19 @@ void eZapScan::sel_scan()
 	TransponderScan setup;
 #endif
 	hide();
-	setup.exec();
+	setup.exec(TransponderScan::stateAutomatic);
 	show();
 }
 
-void eZapScan::sel_bouquet()
+void eZapScan::sel_manualScan()
 {
-/*	FILE *f=fopen("/scheissteil.sdx", "rt");
-
-	int parsed=0, error=0;
-	if (f)
-	{
-		while (1)
-		{
-			char line[129];
-			if (fread(line, 128, 1, f) != 1)
-				break;
-			line[128]=0;
-			int res=eDVB::getInstance()->settings->importSatcoDX(line);
-			if (!res)
-				parsed++;
-			else
-				error++;
-		}
-		eDebug("parsed %d lines ok, %d errornous.", parsed, error);
-		fclose(f);
-	}*/
-	hide();
-	eZapBouquetSetup s;
 #ifndef DISABLE_LCD
-	s.setLCD(LCDTitle, LCDElement);
+	TransponderScan setup(LCDTitle, LCDElement);
+#else
+	TransponderScan setup;
 #endif
-	s.show();
-	s.exec();
-	s.hide();
+	hide();
+	setup.exec(TransponderScan::stateManual);
 	show();
 }
 
@@ -114,20 +86,6 @@ void eZapScan::sel_satconfig()
 	satconfig.hide();
 	show();
 }
-
-void eZapScan::sel_tpeditdlg()
-{
-	hide();
-	eTransponderEditWindow wnd;
-#ifndef DISABLE_LCD
-	wnd.setLCD(LCDTitle, LCDElement);
-#endif
-	wnd.show();
-	wnd.exec();
-	wnd.hide();
-	show();
-}
-
 
 eLNB* eZapScan::getRotorLNB(int silent)
 {
@@ -169,6 +127,19 @@ eLNB* eZapScan::getRotorLNB(int silent)
 		return &(*RotorLnb);
 }
 
+void eZapScan::sel_transponderEdit()
+{
+	hide();
+	eTransponderEditWindow wnd;
+#ifndef DISABLE_LCD
+	wnd.setLCD(LCDTitle, LCDElement);
+#endif
+	wnd.show();
+	wnd.exec();
+	wnd.hide();
+	show();
+}
+
 void eZapScan::sel_rotorConfig()
 {
 	hide();
@@ -189,7 +160,7 @@ void eZapScan::sel_rotorConfig()
 eLNBSelector::eLNBSelector()
 	:eListBoxWindow<eListBoxEntryText>(_("Select LNB"), 5, 300, true)
 {
-	move(ePoint(150, 136));
+	move(ePoint(140, 156));
 	new eListBoxEntryText(&list, _("back"), 0, 0, _("go to prev menu") );
 	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	int cnt=0;

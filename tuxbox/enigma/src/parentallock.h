@@ -14,7 +14,7 @@ class eParentalSetup: public eWindow
 {
 	eButton *ok;
 	eCheckbox *parentallock, *setuplock;
-	eButton *changeParentalPin, *changeSetupPin, *lockunlock;
+	eButton *changeParentalPin, *changeSetupPin;
 	eStatusBar *statusbar;
 
 	int sparentallock;
@@ -28,7 +28,6 @@ private:
 	void slockChecked(int);
 	void plockChecked(int);
 	void changePin( eButton* );
-	void lockunlockPressed();
 public:
 	eParentalSetup();
 	~eParentalSetup();

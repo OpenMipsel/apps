@@ -137,6 +137,7 @@
 		<img name="diseqc_0" src="diseqc_0-fs8.png" />
 		<img name="diseqc_1" src="diseqc_1-fs8.png" />
 		<img name="diseqc_2" src="diseqc_2-fs8.png" />
+		<img name="eListBoxEntryCheck" src="check-fs8.png" />
 	</images>
 	
 	<images basepath="countries">
@@ -481,7 +482,7 @@
   
 	<object name="tsSelectType">
 		<tsSelectType cposition="0:0" csize="e:300">
-			<eListbox name="menu" position="20:30" size="e-20:e-10" />
+			<eListbox name="menu" position="0:0" size="e-20:e-10" />
 		</tsSelectType>
 	</object>
 
@@ -811,7 +812,7 @@
 	</object>
 
 	<object name="eWizardLanguage">
-		<eWizardLanguage cposition="120:110" csize="500:400" text="Your language">
+		<eWizardLanguage cposition="120:110" csize="500:400" text="Menu language">
 			<eLabel name="head" position="40:50" size="e:50" font="head" />
 			<eLabel name="help" position="0:100" size="e:30" align="center" />
 			<eListbox name="list" position="50:140" size="e-50:e-50" loadDeco="" />

@@ -1,12 +1,15 @@
 #include <setup_osd.h>
 
+#include <wizard_language.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
 #include <lib/gdi/gfbdc.h>
 #include <lib/gdi/font.h>
-#include <lib/gui/echeckbox.h>
 #include <lib/gui/eskin.h>
+#include <lib/gui/ebutton.h>
 #include <lib/gui/guiactions.h>
+#include <lib/gui/slider.h>
+#include <lib/gui/statusbar.h>
 #include <lib/system/econfig.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
@@ -156,7 +159,7 @@ PluginOffsetScreen::PluginOffsetScreen()
 	descr->setForegroundColor( foreColor );
 	descr->resize(eSize(568,300));
 	descr->move(ePoint(100,100));
-	descr->setText(_("here you can center the plugin rectangle...for more infos press help"));
+	descr->setText(_("here you can center the tuxtxt rectangle...\nfor more infos press help"));
 	eSize ext = descr->getExtend();
 	descr->resize( ext );
 	descr->move( ePoint( (width()/2)-(ext.width()/2) , (height()/2)-(ext.height()/2) ) );
@@ -168,54 +171,19 @@ PluginOffsetScreen::PluginOffsetScreen()
 	setHelpID(96);
 }
 
-eZapOsdSetup::eZapOsdSetup(): eWindow(0)
+eZapOsdSetup::eZapOsdSetup()
+	:eWindow(0)
 {
-	setText(_("OSD Setup"));
-	cmove(ePoint(150, 85));
-	cresize(eSize(440, 445));
+	setText(_("OSD Settings"));
+	cmove(ePoint(140, 160));
+	cresize(eSize(460, 290));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
-
-	int state=0;
-	eConfig::getInstance()->getKey("/ezap/osd/showOSDOnEITUpdate", state);
-
-	showOSDOnEITUpdate = new eCheckbox(this, state, fd);
-	showOSDOnEITUpdate->setText(_("Show OSD on EIT Update"));
-	showOSDOnEITUpdate->move(ePoint(20, 25));
-	showOSDOnEITUpdate->resize(eSize(fd+4+310, fd+4));
-	showOSDOnEITUpdate->setHelpText(_("shows OSD when now/next info is changed"));
-
-	state=1;
-	eConfig::getInstance()->getKey("/ezap/osd/showCurrentRemaining", state);
-	showCurrentRemaining = new eCheckbox(this, state, fd);
-	showCurrentRemaining->setText(_("Show event remaining time"));
-	showCurrentRemaining->move(ePoint(20, 65));
-	showCurrentRemaining->resize(eSize(fd+4+310, fd+4));
-	showCurrentRemaining->setHelpText(_("shows the remaining time for current event (total otherwise)"));
-
-	state=1;
-	eConfig::getInstance()->getKey("/ezap/osd/anableAutohideOSDOn", state);
-	anableAutohideOSDOn = new eCheckbox(this, state, fd);
-	anableAutohideOSDOn->setText(_("Enable auto-hide OSD"));
-	anableAutohideOSDOn->move(ePoint(20, 105));
-	anableAutohideOSDOn->resize(eSize(fd+4+310, fd+4));
-	anableAutohideOSDOn->setHelpText(_("enable auto-hide the OSD"));
-
-	state=0;
-	eConfig::getInstance()->getKey("/ezap/osd/showConsoleOnFB", state);
-	showConsoleOnFB = new eCheckbox(this, state, fd);
-	showConsoleOnFB->setText(_("Show Console on Framebuffer"));
-	showConsoleOnFB->move(ePoint(20, 145));
-	showConsoleOnFB->resize(eSize(fd+4+310, fd+4));
-	showConsoleOnFB->setHelpText(_("shows the linux console on TV"));
-
-	if ( eDVB::getInstance()->getmID() > 4 )
-		showConsoleOnFB->hide();
 
 	alpha = gFBDC::getInstance()->getAlpha();
 	eLabel* l = new eLabel(this);
 	l->setText(_("Alpha:"));
-	l->move(ePoint(20, 185));
+	l->move(ePoint(20, 20));
 	l->resize(eSize(110, fd+4));
 	sAlpha = new eSlider( this, l, 0, 512 );
 
@@ -224,8 +192,8 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	else
 		sAlpha->setIncrement( 10 ); // Percent !
 		
-	sAlpha->move( ePoint( 140, 185 ) );
-	sAlpha->resize(eSize( 280, fd+4 ) );
+	sAlpha->move( ePoint( 150, 20 ) );
+	sAlpha->resize(eSize( 290, fd+4 ) );
 	sAlpha->setHelpText(_("change the transparency correction"));
 	sAlpha->setValue( alpha);
 	CONNECT( sAlpha->changed, eZapOsdSetup::alphaChanged );
@@ -233,12 +201,12 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	brightness = gFBDC::getInstance()->getBrightness();
 	l = new eLabel(this);
 	l->setText(_("Brightness:"));
-	l->move(ePoint(20, 225));
-	l->resize(eSize(110, fd+4));
+	l->move(ePoint(20, 60));
+	l->resize(eSize(120, fd+4));
 	sBrightness = new eSlider( this, l, 0, 255 );
 	sBrightness->setIncrement( 5 ); // Percent !
-	sBrightness->move( ePoint( 140, 225 ) );
-	sBrightness->resize(eSize( 280, fd+4 ) );
+	sBrightness->move( ePoint( 150, 60 ) );
+	sBrightness->resize(eSize( 290, fd+4 ) );
 	sBrightness->setHelpText(_("change the brightness correction"));
 	sBrightness->setValue( brightness);
 	CONNECT( sBrightness->changed, eZapOsdSetup::brightnessChanged );
@@ -246,33 +214,42 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 	gamma = gFBDC::getInstance()->getGamma();
 	l = new eLabel(this);
 	l->setText(_("Contrast:"));
-	l->move(ePoint(20, 265));
-	l->resize(eSize(110, fd+4));
+	l->move(ePoint(20, 100));
+	l->resize(eSize(120, fd+4));
 	sGamma = new eSlider( this, l, 0, 255 );
 	sGamma->setIncrement( 5 ); // Percent !
-	sGamma->move( ePoint( 140, 265 ) );
-	sGamma->resize(eSize( 280, fd+4 ) );
+	sGamma->move( ePoint( 150, 100 ) );
+	sGamma->resize(eSize( 290, fd+4 ) );
 	sGamma->setHelpText(_("change the contrast"));
 	sGamma->setValue( gamma);
 	CONNECT( sGamma->changed, eZapOsdSetup::gammaChanged );
 
-	pluginoffs=new eButton(this);
-	pluginoffs->setText(_("plugin offset"));
-	pluginoffs->setHelpText(_("set the pluging offset coordinates (tuxtxt, a.o. )"));
+	menu_language=new eButton(this);
+	menu_language->setText(_("Menu language"));
+	menu_language->setShortcut("blue");
+	menu_language->setShortcutPixmap("blue");
+	menu_language->move(ePoint(20, 140));
+	menu_language->resize(eSize(205, 40));
+	menu_language->loadDeco();
+	menu_language->setHelpText(_("press ok to select your menu language"));
+	CONNECT( menu_language->selected, eZapOsdSetup::menuLanguagePressed );
 
+	pluginoffs=new eButton(this);
+	pluginoffs->setText(_("TuxText position"));
+	pluginoffs->setHelpText(_("here you can center the Tuxtxt (builtin videotext)"));
 	pluginoffs->setShortcut("yellow");
 	pluginoffs->setShortcutPixmap("yellow");
-	pluginoffs->move(ePoint(20, 305));
-	pluginoffs->resize(eSize(250, 40));
+	pluginoffs->move(ePoint(235, 140));
+	pluginoffs->resize(eSize(205, 40));
 	pluginoffs->loadDeco();
-	CONNECT( pluginoffs->selected, eZapOsdSetup::PluginOffsetPressed );
+	CONNECT( pluginoffs->selected, eZapOsdSetup::pluginPositionPressed );
 
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
 	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 360));
-	ok->resize(eSize(220, 40));
+	ok->move(ePoint(20, 205));
+	ok->resize(eSize(205, 40));
 	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
 
@@ -287,11 +264,6 @@ eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 
 eZapOsdSetup::~eZapOsdSetup()
 {
-}
-
-void eZapOsdSetup::consoleStateChanged( int i )
-{
-	fbClass::getInstance()->showConsole( i );
 }
 
 void eZapOsdSetup::alphaChanged( int i )
@@ -312,30 +284,32 @@ void eZapOsdSetup::gammaChanged( int i )
 	gFBDC::getInstance()->setGamma(gamma);
 }
 
-void eZapOsdSetup::fieldSelected(int *number)
+void eZapOsdSetup::pluginPositionPressed()
 {
-	focusNext(eWidget::focusDirNext);
-}
-
-void eZapOsdSetup::PluginOffsetPressed()
-{
+	eWidget *oldfocus=focus;
 	hide();
 	PluginOffsetScreen scr;
 	scr.show();
 	scr.exec();
 	scr.hide();
 	show();
+	setFocus(oldfocus);
 }
 
 void eZapOsdSetup::okPressed()
 {
 	gFBDC::getInstance()->saveSettings();
-	eConfig::getInstance()->setKey("/ezap/osd/showOSDOnEITUpdate", showOSDOnEITUpdate->isChecked());
-	eConfig::getInstance()->setKey("/ezap/osd/showCurrentRemaining", showCurrentRemaining->isChecked());
-	eConfig::getInstance()->setKey("/ezap/osd/showConsoleOnFB", showConsoleOnFB->isChecked());
-	eConfig::getInstance()->setKey("/ezap/osd/anableAutohideOSDOn", anableAutohideOSDOn->isChecked());
 	eConfig::getInstance()->flush();
 	close(1);
+}
+
+void eZapOsdSetup::menuLanguagePressed()
+{
+	eWidget *oldfocus=focus;
+	hide();
+	eWizardLanguage::run();
+	show();
+	setFocus(oldfocus);
 }
 
 int eZapOsdSetup::eventHandler( const eWidgetEvent &e )
@@ -344,9 +318,6 @@ int eZapOsdSetup::eventHandler( const eWidgetEvent &e )
 	{
 		case eWidgetEvent::execDone:
 		{
-			int state=0;
-			eConfig::getInstance()->getKey("/ezap/osd/showConsoleOnFB", state);
-			fbClass::getInstance()->showConsole(state);
 			gFBDC::getInstance()->reloadSettings();
 			break;
 		}

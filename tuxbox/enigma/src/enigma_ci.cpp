@@ -385,14 +385,14 @@ enigmaCI::enigmaCI(): eWindow(0)
 	{
 		setText(_("Common Interface Modules"));
 		move(ePoint(160, 80));
-		cresize(eSize(350, 340));
+		cresize(eSize(350, 310));
 		DVBCI2=eDVB::getInstance()->DVBCI2;
 	}
 	else
 	{	
 		setText(_("Common Interface Module"));
 		move(ePoint(160, 136));
-		cresize(eSize(350, 220));
+		cresize(eSize(350, 180));
 	}
 	
 	reset=new eButton(this);
@@ -450,25 +450,7 @@ enigmaCI::enigmaCI(): eWindow(0)
 		app2->loadDeco();
 
 		CONNECT(app2->selected, enigmaCI::app2Pressed);		
-
-		ok=new eButton(this);
-		ok->setText(_("ok"));
-		ok->move(ePoint(20, 273));
-		ok->resize(eSize(90, fd+4));
-		ok->setHelpText(_("leave Common Interface menu"));
-		ok->loadDeco();
 	}
-	else
-	{
-		ok=new eButton(this);
-		ok->setText(_("ok"));
-		ok->move(ePoint(20, 150));
-		ok->resize(eSize(90, fd+4));
-		ok->setHelpText(_("leave Common Interface menu"));
-		ok->loadDeco();
-	}
-	
-	CONNECT(ok->selected, enigmaCI::okPressed);		
 
 	status = new eStatusBar(this);	
 	status->move( ePoint(0, clientrect.height()-30) );
@@ -502,11 +484,6 @@ void enigmaCI::updateCI2info(const char *buffer)
 {
 	eDebug("new info %s",buffer);
 	app2->setText(buffer);
-}
-
-void enigmaCI::okPressed()
-{
-	close(1);
 }
 
 void enigmaCI::resetPressed()

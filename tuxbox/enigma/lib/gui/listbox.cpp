@@ -1,4 +1,5 @@
 #include <lib/gui/listbox.h>
+#include <lib/system/econfig.h>
 #include <lib/gdi/font.h>
 
 gFont eListBoxEntryText::font;
@@ -924,4 +925,58 @@ const eString& eListBoxEntrySeparator::redraw(gPainter *rc, const eRect& rect, g
 	}
 	static eString ret="separator";
 	return ret;
+}
+
+eListBoxEntryCheck::eListBoxEntryCheck( eListBox<eListBoxEntry> *lb, const char* text, const char* regkey, const eString& hlptxt )
+	:eListBoxEntryText((eListBox<eListBoxEntryText>*)lb, text, (void*)-1, 0, hlptxt, 0 )
+	,pm(eSkin::getActive()->queryImage("eListBoxEntryCheck"))
+	,regKey(regkey), checked(false)
+{
+	selectable=1;
+	if ( regKey )
+	{
+		checked=0;
+		if ( eConfig::getInstance()->getKey( regKey.c_str(), checked ) )
+			eConfig::getInstance()->setKey( regKey.c_str(), checked );
+	}
+	if (listbox)
+		CONNECT(listbox->selected, eListBoxEntryCheck::LBSelected);
+}
+
+void eListBoxEntryCheck::LBSelected(eListBoxEntry* t)
+{
+	if (t == this)
+	{
+		checked=checked?0:1;
+		eConfig::getInstance()->setKey( regKey.c_str(), checked );
+		listbox->invalidateCurrent();
+	}
+}
+
+const eString& eListBoxEntryCheck::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
+{
+	bool b;
+
+	if ( (b = (state == 2)) )
+		state = 0;
+
+	eListBoxEntryText::redraw( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state );	
+
+	if ( pm && checked )
+	{
+		eRect right = rect;
+		right.setLeft( rect.right() - (pm->x + 10) );
+		rc->clip(right);
+
+		eSize psize = pm->getSize(),
+					esize = rect.size();
+
+		int yOffs = rect.top()+((esize.height() - psize.height()) / 2);
+
+		rc->blit(*pm, ePoint(right.left(), yOffs), right, gPixmap::blitAlphaTest );
+
+		rc->clippop();
+	}
+
+	return text;
 }

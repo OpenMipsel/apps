@@ -18,7 +18,7 @@ eZapRFmodSetup::eZapRFmodSetup(): eWindow(0)
 {
 //	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
-	setText(_("RF-Modulator Setup"));
+	setText(_("UHF-Modulator Setup"));
 	move(ePoint(150, 86));
 	cresize(eSize(390, 320));
 		

@@ -74,12 +74,6 @@ void MakeParam(char* id, int val)
 ePlugin::ePlugin(eListBox<ePlugin> *parent, const char *cfgfile, const char* descr)
 	:eListBoxEntryText((eListBox<eListBoxEntryText>*)parent)
 {
-	if (!cfgfile)
-	{
-		text="back";
-		return;
-	}
-
 	eDebug(cfgfile);
 	text=getInfo(cfgfile, "name");
 
@@ -130,8 +124,6 @@ eZapPlugins::eZapPlugins(int type, eWidget* lcdTitle, eWidget* lcdElement)
 #ifndef DISABLE_LCD
 	setLCD(lcdTitle, lcdElement);
 #endif
-	new ePlugin(&list, 0);
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT(list.selected, eZapPlugins::selected);
 }
 

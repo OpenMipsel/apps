@@ -16,8 +16,6 @@ eModeSelector::eModeSelector()
 	:eListBoxWindow<eListBoxEntryText>(_("Bouquet Type"), 5, 400)
 {
 	move( ePoint(100,100) );
-	new eListBoxEntryText( &list, _("back"), (void*) -1 );
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryText( &list, _("TV"), (void*)  eZapMain::modeTV );
 	new eListBoxEntryText( &list, _("Radio"), (void*) eZapMain::modeRadio );
 	CONNECT( list.selected, eModeSelector::entrySelected );
@@ -32,14 +30,18 @@ void eModeSelector::entrySelected( eListBoxEntryText *e )
 }
 
 eZapBouquetSetup::eZapBouquetSetup()
-	:eListBoxWindow<eListBoxEntryMenu>(_("Bouquet Setup"), 8, 430, true)
-{
+	:eSetupWindow(_("Service Organising"), 8, 430)
+{                                        
 	move(ePoint(150, 136));
-	CONNECT((new eListBoxEntryMenu(&list, _("back"), _("back to setup")))->selected, eWidget::accept);
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-	CONNECT((new eListBoxEntryMenu(&list, _("Create new bouquet"), _("create new empty bouquet")))->selected, eZapBouquetSetup::createNewEmptyBouquet );
-	CONNECT((new eListBoxEntryMenu(&list, _("Add services to bouquet"), _("add multiple services to a specific bouquet")))->selected, eZapBouquetSetup::editModeSelected );
-	CONNECT((new eListBoxEntryMenu(&list, _("Edit bouquets"), _("sort,rename,delete services/bouquets ")))->selected, eZapBouquetSetup::editSelected );
+	int entry=0;
+	CONNECT((new eListBoxEntryMenu(&list, _("Create new bouquet"), eString().sprintf("(%d) %s", ++entry, _("create new empty bouquet"))))->selected, eZapBouquetSetup::createNewEmptyBouquet );
+	CONNECT((new eListBoxEntryMenu(&list, _("Add services to bouquet"), eString().sprintf("(%d) %s", ++entry, _("add multiple services to a specific bouquet"))))->selected, eZapBouquetSetup::editModeSelected );
+	CONNECT((new eListBoxEntryMenu(&list, _("Edit bouquets"), eString().sprintf("(%d) %s", ++entry, _("sort,rename,delete services/bouquets "))))->selected, eZapBouquetSetup::editSelected );
+	if ( eConfig::getInstance()->getParentalPin() )
+	{
+		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		CONNECT((new eListBoxEntryMenu(&list, _("Lock/Unlock Services"), eString().sprintf("(%d) %s", ++entry,_("lock,unlock services (parental locking)"))))->selected, eZapBouquetSetup::lockUnlockServices );
+	}
 //	CONNECT((new eListBoxEntryMenu(&list, _("Duplicate Sat/Provider/Bouquet"), _("copy specific bouquet/provider/sat to bouquet list")))->selected, eZapBouquetSetup::editSelected );
 }
 
@@ -199,4 +201,16 @@ void eZapBouquetSetup::createNewEmptyBouquet()
 	if ( ret != -1 )
 		eZapMain::getInstance()->createEmptyBouquet( ret );
 	show();
+}
+
+extern bool checkPin( int pin, const char * text );
+
+void eZapBouquetSetup::lockUnlockServices()
+{
+	if ( checkPin( eConfig::getInstance()->getParentalPin(), _("parental")) )
+	{
+		eZap::getInstance()->getServiceSelector()->plockmode = 1;
+		eZap::getInstance()->getServiceSelector()->choose(-1);
+		eZap::getInstance()->getServiceSelector()->plockmode = 0;
+	}
 }

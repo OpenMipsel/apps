@@ -176,7 +176,7 @@ again_satconfig:
 
 				{
 					TransponderScan scan(0, 0);
-					res=scan.exec(TransponderScan::initialAutomatic);
+					res=scan.exec(TransponderScan::stateAutomatic);
 				}
 				if (!res)
 					goto again_satconfig;
