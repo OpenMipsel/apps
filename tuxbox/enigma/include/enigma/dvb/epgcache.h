@@ -62,13 +62,16 @@ struct hash<uniqueEPGKey>
 
 class eventData
 {
+public:
+	enum TYP {SCHEDULE, NOWNEXT};
 private:
 	__u8* EITdata;
 	int ByteSize;
 public:
+	TYP type;
 	static int CacheSize;
-	eventData(const eit_event_struct* e, int size)
-	:ByteSize(size)
+	eventData(const eit_event_struct* e, int size, enum TYP t)
+	:ByteSize(size), type(t)
 	{
 		CacheSize+=size;
 		EITdata = new __u8[size];
@@ -91,28 +94,45 @@ public:
 
 class eEPGCache;
 
-class eScheduleCurrentTS: public eSection
+class eSchedule: public eSection
 {
 	friend class eEPGCache;
-	eScheduleCurrentTS();
-	int sectionRead(__u8 *data);
+	inline int sectionRead(__u8 *data);
+	eSchedule()  // 0x50, Filter 0xF0
+		:eSection(0x12, 80, -1, -1, SECREAD_CRC|SECREAD_NOTIMEOUT, 240)
+	{
+	}
+};
+
+class eNowNext: public eSection
+{
+	friend class eEPGCache;
+	inline int sectionRead(__u8 *data);
+	eNowNext()  // 0x4E, 0x4F
+		:eSection(0x12, 78 , -1, -1, SECREAD_CRC|SECREAD_NOTIMEOUT, 254)
+	{
+	}
 };
 
 class eEPGCache: public Object
 {
-	friend class eScheduleCurrentTS;
+	friend class eSchedule;
+	friend class eNowNext;
 private:
 	uniqueEPGKey current_service;
-	int firstCurrentTSEventId;
+	int current_sid;
+	int firstScheduleEventId;
+	int firstNowNextEventId;
 	int isRunning;
-	int sectionRead(__u8 *data);
+	int sectionRead(__u8 *data, eventData::TYP type);
 	static eEPGCache *instance;
 
 	eventCache eventDB;
 	updateMap serviceLastUpdated;
 	updateMap temp;
 
-	eScheduleCurrentTS scheduleCurrentTS;
+	eSchedule scheduleReader;
+	eNowNext nownextReader;
 	eTimer CleanTimer;
 	eTimer zapTimer;
 public:
@@ -130,13 +150,8 @@ public:
 	inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service);
 
 	Signal1<void, bool> EPGAvail;
-	Signal0<void> EPGUpdated;
+	Signal1<void, const updateMap*> EPGUpdated;
 };
-
-inline int eScheduleCurrentTS::sectionRead( __u8 *data )
-{
-	return eEPGCache::getInstance()->sectionRead(data);
-}
 
 inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &service)
 {
@@ -144,5 +159,14 @@ inline const eventMap* eEPGCache::getEventMap(const eServiceReferenceDVB &servic
 	return (It != eventDB.end())?(&(It->second)):0;
 }
 
+inline int eNowNext::sectionRead(__u8 *data)
+{
+	return eEPGCache::getInstance()->sectionRead(data, eventData::NOWNEXT);
+}
+
+inline int eSchedule::sectionRead(__u8 *data)
+{
+	return eEPGCache::getInstance()->sectionRead(data, eventData::SCHEDULE);
+}
 
 #endif
