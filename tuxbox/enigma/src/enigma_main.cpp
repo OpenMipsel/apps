@@ -1054,6 +1054,8 @@ void eZapMain::onRotorTimeout()
 
 void eZapMain::eraseBackground(gPainter *painter, const eRect &where)
 {
+	(void)painter;
+	(void)where;
 }
 
 #ifndef DISABLE_FILE
@@ -2142,6 +2144,7 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 void eZapMain::nextService(int add)
 {
 	eServicePath p = eZap::getInstance()->getServiceSelector()->getPath();
+	(void)add;
 
 	if ( p.size() && p.current() == playlistref )
 		playlistNextService();
@@ -2565,7 +2568,7 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 
 		for (unsigned int i=0; i<filename.length(); ++i)
 		{
-			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_- ()", filename[i]) || (filename[i] >= 0x80)) 	// allow UTF-8
+			if (strchr("abcdefghijklkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_- ()", filename[i]) || (filename[i] & 0x80)) 	// allow UTF-8
 				cname+=filename[i];
 			else
 				cname+='_';
@@ -2672,6 +2675,7 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 
 void eZapMain::startSkip(int dir)
 {
+	(void)dir;
 	skipcounter=0;
 	{
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -2703,6 +2707,7 @@ void eZapMain::repeatSkip(int dir)
 
 void eZapMain::stopSkip(int dir)
 {
+	(void)dir;
 #if 0
 	if (!skipcounter)
 	{
