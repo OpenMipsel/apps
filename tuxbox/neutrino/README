@@ -8,6 +8,20 @@ patch -p0 < apps/tuxbox/neutrino/patch.HEAD.for.alexW
 
 
 
+Suitable other source code:
+---------------------------
+
+apps/dvb/zapit      : rel_alexW
+apps/misc/libs      : HEAD
+apps/tuxbox/lcd     : rel_1_0_0
+apps/tuxbox/neutrino: HEAD (patched, see above)
+apps/tuxbox/plugins : rel_1_0_0
+apps/tuxbox/tools   : rel_1_0_0
+cdk                 : HEAD (Makefile.am patched, see below)
+driver              : rel_alexW
+
+
+
 Additional comments:
 --------------------
 1.) You should use the HEAD branch of cdk (the directory in the cvs tree).
@@ -16,14 +30,7 @@ Additional comments:
   automatically. Hence the old driver headers must be detected. This
   can be done in the following way:
 
-  You can use a different configure command (cf. cdk/doc/INSTALL.en, Section 2):
+  patch -p0 < apps/tuxbox/neutrino/patch.cdk.Makefile.for.alexW
 
-./configure --prefix=$HOME/dbox2 --with-cvsdir=$HOME/tuxbox-cvs --enable-maintainer-mode
-
-should be replaced with (i.e. add the option --with-dvbincludes)
-
-./configure --prefix=$HOME/dbox2 --with-cvsdir=$HOME/tuxbox-cvs --with-dvbincludes=$HOME/tuxbox-cvs/driver/include --enable-maintainer-mode
-
-.
 
 Enjoy
