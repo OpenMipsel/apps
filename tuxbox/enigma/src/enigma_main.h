@@ -502,17 +502,15 @@ public:
 	eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path);
 };
 
-#ifndef DISABLE_FILE
-
-class eRecordContextMenu: public eListBoxWindow<eListBoxEntryText>
+class eSleepTimerContextMenu: public eListBoxWindow<eListBoxEntryText>
 {
 	eServiceReference ref;
 	void entrySelected(eListBoxEntryText *s);
 public:
-	eRecordContextMenu();
+	eSleepTimerContextMenu();
 };
 
-class eRecStopWindow: public eWindow
+class eShutdownStandbySelWindow: public eWindow
 {
 	eCheckbox *Standby, *Shutdown;
 	eButton *cancel;
@@ -525,17 +523,34 @@ protected:
 	eNumber *num;
 public:
 	int getCheckboxState();
-	eRecStopWindow( eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive=0, eWidget* descr=0, int grabfocus=1, const char* deco="eNumber" );
+	eShutdownStandbySelWindow( eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive=0, eWidget* descr=0, int grabfocus=1, const char* deco="eNumber" );
 };
 
-class eRecTimeInput: public eRecStopWindow
+class eSleepTimer: public eShutdownStandbySelWindow
+{
+	void setPressed();
+public:
+	eSleepTimer();
+};
+
+#ifndef DISABLE_FILE
+
+class eRecordContextMenu: public eListBoxWindow<eListBoxEntryText>
+{
+	eServiceReference ref;
+	void entrySelected(eListBoxEntryText *s);
+public:
+	eRecordContextMenu();
+};
+
+class eRecTimeInput: public eShutdownStandbySelWindow
 {
 	void setPressed();
 public:
 	eRecTimeInput();
 };
 
-class eTimerInput: public eRecStopWindow
+class eTimerInput: public eShutdownStandbySelWindow
 {
 	void setPressed();
 public:

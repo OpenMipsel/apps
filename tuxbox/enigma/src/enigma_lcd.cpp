@@ -99,8 +99,7 @@ void eZapLCDMain::setServiceName(eString name)
 
 void eZapLCDMain::leaveService(const eServiceReferenceDVB &service)
 {
-	if (Progress->isVisible())
-		Progress->hide();
+	Progress->hide();
 	ServiceName->setText("");
 }
 

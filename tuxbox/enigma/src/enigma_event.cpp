@@ -307,8 +307,7 @@ void eEventDisplay::checkTimerIcon( EITEvent *event )
 			if (!pmap)
 				return;
 			timer_icon->setPixmap(pmap);
-			if ( !timer_icon->isVisible() )
-				timer_icon->show();
+			timer_icon->show();
 		}
 		else if ( p->type & ePlaylistEntry::RecTimerEntry )
 		{
@@ -316,11 +315,10 @@ void eEventDisplay::checkTimerIcon( EITEvent *event )
 			if (!pmap)
 				return;
 			timer_icon->setPixmap(pmap);
-			if ( !timer_icon->isVisible() )
-				timer_icon->show();
+			timer_icon->show();
 		}
 	}
-	else if ( timer_icon->isVisible() )
+	else
 		timer_icon->hide();
 }
 

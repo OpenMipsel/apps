@@ -199,7 +199,8 @@ void eTimerManager::actionHandler()
 			eDebug("[eTimerManager] zapToChannel");
 			if ( !(nextStartingEvent->type&ePlaylistEntry::typeShutOffTimer) )
 				eZapMain::getInstance()->handleStandby();
-			if ( eServiceInterface::getInstance()->service != nextStartingEvent->service )
+			if ( nextStartingEvent->service &&
+					eServiceInterface::getInstance()->service != nextStartingEvent->service )
 			{
 				eDebug("[eTimerManager] change to the right service");
 				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
@@ -248,12 +249,17 @@ void eTimerManager::actionHandler()
 
 		case startCountdown:
 			eDebug("[eTimerManager] startCountdown");
-			eZapMain::getInstance()->toggleTimerMode();
-			// now in eZapMain the RemoteControl should be handled for TimerMode...
-			// an service change now stop the Running Event and set it to userAborted
-			if ( conn.connected() )
-				conn.disconnect();
-			conn = CONNECT( eDVB::getInstance()->leaveService, eTimerManager::leaveService );
+			if ( nextStartingEvent->type & ePlaylistEntry::typeShutOffTimer && !nextStartingEvent->service )
+				; // don't change timer mode for sleeptimer
+			else
+			{
+				eZapMain::getInstance()->toggleTimerMode();
+				// now in eZapMain the RemoteControl should be handled for TimerMode...
+				// any service change stops now the Running Event and set it to userAborted
+				if ( conn.connected() )
+					conn.disconnect();
+				conn = CONNECT( eDVB::getInstance()->leaveService, eTimerManager::leaveService );
+			}
 			if ( nextStartingEvent->type & ePlaylistEntry::typeSmartTimer )
 			{
 				conn2 = CONNECT( eDVB::getInstance()->tEIT.tableReady, eTimerManager::EITready );
@@ -349,7 +355,11 @@ void eTimerManager::actionHandler()
 
 				}
 				eZapMain::getInstance()->handleStandby();
-				eZapMain::getInstance()->toggleTimerMode();
+				if ( nextStartingEvent->type & ePlaylistEntry::typeShutOffTimer
+					&& !nextStartingEvent->service )
+					; // dont change Timer Mode for Sleeptimers
+				else
+					eZapMain::getInstance()->toggleTimerMode();
 			}
 				if ( eConfig::getInstance()->pLockActive() && eServiceInterface::getInstance()->service.isLocked() )
 					eServiceInterface::getInstance()->stop();
@@ -1156,7 +1166,7 @@ void eTimerListView::addPressed()
 
 void eTimerListView::entrySelected(eListBoxEntryTimer *entry)
 {
-	if ( entry )
+	if ( entry && entry->entry->service )
 	{
 		hide();
 		eTimerEditView e( entry->entry );
@@ -1626,6 +1636,8 @@ void eTimerEditView::comboBoxClosed( eComboBox *combo,  eListBoxEntryText* )
 
 void eTimerEditView::showServiceSelector()
 {
+	if ( !tmpService )  // Sleeptimer...
+		return;
 	eServiceSelector sel;
 	sel.setLCD(LCDTitle, LCDElement);
 	hide();

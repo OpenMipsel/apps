@@ -683,6 +683,19 @@
 		</recording_duration>
 	</object>
 
+	<object name="sleeptimer">
+		<sleeptimer text="Set Sleeptimer" cposition="140:200" csize="390:180" >
+			<eLabel name="l_duration" text="duration:" position="10:10" size="200:35" vcenter="on"/>
+			<eNumber name="duration" position="210:10" size="46:35" loadDeco="" helptext="(0..9, left, right, ok)" />
+			<eLabel text="min" position="266:10" size="e-10:35" vcenter="on"/>
+			<eCheckbox name="shutdown" text="shutdown  " position="10:55" size="170:35" helptext="shutdown the box to deepstandby (ok)" swaptxtpixmap="on" vcenter="on" />
+			<eCheckbox name="standby" text="standby  " position="210:55" size="170:35" helptext="goto standby (ok)"  swaptxtpixmap="on" vcenter="on" />
+			<eButton text="set" name="set" position="10:95" size="170:40" helptext="set sleeptimer and close window (ok)" loadDeco="" shortcut="green" />
+			<eButton text="abort" name="abort" position="210:95" size="170:40" helptext="close window and set no sleep timer (ok)" loadDeco="" shortcut="escape" />
+			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
+		</sleeptimer>
+	</object>
+
 	<object name="recording_end_time">
 		<recording_end_time text="Stop Record" cposition="140:200" csize="390:180" >
 			<eLabel name="lrec_end_time" text="recording end time:" position="10:10" size="200:35" vcenter="on"/>

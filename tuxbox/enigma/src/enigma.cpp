@@ -152,11 +152,27 @@ eZap::eZap(int argc, char **argv)
 	ezapInitializeWeb(httpd, dyn_resolver);	
 
 	serialhttpd=0;
-#if 1
-  if ( eDVB::getInstance()->getmID() > 4 )
-  {
-  	eDebug("[ENIGMA] starting httpd on serial port...");
-	int fd=::open("/dev/tts/0", O_RDWR);
+
+	bool SerialConsoleActivated=true;
+	FILE *f=fopen("/proc/cmdline", "rt");
+	if (f)
+	{
+		char *cmdline=NULL;
+		size_t len = 0;
+		getline( &cmdline, &len, f );
+		SerialConsoleActivated = strstr( cmdline, "console=ttyS0" ) != NULL;
+		fclose(f);
+		free(cmdline);
+		if ( SerialConsoleActivated )
+			eDebug("console=ttyS0 detected...disable enigma serial http interface");
+		else
+			eDebug("activate enigma serial http interface");
+	}
+
+	if ( !SerialConsoleActivated && eDVB::getInstance()->getmID() > 4 )
+	{
+		eDebug("[ENIGMA] starting httpd on serial port...");
+		int fd=::open("/dev/tts/0", O_RDWR);
 		if (fd < 0)
 			eDebug("[ENIGMA] serial port error (%m)");
 		else
@@ -171,7 +187,7 @@ eZap::eZap(int argc, char **argv)
 			tio.c_cc[VMIN] = 1;
 			tcflush(fd, TCIFLUSH);
 			tcsetattr(fd, TCSANOW, &tio); 
-			
+
 			logOutputConsole=0; // disable enigma logging to console
 			klogctl(8, 0, 1); // disable kernel log to serial
 
@@ -183,7 +199,6 @@ eZap::eZap(int argc, char **argv)
 			serialhttpd->inject(i, strlen(i));
 		}
 	}
-#endif
 
 	ezapInitializeXMLRPC(httpd);
 	httpd->addResolver(dyn_resolver);

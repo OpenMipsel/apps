@@ -2102,8 +2102,7 @@ void eZapMain::volumeUp()
 	eAVSwitch::getInstance()->changeVolume(0, -2);
 	if ((!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this))
 	{
-		if (!volume.isVisible())
-			volume.show();
+		volume.show();
 		volumeTimer.start(2000, true);
 	}
 }
@@ -2113,16 +2112,14 @@ void eZapMain::volumeDown()
 	eAVSwitch::getInstance()->changeVolume(0, +2);
 	if ((!eZap::getInstance()->focus) || (eZap::getInstance()->focus == this))
 	{
-		if (!volume.isVisible())
-			volume.show();
+		volume.show();
 		volumeTimer.start(2000, true);
 	}
 }
 
 void eZapMain::hideVolumeSlider()
 {
-	if (volume.isVisible())
-		volume.hide();
+	volume.hide();
 }
 
 void eZapMain::toggleMute()
@@ -2132,8 +2129,7 @@ void eZapMain::toggleMute()
 
 void eZapMain::showMainMenu()
 {
-	if (isVisible())
-		hide();
+	hide();
 
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
@@ -2168,7 +2164,7 @@ void eZapMain::standbyPress()
 void eZapMain::standbyRepeat()
 {
 	int diff = time(0) - standbyTime;
-	if (diff > 2)
+	if (diff > 0)
 		standbyRelease();
 }
 
@@ -2179,15 +2175,51 @@ void eZapMain::standbyRelease()
 
 	int diff = time(0) - standbyTime;
 	standbyTime=-1;
-	if (diff > 2)
+	if (diff > 0)
 	{
-		if (handleState())
-			eZap::getInstance()->quit();
-	} else
+		hide();
+		eSleepTimerContextMenu m;
+		m.show();
+		int ret = m.exec();
+		m.hide();
+		switch (ret)
+		{
+			case 2:
+				goto standby;
+			case 3:
+			{
+				eSleepTimer t;
+				t.show();
+				EITEvent *evt = (EITEvent*) t.exec();
+				if (evt != (EITEvent*)-1)
+				{
+					eServiceReference ref;
+					ref.descr = _("SleepTimer");
+					eTimerManager::getInstance()->addEventToTimerList( &t,
+							&ref, evt,
+							ePlaylistEntry::stateWaiting|
+							ePlaylistEntry::typeShutOffTimer|
+							ePlaylistEntry::SwitchTimerEntry
+							);
+					wasSleeping = t.getCheckboxState();
+					delete evt;
+				}
+				t.hide();
+				break;
+			}
+			case 1:
+/*				if (handleState())*/
+					eZap::getInstance()->quit();
+			default:
+			case 0:
+				break;
+		}
+	}
+	else
 	{
+standby:
 		eZapStandby standby;
-		if (isVisible())
-			hide();
+		hide();
 		standby.show();
 		state |= stateSleeping;
 		standby.exec();   // this blocks all main actions...
@@ -2201,11 +2233,10 @@ void eZapMain::standbyRelease()
 
 void eZapMain::showInfobar()
 {
-	if ((!isVisible()) &&
-			(eApp->looplevel() == 1) &&
+	if ( !isVisible() && eApp->looplevel() == 1 &&
 			(
-				(!eZap::getInstance()->focus) ||
-				(eZap::getInstance()->focus == this)
+				!eZap::getInstance()->focus ||
+				eZap::getInstance()->focus == this
 			)
 		 )
 		show();
@@ -3568,8 +3599,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			if ( state & stateRecording && !(state & stateInTimerMode) )
 			{
 				eRecordContextMenu menu;
-				if (isVisible())
-					hide();
+				hide();
 				menu.show();
 				int ret = menu.exec();
 				menu.hide();
@@ -3741,8 +3771,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 			num=-1;
 		else if ( num && handleState())
 		{
-			if (isVisible())
-				hide();
+			hide();
 			eServiceNumberWidget s(num);
 			s.show();
 			num = s.exec();
@@ -4313,14 +4342,41 @@ void eZapMain::clockUpdate()
 		s.sprintf("%02d:%02d", t->tm_hour, t->tm_min);
 		clocktimer.start((70-t->tm_sec)*1000);
 		Clock->setText(s);
-		pLCD->lcdMain->Clock->setText(s);
-		pLCD->lcdStandby->Clock->setText(s);
+
+		if(eDVB::getInstance()->getmID() == 6  // DM5K6...
+			&& eZapStandby::getInstance() ) //  in standby
+		{
+			int num = t->tm_hour*10+t->tm_min;
+			eDebug("write number to led-display");
+			int fd=::open("/dev/dbox/fp0",O_RDWR);
+			::ioctl(fd,4,&num);
+			::close(fd);
+		}
+		else
+		{
+			pLCD->lcdMain->Clock->setText(s);
+			pLCD->lcdStandby->Clock->setText(s);
+		}
 	} else
 	{
 		Clock->setText("--:--");
-		pLCD->lcdMain->Clock->setText("--:--");
-		pLCD->lcdStandby->Clock->setText("--:--");
 		clocktimer.start(60000);
+		if(eDVB::getInstance()->getmID() == 6  // DM5K6...
+			&& eZapStandby::getInstance() ) //  in standby
+		{
+			// TripleDES check here... when no time is avail...
+			// we set 9999
+			int num=9999;
+			eDebug("write number to led-display");
+			int fd=::open("/dev/dbox/fp0",O_RDWR);
+			::ioctl(fd,4,&num);
+			::close(fd);
+		}
+		else
+		{
+			pLCD->lcdMain->Clock->setText("--:--");
+			pLCD->lcdStandby->Clock->setText("--:--");
+		}
 	}
 	updateProgress();
 }
@@ -4753,9 +4809,86 @@ void eServiceContextMenu::entrySelected(eListBoxEntryText *test)
 		close((int)test->getKey());
 }
 
+eSleepTimerContextMenu::eSleepTimerContextMenu()
+	: eListBoxWindow<eListBoxEntryText>(_("Shutdonw/Standby Menu"), 5)
+{
+	move(ePoint(150, 200));
+	new eListBoxEntryText(&list, _("back"), (void*)0);
+	new eListBoxEntryText(&list, _("shutdown now"), (void*)1);
+	new eListBoxEntryText(&list, _("goto standby"), (void*)2);
+	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3);
+	CONNECT(list.selected, eSleepTimerContextMenu::entrySelected);
+}
+
+void eSleepTimerContextMenu::entrySelected( eListBoxEntryText *sel )
+{
+	if (!sel)
+		close(0);
+	else
+		close((int)sel->getKey());
+}
+
+eShutdownStandbySelWindow::eShutdownStandbySelWindow(eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive, eWidget* descr, int grabfocus, const char* deco )
+{
+	num = new eNumber( parent, len, min, max, maxdigits, init, isactive, descr, grabfocus, deco );
+	Shutdown = new eCheckbox(this);
+	Shutdown->setName("shutdown");
+	Standby = new eCheckbox(this);
+	Standby->setName("standby");
+	set = new eButton(this);
+	set->setName("set");
+	cancel = new eButton(this);
+	cancel->setName("abort");
+	CONNECT( num->selected, eShutdownStandbySelWindow::fieldSelected );
+	CONNECT( Shutdown->checked, eShutdownStandbySelWindow::ShutdownChanged );
+	CONNECT( Standby->checked, eShutdownStandbySelWindow::StandbyChanged );
+	CONNECT( cancel->selected, eWidget::reject );
+}
+
+void eShutdownStandbySelWindow::StandbyChanged( int checked )
+{
+	if ( checked )
+		Shutdown->setCheck( 0 );
+}
+
+void eShutdownStandbySelWindow::ShutdownChanged( int checked )
+{
+	if ( checked )
+		Standby->setCheck( 0 );
+}
+
+int eShutdownStandbySelWindow::getCheckboxState()
+{
+	return Standby->isChecked()?3:Shutdown->isChecked()?2:0;
+}
+
+eSleepTimer::eSleepTimer()
+:eShutdownStandbySelWindow( this, 1, 1, 240, 3, 0, 0 )
+{
+	eLabel *l = new eLabel(this);
+	l->setName("l_duration");
+	num->setDescr(l);
+	num->setName("duration");
+	num->setNumber(10);
+	if (eSkin::getActive()->build(this, "sleeptimer"))
+		eFatal("skin load of \"sleeptimer\" failed");
+	CONNECT( set->selected, eSleepTimer::setPressed );
+}
+
+void eSleepTimer::setPressed()
+{
+	EITEvent *evt = new EITEvent();
+	evt->start_time = time(0)+eDVB::getInstance()->time_difference;
+	evt->duration = num->getNumber()*60;
+	evt->event_id = -1;
+	evt->free_CA_mode = -1;
+	evt->running_status = -1;
+	close((int)evt);
+}
+
 #ifndef DISABLE_FILE
 eTimerInput::eTimerInput()
-:eRecStopWindow( this, 1, 1, 240, 3, 0, 0 )
+:eShutdownStandbySelWindow( this, 1, 1, 240, 3, 0, 0 )
 {
 	eLabel *l = new eLabel(this);
 	l->setName("lrec_duration");
@@ -4797,42 +4930,8 @@ void eRecordContextMenu::entrySelected( eListBoxEntryText *sel )
 		close((int)sel->getKey());
 }
 
-eRecStopWindow::eRecStopWindow(eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive, eWidget* descr, int grabfocus, const char* deco )
-{
-	num = new eNumber( parent, len, min, max, maxdigits, init, isactive, descr, grabfocus, deco );
-	Shutdown = new eCheckbox(this);
-	Shutdown->setName("shutdown");
-	Standby = new eCheckbox(this);
-	Standby->setName("standby");
-	set = new eButton(this);
-	set->setName("set");
-	cancel = new eButton(this);
-	cancel->setName("abort");
-	CONNECT( num->selected, eRecStopWindow::fieldSelected );
-	CONNECT( Shutdown->checked, eRecStopWindow::ShutdownChanged );
-	CONNECT( Standby->checked, eRecStopWindow::StandbyChanged );
-	CONNECT( cancel->selected, eWidget::reject );
-}
-
-void eRecStopWindow::StandbyChanged( int checked )
-{
-	if ( checked )
-		Shutdown->setCheck( 0 );
-}
-
-void eRecStopWindow::ShutdownChanged( int checked )
-{
-	if ( checked )
-		Standby->setCheck( 0 );
-}
-
-int eRecStopWindow::getCheckboxState()
-{
-	return Standby->isChecked()?3:Shutdown->isChecked()?2:0;
-}
-
 eRecTimeInput::eRecTimeInput()
-:eRecStopWindow( this, 2, 0, 59, 2, 0, 0 )
+:eShutdownStandbySelWindow( this, 2, 0, 59, 2, 0, 0 )
 {
 	eLabel *l = new eLabel(this);
 	l->setName("lrec_end_time");
