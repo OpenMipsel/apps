@@ -1067,6 +1067,7 @@ void eZapMain::saveRecordings( bool destroy )
 {
 	// save and destroy recordingslist
 	recordings->save();
+	::sync();
 	if (destroy)
 	{
 		eServiceInterface::getInstance()->removeRef(recordingsref);
@@ -1123,6 +1124,12 @@ void eZapMain::loadRecordings( bool create )
 	recordings->load(MOVIEDIR "/recordings.epl");
 	if ( !create && eZap::getInstance()->getServiceSelector()->getPath().current() == recordingsref )
 		eZap::getInstance()->getServiceSelector()->actualize();
+}
+
+void eZapMain::clearRecordings()
+{
+	recordings->clear();
+	saveRecordings();
 }
 #endif
 
@@ -2569,7 +2576,7 @@ int eZapMain::recordDVR(int onoff, int user, const char *timer_descr )
 			ePlaylistEntry en(ref2);
 			en.type=ePlaylistEntry::PlaylistEntry|ePlaylistEntry::boundFile;
 			recordings->getList().push_back(en); // add to playlist
-			recordings->save(MOVIEDIR "/recordings.epl");
+			saveRecordings();
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdRecordStart));
 			state |= (stateRecording|recDVR);
 			recstatus->show();

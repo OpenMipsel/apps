@@ -106,6 +106,12 @@
 			<action name="showServiceSelector" key="ok" flags="m" />
 		</actionmap>
 
+		<actionmap name="enigmaGlobal">
+			<action name="volumeUp" key="+" flags="mr" />
+			<action name="volumeDown" key="-" flags="mr" />
+			<action name="toggleMute" key="mute" flags="m" />
+		</actionmap>
+
 		<actionmap name="timerView">
 			<action name="removeTimerEntry" key="red" flags="m" />
 		</actionmap>

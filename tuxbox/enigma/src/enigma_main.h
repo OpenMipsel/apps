@@ -534,13 +534,14 @@ public:
 
 	void moveService(const eServiceReference &path, const eServiceReference &ref, const eServiceReference &after);
 	void showMultiEPG();
-	
+
 	void loadPlaylist( bool create = false );
 	void savePlaylist( bool destory = false );
 
 #ifndef DISABLE_FILE
 	void loadRecordings( bool create = false );
 	void saveRecordings( bool destory = false );
+	void clearRecordings();
 #endif
 
 	void loadUserBouquets( bool destroy=true );  // this recreate always all user bouquets...
