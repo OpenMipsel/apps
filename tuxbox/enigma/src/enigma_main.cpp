@@ -167,6 +167,7 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 0));
 		eAVSwitch::getInstance()->setInput(1);
+		eAVSwitch::getInstance()->setTVPin8(0);
 		system("/bin/sync");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc");
 		system("/sbin/hdparm -y /dev/ide/host0/bus0/target1/lun0/disc");
@@ -181,6 +182,7 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
 		eAVSwitch::getInstance()->setInput(0);
+		eStreamWatchdog::getInstance()->reloadSettings();
 		eDBoxLCD::getInstance()->switchLCD(1);
 		break;
 	}
@@ -731,6 +733,9 @@ eZapMain::eZapMain()
 		playService(*curlist->current, psDontAdd);
 	startMessages();
 	
+
+	dvrFunctions->zOrderRaise();
+	nonDVRfunctions->zOrderRaise();	
 /*	recstatus=new eRecordingStatus();
 	recstatus->hide(); */
 

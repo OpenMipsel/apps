@@ -16,7 +16,7 @@ private:
 	void redrawWidget(gPainter *, const eRect &rect);
 	eRect getNumberRect(int n);
 	int eventHandler(const eWidgetEvent &event);
-	int number[16];
+	int number[24];
 	int len, dspace, space_selected, active;
 	gColor cursorB, cursorF, normalB, normalF;
 	int have_focus;

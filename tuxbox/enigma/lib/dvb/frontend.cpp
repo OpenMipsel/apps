@@ -376,8 +376,8 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 
 	if ( !timeout )  // then the Rotor is Running... we wait if it stops..
 	{
-		// set rotor timeout to 30sec's...
-		timeout = time(0) + 30;
+		// set rotor timeout to 120sec's...
+		timeout = time(0) + 120;
 //		cnt=0;
 		while(true)
 		{
@@ -652,16 +652,14 @@ int eFrontend::tune(eTransponder *trans,
 		// calc Frequency
 		int local = Frequency - ( Frequency > lnb->getLOFThreshold() ? lnb->getLOFHi() : lnb->getLOFLo() );
 		front.Frequency = local > 0 ? local : -local;
-    
+
+		int secTone = SEC_TONE_OFF;
 		// set Continuous Tone ( 22 Khz... low - high band )
 		if ( (swParams.HiLoSignal == eSwitchParameter::ON) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency > lnb->getLOFThreshold()) ) )
-		{
-			seq.continuousTone = SEC_TONE_ON;
-		}
-		else if ( (swParams.HiLoSignal == eSwitchParameter::OFF) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency <= lnb->getLOFThreshold()) ) )
-		{
-			seq.continuousTone = SEC_TONE_OFF;
-		}
+			secTone = SEC_TONE_ON;
+/*		else if ( (swParams.HiLoSignal == eSwitchParameter::OFF) || ( (swParams.HiLoSignal == eSwitchParameter::HILO) && (Frequency <= lnb->getLOFThreshold()) ) )
+			seq.continuousTone = SEC_TONE_OFF;*/
+
 
 		// Voltage( 0/14/18V  vertical/horizontal )
 		int voltage = SEC_VOLTAGE_OFF;
@@ -682,33 +680,51 @@ int eFrontend::tune(eTransponder *trans,
 		{
 			// drive rotor always with 18V ( is faster )
 			seq.voltage = SEC_VOLTAGE_18;
+			seq.continuousTone = SEC_TONE_OFF;
 
 			RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat );
 //		RotorUseTimeout(seq, sat->getOrbitalPosition() );
 
 		// set the right voltage
 			if ( voltage != SEC_VOLTAGE_18 )
+			{
+				eDebug("set voltage after send rotor cmd..wait 20ms");
 				ioctl(secfd, SEC_SET_VOLTAGE, &voltage);
+				usleep(20);
+			}
+
+			__u8 delay=17;
+			if ( secTone != SEC_TONE_OFF )
+			{
+				eDebug("enable continuous tone after send rotor cmd..wait 80ms");
+				usleep(delay); // wait..
+				delay=0;
+				if( ioctl(secfd, SEC_SET_TONE, &secTone) )
+					perror("SEC_SET_TONE");
+				usleep(80); // wait 80ms after enable continuous Tone
+			}
 		}
 		else  // no Rotor avail... we send the complete cmd...
 		{
-			eDebug("sendSeq");
-			seq.voltage=voltage;
-			if ( sendSeq && ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
+			if ( sendSeq )
 			{
-				perror("SEC_SEND_SEQUENCE");
-				return -1;
-			}
-			else if ( lnb->getDiSEqC().SeqRepeat )  // Sequence Repeat ?
-			{
-				usleep( 80000 ); // between seq repeats we wait 80ms
-				ioctl(secfd, SEC_SEND_SEQUENCE, &seq);  // just do it *g*
+				eDebug("sendSeq");
+				seq.voltage=voltage;
+				seq.continuousTone=secTone;
+				if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
+				{
+					perror("SEC_SEND_SEQUENCE");
+					return -1;
+				}
+				else if ( lnb->getDiSEqC().SeqRepeat )  // Sequence Repeat ?
+				{
+					usleep( 80000 ); // between seq repeats we wait 80ms
+					ioctl(secfd, SEC_SEND_SEQUENCE, &seq);  // just do it *g*
+				}
 			}
 		}
-
 		// delete allocated memory...
-		if (cmdCount)
-			delete [] commands;
+		delete [] commands;
 	}
 
 	front.Inversion=Inversion;

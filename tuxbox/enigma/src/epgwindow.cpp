@@ -183,12 +183,10 @@ void eEPGSelector::fillEPGList()
 		It = evt->begin();
 	if (current.data[0] == 4 ) //NVOD
 	{
-//		eDebug("nvod");
 		for (; It != evt->end(); It++)
 		{
-//			eDebug("evt");
 			EITEvent evt(*It->second);   // NVOD Service Event
-			
+
 			const std::list<NVODReferenceEntry> *RefList = eEPGCache::getInstance()->getNVODRefList( (eServiceReferenceDVB&)current );
 			if (RefList)
 			{
@@ -198,7 +196,6 @@ void eEPGSelector::fillEPGList()
 					const eventMap *eMap = eEPGCache::getInstance()->getEventMap( ref );
 					if (eMap)
 					{
-//						eDebug("eMap");
 						for ( eventMap::const_iterator refIt( eMap->begin() ); refIt != eMap->end(); refIt++)
 						{
 							EITEvent refEvt(*refIt->second);
@@ -209,21 +206,15 @@ void eEPGSelector::fillEPGList()
 								{
 									if ( ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id == evt.event_id)
 									{
-										// make copy von ref Event  ( then we habe begintime and duration )
-										EITEvent e(refIt->second->get());
+										// make copy of ref Event  ( then we habe begintime and duration )
+										EITEvent e(*It->second);
 										// do not delete ePtrListEntrys..
 										e.descriptor.setAutoDelete(false);
-										// clear descriptor list
-										e.descriptor.clear();
-										// parse descriptors of NVOD Service .. ( get Description )
-										for (ePtrList<Descriptor>::iterator d(evt.descriptor); d != evt.descriptor.end(); ++d )
-										{
-											Descriptor *descriptor=*d;
-											if (descriptor->Tag()==DESCR_SHORT_EVENT)
-												e.descriptor.push_back( new ShortEventDescriptor( *((ShortEventDescriptor*)descriptor) ) );
-											else if (descriptor->Tag()==DESCR_EXTENDED_EVENT)
-												e.descriptor.push_back( new ExtendedEventDescriptor( *((ExtendedEventDescriptor*)descriptor) ) );
-										}
+										e.start_time = refEvt.start_time;
+										e.duration = refEvt.duration;
+										e.event_id = refEvt.event_id;
+										e.free_CA_mode = refEvt.free_CA_mode;
+										e.running_status = refEvt.running_status;
 										new eListBoxEntryEPG(e, events, current);
 										break;
 									}
@@ -233,8 +224,6 @@ void eEPGSelector::fillEPGList()
 					}
 				}
 			}
-			else
-				eDebug("no NVOD Reference List in eEPGCache");
 		}
 		((eListBox<eListBoxEntryEPG>*)events)->sort();
 	}

@@ -60,11 +60,7 @@ public:
 	}
 	bool operator == ( const uniqueEvent& e )
 	{
-			/*
-					problem: EIDs repeat. sooner or later.
-					but not within 4 hours.
-			*/
-		return (abs(beginTime-e.beginTime)<4*60*60) && (event_id == e.event_id) && (service.sid == e.service.sid) && (service.onid == e.service.onid);
+		return (beginTime == e.beginTime) && (event_id == e.event_id) && (service.sid == e.service.sid) && (service.onid == e.service.onid);
 	}
 	uniqueEvent& operator = ( const uniqueEvent& e )
 	{
@@ -79,8 +75,7 @@ public:
 	}
 };
 
-
-#define eventMap std::map<int, eventData*>
+#define eventMap std::map<__u16, eventData*>
 
 #if defined(__GNUC__) && __GNUC__ >= 3 && __GNUC_MINOR__ >= 1  // check if gcc version >= 3.1
 	#define eventCache __gnu_cxx::hash_map<uniqueEPGKey, eventMap, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal>
@@ -88,7 +83,7 @@ public:
 	#define tmpMap __gnu_cxx::hash_map<uniqueEPGKey, std::pair<time_t, int>, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal >
 	#define nvodMap __gnu_cxx::hash_map<uniqueEPGKey, std::list<NVODReferenceEntry>, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal >
 	namespace __gnu_cxx
-#else																													// for older gcc use following
+#else // for older gcc use following
 	#define eventCache std::hash_map<uniqueEPGKey, eventMap, std::hash<uniqueEPGKey>, uniqueEPGKey::equal >
 	#define updateMap __gnu_cxx::hash_map<uniqueEPGKey, time_t, __gnu_cxx::hash<uniqueEPGKey>, uniqueEPGKey::equal >
 	#define tmpMap std::hash_map<uniqueEPGKey, std::pair<time_t, int>, std::hash<uniqueEPGKey>, uniqueEPGKey::equal >
@@ -194,8 +189,6 @@ private:
 	eTimer CleanTimer;
 	eTimer zapTimer;
 	bool finishEPG();
-	SDT *SDTOtherTS;
-	int otherSDTReady;
 public:
 	void startEPG();
 	void abortEPG(const eServiceReferenceDVB& s=eServiceReferenceDVB());
