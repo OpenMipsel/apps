@@ -13,6 +13,7 @@ protected:
 	int blitFlags;
 	int flags;
 	eTextPara *para;
+	gColor transparentBackgroundColor;
 	int align;
 	void validate( const eSize* s=0 );
 	int eventHandler(const eWidgetEvent &event);
