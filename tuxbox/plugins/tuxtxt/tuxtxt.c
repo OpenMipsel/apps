@@ -4,6 +4,9 @@
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
  ******************************************************************************
  * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.6  2003/02/15 11:01:47  lazyt
+ * grr, not only the configmenu was broken
+ *
  * Revision 1.37.2.5  2003/02/15 09:30:55  lazyt
  * ups, what's going on with the configmenu?
  *
@@ -22,7 +25,7 @@ void plugin_exec(PluginParam *par)
 {
 	//show versioninfo
 
-		printf("TuxTxt $Revision: 1.37.2.5 $\n");
+		printf("TuxTxt $Revision: 1.37.2.6 $\n");
 
 	//get params
 
@@ -702,13 +705,13 @@ skip_pid:;
 						pid_table[pid_test].service_name_len = SDT[sdt_scan+9 + SDT[sdt_scan+8]];
 						for(byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
 						{
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ž') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '„') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '™') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '÷') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'š') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == '˜') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ß') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
 
 							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] >= 0x80 && SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] <= 0x9F) diff--;
 							else pid_table[pid_test].service_name[byte + diff] = SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte];
@@ -1078,12 +1081,12 @@ void ConfigMenu(int Init)
 													if(current_pid == 0)
 													{
 														menu[6*62 +  1] = ' ';
-														menu[6*62 + 28] = 'Œ';
+														menu[6*62 + 28] = 'î';
 													}
 													else
 													{
-														menu[6*62 +  1] = '­';
-														menu[6*62 + 28] = 'Œ';
+														menu[6*62 +  1] = 'í';
+														menu[6*62 + 28] = 'î';
 													}
 												}
 
@@ -1103,12 +1106,12 @@ void ConfigMenu(int Init)
 												if(national_subset == 0)
 												{
 													menu[20*62 +  1] = ' ';
-													menu[20*62 + 28] = 'Œ';
+													menu[20*62 + 28] = 'î';
 												}
 												else
 												{
-													menu[20*62 +  1] = '­';
-													menu[20*62 + 28] = 'Œ';
+													menu[20*62 +  1] = 'í';
+													menu[20*62 + 28] = 'î';
 												}
 
 												memcpy(&menu[62*20 + 2], &countrystring[national_subset*26], 26);
@@ -1138,13 +1141,13 @@ void ConfigMenu(int Init)
 												{
 													if(current_pid == pids_found - 1)
 													{
-														menu[6*62 +  1] = '­';
+														menu[6*62 +  1] = 'í';
 														menu[6*62 + 28] = ' ';
 													}
 													else
 													{
-														menu[6*62 +  1] = '­';
-														menu[6*62 + 28] = 'Œ';
+														menu[6*62 +  1] = 'í';
+														menu[6*62 + 28] = 'î';
 													}
 												}
 
@@ -1163,13 +1166,13 @@ void ConfigMenu(int Init)
 
 												if(national_subset == 12)
 												{
-													menu[20*62 +  1] = '­';
+													menu[20*62 +  1] = 'í';
 													menu[20*62 + 28] = ' ';
 												}
 												else
 												{
-													menu[20*62 +  1] = '­';
-													menu[20*62 + 28] = 'Œ';
+													menu[20*62 +  1] = 'í';
+													menu[20*62 + 28] = 'î';
 												}
 
 												memcpy(&menu[62*20 + 2], &countrystring[national_subset*26], 26);
@@ -2469,15 +2472,15 @@ void RenderMessage(int Message)
 {
 	int byte;
 	int fbcolor, timecolor, menucolor;
-	char message_1[] = "…ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßƒŠ";
-	char message_2[] = "ã                                   „‚";
-	char message_3[] = "ã   suche nach Teletext-Anbietern   „‚";
-	char message_4[] = "ã                                   „‚";
-	char message_5[] = "†µµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµµ‡‚";
-	char message_6[] = "‰ˆ";
+	char message_1[] = "àáááááááááááááááááááááááááááááááááááâè";
+	char message_2[] = "ã                                   äé";
+	char message_3[] = "ã   suche nach Teletext-Anbietern   äé";
+	char message_4[] = "ã                                   äé";
+	char message_5[] = "åæææææææææææææææææææææææææææææææææææçé";
+	char message_6[] = "ëììììììììììììììììììììììììììììììììììììê";
 
-	char message_7[] = "ã kein Teletext auf dem Transponder „‚";
-	char message_8[] = "ã  warte auf Empfang von Seite 100  „‚";
+	char message_7[] = "ã kein Teletext auf dem Transponder äé";
+	char message_8[] = "ã  warte auf Empfang von Seite 100  äé";
 
 	//reset zoom
 
@@ -2649,8 +2652,8 @@ void CreateLine25()
 {
 	int byte;
 	char line25_1[] = "   ?00<      ??0<      >??0      >?00   ((((((((((1111111111AAAAAAAAAAXXXXXXXXXX";
-	char line25_2[] = " ‹ð w{hlen   ±• anzeigen   ›“ abbrechen ñ¿¿ññññññññññ¿¿ññññññññññññ¿¿ñññññññññññ";
-//	char line25_2[] = " ‹ð w{hlen   ±• anzeigen   õ÷ abbrechen ñ¿¿ññññññññññ¿¿ññññññññññññ¿¿ñññññññññññ";
+	char line25_2[] = " ïð w{hlen   ñò anzeigen   óô abbrechen ¤¨¨¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤";
+//	char line25_2[] = " ïð w{hlen   ñò anzeigen   õö abbrechen ¤¨¨¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤";
 
 	//get prev 100th
 
