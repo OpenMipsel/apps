@@ -487,6 +487,7 @@ void eUpgrade::flashImage(int checkmd5)
 				_("Are you sure you want to upgrade to this new version?"),
 				_("Ready to upgrade"),
 				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion);
+			int mtdsize;
 			hide();
 			mb.show();
 			int res=mb.exec();
@@ -506,19 +507,22 @@ void eUpgrade::flashImage(int checkmd5)
 				case 2:
 				case 3:
 					mtd="2";
+					mtdsize=0x6e0000;
 					break;
 				case 5:		// dreambox
 				case 6:
 					mtd="0";
+					mtdsize=0x700000;
 					break;
 				default:
 					mtd="../null";
+					mtdsize=0;
 				}
 				{
 					int fd=open(eString("/dev/mtdblock/" + mtd).c_str(), O_RDONLY);
 					void *ptr;
 					volatile int a;
-					if ((fd < 0) || !(ptr=mmap(0, 0x600000, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0)))
+					if ((fd < 0) || !(ptr=mmap(0, mtdsize, PROT_READ, MAP_SHARED|MAP_LOCKED, fd, 0)))
 
 					{
 						eMessageBox mb(
@@ -530,7 +534,7 @@ void eUpgrade::flashImage(int checkmd5)
 						mb.hide();
 						return;
 					}
-					for (int i=0; i<0x600000; ++i)
+					for (int i=0; i<mtdsize; i+=4096) // page size
 						a=((__u8*)ptr)[i];
 				}
 				int res=system(eString("/bin/eraseall /dev/mtd/" + mtd).c_str())>>8;
