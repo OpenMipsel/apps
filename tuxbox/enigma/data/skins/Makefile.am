@@ -6,5 +6,6 @@ install_DATA = \
 	neutrino.esml neutrino.info \
 	stone.esml stone.info \
 	silver.esml silver.info \
-	small.esml small.info
+	small.esml small.info \
+	small169.esml small169.info
 
