@@ -555,7 +555,7 @@ void eZapMain::onRotorStart( int newPos )
 {
 	if (!pRotorMsg)
 	{
-		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the rotor is driving to %d.%d°%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
+		pRotorMsg = new eMessageBox( eString().sprintf(_("Please wait while the motor is driving to %d.%d°%c ...."),abs(newPos)/10,abs(newPos)%10,newPos<0?'W':'E'), _("Message"), 0);
 		pRotorMsg->show();
 	}
 }
@@ -2086,7 +2086,7 @@ bool eZapMain::handleState(int justask)
 		if ( state & stateInTimerMode )
 		{
 			if (state & recDVR )
-				text=_("Currently an timer based digital recording is in progress!\n"
+				text=_("A timer based digital recording is currently in progress!\n"
 							"This stops the timer, and digital recording!");
 			else
 				return true; // we wouldn't destroy the VCR Recording *g*
@@ -2096,7 +2096,7 @@ bool eZapMain::handleState(int justask)
 		else
 		{
 			if (state & recDVR )
-				text=_("Currently an digital recording is in progress!\n"
+				text=_("A digital recording is currently in progress!\n"
 							"This stops the digital recording!");
 			else
 				return true; // we wouldn't destroy the VCR Recording *g*
@@ -2106,7 +2106,7 @@ bool eZapMain::handleState(int justask)
 	}
 	else if ( state & stateInTimerMode )
 	{
-		text=_("Currently an timer event is in progress!\n"
+		text=_("A timer event is currently in progress!\n"
 					"This stops the timer event!");
 	}
 	else		// not timer event or recording in progress
@@ -2616,9 +2616,9 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			break;
 		}
 		case -ENOSTREAM:
-			Description->setText(_("This service sends (currently) no signal"));
-			postMessage(eZapMessage(0, _("switch"), _("This service sends (currently) no signal")), 1);
-			eDebug("This service sends (currently) no signal");
+			Description->setText(_("This service doesn't currently send a signal"));
+			postMessage(eZapMessage(0, _("switch"), _("This service doesn't currently send a signal")), 1);
+			eDebug("This service doesn't currently send a signal");
 			break;
 		case -ENOSYS:
 			Description->setText(_("This content could not be displayed"));
@@ -2626,9 +2626,9 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			postMessage(eZapMessage(0, _("switch"), _("This content could not be displayed")), 1);
 			break;
 		case -ENVOD:
-			Description->setText(_("NVOD Service - select a starttime, please"));
-			eDebug("NVOD Service - select a starttime, please");
-			postMessage(eZapMessage(0, _("switch"), _("NVOD Service - select a starttime, please")), 1);
+			Description->setText(_("NVOD Service - please select a starttime"));
+			eDebug("NVOD Service - please select a starttime");
+			postMessage(eZapMessage(0, _("switch"), _("NVOD Service - please select a starttime")), 1);
 			break;
 		default:
 			Description->setText(_("Unknown error!!"));

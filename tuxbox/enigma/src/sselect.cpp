@@ -37,7 +37,7 @@ struct serviceSelectorActions
 		map("serviceSelector", _("service selector")),
 		nextBouquet(map, "nextBouquet", _("switch to next bouquet"), eAction::prioDialogHi),
 		prevBouquet(map, "prevBouquet", _("switch to previous bouquet"), eAction::prioDialogHi),
-		pathUp(map, "pathUp", _("go one dir path up"), eAction::prioDialog),
+		pathUp(map, "pathUp", _("go up a directory"), eAction::prioDialog),
 		showEPGSelector(map, "showEPGSelector", _("shows the EPG selector for the highlighted channel"), eAction::prioDialog),
 		showMenu(map, "showMenu", _("show service selector menu"), eAction::prioDialog),
 		showFavourite(map, "showFavourite", _("showFavourite"), eAction::prioDialog),

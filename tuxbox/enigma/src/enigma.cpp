@@ -219,7 +219,7 @@ eZap::eZap(int argc, char **argv)
 	{
 		bootcount = 1;
 		eMessageBox msg(_("Welcome to enigma.\n\n"
-											"Please do a transponderscan first.\n(mainmenu > setup > channels > transponder scan)"),
+											"Please do a transponder scan first.\n(mainmenu > setup > channels > transponder scan)"),
 										_("First start of enigma"),
 										eMessageBox::btOK|eMessageBox::iconInfo, eMessageBox::btOK );
 		msg.show();

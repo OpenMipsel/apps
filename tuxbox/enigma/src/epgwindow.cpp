@@ -23,7 +23,7 @@ struct epgSelectorActions
   eActionMap map;
 	eAction addTimerEvent, removeTimerEvent;
 	epgSelectorActions():
-		map("epgSelector", _("epg selector")),
+		map("epgSelector", _("EPG selector")),
 		addTimerEvent(map, "addTimerEvent", _("add this event to timer list"), eAction::prioDialog ),
 		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog )
 	{

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.8 2003/01/07 03:55:03 TripleDES Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.9 2003/01/20 14:24:53 tmbinc Exp $
  */
 
 #include <enigma_setup.h>
@@ -79,19 +79,19 @@ eZapSetup::eZapSetup()
 		haverfmod=0;
 	}
 	
-	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to Mainmenu") ))->selected, eZapSetup::sel_close);
+	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to main menu") ))->selected, eZapSetup::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), _("open channel setup") ))->selected, eZapSetup::sel_channels);
 	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), _("open network setup") ))->selected, eZapSetup::sel_network);
-	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), _("open osd setup") ))->selected, eZapSetup::sel_osd);
+	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), _("open OSD setup") ))->selected, eZapSetup::sel_osd);
 	if (havelcd)
-		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open lcd setup") ))->selected, eZapSetup::sel_lcd);
-	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), _("open remotecontrol setup") ))->selected, eZapSetup::sel_rc);
+		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open LCD setup") ))->selected, eZapSetup::sel_lcd);
+	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), _("open remote control setup") ))->selected, eZapSetup::sel_rc);
 	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), _("open video setup") ))->selected, eZapSetup::sel_video);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), _("open skin selector") ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), _("open language selector") ))->selected, eZapSetup::sel_language);
 	if (haveharddisk)
-		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), _("initialize harddisc") ))->selected, eZapSetup::sel_harddisk);
+		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), _("open harddisk setup") ))->selected, eZapSetup::sel_harddisk);
 	if (haveci)
 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), _("show CI Menu") ))->selected, eZapSetup::sel_ci);
 	if (havenetwork)

@@ -224,7 +224,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 		}
 
 		if (!_title)
-			_title = _("no info available");
+			_title = _("no information is available");
 
 		eventTime->setText(_eventTime);
 		eventDate->setText(_eventDate);
@@ -232,7 +232,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 		setText(_title);
 
 		if (!_long_description)
-			long_description->setText(_("no description available"));
+			long_description->setText(_("no description is available"));
 		else
 			long_description->setText(_long_description);
 
@@ -241,7 +241,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 	else
 	{
 		setText(service);
-		long_description->setText(_("no description available"));
+		long_description->setText(_("no description is available"));
 	}
 	updateScrollbar();
 	long_description->show();

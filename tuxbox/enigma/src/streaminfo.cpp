@@ -436,7 +436,7 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 	} else
 	{
 		w=new eLabel(this);
-		w->setText(_("no information available"));
+		w->setText(_("no information is available"));
 		((eLabel*)w)->setFlags(eLabel::flagVCenter);
 		((eLabel*)w)->setAlign(eTextPara::dirCenter);
 		w->move(ePoint(0, 0));
@@ -474,7 +474,7 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 	} else
 	{
 		w=new eLabel(this);
-		w->setText(_("no information available"));
+		w->setText(_("no information is available"));
 		((eLabel*)w)->setFlags(eLabel::flagVCenter);
 		((eLabel*)w)->setAlign(eTextPara::dirCenter);
 		w->move(ePoint(0, 0));
@@ -495,7 +495,7 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 	lb->resize( eSize(45, rect.height()-5) );
 	lb->setFlags( eListBoxBase::flagNoPageMovement | eListBoxBase::flagNoUpDownMovement );
 	new eListBoxEntryMenu( lb, "1/3", _("Service information (right)"), eTextPara::dirCenter );
-	new eListBoxEntryMenu( lb, "2/3", _("Scramble system information (left, right)"), eTextPara::dirCenter );
+	new eListBoxEntryMenu( lb, "2/3", _("Scrambled system information (left, right)"), eTextPara::dirCenter );
 	new eListBoxEntryMenu( lb, "3/3", _("Transponder information (left)"), eTextPara::dirCenter );
 	descr = new eLabel( &statusbar );
 	descr->move( ePoint(0,0) );

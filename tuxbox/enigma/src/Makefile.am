@@ -24,7 +24,7 @@ enigma_LDADD = \
 	$(top_builddir)/lib/system/libenigma_system.la \
 	@SIGC_LIBS@ \
 	@XMLTREE_LIBS@ \
-	-ldl -lpthread -lcrypt -lresolv -lmd5sum
+	-ldl -lpthread -lcrypt -lresolv -lmd5sum -lmad
 #\
 #	/dbox2/cdkroot/lib/libmpatrolmt.a -lbfd -liberty
 

@@ -450,7 +450,7 @@ bool eTimerManager::removeEventFromTimerList( eWidget *sel, const ePlaylistEntry
 			if (type == erase)
 			{
 				str1 = _("You would to delete the running event..\nthis stops the timer mode (recording)!");
-				str2 = _("Delete event from timerlist");
+				str2 = _("Delete the event from the timerlist");
 				str3 = _("Really delete this event?");
 			}
 			else if (type == update)
@@ -525,7 +525,7 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 		{
 			if ( entry.type & ePlaylistEntry::typeShutOffTimer )
 			{
-				eMessageBox box(_("The Endtime overlaps with an event in the timerlist"), _("Set Stop Time"), eMessageBox::iconWarning|eMessageBox::btOK);
+				eMessageBox box(_("The Endtime overlaps with another event in the timerlist"), _("Set Stop Time"), eMessageBox::iconWarning|eMessageBox::btOK);
 				sel->hide();
 				box.show();
 				box.exec();
@@ -534,7 +534,9 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const ePlaylistEntry& ent
 			}
 			else
 			{
-				eMessageBox box(_("This event can not added to the timerlist.\nThe event overlaps with another event in the timerlist\nPlease check manually the timerlist."), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
+				eMessageBox box(_("This event cannot added to the timerlist.\n"
+					"The event overlaps with another event in the timerlist\n"
+					"Please check the timerlist manually."), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
 				sel->hide();
 				box.show();
 				box.exec();
@@ -558,7 +560,7 @@ bool eTimerManager::addEventToTimerList( eWidget *sel, const eServiceReference *
 {
 	ePlaylistEntry e( *ref, evt->start_time, evt->duration, evt->event_id, type );
 // add the event description
-	eString descr	= _("no description avail");
+	eString descr	= _("no description is available");
 	for (ePtrList<Descriptor>::const_iterator d(evt->descriptor); d != evt->descriptor.end(); ++d)
 	{
 		Descriptor *descriptor=*d;
@@ -1044,7 +1046,8 @@ void eTimerView::addPressed()
 	else
 	{
 		hide();
-		eMessageBox box(_("Invalid begin or end time.!\nYou can not add this to timerlist"), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
+		eMessageBox box(_("Invalid begin or end time.!\n"
+			"You cannot add this to timerlist"), _("Add event to timerlist"), eMessageBox::iconWarning|eMessageBox::btOK);
 		box.show();
 		box.exec();
 		box.hide();

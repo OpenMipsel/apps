@@ -57,8 +57,8 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	combo_type->setName("type");
 	CONNECT(combo_type->selchanged, eSatelliteConfigurationManager::typeChanged);
 	new eListBoxEntryText( *combo_type, _("one single satellite"), (void*)0, 0, _("one directly connected LNB"));
-	new eListBoxEntryText( *combo_type, _("2 satellites via DiSEqC A/B"), (void*)1, 0, _("2 LNBs via Diseqc"));
-	new eListBoxEntryText( *combo_type, _("4 satellites via DiSEqC OPT A/B"), (void*)2, 0, _("3 LNBs via Diseqc"));
+	new eListBoxEntryText( *combo_type, _("2 satellites via DiSEqC A/B"), (void*)1, 0, _("2 LNBs via DiSEqC"));
+	new eListBoxEntryText( *combo_type, _("4 satellites via DiSEqC OPT A/B"), (void*)2, 0, _("4 LNBs via DiSEqC"));
 	new eListBoxEntryText( *combo_type, _("non-standard user defined configuration..."), (void*)3, 0, _("special"));
 	
 	eSkin *skin=eSkin::getActive();
@@ -622,7 +622,7 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 
 	c->resize( eSize( 90, 30 ) );
 	c->setHelpText( _("press ok to select another 22kHz mode") );
-	new eListBoxEntryText( *c, "Hi/Lo", (void*)eSwitchParameter::HILO, 0, _("22kHz signal is automaticaly switched") );
+	new eListBoxEntryText( *c, "Hi/Lo", (void*)eSwitchParameter::HILO, 0, _("22kHz signal is automatically switched") );
 	new eListBoxEntryText( *c, "On", (void*)eSwitchParameter::ON, 0, _("22kHz is always enabled (high band)") );
 	new eListBoxEntryText( *c, "Off", (void*)eSwitchParameter::OFF, 0, _("22kHz is always disabled (low band)") );
 	c->setCurrent( (void*) (int) s->getSwitchParams().HiLoSignal );
@@ -635,9 +635,9 @@ void eSatelliteConfigurationManager::addSatellite( eSatellite *s )
 
 	c->resize( eSize( 90, 30 ) );
 	c->setHelpText( _("press ok to select another LNB Voltage mode") );
-	new eListBoxEntryText( *c, "H/V", (void*)eSwitchParameter::HV, 0, _("Voltage is automaticaly changed") );
+	new eListBoxEntryText( *c, "H/V", (void*)eSwitchParameter::HV, 0, _("Voltage is automatically changed") );
 	new eListBoxEntryText( *c, "14V", (void*)eSwitchParameter::_14V, 0, _("Voltage is always 14V (vertical)") );
-	new eListBoxEntryText( *c, "18V", (void*)eSwitchParameter::_18V, 0, _("Voltage is always 18V (horizontal") );
+	new eListBoxEntryText( *c, "18V", (void*)eSwitchParameter::_18V, 0, _("Voltage is always 18V (horizontal)") );
 	new eListBoxEntryText( *c, "off", (void*)eSwitchParameter::_0V, 0, _("Voltage is always off") );
 	c->setCurrent( (void*) (int) s->getSwitchParams().VoltageMode );
 	CONNECT( c->selchanged_id, eSatelliteConfigurationManager::voltageChanged);

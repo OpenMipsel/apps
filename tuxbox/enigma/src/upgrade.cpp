@@ -111,7 +111,7 @@ eUpgrade::eUpgrade()
 	
 	imagehelp=new eLabel(this);
 	imagehelp->setName("imagehelp");
-	imagehelp->setText(_("Please select software version to upgrade to:"));
+	imagehelp->setText(_("Please select the software version to upgrade to:"));
 
 	progress=new eProgress(this);
 	progress->setName("progress");
@@ -480,7 +480,7 @@ void eUpgrade::flashImage(int checkmd5)
 		{
 			setStatus(_("Checksum OK. Ready to upgrade."));
 			eMessageBox mb(
-				_("Do you really want to upgrade to the new version?"),
+				_("Are you sure you want to upgrade to this new version?"),
 				_("Ready to upgrade"),
 				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion);
 			hide();
@@ -490,7 +490,7 @@ void eUpgrade::flashImage(int checkmd5)
 			if (res == eMessageBox::btYes)
 			{
 				eMessageBox mb(
-					_("Erasing...\nPlease do not switch off box now!"),
+					_("Erasing...\nPlease wait... do NOT switch off the receiver!"),
 					_("upgrade in progress"), eMessageBox::iconInfo);
 				mb.show();
 				sync();
@@ -533,7 +533,7 @@ void eUpgrade::flashImage(int checkmd5)
 				if (!res)
 				{
 					eMessageBox mb(
-						_("Writing software to flash...\nPlease do not switch off box now!"),
+						_("Writing software to flash...\nPlease wait... do NOT switch off the receiver!"),
 						_("upgrade in progress"), eMessageBox::iconInfo);
 					mb.show();
 					res=system(eString("cat " TMP_IMAGE " > /dev/mtd/" + mtd).c_str())>>8;

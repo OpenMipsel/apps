@@ -236,10 +236,10 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 	switch (eFrontend::getInstance()->Type())
 	{
 		case eFrontend::feSatellite:
-			l_status->setText(_("To begin searching for a valid satellite press OK, or choose your wished satellite manually and press OK"));
+			l_status->setText(_("To begin searching for a valid satellite press OK, or choose your desired satellite manually and press OK"));
 		break;
 		case eFrontend::feCable:
-			l_status->setText(_("To begin searching for a valid cable provider press OK, or choose your wished cable provider manually and press OK"));
+			l_status->setText(_("To begin searching for a valid cable provider press OK, or choose your desired cable provider manually and press OK"));
 		break;
 	}
 	
@@ -876,7 +876,7 @@ int TransponderScan::exec()
 			scan.exec();
 			scan.hide();
 
-			text.sprintf(_("The transponderscan has finished and found %i new Transponders, %i new TV Services, %i new Radio Services and %i new Data Services. %i Transponders within %i Services scanned."), scan.newTransponders, scan.newTVServices, scan.newRadioServices, scan.newDataServices, scan.tpScanned, scan.servicesScanned );
+			text.sprintf(_("The transponder scan has finished and found %i new Transponders, %i new TV Services, %i new Radio Services and %i new Data Services. %i Transponders within %i Services scanned."), scan.newTransponders, scan.newTVServices, scan.newRadioServices, scan.newDataServices, scan.tpScanned, scan.servicesScanned );
 			
 			state=stateDone;
 			break;

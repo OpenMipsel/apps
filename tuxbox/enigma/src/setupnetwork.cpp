@@ -54,7 +54,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	ip->move(ePoint(160, 20));
 	ip->resize(eSize(200, fd+10));
 	ip->setFlags(eNumber::flagDrawPoints);
-	ip->setHelpText(_("enter IP Adress of the box (0..9, left, right)"));
+	ip->setHelpText(_("enter IP Address of the box (0..9, left, right)"));
 	ip->loadDeco();
 	CONNECT(ip->selected, eZapNetworkSetup::fieldSelected);
 
@@ -96,7 +96,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	gateway->move(ePoint(160, 140));
 	gateway->resize(eSize(200, fd+10));
 	gateway->setFlags(eNumber::flagDrawPoints);
-	gateway->setHelpText(_("enter ip of your gateway (0..9, left, right)"));
+	gateway->setHelpText(_("enter your gateways IP Address (0..9, left, right)"));
 	gateway->loadDeco();
 	CONNECT(gateway->selected, eZapNetworkSetup::fieldSelected);
 
@@ -112,7 +112,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	ok->setShortcutPixmap("green");
 	ok->move(ePoint(10, 220));
 	ok->resize(eSize(170, 40));
-	ok->setHelpText(_("close window and save changes"));
+	ok->setHelpText(_("save changes and return"));
 	ok->loadDeco();
 	
 	CONNECT(ok->selected, eZapNetworkSetup::okPressed);
@@ -122,7 +122,7 @@ eZapNetworkSetup::eZapNetworkSetup():
 	abort->setText(_("abort"));
 	abort->move(ePoint(200, 220));
 	abort->resize(eSize(170, 40));
-	abort->setHelpText(_("close window (no changes are saved)"));
+	abort->setHelpText(_("ignore changes and return"));
 
 	CONNECT(abort->selected, eZapNetworkSetup::abortPressed);
 

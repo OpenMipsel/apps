@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.9 2003/01/02 19:37:19 Ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.10 2003/01/20 14:24:53 tmbinc Exp $
  */
 
 #include <setup_harddisk.h>
@@ -270,7 +270,7 @@ void eHarddiskMenu::s_format()
 		{
 			eMessageBox msg(
 				 _("There's data on this harddisk.\n"
-				 "You will loose that data. Proceed?"),
+				 "You will lose that data. Proceed?"),
 				 _("formatting harddisk..."),
 				 eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo);
 			msg.show();
@@ -350,7 +350,7 @@ void eHarddiskMenu::s_format()
 		msg.hide();
 		{
 			eMessageBox msg(
-				_("successfully formated your disk!"),
+				_("successfully formatted your disk!"),
 				_("formatting harddisk..."),
 				 eMessageBox::btOK|eMessageBox::iconInfo);
 			msg.show();
@@ -486,7 +486,7 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 			else
 			{
 				eMessageBox msg(
-					_("not supportet filesystem for check."),
+					_("not supported filesystem for check."),
 					_("check filesystem..."),
 					eMessageBox::btOK|eMessageBox::iconError);
 				msg.show();

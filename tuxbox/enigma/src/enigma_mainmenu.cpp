@@ -38,16 +38,16 @@ void eMainMenu::setActive(int i)
 		description->setText(_("File mode"));
 		break;
 	case 3:
-		description->setText(_("information"));
+		description->setText(_("Information"));
 		break;
 	case 4:
-		description->setText(_("shutdown"));
+		description->setText(_("Shutdown"));
 		break;
 	case 5:
-		description->setText(_("setup"));
+		description->setText(_("Setup"));
 		break;
 	case 6:
-		description->setText(_("games"));
+		description->setText(_("Games"));
 		break;
 	case 7:
 		description->setText(_("VCR"));
