@@ -5,6 +5,7 @@
 
 class eButton;
 class eCheckbox;
+class eComboBox;
 class eNumber;
 class eTextInputField;
 class eTransponder;
@@ -34,10 +35,13 @@ public:
 	eTransponderEditWindow();
 	~eTransponderEditWindow();
 	void satSelChanged( eListBoxEntryText* );
+	void satPressed();
 	void addPressed();
 	void editPressed();
 	void removePressed();
 	void focusChanged( const eWidget* w );
+	void addNetwork();
+	void removeNetwork();
 	int eventHandler( const eWidgetEvent & e );
 };
 
@@ -55,9 +59,11 @@ class eSatEditDialog: public eWindow
 {
 	eTextInputField *name;
 	eNumber *OrbitalPos;
-	eCheckbox *skipKnowNit, *useBAT, *useONIT, *doNetworkSearch;
+	eCheckbox *skipKnownNIT, *useBAT, *useONIT, *doNetworkSearch;
+	eComboBox *direction;
 	eButton *save, *cancel;
-	eTransponder *tp;
+	eStatusBar *sbar;
+	tpPacket *tp;
 	void savePressed();
 public:
 	eSatEditDialog( tpPacket *tp );

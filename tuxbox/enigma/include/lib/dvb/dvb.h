@@ -704,6 +704,12 @@ public:
 class tpPacket
 {
 public:
+	bool operator==(const tpPacket& p)
+	{
+		// this do only compare the adresses.. to find a tpPacket
+		// in a std::list<tpPacket>.. but it is fast !!
+		return &possibleTransponders == &p.possibleTransponders;
+	}
 	std::string name;
 	int scanflags;
 	int orbital_position;
@@ -714,8 +720,8 @@ class existNetworks
 {
 	bool networksLoaded;
 public:
-	const std::list<tpPacket>& getNetworks();
-	const std::map<int,tpPacket>& getNetworkNameMap();
+	std::list<tpPacket>& getNetworks();
+	std::map<int,tpPacket>& getNetworkNameMap();
 	int reloadNetworks();
 	int saveNetworks();
 	void invalidateNetworks() { networksLoaded=false; }

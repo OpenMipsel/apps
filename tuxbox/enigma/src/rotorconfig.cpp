@@ -235,8 +235,7 @@ void RotorConfig::gotoXXChanged( int state )
 		lLatitude->hide();
 		Latitude->hide();
 		LaDirection->hide();
-		
-		positions->show();
+
 		add->show();
 		remove->show();
 		lOrbitalPosition->show();

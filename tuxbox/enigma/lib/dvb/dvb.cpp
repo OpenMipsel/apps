@@ -292,7 +292,7 @@ existNetworks::existNetworks()
 
 }
 
-const std::list<tpPacket>& existNetworks::getNetworks()
+std::list<tpPacket>& existNetworks::getNetworks()
 {
 	if (!networksLoaded)
 	{
@@ -302,7 +302,7 @@ const std::list<tpPacket>& existNetworks::getNetworks()
 	return networks;
 }
 
-const std::map<int,tpPacket>& existNetworks::getNetworkNameMap()
+std::map<int,tpPacket>& existNetworks::getNetworkNameMap()
 {
 	if (!networksLoaded)
 	{

@@ -804,6 +804,18 @@
 		<TransponderWindow cposition="80:100" csize="550:390" text="Transponders">
 			<eListbox name="satlist" position="10:10" size="305:e-90" loadDeco="" />
 			<eListbox name="transponderlist" position="335:10" size="205:e-90" loadDeco="" />
+			<eButton name="sat" text="sat" position="10:e-80" size="125:40" loadDeco="" helptext="select sat(up/down), ok(edit), green(add new), red(delete)" />
+			<eButton name="add" text="add" position="145:e-80" size="125:40" loadDeco="" helptext="add new Transponder to selected sat (ok)" />
+			<eButton name="edit" text="edit" position="280:e-80" size="125:40" loadDeco="" helptext="edit selected transponder (ok)" />
+			<eButton name="remove" text="remove" position="415:e-80" size="125:40" loadDeco="" helptext="remove selected satellite" />
+			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
+		</TransponderWindow>
+	</object>
+
+	<object name="TransponderWindow">
+		<TransponderWindow cposition="80:100" csize="550:390" text="Transponders">
+			<eListbox name="satlist" position="10:10" size="305:e-90" loadDeco="" />
+			<eListbox name="transponderlist" position="335:10" size="205:e-90" loadDeco="" />
 			<eButton name="sat" text="sat" position="10:e-80" size="125:40" loadDeco="" helptext="select sat ( up/down )" />
 			<eButton name="add" text="add" position="145:e-80" size="125:40" loadDeco="" helptext="add new Transponder to selected sat (ok)" />
 			<eButton name="edit" text="edit" position="280:e-80" size="125:40" loadDeco="" helptext="edit selected transponder (ok)" />
@@ -811,5 +823,5 @@
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</TransponderWindow>
 	</object>
-	
+
 </eskin>

@@ -192,5 +192,10 @@
 			<action name="leftTop" key="red" flags="m" />
 			<action name="rightBottom" key="green" flags="m" />
 		</actionmap>
+
+		<actionmap name="TransponderEditWindow">
+			<action name="addNetwork" key="green" flags="m" />
+			<action name="removeNetwork" key="red" flags="m" />
+		</actionmap>
 	</device>
 </rcdefaults>
