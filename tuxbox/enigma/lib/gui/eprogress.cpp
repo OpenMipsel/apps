@@ -15,6 +15,7 @@ eProgress::eProgress(eWidget *parent, int takefocus)
 	right=eSkin::getActive()->queryScheme("eProgress.right");
 	perc=start=0;
 	border=2;
+	direction=0;
 	setForegroundColor(eSkin::getActive()->queryScheme("eProgress.border"));
 }
 
