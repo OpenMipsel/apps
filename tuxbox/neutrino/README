@@ -1,4 +1,29 @@
+Compiling Neutrino for alexW Images:
+------------------------------------
+
 Please check out the HEAD version of apps/tuxbox/neutrino and apply the
 patch apps/tuxbox/neutrino/patch.HEAD.for.alexW found in rel_alexW:
 
 patch -p0 < apps/tuxbox/neutrino/patch.HEAD.for.alexW
+
+
+
+Additional comments:
+--------------------
+1.) You should use the HEAD branch of cdk (the directory in the cvs tree).
+
+2.) Sectionsd detects the driver version at compile time
+  automatically. Hence the old driver headers must be detected. This
+  can be done in the following way:
+
+  You can use a different configure command (cf. cdk/doc/INSTALL.en, Section 2):
+
+./configure --prefix=$HOME/dbox2 --with-cvsdir=$HOME/tuxbox-cvs --enable-maintainer-mode
+
+should be replaced with (i.e. add the option --with-dvbincludes)
+
+./configure --prefix=$HOME/dbox2 --with-cvsdir=$HOME/tuxbox-cvs --with-dvbincludes=$HOME/tuxbox-cvs/driver/include --enable-maintainer-mode
+
+.
+
+Enjoy
