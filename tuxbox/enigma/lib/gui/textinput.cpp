@@ -5,6 +5,7 @@
 #include <lib/gui/eskin.h>
 #include <lib/gui/ewindow.h>
 #include <lib/system/init.h>
+#include <lib/system/econfig.h>
 #include <lib/gdi/font.h>
 
 eTextInputField::eTextInputField( eWidget *parent, eLabel *descr, const char *deco )
@@ -12,9 +13,10 @@ eTextInputField::eTextInputField( eWidget *parent, eLabel *descr, const char *de
     useableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 //						 " +-.,:?!\"';_*/()<=>%#@&"),
              "ĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîï°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ"
-						 " +-.,:?!\"';_*/()<=>%#@&"),
-	nextCharTimeout(0), capslock(0)
+						 " +-.,:?!\"';_*/()<=>%#@&"), capslock(0)
 {
+	if ( eConfig::getInstance()->getKey("/ezap/rc/TextInputField/nextCharTimeout", nextCharTimeout ) )
+		nextCharTimeout=0;
 	CONNECT( nextCharTimer.timeout, eTextInputField::nextChar );
 	addActionMap(&i_numberActions->map);
 	flags=0;

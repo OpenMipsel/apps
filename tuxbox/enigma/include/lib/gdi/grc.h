@@ -9,6 +9,7 @@
 
 #include <pthread.h>
 #include <stack>
+#include <list>
 
 #include <lib/base/estring.h>
 #include <lib/base/ringbuffer.h>
@@ -130,7 +131,6 @@ class gRC
 	eLock queuelock;
 	
 	queueRingBuffer<gOpcode> queue;
-	
 public:
 	gRC();
 	virtual ~gRC();
@@ -160,8 +160,8 @@ class gPainter
 	friend class gRC;
 
 	gOpcode *beginptr;
-
 			/* paint states */	
+//	std::stack<eRect, std::list<eRect> > cliparea;
 	std::stack<eRect> cliparea;
 	gFont font;
 	gColor foregroundColor, backgroundColor;

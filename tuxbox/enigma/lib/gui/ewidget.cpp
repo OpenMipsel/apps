@@ -19,7 +19,7 @@ eWidget::actionMapList eWidget::globalActions;
 eWidget::eWidget(eWidget *_parent, int takefocus):
 	parent(_parent ? _parent : root),
 	shortcut(0), shortcutFocusWidget(0),
-	focus(0), takefocus(takefocus),
+	focus(0), TLW(0), takefocus(takefocus),
 	font( parent ? parent->font : eSkin::getActive()->queryFont("global.normal") ),
 	backgroundColor(_parent?gColor(-1):gColor(eSkin::getActive()->queryScheme("global.normal.background"))),
 	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground")))
@@ -156,11 +156,19 @@ void eWidget::resize(const eSize& nsize)
 	recalcClip();
 }
 
+void eWidget::recalcAbsolutePosition()
+{
+	absPosition = (parent?(parent->getAbsolutePosition()+parent->clientrect.topLeft()+position):position);
+	for (ePtrList<eWidget>::iterator it( childlist ); it != childlist.end(); it++ )
+		it->recalcAbsolutePosition();
+}
+
 void eWidget::move(const ePoint& nposition)
 {
 	position=nposition;
-	event(eWidgetEvent(eWidgetEvent::changedPosition));
 	recalcClip();
+	recalcAbsolutePosition();
+	event(eWidgetEvent(eWidgetEvent::changedPosition));
 }
 
 void eWidget::cresize(const eSize& nsize)

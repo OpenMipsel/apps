@@ -191,9 +191,7 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 	
 	for (timeMap::const_iterator event(ibegin); event != iend; ++event)
 	{
-		const EITEvent *ev = epgcache->lookupEvent(service.service, event->first);
-		if (!ev)
-			continue;
+		EITEvent *ev = new EITEvent(*event->second);
 		if (((ev->start_time+ev->duration)>= start) && (ev->start_time <= end))
 		{
 			entry *e = new entry(this, timeFont, titleFont, descrFont, entryColor, entryColorSelected);

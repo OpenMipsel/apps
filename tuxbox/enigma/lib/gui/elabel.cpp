@@ -83,6 +83,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 /*	eDebug("decoStr = %s, text=%s, name=%s, %p left = %d, top = %d, width=%d, height = %d", strDeco?strDeco.c_str():"no", text?text.c_str():"no" , name?name.c_str():"no", this, this->getPosition().x(), this->getPosition().y(), this->getSize().width(), this->getSize().height() ); 
 	eDebug("renderContext left = %d, top = %d, width = %d, height = %d", rc.left(), rc.top(), rc.width(), rc.height() );*/
 
+	target->clip( rc );
 	eRect area=eRect(ePoint(0, 0), ePoint(width(), height()));
 
 	if (deco_selected && have_focus)
@@ -94,7 +95,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 		deco.drawDecoration(target, ePoint(width(), height()));
 		area=crect;
 	}
-	
+
 	if (shortcutPixmap)
 	{
 		//area.setWidth(area.width()-area.height());
@@ -103,8 +104,10 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 
 	if (text.length())
 	{
-		if ( area.size().height() < size.height() || area.size().width() < size.width() )  // then deco is drawed
+		if ( area.size().height() < size.height() ||
+				area.size().width() < size.width() )
 		{
+		// then deco is drawed
 			eSize s=area.size();
 			validate( &s );
 		} else
@@ -126,9 +129,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 			target->setBackgroundColor(w->getBackgroundColor());
 		}
 		target->setFont(font);
-		target->clip( area );
 		target->renderPara(*para, ePoint( area.left(), area.top()+yOffs) );
-		target->clippop();
 	}
 	if (pixmap)
 	{
@@ -141,6 +142,7 @@ void eLabel::redrawWidget(gPainter *target, const eRect &rc)
 				ePoint((area.height()-shortcutPixmap->x)/2, area.top()+(area.height()-shortcutPixmap->y)/2),
 				eRect(),
 				gPixmap::blitAlphaTest);
+	target->clippop();
 }
 
 int eLabel::eventHandler(const eWidgetEvent &event)

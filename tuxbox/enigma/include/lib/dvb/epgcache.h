@@ -195,7 +195,6 @@ private:
 	int isRunning;
 	int paused;
 	int sectionRead(__u8 *data, int source);
-	void SDTReady(int err);
 	static eEPGCache *instance;
 
 	eventCache eventDB;

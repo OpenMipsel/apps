@@ -2704,12 +2704,7 @@ void eZapMain::handleStandby()
 		message_notifier.send(eZapMain::messageShutdown);
 	}
 	else if (wasSleeping==3)
-	{  // shutofftimer .. undelayed.. standby...
-		wasSleeping=0;
-		// use message_notifier to goto sleep...
-		// we will not block the mainloop...
-		message_notifier.send(eZapMain::messageGoSleep);
-	}
+		delayedStandby();
 }
 
 void eZapMain::delayedStandby()
@@ -2811,7 +2806,6 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 			}
 		}
 		else if ( it->service.type == eServicePlaylistHandler::ID )
-
 			eServicePlaylistHandler::getInstance()->removePlaylist( it->service );
 
 		if (removeEntry) // remove service.. and linked files..
@@ -3136,7 +3130,10 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 
 		if ( flags&psSeekPos )
 		{
-			std::list<ePlaylistEntry>::iterator i=std::find(playlist->getList().begin(), playlist->getList().end(), service);
+			std::list<ePlaylistEntry>::iterator i =
+				std::find( playlist->getList().begin(),
+					playlist->getList().end(), service);
+
 			if (i != playlist->getList().end())
 			{
 //			eDebug("we have stored PlaylistPosition.. get this... and set..");
@@ -3154,7 +3151,7 @@ void eZapMain::playService(const eServiceReference &service, int flags)
 		if (!playlistmode)		// dem user liebgewonnene playlists nicht einfach killen
 		{
 //			eDebug("not playlistmode.. shrink playlist");
-			while (playlist->getConstList().size() > 19)
+			while (playlist->getConstList().size() > 25)
 				playlist->getList().pop_front();
 		}
 /*		else
@@ -3217,7 +3214,8 @@ void eZapMain::addService(const eServiceReference &service)
 	{
 //		eDebug("addService");
 		int last=0;
-		if (playlist->current != playlist->getConstList().end() && *playlist->current == service)
+		if (playlist->current != playlist->getConstList().end()
+			&& *playlist->current == service)
 		{
 			++playlist->current;
 			last=1;

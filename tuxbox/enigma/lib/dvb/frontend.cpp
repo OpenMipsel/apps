@@ -990,7 +990,7 @@ send:
 		else if ( lastcsw != csw )
 		{
 			// faster zap workaround... send only diseqc when satpos changed
-			if ( lnb->getDiSEqC().FastDiSEqC && (csw / 4) == (lastcsw / 4) )
+			if ( lnb->getDiSEqC().FastDiSEqC && csw && (csw / 4) == (lastcsw / 4) )
 				seq.numCommands=0;
 			goto send; // jump above...
 		}

@@ -29,6 +29,7 @@ public:
 
 class eSection: public Object
 {
+	eMainloop *context;
 	eSectionReader reader;
 	static ePtrList<eSection> active;
 	eSocketNotifier *notifier;
@@ -43,6 +44,7 @@ class eSection: public Object
 	int lockcount;
 	int setFilter(int pid, int tableid, int tableidext, int version, const char *dmxdev=DEMUX0);
 public:
+	void setContext( eMainloop *context ) { this->context = context; }
 	void data(int socket);
 	void timeout();
 public:
@@ -75,9 +77,6 @@ public:
 	int error;
 	int ready;
 };
-
-
-
 
 class eAUGTable: public Object
 {
@@ -169,7 +168,7 @@ public:
 	{
 //		printf("eAUTable: got table (ready %d, error %d\n", next->ready, next->error);
 		if ( current )
-			printf("current lockcount = %d", current->getLockCount() );
+			eDebug("current lockcount = %d", current->getLockCount() );
 		if (current && current->getLockCount())
 		{
 			delete next;

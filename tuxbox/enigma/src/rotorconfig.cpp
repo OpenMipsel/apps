@@ -630,13 +630,18 @@ void eRotorManual::satChanged( eListBoxEntryText *sat)
 		eListBoxEntryText *sel=0;
 
 		eSatellite *Sat = (eSatellite*) (sat->getKey());
+
 		for ( std::list<tpPacket>::const_iterator i( eTransponderList::getInstance()->getNetworks().begin() ); i != eTransponderList::getInstance()->getNetworks().end(); i++ )
+		{
 			if ( i->orbital_position == Sat->getOrbitalPosition() )
+			{
 				for (std::list<eTransponder>::const_iterator it( i->possibleTransponders.begin() ); it != i->possibleTransponders.end(); it++)
 					if ( tp && *tp == *it )
 						sel = new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
 					else
 						new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
+			}
+		}
 
 		if (Transponder->getCount())
 		{
@@ -650,7 +655,7 @@ void eRotorManual::satChanged( eListBoxEntryText *sat)
 
 void eRotorManual::tpChanged( eListBoxEntryText *tp )
 {
- if (tp && tp->getKey() )
+	if (tp && tp->getKey() )
 	{
 		transponder = (eTransponder*)(tp->getKey());
 		transponder->tune();

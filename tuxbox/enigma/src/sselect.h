@@ -7,7 +7,6 @@
 #include <lib/dvb/epgcache.h>
 #include <src/channelinfo.h>
 
-#include <stack>
 #include <lib/dvb/service.h>
 
 class eService;

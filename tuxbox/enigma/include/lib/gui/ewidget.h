@@ -110,6 +110,7 @@ protected:
 	eString name;
 	eString helptext;
 	ePoint position;
+	ePoint absPosition;
 	eSize size;
 	eRect clientrect;
 	eRect clientclip;
@@ -120,7 +121,7 @@ protected:
 	ePtrList<eWidget> _focusList;
 	
 	ePtrList<eWidget> actionListener;
-	eWidget *focus;
+	eWidget *focus, *TLW;
 
 		/// old top-level focus
 	eWidget *oldTLfocus;
@@ -129,9 +130,9 @@ protected:
 	
 	gDC *target;
 
-	inline eWidget *getTLW()		// pseudoTLW !!
+	inline eWidget *getTLW() // pseudoTLW !!
 	{
-		return (parent && parent->parent)?parent->getTLW():this;
+		return TLW ? TLW : (TLW = (parent && parent->parent) ? parent->getTLW() : this );
 	}
 	int result, in_loop, have_focus, just_showing;
 	void takeFocus();
@@ -208,9 +209,11 @@ public:
 	eWidget *LCDTmp;
 #endif
 
-	inline ePoint getAbsolutePosition() const
+	void recalcAbsolutePosition();
+
+	const inline ePoint &getAbsolutePosition() const
 	{
-		return (parent?(parent->getAbsolutePosition()+parent->clientrect.topLeft()+position):position);
+		return absPosition;
 	}
 
 	inline ePoint getRelativePosition(eWidget *e) const

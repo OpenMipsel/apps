@@ -91,7 +91,7 @@ void gPainter::begin(const eRect &rect)
 	o.dc=&dc;
 	o.opcode=gOpcode::begin;
 	o.parm.begin=new gOpcode::para::pbegin(rect);
-	
+//	cliparea=std::stack<eRect, std::list<eRect> >();
 	cliparea=std::stack<eRect>();
 	cliparea.push(rect);
 	setLogicalZero(cliparea.top().topLeft());

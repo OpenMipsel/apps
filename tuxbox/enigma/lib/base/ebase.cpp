@@ -179,7 +179,7 @@ void eMainloop::enter_loop()
 	while (!app_exit_loop && !app_quit_now)
 	{
 		processOneEvent();
-	}	
+	}
 
 	// wiederherstellen der vorherigen app_exit_loop
 	app_exit_loop = old_exit_loop;

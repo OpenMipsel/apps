@@ -335,6 +335,19 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 			}
 		}
 
+		timeMap::iterator i = It->second.second.lower_bound(t);
+		if ( i != It->second.second.end() )
+		{
+			i--;
+			if ( i != It->second.second.end() )
+			{
+				const eit_event_struct* eit_event = i->second->get();
+				int duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
+				if ( t <= i->first+duration )
+					return new EITEvent( *i->second );
+			}
+		}
+/*    
 		for ( eventMap::iterator i( It->second.first.begin() ); i != It->second.first.end(); i++)
 		{
 			const eit_event_struct* eit_event = i->second->get();
@@ -342,7 +355,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 			time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
 			if ( t >= begTime && t <= begTime+duration) // then we have found
 				return new EITEvent( *i->second );
-		}
+		}*/
 	}
 	return 0;
 }
@@ -415,7 +428,7 @@ void eEPGCache::startEPG()
 		return;
 	}
 
-	if (eDVB::getInstance()->time_difference)	
+	if (eDVB::getInstance()->time_difference)
 	{
 		temp.clear();
 		eDebug("[EPGC] start caching events");
@@ -438,7 +451,7 @@ void eEPGCache::abortEPG(const eServiceReferenceDVB&)
 	zapTimer.stop();
 	if (isRunning)
 	{
-	 	if (isRunning & 1)
+		if (isRunning & 1)
 		{
 			isRunning &= ~1;
 			scheduleReader.abort();

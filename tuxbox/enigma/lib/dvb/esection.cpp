@@ -10,9 +10,11 @@
 
 #include <lib/base/ebase.h>
 #include <lib/base/eerror.h>
+#include <lib/system/elock.h>
 
 #include <ost/dmx.h>
 
+static pthread_mutex_t slock=PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 ePtrList<eSection> eSection::active;
 
 eSectionReader::eSectionReader()
@@ -99,16 +101,17 @@ int eSectionReader::read(__u8 *buf)
 }
 
 eSection::eSection(int _pid, int _tableid, int _tableidext, int _version, int _flags, int _tableidmask)
-	: pid(_pid), tableid(_tableid), tableidext(_tableidext), tableidmask(_tableidmask), flags(_flags), version(_version)
+	:context(eApp), pid(_pid), tableid(_tableid), tableidext(_tableidext), tableidmask(_tableidmask), flags(_flags), version(_version)
 {
 	notifier=0;
 	section=0;
 	lockcount=0;
-	timer=new eTimer(eApp);
+	timer=new eTimer(context);
 	CONNECT(timer->timeout, eSection::timeout);
 }
 
 eSection::eSection()
+	:context(eApp)
 {
 	timer=0;
 	notifier=0;
@@ -155,12 +158,15 @@ int eSection::setFilter(int pid, int tableid, int tableidext, int version, const
 		return -ENOENT;
 
 	if (!(flags&SECREAD_NOABORT))
+	{
+		singleLock s(slock);
 		active.push_back(this);
+	}
 
 	if (notifier)
 		delete notifier;
 
-	notifier=new eSocketNotifier(eApp, reader.getHandle(), eSocketNotifier::Read);
+	notifier=new eSocketNotifier(context, reader.getHandle(), eSocketNotifier::Read);
 
 	CONNECT(notifier->activated, eSection::data);
 
@@ -172,7 +178,10 @@ void eSection::closeFilter()
 	if (reader.getHandle()>0)
 	{
 		if (!(flags&SECREAD_NOABORT))
+		{
+			singleLock s(slock);
 			active.remove(this);
+		}
 		delete notifier;
 		notifier=0;
 		if (timer)
@@ -183,7 +192,7 @@ void eSection::closeFilter()
 
 void eSection::data(int socket)
 {
-	int max = 100;
+	int max = 50;
 	while (max--)
 	{
 		if (lockcount)
@@ -196,10 +205,21 @@ void eSection::data(int socket)
 
 		//  printf("%d/%d, we want %d  | service_id %04x | version %04x\n", buf[6], maxsec, section, (buf[3]<<8)|buf[4], buf[5]);
 
+		bool tmp=false;
 		if (flags&SECREAD_INORDER)
+		{
 			version=buf[5];
+			if (section>maxsec)    // last section?
+			{
+				closeFilter();       // stop feeding
+				sectionFinish(0);
+				break;
+			}
+		}
+		else
+			tmp=true;
 
-		if ((!(flags&SECREAD_INORDER)) || (section==buf[6]))
+		if ( tmp || section==buf[6] )
 		{
 			int err;
 			if ((err=sectionRead(buf)))
@@ -211,13 +231,6 @@ void eSection::data(int socket)
 				return;
 			}
 			section=buf[6]+1;
-		}
-
-		if ((section>maxsec) && (flags&SECREAD_INORDER))		// last section?
-		{
-			closeFilter();										// stop feeding
-			sectionFinish(0);
-			break;
 		}
 	}
 }

@@ -36,16 +36,14 @@ void eZapRCSetup::update()
 eZapRCSetup::eZapRCSetup(): eWindow(0)
 {
 	setText(_("Remotecontrol Setup"));
-	cmove(ePoint(140, 146));
-	cresize(eSize(470, 320));
+	cmove(ePoint(140, 136));
+	cresize(eSize(470, 345));
 
 	int fd=eSkin::getActive()->queryValue("fontsize", 20);
 
 	eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);
 	rrate = 250 - rrate;
-
-	eDebug("rrate = %i, rdelay = %i", rrate, rdelay);
 
 	lrrate=new eLabel(this);
 	lrrate->setText(_("Repeat Rate:"));
@@ -104,6 +102,24 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 	sselect_style_val=activeStyles.find("sselect_classic") != activeStyles.end();
 	sselect_style->setCheck(sselect_style_val);
 
+	lNextCharTimeout = new eLabel(this);
+	lNextCharTimeout->move(ePoint(20,220));
+	lNextCharTimeout->resize(eSize(280,35));
+	lNextCharTimeout->setText(_("Next Char Timeout:"));
+
+	unsigned int t;
+	eConfig::getInstance()->delKey("/ezap/rc/TextInputField/nextCharTimeout");
+	eConfig::getInstance()->delKey("/ezap/rc/TextInputField/nextCharTimeout");
+	if (eConfig::getInstance()->getKey("/ezap/rc/TextInputField/nextCharTimeout", t) )
+		t=0;
+	NextCharTimeout = new eNumber(this,1,0,3999,4,0,0,lNextCharTimeout);
+	NextCharTimeout->move(ePoint(315,220));
+	NextCharTimeout->resize(eSize(65,35));
+	NextCharTimeout->loadDeco();
+	NextCharTimeout->setHelpText(_("Cursor to next char timeout(msek) in textinputfields)"));
+	NextCharTimeout->setNumber(t);
+	CONNECT(NextCharTimeout->selected, eZapRCSetup::nextField);
+
 	ok=new eButton(this);
 	ok->setText(_("save"));
 	ok->setShortcut("green");
@@ -135,6 +151,11 @@ eZapRCSetup::~eZapRCSetup()
 {
 }
 
+void eZapRCSetup::nextField(int *)
+{
+	focusNext(eWidget::focusDirNext);
+}
+
 void eZapRCSetup::styleChanged( eListBoxEntryText* e)
 {
 	if (e)
@@ -153,9 +174,11 @@ void eZapRCSetup::okPressed()
 	if ((sselect_style_val) && !sselect_style->isChecked())
 		eZapMain::getInstance()->reloadPaths(1);	// reset paths
 	setStyle();
-	
+
 	eConfig::getInstance()->setKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->setKey("/ezap/rc/repeatDelay", rdelay);
+	unsigned int t = (unsigned int) NextCharTimeout->getNumber();
+	eConfig::getInstance()->setKey("/ezap/rc/TextInputField/nextCharTimeout", t );
 	eConfig::getInstance()->flush();
 	close(1);
 }

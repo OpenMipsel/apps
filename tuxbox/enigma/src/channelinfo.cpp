@@ -12,24 +12,18 @@
 eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	:eDecoWidget(parent, 0, deco),
 	ctime(this), cname(this), copos(this), cdescr(this),
-	cgenre(this), cdolby(this), cstereo(this),
+	cdolby(this), cstereo(this),
 	cformat(this), cscrambled(this), eit(0)
 {
 	foregroundColor=eSkin::getActive()->queryColor("eStatusBar.foreground");
 	backgroundColor=eSkin::getActive()->queryColor("eStatusBar.background");
 	gFont fn = eSkin::getActive()->queryFont("eChannelInfo");
-	gFont ft = fn;
-	ft.pointSize+=2;
 
 	cdescr.setFont( fn );
 	cdescr.setForegroundColor( foregroundColor );
 	cdescr.setBackgroundColor( backgroundColor );
-	cdescr.setFlags( RS_FADE /*| eLabel::flagVCenter*/ );
-
-	cgenre.setFont( fn );
-	cgenre.setForegroundColor( foregroundColor );
-	cgenre.setBackgroundColor( backgroundColor );
-	cgenre.setFlags( RS_FADE /*| eLabel::flagVCenter*/ );
+	cdescr.setFlags(RS_WRAP);
+	cdescr.hide();
 
 	copos.setFont( fn );
 	copos.setAlign( eTextPara::dirRight );
@@ -37,7 +31,7 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	copos.setBackgroundColor( backgroundColor );
 	copos.setFlags( RS_FADE );
 
-	cname.setFont( ft );
+	cname.setFont( fn );
 	cname.setForegroundColor( foregroundColor );
 	cname.setBackgroundColor( backgroundColor );
 	cname.setFlags( RS_FADE );
@@ -179,8 +173,8 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 				{
 					if(genresTableShort[ce->content_nibble_level_1*16+ce->content_nibble_level_2])
 					{
-						if ( !genre.length() )
-							genre+=_("GENRE: ");
+/*						if ( !genre.length() )
+							genre+=_("GENRE: ");*/
 						genre += gettext( genresTableShort[ce->content_nibble_level_1*16+ce->content_nibble_level_2] );
 						genre += " ";
 					}
@@ -189,11 +183,17 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 		}
 		if(!t.isNull()) name += t;
 
-		int n = 0;
 		cname.setText( name );
+		if ( genre.size() )
+		{
+			if ( name.size() )
+				descr+=" / ";
+			descr+=genre;
+		}
 		cdescr.setText( descr );
-		cgenre.setText( genre );
 		ctime.setText( starttime );
+
+		int n = 0;
 		n = LayoutIcon(&cdolby, (cflags & cflagDolby), n);
 		n = LayoutIcon(&cstereo, (cflags & cflagStereo), n);
 		n = LayoutIcon(&cformat, (cflags & cflagWide), n );
@@ -216,13 +216,13 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 	
 	if (!service.path.size())
 	{
+		cdescr.show();
 		cname.setFlags(RS_FADE);
-		cname.resize( eSize(clientrect.width() - ( (clientrect.width() / 8)*2 + 4), (clientrect.height()/3)-2 ));
+		cname.resize( eSize( clientrect.width()/8*7-4, clientrect.height()/3) );
 		int opos=service.getDVBNamespace().get()>>16;
 		copos.setText(eString().sprintf("%d.%d\xAF%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
 		EITEvent *e = 0;
 		e = eEPGCache::getInstance()->lookupEvent(service);
-	//	eDebug(" e = %p", e);	
 		if (e)  // data is in cache...
 		{
 	  	ParseEITInfo(e);
@@ -231,12 +231,12 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		else  // we parse the eit...
 		{
 			cname.setText(_("no data for this service avail"));
-	
+			copos.setText("");
 			eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 			if (!sapi)
 				return;
 			eServiceReferenceDVB &ref = sapi->service;
-	
+
 			int type = ((service.getTransportStreamID()==ref.getTransportStreamID())
 				&&	(service.getOriginalNetworkID()==ref.getOriginalNetworkID())) ? EIT::tsActual:EIT::tsOther;
 	
@@ -246,6 +246,9 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		}
 	} else
 	{
+		cdescr.hide();
+		cname.setFlags(RS_WRAP);
+		cname.resize( eSize( clientrect.width()/8*7-4, clientrect.height() ));
 		// should be moved to eService
 		eString filename=service.path;
 		int slice=0;
@@ -258,10 +261,9 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		}
 		int i = service.path.rfind("/");
 		i++;
-		cgenre.setText(eString(_("Filesize: ")) + eString().sprintf("%d MB", filelength/1024));
-		cname.setFlags(RS_WRAP);
-		cname.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)*2-2 ));
-		cname.setText(eString(_("Filename: "))+ service.path.mid( i, service.path.length()-i ) );
+		eString size;
+		size.sprintf(_("\nFilesize: %d MB"), filelength/1024);
+		cname.setText(eString(_("Filename: "))+service.path.mid( i, service.path.length()-i)+size );
 	}
 }
 	
@@ -290,7 +292,6 @@ void eChannelInfo::clear()
 {
 	cname.setText("");
 	cdescr.setText("");
-	cgenre.setText("");
 	ctime.setText("");
 	copos.setText("");
 	cdolby.hide();
@@ -350,7 +351,7 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 		case eWidgetEvent::changedSize:
-		    {
+		{
 			if (deco)
 				clientrect=crect;
 
@@ -360,24 +361,12 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 			ctime.resize( eSize(dx, 36 ));
 
 			cname.move( ePoint( dx + 4, 0 ) );
-			cname.resize( eSize( clientrect.width() - (dx + dx + 4), dy+2) );
-			
-			bool emptygenre=( cgenre.getText().length()==0 );
 
-			cdescr.move( ePoint(dx + 4, dy + 2 ));
-			cdescr.resize( eSize(clientrect.width() - (dx + 4), dy+(emptygenre?dy:0)-2 ));
+			cdescr.move( ePoint(dx + 4, dy) );
+			cdescr.resize( eSize( clientrect.width() - (dx*2 + 4), dy+dy) );
 
-			if(emptygenre){
-			    cgenre.move(ePoint(-1,-1));
-			    cgenre.resize(eSize(0,0));
-			}
-			else{
-			    cgenre.move( ePoint(dx + 4, dy*2 /*cdescr.getPosition().y() + cdescr.getSize().height())*/) );
-			    cgenre.resize( eSize( clientrect.width() - (dx + 4)*2, dy-2 ));
-			}
-
-			copos.move( ePoint( clientrect.width() - (dx + 4), 0 ));
-			copos.resize( eSize(dx+4, dy-2) );
+			copos.move( ePoint( clientrect.width() - (dx+4), dy+dy) );
+			copos.resize( eSize(dx + 4, dy) );
 
 			cdolby.resize( eSize(25,15) );
 			cstereo.resize( eSize(25,15) );
@@ -386,12 +375,13 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 
 			invalidate();
 			break;
-		    }
+    }
 		default:
 		break;
 	}
 	return eDecoWidget::eventHandler(event);
 }
+
 static eWidget *create_eChannelInfo(eWidget *parent)
 {
 	return new eChannelInfo(parent);
