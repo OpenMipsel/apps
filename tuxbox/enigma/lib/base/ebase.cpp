@@ -95,6 +95,12 @@ void eTimer::activate()   // Internal Funktion... called from eApplication
 
 // mainloop
 
+void eMainloop::recalcAllTimers( int difference )
+{
+	for ( ePtrList<eTimer>::iterator it(TimerList.begin()); it != TimerList.end(); it++ )
+		it->recalc( difference );
+}
+
 void eMainloop::addSocketNotifier(eSocketNotifier *sn)
 {
 	notifiers.insert(std::pair<int,eSocketNotifier*> (sn->getFD(), sn));

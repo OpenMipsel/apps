@@ -177,13 +177,17 @@ eZap::eZap(int argc, char **argv)
 
 	eDebug("[ENIGMA] starting httpd");
 	httpd = new eHTTPD(80, eApp);
-	ezapInitializeWeb(httpd, dyn_resolver);	
-//	ezapInitializeNetCMD(httpd, dyn_resolver);	
+
+#ifndef DISABLE_NETWORK
+	ezapInitializeXMLRPC(httpd);
+#endif
+	ezapInitializeWeb(httpd, dyn_resolver);
+	httpd->addResolver(dyn_resolver);
+	httpd->addResolver(fileresolver);
 
 	serialhttpd=0;
-
 	bool SerialConsoleActivated=true;
-/*	FILE *f=fopen("/proc/cmdline", "rt");
+	FILE *f=fopen("/proc/cmdline", "rt");
 	if (f)
 	{
 		char *cmdline=NULL;
@@ -196,7 +200,7 @@ eZap::eZap(int argc, char **argv)
 			eDebug("console=ttyS0 detected...disable enigma serial http interface");
 		else
 			eDebug("activate enigma serial http interface");
-	}*/
+	}
 
 	if ( !SerialConsoleActivated && eDVB::getInstance()->getmID() > 4 )
 	{
@@ -225,17 +229,12 @@ eZap::eZap(int argc, char **argv)
 					"you may start a HTTP session now if you send a \"break\".\r\n";
 			write(fd, banner, strlen(banner));
 			serialhttpd = new eHTTPConnection(fd, 0, httpd, 1);
+//			char *i="GET /version HTTP/1.0\n\n";
 //			char *i="GET /menu.cr HTTP/1.0\n\n";
 			char *i="GET /log/debug HTTP/1.0\n\n";
 			serialhttpd->inject(i, strlen(i));
 		}
 	}
-
-#ifndef DISABLE_NETWORK
-	ezapInitializeXMLRPC(httpd);
-#endif
-	httpd->addResolver(dyn_resolver);
-	httpd->addResolver(fileresolver);
 
 	eDebug("[ENIGMA] ok, beginning mainloop");
 
@@ -273,12 +272,12 @@ eZap::~eZap()
 	delete serviceSelector;
 	eDebug("[ENIGMA] fertig");
 	init->setRunlevel(-1);
-	
+
 	for (std::list<void*>::iterator i(plugins.begin()); i != plugins.end(); ++i)
 		dlclose(*i);
 
-  if (serialhttpd)
-    delete serialhttpd;
+	if (serialhttpd)
+		delete serialhttpd;
     
 	delete httpd;
 	delete init;

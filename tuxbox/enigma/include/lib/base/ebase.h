@@ -178,11 +178,13 @@ public:
  */
 class eTimer
 {
+	friend class eMainloop;
 	eMainloop &context;
 	timeval nextActivation;
 	long interval;
 	bool bSingleShot;
 	bool bActive;
+	void recalc( int diff )	{ nextActivation+=diff; }
 public:
 	/**
 	 * \brief Constructs a timer.
@@ -223,11 +225,12 @@ public:
 	void removeTimer(eTimer* e)	{		TimerList.remove(e);	}
 
 	int looplevel() { return loop_level; }
-	
+
 	int exec();  // recursive enter the loop
 	void quit(int ret=0); // leave all pending loops (recursive leave())
 	void enter_loop();
 	void exit_loop();
+	void recalcAllTimers( int difference );
 };
 
 /**

@@ -20,21 +20,21 @@
 #include <enigma_plugins.h>
 #include <sselect.h>
 
-#include <lib/system/http_dyn.h>
+#include <lib/driver/eavswitch.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/epgcache.h>
-#include <lib/system/econfig.h>
-#include <lib/gdi/fb.h>
-#include <lib/gdi/glcddc.h>
-#include <lib/gdi/gfbdc.h>
+#include <lib/dvb/servicestructure.h>
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/service.h>
-#include <lib/gui/emessage.h>
+#include <lib/gdi/fb.h>
+#include <lib/gdi/glcddc.h>
+#include <lib/gdi/gfbdc.h>
 #include <lib/gdi/epng.h>
-#include <lib/driver/eavswitch.h>
-#include <lib/dvb/service.h>
+#include <lib/gui/emessage.h>
+#include <lib/system/http_dyn.h>
+#include <lib/system/econfig.h>
 
 // #include <lib/dvr/dvrsocket.h>
 
@@ -379,7 +379,11 @@ static eString getIP()
 
 static eString filter_string(eString string)
 {
-	return string.removeChars('\x86').removeChars('\x87').removeChars('\x05');
+	return string.
+		removeChars('\x86').
+		removeChars('\x87').
+		removeChars('\xC2').
+		removeChars('\x05');
 }
 
 static eString getVolBar()
@@ -449,8 +453,10 @@ public:
 		if (!service)
 			result+="N/A";
 		else
-			result+=service->service_name;
-		iface.removeRef(e);
+		{
+			result+=filter_string(service->service_name);
+			iface.removeRef(e);
+		}
 
 		result+="</a></font></td></tr>\n";
 		num++;
@@ -488,7 +494,7 @@ static eString getWatchContent(eString mode, eString path)
 		if (! (current_service.flags&eServiceReference::isDirectory))	// is playable
 		{
 			iface->play(current_service);
-			result+="ok, hear the music..";
+//			result+="ok, hear the music..";
 		} else
 		{
 			eWebNavigatorListDirectory navlist(result, path, tpath, *iface);
@@ -746,7 +752,7 @@ static eString getcurepg(eString request, eString dirpath, eString opt, eHTTPCon
 
 	result+=eString("<html>" CHARSETMETA "<head><title>epgview</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/epgview.css\"></head><body bgcolor=#000000>");
 	result+=eString("<span class=\"title\">");
-	result+=eString(current->service_name);
+	result+=filter_string(current->service_name);
 	result+=eString("</span>");
 	result+=eString("<br>\n");
 
@@ -790,6 +796,7 @@ static eString getsi(eString request, eString dirpath, eString opt, eHTTPConnect
 	eString tsid("");
 	eString onid("");
 	eString sid("");
+	eString pmt("");
 
 	content->local_header["Content-Type"]="text/html; charset=utf-8";
 
@@ -800,8 +807,8 @@ static eString getsi(eString request, eString dirpath, eString opt, eHTTPConnect
 	eServiceDVB *service=eDVB::getInstance()->settings->getTransponders()->searchService(sapi->service);
 	if (service)
 	{
-		name=service->service_name.c_str();
-		provider=service->service_provider.c_str();
+		name=filter_string(service->service_name);
+		provider=filter_string(service->service_provider);
 	}
 	vpid=eString().sprintf("%04xh (%dd)", Decoder::parms.vpid, Decoder::parms.vpid);
 	apid=eString().sprintf("%04xh (%dd)", Decoder::parms.apid, Decoder::parms.apid);
@@ -810,6 +817,7 @@ static eString getsi(eString request, eString dirpath, eString opt, eHTTPConnect
 	tsid=eString().sprintf("%04xh", sapi->service.getTransportStreamID().get());
 	onid=eString().sprintf("%04xh", sapi->service.getOriginalNetworkID().get());
 	sid=eString().sprintf("%04xh", sapi->service.getServiceID().get());
+	pmt=eString().sprintf("%04xh", Decoder::parms.pmtpid);
 
 	FILE *bitstream=0;
 	
@@ -855,6 +863,7 @@ static eString getsi(eString request, eString dirpath, eString opt, eHTTPConnect
 	result+=eString("<tr><td>tsid:</td><td>"+tsid+"</td></tr>");
 	result+=eString("<tr><td>onid:</td><td>"+onid+"</td></tr>");
 	result+=eString("<tr><td>sid:</td><td>"+sid+"</td></tr>");
+	result+=eString("<tr><td>pmt:</td><td>"+pmt+"</td></tr>");
 	result+=eString("<tr><td>vidformat:<td>"+vidform+"</td></tr>");
 	result+=eString("</table>");
 	result+=eString("</body></html>");
@@ -1128,7 +1137,8 @@ static eString web_root(eString request, eString dirpath, eString opts, eHTTPCon
 	eString spath=opt["path"];
 
 	if(!spath)
-		spath=ref2string(eServiceReference(eServiceReference::idStructure, eServiceReference::isDirectory, 0));
+		spath=eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTV).toString();
+		//ref2string(eServiceReference(eServiceReference::idStructure, eServiceReference::isDirectory, 0));
 
 	if(!mode)
 		mode="zap";

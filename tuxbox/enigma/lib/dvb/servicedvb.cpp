@@ -535,10 +535,11 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 #endif
 	CONNECT(eStreamWatchdog::getInstance()->AspectRatioChanged, eServiceHandlerDVB::aspectRatioChanged);
 
-	cache.addPersistentService(
-			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 0xFFFFFFFF, 0xFFFFFFFF),
-			new eService( _("Providers"), eService::spfColCombi)
-		);
+	int data = 0xFFFFFFFF;
+	data &= ~(1<<4);  // exclude NVOD
+	data &= ~(1<<1);  // exclude TV
+	data &= ~(1<<2);  // exclude Radio
+
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF),
 			new eService( _("Providers (TV)"), eService::spfColCombi)
@@ -548,9 +549,10 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 			new eService( _("Providers (Radio)"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
-			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 0xFFFFFFFF, 0xFFFFFFFF), 
-			new eService( _("All services"), eService::spfColMulti)
+			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, data, 0xFFFFFFFF),
+			new eService( _("Providers (Data)"), eService::spfColCombi)
 		);
+
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1), 0xFFFFFFFF ), // TV and NVOD
 			new eService( _("All services (TV)"), eService::spfColMulti)
@@ -559,17 +561,26 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ), // radio
 			new eService( _("All services (Radio)"), eService::spfColMulti)
 		);
+	cache.addPersistentService(
+			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, data, 0xFFFFFFFF),
+			new eService( _("All services (Data)"), eService::spfColMulti)
+		);
+
 	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
 	{
 		cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1)),
-			new eService( _("Satellites"), eService::spfColSingle)
+			new eService( _("Satellites (TV)"), eService::spfColSingle)
 		);
 		cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2),
-			new eService( _("Satellites"), eService::spfColSingle)
+			new eService( _("Satellites (Radio)"), eService::spfColSingle)
 		);
-	}
+		cache.addPersistentService(
+			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, data),
+			new eService( _("Satellites (Data)"), eService::spfColSingle)
+		);
+}
 #ifndef DISABLE_FILE
 	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
 	recording=0;
@@ -921,7 +932,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 		if ( it == eTransponderList::getInstance()->getNetworkNameMap().end() )
 			return 0;
 		else
-			return new eService( it->second.name+ _(" - bouquets"), eService::spfColCombi);
+			return new eService( it->second.name+ _(" - provider"), eService::spfColCombi);
 	}
 	case -2: // for satellites...
 	{
@@ -958,6 +969,10 @@ struct eServiceHandlerDVB_SatExist
 
 void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node, const eServiceReference &ref)
 {
+	int data = 0xFFFFFFFF;
+	data &= ~(1<<4);  // exclude NVOD
+	data &= ~(1<<1);  // exclude TV
+	data &= ~(1<<2);  // exclude Radio
 	switch (ref.type)
 	{
 	case eServiceReference::idStructure:
@@ -966,14 +981,15 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 		case eServiceStructureHandler::modeBouquets:
 			break;
 		case eServiceStructureHandler::modeRoot:
-/*			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));
-			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 0xFFFFFFFF, 0xFFFFFFFF));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, data ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1), 0xFFFFFFFF ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ));
-			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 0xFFFFFFFF));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, data, 0xFFFFFFFF));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF ));
-			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ));*/
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, data, 0xFFFFFFFF));
 			break;
 		case eServiceStructureHandler::modeTvRadio:
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF ));
@@ -992,6 +1008,12 @@ void eServiceHandlerDVB::loadNode(eServiceCache<eServiceHandlerDVB>::eNode &node
 				cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2 ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ));
 			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ));
+			break;
+		case eServiceStructureHandler::modeData:
+			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+				cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, data ));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, data, 0xFFFFFFFF ));
+			cache.addToNode(node, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, data, 0xFFFFFFFF ));
 			break;
 		}
 		break;
