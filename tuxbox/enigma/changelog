@@ -52,6 +52,7 @@
 200303080430 5 * Delayed go to standby after running timer event
 200303081912 6 * MP3 ID3 Tag improvements... parse on demand
 200303100238 3 * add many funktions to reload settings on run time... ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010829.html )
+200303101819 5 * add alternative bouquet switching style in service selector ( can be enabled in rc setup ) red -> TV Service, green -> Satellites, yellow DVB-Bouquets, blue -> User bouquets
 200303110429 6 * reenable bouquet + - keys with closed service selector ( https://lists.berlios.de/pipermail/tuxbox-cvs/2003-March/010845.html )
 200303141538 7 * add second plugin directory (/var/tuxbox/plugins)
 200303141538 5 * now timers kann directly added with  - green button for DVR Timer,  - yellow button for NGRAB Timer,  - blue button for switch timer in EPG and eventview
