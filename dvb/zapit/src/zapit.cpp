@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.22 2003/03/30 12:59:49 thegoodguy Exp $
+ * $Id: zapit.cpp,v 1.290.2.23 2003/03/30 13:02:08 thegoodguy Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -1345,7 +1345,7 @@ void leaveStandby(void)
 		if (!frontend->isInitialized())
 		{
 			printf("[zapit] unable to open frontend devices. bye.\n");
-			return -1;
+			exit(-1);
 		}
 	}
 	if (!videoDecoder) {
@@ -1451,7 +1451,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.22 2003/03/30 12:59:49 thegoodguy Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.23 2003/03/30 13:02:08 thegoodguy Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
