@@ -93,7 +93,7 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 				close(0);
 			else if (event.action == &i_enigmaEventViewActions->addTimerEvent)
 			{
-				if ( events && eTimerManager::getInstance()->addEventToTimerList( this, &ref, *events ) )
+				if ((evt || events) && eTimerManager::getInstance()->addEventToTimerList( this, &ref, evt?evt:*events ) )
 				{
 					hide();
 					eTimerView v( eTimerManager::getInstance()->findEvent( &ref, *events ) );
@@ -101,13 +101,13 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 					v.exec();
 					v.hide();
 //					invalidate();
-					checkTimerIcon();
+					checkTimerIcon(evt?evt:*events);
 					show();
 				}
 			}
-			else if ( events && event.action == &i_enigmaEventViewActions->removeTimerEvent)
+			else if ( event.action == &i_enigmaEventViewActions->removeTimerEvent)
 			{
-				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &ref, *events ) )
+				if ((evt || events) && eTimerManager::getInstance()->removeEventFromTimerList( this, &ref, evt?evt:*events ) )
 					timer_icon->hide();
 			}
 			else
@@ -120,7 +120,7 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 }
 
 eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const ePtrList<EITEvent>* e, EITEvent* evt )
-: eWindow(1), service(service), ref(ref)
+: eWindow(1), service(service), ref(ref), evt(evt)
 	/*
 			kleine anmerkung:
 			
@@ -269,7 +269,7 @@ void eEventDisplay::setEvent(EITEvent *event)
 
 		channel->setText(service);
 
-		checkTimerIcon();
+		checkTimerIcon(event);
 	} 
 	else
 	{
@@ -280,10 +280,10 @@ void eEventDisplay::setEvent(EITEvent *event)
 	long_description->show();
 }
 
-void eEventDisplay::checkTimerIcon()
+void eEventDisplay::checkTimerIcon( EITEvent *event )
 {
 	ePlaylistEntry* p;
-	if ( events && (p = eTimerManager::getInstance()->findEvent( &ref, *events )) )
+	if ( event && (p = eTimerManager::getInstance()->findEvent( &ref, event )) )
 	{
 		if ( p->type & ePlaylistEntry::SwitchTimerEntry )
 		{

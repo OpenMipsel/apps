@@ -1198,10 +1198,19 @@ const eServiceReference *eServiceSelector::choose(int irc)
 	case dirDown:
 		services->moveSelection(eListBox<eListBoxEntryService>::dirDown);
 		break;
+	case dirFirst:
+		services->moveSelection(eListBox<eListBoxEntryService>::dirFirst);
+		break;
+	case dirLast:
+		services->moveSelection(eListBox<eListBoxEntryService>::dirLast);
+		break;
 	default:
 		break;
 	}
 	services->endAtomic();
+
+	if ( !services->getCount() )
+		ci->clear();
 
 	show();
 

@@ -137,8 +137,10 @@
 			
 			<action name="stop" key="tv" flags="m" />
 
-			<action name="showBouquets" key="bouqup" flags="m" />
-			<action name="showBouquets" key="bouqdown" flags="m" />
+			<action name="showUserBouquets" key="bouqup" flags="m" />
+			<action name="showDVBBouquets" key="bouqdown" flags="m" />
+			<action name="showRecMovies" key="bouqup" flags="m" />
+			<action name="showPlaylist" key="bouqdown" flags="m" />
 			<action name="modeTV" key="tv" flags="m" />
 			<action name="modeRadio" key="radio" flags="m" />
 			<action name="modeFile" key="text" flags="m" />

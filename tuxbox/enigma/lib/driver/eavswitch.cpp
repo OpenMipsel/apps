@@ -289,6 +289,7 @@ int eAVSwitch::setColorFormat(eAVColorFormat c)
 	{
 	case cfNull:
 		return -1;
+	default:
 	case cfCVBS:
 		arg=SAA_MODE_FBAS;
 		break;

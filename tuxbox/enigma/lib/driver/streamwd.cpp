@@ -95,7 +95,7 @@ void eStreamWatchdog::reloadSettings()
 
 	int videoDisplayFormat=VIDEO_LETTER_BOX;
 	int doanamorph=0;
-	unsigned int pin8;
+	unsigned int pin8; // Letterbox
 	eConfig::getInstance()->getKey("/elitedvb/video/pin8", pin8);
 	switch (pin8)
 	{

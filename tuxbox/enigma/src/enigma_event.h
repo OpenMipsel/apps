@@ -15,6 +15,7 @@ class eEventDisplay: public eWindow
 	ePtrList<EITEvent>::iterator *events;
 	ePtrList<EITEvent> *eventlist;
 	eWidget *descr;
+	EITEvent *evt;
 	eLabel *long_description, *eventDate, *eventTime, *channel,
 					*timer_icon;
 	eProgress *scrollbar;
@@ -22,7 +23,7 @@ class eEventDisplay: public eWindow
 	void prevEvent();
 	int total;
 	void updateScrollbar();
-	void checkTimerIcon();
+	void checkTimerIcon(EITEvent *);
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:

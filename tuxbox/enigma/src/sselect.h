@@ -96,7 +96,7 @@ public:
 	int movemode;
 	int editMode;
 	enum { styleInvalid, styleCombiColumn, styleSingleColumn, styleMultiColumn };
-	enum { dirNo, dirUp, dirDown };
+	enum { dirNo, dirUp, dirDown, dirFirst, dirLast };
 
 	eServiceSelector();
 	~eServiceSelector();

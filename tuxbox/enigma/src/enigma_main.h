@@ -328,7 +328,7 @@ private:
 	void handleNVODService(SDTEntry *sdtentry);
 
 	// actions
-	void showServiceSelector(int dir, int selcurrent);
+	void showServiceSelector(int dir, eServiceReference root=eServiceReference(), eServiceReference path=eServiceReference(), int newmode=-1 );
 	void nextService(int add=0);
 	void prevService();
 	void playlistNextService();
