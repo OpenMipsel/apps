@@ -120,7 +120,6 @@ src/setup_rfmod.cpp
 src/enigma_event.cpp
 src/wizard_language.cpp
 src/setup_audio.cpp
-src/extra/enigma_extra.cpp
 src/tpeditwindow.cpp
 src/parentallock.cpp
 src/engrab.cpp
