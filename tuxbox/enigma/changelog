@@ -30,8 +30,9 @@
 200302082206 6 * Add support to rename recorded movies ( not the filenames ) 
 200302082206 8 * Show filename of recorded movies in channelinfo
 200302091843 5 * Extended Event Info is now working on subservices and nvod channels
+200302091500 6 * Diseqc setup wizard
 200302112339 2 * New format for services bouquets and favourite lists this is important for better support of services with non unique tsid/onid combinations ( feed and SCPCs )
 200302112101 5 * Show correct free diskspace on mounted nfs shares
 200302112101 5 * Add partitioncheck support for reiserfs partitions
 200302112101 3 * Add for each satellit two new folders in serviceselector ( on contains all services of ths satellite, and the other contains all bouquets of ths satellite )
-
+200302131538 5 * Translation info will be shown in "about" dialog
