@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.17 2003/05/07 16:57:57 ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.18 2003/05/07 22:14:13 tripledes Exp $
  */
 
 #include <enigma_info.h>
@@ -227,7 +227,7 @@ public:
 			processor->setText(_("Processor: STB04500, 252MHz"));
 			break;
 		case 6:
-			processor->setText(_("Processor: STB25xxx, 252MHz"));
+			processor->setText(_("Processor: STBx25xx, 252MHz"));
 			break;
 		}
 		
