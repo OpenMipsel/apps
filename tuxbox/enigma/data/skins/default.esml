@@ -337,8 +337,8 @@
 			<eLabel name="lDirection" text="Direction:" position="190:195" size="e-150:35" vcenter="on" />
 			<eComboBox name="Direction" position="e-140:195" size="e-10:35" helptext="choose direction" loadDeco="" />
 
-			<eButton name="add" text="add" position="190:240" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" />
-			<eButton name="remove" text="remove" position="370:240" size="170:40" helptext="remove selected entry" loadDeco="" />
+			<eButton name="add" text="add" position="190:240" size="170:40" helptext="add to table/existing is overwritten" loadDeco="" shortcut="yellow" />
+			<eButton name="remove" text="remove" position="370:240" size="170:40" helptext="remove selected entry" loadDeco="" shortcut="red" />
 
 			<eButton name="save" text="save" position="10:e-80" size="170:40" helptext="save changes and use the selected lnb (in first page) for the choosen satellite" loadDeco="" shortcut="green" />
 			<eButton name="cancel" text="cancel" position="190:e-80" size="170:40" helptext="leave lnb-setup (no changes are saved)" loadDeco="" />
@@ -388,7 +388,7 @@
 			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="200:30" helptext="remove all services before scan" />
 			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="200:30" helptext="enable/disable initiate network search" />
 			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponderscan" loadDeco="" vcenter="on" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" vcenter="on" />
+			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" vcenter="on" shortcut="abort" />
 		</tsManual>
 	</object>
 
@@ -400,7 +400,7 @@
 			<eFEStatus name="festatus" position="0:190" size="400:85" />
 			<eCheckBox name="eraseall" text="erase all" position="10:e-80" size="150:30" helptext="erase bouquets and services before scan" />
   		<eButton text="start scan" name="start" position="10:e-40" size="200:40" align="center" helptext="starts the transponderscan" loadDeco="" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" />
+			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" shortcut="abort" />
 		</tsAutomatic>
 	</object>
 
@@ -563,7 +563,7 @@
 			<eLabel text="min" position="266:10" size="e-10:35" vcenter="on"/>
 			<eCheckbox name="shutdown" text="shutdown  " position="10:55" size="170:35" helptext="shutdown the box after recording (ok)" swaptxtpixmap="on" vcenter="on" />
 			<eCheckbox name="standby" text="standby  " position="210:55" size="170:35" helptext="goto standby after recording (ok)"  swaptxtpixmap="on" vcenter="on" />
-			<eButton text="set" name="set" position="10:95" size="170:40" helptext="set recording end time and close window (ok)" loadDeco="" />
+			<eButton text="set" name="set" position="10:95" size="170:40" helptext="set recording end time and close window (ok)" loadDeco="" shortcut="green" />
 			<eButton text="abort" name="abort" position="210:95" size="170:40" helptext="close window and use no record timer (ok)" loadDeco="" shortcut="escape" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</recording_duration>
@@ -576,7 +576,7 @@
 			<eLabel text="o'clock" position="290:10" size="e-10:35" vcenter="on"/>
 			<eCheckbox name="shutdown" text="shutdown  " position="10:55" size="170:35" helptext="shutdown the box after recording (ok)" swaptxtpixmap="on" vcenter="on" />
 			<eCheckbox name="standby" text="standby  " position="210:55" size="170:35" helptext="goto standby after recording (ok)"  swaptxtpixmap="on" vcenter="on" />
-			<eButton name="set" text="set" position="10:95" size="170:40" helptext="set recording end time and close window (ok)" loadDeco="" />
+			<eButton name="set" text="set" position="10:95" size="170:40" helptext="set recording end time and close window (ok)" loadDeco="" shortcut="green" />
 			<eButton name="abort" text="abort"  position="210:95" size="170:40" helptext="close window and use no record timer (ok)" loadDeco="" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</recording_end_time>
@@ -593,8 +593,8 @@
 			<eLabel text="status:" position="10:110" size="70:30" />
 			<eLabel name="status" position="80:110" size="e:30" />
 			<eButton name="close" text="close" position="10:170" size="170:40" loadDeco="" helptext="close harddisk menu" />
-			<eButton name="format" text="format" position="190:170" size="170:40" loadDeco="" helptext="initialize the disc for use with the dreambox" />
-			<eButton name="check" text="check" position="370:170" size="170:40" loadDeco="" helptext="do a filsystem check" />
+			<eButton name="format" text="format" position="190:170" size="170:40" loadDeco="" helptext="initialize the disc for use with the dreambox" shortcut="red" />
+			<eButton name="check" text="check" position="370:170" size="170:40" loadDeco="" helptext="do a filsystem check" shortcut="yellow" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</eHarddiskMenu>
 	</object>
@@ -604,7 +604,7 @@
 			<eLabel text="status output:" position="10:10" size="e-10:30" />
 			<eLabel name="state" position="10:50" size="e-10:e-100" loadDeco="eNumber" wrap="on" />
 			<eButton name="cancel" text="cancel" position="e-180:e-80" size="170:40" helptext="cancel partition check" loadDeco="" />
-			<eButton name="close" text="close" position="e-360:e-80" size="170:40" helptext="close window" loadDeco="" />
+			<eButton name="close" text="close" position="e-360:e-80" size="170:40" helptext="close window" loadDeco="" shortcut="green" />
 			<eStatusBar name="statusbar" position="0:e-30" size="e:e" loadDeco="" />
 		</ePartitionCheck>
 	</object>

@@ -1134,7 +1134,7 @@ int eTimerView::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
-		case eWidgetEvent::evtAction:
+/*		case eWidgetEvent::evtAction:
 			if (event.action == &i_focusActions->left && focus != events)
 				eWidget::focusNext(eWidget::focusDirW);
 			else if (event.action == &i_focusActions->right && focus != events)
@@ -1145,7 +1145,7 @@ int eTimerView::eventHandler(const eWidgetEvent &event)
 				eWidget::focusNext(eWidget::focusDirS);
 			else
 				break;
-			return 1;
+			return 1;*/
 		default:
 			break;
 	}

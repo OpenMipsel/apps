@@ -171,7 +171,7 @@ int eLabel::eventHandler(const eWidgetEvent &event)
 eSize eLabel::getExtend()
 {
 	validate();
-	return eSize(para->getBoundBox().width()+(shortcutPixmap?shortcutPixmap->x*2:0), para->getBoundBox().height());
+	return eSize(para->getBoundBox().width()/*+(shortcutPixmap?shortcutPixmap->x*2:0)*/, para->getBoundBox().height());
 }
 
 ePoint eLabel::getLeftTop()
