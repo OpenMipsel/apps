@@ -1,4 +1,4 @@
- #define TIMESHIFT
+// #define TIMESHIFT
 		// intial time to lag behind live
 #define TIMESHIFT_GUARD (1024*1024)
 #include <lib/dvb/servicedvb.h>
