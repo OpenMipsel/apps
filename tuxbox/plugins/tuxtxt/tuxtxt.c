@@ -4,6 +4,9 @@
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
  ******************************************************************************
  * $Log: tuxtxt.c,v $
+ * Revision 1.37.2.8  2003/03/03 11:01:44  alexw
+ * add delta(1.44, 1.45): fixed "warning: comparison is always false due to limited range of data type"
+ *
  * Revision 1.37.2.7  2003/02/22 21:46:40  happydude
  * implement parallel transmission reception - fixes some channels
  * improve auto detection of national subset
@@ -31,7 +34,7 @@ void plugin_exec(PluginParam *par)
 {
 	//show versioninfo
 
-		printf("TuxTxt $Revision: 1.37.2.7 $\n");
+		printf("TuxTxt $Revision: 1.37.2.8 $\n");
 
 	//get params
 
@@ -720,13 +723,13 @@ skip_pid:;
 						pid_table[pid_test].service_name_len = SDT[sdt_scan+9 + SDT[sdt_scan+8]];
 						for(byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
 						{
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'Ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == 'ß') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
+							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ß') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
 
 							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] >= 0x80 && SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] <= 0x9F) diff--;
 							else pid_table[pid_test].service_name[byte + diff] = SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte];
