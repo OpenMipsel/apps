@@ -23,14 +23,9 @@
 eFrontend* eFrontend::frontend;
 
 eFrontend::eFrontend(int type, const char *demod, const char *sec)
-:type(type), curRotorPos( 1000 ), state(stateIdle),
-	transponder(0), timer2(eApp), rotorTimer1(eApp), rotorTimer2(eApp), 
-	noRotorCmd(0)
+:type(type), curRotorPos( 1000 ), state(stateIdle), transponder(0), timer2(eApp), noRotorCmd(0)
 {
 	timer=new eTimer(eApp);
-
-	CONNECT(rotorTimer1.timeout, eFrontend::RotorStartLoop );
-	CONNECT(rotorTimer2.timeout, eFrontend::RotorRunningLoop );
 
 	CONNECT(timer->timeout, eFrontend::timeout);
 	fd=::open(demod, O_RDWR);
@@ -365,24 +360,27 @@ int eFrontend::RotorUseTimeout(secCmdSequence& seq, void *cmds, int newPosition,
 	else
 		eDebug("Rotor Cmd is sent");
 
-	/* emit */ s_RotorRunning(newPosition);
+	/* emit */ rotorRunning(newPosition);
 
 	if ( curRotorPos != 1000 ) // uninitialized  
 		usleep( (int)( abs(newPosition - curRotorPos) * TimePerDegree * 100) + startDelay );
 
-	/* emit */ s_RotorStopped();
+	/* emit */ rotorStopped();
 
 	curRotorPos = newPosition;
 
 	return 0;
 }
 
-int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat, eLNB *lnb )
+int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat, int DeltaA, int newPos, eLNB *lnb )
 {
+	int ret=0;
+//	eDebug("RotorUseInputPower");
 	secCommand *commands = (secCommand*) cmds;
-	idlePowerInput=0;
-	runningPowerInput=0;
+	int idlePowerInput=0;
+	int runningPowerInput=0;
 	int secTone = seq.continuousTone;
+//	int cnt=0;
 
 	// open front prozessor
 	int fp=::open("/dev/dbox/fp0", O_RDWR);
@@ -440,104 +438,78 @@ int eFrontend::RotorUseInputPower(secCmdSequence& seq, void *cmds, int SeqRepeat
 		::close(fp);
 		return -2;
 	}
-	::close(fp);
+//	eDebug("Rotor Cmd is sent");
+
 	// set rotor start timeout  // 5 sek..
-	gettimeofday(&rotorTimeout,0);
-	rotorTimeout+=5000;
-	RotorStartLoop();
-	return 0;
-}
+	time_t timeout=time(0)+5;
 
-void eFrontend::RotorStartLoop()
-{
-	// timeouted ??
-	timeval now;
-	gettimeofday(&now,0);
-	if ( rotorTimeout < now )
+	// now wait for rotor start
+	while(true)
 	{
-		eDebug("rotor has timeoutet :( ");
-		/* emit */ s_RotorTimeout();
-		RotorFinish();
-	}
-	else
-	{
-		// open front prozessor
-		int fp=::open("/dev/dbox/fp0", O_RDWR);
-		if (fp < 0)
-		{
-			eDebug("couldn't open fp");
-			return;
-		}
-
 		if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &runningPowerInput)<0)
 		{
 			eDebug("FP_IOCTL_GET_LNB_CURRENT sucks.\n");
 			::close(fp);
-			return;
+			return -1;
 		}
-//		eDebug("%d mA", runningPowerInput);
+//		eDebug("(%d) %d mA\n", cnt, runningPowerInput);
+//		cnt++;
 
-		if ( abs(runningPowerInput-idlePowerInput ) >= DeltaA ) // rotor running ?
+		if ( abs(runningPowerInput-idlePowerInput ) < DeltaA ) // rotor running ?
+			usleep(50000);  // not... then wait 50ms
+		else  // rotor is running
 		{
-			eDebug("Rotor is Running");
-			/* emit */ s_RotorRunning( newPos );
-
-			// set rotor running timeout  // 150 sek
-			gettimeofday(&rotorTimeout,0);
-			rotorTimeout+=150000;
-			RotorRunningLoop();
-		}
-		else
-			rotorTimer1.start(50,true);  // restart timer
-		::close(fp);
-	}
-}
-
-void eFrontend::RotorRunningLoop()
-{
-	timeval now;
-	gettimeofday(&now,0);
-	if ( rotorTimeout < now )
-	{
-		eDebug("Rotor timeouted :-(");
-		/* emit */ s_RotorTimeout();
-	}
-	else
-	{
-		// open front prozessor
-		int fp=::open("/dev/dbox/fp0", O_RDWR);
-		if (fp < 0)
-		{
-			eDebug("couldn't open fp");
-			return;
+//			eDebug("Rotor is Running");
+			/* emit */ rotorRunning( newPos );          
+			timeout=0;
+			break;  // leave endless loop
 		}
 
-		if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &runningPowerInput)<0)
+		if ( timeout <= time(0) )   // timeout
 		{
-			printf("FP_IOCTL_GET_LNB_CURRENT sucks.\n");
+			eDebug("rotor has timeoutet :( ");
+			/* emit */ rotorTimeout();
 			::close(fp);
-			return;
+			return -3;
 		}
-//		eDebug("%d mA", runningPowerInput);
-
-		if ( abs( idlePowerInput-runningPowerInput ) <= DeltaA ) // rotor stoped ?
-		{
-			eDebug("Rotor Stopped");
-			/* emit */ s_RotorStopped();
-			RotorFinish();
-		}
-		else
-			rotorTimer2.start(50,true);  // restart timer
-		::close(fp);
 	}
-}
 
-void eFrontend::RotorFinish()
-{
-	if ( voltage != SEC_VOLTAGE_18 && voltage != SEC_VOLTAGE_18_5 )
-		if (ioctl(secfd, SEC_SET_VOLTAGE, voltage) < 0 )
-			perror("SEC_SET_VOLTAGE");
-	transponder->tune();
+	if ( !timeout )  // then the Rotor is Running... we wait if it stops..
+	{
+		// set rotor timeout to 150sec's...
+		timeout = time(0) + 150;
+//		cnt=0;
+		while(true)
+		{
+			if (ioctl(fp, FP_IOCTL_GET_LNB_CURRENT, &runningPowerInput)<0)
+			{
+				printf("FP_IOCTL_GET_LNB_CURRENT sucks.\n");
+				::close(fp);
+				return -1;
+			}
+//			eDebug("(%d) %d mA", cnt, runningPowerInput);
+//			cnt++;
+
+			if ( abs( idlePowerInput-runningPowerInput ) > DeltaA ) // rotor stoped ?
+				usleep(50000);  // not... then wait 50ms
+			else  // rotor has stopped
+			{
+//				eDebug("Rotor Stopped");
+				/* emit */ rotorStopped();                      
+				break;
+			}
+
+			if ( timeout <= time(0) ) // Rotor has timouted
+			{
+//				eDebug("Rotor timeouted :-(");
+				/* emit */ rotorTimeout();
+				ret = -3;
+				break;
+			}
+		}
+	}
+	::close(fp);
+	return ret;
 }
 
 double Radians( double number )
@@ -681,21 +653,10 @@ int eFrontend::tune(eTransponder *trans,
 		Modulation QAM)					// Modulation, QAM_xx
 {
 //	eDebug("op = %d", trans->satellite.orbital_position );
-	int finalTune=1;
 	FrontendParameters front;
-	Decoder::Flush();
+//	Decoder::Flush();
 	eSection::abortAll();
 	timer->stop();
-
-	if ( rotorTimer1.isActive() || rotorTimer2.isActive() )
-	{
-		/* emit */ s_RotorStopped();
-		rotorTimer1.stop();
-		rotorTimer2.stop();
-		// ROTOR STOP
-		eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x60 );
-		eFrontend::getInstance()->sendDiSEqCCmd( 0x31, 0x60 );
-	}
 
 	if (state==stateTuning)
 	{
@@ -703,7 +664,7 @@ int eFrontend::tune(eTransponder *trans,
 		if (transponder)
 			/*emit*/ tunedIn(transponder, -ECANCELED);
 	}
-
+	
 	if (state==stateTuning)
 		return -EBUSY;
 
@@ -978,7 +939,7 @@ int eFrontend::tune(eTransponder *trans,
 			seq.continuousTone = SEC_TONE_OFF;
 
 		// Voltage( 0/14/18V  vertical/horizontal )
-		voltage = SEC_VOLTAGE_OFF;
+		int voltage = SEC_VOLTAGE_OFF;
 		if ( swParams.VoltageMode == eSwitchParameter::_14V || ( polarisation == polVert && swParams.VoltageMode == eSwitchParameter::HV )  )
 			voltage = lnb->getIncreasedVoltage() ? SEC_VOLTAGE_13_5 : SEC_VOLTAGE_13;
 		else if ( swParams.VoltageMode == eSwitchParameter::_18V || ( polarisation==polHor && swParams.VoltageMode == eSwitchParameter::HV)  )
@@ -993,32 +954,25 @@ int eFrontend::tune(eTransponder *trans,
 		if ( lastRotorCmd != RotorCmd && !noRotorCmd )
 		{
 //			eDebug("0x%02x,0x%02x,0x%02x,0x%02x", commands[cmdCount].u.diseqc.cmdtype, commands[cmdCount].u.diseqc.addr, commands[cmdCount].u.diseqc.cmd, commands[cmdCount].u.diseqc.params[cmdCount]);
-			// drive rotor always with 18V ( is faster )
-			if ( voltage == SEC_VOLTAGE_13 )
-				seq.voltage=SEC_VOLTAGE_18;
-			else if ( voltage == SEC_VOLTAGE_13_5 )
-				seq.voltage=SEC_VOLTAGE_18_5;
-
 			lastRotorCmd=RotorCmd;
+			// drive rotor always with 18V ( is faster )
+			seq.voltage = SEC_VOLTAGE_18;
 
-			if ( lnb->getDiSEqC().useRotorInPower&1 )
-			{
-				newPos=sat->getOrbitalPosition();
-				DeltaA=(lnb->getDiSEqC().useRotorInPower & 0x0000FF00) >> 8;
-				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat, lnb );
-				finalTune=0;
-			}
+			if ( lnb->getDiSEqC().useRotorInPower & 1 )
+				RotorUseInputPower(seq, (void*) commands, lnb->getDiSEqC().SeqRepeat, (lnb->getDiSEqC().useRotorInPower & 0x0000FF00) >> 8, sat->getOrbitalPosition(), lnb );
 			else
-			{
 				RotorUseTimeout(seq, (void*) commands, sat->getOrbitalPosition(), lnb->getDiSEqC().DegPerSec, lnb->getDiSEqC().SeqRepeat, lnb );
-				// set the right voltage
-				if ( voltage != SEC_VOLTAGE_18 && voltage != SEC_VOLTAGE_18_5 )
+
+			// set the right voltage
+			if ( voltage != SEC_VOLTAGE_18 )
+			{
+				seq.commands=0;
+				seq.numCommands=0;
+				seq.voltage=voltage;
+				if (ioctl(secfd, SEC_SEND_SEQUENCE, &seq) < 0 )
 				{
-					if (ioctl(secfd, SEC_SET_VOLTAGE, voltage) < 0 )
-					{
-						perror("SEC_SET_VOLTAGE");
-						return -1;
-					}
+					perror("SEC_SEND_SEQUENCE");
+					return -1;
 				}
 			}
 		}
@@ -1052,45 +1006,45 @@ send:
 		lastucsw = ucsw;
 		lastToneBurst = ToneBurst;
 		lastLNB = lnb;  /* important.. for the right timeout
-											 between normal diseqc cmd and rotor cmd */
+		 between normal diseqc cmd and rotor cmd */
 
 		// delete allocated memory...
 		delete [] commands;
 	}
 
-	if (finalTune)
+	front.Inversion=Inversion;
+	switch (type)
 	{
-		front.Inversion=Inversion;
-		switch (type)
-		{
-			case feCable:
-				eDebug("Cable Frontend detected");
-				front.Frequency = Frequency;
-				front.u.qam.SymbolRate=SymbolRate;
-				front.u.qam.FEC_inner=FEC_inner;
-				front.u.qam.QAM=QAM;
-				break;
-			case feSatellite:
-				eDebug("Sat Frontend detected");
-				front.u.qpsk.SymbolRate=SymbolRate;
-				front.u.qpsk.FEC_inner=FEC_inner;
-				break;
-			case feTerrestrical:
-				eDebug("DVB-T Frontend detected");
-				break;
-		}
-		if (ioctl(fd, FE_SET_FRONTEND, &front)<0)
-		{
-			perror("FE_SET_FRONTEND");
-			return -1;
-		}
-		eDebug("FE_SET_FRONTEND OK");
+		case feCable:
+			eDebug("Cable Frontend detected");
+			front.Frequency = Frequency;
+			front.u.qam.SymbolRate=SymbolRate;
+			front.u.qam.FEC_inner=FEC_inner;
+			front.u.qam.QAM=QAM;
+			break;
+		case feSatellite:
+			eDebug("Sat Frontend detected");
+			front.u.qpsk.SymbolRate=SymbolRate;
+			front.u.qpsk.FEC_inner=FEC_inner;
+			break;
+		case feTerrestrical:
+			eDebug("DVB-T Frontend detected");
+			break;
+	}
+	if (ioctl(fd, FE_SET_FRONTEND, &front)<0)
+	{
+		perror("FE_SET_FRONTEND");
+		return -1;
+ 	}
+	eDebug("FE_SET_FRONTEND OK");
+//	eDebug("Symbolrate = %d", SymbolRate );
+	state=stateTuning;
+//	tries=30000000*2 / SymbolRate; // 1.0 second timeout
+//	tries=tries<5?5:tries;
+	tries=20;
+//	eDebug("tries=%d", tries);
+	timer->start(50, true);
 
-		state=stateTuning;
-		tries=20;
-
-		timer->start(50, true);
-  }
 	return 0;
 }
 
