@@ -119,12 +119,13 @@ public:
 	
 	
 protected:
-  int controllertype;
+	int controllertype;
 	eDVBController *controller;
 
 private:
 	void tunedIn(eTransponder*, int);
 	eDVBState state;
+	int mID;
 public:
 	
 	void setMode(int mode);
@@ -150,6 +151,8 @@ public:
 
 	static eString getInfo(const char *info);
 	
+	int getmID();
+
 	PMT *getPMT();
 	EIT *getEIT();
 	SDT *getSDT();

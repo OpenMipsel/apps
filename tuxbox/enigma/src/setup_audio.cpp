@@ -24,7 +24,6 @@ eZapAudioSetup::eZapAudioSetup():
 	int sac3default = 0;
 
 	sac3default=eAudio::getInstance()->getAC3default();
-// Key("/elitedvb/audio/ac3default", sac3default);
 
 	ac3default=new eCheckbox(this, sac3default, 1);
 	ac3default->setText("AC3 default output");
@@ -70,21 +69,13 @@ void eZapAudioSetup::ac3defaultChanged( int i )
 
 void eZapAudioSetup::okPressed()
 {
-
 	eAudio::getInstance()->saveSettings();
-
-	//int sac3default=ac3default->isChecked();
-	
-	//eConfig::getInstance()->setKey("/elitedvb/audio/ac3default", sac3default);
-	//eConfig::getInstance()->flush();
-	
 	close(1);
 }
 
 void eZapAudioSetup::abortPressed()
 {
 	eAudio::getInstance()->reloadSettings();
-
 	close(0);
 }
 

@@ -501,7 +501,7 @@ void eUpgrade::flashImage(int checkmd5)
 				sync();
 				Decoder::Flush();
 				eString mtd;
-				switch (atoi(eDVB::getInstance()->getInfo("mID").c_str()))
+				switch (eDVB::getInstance()->getmID())
 				{
 				case 1:		// d-box2
 				case 2:

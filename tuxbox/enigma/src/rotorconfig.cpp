@@ -142,7 +142,7 @@ RotorConfig::RotorConfig(eLNB *lnb )
 	if (lnb)
 		setLNBData(lnb);
 
-	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) < 05 )
+	if ( eDVB::getInstance()->getmID() < 5 )
 	{
 		eDebug("useRotorInputPower can only used on dreambox");
 		useRotorInPower->hide();

@@ -68,7 +68,7 @@ eActionMap::~eActionMap()
 	eActionMapList::getInstance()->removeActionMap(identifier);
 }
 
-void eActionMap::loadXML(eRCDevice *device, std::map<std::string,int> &keymap, const XMLTreeNode *node, const eString& style)
+void eActionMap::loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *node, const eString& style)
 {
 	for (XMLTreeNode *xaction=node->GetChild(); xaction; xaction=xaction->GetNext())
 	{
@@ -91,6 +91,7 @@ void eActionMap::loadXML(eRCDevice *device, std::map<std::string,int> &keymap, c
 		}
 		const char *code=xaction->GetAttributeValue("code");
 		int icode=-1;
+		eString picture="";
 		if (!code)
 		{
 			const char *key=xaction->GetAttributeValue("key");
@@ -99,24 +100,28 @@ void eActionMap::loadXML(eRCDevice *device, std::map<std::string,int> &keymap, c
 				eFatal("please specify a number as code= or a defined key with key=.");
 				continue;
 			}
-			std::map<std::string,int>::iterator i=keymap.find(std::string(key));
+			
+			eKeymap::iterator i=keymap.find(std::string(key));
+			
 			if (i == keymap.end())
 			{
 				eFatal("undefined key %s specified!", key);
 				continue;
 			}
-			icode=i->second;
+			icode=i->second.first;
+			picture=i->second.second;
 		} else
 			sscanf(code, "%x", &icode);
+	
 		const char *flags=xaction->GetAttributeValue("flags");
 		if (!flags || !*flags)
 			flags="b";
 		if (strchr(flags, 'm'))
-			action->insertKey( style, eRCKey(device, icode, 0) );
+			action->insertKey( style, eRCKey(device, icode, 0, picture) );
 		if (strchr(flags, 'b'))
-			action->insertKey( style, eRCKey(device, icode, eRCKey::flagBreak) );
+			action->insertKey( style, eRCKey(device, icode, eRCKey::flagBreak, picture) );
 		if (strchr(flags, 'r'))
-			action->insertKey( style, eRCKey(device, icode, eRCKey::flagRepeat) );
+			action->insertKey( style, eRCKey(device, icode, eRCKey::flagRepeat, picture) );
 	}
 }
 
@@ -263,7 +268,7 @@ int eActionMapList::loadXML(const char *filename)
 	for (node=node->GetChild(); node; node=node->GetNext())
 		if (!strcmp(node->GetType(), "device"))
 		{
-			std::map<std::string,int> keymap;
+			eKeymap keymap;
 			const char *identifier=node->GetAttributeValue("identifier");
 			if (!identifier)
 			{
@@ -327,8 +332,10 @@ int eActionMapList::loadXML(const char *filename)
 								if (acode)
 								{
 									int code=0;
+									const char *apng=k->GetAttributeValue("picture");
 									sscanf(acode, "%x", &code);
-									keymap.insert(std::pair<std::string,int>(name, code));
+									
+									keymap.insert(std::pair<std::string, std::pair<int, std::string> >(name, std::pair<int, std::string> (code, apng ? apng : "")));
 								} else
 									eFatal("no code specified for key %s!", name);
 							} else

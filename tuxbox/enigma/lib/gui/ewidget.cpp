@@ -1,6 +1,7 @@
 #include <errno.h>
 
 #include <enigma.h>
+#include <helpwindow.h>
 #include <lib/base/eptrlist.h>
 #include <lib/base/eerror.h>
 #include <lib/gdi/gfbdc.h>
@@ -41,6 +42,8 @@ eWidget::eWidget(eWidget *_parent, int takefocus):
 		parent->childlist.push_back(this);
 		
 	just_showing=0;
+
+	addActionMap(&i_cursorActions->map);
 }
 
 eWidget::~eWidget()
@@ -389,6 +392,28 @@ int eWidget::eventFilter(const eWidgetEvent &event)
 	return 0;
 }
 
+void eWidget::addActionToHelpList(eAction *action)
+{
+	actionHelpList.push_back( action );
+}
+
+void eWidget::setHelpID(int fHelpID)
+{
+	helpID=fHelpID;
+}
+
+void eWidget::showHelp()
+{
+	if (actionHelpList.size())
+	{
+		eHelpWindow helpwin(actionHelpList, helpID);
+
+		helpwin.show();
+		helpwin.exec();
+		helpwin.hide();
+	}
+}
+
 int eWidget::eventHandler(const eWidgetEvent &evt)
 {
 	switch (evt.type)
@@ -408,6 +433,8 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 			focusNext(focusDirPrev);
 		else if (evt.action == &i_focusActions->right)
 			focusNext(focusDirNext);
+		else if (evt.action == &i_cursorActions->help)
+			showHelp();
 		else
 			return 0;
 		return 1;
@@ -464,7 +491,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		invalidate();
 		break;
 	case eWidgetEvent::evtShortcut:
-		setFocus(this);
+			setFocus(this);
 		break;
 	default:
 		break;

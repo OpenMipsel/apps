@@ -12,6 +12,8 @@
 #include <lib/base/estring.h>
 #include <lib/driver/rc.h>
 
+typedef std::set<eRCKey> keylist;
+
 class eActionMap;
 class eActionMapList;
 
@@ -22,14 +24,13 @@ class eActionMapList;
  */
 class eAction
 {
-	typedef std::set<eRCKey> keylist;
 	char *description, *identifier;
 	eActionMap *map;
 	friend struct priorityComperator;
-	std::map<eString, keylist> keys;
 	int priority;
 public:
 	typedef std::pair<void*,eAction*> directedAction;
+	std::map<eString, keylist> keys;
 	/**
 	 * \brief Functor to compare by priority.
 	 *
@@ -70,6 +71,8 @@ public:
 
 typedef std::multiset<eAction::directedAction,eAction::priorityComperator> eActionPrioritySet;
 
+typedef std::map<std::string, std::pair<int, std::string> > eKeymap;
+
 class XMLTreeNode;
 
 class eActionMap
@@ -93,7 +96,7 @@ public:
 	const char *getDescription() const { return description; }
 	const char *getIdentifier() const { return identifier; }
 	void reloadConfig();
-	void loadXML(eRCDevice *device, std::map<std::string,int> &keymap, const XMLTreeNode *node, const eString& s="");
+	void loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *node, const eString& s="");
 	void saveConfig();
 };
 

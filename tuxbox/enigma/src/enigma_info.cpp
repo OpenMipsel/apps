@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.11 2003/02/13 14:33:38 tmbinc Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.12 2003/02/18 23:13:27 bernroth Exp $
  */
 
 #include <enigma_info.h>
@@ -42,7 +42,7 @@ eZapInfo::eZapInfo()
 	move(ePoint(150, 136));
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), _("back to mainmenu")))->selected, eZapInfo::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Streaminfo"), _("open the Streaminfo")))->selected, eZapInfo::sel_streaminfo);
-	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) < 5 )
+	if ( eDVB::getInstance()->getmID() < 5 )
 		CONNECT((new eListBoxEntryMenu(&list, _("Show BN version"),_("show the Current Version of the Betanova FW")))->selected, eZapInfo::sel_bnversion);
 
 	CONNECT((new eListBoxEntryMenu(&list, _("About..."), _("open the about dialog")))->selected, eZapInfo::sel_about);
@@ -121,7 +121,7 @@ class eAboutScreen: public eWindow
 public:
 	eAboutScreen()
 	{
-		int mID=atoi( eDVB::getInstance()->getInfo("mID").c_str());
+		int mID=eDVB::getInstance()->getmID();
 		
 		const char *magic="";
 		
@@ -316,7 +316,7 @@ public:
 				eString ver=verid.mid(1, 3);
 				eString date=verid.mid(4, 8);
 //				eString time=verid.mid(12, 4);
-				if ( atoi( eDVB::getInstance()->getInfo("mID").c_str() ) < 5 )
+				if ( eDVB::getInstance()->getmID() < 5 )
 					version->setText(
 														eString().sprintf
 															("%s %c.%d. %s", typea[type%3], ver[0],

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.12 2003/02/12 22:43:37 rathma Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.13 2003/02/18 23:13:27 bernroth Exp $
  */
 
 #include <enigma_setup.h>
@@ -48,7 +48,7 @@ eZapSetup::eZapSetup()
 {
 	move(ePoint(135, 120));
 	int havenetwork, haveci, haveharddisk, havelcd, haverfmod;
-	switch (atoi(eDVB::getInstance()->getInfo("mID").c_str()))
+	switch (eDVB::getInstance()->getmID())
 	{
 	case 1:
 	case 2:

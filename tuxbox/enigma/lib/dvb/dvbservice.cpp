@@ -406,7 +406,7 @@ void eDVBServiceController::scanPMT()
 	
 	int isca=0;
 
-	if ( atoi( dvb.getInfo("mID").c_str() ) > 4 )
+	if ( dvb.getmID() > 4 )
 		calist.clear();
 
 	usedCASystems.clear();
@@ -707,7 +707,7 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
 void eDVBServiceController::initCAlist()
 {
 	availableCASystems.clear();
-	if ( atoi( dvb.getInfo("mID").c_str() ) < 5 )  // no dreambox
+	if ( dvb.getmID() < 5 )  // no dreambox
 	{
 		availableCASystems.insert(0x1702);	// BetaCrypt C (sat)
 		availableCASystems.insert(0x1722);	// BetaCrypt D (cable)

@@ -397,7 +397,7 @@ enigmaCI::enigmaCI(): eWindow(0)
 
 	DVBCI=eDVB::getInstance()->DVBCI;
 	
-	if(atoi(eDVB::getInstance()->getInfo("mID").c_str()) == 6)
+	if(eDVB::getInstance()->getmID() == 6)
 	{
 		setText(_("Common Interface Modules"));
 		move(ePoint(150, 80));
@@ -438,7 +438,7 @@ enigmaCI::enigmaCI(): eWindow(0)
 
 	CONNECT(app->selected, enigmaCI::appPressed);		
 
-	if(atoi(eDVB::getInstance()->getInfo("mID").c_str()) == 6)
+	if(eDVB::getInstance()->getmID() == 6)
 	{
 		reset2=new eButton(this);
 		reset2->setText(_("Reset"));
@@ -494,7 +494,7 @@ enigmaCI::enigmaCI(): eWindow(0)
 	CONNECT(DVBCI->ci_progress, enigmaCI::updateCIinfo);		
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));
 
-	if(atoi(eDVB::getInstance()->getInfo("mID").c_str()) == 6)
+	if(eDVB::getInstance()->getmID() == 6)
 	{
 		CONNECT(DVBCI2->ci_progress, enigmaCI::updateCI2info);		
 		DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::init));

@@ -101,7 +101,7 @@ void eAVSwitch::reloadSettings()
 
 int eAVSwitch::setVolume(int vol)
 {
-	eString s = eDVB::getInstance()->getInfo("mID");
+	int mID = eDVB::getInstance()->getmID();
 
 	vol=63-vol/(65536/64);
 	if (vol<0)
@@ -109,7 +109,7 @@ int eAVSwitch::setVolume(int vol)
 	if (vol>63)
 		vol=63;
 
-	if (s == "05" || s == "06")  // Dreambox
+	if (mID == 5 || mID == 6)  // Dreambox
 	{
 		if ((vol == 63) && !mute)
 		{
@@ -215,12 +215,12 @@ void eAVSwitch::sendVolumeChanged()
 
 void eAVSwitch::toggleMute()
 {
-	eString s = eDVB::getInstance()->getInfo("mID");
+	int mID = eDVB::getInstance()->getmID();
 	mute = !mute;
 	if (mute)
 	{
 //		setVolume(63);
-		if ( s == "05" || s == "06" )
+		if ( mID == 5 || mID == 6 )
 			muteOstAudio(1);
 		else
 			muteAvsAudio(1);
@@ -228,7 +228,7 @@ void eAVSwitch::toggleMute()
 	else
 	{
 //		changeVolume(1,volume);
-		if ( s == "05" || s == "06" )
+		if ( mID == 5 || mID == 6 )
 			muteOstAudio(0);
 		else
 			muteAvsAudio(0);
@@ -301,7 +301,7 @@ int eAVSwitch::setColorFormat(eAVColorFormat c)
 
 int eAVSwitch::setInput(int v)
 {	
-	eString s = eDVB::getInstance()->getInfo("mID");
+	int mID = eDVB::getInstance()->getmID();
 
 	eDebug("[eAVSwitch] setInput %d, avsfd=%d", v, avsfd);
 	switch (v)
@@ -316,7 +316,7 @@ int eAVSwitch::setInput(int v)
 		changeVolume(1, volume);  // set Volume to TV Volume
 		if (mute)
 		{
-			if ( s == "05" || s == "06" )
+			if ( mID == 5 || mID == 6 )
 				muteOstAudio(1);
 			else
 				muteAvsAudio(1);
@@ -335,7 +335,7 @@ int eAVSwitch::setInput(int v)
 		ioctl(avsfd, AVSIOSASW3, scart+5);
 		if (mute)
 		{
-			if ( s == "05" || s == "06" )
+			if ( mID == 5 || mID == 6 )
 				muteOstAudio(0);
 			else
 				muteAvsAudio(0);

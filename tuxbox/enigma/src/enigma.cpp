@@ -150,7 +150,7 @@ eZap::eZap(int argc, char **argv)
 
 	serialhttpd=0;
 #if 0
-  if ( atoi(eDVB::getInstance()->getInfo("mID").c_str()) > 4 )
+  if ( eDVB::getInstance()->getmID).c_str()) > 4 )
   {
   	eDebug("[ENIGMA] starting httpd on serial port...");
     int fd=::open("/dev/tts/0", O_RDWR);

@@ -1046,7 +1046,7 @@ eZapMain::~eZapMain()
 	pLCD->lcdMain->hide();
 	pLCD->lcdShutdown->show();
 	gLCDDC::getInstance()->setUpdate(0);
-	if ( atoi( eDVB::getInstance()->getInfo("mID").c_str()) == 5 )
+	if ( eDVB::getInstance()->getmID() == 5 )
 		eDBoxLCD::getInstance()->switchLCD(0);
 
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
@@ -2559,7 +2559,7 @@ void eZapMain::blinkRecord()
 				if (!(cnt++ % 7))
 					swp^=1;
 				if (swp)
-					DVRSpaceLeft->setText(eString().sprintf("%d.%02d GB\nfree", fds/1024, (fds%1024)/10.34 ));
+					DVRSpaceLeft->setText(eString().sprintf("%d.%02d GB\nfree", fds/1024, (int)(fds%1024)/10.34 ));
 				else
 				{
 					int min = fds/33;
@@ -2793,7 +2793,8 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		{
 			if ( handleState() )
 			{
-				setMode(modeRadio, 1);
+				if (mode != modeRadio)
+					setMode(modeRadio, 1);
 				showServiceSelector(-1, 1);
 			}
 		}
@@ -2801,7 +2802,8 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		{
 			if ( handleState() )
 			{
-				setMode(modeTV, 2);
+				if (mode != modeTV)
+					setMode(modeTV, 2);
 				showServiceSelector(-1, 1);
 			}
 		}
@@ -3113,7 +3115,7 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		if (num != -1)
 		{
 #if 1
-			if(eDVB::getInstance()->getInfo("mID")=="06")
+			if(eDVB::getInstance()->getmID() == 6)
 			{
 				eDebug("write number to led-display");
 				int fd=::open("/dev/dbox/fp0",O_RDWR);

@@ -2,6 +2,7 @@
 #define __enigma_main_h
 
 #include <epgwindow.h>
+#include <helpwindow.h>
 #include <enigma_lcd.h>
 #include <lib/dvb/si.h>
 #include <lib/dvb/dvb.h>

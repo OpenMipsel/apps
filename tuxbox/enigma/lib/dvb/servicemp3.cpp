@@ -851,6 +851,9 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 {
 	id3_file *file;
 	
+
+//	eDebug("*************** servicemp3.cpp FILENAME: %s", filename);
+
 	if (!strncmp(filename, "http://", 7))
 	{
 		if (!isUTF8(filename))
@@ -870,7 +873,7 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 	if (!file)
 		return;
 		
-	id3=&id3tags;
+	//id3=&id3tags;
 	
 	id3_tag *tag=id3_file_tag(file);
 	if (!tag)
@@ -879,83 +882,9 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 		return;
 	}
 
-	eString description="";
-
   struct id3_frame const *frame;
   id3_ucs4_t const *ucs4;
   id3_utf8_t *utf8;
-
-#if 0
-	struct
-	{
-		char const *id;
-		char c;
-	} const info[] = {
-		{ ID3_FRAME_TITLE,  '2'},
-		{ "TIT3",           's'}, 
-		{ "TCOP",           'd'},
-		{ "TPRO",           'p'},
-		{ "TCOM",           'b'},
-		{ ID3_FRAME_ARTIST, '1'},
-		{ "TPE2",           'f'},
-		{ "TPE3",           'c'},
- 		{ "TEXT",           'l'},
-		{ ID3_FRAME_ALBUM,  '3'},
-		{ ID3_FRAME_YEAR,   '4'},
-		{ ID3_FRAME_TRACK,  'a'},
-		{ "TPUB",           'P'},
-		{ ID3_FRAME_GENRE,  '6'},
- 		{ "TRSN",           'S'},
-		{ "TENC",           'e'}
-	};
-
-	const char *naming="[%a] [%1 - %3] %2";
-	
-	for (const char *c=naming; *c; ++c)
-	{
-		if ((*c != '%') || (*++c=='%') || !*c)
-		{
-			description+=*c;
-			continue;
-		}
-		
-		unsigned int i;
-		
-		for (i=0; i<sizeof(info)/sizeof(*info); ++i)
-			if (info[i].c == *c)
-				break;
-		if (i == sizeof(info)/sizeof(*info))
-			continue;
-
-		union id3_field const *field;
-		unsigned int nstrings, j;
-
-		frame = id3_tag_findframe(tag, info[i].id, 0);
-		if (frame == 0)
-			continue;
-		
-		field    = &frame->fields[1];
-		nstrings = id3_field_getnstrings(field);
-	
-		for (j = 0; j < nstrings; ++j) 
-		{
-			ucs4 = id3_field_getstrings(field, j);
-			assert(ucs4);
-
-			if (strcmp(info[i].id, ID3_FRAME_GENRE) == 0)
-				ucs4 = id3_genre_name(ucs4);
-
-
-			utf8 = id3_ucs4_utf8duplicate(ucs4);
-			description+=eString((const char*)utf8);
-			if (utf8 == 0)
-				break;
-			id3tags.tags.insert(std::pair<eString,eString>(info[i].id, eString((char*)utf8)));
-			free(utf8);
-		}
-	}
-	service_name=description;
-#endif
 
 	for (unsigned int i=0; i<tag->nframes; ++i)
 	{
@@ -966,18 +895,20 @@ eServiceMP3::eServiceMP3(const char *filename): eService("")
 		field    = &frame->fields[1];
 		nstrings = id3_field_getnstrings(field);
 	
-		for (j = 0; j < nstrings; ++j) 
+		for (j = 0; j < nstrings; ++j)
 		{
 			ucs4 = id3_field_getstrings(field, j);
 			assert(ucs4);
-
+			
 			if (strcmp(frame->id, ID3_FRAME_GENRE) == 0)
 				ucs4 = id3_genre_name(ucs4);
-
+				
 			utf8 = id3_ucs4_utf8duplicate(ucs4);
-			description+=eString((const char*)utf8);
 			if (utf8 == 0)
 				break;
+			
+			eDebug("****** %s", (char*)utf8);
+
 			id3tags.tags.insert(std::pair<eString,eString>(frame->id, eString((char*)utf8)));
 			free(utf8);
 		}

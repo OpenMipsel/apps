@@ -73,7 +73,7 @@ void gFBDC::calcRamp()
 			d=255;
 		ramp[i]=d;
 
-/*		if ( eDVB::getInstance()->getInfo("mID") == "01" )
+/*		if ( eDVB::getInstance()->getmID == 1 )
 			rampalpha[i]=i*alpha/65535;
 		else*/
 			rampalpha[i]=i*alpha/256;

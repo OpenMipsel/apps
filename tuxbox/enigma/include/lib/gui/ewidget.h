@@ -102,6 +102,8 @@ public:
 	 */
 	Signal1<void, const eWidget*> focusChanged;
 protected:
+	ePtrList<eAction> actionHelpList;
+	int helpID;
 	ePtrList<eWidget> childlist;
 	static eWidget *root;
 	eWidget *parent;
@@ -172,6 +174,8 @@ protected:
 	virtual void recalcClientRect();
 	void recalcClip();
 	void checkFocus();
+
+	void showHelp();
 	
 	typedef ePtrList<eActionMap> actionMapList;
 
@@ -476,6 +480,9 @@ public:
 	 */
 	void setShortcut(const eString &shortcut);
 	void setShortcutFocus(eWidget *focus);
+	
+	void addActionToHelpList(eAction *action);
+	void setHelpID(int fHelpID);
 };
 
 class eDecoWidget:public eWidget

@@ -72,6 +72,8 @@ eDVB::eDVB()
 	DVBCI2=new eDVBCI();
 	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::start));
 
+	mID = atoi(getInfo("mID").c_str());
+
 		// initialize frontend (koennte auch nochmal raus)
 	eString frontend=getInfo("fe");
 	int fe;
@@ -113,10 +115,7 @@ eDVB::eDVB()
 	setMode(controllerService);
 
 		// init AV switch
-	int type=0;
-	type=atoi( getInfo("mID").c_str() );
-	
-	switch (type)
+	switch (mID)
 	{
 	case 1:
 		new eAVSwitchNokia;
@@ -132,7 +131,7 @@ eDVB::eDVB()
 		break;
 	}
 	
-	if(type==6)
+	if(mID==6)
 	{
 		// start rf mod
 		new eRFmod;
@@ -200,6 +199,11 @@ eString eDVB::getInfo(const char *info)
 	}	
 	fclose(f);
 	return result;
+}
+
+int eDVB::getmID()
+{
+	return mID;
 }
 
 		// for external access only

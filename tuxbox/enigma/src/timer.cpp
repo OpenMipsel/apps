@@ -919,7 +919,7 @@ eTimerView::eTimerView( ePlaylistEntry* e)
 		new eListBoxEntryText( *emonth, monthStr[i], (void*) i );
 
 	new eListBoxEntryText( *type, _("switch"), (void*) ePlaylistEntry::SwitchTimerEntry );
-	if(eDVB::getInstance()->getInfo("mID") != "06")
+	if(eDVB::getInstance()->getmID() != 6)
 	{
 		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 		new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
@@ -1086,9 +1086,9 @@ void eTimerView::selChanged( eListBoxEntryTimer *entry )
 		time_t now = time(0)+eDVB::getInstance()->time_difference;
 		tm tmp = *localtime( &now );
 		updateDateTime( tmp, tmp );
-		if (eDVB::getInstance()->getInfo("mID") == "06" )
+		if (eDVB::getInstance()->getmID() == 6 )
 			type->setCurrent( (void*)ePlaylistEntry::SwitchTimerEntry );
-		else if (eDVB::getInstance()->getInfo("mID") == "05" )
+		else if (eDVB::getInstance()->getmID() == 5 )
 			type->setCurrent( (void*)(ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
 		else
 			type->setCurrent( (void*)(ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );

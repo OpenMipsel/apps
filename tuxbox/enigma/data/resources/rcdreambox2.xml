@@ -6,43 +6,43 @@
 
 	<device identifier="Dreambox2" >
 		<keys>
-			<key name="0" code="00" />
-			<key name="1" code="01" />
-			<key name="2" code="02" />
-			<key name="3" code="03" />
-			<key name="4" code="04" />
-			<key name="5" code="05" />
-			<key name="6" code="06" />
-			<key name="7" code="07" />
-			<key name="8" code="08" />
-			<key name="9" code="09" />
+			<key name="0" code="00" picture="key.0" />
+			<key name="1" code="01" picture="key.1" />
+			<key name="2" code="02" picture="key.2" />
+			<key name="3" code="03" picture="key.3" />
+			<key name="4" code="04" picture="key.4" />
+			<key name="5" code="05" picture="key.5" />
+			<key name="6" code="06" picture="key.6" />
+			<key name="7" code="07" picture="key.7" />
+			<key name="8" code="08" picture="key.8" />
+			<key name="9" code="09" picture="key.9" />
 			<key name="volup" code="0a" />
 			<key name="voldown" code="0b" />
-			<key name="tv" code="0c" />
+			<key name="tv" code="0c" picture="key.15" />
 			<key name="bouqup" code="0d" />
 			<key name="bouqdown" code="0e" />
 			<key name="power" code="0f" />
-			<key name="dream" code="20" />
+			<key name="dream" code="20" picture="key.13" />
 			<key name="up" code="21" />
 			<key name="down" code="22" />
 			<key name="left" code="23" />
 			<key name="right" code="24" />
 			<key name="ok" code="25" />
-			<key name="audio" code="26" />
-			<key name="video" code="27" />
-			<key name="info" code="28" />
+			<key name="audio" code="26" picture="key.10" />
+			<key name="video" code="27" picture="key.11" />
+			<key name="info" code="28" picture="key.12" />
 			<key name="record" code="35" />
-			<key name="red" code="40" />
-			<key name="green" code="41" />
-			<key name="yellow" code="42" />
-			<key name="blue" code="43" />
+			<key name="red" code="40" picture="key.17" />
+			<key name="green" code="41" picture="key.18" />
+			<key name="yellow" code="42" picture="key.19" />
+			<key name="blue" code="43" picture="key.20" />
 			<key name="mute" code="44" />
-			<key name="text" code="45" />
+			<key name="text" code="45" picture="key.22" />
 			<key name="next" code="50" />
 			<key name="prev" code="51" />
-			<key name="LAME" code="52" />
-			<key name="radio" code="53" />
-			<key name="help" code="54" />
+			<key name="LAME" code="52" picture="key.21" />
+			<key name="radio" code="53" picture="key.16" />
+			<key name="help" code="54" picture="key.23" />
 		</keys>
 		
 				<!-- globale shortcuts. sollten auf jeder FB zu finden sein. -->
@@ -76,6 +76,14 @@
 			<action name="right" key="right" flags="mr" />
 			<action name="ok" key="ok" flags="m" />
 			<action name="cancel" key="LAME" flags="m" />
+			<action name="help" key="help" flags="m" />
+		</actionmap>
+
+		<actionmap name="helpwindow">
+			<action name="close" key="ok" flags="m" />
+			<action name="close" key="help" flags="m" />
+			<action name="up" key="up" flags="mr" />
+			<action name="down" key="down" flags="mr" />
 		</actionmap>
 
 		<actionmap name="focus">

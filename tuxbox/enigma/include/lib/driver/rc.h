@@ -5,6 +5,7 @@
 #include <map>
 
 #include <lib/base/ebase.h>
+#include <lib/base/estring.h>
 #include <libsig_comp.h>
 
 class eRCInput;
@@ -112,9 +113,10 @@ class eRCKey
 public:
 	eRCDevice *producer;
 	int code, flags;
+	eString picture;
 
-	eRCKey(eRCDevice *producer, int code, int flags): 
-		producer(producer), code(code), flags(flags)
+	eRCKey(eRCDevice *producer, int code, int flags, eString picture=""):
+		producer(producer), code(code), flags(flags), picture(picture)
 	{
 	}
 	enum
