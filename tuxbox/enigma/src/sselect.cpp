@@ -311,7 +311,6 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 					}
 					if (sdescr.length())
 					{
-						sdescr.removeChars('\n').removeChars('\t');
 						curEventId = e->event_id;
 						descrPara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
 						descrPara->setFont( descrFont );
@@ -450,20 +449,6 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	else
 		goUpEntry = 0;
 
-/*
-	if (!movemode && style != styleCombiColumn )
-	{
-		int alt=0;
-		char *sstyle=0;
-		if (eConfig::getInstance()->getKey("/ezap/rc/sselect_style", sstyle) )
-			alt = 0;
-		else
-		{
-			alt = !strcmp(sstyle, "sselect_classic");
-			free(sstyle);
-		}
-	}*/
-	
 	eServiceInterface *iface=eServiceInterface::getInstance();
 	ASSERT(iface);
 	

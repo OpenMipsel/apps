@@ -2370,23 +2370,15 @@ void eZapMain::play()
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
-/*	if ( state & statePaused )
+	switch (handler->getState())
 	{
-		state &= ~statePaused;
-		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSkip, 0));
-		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
-		Decoder::Resume();
+		case eServiceHandler::statePause:
+			pause();
+			break;
+		default:
+			playService( eServiceInterface::getInstance()->service, psDontAdd );
+			break;
 	}
-	else */
-	if (skipping)
-	{
-		skipping=0;
-		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
-	}
-	else if (handler->getState() == eServiceHandler::statePause)
-		pause();
-	else if ( handler->getState() != eServiceHandler::statePlaying )
-		handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSeekAbsolute, 0));
 	updateProgress();
 }
 
@@ -2402,13 +2394,6 @@ void eZapMain::stop()
 
 void eZapMain::pause()
 {
-/*	if ( state != stateRecording )
-		record();
-	if ( !(state&statePaused) )
-	{
-		state |= statePaused;
-		Decoder::Pause();
-	}*/
 	eServiceHandler *handler=eServiceInterface::getInstance()->getService();
 	if (!handler)
 		return;
