@@ -201,16 +201,16 @@ int getRejectFlags()
 	}
 	int flags=0;
 	char *p = getOptionString(buf, "REJECT_WWW=");
-	if ( p && strstr(p,"yes") )
+	if ( p && strstr(p,"REJECT_WWW=yes") )
 		flags|=1;
 	p = getOptionString(buf, "REJECT_TELNET=");
-	if ( p && strstr(p,"yes") )
+	if ( p && strstr(p,"REJECT_TELNET=yes") )
 		flags|=2;
 	p = getOptionString(buf, "REJECT_SAMBA=");
-	if ( p && strstr(p,"yes") )
+	if ( p && strstr(p,"REJECT_SAMBA=yes") )
 		flags|=4;
 	p = getOptionString(buf, "REJECT_FTP=");
-	if ( p && strstr(p,"yes") )
+	if ( p && strstr(p,"REJECT_FTP=yes") )
 		flags|=8;
 	fclose(f);
 	return flags;
