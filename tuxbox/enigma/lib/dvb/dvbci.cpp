@@ -58,7 +58,7 @@ eDVBCI::eDVBCI()
 	CONNECT(messages.recv_msg, eDVBCI::gotMessage);
 
 	memset(appName,0,sizeof(appName));
-	tempPMTentrys=0;		
+	tempPMTentrys=0;
 
 	run();
 }
@@ -422,8 +422,8 @@ void eDVBCI::sendData(unsigned char tc_id,unsigned char *data,unsigned int len)
 	unsigned char lpdu[PAYLOAD_LEN+2];
 	unsigned int rp=0;
 
-	pollTimer.stop();	
-	
+	stopTimer();
+
 	lpdu[0]=tc_id;
 	
 	while(bytesleft)
@@ -1050,14 +1050,21 @@ void eDVBCI::incoming(unsigned char *buffer,int len)
 
 void eDVBCI::startTimer()
 {
-	deadTimer.start(2000,true);
 	pollTimer.start(200,true);
+	deadTimer.start(2000,true);
+} 
+
+void eDVBCI::stopTimer()
+{
+	pollTimer.stop();
+	deadTimer.stop();
 }
 
 void eDVBCI::deadReset()
 {
 	eDebug("CI timeoutet... do reset");
 	::ioctl(fd, CI_RESET);
+	startTimer();
 }
 
 void eDVBCI::dataAvailable(int what)
@@ -1067,7 +1074,7 @@ void eDVBCI::dataAvailable(int what)
 	int size;
 	(void)what;
 
-  pollTimer.stop();
+	stopTimer();
 
 	::ioctl(fd,CI_GET_STATUS,&present);	
 
@@ -1122,8 +1129,7 @@ void eDVBCI::dataAvailable(int what)
 			printf("%02x ",buffer[i]);
 		printf("\n");	
 #endif	
-		incoming(buffer,size);			
-		//pollTimer.start(250);
+		incoming(buffer,size);
 		return;
 	}	
 	
@@ -1139,7 +1145,7 @@ void eDVBCI::poll()
 {
 	int present;
 #if 0
-	printf("TIMER\n");
+	eDebug("TIMER");
 #endif
 	::ioctl(fd,CI_GET_STATUS,&present);	
 

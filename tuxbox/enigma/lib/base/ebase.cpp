@@ -42,7 +42,7 @@ void eTimer::start(long msek, bool singleShot)
 	bActive = true;
 	bSingleShot = singleShot;
 	interval = msek;
- 	gettimeofday(&nextActivation, 0);		
+ 	gettimeofday(&nextActivation, 0);
 //	eDebug("this = %p\nnow sec = %d, usec = %d\nadd %d msec", this, nextActivation.tv_sec, nextActivation.tv_usec, msek);
 	nextActivation += (msek<0 ? 0 : msek);
 //	eDebug("next Activation sec = %d, usec = %d", nextActivation.tv_sec, nextActivation.tv_usec );
@@ -114,7 +114,7 @@ void eMainloop::processOneEvent()
 		TimerList.begin()->activate();
 
 	int fdAnz = notifiers.size();
-	pollfd* pfd = new pollfd[fdAnz];  // make new pollfd array
+	pollfd pfd[fdAnz];
 
 // fill pfd array
 	std::map<int,eSocketNotifier*>::iterator it(notifiers.begin());
@@ -126,9 +126,14 @@ void eMainloop::processOneEvent()
 
 	int ret=poll(pfd, fdAnz, TimerList ? usec / 1000 : -1);  // milli .. not micro seks
 
-	if (ret>0)
+	if (!ret) // timeouted leave poll .. immediate check all timers
 	{
-//		eDebug("bin aussem poll raus und da war was");
+		while ( TimerList && timeout_usec( TimerList.begin()->getNextActivation() ) <= 0 )
+			TimerList.begin()->activate();
+	}
+	else if (ret>0)
+	{
+	//		eDebug("bin aussem poll raus und da war was");
 		for (int i=0; i < fdAnz ; i++)
 		{
 			if( notifiers.find(pfd[i].fd) == notifiers.end())
@@ -142,20 +147,21 @@ void eMainloop::processOneEvent()
 
 				if (!--ret)
 					break;
-			} else if (pfd[i].revents & (POLLERR|POLLHUP|POLLNVAL))
+				else
+				{
+				    while ( TimerList && timeout_usec( TimerList.begin()->getNextActivation() ) <= 0 )
+					TimerList.begin()->activate();
+				}
+			}
+			else if (pfd[i].revents & (POLLERR|POLLHUP|POLLNVAL))
 				eDebug("poll: unhandled POLLERR/HUP/NVAL for fd %d(%d)", pfd[i].fd,pfd[i].revents);
 		}
 	}
 	else if (ret<0)
+	{
 		eDebug("poll made error");
-
-		// check Timers...
-	while ( TimerList && timeout_usec( TimerList.begin()->getNextActivation() ) <= 0 )
-		TimerList.begin()->activate();
-
-	delete [] pfd;
+	}
 }
-
 
 int eMainloop::exec()
 {

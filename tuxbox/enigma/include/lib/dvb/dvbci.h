@@ -117,6 +117,7 @@ protected:
 	void dataAvailable(int what);
 	void poll();
 	void startTimer();
+	void stopTimer();
 	void deadReset();
 	void updateCIinfo(unsigned char *buffer);
 
