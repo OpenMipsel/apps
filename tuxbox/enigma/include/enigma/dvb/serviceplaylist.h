@@ -11,7 +11,8 @@ struct ePlaylistEntry
 		PlaylistEntry=1, SwitchTimerEntry=2, RecTimerEntry=4,	
 		stateWaiting=64, stateRunning=128, statePaused=256,
 		stateFinished=512, stateEventOutdated=1024,	stateNoSpaceLeft=2048,
-		stateUserAborted=4096, stateZapFailed=8192, typeSmartTimer=32768
+		stateUserAborted=4096, stateZapFailed=8192, typeSmartTimer=32768,
+		boundFile=65536 // delete file together with playlist entry
 	};
 
 	eServiceReference service;
