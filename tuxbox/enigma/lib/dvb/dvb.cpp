@@ -78,20 +78,21 @@ eService::~eService()
 }
 
 eServiceDVB::eServiceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, eServiceID service_id, int service_number):
-		eService(""), transport_stream_id(transport_stream_id), original_network_id(original_network_id), service_id(service_id), service_number(service_number)
+		eService(""), transport_stream_id(transport_stream_id), original_network_id(original_network_id), service_id(service_id), service_number(service_number), dxflags(0)
 {
 	dvb=this;
 	clearCache();
 }
 
 eServiceDVB::eServiceDVB(eServiceID service_id, const char *name)
-	: eService(name), service_id(service_id), service_number(-1)
+	: eService(name), service_id(service_id), service_number(-1), dxflags(0)
 {
 	dvb=this;
+	clearCache();
 }
 
 eServiceDVB::eServiceDVB(eTransportStreamID transport_stream_id, eOriginalNetworkID original_network_id, const SDTEntry *sdtentry, int service_number):
-		eService(""), transport_stream_id(transport_stream_id), original_network_id(original_network_id), service_number(service_number)
+		eService(""), transport_stream_id(transport_stream_id), original_network_id(original_network_id), service_number(service_number), dxflags(0)
 {
 	dvb=this;
 	clearCache();
@@ -191,6 +192,8 @@ int eTransponder::isValid()
 
 void eServiceDVB::update(const SDTEntry *sdtentry)
 {
+	if (dxflags & dxNoDVB) // never ever update "manual" pids.
+		return;
 	if (eServiceID(sdtentry->service_id) != service_id)
 	{
 		eDebug("tried to update sid %x with sdt-sid %x", service_id.get(), sdtentry->service_id);
@@ -206,8 +209,12 @@ void eServiceDVB::update(const SDTEntry *sdtentry)
 			const ServiceDescriptor *nd=(ServiceDescriptor*)*d;
 		
 			service_name=nd->service_name;
-			service_provider=nd->service_provider;
-
+			if (!nd->service_provider.empty())
+				service_provider=nd->service_provider;
+			
+			if (!service_name)
+				service_name="unnamed service";
+			
 			service_type=nd->service_type;
 		}
 //	printf("%04x:%04x %02x %s", transport_stream_id, service_id, service_type, (const char*)service_name);
@@ -410,7 +417,8 @@ int eTransponderList::handleSDT(const SDT *sdt, eOriginalNetworkID onid, eTransp
 	}
 
 	for (std::map<eServiceReferenceDVB,eServiceDVB>::iterator i(services.begin()); i != services.end(); ++i)
-		if ((i->first.getOriginalNetworkID() == onid)	&& // if service on this on
+		if ((!(i->second.dxflags & eServiceDVB::dxNoDVB)) &&  // never ever touch non-dvb services
+				(i->first.getOriginalNetworkID() == onid)	&& // if service on this on
 				(i->first.getTransportStreamID() == tsid) && 	// and on this transponder (war das "first" hier wichtig?)
 				(!s.count(i->first.getServiceID()))) // but does not exist
 			{

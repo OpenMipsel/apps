@@ -199,7 +199,15 @@ struct saveService: public std::unary_function<const eServiceDVB&, void>
 	{
 		fprintf(f, "%04x:%04x:%04x:%d:%d\n", s.service_id.get(), s.transport_stream_id.get(), s.original_network_id.get(), s.service_type, s.service_number);
 		fprintf(f, "%s\n", s.service_name.c_str());
-		fprintf(f, "%s\n", s.service_provider.c_str());
+		if (s.dxflags)
+			fprintf(f, "f:%x,", s.dxflags);
+		if (s.dxflags & eServiceDVB::dxNoDVB)
+			for (int i=0; i<eServiceDVB::cacheMax; ++i)
+			{
+				if (s.cache[i] != -1)
+					fprintf(f, "c:%02d%04x,", i, s.cache[i]);
+			}
+		fprintf(f, "p:%s\n", s.service_provider.c_str());
 	}
 	~saveService()
 	{
@@ -332,7 +340,42 @@ void eDVBSettings::loadServices()
 		fgets(line, 256, f);
 		if (strlen(line))
 			line[strlen(line)-1]=0;
-		s.service_provider=line;
+
+		eString str=line;
+		
+		if (str[1]!=':')	// old ... (only service_provider)
+		{
+			s.service_provider=line;
+		} else
+			while ((!str.empty()) && str[1]==':') // new: p:, f:, c:%02d...
+			{
+				int c=str.find(',');
+				char p=str[0];
+				eString v;
+				if (c == eString::npos)
+				{
+					v=str.mid(2);
+					str="";
+				} else
+				{
+					v=str.mid(2, c-2);
+					str=str.mid(c+1);
+				}
+				eDebug("%c ... %s", p, v.c_str());
+				if (p == 'p')
+					s.service_provider=v;
+				else if (p == 'f')
+				{
+					sscanf(v.c_str(), "%x", &s.dxflags);
+					eDebug("dxflags: %d", s.dxflags);
+				} else if (p == 'c')
+				{
+					int cid, val;
+					sscanf(v.c_str(), "%02d%04x", &cid, &val);
+					if (cid < eServiceDVB::cacheMax)
+						s.cache[cid]=val;
+				}
+			}
 	}
 	
 	eDebug("loaded %d services", count);

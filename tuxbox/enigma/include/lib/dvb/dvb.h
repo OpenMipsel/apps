@@ -258,6 +258,13 @@ public:
 	
 	int service_number;		// nur fuer dvb, gleichzeitig sortierkriterium...
 	
+	enum {
+		dxNameFixed=1,
+		dxDontshow=2,
+		dxNoDVB=4		// no PAT/PMT/...
+	};
+	int dxflags;
+	
 	int cache[cacheMax];
 	
 	void set(cacheID c, int v)
