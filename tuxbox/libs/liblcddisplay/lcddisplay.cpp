@@ -95,7 +95,7 @@ void CLCDDisplay::resume()
 void CLCDDisplay::convert_data ()
 {
 	int x,y,z;
-	char tmp2[4];
+	char tmp2[LCD_ROWS];
 	for(x=0;x < LCD_COLS;x++) {   
 		for(y=0;y < LCD_ROWS;y++) {
 			tmp2[y] = 0;
@@ -160,8 +160,8 @@ void CLCDDisplay::draw_line (int x1, int y1, int x2, int y2, int state)
 	int dx,dy,sdx,sdy,px,py,dxabs,dyabs,i;
 	float slope;
    
-	dx=x2-x1;      
-	dy=y2-y1;      
+	dx=x2-x1+1;      
+	dy=y2-y1+1;      
 	dxabs=abs(dx);
 	dyabs=abs(dy);
 	sdx=sgn(dx);
