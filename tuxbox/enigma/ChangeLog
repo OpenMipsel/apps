@@ -1,0 +1,3 @@
+- Audio menu added (select default ac3-output)
+- harddisk size report corrected
+- hide info windows after 2 secs (service cannot be descrambled, service not available, no signal etc...)

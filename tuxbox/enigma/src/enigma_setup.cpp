@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.9 2003/01/20 14:24:53 tmbinc Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.10 2003/01/30 08:47:17 bernroth Exp $
  */
 
 #include <enigma_setup.h>
@@ -25,6 +25,7 @@
 #include <enigma_scan.h>
 #include <setupnetwork.h>
 #include <setupvideo.h>
+#include <setup_audio.h>
 #include <setup_language.h>
 #include <setup_osd.h>
 #include <setup_lcd.h>
@@ -88,6 +89,7 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), _("open LCD setup") ))->selected, eZapSetup::sel_lcd);
 	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), _("open remote control setup") ))->selected, eZapSetup::sel_rc);
 	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), _("open video setup") ))->selected, eZapSetup::sel_video);
+	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), _("open audio setup") ))->selected, eZapSetup::sel_sound);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), _("open skin selector") ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), _("open language selector") ))->selected, eZapSetup::sel_language);
 	if (haveharddisk)
@@ -133,6 +135,13 @@ void eZapSetup::sel_network()
 
 void eZapSetup::sel_sound()
 {
+	hide();
+	eZapAudioSetup setup;
+	setup.setLCD(LCDTitle, LCDElement);
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
 }
 
 void eZapSetup::sel_osd()

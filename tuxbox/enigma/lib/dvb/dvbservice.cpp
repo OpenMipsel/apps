@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/dvbci.h>
+#include <lib/dvb/eaudio.h>
 
 eDVBServiceController::eDVBServiceController(eDVB &dvb)
 : eDVBController(dvb)
@@ -405,7 +406,11 @@ void eDVBServiceController::scanPMT()
 
 	isca+=checkCA(calist, pmt->program_info);
 	
-	PMTEntry *audio=0, *video=0, *teletext=0;
+	PMTEntry *audio=0, *ac3_audio=0, *video=0, *teletext=0;
+
+	int sac3default = 0;
+
+	sac3default=eAudio::getInstance()->getAC3default();
 
 	int audiopid=-1, videopid=-1;
 
@@ -435,7 +440,7 @@ void eDVBServiceController::scanPMT()
 		case 2: // ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream
 			if ((!video) || (pe->elementary_PID == videopid))
 			{
-  			video=pe;
+				video=pe;
 			}
 			isca+=checkCA(calist, pe->ES_info);
 			break;
@@ -452,9 +457,9 @@ void eDVBServiceController::scanPMT()
 			isca+=checkCA(calist, pe->ES_info);
 			for (ePtrList<Descriptor>::iterator i(pe->ES_info); i != pe->ES_info.end(); ++i)
 			{
-				if ((i->Tag()==DESCR_AC3) && (pe->elementary_PID == audiopid))
+				if ((i->Tag()==DESCR_AC3) && ((!ac3_audio) || (pe->elementary_PID == audiopid)))
 				{
-					audio=pe;
+					ac3_audio=pe;
 				}
 				if (i->Tag()==DESCR_TELETEXT)
 					teletext=pe;
@@ -486,7 +491,10 @@ void eDVBServiceController::scanPMT()
 
   DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
   DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
-  
+
+	if (sac3default && ac3_audio)
+ 		audio=ac3_audio;
+
 	setPID(video);
 	setPID(audio);
 	setPID(teletext);

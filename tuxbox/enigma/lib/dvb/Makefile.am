@@ -6,7 +6,7 @@ INCLUDES = \
 lib_LTLIBRARIES = libenigma_dvb.la
 
 libenigma_dvb_la_SOURCES = \
-	decoder.cpp dvb.cpp edvb.cpp epgcache.cpp \
+	decoder.cpp dvb.cpp edvb.cpp epgcache.cpp eaudio.cpp \
 	esection.cpp frontend.cpp si.cpp record.cpp \
 	dvbwidgets.cpp dvbservice.cpp settings.cpp \
 	dvbscan.cpp service.cpp servicedvb.cpp servicestructure.cpp \

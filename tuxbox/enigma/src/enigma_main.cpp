@@ -2153,7 +2153,7 @@ void eZapMain::blinkRecord()
 				if (!(cnt++ % 7))
 					swp^=1;
 				if (swp)
-					DVRSpaceLeft->setText(eString().sprintf("%d.%03d GB free", fds/1000, fds%1000 ));
+					DVRSpaceLeft->setText(eString().sprintf("%d.%03d GB free", fds/1024, fds%1024 ));
 				else
 					DVRSpaceLeft->setText(eString().sprintf("~%d min free", fds/33 ));
 			}
@@ -2610,25 +2610,25 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			if( serviceFlags & eServiceHandler::flagIsScrambled )
 			{
 				Description->setText(_("This service could not be descrambled"));
-				postMessage(eZapMessage(0, _("switch"), _("This service could not be descrambled")), 1);
+				postMessage(eZapMessage(0, _("switch"), _("This service could not be descrambled"), 2), 1);
 				eDebug("This service could not be descrambled");
 			}
 			break;
 		}
 		case -ENOSTREAM:
 			Description->setText(_("This service doesn't currently send a signal"));
-			postMessage(eZapMessage(0, _("switch"), _("This service doesn't currently send a signal")), 1);
+			postMessage(eZapMessage(0, _("switch"), _("This service doesn't currently send a signal"), 2), 1);
 			eDebug("This service doesn't currently send a signal");
 			break;
 		case -ENOSYS:
 			Description->setText(_("This content could not be displayed"));
 			eDebug("This content could not be displayed");
-			postMessage(eZapMessage(0, _("switch"), _("This content could not be displayed")), 1);
+			postMessage(eZapMessage(0, _("switch"), _("This content could not be displayed"), 2), 1);
 			break;
 		case -ENVOD:
 			Description->setText(_("NVOD Service - please select a starttime"));
 			eDebug("NVOD Service - please select a starttime");
-			postMessage(eZapMessage(0, _("switch"), _("NVOD Service - please select a starttime")), 1);
+			postMessage(eZapMessage(0, _("switch"), _("NVOD Service - please select a starttime"), 5), 1);
 			break;
 		default:
 			Description->setText(_("Unknown error!!"));
