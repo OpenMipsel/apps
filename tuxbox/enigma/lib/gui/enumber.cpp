@@ -200,6 +200,9 @@ int eNumber::eventHandler(const eWidgetEvent &event)
 	return eDecoWidget::eventHandler(event);
 }
 
+// isactive is the digit (always in the first field )
+// that ist active after get the first focus ! 
+
 eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, int *init, int isactive, eWidget* descr, int grabfocus, const char *deco)
  :eDecoWidget(parent, grabfocus, deco ),
 	active(0), 
@@ -207,7 +210,7 @@ eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, 
 	cursorF(eSkin::getActive()->queryScheme("global.selected.foreground")),	
 	normalB(eSkin::getActive()->queryScheme("global.normal.background")),	
 	normalF(eSkin::getActive()->queryScheme("global.normal.foreground")),	
-	have_focus(0), digit(0), isactive(isactive), flags(0), descr(descr), tmpDescr(0),
+	have_focus(0), digit(isactive), isactive(isactive), flags(0), descr(descr), tmpDescr(0),
 	neg(false)
 {
 	setNumberOfFields(_len);
@@ -218,7 +221,7 @@ eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, 
 		number[i]=init[i];
 	addActionMap(&i_cursorActions->map);
 }                 
-
+             
 eNumber::~eNumber()
 {
 }
@@ -255,7 +258,7 @@ int eNumber::keyDown(int key)
 			invalidate(getNumberRect(active));
 			digit++;
 			if ((digit>=maxdigits) || (nn==0))
-			{
+			{        
 				active++;
 				invalidate(getNumberRect(active-1));
 				digit=0;
@@ -296,7 +299,7 @@ int eNumber::keyDown(int key)
 void eNumber::gotFocus()
 {
 	have_focus++;
-	digit=0;
+	digit=isactive;
 
   if (deco && deco_selected)
 		invalidate();
@@ -359,6 +362,7 @@ void eNumber::lostFocus()
 		invalidate();
 	else
 		invalidate(getNumberRect(active));
+	isactive=0;
 }
 
 void eNumber::setNumber(int f, int n)

@@ -5330,7 +5330,7 @@ eTimeCorrectionEditWindow::eTimeCorrectionEditWindow( tsref tp )
 	time_t now = time(0)+eDVB::getInstance()->time_difference;
 	tm tmp = *localtime( &now );
 
-	nTime = new eNumber(this, 2, 0, 59, 2, 0, 1, l);
+	nTime = new eNumber(this, 2, 0, 59, 2, 0, 0, l);
 	nTime->resize(eSize(75,35));
 	nTime->move(ePoint(210,90));
 	nTime->setFlags( eNumber::flagTime|eNumber::flagFillWithZeros );

@@ -375,7 +375,14 @@ void eEPGCache::enterService(const eServiceReferenceDVB &service, int err)
 
 	int update;
 
-	if (!err || err == -ENOCASYS || err == -ENVOD)
+// check if this is a subservice and this is only a dbox2
+// then we dont start epgcache on subservice change..
+// ever and ever..
+	if ( service.getServiceType() == 7 &&
+			eDVB::getInstance()->getmID() < 5 )
+			err = 1111; //faked
+
+	if ( !err || err == -ENOCASYS || err == -ENVOD )
 	{
 		update = ( It != serviceLastUpdated.end() ? ( UPDATE_INTERVAL - ( (time(0)+eDVB::getInstance()->time_difference-It->second) * 1000 ) ) : ZAP_DELAY );
 
