@@ -220,9 +220,9 @@ void eDVBScanController::handleEvent(const eDVBEvent &event)
 							break;
 						}
 					}
-  					
+
 					if (flags & flagNoCircularPolarization)
-					    tp.satellite.polarisation&=1;
+						tp.satellite.polarisation&=1;
 
 					if ( addTransponder(tp) )
 						dvb.event(eDVBScanEvent(eDVBScanEvent::eventScanTPadded));

@@ -264,7 +264,7 @@
 	<object name="eventview">
 		<eWindow cposition="100:100" csize="520:380" >
 			<eWidget position="10:5" size="e-40:e-45" name="epg_description" font="eventview.description" />
-			<eLabel position="10:e-35" size="150:e-10" name="date" font="eventview.date" />
+			<eLabel position="10:e-35" size="120:e-10" name="date" font="eventview.date" />
 			<eLabel position="130:e-35" size="140:30" name="time" font="eventview.time" />
 			<eLabel position="280:e-35" size="30:30" name="timer_icon" alphatest="on" />
 			<eLabel position="320:e-35" size="e:30" name="channel" font="eventview.channel" align="right" />

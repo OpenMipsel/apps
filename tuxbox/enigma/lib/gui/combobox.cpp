@@ -62,7 +62,7 @@ int eComboBox::setProperty( const eString& prop, const eString& val )
 	{
 		int width=listbox.getSize().width();
 		width = atoi(val.c_str());
-  setOpenWidth( width );
+		setOpenWidth( width );
 	}
 	else
 		return eButton::setProperty( prop, val);
@@ -124,7 +124,7 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 
 	if (e && button.getText() != e->getText() )
 	{
-		setText( e->getText(), false );
+		text=e->getText();
 		setFocus( this );
 #ifndef DISABLE_LCD
 		if ( parent->LCDElement )

@@ -121,9 +121,12 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 	case eWidgetEvent::execBegin:
-		sbar->move( ePoint(0, clientrect.height()-30) );
-		sbar->resize( eSize( clientrect.width(), 30) );
-		sbar->loadDeco();
+		if ( sbar->getPosition().isNull() )
+		{
+			sbar->move( ePoint(0, clientrect.height()-30) );
+			sbar->resize( eSize( clientrect.width(), 30) );
+			sbar->loadDeco();
+		}
 		break;
 	case eWidgetEvent::evtAction:
 	{
@@ -394,8 +397,10 @@ void eZapEPG::selEntry(int dir)
 		return;
 	}
 	ePtrList<entry>::iterator l = current_service->current_entry;
-	if (dir == +1)
+	if ( dir == +1)
 	{
+		if ( !serviceentries.size() )
+			return;
 		++current_service->current_entry;
 		if (current_service->current_entry == current_service->entries.end())
 		{
@@ -526,7 +531,10 @@ void eZapEPG::buildPage(int direction)
 	while( serviceentries.size() < numservices && curE != curS );
 
 	if (!p)
+	{
+		sbar->setText("");
 		return;
+	}
 
  // set column focus
 	current_service = serviceentries.begin();

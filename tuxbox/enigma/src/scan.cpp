@@ -263,9 +263,8 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 
 void tsAutomatic::start()
 {
-    
-    int snocircular=c_nocircular->isChecked();
-    eConfig::getInstance()->setKey("/elitedvb/DVB/config/nocircular",snocircular);    
+	int snocircular=c_nocircular->isChecked();
+	eConfig::getInstance()->setKey("/elitedvb/DVB/config/nocircular",snocircular);    
 
 	eDVBScanController *sapi=eDVB::getInstance()->getScanAPI();
 	if (!sapi)
@@ -275,10 +274,11 @@ void tsAutomatic::start()
 	} else
 	{
 		tpPacket *pkt=(tpPacket*)(l_network->getCurrent() -> getKey());
-		for (std::list<eTransponder>::iterator i(pkt->possibleTransponders.begin()); i != pkt->possibleTransponders.end(); ++i){
-		    if(snocircular)
-			i->satellite.polarisation&=1;   // CEDR
-		    sapi->addTransponder(*i);
+		for (std::list<eTransponder>::iterator i(pkt->possibleTransponders.begin()); i != pkt->possibleTransponders.end(); ++i)
+		{
+			if(snocircular)
+				i->satellite.polarisation&=1;   // CEDR
+			sapi->addTransponder(*i);
 		}
 
 		// scanflags auswerten

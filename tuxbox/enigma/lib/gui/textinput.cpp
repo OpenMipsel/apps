@@ -270,8 +270,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 			{
 				nextCharTimer.stop();
 				editMode=false;
-				setText(oldText,false);
-				invalidate();
+				setText(oldText);
 				eWindow::globalCancel(eWindow::ON);
 			}
 			else if (event.action == &i_numberActions->key0)

@@ -16,37 +16,28 @@ eWidget *eWidget::root;
 Signal2< void, ePtrList<eAction>*, int >eWidget::showHelp;
 eWidget::actionMapList eWidget::globalActions;
 
-eWidget::eWidget(eWidget *_parent, int takefocus):
-	parent(_parent ? _parent : root),
+eWidget::eWidget(eWidget *_parent, int takefocus)
+	:helpID(0), parent(_parent ? _parent : root),
 	shortcut(0), shortcutFocusWidget(0),
 	focus(0), TLW(0), takefocus(takefocus),
+	state( parent && !(parent->state&stateVisible) ? stateShow : 0 ),
+	target(0), in_loop(0), have_focus(0), just_showing(0),
 	font( parent ? parent->font : eSkin::getActive()->queryFont("global.normal") ),
 	backgroundColor(_parent?gColor(-1):gColor(eSkin::getActive()->queryScheme("global.normal.background"))),
-	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground")))
-{
+	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground"))),
+	pixmap(0)
 #ifndef DISABLE_LCD
-	LCDTitle=0;
-	LCDElement=0;
-	LCDTmp=0;
+	,LCDTitle(0)
+	,LCDElement(0)
+	,LCDTmp(0)
 #endif
-	target=0;
-	in_loop=0;
-	if (parent && !(parent->state&stateVisible))
-		state=stateShow;
-	else
-		state=0;
-
- 	have_focus=0;
- 	pixmap=0;
+{
 	if (takefocus)
 		getTLW()->focusList()->push_back(this);
 
 	if (parent)
 		parent->childlist.push_back(this);
-		
-	just_showing=0;
 
-	helpID=0;
 	addActionMap(&i_cursorActions->map);
 }
 
@@ -800,14 +791,12 @@ void eWidget::setFont(const gFont &fnt)
 	event(eWidgetEvent(eWidgetEvent::changedFont));
 }
 
-void eWidget::setText(const eString &label, bool inv)
+void eWidget::setText(const eString &label)
 {
 	if (label != text)	// ein compare ist immer weniger arbeit als ein unnoetiges redraw
 	{
 		text=label;
 		event(eWidgetEvent(eWidgetEvent::changedText));
-		if (inv)
-			invalidate();
 	}
 }
 

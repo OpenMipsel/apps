@@ -41,6 +41,7 @@ protected:
 private:
 	eRect getEntryRect(int n);
 	int eventHandler(const eWidgetEvent &event);
+	void eraseBackground() {};
 	void recalcMaxEntries();
 	void recalcClientRect();
 	int newFocus();
