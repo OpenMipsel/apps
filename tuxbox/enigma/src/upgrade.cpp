@@ -512,7 +512,7 @@ void eUpgrade::flashImage(int checkmd5)
 				case 5:		// dreambox
 				case 6:
 					mtd="0";
-					mtdsize=0x700000;
+					mtdsize=0x600000;
 					break;
 				default:
 					mtd="../null";
