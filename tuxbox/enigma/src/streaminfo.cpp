@@ -147,6 +147,7 @@ static eString getCAName(int casysid, int always)
 	return "";
 }
 
+#ifndef DISABLE_FILE
 class siTags: public eWidget
 {
 	void willShow();
@@ -215,6 +216,7 @@ void siTags::willShow()
 	}
 	eWidget::willShow();
 }
+#endif
 
 class siPID: public eWidget
 {
@@ -518,13 +520,17 @@ eStreaminfo::eStreaminfo(int mode, const eServiceReference &ref, decoderParamete
 		w->move(ePoint(0, 0));
 		w->resize( s );
 		w->hide();
-	} else if (service && service->id3)
+	}
+#ifndef DISABLE_FILE
+	else if (service && service->id3)
 	{
 		w=new siTags(service, this);
 		w->move(ePoint(0, 0));
 		w->resize( s );
 		w->hide();
-	} else
+	}
+#endif
+	else
 	{
 		w=new eLabel(this);
 		w->setText(_("no information is available"));

@@ -1026,6 +1026,40 @@ void eServicePath::setString( const eString& str )
 	}
 }
 
+std::set<eServiceReference> eServiceReference::locked;
+bool eServiceReference::lockedListChanged=false;
+
+void eServiceReference::loadLockedList( const char* filename )
+{
+	locked.clear();
+	FILE *f=fopen(filename, "r");
+	if (!f)
+		return;
+	char line[256];
+	fgets(line, 256, f);
+	while (true)
+	{
+		if (!fgets( line, 256, f ))
+			break;
+		if (strstr(line, "Parentallocked Services\n"))
+			continue;
+		line[strlen(line)-1]=0;
+		locked.insert( eServiceReference(line) );
+	}
+	fclose(f);
+}
+
+void eServiceReference::saveLockedList( const char* filename )
+{
+	FILE *f=fopen(filename, "wt");
+	if (!f)
+		return;
+	fprintf(f, "Parentallocked Services\n");
+	for ( std::set<eServiceReference>::iterator it = locked.begin(); it != locked.end(); it++ )
+		fprintf( f, "%s\n", it->toString().c_str() );
+	fclose(f);
+}
+
 eServicePath::eServicePath( const eString& str )
 {
 	setString(str);

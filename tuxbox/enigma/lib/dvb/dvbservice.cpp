@@ -2,7 +2,10 @@
 #include <lib/dvb/si.h>
 #include <errno.h>
 #include <lib/dvb/decoder.h>
-#include <lib/dvb/dvbci.h>
+#ifndef DISABLE_CI
+	#include <lib/dvb/dvbci.h>
+#endif
+#include <lib/dvb/service.h>
 #include <lib/dvb/eaudio.h>
 
 eDVBServiceController::eDVBServiceController(eDVB &dvb)
@@ -428,11 +431,13 @@ void eDVBServiceController::scanPMT()
 
 	Decoder::parms.descriptor_length=0;
 	
+#ifndef DISABLE_CI
 	DVBCI=eDVB::getInstance()->DVBCI;
 	DVBCI2=eDVB::getInstance()->DVBCI2;
 
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTflush, pmt->program_number));
 	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTflush, pmt->program_number));
+#endif
 
 	isca+=checkCA(calist, pmt->program_info);
 
@@ -464,8 +469,10 @@ void eDVBServiceController::scanPMT()
 	{
 		PMTEntry *pe=*i;
 
+#ifndef DISABLE_CI
 		DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddPID, pe->elementary_PID,pe->stream_type));
 		DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddPID, pe->elementary_PID,pe->stream_type));
+#endif
 
 		switch (pe->stream_type)
 		{
@@ -535,8 +542,10 @@ void eDVBServiceController::scanPMT()
 		}
 	}
 
+#ifndef DISABLE_CI
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
 	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::go));
+#endif
 
 	if (sac3default && ac3_audio)
 		audio=ac3_audio;
@@ -708,6 +717,7 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
 			CADescriptor *ca=(CADescriptor*)*i;
 			Decoder::addCADescriptor((__u8*)(ca->data));
 
+#ifndef DISABLE_CI 
 			unsigned  char *buf=new unsigned char[ca->data[1]+2];
 			memcpy(buf, ca->data, ca->data[1]+2);
 			DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf));
@@ -715,6 +725,7 @@ int eDVBServiceController::checkCA(ePtrList<CA> &list, const ePtrList<Descriptor
 			unsigned  char *buf2=new unsigned char[ca->data[1]+2];
 			memcpy(buf2, ca->data, ca->data[1]+2);
 			DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::PMTaddDescriptor, buf2));
+#endif
 
 			int avail=0;
 			if (availableCASystems.find(ca->CA_system_ID) != availableCASystems.end())

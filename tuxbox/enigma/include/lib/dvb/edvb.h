@@ -41,7 +41,9 @@ class eDVB;
 
 class eTransponder;
 
+#ifndef DISABLE_CI
 class eDVBCI;
+#endif
 
 class eDVBEvent
 {
@@ -94,7 +96,9 @@ class eDVB: public Object
 {
 	static eDVB *instance;
 
+#ifndef DISABLE_FILE
 	void recMessage(int);
+#endif // DISABLE_FILE
 public:
 		/** tables for current service/transponder */
 	eAUTable<PAT> tPAT;
@@ -106,8 +110,10 @@ public:
 	EIT *parentEIT;
 
 	eDVBRecorder *recorder;
+#ifndef DISABLE_CI
 	eDVBCI *DVBCI;
 	eDVBCI *DVBCI2;
+#endif
 
 public:
 	enum
@@ -163,7 +169,8 @@ public:
 	 * Configures the network according to the configuration stored in the registry.
 	 */
 	void configureNetwork();
-	
+
+#ifndef DISABLE_FILE
 			// recording
 		/// starts a new recording
 	void recBegin(const char *filename, eServiceReferenceDVB service);
@@ -173,6 +180,7 @@ public:
 	void recResume();
 		/// closes a recording
 	void recEnd();
+#endif //DISABLE_FILE
 	
 	int time_difference;
 	

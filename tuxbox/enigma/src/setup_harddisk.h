@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #ifndef __lib_apps_enigma_setup_harddisk_h
 #define __lib_apps_enigma_setup_harddisk_h
 
@@ -49,3 +51,5 @@ public:
 };
 
 #endif
+
+#endif //DISABLE_FILE

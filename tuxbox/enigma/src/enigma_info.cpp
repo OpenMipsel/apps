@@ -17,10 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.16 2003/04/17 00:49:19 ghostrider Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.17 2003/05/07 16:57:57 ghostrider Exp $
  */
 
 #include <enigma_info.h>
+#include <unistd.h>
 
 #include <satfind.h>
 #include <streaminfo.h>
@@ -59,12 +60,21 @@ void eZapInfo::sel_close()
 
 void eZapInfo::sel_satfind()
 {
-	eSatfind s(eFrontend::getInstance());
-	hide();
-	s.show();
-	s.exec();
-	s.hide();
-	show();
+    int pid;
+    eSatfind s(eFrontend::getInstance());
+    hide();
+
+    pid=fork();
+    if( pid==0 ){   // child process
+        system("satfind");
+	_exit(0);
+    }
+    s.show();
+    s.exec();
+    s.hide();
+    if(pid!=-1)
+	system("killall -9 satfind");
+    show();
 }
 
 void eZapInfo::sel_streaminfo()
@@ -257,7 +267,7 @@ public:
 		}
 		
 		eString sharddisks;
-		
+#ifndef DISABLE_FILE
 		for (int c='a'; c<'h'; c++)
 		{
 			char line[1024];
@@ -296,7 +306,7 @@ public:
 				sharddisks+=")\n";
 			}
 		}
-		
+#endif //DISABLE_FILE
 		if (sharddisks == "")
 			sharddisks=_("none");
 		harddisks->setText(sharddisks);

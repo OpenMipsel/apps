@@ -11,6 +11,8 @@
 
 class eServiceHandlerDVB;
 
+#ifndef DISABLE_FILE
+
 class eDVRPlayerThread: public eThread, public eMainloop, public Object
 {
 	eServiceHandlerDVB *handler;
@@ -75,9 +77,11 @@ public:
 	void thread();
 };
 
+#endif //DISABLE_FILE
 
 class eServiceHandlerDVB: public eServiceHandler
 {
+#ifndef DISABLE_FILE
 	friend class eDVRPlayerThread;
 	int recording;
 
@@ -98,8 +102,14 @@ class eServiceHandlerDVB: public eServiceHandler
 	eFixedMessagePump<eDVRPlayerThreadMessage> messages;
 	eDVRPlayerThread *decoder;
 	eString current_filename;
-	
+
+			// (u.a.) timeshift:
+	void startPlayback(const eString &file, int livemode);
+	void stopPlayback(int waslivemode=0);
+
 	void gotMessage(const eDVRPlayerThreadMessage &message);
+	void handleDVBEvent( const eDVBEvent& );
+#endif //DISABLE_FILE
 
 	void scrambledStatusChanged(bool);
 	void switchedService(const eServiceReferenceDVB &, int);
@@ -113,11 +123,6 @@ class eServiceHandlerDVB: public eServiceHandler
 	int pcrpid;
 
 	eServiceCache<eServiceHandlerDVB> cache;
-	void handleDVBEvent( const eDVBEvent& );
-	
-			// (u.a.) timeshift:
-	void startPlayback(const eString &file, int livemode);
-	void stopPlayback(int waslivemode=0);
 public:
 	int getID() const;
 	eServiceHandlerDVB();

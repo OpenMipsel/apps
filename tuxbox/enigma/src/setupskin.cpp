@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.5 2003/01/07 05:22:17 Ghostrider Exp $
+ * $Id: setupskin.cpp,v 1.11.2.6 2003/05/07 16:57:57 ghostrider Exp $
  */
 
 #include <setupskin.h>
@@ -33,7 +33,12 @@ void eSkinSetup::loadSkins()
 {
 	eListBoxEntrySkin* selection=0;
 
-	const char *skinPaths[] = { CONFIGDIR "/enigma/skins/", DATADIR "/enigma/skins/", 0 };
+	const char *skinPaths[] =
+	{
+		CONFIGDIR "/enigma/skins/",
+		DATADIR "/enigma/skins/",
+		0
+	};
 
 	char *current_skin=0;
 	eConfig::getInstance()->getKey("/ezap/ui/skin", current_skin);
@@ -42,26 +47,28 @@ void eSkinSetup::loadSkins()
 
 	for (int i=0; skinPaths[i]; ++i)
 	{
-		struct dirent **namelist=0;
-		int n = scandir(skinPaths[i], &namelist, 0, alphasort);
-
-		if ( n < 0 && i)
+		DIR *d=opendir(skinPaths[i]);
+		if (!d)
 		{
-			eDebug("error reading skin directory");
-			eMessageBox msg("error reading skin directory", "error");
-			msg.show();
-			msg.exec();
-			msg.hide();
+			if (i)
+			{
+				eDebug("error reading skin directory");
+				eMessageBox msg("error reading skin directory", "error");
+				msg.show();
+				msg.exec();
+				msg.hide();
+			}
 			continue;
 		}
 
-		for(int count=0;count<n;count++)
+		while(struct dirent *e=readdir(d))
 		{
-			if (i && parsedSkins.find(namelist[count]->d_name) != parsedSkins.end() )
+			if (i && parsedSkins.find(e->d_name) != parsedSkins.end() )
 				// ignore loaded skins in var... (jffs2)
 				continue;
 
-			eString	fileName=eString(skinPaths[i]) + eString(namelist[count]->d_name);
+			eString fileName=skinPaths[i];
+			fileName+=e->d_name;
 
 			if (fileName.find(".info") != eString::npos)
 			{
@@ -70,19 +77,17 @@ void eSkinSetup::loadSkins()
 				eDebug("esml = %s, name = %s", esml.c_str(), name.c_str());
 				if (esml.size() && name.size())
 				{
-					parsedSkins.insert(namelist[count]->d_name);
+					parsedSkins.insert(e->d_name);
 					eListBoxEntrySkin *s=new eListBoxEntrySkin(lskins, name, esml);
 					if (current_skin && esml == current_skin)
 						selection=s;
 				}
 			}
-			free(namelist[count]);
 		}
-
-		if (namelist)
-			free(namelist);
+		closedir(d);
 	}
-
+	if ( lskins->getCount() )
+		lskins->sort();
 	if (selection)
 		lskins->setCurrent(selection);
 }

@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #include <lib/dvb/record.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -277,3 +279,5 @@ void eDVBRecorder::writeSection(void *data, int pid)
 		first=0;
 	}
 }
+
+#endif //DISABLE_FILE

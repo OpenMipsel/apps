@@ -221,6 +221,9 @@ void eDVBScanController::handleEvent(const eDVBEvent &event)
 						}
 					}
   					
+					if (flags & flagNoCircularPolarization)
+					    tp.satellite.polarisation&=1;
+
 					if ( addTransponder(tp) )
 						dvb.event(eDVBScanEvent(eDVBScanEvent::eventScanTPadded));
 				}
@@ -458,6 +461,15 @@ void eDVBScanController::setSkipOtherOrbitalPositions(int skipOtherOP)
 		flags|=flagSkipOtherOrbitalPositions;
 	else
 		flags&=~flagSkipOtherOrbitalPositions;
+
+}
+
+void eDVBScanController::setNoCircularPolarization(int nocircular)
+{
+	if (nocircular)
+		flags|=flagNoCircularPolarization;
+	else
+		flags&=~flagNoCircularPolarization;
 
 }
 

@@ -45,6 +45,9 @@
 			<action name="down" key="down" flags="mr" />
 			<action name="left" key="left" flags="mr" />
 			<action name="right" key="right" flags="mr" />
+			<action name="insertchar" key="+" flags="mr" />
+			<action name="deletechar" key="-" flags="mr" />
+			<action name="capslock" key="yellow" flags="mr" />
 			<action name="ok" key="ok" flags="m" />
 			<action name="cancel" key="home" flags="m" />
 		</actionmap>
@@ -58,7 +61,7 @@
 
 		<actionmap name="list">
 			<action name="pagedown" key="right" flags="mr" />
-			<action name="pagedown" key="pageup" flags="mr" />
+			<action name="pageup" key="pageup" flags="mr" />
 			<action name="pageup" key="left" flags="mr" />
 			<action name="pagedown" key="pagedown" flags="mr" />
 		</actionmap>

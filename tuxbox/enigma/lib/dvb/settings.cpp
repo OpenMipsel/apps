@@ -30,6 +30,37 @@ void eDVBSettings::removeDVBBouquets()
 	}
 }
 
+void eDVBSettings::removeDVBBouquet(int bouquet_id)
+{
+	for (ePtrList<eBouquet>::iterator i(bouquets); i != bouquets.end();)
+	{
+		if ( i->bouquet_id == bouquet_id)
+		{
+			eDebug("removing bouquet '%s'", i->bouquet_name.c_str());
+			i = bouquets.erase(i);
+			bouquetsChanged=1;
+		}
+		else
+		{
+			i++;
+		}
+	}
+}
+
+void eDVBSettings::renameDVBBouquet(int bouquet_id, eString& new_name)
+{
+	for (ePtrList<eBouquet>::iterator i(bouquets); i != bouquets.end();)
+	{
+		if ( i->bouquet_id == bouquet_id)
+		{
+			eDebug("renaming bouquet '%s' to '%s'", i->bouquet_name.c_str(), new_name.c_str());
+			i->bouquet_name=new_name;
+			bouquetsChanged=1;
+		}
+		i++;
+	}
+}
+
 void eDVBSettings::addDVBBouquet(eDVBNamespace origin, const BAT *bat )
 {
 	eDebug("wir haben da eine bat, id %x", bat->bouquet_id);
@@ -94,7 +125,7 @@ static eString beautifyBouquetName(eString bouquet_name)
 	return bouquet_name;
 }
 
-eBouquet *eDVBSettings::getBouquet(eString bouquet_name)
+eBouquet *eDVBSettings::getBouquet(eString& bouquet_name)
 {
 	for (ePtrList<eBouquet>::iterator i(bouquets); i != bouquets.end(); i++)
 		if (!i->bouquet_name.icompare(bouquet_name))

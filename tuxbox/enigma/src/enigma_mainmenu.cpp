@@ -49,6 +49,7 @@ void eMainMenu::setActive(int i)
 	case 1:
 		description->setText(eString("(2) ") + eString(_("Radio mode")));
 		break;
+#ifndef DISABLE_FILE
 	case 2:
 		description->setText(eString("(3) ") + eString(_("File mode")));
 		break;
@@ -69,8 +70,27 @@ void eMainMenu::setActive(int i)
 		break;
 	case 8:
 		description->setText(eString("(9) ") + eString(_("Timer")));
+#else
+	case 2:
+		description->setText(eString("(3) ") + eString(_("Information")));
+		break;
+	case 3:
+		description->setText(eString("(4) ") + eString(_("Shutdown")));
+		break;
+	case 4:
+		description->setText(eString("(5) ") + eString(_("Setup")));
+		break;
+	case 5:
+		description->setText(eString("(6) ") + eString(_("Games")));
+		break;
+	case 6:
+		description->setText(eString("(7) ") + eString(_("VCR")));
+		break;
+	case 7:
+		description->setText(eString("(8) ") + eString(_("Timer")));
+#endif
 	}
-	
+
 	if (LCDTitle)
 		LCDTitle->setText(_("Mainmenu"));
 
@@ -135,11 +155,13 @@ void eMainMenu::sel_radio()
 	close(0);
 }
 
+#ifndef DISABLE_FILE
 void eMainMenu::sel_file()
 {
   eZapMain::getInstance()->setMode(eZapMain::modeFile, 1);
 	close(0);
 }
+#endif
 
 void eMainMenu::sel_vcr()
 {
@@ -170,7 +192,7 @@ void eMainMenu::sel_info()
 	show();
 }
 
-extern bool checkPin( int pin, const char * text );
+extern bool checkPin( int, const char* );
 
 void eMainMenu::sel_setup()
 {
@@ -179,13 +201,17 @@ void eMainMenu::sel_setup()
 
 	if ( checkPin( setuppin, _("setup") ) )
 	{
-		eZapLCD *pLCD=eZapLCD::getInstance();
-		eZapSetup setup;
-		setup.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
 		hide();
-		setup.show();
-		setup.exec();
-		setup.hide();
+		int i=0;
+		do{
+			eZapLCD *pLCD=eZapLCD::getInstance();
+			eZapSetup setup;
+			setup.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+			setup.show();
+			i=setup.exec();
+			setup.hide();
+		}while(i==-1);      // to redisplay Setup after language change
+		setActive(active);  // --"--
 		show();
 	}
 }
@@ -291,6 +317,7 @@ void eMainMenu::selected(int i)
 	case 1:
 		sel_radio();
 		break;
+#ifndef DISABLE_FILE
 	case 2:
 		sel_file();
 		break;
@@ -312,6 +339,26 @@ void eMainMenu::selected(int i)
 	case 8:
 		sel_timer();
 		break;
+#else
+	case 2:
+		sel_info();
+		break;
+	case 3:
+		sel_quit();
+		break;
+	case 4:
+		sel_setup();
+		break;
+	case 5:
+		sel_plugins();
+		break;
+	case 6:
+		sel_vcr();
+		break;
+	case 7:
+		sel_timer();
+		break;
+#endif
 	}
 }
 

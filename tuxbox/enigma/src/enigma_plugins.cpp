@@ -134,13 +134,10 @@ eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 
 int eZapPlugins::exec()
 {
-	struct dirent **namelist;
-
 	for ( int i = 0; i < 2; i++ )
 	{
-		int n = scandir(PluginPath[i].c_str(), &namelist, 0, alphasort);
-
-		if (n < 0)
+		DIR *d=opendir(PluginPath[i].c_str());
+		if (!d && i)
 		{
 			eString err;
 			err.sprintf(_("Couldn't read plugin directory %s"), PluginPath[i].c_str() );
@@ -155,19 +152,15 @@ int eZapPlugins::exec()
 			}
 			continue;
 		}
-
-		for(int count=0;count<n;count++)
+		while (struct dirent *e=readdir(d))
 		{
-			eString	FileName = namelist[count]->d_name;
+			eString FileName = e->d_name;
 			
 			if ( FileName.find(".cfg") != eString::npos )
 				new ePlugin(&list, (PluginPath[i]+FileName).c_str());
-
-			free(namelist[count]);
 		}
-		free(namelist);
+		closedir(d);
 	}
-	
 	show();
 	int res=eListBoxWindow<ePlugin>::exec();
 	hide();

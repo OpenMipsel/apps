@@ -1,6 +1,7 @@
 #define TIMESHIFT
 		// intial time to lag behind live
 #define TIMESHIFT_GUARD (1024*1024)
+#include <lib/base/i18n.h>
 #include <lib/dvb/servicedvb.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
@@ -14,6 +15,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+
+#ifndef DISABLE_FILE
 
 eDVRPlayerThread::eDVRPlayerThread(const char *_filename, eServiceHandlerDVB *handler, int livemode )
 	:handler(handler), buffer(64*1024), livemode(livemode), liveupdatetimer(this), lock(), messages(this, 1)
@@ -391,22 +394,16 @@ void eDVRPlayerThread::gotMessage(const eDVRPlayerThreadMessage &message)
 	}
 }
 
-int eServiceHandlerDVB::getID() const
+void eServiceHandlerDVB::gotMessage(const eDVRPlayerThreadMessage &message)
 {
-	return eServiceReference::idDVB;
-}
-
-void eServiceHandlerDVB::scrambledStatusChanged(bool scrambled)
-{
-	int oldflags=flags;
-
-	if (scrambled)
-		flags |= flagIsScrambled;
-	else
-		flags &= ~flagIsScrambled;
-
-	if (oldflags != flags)
-		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
+	if (message.type == eDVRPlayerThreadMessage::done)
+	{
+		state=stateStopped;
+		serviceEvent(eServiceEvent(eServiceEvent::evtEnd));
+	} else if (message.type == eDVRPlayerThreadMessage::liveeof)
+	{
+		stopPlayback(1);
+	}
 }
 
 void eServiceHandlerDVB::handleDVBEvent( const eDVBEvent & e )
@@ -453,6 +450,26 @@ void eServiceHandlerDVB::stopPlayback( int waslivemode )
 	}
 }
 
+#endif //DISABLE_FILE
+
+int eServiceHandlerDVB::getID() const
+{
+	return eServiceReference::idDVB;
+}
+
+void eServiceHandlerDVB::scrambledStatusChanged(bool scrambled)
+{
+	int oldflags=flags;
+
+	if (scrambled)
+		flags |= flagIsScrambled;
+	else
+		flags &= ~flagIsScrambled;
+
+	if (oldflags != flags)
+		serviceEvent(eServiceEvent(eServiceEvent::evtFlagsChanged) );
+}
+
 void eServiceHandlerDVB::switchedService(const eServiceReferenceDVB &, int err)
 {
 	int oldstate=state;
@@ -494,7 +511,12 @@ void eServiceHandlerDVB::aspectRatioChanged(int isanamorph)
 }
 
 eServiceHandlerDVB::eServiceHandlerDVB()
-	:eServiceHandler(eServiceReference::idDVB), messages(eApp, 0), decoder(0), cache(*this)
+	:eServiceHandler(eServiceReference::idDVB),
+#ifndef DISABLE_FILE
+	messages(eApp, 0),
+	decoder(0),
+#endif
+	cache(*this)
 {
 	if (eServiceInterface::getInstance()->registerHandler(id, this)<0)
 		eFatal("couldn't register serviceHandler %d", id);
@@ -505,52 +527,57 @@ eServiceHandlerDVB::eServiceHandlerDVB()
 	CONNECT(eDVB::getInstance()->gotSDT, eServiceHandlerDVB::gotSDT);
 	CONNECT(eDVB::getInstance()->gotPMT, eServiceHandlerDVB::gotPMT);
 	CONNECT(eDVB::getInstance()->leaveService, eServiceHandlerDVB::leaveService);
+#ifndef DISABLE_FILE
 	CONNECT(eDVB::getInstance()->eventOccured, eServiceHandlerDVB::handleDVBEvent);
+#endif
 	CONNECT(eStreamWatchdog::getInstance()->AspectRatioChanged, eServiceHandlerDVB::aspectRatioChanged);
 
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 0xFFFFFFFF, 0xFFFFFFFF),
-			new eService("DVB - bouquets", eService::spfColCombi)
+			new eService( _("DVB - bouquets"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF),
-			new eService("DVB - bouquets (TV)", eService::spfColCombi)
+			new eService( _("DVB - bouquets (TV)"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ),
-			new eService("DVB - bouquets (Radio)", eService::spfColCombi)
+			new eService( _("DVB - bouquets (Radio)"), eService::spfColCombi)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 0xFFFFFFFF, 0xFFFFFFFF), 
-			new eService("DVB - all services", eService::spfColMulti)
+			new eService( _("DVB - all services"), eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, (1<<4)|(1<<1), 0xFFFFFFFF ), // TV and NVOD
-			new eService("DVB - TV services", eService::spfColMulti)
+			new eService( _("DVB - TV services"), eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -2, 1<<2, 0xFFFFFFFF ), // radio
-			new eService("DVB - Radio services", eService::spfColMulti)
+			new eService( _("DVB - Radio services"), eService::spfColMulti)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1)),
-			new eService("Satellites", eService::spfColSingle)
+			new eService( _("Satellites"), eService::spfColSingle)
 		);
 	cache.addPersistentService(
 			eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2),
-			new eService("Satellites", eService::spfColSingle)
+			new eService( _("Satellites"), eService::spfColSingle)
 		);
 	CONNECT(eServiceFileHandler::getInstance()->fileHandlers, eServiceHandlerDVB::addFile);
-		
+#ifndef DISABLE_FILE
 	recording=0;
 	CONNECT(messages.recv_msg, eServiceHandlerDVB::gotMessage);
 	messages.start();
+#endif
 }
 
 eServiceHandlerDVB::~eServiceHandlerDVB()
 {
+#ifndef DISABLE_FILE
 	if (recording)
 		eDVB::getInstance()->recEnd();
+#endif
 	if (eServiceInterface::getInstance()->unregisterHandler(id)<0)
 		eFatal("couldn't unregister serviceHandler %d", id);
 }
@@ -562,11 +589,13 @@ int eServiceHandlerDVB::play(const eServiceReference &service)
 	if (service.type != eServiceReference::idDVB)
 		return -1;
 //	int oldflags=flags;
+#ifndef DISABLE_FILE
 	decoder=0;
 
 	if (service.path.length())
 		startPlayback(service.path, 0);
 	else
+#endif
 		flags &= ~(flagIsSeekable|flagSupportPosition);
 
 //	if (oldflags != flags)
@@ -581,6 +610,7 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 {
 	switch (cmd.type)
 	{
+#ifndef DISABLE_FILE
 	case eServiceCommand::cmdRecordOpen:
 	{
 		if (!recording)
@@ -682,6 +712,7 @@ int eServiceHandlerDVB::serviceCommand(const eServiceCommand &cmd)
 			return -1;
 		decoder->messages.send(eDVRPlayerThread::eDVRPlayerThreadMessage(eDVRPlayerThread::eDVRPlayerThreadMessage::seekmode, 0));
 		break;
+#endif // DISABLE_FILE
 	default:
 		return -1;
 	}
@@ -735,13 +766,16 @@ int eServiceHandlerDVB::stop()
 	if (sapi)
 		sapi->switchService(eServiceReferenceDVB());
 
+#ifndef DISABLE_FILE
 	stopPlayback();
+#endif
 
 	return 0;
 }
 
 void eServiceHandlerDVB::addFile(void *node, const eString &filename)
 {
+#ifndef DISABLE_FILE
 	if (filename.right(3).upper()==".TS")
 	{
 		struct stat s;
@@ -749,6 +783,7 @@ void eServiceHandlerDVB::addFile(void *node, const eString &filename)
 			return;
 		eServiceFileHandler::getInstance()->addReference(node, eServiceReference(id, 0, filename));
 	}
+#endif
 }
 
 struct eServiceHandlerDVB_addService
@@ -756,12 +791,16 @@ struct eServiceHandlerDVB_addService
 	Signal1<void,const eServiceReference&> &callback;
 	int type;
 	int DVBNamespace;
+	int pLockActive;
 	eServiceHandlerDVB_addService(Signal1<void,const eServiceReference&> &callback, int type, int DVBNamespace)
-	: callback(callback), type(type), DVBNamespace(DVBNamespace)
+	: callback(callback), type(type), DVBNamespace(DVBNamespace), pLockActive(0)
 	{
+		pLockActive = eConfig::getInstance()->pLockActive();
 	}
 	void operator()(const eServiceReference &service)
 	{
+		if ( pLockActive && service.isLocked() )
+			return;
 		eService *s = eTransponderList::getInstance()->searchService( service );
 		if ( s && s->spflags & eServiceDVB::dxDontshow )
 			return;
@@ -809,6 +848,7 @@ void eServiceHandlerDVB::enterDirectory(const eServiceReference &ref, Signal1<vo
 
 eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 {
+#ifndef DISABLE_FILE
 	if (node.data[0]>=0)
 	{
 		eString l=node.path.mid(node.path.rfind('/')+1);
@@ -864,6 +904,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 			return new eService(l);
 		return dvb;
 	}
+#endif // DISABLE_FILE
 	switch (node.data[0])
 	{
 	case -1: // for satellites...
@@ -872,7 +913,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 		if ( it == eTransponderList::getInstance()->getNetworkNameMap().end() )
 			return 0;
 		else
-			return new eService( it->second.name+" - bouquets", eService::spfColCombi);
+			return new eService( it->second.name+ _(" - bouquets"), eService::spfColCombi);
 	}
 	case -2: // for satellites...
 	{
@@ -880,7 +921,7 @@ eService *eServiceHandlerDVB::createService(const eServiceReference &node)
 		if ( it == eTransponderList::getInstance()->getNetworkNameMap().end() )
 			return 0;
 		else
-			return new eService( it->second.name+" - services", eService::spfColMulti);
+			return new eService( it->second.name+ _(" - services"), eService::spfColMulti);
 	}
 	case -3:
 	{
@@ -1023,20 +1064,9 @@ void eServiceHandlerDVB::removeRef(const eServiceReference &service)
 	}
 }
 
-void eServiceHandlerDVB::gotMessage(const eDVRPlayerThreadMessage &message)
-{
-	if (message.type == eDVRPlayerThreadMessage::done)
-	{
-		state=stateStopped;
-		serviceEvent(eServiceEvent(eServiceEvent::evtEnd));
-	} else if (message.type == eDVRPlayerThreadMessage::liveeof)
-	{
-		stopPlayback(1);
-	}
-}
-
 int eServiceHandlerDVB::getPosition(int what)
 {
+#ifndef DISABLE_FILE
 	if (!decoder)
 		return -1;
 	switch (what)
@@ -1052,6 +1082,9 @@ int eServiceHandlerDVB::getPosition(int what)
 	default:
 		return -1;
 	}
+#else
+	return -1;
+#endif
 }
 
 eAutoInitP0<eServiceHandlerDVB> i_eServiceHandlerDVB(eAutoInitNumbers::service+2, "eServiceHandlerDVB");

@@ -135,7 +135,7 @@ protected:
 	eString helptext;
 public:
 	eListBoxEntry(eListBox<eListBoxEntry>* parent, eString hlptxt=0)
-		:listbox(parent), helptext(hlptxt?hlptxt:_("no description avail"))
+		:listbox(parent), helptext(hlptxt?hlptxt:eString(" "))
 	{
 		if (listbox)
 			listbox->append(this);
@@ -195,6 +195,7 @@ public:
 	void *& getKey() { return key; }
 	const void* getKey() const { return key; }
 	const eString& getText() { return text; }
+	void SetText(const eString& txt); // not setText !!!
 protected:
 	const eString& redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state );
 };

@@ -431,7 +431,7 @@ void eListBoxBase::gotFocus()
 	}
 	if (flags & flagShowEntryHelp)
 	{
-		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
+		setHelpText( current != childs.end() ? current->getHelpText(): eString(" ")); // eString(_("no description available")));
 	}
 }
 
@@ -883,4 +883,13 @@ const eString &eListBoxEntryTextStream::redraw(gPainter *rc, const eRect& rect, 
 
 	static eString ret = text.str();
 	return ret;
+}
+
+void eListBoxEntryText::SetText(const eString& txt)
+{
+	if(para){
+		para->destroy();
+		para=0;
+	};
+	text=txt;
 }

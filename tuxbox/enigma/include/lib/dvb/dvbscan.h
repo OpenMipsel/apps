@@ -53,7 +53,8 @@ class eDVBScanController: public eDVBController, public Object
 		flagNetworkSearch=4,
 		flagSkipKnownNIT=8,
 		flagClearList=16,
-		flagSkipOtherOrbitalPositions=32
+		flagSkipOtherOrbitalPositions=32,
+		flagNoCircularPolarization=64
 	};
 	
 	int scanOK;	// 1 SDT, 2 NIT, 4 BAT, 8 oNIT
@@ -88,6 +89,7 @@ public:
 	void setClearList(int clearlist);
 	void setSkipKnownNIT(int skip);
 	void setSkipOtherOrbitalPositions(int skipOtherOP);
+	void setNoCircularPolarization(int nocircular);
 	
 	void start();
 };

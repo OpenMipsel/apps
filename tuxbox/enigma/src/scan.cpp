@@ -215,6 +215,13 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 	c_eraseall->setName("eraseall");
 	c_eraseall->hide();
 
+	int snocircular=0;
+	eConfig::getInstance()->getKey("/elitedvb/DVB/config/nocircular",snocircular);
+	c_nocircular=new eCheckbox(this,snocircular);
+	c_nocircular->setName("nocircular");
+	c_nocircular->hide();
+	
+
 	b_start=new eButton(this);
 	b_start->setName("start");
 	b_start->hide();
@@ -254,6 +261,10 @@ tsAutomatic::tsAutomatic(eWidget *parent): eWidget(parent)
 
 void tsAutomatic::start()
 {
+    
+    int snocircular=c_nocircular->isChecked();
+    eConfig::getInstance()->setKey("/elitedvb/DVB/config/nocircular",snocircular);    
+
 	eDVBScanController *sapi=eDVB::getInstance()->getScanAPI();
 	if (!sapi)
 	{	
@@ -262,8 +273,11 @@ void tsAutomatic::start()
 	} else
 	{
 		tpPacket *pkt=(tpPacket*)(l_network->getCurrent() -> getKey());
-		for (std::list<eTransponder>::iterator i(pkt->possibleTransponders.begin()); i != pkt->possibleTransponders.end(); ++i)
-			sapi->addTransponder(*i);
+		for (std::list<eTransponder>::iterator i(pkt->possibleTransponders.begin()); i != pkt->possibleTransponders.end(); ++i){
+		    if(snocircular)
+			i->satellite.polarisation&=1;   // CEDR
+		    sapi->addTransponder(*i);
+		}
 
 		// scanflags auswerten
 		sapi->setSkipKnownNIT(pkt->scanflags & 8);
@@ -275,6 +289,7 @@ void tsAutomatic::start()
 		sapi->setSkipOtherOrbitalPositions(1);
 
 		sapi->setClearList(c_eraseall->isChecked());
+		sapi->setNoCircularPolarization(snocircular);
 
 		close(0);
 	}
@@ -310,6 +325,7 @@ void tsAutomatic::dvbEvent(const eDVBEvent &event)
 		} else
 		{
 			c_eraseall->show();
+			c_nocircular->show();
 			b_start->show();
 			setFocus(c_eraseall);
 			l_status->setText(_("A valid transponder has been found. Verify that the right network is selected"));
@@ -392,7 +408,7 @@ int tsAutomatic::tuneNext(int next)
 	static int i=0;
 	i++;
 	std::string progress=_("Search in progress ");
-	progress+="\\-/|"[i&3];
+	progress+="\\|/-"[i&3];
 	l_status->setText(progress);
 
 	return 0;
@@ -737,7 +753,7 @@ int TransponderScan::exec(int initial)
 			scan.exec();
 			scan.hide();
 
-			text.sprintf(_("The transponder scan has finished and found %i new Transponders, %i new TV Services, %i new Radio Services and %i new Data Services. %i Transponders within %i Services scanned."), scan.newTransponders, scan.newTVServices, scan.newRadioServices, scan.newDataServices, scan.tpScanned, scan.servicesScanned );
+			text.sprintf(_("The transponder scan has finished and found \n   %i new Transponders,\n   %i new TV Services,\n   %i new Radio Services and\n   %i new Data Services.\n%i Transponders within %i Services scanned."), scan.newTransponders, scan.newTVServices, scan.newRadioServices, scan.newDataServices, scan.tpScanned, scan.servicesScanned );
 			scanok=1;
 			
 			state=stateDone;
@@ -754,7 +770,7 @@ int TransponderScan::exec(int initial)
 			statusbar->setText(_("Scan is in finished, press ok to close window"));
 			finish.exec();
 			finish.hide();
-			eMessageBox mb(eString().sprintf(_("Do you want to scan another %s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
+			eMessageBox mb(eString().sprintf(_("Do you want\n to scan another\n %s?"),oldstate==stateAutomatic?_("Satellite"):_("Transponder")),
 				_("Scan finished"),
 				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
 				eMessageBox::btYes );

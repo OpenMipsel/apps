@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #include <engrab.h>
 #include <stdio.h>
 #include <fstream>
@@ -205,3 +207,5 @@ ENgrabWnd::ENgrabWnd()
 	CONNECT((new eListBoxEntryMenu(&lb, _("stopp recording"), _("stop manual recording") ))->selected, ENgrabWnd::manualStop);
 	lb.moveSelection(eListBox<eListBoxEntryMenu>::dirFirst);
 }
+
+#endif // DISABLE_FILE

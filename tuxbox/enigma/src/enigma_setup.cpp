@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.18 2003/04/15 15:03:00 tmbinc Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.19 2003/05/07 16:57:57 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -101,11 +101,15 @@ eZapSetup::eZapSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), eString().sprintf("(%d) %s", ++entry, _("open audio setup")) ))->selected, eZapSetup::sel_sound);
 	CONNECT((new eListBoxEntryMenu(&list, _("Skin..."), eString().sprintf("(%d) %s", ++entry, _("open skin selector")) ))->selected, eZapSetup::sel_skin);
 	CONNECT((new eListBoxEntryMenu(&list, _("Language..."), eString().sprintf("(%d) %s", ++entry, _("open language selector")) ))->selected, eZapSetup::sel_language);
+#ifndef DISABLE_FILE
 	CONNECT((new eListBoxEntryMenu(&list, _("Ngrab..."), eString().sprintf("(%d) %s", ++entry, _("open ngrab config")) ))->selected, eZapSetup::sel_engrab);
+#endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Extra settings..."), eString().sprintf("(%d) %s", ++entry, _("open extra config")) ))->selected, eZapSetup::sel_extra);
 	CONNECT((new eListBoxEntryMenu(&list, _("Parental settings..."), eString().sprintf("(%d) %s", ++entry, _("open parental setup")) ))->selected, eZapSetup::sel_parental);
+#ifndef DISABLE_FILE
 	if (haveharddisk)
 		CONNECT((new eListBoxEntryMenu(&list, _("Harddisk..."), eString().sprintf("(%d) %s", ++entry, _("open harddisk setup")) ))->selected, eZapSetup::sel_harddisk);
+#endif
 	if (haveci)
 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), eString().sprintf("(%d) %s", ++entry, _("show CI Menu")) ))->selected, eZapSetup::sel_ci);
 	if (havenetwork)
@@ -220,6 +224,7 @@ void eZapSetup::sel_video()
 	show();
 }
 
+#ifndef DISABLE_FILE
 void eZapSetup::sel_engrab()
 {
 	hide();
@@ -230,6 +235,7 @@ void eZapSetup::sel_engrab()
 	setup.hide();
 	show();
 }
+#endif
 
 void eZapSetup::sel_extra()
 {
@@ -254,6 +260,7 @@ void eZapSetup::sel_language()
 	eWizardLanguage::run();
 }
 
+#ifndef DISABLE_FILE
 void eZapSetup::sel_harddisk()
 {
 	hide();
@@ -273,9 +280,11 @@ void eZapSetup::sel_harddisk()
 	}
 	show();
 }
+#endif
 
 void eZapSetup::sel_ci()
 {
+#ifndef DISABLE_CI
 	hide();
 	enigmaCI ci;
 	ci.setLCD(LCDTitle, LCDElement);
@@ -283,6 +292,7 @@ void eZapSetup::sel_ci()
 	ci.exec();
 	ci.hide();
 	show();
+#endif
 }
 
 void eZapSetup::sel_upgrade()

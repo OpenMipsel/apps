@@ -2,6 +2,7 @@
 #include <lib/dvb/servicefile.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
+#include <lib/system/econfig.h>
 #include <lib/base/i18n.h>
 #include <unistd.h>
 
@@ -52,9 +53,9 @@ int ePlaylist::load(const char *filename)
 		return -1;
 	}
 	int ignore_next=0;
+	char line[256];
 	while (1)
 	{
-		char line[256];
 		if (!fgets(line, 256, fp))
 			break;
 		line[strlen(line)-1]=0;
@@ -253,6 +254,8 @@ void eServicePlaylistHandler::removeRef(const eServiceReference &service)
 
 void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback)
 {
+	int pLockActive = eConfig::getInstance()->pLockActive();
+
 	if (dir.type == id)
 	{
 		ePlaylist *service=(ePlaylist*)addRef(dir);
@@ -260,7 +263,11 @@ void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signa
 			return;
 	
 		for (std::list<ePlaylistEntry>::const_iterator i(service->getConstList().begin()); i != service->getConstList().end(); ++i)
+		{
+			if ( pLockActive && i->service.isLocked() )
+				continue;
 			callback(*i);
+		}
 	
 		removeRef(dir);
 	}
@@ -268,6 +275,8 @@ void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signa
 		range=playlists.equal_range(dir);
 	while (range.first != range.second)
 	{
+		if ( pLockActive && range.first->second.isLocked() )
+			continue;
 		callback(range.first->second);
 		++range.first;
 	}

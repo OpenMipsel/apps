@@ -205,7 +205,19 @@ void eTimerManager::actionHandler()
 				conn = CONNECT( eDVB::getInstance()->switchedService, eTimerManager::switchedService );
 				eString save = nextStartingEvent->service.descr;
 				nextStartingEvent->service.descr = getLeft( nextStartingEvent->service.descr, '/' );
-				eZapMain::getInstance()->playService( nextStartingEvent->service, 0 );
+
+				// get Parentallocking state
+				int pLockActive = eConfig::getInstance()->pLockActive() && nextStartingEvent->service.isLocked();
+
+				if ( pLockActive ) // P Locking is active ?
+					eConfig::getInstance()->locked=false;  // then disable for zap
+
+				// switch to service
+				eZapMain::getInstance()->playService( nextStartingEvent->service, eZapMain::psSetMode );
+
+				if ( pLockActive )  // reenable Parental locking
+					eConfig::getInstance()->locked=true;
+
 				nextStartingEvent->service.descr=save;
 			}
 			else
@@ -339,6 +351,8 @@ void eTimerManager::actionHandler()
 				eZapMain::getInstance()->handleStandby();
 				eZapMain::getInstance()->toggleTimerMode();
 			}
+				if ( eConfig::getInstance()->pLockActive() && eServiceInterface::getInstance()->service.isLocked() )
+					eServiceInterface::getInstance()->stop();
 			nextAction=setNextEvent;	// we set the Next Event... a new beginning *g*
 			actionTimer.start(0, true);
 			break;
@@ -440,6 +454,7 @@ void eTimerManager::actionHandler()
 		}
 		break;
 
+#ifndef DISABLE_FILE
 		case startRecording:
 			eDebug("[eTimerManager] start recording");
 			if (nextStartingEvent->type & ePlaylistEntry::recDVR)
@@ -523,7 +538,7 @@ void eTimerManager::actionHandler()
 
 			}
 			break;
-
+#endif // DISABLE_FILE
 		default:
 			eDebug("unhandled timer action");
 	}
@@ -1282,12 +1297,11 @@ void eTimerEditView::createWidgets()
 		new eListBoxEntryText( *emonth, monthStr[i], (void*) i );
 
 	new eListBoxEntryText( *type, _("switch"), (void*) ePlaylistEntry::SwitchTimerEntry );
-	if(eDVB::getInstance()->getmID() != 6)
-	{
-		new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
-		new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
+#ifndef DISABLE_FILE
+	new eListBoxEntryText( *type, _("record DVR"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR) );
+	new eListBoxEntryText( *type, _("Ngrab"), (void*) (ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recNgrab) );
 //		new eListBoxEntryText( *type, _("record VCR"), (void*) ePlaylistEntry::RecTimerEntry|ePlaylisteEntry::recVCR ); );
-	}
+#endif
 }
 
 eTimerEditView::eTimerEditView( ePlaylistEntry* e)
@@ -1380,8 +1394,14 @@ void eTimerEditView::setMultipleCheckboxes( int type )
 	}
 }
 
+extern bool checkPin( int pin, const char * text );
+
 void eTimerEditView::applyPressed()
 {
+	if ( eConfig::getInstance()->pLockActive() && tmpService.isLocked() &&
+			!checkPin( eConfig::getInstance()->getParentalPin(), _("parental")))
+		return;
+
 	EITEvent evt;
 	time_t newEventBegin;
 	int newEventDuration;

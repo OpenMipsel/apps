@@ -300,8 +300,10 @@ private:
 	ePlaylist *playlist; // history / current playlist entries
 	eServiceReference playlistref;
 
+#ifndef DISABLE_FILE
 	ePlaylist *recordings;
 	eServiceReference recordingsref;
+#endif 
 
 	ePlaylist *userTVBouquets;
 	eServiceReference userTVBouquetsRef;
@@ -340,7 +342,6 @@ private:
 	void nextService(int add=0);
 	void prevService();
 	void playlistNextService();
-	void playlistPrevService();
 	void volumeUp();
 	void volumeDown();
 	void hideVolumeSlider();
@@ -363,6 +364,7 @@ private:
 	void hideInfobar();
 	void showHelp( ePtrList<eAction>*, int );
 
+#ifndef DISABLE_FILE
 	void play();
 	void stop();
 	void pause();
@@ -373,6 +375,7 @@ private:
 	void startSkip(int dir);
 	void repeatSkip(int dir);
 	void stopSkip(int dir);
+#endif
 
 	void showServiceMenu(eServiceSelector*);
 
@@ -422,12 +425,14 @@ private:
 	void getPlaylistPosition();
 	void setPlaylistPosition();
 	bool handleState(int justask=0);
-	void blinkRecord();
 
+#ifndef DISABLE_FILE
+	void blinkRecord();
 	void toggleIndexmark();
 	eZapSeekIndices indices;
 	ePtrList<eLabel> indexmarks;
 	void redrawIndexmarks();
+#endif // DISABLE_FILE
 public:
 	void postMessage(const eZapMessage &message, int clear=0);
 	void gotMessage(const int &);
@@ -442,15 +447,21 @@ public:
 		psRemove=2,   // remove before add
 		psActivate=4, // use existing entry if available
 		psDontAdd=8,  // just play
-		psSeekPos=16
+		psSeekPos=16, //
+		psSetMode=32
 	};
 
 	void playService(const eServiceReference &service, int flags);
+	void playlistPrevService();
+
+#ifndef DISABLE_FILE
 	int recordDVR(int onoff, int user, const char* event_name=0 ); // starts recording
+	const eServiceReference& getRecordingsref() { return recordingsref; }
+#endif
 
 	void setMode(int mode, int user=0); // user made change?
 	int getMode() { return mode; }
-	const eServiceReference& getRecordingsref() { return recordingsref; }
+
 	void rotateRoot();
 	void toggleTimerMode();
 	void toggleEditMode(eServiceSelector *);
@@ -466,8 +477,10 @@ public:
 	void loadPlaylist( bool create = false );
 	void savePlaylist( bool destory = false );
 
+#ifndef DISABLE_FILE
 	void loadRecordings( bool create = false );
 	void saveRecordings( bool destory = false );
+#endif
 
 	void loadUserBouquets( bool destroy=true );  // this recreate always all user bouquets...
 
@@ -488,6 +501,8 @@ class eServiceContextMenu: public eListBoxWindow<eListBoxEntryText>
 public:
 	eServiceContextMenu(const eServiceReference &ref, const eServiceReference &path);
 };
+
+#ifndef DISABLE_FILE
 
 class eRecordContextMenu: public eListBoxWindow<eListBoxEntryText>
 {
@@ -513,6 +528,13 @@ public:
 	eRecStopWindow( eWidget *parent, int len, int min, int max, int maxdigits, int *init, int isactive=0, eWidget* descr=0, int grabfocus=1, const char* deco="eNumber" );
 };
 
+class eRecTimeInput: public eRecStopWindow
+{
+	void setPressed();
+public:
+	eRecTimeInput();
+};
+
 class eTimerInput: public eRecStopWindow
 {
 	void setPressed();
@@ -520,11 +542,6 @@ public:
 	eTimerInput();
 };
 
-class eRecTimeInput: public eRecStopWindow
-{
-	void setPressed();
-public:
-	eRecTimeInput();
-};
+#endif //DISABLE_FILE
 
 #endif /* __enigma_main_h */

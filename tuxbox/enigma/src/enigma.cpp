@@ -104,9 +104,6 @@ eZap::eZap(int argc, char **argv)
 
 	eDebug("[ENIGMA] loading default keymaps...");
 
-	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox.xml") )
-		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdreambox.xml");
-
 	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox2.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdreambox2.xml");
 

@@ -1,3 +1,4 @@
+#ifndef DISABLE_FILE
 /*
  * setup_harddisk.cpp
  *
@@ -17,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.18 2003/03/03 23:53:01 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.19 2003/05/07 16:57:57 ghostrider Exp $
  */
 
 #include <setup_harddisk.h>
@@ -616,3 +617,5 @@ void ePartitionCheck::getData( eString str )
 	else if ( str.find("[N/Yes]") != eString::npos )
 		fsck->write("Yes");
 }
+
+#endif // DISABLE_FILE

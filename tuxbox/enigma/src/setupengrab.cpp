@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #include <setupengrab.h>
 #include <plugin.h>
 #include <stdio.h>
@@ -114,3 +116,5 @@ void ENgrabSetup::abortPressed()
 {
 	close(0);
 }
+
+#endif // DISABLE_FILE

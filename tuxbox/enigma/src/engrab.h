@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #ifndef __engrab_h
 #define __engrab_h
 
@@ -36,3 +38,5 @@ public:
 };
 
 #endif
+
+#endif // DISABLE_FILE

@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #include "lib/codecs/codecmpg.h"
 #include <netinet/in.h>
 #include <unistd.h>
@@ -224,3 +226,5 @@ int eMPEGDemux::getAverageBitrate()
 {
 	return 1234567;
 }
+
+#endif // DISABLE_FILE

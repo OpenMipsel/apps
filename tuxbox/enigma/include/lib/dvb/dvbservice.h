@@ -3,7 +3,9 @@
 
 #include <lib/dvb/edvb.h>
 
+#ifndef DISABLE_CI
 class eDVBCI;
+#endif
 
 class eDVBServiceEvent: public eDVBEvent
 {
@@ -61,8 +63,10 @@ public:
 	
 	int checkCA(ePtrList<CA> &list, const ePtrList<Descriptor> &descriptors);
 	
+#ifndef DISABLE_CI
 	eDVBCI *DVBCI;
 	eDVBCI *DVBCI2;
+#endif
 
 	void scanPMT();
 

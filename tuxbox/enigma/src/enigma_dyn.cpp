@@ -961,6 +961,7 @@ static eString reload_settings(eString request, eString dirpath, eString opt, eH
 	return "-no settings to load\n";
 }
 
+#ifndef DISABLE_FILE
 static eString load_recordings(eString request, eString dirpath, eString opt, eHTTPConnection *content)
 {
 	eZapMain::getInstance()->loadRecordings();
@@ -972,6 +973,7 @@ static eString save_recordings(eString request, eString dirpath, eString opt, eH
 	eZapMain::getInstance()->saveRecordings();
 	return "+ok\n";
 }
+#endif
 
 static eString load_timerList(eString request, eString dirpath, eString opt, eHTTPConnection *content)
 {
@@ -1212,8 +1214,10 @@ void ezapInitializeDyn(eHTTPDynPathResolver *dyn_resolver)
 	dyn_resolver->addDyn("GET", "/cgi-bin/streaminfo", getsi);
 	dyn_resolver->addDyn("GET", "/channels/getcurrent", channels_getcurrent);
 	dyn_resolver->addDyn("GET", "/cgi-bin/reloadSettings", reload_settings);
+#ifndef DISABLE_FILE
 	dyn_resolver->addDyn("GET", "/cgi-bin/reloadRecordings", load_recordings);
 	dyn_resolver->addDyn("GET", "/cgi-bin/saveRecordings", save_recordings);
+#endif
 	dyn_resolver->addDyn("GET", "/cgi-bin/reloadPlaylist", load_playlist);
 	dyn_resolver->addDyn("GET", "/cgi-bin/savePlaylist", save_playlist);
 	dyn_resolver->addDyn("GET", "/cgi-bin/reloadUserBouquets", load_userBouquets);

@@ -53,7 +53,7 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	buttonWidget=new eWidget(this);
 	buttonWidget->setName("buttons");	
 	
-	combo_type=new eComboBox(this, 4);
+	combo_type=new eComboBox(this, 5);
 	combo_type->setName("type");
 	CONNECT(combo_type->selchanged, eSatelliteConfigurationManager::typeChanged);
 	new eListBoxEntryText( *combo_type, _("one single satellite"), (void*)0, 0, _("one directly connected LNB"));

@@ -46,13 +46,13 @@ eTPEditDialog::eTPEditDialog( eTransponder *tp )
 	:eWindow(0), tp(tp)
 {
 	setText(_("Transponder Edit"));
-	cmove( ePoint( 150, 200 ) );
-	cresize( eSize( 400, 210 ) );
+	cmove( ePoint( 120, 200 ) );
+	cresize( eSize( 460, 210 ) );
 	tpWidget=new eTransponderWidget(this, 1,
 		eTransponderWidget::deliverySatellite|
 		eTransponderWidget::flagNoSat|
 		eTransponderWidget::flagNoInv);
-	tpWidget->resize( eSize( 400, 130 ) );
+	tpWidget->resize( eSize( 460, 130 ) );
 	tpWidget->load();
 	tpWidget->setTransponder( tp );
 	tpWidget->move( ePoint(0,-40) );

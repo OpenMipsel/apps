@@ -1,3 +1,5 @@
+#ifndef DISABLE_CI
+
 #ifndef __enigmaci_h
 #define __enigmaci_h
 
@@ -84,3 +86,5 @@ public:
 };
 
 #endif
+
+#endif // DISABLE_CI

@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #ifndef __setupengrab_h
 #define __setupengrab_h
 
@@ -23,3 +25,5 @@ public:
 	~ENgrabSetup();
 };
 #endif
+
+#endif // DISABLE_FILE

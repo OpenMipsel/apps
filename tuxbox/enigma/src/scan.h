@@ -49,6 +49,7 @@ class tsAutomatic: public eWidget
 	eButton *b_start, *b_abort;
 	eComboBox *l_network;
 	eCheckbox *c_eraseall;
+	eCheckbox *c_nocircular;
 	eLabel *l_status;
 	std::list<eTransponder>::iterator current_tp, last_tp;
 	int automatic;

@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #ifndef __lib_dvb_servicemp3_h
 #define __lib_dvb_servicemp3_h
 
@@ -192,3 +194,5 @@ public:
 };
 
 #endif
+
+#endif //DISABLE_FILE

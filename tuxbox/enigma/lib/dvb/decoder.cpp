@@ -112,6 +112,7 @@ void Decoder::Close()
 
 void Decoder::Flush()
 {
+	eDebug("Decoder::Flush()");
 	parms.vpid = parms.apid = parms.tpid = parms.pcrpid = parms.ecmpid = -1;
 	parms.audio_type=0;
 	parms.descriptor_length=0;
@@ -193,7 +194,10 @@ int Decoder::Set()
 	parms.flushbuffer=0;
 	
 	eDebug(" ------------> changed! %x", changed);
-	
+
+	if (changed & 0xF7)
+		SetECM(parms.vpid, parms.apid, parms.ecmpid, parms.emmpid, parms.pmtpid, parms.casystemid, parms.descriptor_length, parms.descriptors);
+
 	if (changed & 4)
 	{
 #ifdef OLD_VBI // for old drivers in alexW Image...
@@ -272,9 +276,6 @@ int Decoder::Set()
 		}
 #endif    
 	}
-
-	if (changed & 0xF7)
-		SetECM(parms.vpid, parms.apid, parms.ecmpid, parms.emmpid, parms.pmtpid, parms.casystemid, parms.descriptor_length, parms.descriptors);
 
 	if ( changed & 11 )
 	{
@@ -553,7 +554,7 @@ int Decoder::Set()
 						eDebug("ok");
 			}
 		}
-    
+
 		if ( parms.apid != -1 )
 		{
 			eDebugNoNewLine("DMX_START (audio) - ");
@@ -566,7 +567,7 @@ int Decoder::Set()
 	}
 
 	current=parms;
-    
+
 	return 0;
 }
 

@@ -352,6 +352,37 @@ eString convertDVBUTF8(unsigned char *data, int len, int table)
 	return eString().assign((char*)res, t);
 }
 
+eString convertUTF8DVB(const eString &string)
+{
+	eString ss=eString();
+	
+	int len=string.length();
+	for(int i=0;i<len;i++){
+		unsigned char c1=string[i];
+		unsigned int c;
+		if(c1<0x80)
+			c=c1;
+		else{
+			i++;
+			unsigned char c2=string[i];
+			c=((c1&0x3F)<<6) + (c2&0x3F);
+		}
+		// c = UNICODE
+		// now search it in table
+		if(c>=0x80){
+			for(unsigned int j=0;j<128;j++){
+				if(c88599[j]==c){            // now only 8859-9 ....
+					c=0x80+j;
+					break;
+				}
+			}
+		}
+		ss+=c;
+	}
+
+	return ss;
+}
+
 eString convertLatin1UTF8(const eString &string)
 {
 	unsigned int bytesneeded=0, t=0, i;

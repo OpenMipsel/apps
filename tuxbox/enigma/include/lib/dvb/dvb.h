@@ -356,8 +356,16 @@ public:
 	}
 };
 
-struct eServiceReference
+class eServiceReference
 {
+	static std::set<eServiceReference> locked;
+	static bool lockedListChanged;
+public:
+	static void loadLockedList( const char* filename );
+	static void saveLockedList( const char* filename );
+	bool isLocked() const { return locked.find( *this ) != locked.end(); }
+	void lock() const { locked.insert( *this );lockedListChanged=true; }
+	void unlock() const { locked.erase( *this );lockedListChanged=true; }
 	enum
 	{
 		idInvalid=-1,

@@ -16,12 +16,16 @@ private:
 	void sel_osd();
 	void sel_lcd();
 	void sel_rc();
+#ifndef DISABLE_FILE
 	void sel_harddisk();
+#endif
 	void sel_ci();
 	void sel_upgrade();
 	void sel_rfmod();
 	void sel_num(int n);
+#ifndef DISABLE_FILE
 	void sel_engrab();
+#endif
 	void sel_extra();
 	void sel_parental();
 	void sel_test();

@@ -1,3 +1,5 @@
+#ifndef DISABLE_CI
+
 #include <enigma_ci.h>
 
 #include <lib/base/i18n.h>
@@ -565,3 +567,4 @@ void enigmaCI::app2Pressed()
 	show();
 }
 
+#endif // DISABLE_CI

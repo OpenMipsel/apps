@@ -81,7 +81,8 @@ static struct
 		{"ar", "ae"},
 		{"cs", "cz"},
 		{"el", "gr"},
-		{"sv", "se"}};
+		{"sv", "se"},
+		{"uk", "ua"}};
 
 static const char * getCountry(const char *language)
 {

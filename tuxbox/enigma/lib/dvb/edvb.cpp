@@ -28,7 +28,9 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
-#include <lib/dvb/dvbci.h>
+#ifndef DISABLE_CI
+	#include <lib/dvb/dvbci.h>
+#endif
 
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/dvbscan.h>
@@ -67,11 +69,13 @@ eDVB::eDVB()
 		eFatal("eDVB already initialized!");
 	instance=this;
 
+#ifndef DISABLE_CI
 	DVBCI=new eDVBCI();
 	DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::start));
 
 	DVBCI2=new eDVBCI();
 	DVBCI2->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::start));
+#endif
 
 	mID = atoi(getInfo("mID").c_str());
 
@@ -154,7 +158,9 @@ eDVB::eDVB()
 eDVB::~eDVB()
 {
 	delete settings; 
+#ifndef DISABLE_FILE
 	recEnd();
+#endif // DISABLE_FILE
 
 	eAVSwitch::getInstance()->setActive(0);
 	delete eAVSwitch::getInstance();
@@ -168,6 +174,7 @@ eDVB::~eDVB()
 	instance=0;
 }
 
+#ifndef DISABLE_FILE
 void eDVB::recMessage(int msg)
 {
 	switch (msg)
@@ -177,6 +184,7 @@ void eDVB::recMessage(int msg)
 		break;
 	}
 }
+#endif // DISABLE_FILE
 
 eString eDVB::getInfo(const char *info)
 {
@@ -280,6 +288,7 @@ void eDVB::configureNetwork()
 	}
 }
 
+#ifndef DISABLE_FILE
 void eDVB::recBegin(const char *filename, eServiceReferenceDVB service)
 {
 	if (recorder)
@@ -454,6 +463,7 @@ void eDVB::recEnd()
 	delete recorder;
 	recorder=0;
 }
+#endif //DISABLE_FILE
 
 void eDVB::setMode(int mode)
 {
@@ -469,8 +479,10 @@ void eDVB::setMode(int mode)
 		break;
 	case controllerService:
 		controller = new eDVBServiceController(*this);
+#ifndef DISABLE_CI
 		DVBCI->messages.send(eDVBCI::eDVBCIMessage(eDVBCI::eDVBCIMessage::getcaids));
-		break;
+#endif
+	break;
 	}
 }
 

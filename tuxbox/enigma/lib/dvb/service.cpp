@@ -2,6 +2,7 @@
 #include <lib/dvb/dvb.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
+#include <lib/system/econfig.h>
 
 int eServiceHandler::flags=0;
 
@@ -174,9 +175,15 @@ eServiceHandler *eServiceInterface::getServiceHandler(int id)
 
 int eServiceInterface::play(const eServiceReference &s)
 {
+	int pLockActive = eConfig::getInstance()->pLockActive();
+	if ( s.isLocked() && pLockActive )
+	{
+		eWarning("service is parentallocked... don't play");
+		return -1;
+	}
 	if (switchServiceHandler(s.type))
 	{
-		eWarning("couldn't play service type %d\n", s.type);
+		eWarning("couldn't play service type %d", s.type);
 		return -1;
 	}
 	service=s;

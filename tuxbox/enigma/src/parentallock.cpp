@@ -51,8 +51,7 @@ eParentalSetup::eParentalSetup():
 	parentallock->resize(eSize(200, 30));
 	parentallock->setHelpText(_("enable/disable parental lock"));
 	CONNECT(parentallock->checked, eParentalSetup::plockChecked );
-	parentallock->hide();
-	
+
 	changeParentalPin = new eButton(this);
 	changeParentalPin->setText(_("change PIN"));
 	changeParentalPin->move( ePoint( 220, 15 ) );
@@ -203,8 +202,7 @@ void eParentalSetup::changePin(eButton *p)
 
 void eParentalSetup::loadSettings()
 {
-	if (eConfig::getInstance()->getKey("/elitedvb/pins/parentallock", parentalpin))
-		parentalpin=0;
+	parentalpin = eConfig::getInstance()->getParentalPin();
 
 	sparentallock = parentalpin != 0;
 
@@ -217,7 +215,7 @@ void eParentalSetup::loadSettings()
 void eParentalSetup::saveSettings()
 {
 	eConfig::getInstance()->setKey("/elitedvb/pins/setuplock", setuppin);
-	eConfig::getInstance()->setKey("/elitedvb/pins/parentallock", parentalpin);
+	eConfig::getInstance()->setParentalPin(parentalpin);
 }
 
 eParentalSetup::~eParentalSetup()

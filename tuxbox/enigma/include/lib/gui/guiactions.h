@@ -8,14 +8,17 @@
 struct cursorActions
 {
 	eActionMap map;
-	eAction up, down, left, right, ok, cancel, help;
+	eAction up, down, left, right, insertchar, deletechar, capslock, ok, cancel, help;
 	cursorActions():
 		map("cursor", "Cursor"),
 		up(map, "up", _("up"), eAction::prioWidget),
 		down(map, "down", _("down"), eAction::prioWidget),
 		left(map, "left", _("left"), eAction::prioWidget),
 		right(map, "right", _("right"), eAction::prioWidget),
-		ok(map, "ok", _("ok"), eAction::prioWidget),
+		insertchar(map, "insertchar", _("next char"), eAction::prioWidget),
+		deletechar(map, "deletechar", _("prev char"), eAction::prioWidget),
+		capslock(map, "capslock", _("CapsLock"), eAction::prioWidget),
+		ok(map, "ok", "OK", eAction::prioWidget),
 		cancel(map, "cancel", _("cancel"), eAction::prioDialog),
 		help(map, "help", _("show the help window"), eAction::prioGlobal)
 	{

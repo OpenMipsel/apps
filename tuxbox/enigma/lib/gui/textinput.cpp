@@ -1,3 +1,4 @@
+#include <lib/base/estring.h>
 #include <lib/gui/textinput.h>
 #include <lib/gui/guiactions.h>
 #include <lib/gui/numberactions.h>
@@ -8,7 +9,11 @@
 
 eTextInputField::eTextInputField( eWidget *parent, eLabel *descr, const char *deco )
 	:eButton( parent, descr, 1, deco), maxChars(0), lastKey(-1), editMode(false), nextCharTimer(eApp),
-	useableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 +-.,:?!\"';_*/()<=>%#@&")
+    useableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+//						 " +-.,:?!\"';_*/()<=>%#@&"),
+             "–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ"
+						 " +-.,:?!\"';_*/()<=>%#@&"),
+	nextCharTimeout(0), capslock(0)
 {
 	CONNECT( nextCharTimer.timeout, eTextInputField::nextChar );
 	addActionMap(&i_numberActions->map);
@@ -16,37 +21,74 @@ eTextInputField::eTextInputField( eWidget *parent, eLabel *descr, const char *de
 	align=eTextPara::dirLeft;
 }
 
+void eTextInputField::updated()
+{
+	unsigned char c[4096];
+	strcpy((char *)c,isotext.c_str());
+		
+	text=convertDVBUTF8(c,strlen((char*)c));
+	eLabel::invalidate();
+	drawCursor();
+}
+
 void eTextInputField::nextChar()
 {
 	if ( curPos+1 < maxChars )
 	{
 		++curPos;
-		eLabel::invalidate();
-		drawCursor();
-		if ( curPos > text.length() )
-			text+=' ';
+		if ( curPos > isotext.length()-1 )
+			isotext+=' ';
+		updated();
 	}
 	lastKey=-1;
 }
 
-const char *keys[12] = {
-		"+0-.,:?!\"';_", // 0
-		" 1",        // 1
-		"abc2ABC",   // 2
-		"def3DEF",   // 3
-		"ghi4GHI",   // 4
-		"jkl5JKL",   // 5
-		"mno6MNO",   // 6
-		"pqrs7PQRS", // 7
-		"tuv8TUV",   // 8
-		"wxyz9WXYZ", // 9
-		"*/()<=>%",  // <
-		"#@&`"       // >
+//		"abc2ABC",   // 2
+//		"def3DEF",   // 3
+//		"ghi4GHIª",   // 4
+//		"jkl5JKL",   // 5
+//		"mno6MNO",   // 6
+//		"pqrs7PQRS", // 7
+//		"tuv8TUV",   // 8
+//		"wxyz9WXYZ",   // 9
+
+const char *keys[2][12] = {
+// lowercase
+	  { 	"+0-.,:?!\"';_",     // 0
+		" 1#@&/()<=>%",      // 1
+		"abc2–—“”",   // 2
+		"def3‘’÷◊",   // 3
+		"ghi4ÿŸ⁄€",   // 4
+		"jkl5‹›ﬁﬂ",   // 5
+		"mno6‡·‚„",   // 6
+		"pqrs7‰ÂÊÁ",  // 7
+		"tuv8ËÈÍÎ",   // 8
+		"wxyz9ÌÓÔ",   // 9
+		"*/()<=>%",          // <
+		"#@&`" },            // >
+// uppercase
+	  { 	"+0-.,:?!\"';_",     // 0
+		" 1#@&/()<=>%",      // 1
+		"ABC2∞±≤≥",   // 2
+		"DEF3¥µ∂∑",   // 3
+		"GHI4∏π∫ª",   // 4
+		"JKL5ºΩæø",   // 5
+		"MNO6¿¡¬√",   // 6
+		"PQRS7ƒ≈∆«",  // 7
+		"TUV8»… À",   // 8
+		"WXYZ9ÕŒœ",   // 9
+		"*/()<=>%",          // <
+		"#@&`" }             // >
 };
 
 void eTextInputField::setUseableChars( const char* uchars )
 {
 	useableChars=uchars;
+}
+
+void eTextInputField::setNextCharTimeout( unsigned int newtimeout )
+{
+	nextCharTimeout=newtimeout;
 }
 
 void eTextInputField::drawCursor()
@@ -56,9 +98,9 @@ void eTextInputField::drawCursor()
 	rc.setHeight( 3 );
 	if ( para )
 	{
-		if ( text.length() )  // text exist?
+		if ( isotext.length() )  // text exist?
 		{
-			if ( text.length() > curPos) // before or on the last char?
+			if ( isotext.length() > curPos) // before or on the last char?
 			{
 				const eRect &bbox = para->getGlyphBBox(curPos);
 				if ( !bbox.width() )  // Space
@@ -68,7 +110,7 @@ void eTextInputField::drawCursor()
 						const eRect &bbBefore = para->getGlyphBBox(curPos-1);
 						rc.setLeft( bbBefore.right()+2 );
 					}
-					if ( text.length() > curPos+1) // char after space ?
+					if ( isotext.length() > curPos+1) // char after space ?
 					{
 						const eRect &bbAfter = para->getGlyphBBox(curPos+1);
 						rc.setRight( bbAfter.left()-2 );
@@ -84,8 +126,8 @@ void eTextInputField::drawCursor()
 			}
 			else // we are behind the last character
 			{
-				const eRect &bbox = para->getGlyphBBox(text.length()-1);
-				rc.setLeft( bbox.right() + ( ( curPos-text.length() ) * 10 ) + 2 );
+				const eRect &bbox = para->getGlyphBBox(isotext.length()-1);
+				rc.setLeft( bbox.right() + ( ( curPos-isotext.length() ) * 10 ) + 2 );
 				rc.setWidth( 10 );
 			}
 		}
@@ -96,49 +138,89 @@ void eTextInputField::drawCursor()
 		}
 		rc.moveBy( (deco_selected?crect_selected.left():crect.left())+1, 0 );
 		gPainter *painter = getPainter( deco_selected?crect_selected:crect );
-		painter->clip( rc );
 		painter->setForegroundColor( getForegroundColor() );
 		painter->setBackgroundColor( getBackgroundColor() );
+		painter->clip( rc );
 		painter->fill( rc );
 		painter->clippop();
+		if(capslock){
+			rc.setTop(crect.top());
+			rc.setHeight( 3 );
+			painter->clip( rc );
+			painter->fill( rc );
+			painter->clippop();
+		}
 		delete painter;
 	}
 }
 
 int eTextInputField::eventHandler( const eWidgetEvent &event )
 {
+	isotext=convertUTF8DVB(text);
 	switch (event.type)
 	{
 		case eWidgetEvent::changedText:
-			if ( maxChars < text.length() )
-				maxChars = text.length();
+			if ( maxChars < isotext.length() )
+				maxChars = isotext.length();
 			return eButton::eventHandler( event );
 		break;
 		case eWidgetEvent::evtAction:
 		{
 			int key = -1;
-			if (event.action == &i_cursorActions->up && editMode)
+			if ( event.action == &i_cursorActions->capslock && editMode){
+				capslock^=1;
+				eLabel::invalidate();
+				drawCursor();
+			}
+			else if ( (event.action == &i_cursorActions->up || event.action == &i_cursorActions->down) && editMode)
 			{
-				if ( text.length()<maxChars )
+				nextCharTimer.stop();
+				const char *pc1=useableChars.c_str();
+				if ( curPos>=isotext.length() ){
+					if (event.action == &i_cursorActions->down){
+						while(*pc1)pc1++;
+					  pc1--;
+					}
+				  isotext += *pc1;
+				}
+				else{
+					const char *pc2=strchr( pc1, isotext[curPos] );
+					if(!pc2 || !pc2[0]){ pc2=pc1; }
+					if(event.action == &i_cursorActions->up){
+						pc2++;
+						if(!pc2[0])pc2=pc1;
+					}
+					else{
+						if(pc2==pc1)
+						{
+							while(*pc2)pc2++;
+						}
+						pc2--;
+					}
+					isotext[curPos] = *pc2;
+				}
+				updated();
+			}
+			else if (event.action == &i_cursorActions->insertchar && editMode)
+			{
+				if ( isotext.length()<maxChars )
 				{
-					text.insert( curPos, " ");
-					eLabel::invalidate();
-					drawCursor();
+					isotext.insert( curPos, " ");
+					updated();
 				}
 			}
-			else if (event.action == &i_cursorActions->down && editMode)
+			else if (event.action == &i_cursorActions->deletechar && editMode)
 			{
-				if ( text.length() )
+				if ( isotext.length() )
 				{
-					text.erase( curPos, 1 );
+					isotext.erase( curPos, 1 );
 //					eDebug("curPos=%d, length=%d", curPos, text.length() );
-					if ( text.length() == curPos )
+					if ( isotext.length() == curPos )
 					{
 //						eDebug("curPos--");
 						curPos--;
 					}
-					eLabel::invalidate();
-					drawCursor();
+					updated();
 				}
 			}
 			else if (event.action == &i_cursorActions->left && editMode )
@@ -147,9 +229,8 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				if ( curPos > 0 )
 				{
 					--curPos;
-					eLabel::invalidate();
-					drawCursor();
 					lastKey=-1;
+					updated();
 				}
 			}
 			else if (event.action == &i_cursorActions->right && editMode)
@@ -163,9 +244,11 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				if ( editMode )
 				{
 					setHelpText(oldHelpText);
-					while ( text[text.length()-1] == ' ' )
-						text.erase( text.length()-1 );
+					if(isotext.length()>0)
+						while ( isotext[isotext.length()-1] == ' ' )
+							isotext.erase( isotext.length()-1 );
 
+					updated();
 					eButton::invalidate();  // remove the underline
 					editMode=false;
 					eWindow::globalCancel(eWindow::ON);
@@ -174,7 +257,7 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				{
 					oldHelpText=helptext;
 					oldText=text;
-					setHelpText(_("press ok to leave edit mode"));
+					setHelpText(_("press ok to leave edit mode, yellow=capslock"));
 					editMode=true;
 					curPos=0;
 					drawCursor();
@@ -226,35 +309,35 @@ int eTextInputField::eventHandler( const eWidgetEvent &event )
 				
 				if ( key == lastKey )
 				{
-					char *oldkey = strchr( keys[key], text[curPos] );
-					newChar = oldkey?keys[key][oldkey-keys[key]+1]:0;
+					char *oldkey = strchr( keys[capslock][key], isotext[curPos] );
+					newChar = oldkey?keys[capslock][key][oldkey-keys[capslock][key]+1]:0;
 				}
 
 				if (!newChar)
 				{
-					newChar = keys[key][0];
+					newChar = keys[capslock][key][0];
 				}
 				char testChar = newChar;
 				do
 				{
 					if ( strchr( useableChars.c_str(), newChar ) ) // char useable?
 					{
-						if ( curPos == text.length() )
+						if ( curPos == isotext.length() )
 							text += newChar;
 						else
-							text[curPos] = newChar;
-						eLabel::invalidate();
-						drawCursor();
-						nextCharTimer.start(750,true);
+							isotext[curPos] = newChar;
+						updated();
+						if(nextCharTimeout)
+							nextCharTimer.start(nextCharTimeout,true);
 						break;
 					}
 					else
 					{
 						nextCharTimer.stop();
-						char *oldkey = strchr( keys[key], newChar );
-						newChar=oldkey?keys[key][oldkey-keys[key]+1]:0;
+						char *oldkey = strchr( keys[capslock][key], newChar );
+						newChar=oldkey?keys[capslock][key][oldkey-keys[capslock][key]+1]:0;
 						if (!newChar)
-							newChar=keys[key][0];
+							newChar=keys[capslock][key][0];
 					}
 				}
 				while( newChar != testChar );  // all chars tested.. and no char is useable..

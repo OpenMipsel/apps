@@ -458,7 +458,7 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	new eListBoxEntryText(*Mode, _("position"), (void*) 0, 0, _("store new sat positions"));
 	new eListBoxEntryText(*Mode, _("drive to stored pos"), (void*) 1, 0, _("drive to stored position"));
 	new eListBoxEntryText(*Mode, _("drive to satellite"), (void*) 8, 0, _("drive to stored satellite"));
-	new eListBoxEntryText(*Mode, _("drive to 0°"), (void*) 2, 0, _("drives to 0°"));
+	new eListBoxEntryText(*Mode, _("drive to 0\xAF"), (void*) 2, 0, _("drives to 0\xAF"));
 	new eListBoxEntryText(*Mode, _("recalculate"), (void*) 3, 0, _("recalculate stored positions rel. to current pos"));
 	new eListBoxEntryText(*Mode, _("set east limit"), (void*) 4, 0, _("set east soft limit"));
 	new eListBoxEntryText(*Mode, _("set west limit"), (void*) 5, 0, _("set west soft limit"));
@@ -882,7 +882,7 @@ void eStoreWindow::onStorePressed()
 	std::map<int,int>::iterator it = lnb->getDiSEqC().RotorTable.find( orbital_pos );
 	if ( it != lnb->getDiSEqC().RotorTable.end() )
 	{
-		eMessageBox mb( eString().sprintf(_("%d.%d°%c is currently stored at location %d!\nWhen you store this now at Location %d, we must remove the old Location.\nAre you sure you want to do this?"),abs(orbital_pos)/10, abs(orbital_pos)%10, orbital_pos>0?'E':'W', it->second, StorageLoc->getNumber() ), _("Warning"), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
+		eMessageBox mb( eString().sprintf(_("%d.%d\xAF%c is currently stored at location %d!\nWhen you store this now at Location %d, we must remove the old Location.\nAre you sure you want to do this?"),abs(orbital_pos)/10, abs(orbital_pos)%10, orbital_pos>0?'E':'W', it->second, StorageLoc->getNumber() ), _("Warning"), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
 		hide();
 		mb.show();
 		switch( mb.exec() )
@@ -904,7 +904,7 @@ void eStoreWindow::onStorePressed()
 	}
 	else
 	{
-		eMessageBox mb( eString().sprintf(_("Store %d.%d°%c at location %d.\n"
+		eMessageBox mb( eString().sprintf(_("Store %d.%d\xAF%c at location %d.\n"
 			"If you want another location, then say no and change the location manually.\n"
 			"Are you sure you want to store at this location?"),abs(orbital_pos)/10, abs(orbital_pos)%10, orbital_pos>0?'E':'W', StorageLoc->getNumber() ), _("Information"), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
 		hide();

@@ -147,6 +147,7 @@
 		<img name="country_pl" src="pl.png" />
 		<img name="country_pt" src="pt.png" />
 		<img name="country_tr" src="tr.png" />
+		<img name="country_ru" src="ru.png" />
 		<img name="country_missing" src="missing.png" />
 	</images>
 
@@ -294,8 +295,8 @@
 
 	<object name="enigma_lcd_standby">
 		<eZapLCDStandby position="0:0" size="120:64">
-			<eLabel position="25:15" size="e:e" font="lcd.standby.clock" name="clock" />	
-			<eLabel position="0:0" size="e:e" pixmap="lcd_standby" />	
+			<eLabel position="0:10" size="e:e" font="lcd.standby.clock" name="clock" />
+			<!-- <eLabel position="0:0" size="e:e" pixmap="lcd_standby" /> -->
 		</eZapLCDStandby>
 	</object>
 
@@ -402,7 +403,7 @@
 		<RotorConfig text="Motor Config" cposition="80:100" csize="550:400" >
 			<eCheckbox text="Use Motor Input Power" name="useRotorInPower" position="10:10" size="300:35" helptext="Use motor input power for running detection.. else use timeout" />
 			<eNumber name="DegPerSec" position="320:10" size="100:35" helptext="motor drive speed, in degrees per second" loadDeco="" />
-			<eLabel name="lDegPerSec" text="°/sec" position="430:10" size="e-10:35" vcenter="on" />
+			<eLabel name="lDegPerSec" text="&#175;/sec" position="430:10" size="e-10:35" vcenter="on" />
 			<eNumber name="DeltaA" position="320:10" size="60:35" helptext="motor power input difference between running and not running" loadDeco="" />
 			<eLabel name="lDeltaA" text="mA" position="390:10" size="e-10:35" vcenter="on" />
 
@@ -421,7 +422,7 @@
 			<eNumber name="StoredRotorNo" position="e-100:100" size="e-10:35" helptext="enter where this orbital position is (to) stored in motor" loadDeco="" />
 
 			<eLabel name="lOrbitalPosition" text="Orbital Position:" position="190:150" size="e-110:35" vcenter="on" />
-			<eNumber name="OrbitalPosition" position="e-100:150" size="e-10:35" helptext="enter orbital position without dot (19.2° = 192)" loadDeco="" />
+			<eNumber name="OrbitalPosition" position="e-100:150" size="e-10:35" helptext="enter orbital position without dot (19.2&#175; = 192)" loadDeco="" />
 
 			<eLabel name="lDirection" text="Direction:" position="190:195" size="e-150:35" vcenter="on" />
 			<eComboBox name="Direction" position="e-140:195" size="e-10:35" helptext="choose direction" loadDeco="" />
@@ -470,14 +471,14 @@
 
 	<object name="tsManual">
 		<tsManual position="0:0" size="e:360">
-			<eTranspondersettings name="transponder" position="0:0" size="400:160" />
+			<eTranspondersettings name="transponder" position="0:0" size="456:160" />
 			<eFEStatus name="festatus" position="0:165" size="400:85" />
-			<eCheckbox text="use ONIT" name="useonit" position="10:e-110" size="220:30" helptext="enable/disable check ONIT on any transponder" />
-			<eCheckbox text="use BAT" name="usebat" position="230:e-110" size="200:30" helptext="enable/disable use BAT for scan (if exists)" />
-			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="220:30" helptext="remove all services before scan" />
-			<eCheckbox text="network search" name="searchnit" position="230:e-80" size="200:30" helptext="enable/disable initiate network search" />
-			<eButton text="start scan" name="start" position="10:e-40" size="200:40" helptext="start the transponder scan" loadDeco="" vcenter="on" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" vcenter="on" shortcut="escape" />
+			<eCheckbox text="use ONIT" name="useonit" position="10:e-110" size="230:30" helptext="enable/disable check ONIT on any transponder" />
+			<eCheckbox text="use BAT" name="usebat" position="240:e-110" size="200:30" helptext="enable/disable use BAT for scan (if exists)" />
+			<eCheckbox text="clear list before" name="clearlist" position="10:e-80" size="230:30" helptext="remove all services before scan" />
+			<eCheckbox text="network search" name="searchnit" position="240:e-80" size="200:30" helptext="enable/disable initiate network search" />
+			<eButton text="start scan" name="start" position="10:e-40" size="260:40" helptext="start the transponder scan" loadDeco="" vcenter="on" />
+			<eButton text="abort" name="abort" position="290:e-40" size="140:40" helptext="close window and do not scan" loadDeco="" vcenter="on" shortcut="escape" />
 		</tsManual>
 	</object>
 
@@ -487,9 +488,10 @@
 			<eComboBox name="network" position="160:40" size="e-70:35" loadDeco="" helptext="choose satellite/cable provider (ok)" />
 			<eLabel name="status" position="10:90" size="e-10:90" />
 			<eFEStatus name="festatus" position="0:190" size="400:85" />
-			<eCheckBox name="eraseall" text="erase all" position="10:e-80" size="150:30" helptext="erase bouquets and services before scan" />
-  		<eButton text="start scan" name="start" position="10:e-40" size="200:40" align="center" helptext="starts the transponder scan" loadDeco="" />
-			<eButton text="abort" name="abort" position="230:e-40" size="200:40" helptext="close window and do not scan" loadDeco="" shortcut="escape" />
+			<eCheckBox name="eraseall" text="erase all" position="4:e-80" size="200:30" helptext="erase bouquets and services before scan" />
+			<eCheckBox name="nocircular" text="no circ polariz." position="210:e-80" size="e-10:30" helptext="change circular to linear polarization" />
+	  		<eButton text="start scan" name="start" position="10:e-40" size="260:40" align="center" helptext="starts the transponder scan" loadDeco="" />
+			<eButton text="abort" name="abort" position="290:e-40" size="140:40" helptext="close window and do not scan" loadDeco="" shortcut="escape" />
 		</tsAutomatic>
 	</object>
 
@@ -519,43 +521,41 @@
 	</object>
 
 	<object name="transpondersettings.satellite">
-		<eTranspondersettings position="0:0" size="400:160">
-			<eLabel text="Satellite:" name="lSat" position="10:10" size="140:34" vcenter="on" />
-			<eComboBox name="sat" position="150:10" size="e-10:35" helptext="choose wished satellite (ok)" loadDeco=""  />
+		<eTranspondersettings position="0:0" size="454:160">
+			<eLabel text="Satellite:" name="lSat" position="10:10" size="150:34" vcenter="on" />
+			<eComboBox name="sat" position="164:10" size="e-10:35" helptext="choose wished satellite (ok)" loadDeco=""  />
 
-			<eLabel  name="lFreq" text="Frequency:" position="10:50" size="140:32" vcenter="on" />
-			<eNumber name="frequency" position="150:50" size="e-150:32" helptext="enter transponder frequeny (0..9, left, right)" loadDeco="" />
-			<eLabel text="MHz" position="e-145:50" size="40:32" vcenter="on" />
+			<eLabel  name="lFreq" text="Frequency:" position="10:50" size="150:32" vcenter="on" />
+			<eNumber name="frequency" position="164:50" size="e-150:32" helptext="enter transponder frequeny (0..9, left, right)" loadDeco="" />
+			<eLabel text="MHz" position="e-145:50" size="44:32" vcenter="on" />
+			<eCheckbox text="Inv:" name="inversion" position="e-84:50" size="e-10:32" helptext="enable/disable inversion here (ok)" swaptxtpixmap="on" />
 
-			<eCheckbox text="Inv:" name="inversion" position="330:50" size="e-10:32" helptext="enable/disable inversion here (ok)" swaptxtpixmap="on" />
+			<eLabel name="lPol" text="Polarity:" position="10:85" size="152:34" vcenter="on" />
+			<eListbox name="polarity" position="164:85" size="e-100:34" loadDeco="" helptext="choose polarity (left, right)" noUpDownMovement="on" />
+			<eLabel name="lFec" text="FEC:" position="e-96:85" size="38:34" vcenter="on" />
+			<eListbox name="fec" position="e-54:85" size="e-10:34" loadDeco="" helptext="choose the FEC (left, right)" noUpDownMovement="on" />
 
-			<eLabel name="lPol" text="Polarity:" position="10:85" size="140:34" vcenter="on" />
-			<eListbox name="polarity" position="150:85" size="e-140:34" loadDeco="" helptext="choose polarity (left, right)" noUpDownMovement="on" />
-
-			<eLabel name="lFec" text="FEC:" position="e-120:85" size="50:34" vcenter="on" />
-			<eListbox name="fec" position="e-70:85" size="e-10:34" loadDeco="" helptext="choose the FEC (left, right)" noUpDownMovement="on" />
-
-			<eLabel name="lSymb" text="Symbol Rate:" position="10:124" size="140:32" vcenter="on" />
-			<eNumber name="symbolrate" position="150:124:" size="e-150:32" helptext="enter symbol rate (0..9, left, right)" loadDeco="" />
+			<eLabel name="lSymb" text="Symbol Rate:" position="10:124" size="150:32" vcenter="on" />
+			<eNumber name="symbolrate" position="164:124:" size="e-150:32" helptext="enter symbol rate (0..9, left, right)" loadDeco="" />
 			<eLabel text="KSymb/s" position="e-145:125" size="e:32" vcenter="on" />
 		</eTranspondersettings>
 	</object>
 
 	<object name="transpondersettings.cable">
-		<eTranspondersettings position="0:0" size="400:160">
-			<eLabel name="lFreq" text="Frequency:" position="10:10" size="140:32" vcenter="on" />
-			<eNumber name="frequency" position="150:10:" size="e-150:32" helptext="enter frequency (0..9, left, right)" loadDeco="" />
-			<eLabel text="MHz" position="e-150:10" size="e:32" vcenter="on" />
+		<eTranspondersettings position="0:0" size="454:160">
+			<eLabel name="lFreq" text="Frequency:" position="10:10" size="150:32" vcenter="on" />
+			<eNumber name="frequency" position="164:10:" size="e-150:32" helptext="enter frequency (0..9, left, right)" loadDeco="" />
+			<eLabel text="MHz" position="e-145:10" size="e:32" vcenter="on" />
 
-			<eLabel name="lSymb" text="Symbolrate:" position="10:52" size="140:32" vcenter="on" />
-			<eNumber name="symbolrate" position="150:52" size="e-150:32" helptext="enter symbol rate (0..9, left, right)" loadDeco="" />
-			<eLabel text="KSymb/s" position="e-150:52" size="e:32" vcenter="on" />
+			<eLabel name="lSymb" text="Symbolrate:" position="10:52" size="150:32" vcenter="on" />
+			<eNumber name="symbolrate" position="164:52" size="e-150:32" helptext="enter symbol rate (0..9, left, right)" loadDeco="" />
+			<eLabel text="KSymb/s" position="e-145:52" size="e:32" vcenter="on" />
 
-			<eLabel name="lMod" text="Modulation:" position="10:52" size="140:35" vcenter="on" />
-			<eComboBox name="mod" position="150:52" size="e-10:35" helptext="choose wished modulation (ok)" loadDeco=""  />
-      
-			<eLabel text="Inversion:" position="10:130" size="140:32" vcenter="on" />
-			<eCheckbox name="inversion" position="150:130" size="30:32" helptext="enable/disable inversion (ok)" />
+			<eLabel name="lMod" text="Modulation:" position="10:52" size="150:35" vcenter="on" />
+			<eComboBox name="mod" position="164:52" size="e-10:35" helptext="choose wished modulation (ok)" loadDeco=""  />
+
+			<eLabel text="Inversion:" position="10:130" size="150:32" vcenter="on" />
+			<eCheckbox name="inversion" position="164:130" size="30:32" helptext="enable/disable inversion (ok)" />
 		</eTranspondersettings>
 	</object>
 
@@ -655,7 +655,7 @@
 	</object>
 
 	<object name="eAboutScreen">
-		<eAboutScreen text="About..." cposition="125:120" csize="450:380">
+		<eAboutScreen text="About..." cposition="125:105" csize="450:410">
 			<eLabel name="vendor" position="10:0" csize="e:25"/>
 			<eLabel name="machine" position="30:25" font="eAboutScreen.machine" csize="e:50"/>
 			<eLabel name="processor" text="processor: " position="10:80" csize="e:30" />
@@ -664,7 +664,7 @@
 			<eLabel text="harddisk: " position="10:170" csize="e:30" />
 			<eLabel name="harddisks" position="10:200" csize="e:60" />
 			<eLabel text="Software Version:" position="10:260" csize="e:30" />
-			<eLabel name="version" position="10:290" csize="e:30" />
+			<eLabel name="version" position="10:290" csize="e:60" />
 			<eButton name="okButton" position="20:e-50" csize="100:30" text="ok" loadDeco="" shortcut="green" />
 			<eLabel name="dreamlogo" pixmap="dreamlogo" position="e-160:e-95" csize="143:75" alphatest="on" />
 		</eAboutScreen>

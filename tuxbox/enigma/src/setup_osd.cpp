@@ -169,7 +169,7 @@ PluginOffsetScreen::PluginOffsetScreen()
 
 eZapOsdSetup::eZapOsdSetup(): eWindow(0)
 {
-	setText("OSD Setup");
+	setText(_("OSD Setup"));
 	cmove(ePoint(150, 105));
 	cresize(eSize(440, 405));
 

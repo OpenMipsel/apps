@@ -1,3 +1,5 @@
+#ifndef DISABLE_FILE
+
 #include <lib/dvb/servicemp3.h>
 #include <lib/dvb/servicefile.h>
 #include <lib/system/init.h>
@@ -938,3 +940,5 @@ eServiceMP3::eServiceMP3(const eServiceMP3 &c)
 }
 
 eAutoInitP0<eServiceHandlerMP3> i_eServiceHandlerMP3(eAutoInitNumbers::service+2, "eServiceHandlerMP3");
+
+#endif //DISABLE_FILE

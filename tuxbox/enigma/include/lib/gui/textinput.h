@@ -9,6 +9,7 @@ class eTextInputField: public eButton
 	int eventHandler( const eWidgetEvent &);
 	void redrawWidget( gPainter *target, const eRect &area );
 	void drawCursor();
+	void updated();
 	void nextChar();
 	int lastKey;
 	bool editMode;
@@ -16,10 +17,14 @@ class eTextInputField: public eButton
 	eString oldHelpText;
 	eTimer nextCharTimer;
 	eString useableChars;
+	unsigned int nextCharTimeout;
+	bool capslock;
+	eString isotext;
 public:
 	eTextInputField( eWidget* parent, eLabel *descr=0, const char *deco="eLabel" );
 	void setMaxChars( int i ) { maxChars = i; }
 	void setUseableChars( const char* );
+	void setNextCharTimeout( unsigned int );
 };
 
 #endif

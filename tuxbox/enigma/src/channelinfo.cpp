@@ -24,12 +24,12 @@ eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	cdescr.setFont( fn );
 	cdescr.setForegroundColor( foregroundColor );
 	cdescr.setBackgroundColor( backgroundColor );
-	cdescr.setFlags( RS_FADE | eLabel::flagVCenter );
+	cdescr.setFlags( RS_FADE /*| eLabel::flagVCenter*/ );
 
 	cgenre.setFont( fn );
 	cgenre.setForegroundColor( foregroundColor );
 	cgenre.setBackgroundColor( backgroundColor );
-	cgenre.setFlags( RS_FADE | eLabel::flagVCenter );
+	cgenre.setFlags( RS_FADE /*| eLabel::flagVCenter*/ );
 
 	copos.setFont( fn );
 	copos.setAlign( eTextPara::dirRight );
@@ -85,37 +85,37 @@ const char *eChannelInfo::genresTableShort[256] =
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,
 
-	/* 0x4 Sports */       	_("Sports"),("Special Event"),("Sports Mag."),("Football"),("Tennis"),("Team Sports"),
-							_("Athletics"),("Motor Sports"),("Water Sports"),("Winter Sports"),("Equestrian"),
+	/* 0x4 Sports */       	_("Sports"),_("Special Event"),_("Sports Mag."),_("Football"),_("Tennis"),_("Team Sports"),
+							_("Athletics"),_("Motor Sports"),_("Water Sports"),_("Winter Sports"),_("Equestrian"),
 							_("Martial Sports"),
 							NULL,NULL,NULL,NULL,
 
-	/* 0x5 Children */     	_("Children"),("Pre-School"),("Age 6-14"),("Age 10-16"),("School"),
+	/* 0x5 Children */     	_("Children"),_("Pre-School"),_("Age 6-14"),_("Age 10-16"),_("School"),
 							_("Cartoons"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,
 
-	/* 0x6 Music */        	("Music"),("Rock/Pop"),("Classical"),("Folk"),("Jazz"),("Musical"),("Ballet"),
+	/* 0x6 Music */        	_("Music"),_("Rock/Pop"),_("Classical"),_("Folk"),_("Jazz"),_("Musical"),_("Ballet"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,
 
-	/* 0x7 Culture */      	_("Culture"),("Perf. Arts"),("Fine Arts"),("Religion"),("Pop. Arts"),("Literatur"),
-							_("Film"),("Experimental"),("Press"),("New Media"),("Art Mag."),("Fashion"),
+	/* 0x7 Culture */      	_("Culture"),_("Perf. Arts"),_("Fine Arts"),_("Religion"),_("Pop. Arts"),_("Literature"),
+							_("Film"),_("Experimental"),_("Press"),_("New Media"),_("Art Mag."),_("Fashion"),
 							NULL,NULL,NULL,NULL,
 
-	/* 0x8 Social */       	_("Social"),("Soc. Mag."),("Economics"),("Remark. People"),
+	/* 0x8 Social */       	_("Social"),_("Soc. Mag."),_("Economics"),_("Remark. People"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,
 
-	/* 0x9 Education */    	_("Education"),("Nature"),("Technology"),("Medicine"),("Expeditions"),("Spiritual"),
-							_("Further Ed."),("Languages"),
+	/* 0x9 Education */    	_("Education"),_("Nature"),_("Technology"),_("Medicine"),_("Expeditions"),_("Spiritual"),
+							_("Further Ed."),_("Languages"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 
-	/* 0xa Leisure */      	_("Hobbies"),("Travel"),("Handicraft"),("Motoring"),("Fitness"),("Cooking"),
-							_("Shopping"),("Gardening"),
+	/* 0xa Leisure */      	_("Hobbies"),_("Travel"),_("Handicraft"),_("Motoring"),_("Fitness"),_("Cooking"),
+							_("Shopping"),_("Gardening"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 
-	/* 0xb Special */      	_("Orig. Lang."),("B&W"),("Unpublished"),("Live"),
+	/* 0xb Special */      	_("Orig. Lang."),_("B&W"),_("Unpublished"),_("Live"),
 							NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 							NULL,NULL,NULL,NULL,
 
@@ -180,7 +180,7 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 					if(genresTableShort[ce->content_nibble_level_1*16+ce->content_nibble_level_2])
 					{
 						if ( !genre.length() )
-							genre+="GENRE:";
+							genre+=_("GENRE: ");
 						genre += gettext( genresTableShort[ce->content_nibble_level_1*16+ce->content_nibble_level_2] );
 						genre += " ";
 					}
@@ -217,9 +217,9 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 	if (!service.path.size())
 	{
 		cname.setFlags(RS_FADE);
-		cname.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)-2 ));
+		cname.resize( eSize(clientrect.width() - ( (clientrect.width() / 8)*2 + 4), (clientrect.height()/3)-2 ));
 		int opos=service.getDVBNamespace().get()>>16;
-		copos.setText(eString().sprintf("%d.%d°%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
+		copos.setText(eString().sprintf("%d.%d\xAF%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
 		EITEvent *e = 0;
 		e = eEPGCache::getInstance()->lookupEvent(service);
 	//	eDebug(" e = %p", e);	
@@ -342,7 +342,7 @@ void eChannelInfo::redrawWidget(gPainter *target, const eRect& where)
 	if ( deco )
 		deco.drawDecoration(target, ePoint(width(), height()));
 
-	target->line( ePoint(clientrect.left() + clientrect.width()/8 + 1, clientrect.top()), ePoint(clientrect.left() + clientrect.width()/8 + 1, clientrect.bottom()-1));
+	target->line( ePoint(clientrect.left() + clientrect.width()/8 + 1, clientrect.top()),ePoint(clientrect.left() + clientrect.width()/8 + 1,clientrect.bottom()-1));
 }
 
 int eChannelInfo::eventHandler(const eWidgetEvent &event)
@@ -350,23 +350,34 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 		case eWidgetEvent::changedSize:
+		    {
 			if (deco)
 				clientrect=crect;
 
+			int dx=clientrect.width()/8;
+			int dy=clientrect.height()/3;
 			ctime.move( ePoint(0,0) );
-			ctime.resize( eSize(clientrect.width() / 8, 36 ));
+			ctime.resize( eSize(dx, 36 ));
 
-			cname.move( ePoint( clientrect.width() / 8 + 4, 0 ) );
-			cname.resize( eSize( clientrect.width() - (clientrect.width() / 8 + 4), clientrect.height()/3+2) );
+			cname.move( ePoint( dx + 4, 0 ) );
+			cname.resize( eSize( clientrect.width() - (dx + dx + 4), dy+2) );
+			
+			bool emptygenre=( cgenre.getText().length()==0 );
 
-			cdescr.move( ePoint(clientrect.width() / 8 + 4, clientrect.height() / 3 + 2 ));
-			cdescr.resize( eSize(clientrect.width() - (clientrect.width() / 8 + 4), (clientrect.height()/3)-2 ));
+			cdescr.move( ePoint(dx + 4, dy + 2 ));
+			cdescr.resize( eSize(clientrect.width() - (dx + 4), dy+(emptygenre?dy:0)-2 ));
 
-			cgenre.move( ePoint(clientrect.width() / 8 + 4, cdescr.getPosition().y() + cdescr.getSize().height()) );
-			cgenre.resize( eSize( clientrect.width() - (clientrect.width() / 8 + 4)*2, (clientrect.height()/3)-2 ));
+			if(emptygenre){
+			    cgenre.move(ePoint(-1,-1));
+			    cgenre.resize(eSize(0,0));
+			}
+			else{
+			    cgenre.move( ePoint(dx + 4, dy*2 /*cdescr.getPosition().y() + cdescr.getSize().height())*/) );
+			    cgenre.resize( eSize( clientrect.width() - (dx + 4)*2, dy-2 ));
+			}
 
-			copos.move( ePoint( clientrect.width() - (clientrect.width() / 8 + 4), cgenre.getPosition().y() ));
-			copos.resize( eSize(clientrect.width()/8+4, clientrect.height()/3-2) );
+			copos.move( ePoint( clientrect.width() - (dx + 4), 0 ));
+			copos.resize( eSize(dx+4, dy-2) );
 
 			cdolby.resize( eSize(25,15) );
 			cstereo.resize( eSize(25,15) );
@@ -374,8 +385,8 @@ int eChannelInfo::eventHandler(const eWidgetEvent &event)
 			cscrambled.resize( eSize(25,15) );
 
 			invalidate();
-		break;
-
+			break;
+		    }
 		default:
 		break;
 	}
