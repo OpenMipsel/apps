@@ -1,5 +1,5 @@
 /*
- * $Id: zapit.cpp,v 1.290.2.43 2003/06/04 08:30:02 digi_casi Exp $
+ * $Id: zapit.cpp,v 1.290.2.44 2003/06/06 21:31:16 digi_casi Exp $
  *
  * zapit - d-box2 linux project
  *
@@ -723,8 +723,9 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 				satname = xmlGetAttribute(search, "name");
 				strncpy(sat.satName, satname, 29);
 				sat.satPosition = satellitePositions[satname];
+				sat.motorPosition = motorPositions[sat.satPosition];
 				satlength = sizeof(sat);
-				printf("[zapit] sending %s, %d\n", sat.satName, sat.satPosition);
+				//printf("[zapit] sending %s, %d, %d\n", sat.satName, sat.satPosition, sat.motorPosition);
 				CBasicServer::send_data(connfd, &satlength, sizeof(satlength));
 				CBasicServer::send_data(connfd, (char *)&sat, satlength);
 				search = search->xmlNextNode;
@@ -1536,7 +1537,7 @@ void signal_handler(int signum)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.43 2003/06/04 08:30:02 digi_casi Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp,v 1.290.2.44 2003/06/06 21:31:16 digi_casi Exp $\n");
 
 	for (int i = 1; i < argc ; i++) {
 		if (!strcmp(argv[i], "-d")) {
