@@ -65,7 +65,7 @@
 			<action name="showAudio" key="yellow" flags="m" />
 			<action name="pluginVTXT" key="blue" flags="m" />
 			<action name="showEPGList" key="red" flags="m" />
-			<action name="showEPG" key="?" flags="m" />
+			<action name="record" key="?" flags="m" />
 			<action name="nextService" key="right" flags="mr" />
 			<action name="prevService" key="left" flags="mr" />
 			<action name="serviceListDown" key="down" flags="m" />
@@ -96,11 +96,11 @@
 			<action name="prevBouquet" key="-" flags="mr" />
 			<action name="pathUp" key="d-box" flags="m" />
 			<action name="showEPGSelector" key="?" flags="m" />
-			<action name="toggleStyle" key="mute" flags="m" />
 			<action name="addService" key="green" flags="m" />
 			<action name="showMenu" key="red" flags="m" />
 			<action name="showFavourite" key="blue" flags="m" />
 			<!--action name="addServiceToFavourite" key="yellow" flags="m" /-->
+			<action name="toggleStyle" key="mute" flags="m" />
 			<action name="toggleFocus" key="yellow" flags="m" />
 		</actionmap>
 
