@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-04-09 01:25+0200\n"
-"PO-Revision-Date: Wed Apr 9 1:21:30 CEST 2003\n"
+"POT-Creation-Date: 2003-04-13 20:55+0200\n"
+"PO-Revision-Date: Sun Apr 13 20:44:29 CEST 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: Czech / Hombre <midex@post.cz>\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 msgid "FF "
 msgstr "FF"
 
-#: default.esml:699
+#: default.esml:700
 msgid "cancel partition check"
 msgstr "zrusit kontrolu partition"
 
-#: default.esml:616
+#: default.esml:617
 msgid "press ok to edit the selected event"
 msgstr "stiskem OK uprav vybranou polozku"
 
-#: default.esml:377 src/enigma_info.cpp:49
+#: default.esml:378 src/enigma_info.cpp:49
 msgid "Satfind"
 msgstr "Satelity"
 
@@ -35,18 +35,18 @@ msgstr "Satelity"
 msgid "Pause "
 msgstr "Pauza"
 
-#: default.esml:341 default.esml:371 default.esml:427 default.esml:510
-#: default.esml:722 src/setup_language.cpp:82 src/setup_lcd.cpp:106
+#: default.esml:342 default.esml:372 default.esml:428 default.esml:511
+#: default.esml:723 src/setup_language.cpp:82 src/setup_lcd.cpp:106
 #: src/setup_osd.cpp:258 src/setup_rc.cpp:108 src/setupnetwork.cpp:97
 #: src/setupvideo.cpp:71 src/setup_rfmod.cpp:121 src/setup_audio.cpp:36
 msgid "save"
 msgstr "ulozit"
 
-#: default.esml:401
+#: default.esml:402
 msgid "motor power input difference between running and not running"
 msgstr "rozdíl vstupního proudu rotoru v klidu a v provozu"
 
-#: default.esml:438 default.esml:518 src/rotorconfig.cpp:617
+#: default.esml:439 default.esml:519 src/rotorconfig.cpp:617
 msgid "Satellite:"
 msgstr "Satelit :"
 
@@ -54,131 +54,131 @@ msgstr "Satelit :"
 msgid "Play "
 msgstr "Play"
 
-#: default.esml:439
+#: default.esml:440
 msgid "choose the Satellite you wish to find"
 msgstr "zvolte satelit, který chcete prohledat"
 
-#: default.esml:342 default.esml:372 default.esml:428 default.esml:511
-#: default.esml:723 src/setup_language.cpp:95 src/setup_lcd.cpp:119
+#: default.esml:343 default.esml:373 default.esml:429 default.esml:512
+#: default.esml:724 src/setup_language.cpp:95 src/setup_lcd.cpp:119
 #: src/setup_osd.cpp:272 src/setup_rc.cpp:121 src/setupnetwork.cpp:112
 #: src/setupvideo.cpp:85 src/setup_audio.cpp:51
 msgid "ignore changes and return"
 msgstr "ignorovat zmeny a obnovit"
 
-#: default.esml:639
+#: default.esml:640
 msgid "processor: "
 msgstr "procesor :"
 
-#: default.esml:413
+#: default.esml:414
 msgid "choose entry to edit or remove"
 msgstr "vyber bod pro editaci nebo vymazání"
 
-#: default.esml:640
+#: default.esml:641
 msgid "frontend: "
 msgstr "predrazený :"
 
-#: default.esml:416
+#: default.esml:417
 msgid "enter where this orbital position is (to) stored in motor"
 msgstr "zadej orbitální pozici nastavenou v motoru"
 
-#: default.esml:565
+#: default.esml:566
 msgid "SNR"
 msgstr "SNR"
 
-#: default.esml:485
+#: default.esml:486
 msgid "erase bouquets and services before scan"
 msgstr "vymaz prehled a sluzby pred vyhledáváním"
 
-#: default.esml:382
+#: default.esml:383
 msgid "AGC:"
 msgstr "AGC :"
 
-#: default.esml:358
+#: default.esml:359
 msgid "Uncommitted Switch:"
 msgstr "Uncommitted Switch:?"
 
-#: default.esml:525
+#: default.esml:526
 msgid "enable/disable inversion here (ok)"
 msgstr "umoznit / zakázat inverzi ( OK )"
 
-#: default.esml:370
+#: default.esml:371
 msgid "prev. page"
 msgstr "pred.strana"
 
-#: default.esml:369
+#: default.esml:370
 msgid "Motor Setup"
 msgstr "Natácecí systém"
 
-#: default.esml:335
+#: default.esml:336
 msgid "LOF/L:"
 msgstr "LOF/L :"
 
-#: default.esml:657 default.esml:670
+#: default.esml:658 default.esml:671
 msgid "standby  "
 msgstr "stanby"
 
-#: default.esml:696
+#: default.esml:697
 msgid "Partition Check"
 msgstr "Kontrola partition"
 
-#: default.esml:654 default.esml:667
+#: default.esml:655 default.esml:668
 msgid "enter recording end time (0..9, left, right, ok)"
 msgstr "nastav cas vypnutí nahrávání ( 0..9, <, >, OK )"
 
-#: default.esml:617 default.esml:621
+#: default.esml:618 default.esml:622
 msgid "select year (ok)"
 msgstr "Vyber rok ( OK )"
 
-#: default.esml:627
+#: default.esml:628
 msgid "close timer menu (ok)"
 msgstr "opustit menu casovace ( OK )"
 
-#: default.esml:340
+#: default.esml:341
 msgid "increased voltage"
 msgstr "zvýsit napetí"
 
-#: default.esml:530
+#: default.esml:531
 msgid "FEC:"
 msgstr "FEC :"
 
-#: default.esml:391 default.esml:568
+#: default.esml:392 default.esml:569
 msgid "LOCK"
 msgstr "LOCK"
 
-#: default.esml:409
+#: default.esml:410
 msgid "Latitude:"
 msgstr "Pozice :"
 
-#: default.esml:392 default.esml:569
+#: default.esml:393 default.esml:570
 msgid "SYNC"
 msgstr "SYNC"
 
-#: default.esml:508
+#: default.esml:509
 msgid "Skins:"
 msgstr "Prostredí :"
 
-#: default.esml:390 default.esml:646 src/enigma_ci.cpp:469
+#: default.esml:391 default.esml:647 src/enigma_ci.cpp:469
 #: src/enigma_ci.cpp:478
 msgid "ok"
 msgstr "OK"
 
-#: default.esml:528
+#: default.esml:529
 msgid "choose polarity (left, right)"
 msgstr "vyber polaritu ( <, > )"
 
-#: default.esml:471
+#: default.esml:472
 msgid "enable/disable use BAT for scan (if exists)"
 msgstr "povolit/zakázat pouzití BAT pri vyhledávání"
 
-#: default.esml:525
+#: default.esml:526
 msgid "Inv:"
 msgstr "Inv :"
 
-#: default.esml:620
+#: default.esml:621
 msgid "edit the start time (0..9, left, right)"
 msgstr "upravit cas zacátku ( 0..9, <, > )"
 
-#: default.esml:334
+#: default.esml:335
 msgid "enter LNB lowband offset frequency (0..9, ok)"
 msgstr "zadej LNB kmitocet pro nízké pásmo (0..9,OK)"
 
@@ -186,210 +186,210 @@ msgstr "zadej LNB kmitocet pro nízké pásmo (0..9,OK)"
 msgid "Record "
 msgstr "Zápis"
 
-#: default.esml:507
+#: default.esml:508
 msgid "Skin Selector"
 msgstr "Volba prostredí"
 
-#: default.esml:495
+#: default.esml:496
 msgid "transponder scanned:"
 msgstr "nalezené transpondéry :"
 
-#: default.esml:666
+#: default.esml:667
 msgid "recording end time:"
 msgstr "cas vypnutí záznamu :"
 
-#: default.esml:398
+#: default.esml:399
 msgid "Use motor input power for running detection.. else use timeout"
 msgstr "Pro detekci motoru pouzijte vstupní proud..nebo casový limit."
 
-#: default.esml:421 default.esml:443
+#: default.esml:422 default.esml:444
 msgid "Direction:"
 msgstr "Adresár :"
 
-#: default.esml:359
+#: default.esml:360
 msgid "send the complete DiSEqC sequence dupe"
 msgstr "posli kompletni DiSEqC sekvenci"
 
-#: default.esml:523 default.esml:543
+#: default.esml:524 default.esml:544
 msgid "MHz"
 msgstr "MHz"
 
-#: default.esml:494
+#: default.esml:495
 msgid "services scanned     :"
 msgstr "nalezené kanály :"
 
-#: default.esml:628
+#: default.esml:629
 msgid "update"
 msgstr "upravit"
 
-#: default.esml:510 src/setup_language.cpp:87 src/setup_lcd.cpp:111
+#: default.esml:511 src/setup_language.cpp:87 src/setup_lcd.cpp:111
 #: src/setup_osd.cpp:263 src/setup_rc.cpp:113 src/setupnetwork.cpp:102
 #: src/setupvideo.cpp:76 src/setup_audio.cpp:41
 msgid "save changes and return"
 msgstr "zapis zmeny a uzavri"
 
-#: default.esml:418
+#: default.esml:419
 msgid "Orbital Position:"
 msgstr "Pozice satelitu :"
 
-#: default.esml:425 default.esml:630
+#: default.esml:426 default.esml:631
 msgid "remove"
 msgstr "vymazat"
 
-#: default.esml:397 default.esml:435
+#: default.esml:398 default.esml:436
 msgid "Motor Config"
 msgstr "Nastavení motoru"
 
-#: default.esml:336
+#: default.esml:337
 msgid "enter LNB highband offset frequency (0..9, ok)"
 msgstr "nastav v LNB kmitocet vysokého pásma (0..9, OK)"
 
-#: default.esml:356
+#: default.esml:357
 msgid "DiSEqC Repeats:"
 msgstr "DiSEgC opakování :"
 
-#: default.esml:722
+#: default.esml:723
 msgid "save changes and close window"
 msgstr "zapis zmeny a uzavri okno"
 
-#: default.esml:542
+#: default.esml:543
 msgid "enter frequency (0..9, left, right)"
 msgstr "nastav kmitocet ( 0..9 , <, > )"
 
-#: default.esml:425
+#: default.esml:426
 msgid "remove selected entry"
 msgstr "vymaz vybrané"
 
-#: default.esml:363
+#: default.esml:364
 msgid "select Uncommitted Switch 2 option"
 msgstr "select Uncommitted Switch 2 option?"
 
-#: default.esml:656 default.esml:669
+#: default.esml:657 default.esml:670
 msgid "shutdown the box after recording (ok)"
 msgstr "vypni box po záznamu ( OK )"
 
-#: default.esml:351
+#: default.esml:352
 msgid "select DiSEqC mode (ok)"
 msgstr "vyber mód DiSEgC ( OK )"
 
-#: default.esml:360
+#: default.esml:361
 msgid "Swap Commands"
 msgstr "Swapovací instrukce"
 
-#: default.esml:369
+#: default.esml:370
 msgid "opens the motor setup"
 msgstr "otevre nastavení motoru"
 
-#: default.esml:738
+#: default.esml:739
 msgid "Please choose your DiSEqC-Configuration:"
 msgstr "Zvolte vasi konfiguraci DiSEqC:"
 
-#: default.esml:652 default.esml:665
+#: default.esml:653 default.esml:666
 msgid "Stop Record"
 msgstr "Stop Záznamu"
 
-#: default.esml:339
+#: default.esml:340
 msgid "enter LNB threshold frequency (0..9, ok)"
 msgstr "nastav v LNB prahový kmitocet (0..9, OK)"
 
-#: default.esml:451
+#: default.esml:452
 msgid "close motor setup"
 msgstr "opustit nastavení motoru"
 
-#: default.esml:535 default.esml:547
+#: default.esml:536 default.esml:548
 msgid "KSymb/s"
 msgstr "KSymb/s"
 
-#: default.esml:436
+#: default.esml:437
 msgid "Mode:"
 msgstr "Mód :"
 
-#: default.esml:475 default.esml:487 default.esml:511 default.esml:659
-#: default.esml:672 default.esml:712 src/enigma_ci.cpp:77 src/scan.cpp:38
+#: default.esml:476 default.esml:488 default.esml:512 default.esml:660
+#: default.esml:673 default.esml:713 src/enigma_ci.cpp:77 src/scan.cpp:38
 #: src/setup_language.cpp:92 src/setup_lcd.cpp:116 src/setup_osd.cpp:269
 #: src/setup_rc.cpp:118 src/setupnetwork.cpp:109 src/setupvideo.cpp:82
 #: src/setup_rfmod.cpp:132 src/setup_audio.cpp:48
 msgid "abort"
 msgstr "zavri"
 
-#: default.esml:498
+#: default.esml:499
 msgid "Progress:"
 msgstr "Stav :"
 
-#: default.esml:690
+#: default.esml:691
 msgid "select filsystem to format"
 msgstr "vyber souborový system pro formát"
 
-#: default.esml:310
+#: default.esml:311
 msgid "Satellite Configuration"
 msgstr "Nastavení satelitu "
 
-#: default.esml:378
+#: default.esml:379
 msgid "SNR:"
 msgstr "SNR :"
 
-#: default.esml:700
+#: default.esml:701
 msgid "close window"
 msgstr "uzavri okno"
 
-#: default.esml:386 default.esml:567
+#: default.esml:387 default.esml:568
 msgid "BER"
 msgstr "BER"
 
-#: default.esml:338
+#: default.esml:339
 msgid "Threshold:"
 msgstr "Max.hodnota :"
 
-#: default.esml:445
+#: default.esml:446
 msgid "Recalc Params:"
 msgstr "Prepocti parametry :"
 
-#: default.esml:522
+#: default.esml:523
 msgid "enter transponder frequeny (0..9, left, right)"
 msgstr "nastav kmitocet transpondéru ( 0..9, <, > )"
 
-#: default.esml:371
+#: default.esml:372
 #, fuzzy
 msgid "save changes"
 msgstr "zapis zmeny a uzavri"
 
-#: default.esml:452
+#: default.esml:453
 msgid "save in motor"
 msgstr "ulozit v motoru"
 
-#: default.esml:688
+#: default.esml:689
 msgid "do a filesystem check"
 msgstr "dokoncit test souboru"
 
-#: default.esml:527
+#: default.esml:528
 msgid "Polarity:"
 msgstr "Polarita :"
 
-#: default.esml:424 default.esml:629
+#: default.esml:425 default.esml:630
 msgid "add"
 msgstr "pridat"
 
-#: default.esml:687
+#: default.esml:688
 msgid "initialize the disk for use with the dreambox"
 msgstr "inicializace disku pro pouzití v DreamBoxu"
 
-#: default.esml:474
+#: default.esml:475
 msgid "start the transponder scan"
 msgstr "zacní vyhledávat vysílání"
 
-#: default.esml:313
+#: default.esml:314
 msgid "LNB"
 msgstr "LNB"
 
-#: default.esml:474 default.esml:486
+#: default.esml:475 default.esml:487
 msgid "start scan"
 msgstr "zacni vyhledávat"
 
-#: default.esml:472
+#: default.esml:473
 msgid "remove all services before scan"
 msgstr "vymazat sluzby pred vyhledáváním "
 
-#: default.esml:353
+#: default.esml:354
 msgid "select DiSEqC parameter (ok)"
 msgstr "nastav DiSEqC parametry ( OK )"
 
@@ -398,51 +398,51 @@ msgstr "nastav DiSEqC parametry ( OK )"
 msgid "videotext"
 msgstr "Teletext"
 
-#: default.esml:475 default.esml:487
+#: default.esml:476 default.esml:488
 msgid "close window and do not scan"
 msgstr "zrus vyhledávání a uzavri okno"
 
-#: default.esml:627 default.esml:700
+#: default.esml:628 default.esml:701
 msgid "close"
 msgstr "uzavri"
 
-#: default.esml:485
+#: default.esml:486
 msgid "erase all"
 msgstr "vymaz vse"
 
-#: default.esml:688
+#: default.esml:689
 msgid "check"
 msgstr "zkontroluj"
 
-#: default.esml:521 default.esml:541
+#: default.esml:522 default.esml:542
 msgid "Frequency:"
 msgstr "Kmitocet :"
 
-#: default.esml:581 default.esml:588 default.esml:595
+#: default.esml:582 default.esml:589 default.esml:596
 msgid "Services"
 msgstr "Programy"
 
-#: default.esml:450
+#: default.esml:451
 msgid "0"
 msgstr "nenalezeny"
 
-#: default.esml:361
+#: default.esml:362
 msgid "select Uncommitted Switch 1 option"
 msgstr "select Uncommitted Switch 1 option?"
 
-#: default.esml:368
+#: default.esml:369
 msgid "U-Switch 4:"
 msgstr "U-prepínac 4:"
 
-#: default.esml:534 default.esml:546
+#: default.esml:535 default.esml:547
 msgid "enter symbol rate (0..9, left, right)"
 msgstr "zadej prenosovou rychlost ( 0..9, <, > )"
 
-#: default.esml:720
+#: default.esml:721
 msgid "press ok to enter the name"
 msgstr "pres OK zvolite tento název"
 
-#: default.esml:553
+#: default.esml:554
 msgid "enable/disable inversion (ok)"
 msgstr "umoznit/zakázat inverzi (OK)"
 
@@ -451,181 +451,181 @@ msgstr "umoznit/zakázat inverzi (OK)"
 msgid "subservices"
 msgstr "Programy"
 
-#: default.esml:400
+#: default.esml:401
 msgid "/sec"
 msgstr "/sec"
 
-#: default.esml:630
+#: default.esml:631
 msgid "delete the current selected timer (ok)"
 msgstr "vymazat tento zvolený cas ( OK )"
 
-#: default.esml:349
+#: default.esml:350
 msgid "select MiniDiSEqC parameter (ok)"
 msgstr "vyber MiniDiSEqC parametry ( OK )"
 
-#: default.esml:424
+#: default.esml:425
 msgid "add to table/existing is overwritten"
 msgstr "vybrat seznam/prepsat stávající"
 
-#: default.esml:481
+#: default.esml:482
 msgid "Network:"
 msgstr "Sít :"
 
-#: default.esml:644
+#: default.esml:645
 msgid "Software Version:"
 msgstr "Verze software :"
 
-#: default.esml:364
+#: default.esml:365
 msgid "U-Switch 2:"
 msgstr "U-prepínac 2:"
 
-#: default.esml:407
+#: default.esml:408
 msgid "enter your longitude (0..9, +, -, ok)"
 msgstr "zadej svou zemepisnou délku ( 0..9, +, -, OK )"
 
-#: default.esml:319
+#: default.esml:320
 msgid "remove the selected Satellite"
 msgstr "výmaz vybraného satelitu"
 
-#: default.esml:519
+#: default.esml:520
 msgid "choose wished satellite (ok)"
 msgstr "zvol vybranou druzici ( OK )"
 
-#: default.esml:729
+#: default.esml:730
 msgid "Your language"
 msgstr "Vás Jazyk"
 
-#: default.esml:618 default.esml:622
+#: default.esml:619 default.esml:623
 msgid "select month (ok)"
 msgstr "vyber mesíc ( OK )"
 
-#: default.esml:689
+#: default.esml:690
 msgid "show extended configuration"
 msgstr "Zobrazit podrobneji konfiguraci "
 
-#: default.esml:659 default.esml:672
+#: default.esml:660 default.esml:673
 msgid "close window and use no record timer (ok)"
 msgstr "uzavri okno bez pouzití casu záznamu ( OK ) "
 
-#: default.esml:410
+#: default.esml:411
 msgid "enter your latitude (0..9, +, -, ok)"
 msgstr "zadej svoji zemepisnou sírku (0..9 ,+, -, OK)"
 
-#: default.esml:352
+#: default.esml:353
 msgid "DiSEqC Mode:"
 msgstr "DiSEgC Mód :"
 
-#: default.esml:437
+#: default.esml:438
 msgid "choose what you want to do"
 msgstr "zvolte co chcete vykonat"
 
-#: default.esml:493
+#: default.esml:494
 msgid "scanning..."
 msgstr "vyhledávám ..."
 
-#: default.esml:326
+#: default.esml:327
 msgid "LNB Configuration"
 msgstr "LNB nastavení "
 
-#: default.esml:415
+#: default.esml:416
 msgid "Number in motor:"
 msgstr "Císlo v motoru :"
 
-#: default.esml:679
+#: default.esml:680
 msgid "model:"
 msgstr "model :"
 
-#: default.esml:360
+#: default.esml:361
 msgid "swaps normal and opt.Switch DiSEqC Cmds"
 msgstr "zamenit standart nebo nastavení DiSEqC Cmds "
 
-#: default.esml:319
+#: default.esml:320
 msgid "erase"
 msgstr "smazat"
 
-#: default.esml:312
+#: default.esml:313
 msgid "Sat/Position"
 msgstr "Satelit/Pozice"
 
-#: default.esml:448
+#: default.esml:449
 msgid "calc param 3 (see your motor manual or let it 00)"
 msgstr "zadej param 3 (viz.motor manuál nebo nastav 00)"
 
-#: default.esml:628
+#: default.esml:629
 msgid "update the current selected timer (ok)"
 msgstr "oprav poslední editovaný cas ( OK )"
 
-#: default.esml:341
+#: default.esml:342
 msgid "save changes and use current selected LNB for the chosen satellite"
 msgstr "ulozit zmeny a pouzít toto LNB pro zvolený satelit"
 
-#: default.esml:566
+#: default.esml:567
 msgid "AGC"
 msgstr "AGC"
 
-#: default.esml:354
+#: default.esml:355
 msgid "DiSEqC Parameter:"
 msgstr "DiSEqC nastavení :"
 
-#: default.esml:427
+#: default.esml:428
 msgid ""
 "save changes and use the selected LNB (in first page) for the choosen "
 "satellite"
 msgstr "ulozit zmeny a pouzít nastavené LNB ( 1. strana ) pro zvolený satelit"
 
-#: default.esml:549
+#: default.esml:550
 msgid "Modulation:"
 msgstr "Modulace :"
 
-#: default.esml:340
+#: default.esml:341
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
 msgstr "zvýsení napetí LNB o 0,5V (pro dlouhý kabel) ( OK )"
 
-#: default.esml:357
+#: default.esml:358
 msgid "select uncommitted input"
 msgstr "select Uncommitted Input?"
 
-#: default.esml:470
+#: default.esml:471
 msgid "enable/disable check ONIT on any transponder"
 msgstr "povolit/zakázat kontrolu ONIT pro kazdý transpondér"
 
-#: default.esml:642
+#: default.esml:643
 msgid "harddisk: "
 msgstr "harddisk :"
 
-#: default.esml:398
+#: default.esml:399
 msgid "Use Motor Input Power"
 msgstr "Pouzít vstupní proud Motoru"
 
-#: default.esml:404
+#: default.esml:405
 msgid "when the motor support this, then use"
 msgstr "pokud má motor podporu, pouzijte citac (pohybu)"
 
-#: default.esml:685
+#: default.esml:686
 msgid "status:"
 msgstr "výsledek :"
 
-#: default.esml:367
+#: default.esml:368
 msgid "select Uncommitted Switch 4 option"
 msgstr "select Uncommitted Switch 4 option?"
 
-#: default.esml:471
+#: default.esml:472
 msgid "use BAT"
 msgstr "pouzit BAT"
 
-#: default.esml:545
+#: default.esml:546
 msgid "Symbolrate:"
 msgstr "Rychlost :"
 
-#: default.esml:304
+#: default.esml:305
 msgid "HTTP Download"
 msgstr "HTTP Download"
 
-#: default.esml:370
+#: default.esml:371
 msgid "goto prev page (LNB)"
 msgstr "predchozí strana ( LNB )"
 
-#: default.esml:550
+#: default.esml:551
 msgid "choose wished modulation (ok)"
 msgstr "zadejte svoji modulaci ( OK )"
 
@@ -633,131 +633,131 @@ msgstr "zadejte svoji modulaci ( OK )"
 msgid "FR "
 msgstr "FR"
 
-#: default.esml:419
+#: default.esml:420
 msgid "enter orbital position without dot (19.2 = 192)"
 msgstr "zapis pozici satelitu bez des.cárky ( 19.2 = 192 )"
 
-#: default.esml:658 default.esml:671
+#: default.esml:659 default.esml:672
 msgid "set recording end time and close window (ok)"
 msgstr "Nastav konec záznamu a uzavri okno ( OK )"
 
-#: default.esml:404
+#: default.esml:405
 msgid "Use gotoXX Function"
 msgstr "Pouzít gotoXX funkci"
 
-#: default.esml:320
+#: default.esml:321
 msgid "close Satellite Configuration"
 msgstr "uzavrít nastavení satelitu "
 
-#: default.esml:461
+#: default.esml:462
 msgid "transponder scan"
 msgstr "vyhledávání vysílání"
 
-#: default.esml:333
+#: default.esml:334
 msgid "choose the LNB you wish to apply or edit"
 msgstr "zvol LNB kterou chces pouzít nebo editovat"
 
-#: default.esml:472
+#: default.esml:473
 msgid "clear list before"
 msgstr "odstranit prehled"
 
-#: default.esml:609 default.esml:615 stone.esml:460 silver.esml:470
+#: default.esml:610 default.esml:616 stone.esml:460 silver.esml:470
 msgid "EPG"
 msgstr "EPG"
 
-#: default.esml:683
+#: default.esml:684
 msgid "connected:"
 msgstr "pripojený :"
 
-#: default.esml:343 default.esml:429
+#: default.esml:344 default.esml:430
 msgid "next page"
 msgstr "nás.strana"
 
-#: default.esml:656 default.esml:669
+#: default.esml:657 default.esml:670
 msgid "shutdown  "
 msgstr "Vypnout box"
 
-#: default.esml:533
+#: default.esml:534
 msgid "Symbol Rate:"
 msgstr "Rychlost :"
 
-#: default.esml:441
+#: default.esml:442
 msgid "Transponder:"
 msgstr "Transpondér :"
 
-#: default.esml:658 default.esml:671
+#: default.esml:659 default.esml:672
 msgid "set"
 msgstr "nastavit"
 
-#: default.esml:444
+#: default.esml:445
 msgid "press left or right to move motor"
 msgstr "pro presun motoru stiskni <, >"
 
-#: default.esml:447
+#: default.esml:448
 msgid "calc param 2 (see your motor manual or let it 00)"
 msgstr "zadej param 2 ( viz. motor manuál nebo nastav 00 )"
 
-#: default.esml:625
+#: default.esml:626
 msgid "select the timer type (ok)"
 msgstr "zvol typ casu ( OK )"
 
-#: default.esml:314
+#: default.esml:315
 msgid "22Khz"
 msgstr "22 kHz"
 
-#: default.esml:350
+#: default.esml:351
 msgid "MiniDiSEqC Parameter:"
 msgstr "MiniDiSEqC nastavení :"
 
-#: default.esml:482
+#: default.esml:483
 msgid "choose satellite/cable provider (ok)"
 msgstr "zvolte satelit /kabelovka ( OK )"
 
-#: default.esml:668
+#: default.esml:669
 msgid "o'clock"
 msgstr "hodin"
 
-#: default.esml:337
+#: default.esml:338
 msgid "LOF/H:"
 msgstr "LOF/H :"
 
-#: default.esml:365
+#: default.esml:366
 msgid "select Uncommitted Switch 3 option"
 msgstr "select Uncommitted Switch 3 option?"
 
-#: default.esml:399
+#: default.esml:400
 msgid "motor drive speed, in degrees per second"
 msgstr "úhlová rychlost motoru, stupne za sekundu"
 
-#: default.esml:636 src/enigma_info.cpp:48
+#: default.esml:637 src/enigma_info.cpp:48
 msgid "About..."
 msgstr "Info ..."
 
-#: default.esml:629
+#: default.esml:630
 msgid "add new Timer (ok)"
 msgstr "pridat nový cas ( OK )"
 
-#: default.esml:626
+#: default.esml:627
 msgid "to change service press ok"
 msgstr "ke zmene sluzby pouzijte OK"
 
-#: default.esml:449
+#: default.esml:450
 msgid "Counter(Movement)"
 msgstr "Pocitadlo  ( pohyb )"
 
-#: default.esml:453
+#: default.esml:454
 msgid "search"
 msgstr "vyhledávání"
 
-#: default.esml:470
+#: default.esml:471
 msgid "use ONIT"
 msgstr "pouzít ONIT"
 
-#: default.esml:473
+#: default.esml:474
 msgid "enable/disable initiate network search"
 msgstr "umoznit/vypnout inicializaci hledání síte"
 
-#: default.esml:320 lib/gui/emessage.cpp:97 src/enigma_ci.cpp:220
+#: default.esml:321 lib/gui/emessage.cpp:97 src/enigma_ci.cpp:220
 msgid "OK"
 msgstr "OK"
 
@@ -766,7 +766,7 @@ msgstr "OK"
 msgid "audio track"
 msgstr "stopa"
 
-#: default.esml:318
+#: default.esml:319
 msgid "new"
 msgstr "nový"
 
@@ -774,140 +774,140 @@ msgstr "nový"
 msgid "Stop "
 msgstr "Stop"
 
-#: default.esml:531
+#: default.esml:532
 msgid "choose the FEC (left, right)"
 msgstr "zvol FEC ( <, > )"
 
-#: default.esml:355
+#: default.esml:356
 msgid "select DiSEqC repeats (ok)"
 msgstr "nastav DiSEqC opakování (OK)"
 
-#: default.esml:706
+#: default.esml:707
 msgid "Software upgrade..."
 msgstr "Aktualizace software..."
 
-#: default.esml:406
+#: default.esml:407
 msgid "Longitude:"
 msgstr "Zemepisná délka :"
 
-#: default.esml:408 default.esml:411 default.esml:422
+#: default.esml:409 default.esml:412 default.esml:423
 msgid "choose direction"
 msgstr "vyber smer"
 
-#: default.esml:681
+#: default.esml:682
 msgid "capacity:"
 msgstr "kapacita :"
 
-#: default.esml:737
+#: default.esml:738
 msgid "DiSEqC..."
 msgstr "DiSEqC..."
 
-#: default.esml:509
+#: default.esml:510
 msgid "select skin and press ok or choose save"
 msgstr "vyber Prostredí a uloz ( OK )"
 
-#: default.esml:446
+#: default.esml:447
 msgid "calc param 1 (see your motor manual or let it 00)"
 msgstr "zadej param 1 (viz. motor manuál nebo nastav 00)"
 
-#: default.esml:451
+#: default.esml:452
 msgid "prev page"
 msgstr "pred.strana"
 
-#: default.esml:619 default.esml:623
+#: default.esml:620 default.esml:624
 msgid "select day (ok)"
 msgstr "vyber den (OK)"
 
-#: default.esml:342 default.esml:372 default.esml:428 default.esml:699
-#: default.esml:723
+#: default.esml:343 default.esml:373 default.esml:429 default.esml:700
+#: default.esml:724
 msgid "cancel"
 msgstr "zrusit"
 
-#: default.esml:343
+#: default.esml:344
 msgid "goto next page (DiSEqC)"
 msgstr "na dalsí stranu (DiSEqC)"
 
-#: default.esml:624
+#: default.esml:625
 msgid "edit the end time (0..9, left, right)"
 msgstr "uprav cas konce záznamu ( 0..9, <, > )"
 
-#: default.esml:653
+#: default.esml:654
 msgid "recording duration:"
 msgstr "délka záznamu :"
 
-#: default.esml:366
+#: default.esml:367
 msgid "U-Switch 3:"
 msgstr "U-prepínac 3:"
 
-#: default.esml:442
+#: default.esml:443
 msgid "choose the Transponder you wish to find"
 msgstr "zvolte Transpondér, který chcete prohledat"
 
-#: default.esml:697
+#: default.esml:698
 msgid "status output:"
 msgstr "ukazatel výstupu :"
 
-#: default.esml:359
+#: default.esml:360
 msgid "Sequence repeat"
 msgstr "Sekvence opakování"
 
-#: default.esml:318
+#: default.esml:319
 msgid "add a new Satellite"
 msgstr "pridat nový satelit"
 
-#: default.esml:440
+#: default.esml:441
 msgid "enter stored satellite pos"
 msgstr "ulozené pozice druzic"
 
-#: default.esml:453
+#: default.esml:454
 msgid "open transponder scan"
 msgstr "otevre vyhledávání vysílání"
 
-#: default.esml:678
+#: default.esml:679
 msgid "Harddisk"
 msgstr "Harddisk"
 
-#: default.esml:655
+#: default.esml:656
 msgid "min"
 msgstr "min"
 
-#: default.esml:402
+#: default.esml:403
 msgid "mA"
 msgstr "mA"
 
-#: default.esml:657 default.esml:670
+#: default.esml:658 default.esml:671
 msgid "goto standby after recording (ok)"
 msgstr "vypni do Standby po záznamu ( OK )"
 
-#: default.esml:552
+#: default.esml:553
 msgid "Inversion:"
 msgstr "Inverze :"
 
-#: default.esml:429
+#: default.esml:430
 msgid "goto advanced motor setup"
 msgstr "do rozsirených nastavení Motoru"
 
-#: default.esml:687
+#: default.esml:688
 msgid "format"
 msgstr "formát"
 
-#: default.esml:486
+#: default.esml:487
 msgid "starts the transponder scan"
 msgstr "vyhledávání vysílání"
 
-#: default.esml:362
+#: default.esml:363
 msgid "U-Switch 1:"
 msgstr "U-prepínac 1:"
 
-#: default.esml:315
+#: default.esml:316
 msgid "Voltage"
 msgstr "Napetí"
 
-#: default.esml:473
+#: default.esml:474
 msgid "network search"
 msgstr "hledání síte"
 
-#: default.esml:574
+#: default.esml:575
 msgid "Help"
 msgstr "Nápoveda"
 
@@ -3622,18 +3622,3 @@ msgstr ""
 #: src/setup_audio.cpp:32
 msgid "enable/disable ac3 default output (ok)"
 msgstr "umoznit/zakázat implicitne AC3 výstup  (OK)"
-
-#~ msgid "16:9 (PIN8)"
-#~ msgstr "16:9 ( PIN8 )"
-
-#~ msgid "Bildregie"
-#~ msgstr "PodObrazy"
-
-#~ msgid "FBAS"
-#~ msgstr "FBAS"
-
-#~ msgid "keine"
-#~ msgstr "zádný"
-
-#~ msgid "Tonwahl"
-#~ msgstr "Jazyk zvuku"

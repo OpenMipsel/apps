@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
-"POT-Creation-Date: 2003-04-09 01:25+0200\n"
-"PO-Revision-Date: Wed Apr 9 1:21:30 CEST 2003\n"
+"POT-Creation-Date: 2003-04-13 20:55+0200\n"
+"PO-Revision-Date: Sun Apr 13 20:44:30 CEST 2003\n"
 "Last-Translator: unknown\n"
 "Language-Team: Arabic / Sameer\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 msgid "FF "
 msgstr "ف ف"
 
-#: default.esml:699
+#: default.esml:700
 msgid "cancel partition check"
 msgstr "الغ فحص التقسيم"
 
-#: default.esml:616
+#: default.esml:617
 msgid "press ok to edit the selected event"
 msgstr "اضغط موافق لتحرير الحدث الذي اخترته"
 
-#: default.esml:377 src/enigma_info.cpp:49
+#: default.esml:378 src/enigma_info.cpp:49
 msgid "Satfind"
 msgstr "إيجاد قمر"
 
@@ -35,18 +35,18 @@ msgstr "إيجاد قمر"
 msgid "Pause "
 msgstr "توقف مؤقت"
 
-#: default.esml:341 default.esml:371 default.esml:427 default.esml:510
-#: default.esml:722 src/setup_language.cpp:82 src/setup_lcd.cpp:106
+#: default.esml:342 default.esml:372 default.esml:428 default.esml:511
+#: default.esml:723 src/setup_language.cpp:82 src/setup_lcd.cpp:106
 #: src/setup_osd.cpp:258 src/setup_rc.cpp:108 src/setupnetwork.cpp:97
 #: src/setupvideo.cpp:71 src/setup_rfmod.cpp:121 src/setup_audio.cpp:36
 msgid "save"
 msgstr "تخزين"
 
-#: default.esml:401
+#: default.esml:402
 msgid "motor power input difference between running and not running"
 msgstr "فرق تغذية الموتور بين التحرك وعدم التحرك"
 
-#: default.esml:438 default.esml:518 src/rotorconfig.cpp:617
+#: default.esml:439 default.esml:519 src/rotorconfig.cpp:617
 msgid "Satellite:"
 msgstr "قمر صناعي"
 
@@ -54,132 +54,132 @@ msgstr "قمر صناعي"
 msgid "Play "
 msgstr "تشغيل"
 
-#: default.esml:439
+#: default.esml:440
 msgid "choose the Satellite you wish to find"
 msgstr "اختر القمر الصناعي الذي تريد ايجاده"
 
-#: default.esml:342 default.esml:372 default.esml:428 default.esml:511
-#: default.esml:723 src/setup_language.cpp:95 src/setup_lcd.cpp:119
+#: default.esml:343 default.esml:373 default.esml:429 default.esml:512
+#: default.esml:724 src/setup_language.cpp:95 src/setup_lcd.cpp:119
 #: src/setup_osd.cpp:272 src/setup_rc.cpp:121 src/setupnetwork.cpp:112
 #: src/setupvideo.cpp:85 src/setup_audio.cpp:51
 msgid "ignore changes and return"
 msgstr "اهمل التغيرات وارجع"
 
-#: default.esml:639
+#: default.esml:640
 msgid "processor: "
 msgstr "معالج"
 
-#: default.esml:413
+#: default.esml:414
 msgid "choose entry to edit or remove"
 msgstr "اختر إدخال للتعديل أو الحذف"
 
-#: default.esml:640
+#: default.esml:641
 msgid "frontend: "
 msgstr "الواجهه"
 
-#: default.esml:416
+#: default.esml:417
 msgid "enter where this orbital position is (to) stored in motor"
 msgstr " أدخل الموقع المداري لتخزينه في الموتور"
 
-#: default.esml:565
+#: default.esml:566
 msgid "SNR"
 msgstr "نسبة الإشارة للشوشره"
 
-#: default.esml:485
+#: default.esml:486
 msgid "erase bouquets and services before scan"
 msgstr "احذف الباقات والقنوات قبل البحث"
 
-#: default.esml:382
+#: default.esml:383
 msgid "AGC:"
 msgstr "تعديل الكسب أتوماتيكيا"
 
-#: default.esml:358
+#: default.esml:359
 #, fuzzy
 msgid "Uncommitted Switch:"
 msgstr "مفتاح غير معزز"
 
-#: default.esml:525
+#: default.esml:526
 msgid "enable/disable inversion here (ok)"
 msgstr "تشغيل/إغلاق التحويل هنا وافق "
 
-#: default.esml:370
+#: default.esml:371
 msgid "prev. page"
 msgstr "الصفحة السابقة"
 
-#: default.esml:369
+#: default.esml:370
 msgid "Motor Setup"
 msgstr "إعداد الموتور"
 
-#: default.esml:335
+#: default.esml:336
 msgid "LOF/L:"
 msgstr ""
 
-#: default.esml:657 default.esml:670
+#: default.esml:658 default.esml:671
 msgid "standby  "
 msgstr "وضع الانتظار"
 
-#: default.esml:696
+#: default.esml:697
 msgid "Partition Check"
 msgstr "فحص تقسيم القرص الصلب"
 
-#: default.esml:654 default.esml:667
+#: default.esml:655 default.esml:668
 msgid "enter recording end time (0..9, left, right, ok)"
 msgstr "أدخل وقت نهاية التسجيل (0..9،يسار،يمين،موافق"
 
-#: default.esml:617 default.esml:621
+#: default.esml:618 default.esml:622
 msgid "select year (ok)"
 msgstr "اختر السنه وافق"
 
-#: default.esml:627
+#: default.esml:628
 msgid "close timer menu (ok)"
 msgstr "أغلق قائمة المؤقت وافق"
 
-#: default.esml:340
+#: default.esml:341
 msgid "increased voltage"
 msgstr "زيادة في الفولت"
 
-#: default.esml:530
+#: default.esml:531
 msgid "FEC:"
 msgstr "معامل التصحيح"
 
-#: default.esml:391 default.esml:568
+#: default.esml:392 default.esml:569
 msgid "LOCK"
 msgstr "إغلاق"
 
-#: default.esml:409
+#: default.esml:410
 msgid "Latitude:"
 msgstr "إرتفاع"
 
-#: default.esml:392 default.esml:569
+#: default.esml:393 default.esml:570
 msgid "SYNC"
 msgstr "تزامن"
 
-#: default.esml:508
+#: default.esml:509
 msgid "Skins:"
 msgstr "جلد"
 
-#: default.esml:390 default.esml:646 src/enigma_ci.cpp:469
+#: default.esml:391 default.esml:647 src/enigma_ci.cpp:469
 #: src/enigma_ci.cpp:478
 msgid "ok"
 msgstr "موافق"
 
-#: default.esml:528
+#: default.esml:529
 msgid "choose polarity (left, right)"
 msgstr "اخترالقطبية يمين ، يسار "
 
-#: default.esml:471
+#: default.esml:472
 msgid "enable/disable use BAT for scan (if exists)"
 msgstr "تشغيل /إيقاف استخدام بات للبحث إن وجد"
 
-#: default.esml:525
+#: default.esml:526
 msgid "Inv:"
 msgstr "معكوس"
 
-#: default.esml:620
+#: default.esml:621
 msgid "edit the start time (0..9, left, right)"
 msgstr "تحريروقت البدء0...9، يسار، يمين"
 
-#: default.esml:334
+#: default.esml:335
 msgid "enter LNB lowband offset frequency (0..9, ok)"
 msgstr "أدخل قيمة تردد مذبذب ال ال ان بي المنخفض"
 
@@ -187,211 +187,211 @@ msgstr "أدخل قيمة تردد مذبذب ال ال ان بي المنخفض
 msgid "Record "
 msgstr "تسجيل"
 
-#: default.esml:507
+#: default.esml:508
 msgid "Skin Selector"
 msgstr "اختيار الجلد"
 
-#: default.esml:495
+#: default.esml:496
 msgid "transponder scanned:"
 msgstr "تم البحث في الباقه"
 
-#: default.esml:666
+#: default.esml:667
 msgid "recording end time:"
 msgstr "وقت نهاية التسجيل"
 
-#: default.esml:398
+#: default.esml:399
 msgid "Use motor input power for running detection.. else use timeout"
 msgstr "استخدم الطاقة الداخلة للموتور في الكشف...وغير ذلك أعط  انتهى الوقت"
 
-#: default.esml:421 default.esml:443
+#: default.esml:422 default.esml:444
 msgid "Direction:"
 msgstr "توجيه"
 
-#: default.esml:359
+#: default.esml:360
 msgid "send the complete DiSEqC sequence dupe"
 msgstr "أرسل كل معلومات الدايسك المتتابعه"
 
-#: default.esml:523 default.esml:543
+#: default.esml:524 default.esml:544
 msgid "MHz"
 msgstr "ميجا هيرتز"
 
-#: default.esml:494
+#: default.esml:495
 msgid "services scanned     :"
 msgstr "تم البحث عن الخدمة"
 
-#: default.esml:628
+#: default.esml:629
 msgid "update"
 msgstr "تحديث"
 
-#: default.esml:510 src/setup_language.cpp:87 src/setup_lcd.cpp:111
+#: default.esml:511 src/setup_language.cpp:87 src/setup_lcd.cpp:111
 #: src/setup_osd.cpp:263 src/setup_rc.cpp:113 src/setupnetwork.cpp:102
 #: src/setupvideo.cpp:76 src/setup_audio.cpp:41
 msgid "save changes and return"
 msgstr "خزن التغيرات وارجع"
 
-#: default.esml:418
+#: default.esml:419
 msgid "Orbital Position:"
 msgstr "موقع مداري"
 
-#: default.esml:425 default.esml:630
+#: default.esml:426 default.esml:631
 msgid "remove"
 msgstr "احذف"
 
-#: default.esml:397 default.esml:435
+#: default.esml:398 default.esml:436
 msgid "Motor Config"
 msgstr "تهيئة الموتور"
 
-#: default.esml:336
+#: default.esml:337
 msgid "enter LNB highband offset frequency (0..9, ok)"
 msgstr "أدخل مذبذب ال ال ان بي للنطاق المرتفع 0...9 ووافق"
 
-#: default.esml:356
+#: default.esml:357
 msgid "DiSEqC Repeats:"
 msgstr "تكرار الدايسك"
 
-#: default.esml:722
+#: default.esml:723
 msgid "save changes and close window"
 msgstr "خزن المتغيرات واغلق النافذه"
 
-#: default.esml:542
+#: default.esml:543
 msgid "enter frequency (0..9, left, right)"
 msgstr "أدخل التردد 0....9، يسار ، يمين"
 
-#: default.esml:425
+#: default.esml:426
 msgid "remove selected entry"
 msgstr "احذف الإدخال الذي تم اختياره"
 
-#: default.esml:363
+#: default.esml:364
 #, fuzzy
 msgid "select Uncommitted Switch 2 option"
 msgstr "مفتاح غير معزز"
 
-#: default.esml:656 default.esml:669
+#: default.esml:657 default.esml:670
 msgid "shutdown the box after recording (ok)"
 msgstr "أغلق الجهاز بعد التسجيل وافق"
 
-#: default.esml:351
+#: default.esml:352
 msgid "select DiSEqC mode (ok)"
 msgstr "اختر نظام الدايسك"
 
-#: default.esml:360
+#: default.esml:361
 msgid "Swap Commands"
 msgstr ""
 
-#: default.esml:369
+#: default.esml:370
 msgid "opens the motor setup"
 msgstr " فتح إعداد الموتور"
 
-#: default.esml:738
+#: default.esml:739
 msgid "Please choose your DiSEqC-Configuration:"
 msgstr "الرجاء اختيارنظام الدايسك الذي لديك"
 
-#: default.esml:652 default.esml:665
+#: default.esml:653 default.esml:666
 msgid "Stop Record"
 msgstr "أوقف التسجيل"
 
-#: default.esml:339
+#: default.esml:340
 msgid "enter LNB threshold frequency (0..9, ok)"
 msgstr "أدخل تردد حافة مذبذب ال ال ان بي "
 
-#: default.esml:451
+#: default.esml:452
 msgid "close motor setup"
 msgstr "أغلق إعداد الموتور"
 
-#: default.esml:535 default.esml:547
+#: default.esml:536 default.esml:548
 msgid "KSymb/s"
 msgstr "كيلو سيمبول / الثانيه"
 
-#: default.esml:436
+#: default.esml:437
 msgid "Mode:"
 msgstr "نظام"
 
-#: default.esml:475 default.esml:487 default.esml:511 default.esml:659
-#: default.esml:672 default.esml:712 src/enigma_ci.cpp:77 src/scan.cpp:38
+#: default.esml:476 default.esml:488 default.esml:512 default.esml:660
+#: default.esml:673 default.esml:713 src/enigma_ci.cpp:77 src/scan.cpp:38
 #: src/setup_language.cpp:92 src/setup_lcd.cpp:116 src/setup_osd.cpp:269
 #: src/setup_rc.cpp:118 src/setupnetwork.cpp:109 src/setupvideo.cpp:82
 #: src/setup_rfmod.cpp:132 src/setup_audio.cpp:48
 msgid "abort"
 msgstr "اخرج"
 
-#: default.esml:498
+#: default.esml:499
 msgid "Progress:"
 msgstr "تقدم"
 
-#: default.esml:690
+#: default.esml:691
 msgid "select filsystem to format"
 msgstr ""
 
-#: default.esml:310
+#: default.esml:311
 msgid "Satellite Configuration"
 msgstr "تهيئة القمر الصناعي"
 
-#: default.esml:378
+#: default.esml:379
 msgid "SNR:"
 msgstr "معدل الإشارة للشوشره"
 
-#: default.esml:700
+#: default.esml:701
 msgid "close window"
 msgstr "أغلق النافذه"
 
-#: default.esml:386 default.esml:567
+#: default.esml:387 default.esml:568
 msgid "BER"
 msgstr "معدل نسبة الخطأ في النبضات"
 
-#: default.esml:338
+#: default.esml:339
 msgid "Threshold:"
 msgstr "حافه"
 
-#: default.esml:445
+#: default.esml:446
 msgid "Recalc Params:"
 msgstr "إعادة حساب المتغيرات"
 
-#: default.esml:522
+#: default.esml:523
 msgid "enter transponder frequeny (0..9, left, right)"
 msgstr "أدخل تردد الباقه 0....9"
 
-#: default.esml:371
+#: default.esml:372
 #, fuzzy
 msgid "save changes"
 msgstr "خزن التغيرات وارجع"
 
-#: default.esml:452
+#: default.esml:453
 msgid "save in motor"
 msgstr "إحفظ في الموتور"
 
-#: default.esml:688
+#: default.esml:689
 msgid "do a filesystem check"
 msgstr "قم بعمل فحص لنظام الملفات"
 
-#: default.esml:527
+#: default.esml:528
 msgid "Polarity:"
 msgstr "استقطاب"
 
-#: default.esml:424 default.esml:629
+#: default.esml:425 default.esml:630
 msgid "add"
 msgstr "أضف"
 
-#: default.esml:687
+#: default.esml:688
 msgid "initialize the disk for use with the dreambox"
 msgstr "هيئ القرص الصلب للاستخدام مع دريم بوكس"
 
-#: default.esml:474
+#: default.esml:475
 msgid "start the transponder scan"
 msgstr "إبدأ البحث في الباقات"
 
-#: default.esml:313
+#: default.esml:314
 msgid "LNB"
 msgstr "ال ان بي"
 
-#: default.esml:474 default.esml:486
+#: default.esml:475 default.esml:487
 msgid "start scan"
 msgstr "إبدأ البحث"
 
-#: default.esml:472
+#: default.esml:473
 msgid "remove all services before scan"
 msgstr "احذف كل القنوات قبل البحث"
 
-#: default.esml:353
+#: default.esml:354
 msgid "select DiSEqC parameter (ok)"
 msgstr "اختر بيانات الدايسك وافق"
 
@@ -400,52 +400,52 @@ msgstr "اختر بيانات الدايسك وافق"
 msgid "videotext"
 msgstr "نص صوري"
 
-#: default.esml:475 default.esml:487
+#: default.esml:476 default.esml:488
 msgid "close window and do not scan"
 msgstr "أغلق النافذه ولا تقم بالبحث"
 
-#: default.esml:627 default.esml:700
+#: default.esml:628 default.esml:701
 msgid "close"
 msgstr "أغلق"
 
-#: default.esml:485
+#: default.esml:486
 msgid "erase all"
 msgstr "احذف الجميع"
 
-#: default.esml:688
+#: default.esml:689
 msgid "check"
 msgstr "افحص"
 
-#: default.esml:521 default.esml:541
+#: default.esml:522 default.esml:542
 msgid "Frequency:"
 msgstr "تردد"
 
-#: default.esml:581 default.esml:588 default.esml:595
+#: default.esml:582 default.esml:589 default.esml:596
 msgid "Services"
 msgstr "قنوات"
 
-#: default.esml:450
+#: default.esml:451
 msgid "0"
 msgstr "0"
 
-#: default.esml:361
+#: default.esml:362
 #, fuzzy
 msgid "select Uncommitted Switch 1 option"
 msgstr "مفتاح غير معزز"
 
-#: default.esml:368
+#: default.esml:369
 msgid "U-Switch 4:"
 msgstr ""
 
-#: default.esml:534 default.esml:546
+#: default.esml:535 default.esml:547
 msgid "enter symbol rate (0..9, left, right)"
 msgstr "أدخل معدل الترميز"
 
-#: default.esml:720
+#: default.esml:721
 msgid "press ok to enter the name"
 msgstr "اضغط أوكي لإدخال الاسم"
 
-#: default.esml:553
+#: default.esml:554
 msgid "enable/disable inversion (ok)"
 msgstr "تشغيل/إيقاف التحويل أوكي"
 
@@ -454,184 +454,184 @@ msgstr "تشغيل/إيقاف التحويل أوكي"
 msgid "subservices"
 msgstr "قنوات"
 
-#: default.esml:400
+#: default.esml:401
 msgid "/sec"
 msgstr "/ثانيه"
 
-#: default.esml:630
+#: default.esml:631
 msgid "delete the current selected timer (ok)"
 msgstr "احذف المؤقت الذي تم اختياره حاليا"
 
-#: default.esml:349
+#: default.esml:350
 msgid "select MiniDiSEqC parameter (ok)"
 msgstr "اختر متغيرات ميني دايسك"
 
-#: default.esml:424
+#: default.esml:425
 msgid "add to table/existing is overwritten"
 msgstr "أضف للجدول/ سيتم الكتابة فوق الموجود"
 
-#: default.esml:481
+#: default.esml:482
 msgid "Network:"
 msgstr "شبكه مترابطه"
 
-#: default.esml:644
+#: default.esml:645
 msgid "Software Version:"
 msgstr "نسخة البرنامج التشغيلي"
 
-#: default.esml:364
+#: default.esml:365
 msgid "U-Switch 2:"
 msgstr ""
 
-#: default.esml:407
+#: default.esml:408
 msgid "enter your longitude (0..9, +, -, ok)"
 msgstr "أدخل خط الطول 0...9 ، + ، - ، موافق"
 
-#: default.esml:319
+#: default.esml:320
 msgid "remove the selected Satellite"
 msgstr "أحذف القمر الصناعي الذي تم اختياره"
 
-#: default.esml:519
+#: default.esml:520
 msgid "choose wished satellite (ok)"
 msgstr "اختر القمر الصناعي المرغوب"
 
-#: default.esml:729
+#: default.esml:730
 msgid "Your language"
 msgstr " لغتك"
 
-#: default.esml:618 default.esml:622
+#: default.esml:619 default.esml:623
 msgid "select month (ok)"
 msgstr "اختر الشهر أوكي"
 
-#: default.esml:689
+#: default.esml:690
 #, fuzzy
 msgid "show extended configuration"
 msgstr "أظهر المعلومات الممتده"
 
-#: default.esml:659 default.esml:672
+#: default.esml:660 default.esml:673
 msgid "close window and use no record timer (ok)"
 msgstr "اغلق النافذه واختر مؤقت بدون تسجيل"
 
-#: default.esml:410
+#: default.esml:411
 msgid "enter your latitude (0..9, +, -, ok)"
 msgstr "أدخل خط العرض 0...9 ، + ، - ، أوكي"
 
-#: default.esml:352
+#: default.esml:353
 msgid "DiSEqC Mode:"
 msgstr " نظام دايسك سي"
 
-#: default.esml:437
+#: default.esml:438
 msgid "choose what you want to do"
 msgstr "اختر مالذي تريد عمله"
 
-#: default.esml:493
+#: default.esml:494
 msgid "scanning..."
 msgstr "بحث عن القنوات"
 
-#: default.esml:326
+#: default.esml:327
 msgid "LNB Configuration"
 msgstr "تهيئة ال ال ان بي"
 
-#: default.esml:415
+#: default.esml:416
 msgid "Number in motor:"
 msgstr "الرقم في الموتور"
 
-#: default.esml:679
+#: default.esml:680
 msgid "model:"
 msgstr "طراز"
 
-#: default.esml:360
+#: default.esml:361
 msgid "swaps normal and opt.Switch DiSEqC Cmds"
 msgstr ""
 
-#: default.esml:319
+#: default.esml:320
 msgid "erase"
 msgstr "احذف"
 
-#: default.esml:312
+#: default.esml:313
 msgid "Sat/Position"
 msgstr "قمر / موقع"
 
-#: default.esml:448
+#: default.esml:449
 msgid "calc param 3 (see your motor manual or let it 00)"
 msgstr "احسب المعامل 3 انظر لكتيب الموتور أو ضعها 00"
 
-#: default.esml:628
+#: default.esml:629
 msgid "update the current selected timer (ok)"
 msgstr " حدث مؤقتك الذي اخترته حاليا"
 
-#: default.esml:341
+#: default.esml:342
 msgid "save changes and use current selected LNB for the chosen satellite"
 msgstr "احفظ التغيرات واستخدم ال ال ان بي المختار حاليا للقمر الذي اخترته"
 
-#: default.esml:566
+#: default.esml:567
 msgid "AGC"
 msgstr "التحكم االأتوماتيكي في الكسب"
 
-#: default.esml:354
+#: default.esml:355
 msgid "DiSEqC Parameter:"
 msgstr "إعدادات الدايسك"
 
-#: default.esml:427
+#: default.esml:428
 msgid ""
 "save changes and use the selected LNB (in first page) for the choosen "
 "satellite"
 msgstr "احفظ التغيرات واستخدم ال ال ان بي في الصفحة الأولى للقمر الذي اخترته"
 
-#: default.esml:549
+#: default.esml:550
 msgid "Modulation:"
 msgstr "تعديل"
 
-#: default.esml:340
+#: default.esml:341
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
 msgstr "  نصف فولت زياده للكيبلات الطويله "
 
-#: default.esml:357
+#: default.esml:358
 #, fuzzy
 msgid "select uncommitted input"
 msgstr "مفتاح غير معزز"
 
-#: default.esml:470
+#: default.esml:471
 msgid "enable/disable check ONIT on any transponder"
 msgstr "تشغيل / إيقاف أونت لأي باقه"
 
-#: default.esml:642
+#: default.esml:643
 msgid "harddisk: "
 msgstr "قرص صلب"
 
-#: default.esml:398
+#: default.esml:399
 msgid "Use Motor Input Power"
 msgstr "استخدم الطاقة المغذية للموتور"
 
-#: default.esml:404
+#: default.esml:405
 msgid "when the motor support this, then use"
 msgstr "إذا كان الموتور يدعم هذا ، إذا استخدم "
 
-#: default.esml:685
+#: default.esml:686
 msgid "status:"
 msgstr "حاله"
 
-#: default.esml:367
+#: default.esml:368
 #, fuzzy
 msgid "select Uncommitted Switch 4 option"
 msgstr "مفتاح غير معزز"
 
-#: default.esml:471
+#: default.esml:472
 msgid "use BAT"
 msgstr " استخدم بات"
 
-#: default.esml:545
+#: default.esml:546
 msgid "Symbolrate:"
 msgstr "معدل ترميز"
 
-#: default.esml:304
+#: default.esml:305
 msgid "HTTP Download"
 msgstr "تنزيل اتش تي بي بي"
 
-#: default.esml:370
+#: default.esml:371
 msgid "goto prev page (LNB)"
 msgstr "اذهب للصفحة السابقة لل ال ان بي"
 
-#: default.esml:550
+#: default.esml:551
 msgid "choose wished modulation (ok)"
 msgstr "اختر التعديل المرغوب"
 
@@ -639,132 +639,132 @@ msgstr "اختر التعديل المرغوب"
 msgid "FR "
 msgstr "تردد راديوي"
 
-#: default.esml:419
+#: default.esml:420
 msgid "enter orbital position without dot (19.2 = 192)"
 msgstr "أدخل الموقع المداري بدون نقطه 19.2=192"
 
-#: default.esml:658 default.esml:671
+#: default.esml:659 default.esml:672
 msgid "set recording end time and close window (ok)"
 msgstr "ثبت وقت نهاية التسجيل واغلق النافذه"
 
-#: default.esml:404
+#: default.esml:405
 msgid "Use gotoXX Function"
 msgstr "استخدم خاصية إذهب إلى إكس"
 
-#: default.esml:320
+#: default.esml:321
 msgid "close Satellite Configuration"
 msgstr "اغلق تهيئة القمر الصناعي"
 
-#: default.esml:461
+#: default.esml:462
 msgid "transponder scan"
 msgstr "البحث في الباقه"
 
-#: default.esml:333
+#: default.esml:334
 msgid "choose the LNB you wish to apply or edit"
 msgstr "اختر ال ال ان بي الذي تريد استخدامه أو تعديل بياناته"
 
-#: default.esml:472
+#: default.esml:473
 msgid "clear list before"
 msgstr "امسح اللائحة أولا"
 
-#: default.esml:609 default.esml:615 stone.esml:460 silver.esml:470
+#: default.esml:610 default.esml:616 stone.esml:460 silver.esml:470
 msgid "EPG"
 msgstr "الدليل الإلكتروني للمعلومات"
 
-#: default.esml:683
+#: default.esml:684
 msgid "connected:"
 msgstr "متصل"
 
-#: default.esml:343 default.esml:429
+#: default.esml:344 default.esml:430
 msgid "next page"
 msgstr "الصفحة الثانيه"
 
-#: default.esml:656 default.esml:669
+#: default.esml:657 default.esml:670
 msgid "shutdown  "
 msgstr "إغلاق"
 
-#: default.esml:533
+#: default.esml:534
 msgid "Symbol Rate:"
 msgstr "معدل الترميز"
 
-#: default.esml:441
+#: default.esml:442
 msgid "Transponder:"
 msgstr "باقه"
 
-#: default.esml:658 default.esml:671
+#: default.esml:659 default.esml:672
 msgid "set"
 msgstr "اضبط"
 
-#: default.esml:444
+#: default.esml:445
 msgid "press left or right to move motor"
 msgstr "اضغط يمين أو يسار لتحريك الموتور"
 
-#: default.esml:447
+#: default.esml:448
 msgid "calc param 2 (see your motor manual or let it 00)"
 msgstr "احسب المعدل 2 انظر لكتيب الموتور أو ضع 00"
 
-#: default.esml:625
+#: default.esml:626
 msgid "select the timer type (ok)"
 msgstr "اضبط نوع المؤقت  أوكي"
 
-#: default.esml:314
+#: default.esml:315
 msgid "22Khz"
 msgstr "ذبذبة 22 كيلوهيرتز"
 
-#: default.esml:350
+#: default.esml:351
 msgid "MiniDiSEqC Parameter:"
 msgstr "ضبط ميني دايسك"
 
-#: default.esml:482
+#: default.esml:483
 msgid "choose satellite/cable provider (ok)"
 msgstr "اختر مرسل الخدمه ساتيلايت أو /كيبل"
 
-#: default.esml:668
+#: default.esml:669
 msgid "o'clock"
 msgstr "0 ساعه"
 
-#: default.esml:337
+#: default.esml:338
 msgid "LOF/H:"
 msgstr ""
 
-#: default.esml:365
+#: default.esml:366
 #, fuzzy
 msgid "select Uncommitted Switch 3 option"
 msgstr "مفتاح غير معزز"
 
-#: default.esml:399
+#: default.esml:400
 msgid "motor drive speed, in degrees per second"
 msgstr "سرعة حركة الموتور درجه في الثانيه"
 
-#: default.esml:636 src/enigma_info.cpp:48
+#: default.esml:637 src/enigma_info.cpp:48
 msgid "About..."
 msgstr " عن"
 
-#: default.esml:629
+#: default.esml:630
 msgid "add new Timer (ok)"
 msgstr "اضف مؤقت جديد"
 
-#: default.esml:626
+#: default.esml:627
 msgid "to change service press ok"
 msgstr "لتغيير القناه اضغط  أوكي"
 
-#: default.esml:449
+#: default.esml:450
 msgid "Counter(Movement)"
 msgstr "عداد للحركه"
 
-#: default.esml:453
+#: default.esml:454
 msgid "search"
 msgstr "بحث"
 
-#: default.esml:470
+#: default.esml:471
 msgid "use ONIT"
 msgstr "استخدم أو نت"
 
-#: default.esml:473
+#: default.esml:474
 msgid "enable/disable initiate network search"
 msgstr "تشغيل / إيقاف البحث الشبكي"
 
-#: default.esml:320 lib/gui/emessage.cpp:97 src/enigma_ci.cpp:220
+#: default.esml:321 lib/gui/emessage.cpp:97 src/enigma_ci.cpp:220
 msgid "OK"
 msgstr "أوكي"
 
@@ -773,7 +773,7 @@ msgstr "أوكي"
 msgid "audio track"
 msgstr "عودة"
 
-#: default.esml:318
+#: default.esml:319
 msgid "new"
 msgstr "جديد"
 
@@ -781,140 +781,140 @@ msgstr "جديد"
 msgid "Stop "
 msgstr "توقف"
 
-#: default.esml:531
+#: default.esml:532
 msgid "choose the FEC (left, right)"
 msgstr "اختر معامل التصحيح يمين أو يسار"
 
-#: default.esml:355
+#: default.esml:356
 msgid "select DiSEqC repeats (ok)"
 msgstr "اختر تكرار دايسك سي"
 
-#: default.esml:706
+#: default.esml:707
 msgid "Software upgrade..."
 msgstr "ترقية البرنامج التشغيلي"
 
-#: default.esml:406
+#: default.esml:407
 msgid "Longitude:"
 msgstr "خط الطول"
 
-#: default.esml:408 default.esml:411 default.esml:422
+#: default.esml:409 default.esml:412 default.esml:423
 msgid "choose direction"
 msgstr "اختر الاتجاه"
 
-#: default.esml:681
+#: default.esml:682
 msgid "capacity:"
 msgstr "سعه"
 
-#: default.esml:737
+#: default.esml:738
 msgid "DiSEqC..."
 msgstr "دايسك"
 
-#: default.esml:509
+#: default.esml:510
 msgid "select skin and press ok or choose save"
 msgstr "اختر الواجهة واضغط أوكي أو اختر تخزين"
 
-#: default.esml:446
+#: default.esml:447
 msgid "calc param 1 (see your motor manual or let it 00)"
 msgstr "احسب المعامل 1 انظر لكتيب تشغيل الموتورأو ضع 00"
 
-#: default.esml:451
+#: default.esml:452
 msgid "prev page"
 msgstr "الصفحة السابقه"
 
-#: default.esml:619 default.esml:623
+#: default.esml:620 default.esml:624
 msgid "select day (ok)"
 msgstr "اختر اليوم أوكي"
 
-#: default.esml:342 default.esml:372 default.esml:428 default.esml:699
-#: default.esml:723
+#: default.esml:343 default.esml:373 default.esml:429 default.esml:700
+#: default.esml:724
 msgid "cancel"
 msgstr "الغاء"
 
-#: default.esml:343
+#: default.esml:344
 msgid "goto next page (DiSEqC)"
 msgstr "اذهب للصفحة التالية دايسك سي"
 
-#: default.esml:624
+#: default.esml:625
 msgid "edit the end time (0..9, left, right)"
 msgstr "حرر وقت الانتهاء 0...9، يمين ، يسار"
 
-#: default.esml:653
+#: default.esml:654
 msgid "recording duration:"
 msgstr "زمن التسجيل"
 
-#: default.esml:366
+#: default.esml:367
 msgid "U-Switch 3:"
 msgstr ""
 
-#: default.esml:442
+#: default.esml:443
 msgid "choose the Transponder you wish to find"
 msgstr "اختر التردد الذي تريد ايجاده"
 
-#: default.esml:697
+#: default.esml:698
 msgid "status output:"
 msgstr "نتيجة الحاله"
 
-#: default.esml:359
+#: default.esml:360
 msgid "Sequence repeat"
 msgstr "مرات التكرار"
 
-#: default.esml:318
+#: default.esml:319
 msgid "add a new Satellite"
 msgstr "اضف قمرا صناعيا جديدا"
 
-#: default.esml:440
+#: default.esml:441
 msgid "enter stored satellite pos"
 msgstr "أدخل موضع القمر المخزن"
 
-#: default.esml:453
+#: default.esml:454
 msgid "open transponder scan"
 msgstr "افتح البحث عن الباقات"
 
-#: default.esml:678
+#: default.esml:679
 msgid "Harddisk"
 msgstr "قرص صلب"
 
-#: default.esml:655
+#: default.esml:656
 msgid "min"
 msgstr "دقيقه"
 
-#: default.esml:402
+#: default.esml:403
 msgid "mA"
 msgstr "ملي امبير"
 
-#: default.esml:657 default.esml:670
+#: default.esml:658 default.esml:671
 msgid "goto standby after recording (ok)"
 msgstr "اذهب غلى الانتظار بعد التسجيل أوكي"
 
-#: default.esml:552
+#: default.esml:553
 msgid "Inversion:"
 msgstr ""
 
-#: default.esml:429
+#: default.esml:430
 msgid "goto advanced motor setup"
 msgstr "اذهب لإعداد المتقدم للموتور"
 
-#: default.esml:687
+#: default.esml:688
 msgid "format"
 msgstr "تجهيز القرص الصلب"
 
-#: default.esml:486
+#: default.esml:487
 msgid "starts the transponder scan"
 msgstr "ابدأ البحث عن الترددات"
 
-#: default.esml:362
+#: default.esml:363
 msgid "U-Switch 1:"
 msgstr ""
 
-#: default.esml:315
+#: default.esml:316
 msgid "Voltage"
 msgstr "فولت"
 
-#: default.esml:473
+#: default.esml:474
 msgid "network search"
 msgstr "البحث المترابط الشبكي"
 
-#: default.esml:574
+#: default.esml:575
 msgid "Help"
 msgstr ""
 
@@ -3625,12 +3625,3 @@ msgstr ""
 #: src/setup_audio.cpp:32
 msgid "enable/disable ac3 default output (ok)"
 msgstr "شغل/أغلق خرج آي سي 3 "
-
-#~ msgid "16:9 (PIN8)"
-#~ msgstr "16:9 نقطه 8"
-
-#~ msgid "FBAS"
-#~ msgstr "إف باس"
-
-#~ msgid "keine"
-#~ msgstr "كيني"
