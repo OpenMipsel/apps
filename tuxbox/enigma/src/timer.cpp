@@ -1639,7 +1639,9 @@ void eTimerEditView::showServiceSelector()
 	if ( !tmpService )  // Sleeptimer...
 		return;
 	eServiceSelector sel;
+#ifndef DISABLE_LCD
 	sel.setLCD(LCDTitle, LCDElement);
+#endif
 	hide();
 	sel.setPath(eServiceStructureHandler::getRoot(eServiceStructureHandler::modeTvRadio),eServiceReference() );
 	sel.setStyle(eServiceSelector::styleSingleColumn);

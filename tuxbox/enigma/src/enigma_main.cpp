@@ -202,10 +202,12 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 		return 0;
 	case eWidgetEvent::execBegin:
 	{
+#ifndef DISABLE_LCD
 		eDBoxLCD::getInstance()->switchLCD(0);
 		eZapLCD *pLCD=eZapLCD::getInstance();
 		pLCD->lcdMain->hide();
 		pLCD->lcdStandby->show();
+#endif
 		rezap = 0;
 		if (handler)
 		{
@@ -231,16 +233,20 @@ int eZapStandby::eventHandler(const eWidgetEvent &event)
 	}
 	case eWidgetEvent::execDone:
 	{
+#ifndef DISABLE_LCD
 		eZapLCD *pLCD=eZapLCD::getInstance();
 		pLCD->lcdStandby->hide();
 		pLCD->lcdMain->show();
+#endif
 		if (handler)
 			handler->serviceCommand(eServiceCommand(eServiceCommand::cmdSetSpeed, 1));
 		if (rezap)
 			eServiceInterface::getInstance()->play(ref);
 		eAVSwitch::getInstance()->setInput(0);
 		eStreamWatchdog::getInstance()->reloadSettings();
+#ifndef DISABLE_LCD
 		eDBoxLCD::getInstance()->switchLCD(1);
+#endif
 		break;
 	}
 	default:
@@ -1238,7 +1244,7 @@ eZapMain::eZapMain()
 	:eWidget(0, 1)
 	,mute( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
 	,volume( eZap::getInstance()->getDesktop( eZap::desktopFB ) )
-	,VolumeBar( &volume ), pMsg(0), pRotorMsg(0), message_notifier(eApp, 0), timeout(eApp)
+	,VolumeBar( new eProgress(&volume) ), pMsg(0), pRotorMsg(0), message_notifier(eApp, 0), timeout(eApp)
 	,clocktimer(eApp), messagetimeout(eApp), progresstimer(eApp)
 	,volumeTimer(eApp), recStatusBlink(eApp), doubleklickTimer(eApp), delayedStandbyTimer(eApp)
 	,currentSelectedUserBouquet(0),wasSleeping(0), state(0)
@@ -1281,17 +1287,17 @@ eZapMain::eZapMain()
 	y = eSkin::getActive()->queryValue("volume.slider.pos.y", 0);
 
 	if ( x && y )
-		VolumeBar.move( ePoint(x, y) );
+		VolumeBar->move( ePoint(x, y) );
 
 	x = eSkin::getActive()->queryValue("volume.slider.width", 0),
 	y = eSkin::getActive()->queryValue("volume.slider.height", 0);
 
 	if ( x && y )
-		VolumeBar.resize( eSize( x, y ) );
+		VolumeBar->resize( eSize( x, y ) );
 
-	VolumeBar.setLeftColor( eSkin::getActive()->queryColor("volume_left") );
-	VolumeBar.setRightColor( eSkin::getActive()->queryColor("volume_right") );
-	VolumeBar.setBorder(0);
+	VolumeBar->setLeftColor( eSkin::getActive()->queryColor("volume_left") );
+	VolumeBar->setRightColor( eSkin::getActive()->queryColor("volume_right") );
+	VolumeBar->setBorder(0);
 
 	dvrInfoBar=new eLabel(this);
 	dvrInfoBar->setName("dvrInfoBar");
@@ -1322,7 +1328,9 @@ eZapMain::eZapMain()
 	if (skin->build(this, "ezap_main"))
 		eFatal("skin load of \"ezap_main\" failed");
 
+#ifndef DISABLE_LCD
 	lcdmain.show();
+#endif
 
 	ASSIGN(ChannelNumber, eLabel, "ch_number");
 	ASSIGN(ChannelName, eLabel, "ch_name");
@@ -1449,7 +1457,7 @@ eZapMain::eZapMain()
 
 	reloadPaths();
 
-	eServiceReference::loadLockedList( (eplPath+"/services.locked").c_str() );	
+	eServiceReference::loadLockedList( (eplPath+"/services.locked").c_str() );
 
 	mode=-1;  // fake mode for first call of setMode
 
@@ -1517,13 +1525,14 @@ eZapMain::~eZapMain()
 	if (instance == this)
 		instance = 0;
 
+#ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdShutdown->show();
 	gLCDDC::getInstance()->setUpdate(0);
 	if ( eDVB::getInstance()->getmID() == 5 )
 		eDBoxLCD::getInstance()->switchLCD(0);
-
+#endif
 	eConfig::getInstance()->setKey("/ezap/ui/serviceSelectorStyle", eZap::getInstance()->getServiceSelector()->getStyle() );
 	eConfig::getInstance()->setKey("/ezap/ui/playlistmode", playlistmode);
 	eServiceReference::saveLockedList( (eplPath+"/services.locked").c_str() );
@@ -1801,7 +1810,9 @@ void eZapMain::updateServiceNum( const eServiceReference &_serviceref )
 
 void eZapMain::updateProgress()
 {
+#ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
+#endif
 	if (serviceFlags & eServiceHandler::flagSupportPosition)
 	{
 		eServiceHandler *handler=eServiceInterface::getInstance()->getService();
@@ -1813,8 +1824,10 @@ void eZapMain::updateProgress()
 		{
 			Progress->setPerc(current*100/total);
 			Progress->show();
+#ifndef DISABLE_LCD
 			pLCD->lcdMain->Progress->setPerc(current*100/total);
 			pLCD->lcdMain->Progress->show();
+#endif
 			int min=total-current;
 			int sec=min%60;
 			min/=60;
@@ -1822,7 +1835,9 @@ void eZapMain::updateProgress()
 			ChannelNumber->setText(eString().sprintf("%s%d:%02d", (sign==-1)?"-":"", min, sec));
 		} else
 		{
+#ifndef DISABLE_LCD
 			pLCD->lcdMain->Progress->hide();
+#endif
 			Progress->hide();
 			ChannelNumber->setText("");
 		}
@@ -1845,18 +1860,24 @@ void eZapMain::updateProgress()
 				else
 					EINowDuration->setText(eString().sprintf("%d min", cur_duration / 60));
 				Progress->show();
+#ifndef DISABLE_LCD
 				pLCD->lcdMain->Progress->setPerc((c-cur_start)*100/cur_duration);
 				pLCD->lcdMain->Progress->show();
+#endif
 			} else
 			{
 				EINowDuration->setText(eString().sprintf("%d min", cur_duration / 60));
 				Progress->hide();
+#ifndef DISABLE_LCD
 				pLCD->lcdMain->Progress->hide();
+#endif
 			}
 		} else
 		{
 			Progress->hide();
+#ifndef DISABLE_LCD
 			pLCD->lcdMain->Progress->hide();
+#endif
 		}
 	}
 }
@@ -1918,7 +1939,7 @@ start:
 		p.up();
 
 // evtl schon das passende root gefunden
-		while ( p.current() != root )  
+		while ( p.current() != root )
 		{
 			while (p.size() > 1 )
 				p.up();
@@ -1954,14 +1975,15 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 {
 	hide();
 
+	entered_playlistmode=0;
+	eServiceSelector *e = eZap::getInstance()->getServiceSelector();
+
+#ifndef DISABLE_LCD
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdMenu->show();
-
-	entered_playlistmode=0;
-
-	eServiceSelector *e = eZap::getInstance()->getServiceSelector();
 	e->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 
 	getServiceSelectorPath(modeLast[mode][0]);
 
@@ -1980,8 +2002,10 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 	e->selectService(eServiceInterface::getInstance()->service);
 	const eServiceReference *service = e->choose(dir); // reset path only when NOT showing specific list
 
+#ifndef DISABLE_LCD
 	pLCD->lcdMain->show();
 	pLCD->lcdMenu->hide();
+#endif
 
 	int extZap=0;
 	eConfig::getInstance()->getKey("/elitedvb/extra/extzapping", extZap);
@@ -2000,7 +2024,7 @@ void eZapMain::showServiceSelector(int dir, eServiceReference root, eServiceRefe
 			if ( mode != oldmode ) // restore mode..
 				setMode(oldmode);
 			else // restore old path
-				setServiceSelectorPath(modeLast[mode][0]);  
+				setServiceSelectorPath(modeLast[mode][0]);
 		}
 		else // push playlistref to top of current path
 		{
@@ -2153,12 +2177,15 @@ void eZapMain::showMainMenu()
 {
 	hide();
 
+	eMainMenu mm;
+
+#ifndef DISABLE_LCD
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdMenu->show();
-
-	eMainMenu mm;
 	mm.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
+
 	mm.show();
 
 	if (mm.exec() == 1 && handleState())
@@ -2166,8 +2193,10 @@ void eZapMain::showMainMenu()
 
 	mm.hide();
 
+#ifndef DISABLE_LCD
 	pLCD->lcdMenu->hide();
 	pLCD->lcdMain->show();
+#endif
 }
 
 void eZapMain::toggleTimerMode()
@@ -2634,7 +2663,7 @@ void eZapMain::handleStandby()
 		wasSleeping=0;
 		message_notifier.send(eZapMain::messageShutdown);
 	}
-	else if (wasSleeping==3)  
+	else if (wasSleeping==3)
 	{  // shutofftimer .. undelayed.. standby...
 		wasSleeping=0;
 		// use message_notifier to goto sleep...
@@ -2844,7 +2873,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 				else // user Bouquet
 					p->save();
 				sel->actualize();
-			}	
+			}
 		}
 		eServiceInterface::getInstance()->removeRef(ref);
 	}
@@ -2983,7 +3012,7 @@ void eZapMain::showServiceMenu(eServiceSelector *sel)
 }
 
 void eZapMain::toggleMoveMode( eServiceSelector* sel )
-{   
+{
 	if ( sel->toggleMoveMode() )
 	{
 		currentSelectedUserBouquetRef=sel->getPath().current();
@@ -3232,19 +3261,26 @@ void eZapMain::showSubserviceMenu()
 		hide();
 	}
 
+#ifndef DISABLE_LCD
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdMenu->show();
+#endif
+
 	if (flags&ENIGMA_NVOD)
 	{
+#ifndef DISABLE_LCD
 		nvodsel.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 		nvodsel.show();
 		nvodsel.exec();
 		nvodsel.hide();
 	}
 	else if (flags&ENIGMA_SUBSERVICES)
 	{
+#ifndef DISABLE_LCD
 		subservicesel.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 		subservicesel.show();
 		int ret = subservicesel.exec();
 		subservicesel.hide();
@@ -3254,33 +3290,43 @@ void eZapMain::showSubserviceMenu()
 	}
 	else if (flags&ENIGMA_VIDEO)
 	{
+#ifndef DISABLE_LCD
 		videosel.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 		videosel.show();
 		videosel.exec();
 		videosel.hide();
 	}
+#ifndef DISABLE_LCD
 	pLCD->lcdMenu->hide();
 	pLCD->lcdMain->show();
+#endif
 }
 
 void eZapMain::showAudioMenu()
 {
 	if (flags&ENIGMA_AUDIO)
 	{
+#ifndef DISABLE_LCD
 		eZapLCD* pLCD = eZapLCD::getInstance();
 		pLCD->lcdMain->hide();
 		pLCD->lcdMenu->show();
+#endif
 		if (isVisible())
 		{
 			timeout.stop();
 			hide();
 		}
+#ifndef DISABLE_LCD
 		audiosel.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 		audiosel.show();
 		audiosel.exec();
 		audiosel.hide();
+#ifndef DISABLE_LCD
 		pLCD->lcdMenu->hide();
 		pLCD->lcdMain->show();
+#endif
 	}
 }
 
@@ -3304,11 +3350,13 @@ void eZapMain::showEPGList()
 		return;
 	if (isEPG)
 	{
+		eEPGSelector wnd(service);
+#ifndef DISABLE_LCD
 		eZapLCD* pLCD = eZapLCD::getInstance();
 		pLCD->lcdMain->hide();
 		pLCD->lcdMenu->show();
-		eEPGSelector wnd(service);
 		wnd.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 		if (isVisible())
 		{
 			timeout.stop();
@@ -3317,8 +3365,10 @@ void eZapMain::showEPGList()
 		wnd.show();
 		wnd.exec();
 		wnd.hide();
+#ifndef DISABLE_LCD
 		pLCD->lcdMenu->hide();
 		pLCD->lcdMain->show();
+#endif
 	}
 }
 
@@ -3369,19 +3419,25 @@ void eZapMain::showEPG()
 		if (eit)
 			eit->unlock(); // HIER liegt der hund begraben.
 	}
+#ifndef DISABLE_LCD
 	eZapLCD* pLCD = eZapLCD::getInstance();
 	pLCD->lcdMain->hide();
 	pLCD->lcdMenu->show();
+#endif
 	if (actual_eventDisplay)
 	{
+#ifndef DISABLE_LCD
 		actual_eventDisplay->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 		actual_eventDisplay->show();
 		actual_eventDisplay->exec();
 		actual_eventDisplay->hide();
 	}
 	events.setAutoDelete(true);
+#ifndef DISABLE_LCD
 	pLCD->lcdMenu->hide();
 	pLCD->lcdMain->show();
+#endif
 	if (actual_eventDisplay)
 	{
 		delete actual_eventDisplay;
@@ -3749,7 +3805,7 @@ int eZapMain::eventHandler(const eWidgetEvent &event)
 		else if (mode != modeFile && event.action == &i_enigmaMainActions->showDVBBouquets)
 		{
 			eServiceReference root = eServiceStructureHandler::getRoot(mode==modeTV?eServiceStructureHandler::modeTV:eServiceStructureHandler::modeRadio);
-			if ( mode == modeTV ) 
+			if ( mode == modeTV )
 				showServiceSelector( -1, root, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF) );
 			else
 				showServiceSelector( -1, root, eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF ) );
@@ -3961,7 +4017,9 @@ void eZapMain::showEPG_Streaminfo()
 		if ( isVisible() )
 			hide();
 		eStreaminfo si(0, eServiceInterface::getInstance()->service);
+#ifndef DISABLE_LCD
 		si.setLCD(LCDTitle, LCDElement);
+#endif
 		si.show();
 		si.exec();
 		si.hide();
@@ -4049,7 +4107,9 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		if (serviceref.getServiceType() == 7)  // linkage service..
 			name+=" - " + serviceref.descr;
 
+#ifndef DISABLE_LCD
 		eZapLCD::getInstance()->lcdMain->setServiceName(name);
+#endif
 
 		if ( !serviceref.path.length() )  // no recorded movie
 		{
@@ -4154,9 +4214,10 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			name="bla :(";
 
 		ChannelName->setText(name);
+#ifndef DISABLE_LCD
 		eZapLCD* pLCD = eZapLCD::getInstance();
 		pLCD->lcdMain->setServiceName(name);
-
+#endif
 		if (service && service->id3)
 		{
 			std::map<eString,eString> &tags = service->id3->getID3Tags();
@@ -4363,7 +4424,9 @@ void eZapMain::clockUpdate()
 {
 	time_t c=time(0)+eDVB::getInstance()->time_difference;
 	tm *t=localtime(&c);
+#ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
+#endif
 	if (t && eDVB::getInstance()->time_difference)
 	{
 		eString s;
@@ -4380,11 +4443,13 @@ void eZapMain::clockUpdate()
 			::ioctl(fd,4,&num);
 			::close(fd);
 		}
+#ifndef DISABLE_LCD
 		else
 		{
 			pLCD->lcdMain->Clock->setText(s);
 			pLCD->lcdStandby->Clock->setText(s);
 		}
+#endif
 	} else
 	{
 		Clock->setText("--:--");
@@ -4400,11 +4465,13 @@ void eZapMain::clockUpdate()
 			::ioctl(fd,4,&num);
 			::close(fd);
 		}
+#ifndef DISABLE_LCD
 		else
 		{
 			pLCD->lcdMain->Clock->setText("--:--");
 			pLCD->lcdStandby->Clock->setText("--:--");
 		}
+#endif
 	}
 	updateProgress();
 }
@@ -4420,7 +4487,7 @@ void eZapMain::updateVolume(int mute_state, int vol)
 	}
 	else
 	{
-		VolumeBar.setPerc((63-vol)*100/63);
+		VolumeBar->setPerc((63-vol)*100/63);
 		mute.hide();
 	}
 }

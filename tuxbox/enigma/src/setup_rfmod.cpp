@@ -1,3 +1,5 @@
+#ifdef ENABLE_RFMOD
+
 #include <setup_rfmod.h>
 
 #include <lib/base/i18n.h>
@@ -198,3 +200,5 @@ void eZapRFmodSetup::FineTune_selected(eListBoxEntryText* entry)
 {
 	eRFmod::getInstance()->setFinetune((int)FineTune->getCurrent()->getKey());
 }
+
+#endif //ENABLE_RFMOD

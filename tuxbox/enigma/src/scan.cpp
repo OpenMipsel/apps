@@ -68,7 +68,9 @@ tsManual::tsManual(eWidget *parent, const eTransponder &transponder, eWidget *LC
 :eWidget(parent), transponder(transponder), updateTimer(eApp)
 {
 	addActionMap(&i_cursorActions->map);
+#ifndef DISABLE_LCD
 	setLCD(LCDTitle, LCDElement);
+#endif
 	int ft=0;
 	switch (eFrontend::getInstance()->Type())
 	{
@@ -607,7 +609,9 @@ void tsScan::dvbState(const eDVBState &state)
 }
 
 TransponderScan::TransponderScan( eWidget *LCDTitle, eWidget *LCDElement)
+#ifndef DISABLE_LCD
 	:LCDElement(LCDElement), LCDTitle(LCDTitle)
+#endif
 {
 	window=new eWindow(0);
 	window->setText(_("Transponder Scan"));
@@ -665,7 +669,9 @@ int TransponderScan::exec(int initial)
 		case stateMenu:
 		{
 			tsSelectType select(window);
+#ifndef DISABLE_LCD
 			select.setLCD( LCDTitle, LCDElement);
+#endif
 			select.show();
 			switch (select.exec())
 			{
@@ -706,7 +712,11 @@ int TransponderScan::exec(int initial)
 				}
 
 			eDVB::getInstance()->setMode(eDVB::controllerScan);        
+#ifndef DISABLE_LCD
 			tsManual manual_scan(window, transponder, LCDTitle, LCDElement);
+#else
+			tsManual manual_scan(window, transponder);
+#endif
 			oldstate=stateManual;
 			manual_scan.show();
 			switch (manual_scan.exec())
@@ -726,7 +736,9 @@ int TransponderScan::exec(int initial)
 		{
 			eDVB::getInstance()->setMode(eDVB::controllerScan);
 			tsAutomatic automatic_scan(window);
+#ifndef DISABLE_LCD
 			automatic_scan.setLCD( LCDTitle, LCDElement);
+#endif
 			automatic_scan.show();
 			oldstate=stateAutomatic;
 			switch (automatic_scan.exec())
@@ -744,7 +756,9 @@ int TransponderScan::exec(int initial)
 		case stateScan:
 		{
 			tsScan scan(window);
+#ifndef DISABLE_LCD
 			scan.setLCD( LCDTitle, LCDElement);
+#endif
 			scan.move(ePoint(0, 0));
 			scan.resize(size);
 			
@@ -763,8 +777,10 @@ int TransponderScan::exec(int initial)
 		{
 			eDVB::getInstance()->setMode(eDVB::controllerService);  
 			tsText finish(_("Done."), text, window);
-  		finish.setLCD( LCDTitle, LCDElement);
-  		finish.move(ePoint(0, 0));
+#ifndef DISABLE_LCD
+			finish.setLCD( LCDTitle, LCDElement);
+#endif
+			finish.move(ePoint(0, 0));
 			finish.resize(size);
 			finish.show();
 			statusbar->setText(_("Scan is in finished, press ok to close window"));

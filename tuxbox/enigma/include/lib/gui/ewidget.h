@@ -202,9 +202,11 @@ public:
 		return parent?parent->getNonTransparentBackground():this;
 	}
 
+#ifndef DISABLE_LCD
 	eWidget *LCDTitle;
 	eWidget *LCDElement;
 	eWidget *LCDTmp;
+#endif
 
 	inline ePoint getAbsolutePosition() const
 	{
@@ -427,7 +429,11 @@ public:
 	void setPixmap(gPixmap *pmap);
 	void setTarget(gDC *target);
 	gDC *getTarget() { return target; }
+
+#ifndef DISABLE_LCD
 	void setLCD(eWidget *lcdtitle, eWidget *lcdelement);
+#endif
+
 	void setName(const char *name);
 	const eString& getName() const { return name; }
 	eWidget*& getParent() { return parent; }

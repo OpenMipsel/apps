@@ -79,6 +79,7 @@ void eSlider::gotFocus()
 	swap( left, activated_left );
 	swap( right, activated_right );
 
+#ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)  // detect if LCD Avail
 	{
 		LCDTmp = new eProgress( parent->LCDElement );
@@ -108,6 +109,7 @@ void eSlider::gotFocus()
 		((eProgress*)LCDTmp)->setPerc( perc );
 		LCDTmp->show();
 	}
+#endif // DISABLE_LCD
 	redraw();	
 }
 
@@ -117,6 +119,7 @@ void eSlider::lostFocus()
 	swap( left, activated_left );
 	swap( right, activated_right );
 
+#ifndef DISABLE_LCD
 	if (LCDTmp)
 	{
 		delete LCDTmp;
@@ -127,6 +130,7 @@ void eSlider::lostFocus()
 			tmpDescr=0;
 		}
 	}
+#endif
 	have_focus--;	
 	invalidate();
 }
@@ -151,8 +155,10 @@ int eSlider::eventHandler( const eWidgetEvent& event )
 				break;
 			redraw();
 			/* emit */ changed( getValue() );
+#ifndef DISABLE_LCD
 			if (LCDTmp)
 				((eProgress*)LCDTmp)->setPerc( perc );
+#endif
 			return 1;
 		}
 		default:

@@ -127,7 +127,9 @@ eZapPlugins::eZapPlugins(eWidget* lcdTitle, eWidget* lcdElement)
 	PluginPath[2] = "";
 	setHelpText(_("select plugin and press ok"));
 	move(ePoint(150, 100));
+#ifndef DISABLE_LCD
 	setLCD(lcdTitle, lcdElement);
+#endif
 	new ePlugin(&list, 0);
 	CONNECT(list.selected, eZapPlugins::selected);
 }
@@ -244,12 +246,14 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 	if (plugin->needrc)
 		MakeParam(P_ID_RCINPUT, eRCInput::getInstance()->lock());
 
+#ifndef DISABLE_LCD
 	if (plugin->needlcd)
-    MakeParam(P_ID_LCD,	eDBoxLCD::getInstance()->lock() );
+    MakeParam(P_ID_LCD, eDBoxLCD::getInstance()->lock() );
+#endif
 
 	int tpid = -1;
- 	if (plugin->needvtxtpid)
- 	{
+	if (plugin->needvtxtpid)
+	{
 		if(Decoder::parms.tpid==-1)
 		{
 			MakeParam(P_ID_VTXTPID, 0);
@@ -341,11 +345,13 @@ void eZapPlugins::execPlugin(ePlugin* plugin)
 	if (plugin->needrc)
 		eRCInput::getInstance()->unlock();
 
+#ifndef DISABLE_LCD
 	if (plugin->needlcd)
 		eDBoxLCD::getInstance()->unlock();
+#endif
 
- 	if (plugin->needvtxtpid)
- 	{
+	if (plugin->needvtxtpid)
+	{
 		// start vtxt reinsertion
 		if (tpid != -1)
 		{

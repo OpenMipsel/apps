@@ -1,3 +1,5 @@
+#ifdef ENABLE_RFMOD
+
 #ifndef __erfmod_h
 #define __erfmod_h
 
@@ -27,3 +29,5 @@ public:
 	int setTestPattern(int val);
 };
 #endif
+
+#endif // ENABLE_RFMOD

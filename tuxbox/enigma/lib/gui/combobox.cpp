@@ -127,8 +127,10 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 	{
 		setText( e->getText(), false );
 		setFocus( this );
+#ifndef DISABLE_LCD
 		if ( parent->LCDElement )
 			parent->LCDElement->setText("");
+#endif
 		current = e;
 		/* emit */ selchanged_id(this, current);
 		/* emit */ selchanged(current);
@@ -143,6 +145,7 @@ void eComboBox::onSelChanged(eListBoxEntryText* le)
 {
 	if (flags & flagShowEntryHelp )
 		setHelpText( le->getHelpText() );
+#ifndef DISABLE_LCD
 	if ( parent->getFocus() == &listbox )
 	{
 		if ( LCDTmp )
@@ -150,6 +153,7 @@ void eComboBox::onSelChanged(eListBoxEntryText* le)
 		else if ( parent->LCDElement )
 			parent->LCDElement->setText( le->getText() );
 	}
+#endif
 }
 
 void eComboBox::removeEntry( eListBoxEntryText* le )

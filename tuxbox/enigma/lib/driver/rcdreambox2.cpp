@@ -1,3 +1,5 @@
+#ifndef DISABLE_DREAMBOX_RC
+
 #include <lib/driver/rcdreambox2.h>
 #include <dbox/fp.h>
 
@@ -237,3 +239,5 @@ public:
 };
 
 eAutoInitP0<eDreamboxRCHardware2> init_rcdreambox2(eAutoInitNumbers::rc+1, "DreamBox RC Hardware 2");
+
+#endif // DISABLE_DREAMBOX_RC

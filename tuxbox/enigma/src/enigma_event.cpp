@@ -254,10 +254,10 @@ void eEventDisplay::setEvent(EITEvent *event)
 			{
 				ShortEventDescriptor *s=(ShortEventDescriptor*)*d;
 				_title=s->event_name;
-	
+#ifndef DISABLE_LCD	
 				if (LCDElement)
 					LCDElement->setText(s->text);
-
+#endif
 				if ((s->text.length() > 0) && (s->text!=_title))
 				{
 					_long_description+=s->text;

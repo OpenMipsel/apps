@@ -127,8 +127,10 @@ int eWindow::eventHandler(const eWidgetEvent &event)
 
 void eWindow::willShow()
 {
+#ifndef DISABLE_LCD
 	if (LCDTitle)
 		LCDTitle->setText(text);
+#endif
 	eWidget::willShow();
 }
 

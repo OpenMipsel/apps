@@ -21,7 +21,9 @@ class eListBoxBase: public eDecoWidget
 	ePtrList<eListBoxEntry>::iterator top, bottom, current;
 	int recalced;
 	const eWidget* descr;
+#ifndef DISABLE_LCD
 	eLabel* tmpDescr; // used for description Label in LCD
+#endif
 	gColor colorActiveB, colorActiveF;
 	eRect crect, crect_selected;
 	enum  { arNothing, arCurrentOld, arAll};

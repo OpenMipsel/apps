@@ -1,3 +1,5 @@
+#ifndef DISABLE_DREAMBOX_RC
+
 #ifndef __rcdreambox2_h
 #define __rcdreambox2_h
 
@@ -45,3 +47,5 @@ public:
 	eRCDreamboxButtonDriver();
 };
 #endif
+
+#endif // DISABLE_DREAMBOX_RC

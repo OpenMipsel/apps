@@ -73,7 +73,9 @@ eZap::eZap(int argc, char **argv)
 {
 	int bootcount;
 
+#ifndef DISABLE_LCD
 	eZapLCD *pLCD;
+#endif
 	eHTTPDynPathResolver *dyn_resolver;
 	eHTTPFilePathResolver *fileresolver;
 
@@ -93,7 +95,7 @@ eZap::eZap(int argc, char **argv)
 	desktop_fb->makeRoot();
 	desktop_fb->setBackgroundColor(gColor(0));
 	desktop_fb->show();
-	
+#ifndef DISABLE_LCD
 	desktop_lcd=new eWidget();
 	desktop_lcd->setName("desktop_lcd");
 	desktop_lcd->move(ePoint(0, 0));
@@ -101,12 +103,15 @@ eZap::eZap(int argc, char **argv)
 	desktop_lcd->setTarget(gLCDDC::getInstance());
 	desktop_lcd->setBackgroundColor(gColor(0));
 	desktop_lcd->show();
-
+#endif
 	eDebug("[ENIGMA] loading default keymaps...");
 
+#ifndef DISABLE_DREAMBOX_RC
 	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdreambox2.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdreambox2.xml");
+#endif
 
+#ifndef DISABLE_DBOX_RC
 	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxold.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdboxold.xml");
 
@@ -115,6 +120,7 @@ eZap::eZap(int argc, char **argv)
 
 	if ( eActionMapList::getInstance()->loadXML( CONFIGDIR "/enigma/resources/rcdboxbuttons.xml") )
 		eActionMapList::getInstance()->loadXML( DATADIR "/enigma/resources/rcdboxbuttons.xml");
+#endif
 
 	char *language=0;
 	if (eConfig::getInstance()->getKey("/elitedvb/language", language))
@@ -132,11 +138,11 @@ eZap::eZap(int argc, char **argv)
 	main = new eZapMain();
 	eDebug("<-- eZapMain");
 
+#ifndef DISABLE_LCD
 	pLCD = eZapLCD::getInstance();
 	eDebug("<-- pLCD");
-
 	serviceSelector->setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
-	eDebug("..");
+#endif
 
 	dyn_resolver = new eHTTPDynPathResolver();
 	ezapInitializeDyn(dyn_resolver);

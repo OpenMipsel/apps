@@ -90,12 +90,12 @@ void eMainMenu::setActive(int i)
 		description->setText(eString("(8) ") + eString(_("Timer")));
 #endif
 	}
-
+#ifndef DISABLE_LCD
 	if (LCDTitle)
 		LCDTitle->setText(_("Mainmenu"));
-
 	if (LCDElement)
 		LCDElement->setText( description->getText() );
+#endif
 }
 
 eMainMenu::eMainMenu()
@@ -169,12 +169,16 @@ void eMainMenu::sel_vcr()
 	eAVSwitch::getInstance()->setInput(1);
 	enigmaVCR mb("If you can read this, your scartswitch doesn't work", "VCR");
 	mb.show();
+#ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
 	pLCD->lcdMenu->hide();
 	pLCD->lcdScart->show();
+#endif
 	mb.exec();
+#ifndef DISABLE_LCD
 	pLCD->lcdScart->hide();
 	pLCD->lcdMenu->show();
+#endif
 	mb.hide();
 	eAVSwitch::getInstance()->setInput(0);
 	show();
@@ -182,9 +186,11 @@ void eMainMenu::sel_vcr()
 
 void eMainMenu::sel_info()
 {
-	eZapLCD *pLCD=eZapLCD::getInstance();
 	eZapInfo info;
+#ifndef DISABLE_LCD
+	eZapLCD *pLCD=eZapLCD::getInstance();
 	info.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 	hide();
 	info.show();
 	info.exec();
@@ -203,10 +209,13 @@ void eMainMenu::sel_setup()
 	{
 		hide();
 		int i=0;
-		do{
-			eZapLCD *pLCD=eZapLCD::getInstance();
+		do
+		{
 			eZapSetup setup;
+#ifndef DISABLE_LCD
+			eZapLCD *pLCD=eZapLCD::getInstance();
 			setup.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
 			setup.show();
 			i=setup.exec();
 			setup.hide();
@@ -218,8 +227,12 @@ void eMainMenu::sel_setup()
 
 void eMainMenu::sel_plugins()
 {
+#ifndef DISABLE_LCD
 	eZapLCD *pLCD=eZapLCD::getInstance();
 	eZapPlugins plugins(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#else
+	eZapPlugins plugins;
+#endif
 	hide();
 	plugins.exec();
 	show();
@@ -227,10 +240,12 @@ void eMainMenu::sel_plugins()
 
 void eMainMenu::sel_timer()
 {
-	eZapLCD *pLCD=eZapLCD::getInstance();
 	hide();
 	eTimerListView setup;
+#ifndef DISABLE_LCD
+	eZapLCD *pLCD=eZapLCD::getInstance();
 	setup.setLCD(pLCD->LCDTitle, pLCD->LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -248,10 +263,12 @@ int eMainMenu::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 	case eWidgetEvent::willShow:
+#ifndef DISABLE_LCD
 		if (LCDTitle)
 			LCDTitle->setText(_("Mainmenu"));
 		if (LCDElement)
 			LCDElement->setText( description->getText() );
+#endif
 		break;
 	case eWidgetEvent::evtAction:
 		if (event.action == &i_mainmenuActions->close)

@@ -19,7 +19,10 @@ class eZap: public eApplication, public Object
 {
 	static eZap *instance;
 
-	eWidget *desktop_lcd, *desktop_fb;
+	eWidget *desktop_fb;
+#ifndef DISABLE_LCD
+	eWidget *desktop_lcd;
+#endif
 	
 	eHTTPD *httpd;
 	eHTTPConnection *serialhttpd;
@@ -40,20 +43,28 @@ private:
 	eZapMain *main;
 //	eTimer statusTimer;
 public:
- 	enum { desktopLCD, desktopFB };
- 	
- 	eWidget *getDesktop(int nr)
- 	{
- 		switch (nr)
- 		{
- 		case desktopLCD:
- 			return desktop_lcd;
- 		case desktopFB:
- 			return desktop_fb;
- 		default:
- 			return 0;
- 		}
- 	}
+	enum
+	{
+#ifndef DISABLE_LCD
+		desktopLCD,
+#endif
+		desktopFB
+	};
+
+	eWidget *getDesktop(int nr)
+	{
+		switch (nr)
+		{
+#ifndef DISABLE_LCD
+		case desktopLCD:
+			return desktop_lcd;
+#endif
+		case desktopFB:
+			return desktop_fb;
+		default:
+			return 0;
+		}
+	}
 	static eZap *getInstance();
 	eWidget *focus;
 	eServiceSelector *getServiceSelector()

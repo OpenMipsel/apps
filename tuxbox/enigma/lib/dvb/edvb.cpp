@@ -135,14 +135,16 @@ eDVB::eDVB()
 		new eAVSwitchNokia;
 		break;
 	}
-	
+
+#ifdef ENABLE_RFMOD
 	if(mID==6)
 	{
 		// start rf mod
 		new eRFmod;
 		eRFmod::getInstance()->init();
 	}
-	
+#endif
+
 	// init stream watchdog
 	eStreamWatchdog::getInstance()->reloadSettings();
 
@@ -158,16 +160,19 @@ eDVB::eDVB()
 eDVB::~eDVB()
 {
 	delete settings; 
+
 #ifndef DISABLE_FILE
 	recEnd();
 #endif // DISABLE_FILE
 
 	eAVSwitch::getInstance()->setActive(0);
 	delete eAVSwitch::getInstance();
-	
+
+#ifdef ENABLE_RFMOD
 	if(eRFmod::getInstance())
 		delete eRFmod::getInstance();
-		
+#endif
+
 	Decoder::Close();
 
 	eFrontend::close();

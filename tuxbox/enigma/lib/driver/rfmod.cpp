@@ -1,3 +1,5 @@
+#ifdef ENABLE_RFMOD
+
 #include <lib/driver/rfmod.h>
 
 #include <unistd.h>
@@ -158,3 +160,4 @@ int eRFmod::setSoundSubCarrier(int freq)			//freq in KHz
 	return 0;
 }
 
+#endif // ENABLE_RFMOD

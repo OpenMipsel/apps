@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.19 2003/05/07 16:57:57 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.20 2003/05/09 16:53:08 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -91,11 +91,15 @@ eZapSetup::eZapSetup()
 	
 	CONNECT((new eListBoxEntryMenu(&list, _("[back]"), eString().sprintf("(%d) %s", ++entry, _("back to main menu")) ))->selected, eZapSetup::sel_close);
 	CONNECT((new eListBoxEntryMenu(&list, _("Channels..."), eString().sprintf("(%d) %s", ++entry, _("open channel setup")) ))->selected, eZapSetup::sel_channels);
+#ifndef DISABLE_NETWORK
 	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Network..."), eString().sprintf("(%d) %s", ++entry, _("open network setup")) ))->selected, eZapSetup::sel_network);
+#endif
 	CONNECT((new eListBoxEntryMenu(&list, _("OSD..."), eString().sprintf("(%d) %s", ++entry, _("open OSD setup")) ))->selected, eZapSetup::sel_osd);
+#ifndef DISABLE_LCD
 	if (havelcd)
 		CONNECT((new eListBoxEntryMenu(&list, _("LCD..."), eString().sprintf("(%d) %s", ++entry, _("open LCD setup")) ))->selected, eZapSetup::sel_lcd);
+#endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Remote Control..."), eString().sprintf("(%d) %s", ++entry, _("open remote control setup")) ))->selected, eZapSetup::sel_rc);
 	CONNECT((new eListBoxEntryMenu(&list, _("Video..."), eString().sprintf("(%d) %s", ++entry, _("open video setup")) ))->selected, eZapSetup::sel_video);
 	CONNECT((new eListBoxEntryMenu(&list, _("Audio..."), eString().sprintf("(%d) %s", ++entry, _("open audio setup")) ))->selected, eZapSetup::sel_sound);
@@ -114,8 +118,10 @@ eZapSetup::eZapSetup()
 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface..."), eString().sprintf("(%d) %s", ++entry, _("show CI Menu")) ))->selected, eZapSetup::sel_ci);
 	if (havenetwork)
 		CONNECT((new eListBoxEntryMenu(&list, _("Upgrade..."), eString().sprintf("(%d) %s", ++entry, _("upgrade firmware")) ))->selected, eZapSetup::sel_upgrade);
+#ifdef ENABLE_RFMOD
 	if (haverfmod)
 		CONNECT((new eListBoxEntryMenu(&list, _("RF-Modulator..."), eString().sprintf("(%d) %s", ++entry, _("setup modulator")) ))->selected, eZapSetup::sel_rfmod);
+#endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Video calibration..."), eString().sprintf("(%d) %s", ++entry, _("show calibration picture")) ))->selected, eZapSetup::sel_test);
 }
 
@@ -132,29 +138,37 @@ void eZapSetup::sel_channels()
 {
 	hide();
 	eZapScan setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
 	show();	
 }
 
+#ifndef DISABLE_NETWORK
 void eZapSetup::sel_network()
 {
 	hide();
 	eZapNetworkSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
 	show();
 }
+#endif
 
 void eZapSetup::sel_sound()
 {
 	hide();
 	eZapAudioSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -165,13 +179,16 @@ void eZapSetup::sel_osd()
 {
 	hide();
 	eZapOsdSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
 	show();
 }
 
+#ifndef DISABLE_LCD
 void eZapSetup::sel_lcd()
 {
 	hide();
@@ -182,12 +199,15 @@ void eZapSetup::sel_lcd()
 	setup.hide();
 	show();
 }
+#endif
 
 void eZapSetup::sel_rc()
 {
 	hide();
 	eZapRCSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -199,7 +219,9 @@ void eZapSetup::sel_skin()
 	hide();
 	eSkinSetup setup;
 	int res;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	res=setup.exec();
 	setup.hide();
@@ -217,7 +239,9 @@ void eZapSetup::sel_video()
 {
 	hide();
 	eZapVideoSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -229,7 +253,9 @@ void eZapSetup::sel_engrab()
 {
 	hide();
 	ENgrabSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -241,7 +267,9 @@ void eZapSetup::sel_extra()
 {
 	hide();
 	eZapExtraSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -252,7 +280,9 @@ void eZapSetup::sel_language()
 {
 /*	hide();
 	eZapLanguageSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
@@ -287,7 +317,9 @@ void eZapSetup::sel_ci()
 #ifndef DISABLE_CI
 	hide();
 	enigmaCI ci;
+#ifndef DISABLE_LCD
 	ci.setLCD(LCDTitle, LCDElement);
+#endif
 	ci.show();
 	ci.exec();
 	ci.hide();
@@ -300,6 +332,9 @@ void eZapSetup::sel_upgrade()
 	hide();
 	{
 		eUpgrade up;
+#ifndef DISABLE_LCD
+		up.setLCD(LCDTitle, LCDElement);
+#endif
 		up.show();
 		up.exec();
 		up.hide();
@@ -307,22 +342,28 @@ void eZapSetup::sel_upgrade()
 	show();
 }
 
+#ifdef ENABLE_RFMOD
 void eZapSetup::sel_rfmod()
 {
 	hide();
 	eZapRFmodSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();
 	show();
 }
+#endif
 
 void eZapSetup::sel_parental()
 {
 	hide();
 	eParentalSetup setup;
+#ifndef DISABLE_LCD
 	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	setup.show();
 	setup.exec();
 	setup.hide();

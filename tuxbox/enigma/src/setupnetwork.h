@@ -1,3 +1,5 @@
+#ifndef DISABLE_NETWORK
+
 #ifndef __setupnetwork_h
 #define __setupnetwork_h
 
@@ -24,3 +26,5 @@ public:
 };
 
 #endif
+
+#endif // DISABLE_NETWORK

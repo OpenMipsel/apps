@@ -1,3 +1,5 @@
+#ifndef DISABLE_DBOX_RC
+
 #include <lib/driver/rcdbox.h>
 
 #include <sys/ioctl.h>
@@ -349,3 +351,5 @@ public:
 };
 
 eAutoInitP0<eDBoxRCHardware> init_rcdbox(eAutoInitNumbers::rc+1, "d-Box RC Hardware");
+
+#endif // DISABLE_DBOX_RC

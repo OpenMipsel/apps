@@ -515,8 +515,11 @@ void eSatelliteConfigurationManager::createControlElements()
 void eSatelliteConfigurationManager::lnbSelected(eButton* who)
 {
 	eDebug("lnb selected");
+#ifndef DISABLE_LCD
 	eLNBSetup sel( getSat4LnbButton(who), LCDTitle, LCDElement );
-
+#else
+	eLNBSetup sel( getSat4LnbButton(who) );
+#endif
 	hide();
 	sel.show();
 
@@ -761,9 +764,11 @@ int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
+#ifndef DISABLE_LCD
 	case eWidgetEvent::execBegin:
 		w_buttons->setLCD( LCDTitle, LCDElement );
 	break;
+#endif
 	case eWidgetEvent::evtAction:
 		if (event.action == &i_focusActions->left)
 			focusNext(eWidget::focusDirW);
@@ -790,10 +795,12 @@ eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
 	eSkin *skin=eSkin::getActive();
 	if (skin->build(this, "eLNBSetup"))
 		eFatal("skin load of \"eLNBSetup\" failed");
-	DiSEqCPage = new eDiSEqCPage( this, sat );
-	DiSEqCPage->setLCD( lcdTitle, lcdElement );
 	LNBPage = new eLNBPage( this, sat );
+	DiSEqCPage = new eDiSEqCPage( this, sat );
+#ifndef DISABLE_LCD
+	DiSEqCPage->setLCD( lcdTitle, lcdElement );
 	LNBPage->setLCD( lcdTitle, lcdElement );
+#endif
 	DiSEqCPage->hide();
 	LNBPage->hide();
 	mp.addPage(LNBPage);
@@ -901,9 +908,10 @@ struct eLNBPage::selectlnb: public std::unary_function<const eListBoxEntryText&,
 eLNBPage::eLNBPage( eWidget *parent, eSatellite* sat )
   :eWidget(parent), sat(sat)
 {
+#ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
-  
+#endif  
 	lnb_list = new eListBox<eListBoxEntryText>(this);
 	lnb_list->setFlags( eListBoxBase::flagNoPageMovement );
 	lnb_list->setName("lnblist");
@@ -989,9 +997,10 @@ void eLNBPage::numSelected(int*)
 eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
 	:eWidget(parent), sat(sat)
 {
+#ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
-
+#endif
 	eLabel *l = new eLabel(this);
 	l->setName("lMiniDiSEqCPara");
 	MiniDiSEqCParam = new eComboBox( this, 4, l );

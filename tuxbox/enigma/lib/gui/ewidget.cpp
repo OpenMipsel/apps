@@ -24,9 +24,11 @@ eWidget::eWidget(eWidget *_parent, int takefocus):
 	backgroundColor(_parent?gColor(-1):gColor(eSkin::getActive()->queryScheme("global.normal.background"))),
 	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground")))
 {
+#ifndef DISABLE_LCD
 	LCDTitle=0;
 	LCDElement=0;
 	LCDTmp=0;
+#endif
 	target=0;
 	in_loop=0;
 	if (parent && !(parent->state&stateVisible))
@@ -837,11 +839,13 @@ void eWidget::setTarget(gDC *newtarget)
 	target=newtarget;
 }
 
+#ifndef DISABLE_LCD
 void eWidget::setLCD(eWidget *_lcdtitle, eWidget *_lcdelement)
 {
 	LCDTitle=_lcdtitle;
 	LCDElement=_lcdelement;
 }
+#endif
 
 void eWidget::setName(const char *_name)
 {

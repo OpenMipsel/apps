@@ -413,8 +413,10 @@ gDC *eSkin::getDCbyName(const char *name)
 	gPixmapDC *dc=0;
 	if (!strcmp(name, "fb"))
 		dc=gFBDC::getInstance();
+#ifndef DISABLE_LCD
 	else if (!strcmp(name, "lcd"))
 		dc=gLCDDC::getInstance();
+#endif
 	return dc;
 }
 

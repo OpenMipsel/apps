@@ -17,9 +17,10 @@
 RotorConfig::RotorConfig(eLNB *lnb )
 	:lnb(lnb)
 {
+#ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
-
+#endif
 	useRotorInPower = new eCheckbox(this);
 	useRotorInPower->setName("useRotorInPower");
 
@@ -358,7 +359,9 @@ void RotorConfig::onNextPressed()
 	{
 		hide();
 		eRotorManual c(lnb);
+#ifndef DISABLE_LCD
 		c.setLCD( LCDTitle, LCDElement );
+#endif
 		c.show();
 		c.exec();
 		if (c.changed)
@@ -724,7 +727,11 @@ void eRotorManual::onButtonPressed()
 
 void eRotorManual::onScanPressed()
 {
+#ifndef DISABLE_LCD
 	TransponderScan setup(LCDTitle, LCDElement);
+#else
+	TransponderScan setup;
+#endif
 	hide();
 	setup.exec();
 	show();

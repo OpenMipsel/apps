@@ -40,7 +40,7 @@ class tsManual: public eWidget
 	void update();
 	int eventHandler(const eWidgetEvent &event);
 public:
-	tsManual(eWidget *parent, const eTransponder &transponder, eWidget* LCDTitle, eWidget* LCDElement);
+	tsManual(eWidget *parent, const eTransponder &transponder, eWidget* LCDTitle=0, eWidget* LCDElement=0);
 	eTransponder &getTransponder() { return transponder; }
 };
 
@@ -99,11 +99,13 @@ class TransponderScan
 	eProgress *progress;
 	eLabel *progress_text;
 	eStatusBar *statusbar;	
-	eWidget *select_type, *manual_scan, *automatic_scan, *LCDElement, *LCDTitle;
-
+	eWidget *select_type, *manual_scan, *automatic_scan;
+#ifndef DISABLE_LCD
+	eWidget *LCDElement, *LCDTitle;
+#endif
 public:
 	enum { initialMenu, initialAutomatic };
-	TransponderScan( eWidget* LCDTitle, eWidget* LCDElement);
+	TransponderScan( eWidget* LCDTitle=0, eWidget* LCDElement=0 );
 	~TransponderScan();
 	int exec(int initial=initialMenu);
 };

@@ -1,3 +1,5 @@
+#ifndef DISABLE_LCD
+
 #ifndef __enigma_lcd_h
 #define __enigma_lcd_h
 
@@ -73,3 +75,5 @@ public:
 };
 
 #endif /* __enigma_lcd_h */
+
+#endif // DISABLE_LCD

@@ -6,7 +6,10 @@
 #include <lib/gui/guiactions.h>
 
 eButton::eButton(eWidget *parent, eLabel* desc, int takefocus, const char *deco)
-	:eLabel(parent, 0, takefocus, deco), tmpDescr(0),
+	:eLabel(parent, 0, takefocus, deco),
+#ifndef DISABLE_LCD
+	tmpDescr(0),
+#endif
 	focusB(eSkin::getActive()->queryScheme("global.selected.background")),
 	focusF(eSkin::getActive()->queryScheme("global.selected.foreground")),
 	normalB(eSkin::getActive()->queryScheme("button.normal.background")),
@@ -20,6 +23,7 @@ eButton::eButton(eWidget *parent, eLabel* desc, int takefocus, const char *deco)
 
 void eButton::gotFocus()
 {
+#ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)
 	{
 		if (descr)
@@ -42,6 +46,7 @@ void eButton::gotFocus()
 		else
 			parent->LCDElement->setText(text);
 	}
+#endif
 	setForegroundColor(focusF,false);
 	setBackgroundColor(focusB);
 
@@ -50,6 +55,7 @@ void eButton::gotFocus()
 
 void eButton::lostFocus()
 {
+#ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)
 	{
 		if (LCDTmp)
@@ -65,6 +71,7 @@ void eButton::lostFocus()
 		else
 			parent->LCDElement->setText("");	
 	}
+#endif
 	setForegroundColor(normalF,false);
 	setBackgroundColor(normalB);
 
@@ -81,13 +88,15 @@ int eButton::eventHandler(const eWidgetEvent &event)
 				/*emit*/ selected();
 				/*emit*/ selected_id(this);
 		
-/*				if (parent && parent->LCDElement)
+/*#ifndef DISABLE_LCD
+				if (parent && parent->LCDElement)
 				{
 					if (LCDTmp)
 						LCDTmp->setText(text);
 					else
 						parent->LCDElement->setText(text);
-				}*/
+				}
+#endif*/
 			}
 			else
 				return eLabel::eventHandler(event);

@@ -1,3 +1,5 @@
+#ifndef DISABLE_LCD
+
 #include <enigma_lcd.h>
 
 #include <time.h>
@@ -146,3 +148,5 @@ eZapLCDShutdown::eZapLCDShutdown(eWidget *parent): eWidget(parent, 0)
 	if (eSkin::getActive()->build(this, "enigma_lcd_shutdown"))
 		eFatal("skin load of \"enigma_lcd_shutdown\" failed");
 }
+
+#endif // DISABLE_LCD

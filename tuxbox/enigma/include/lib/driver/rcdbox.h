@@ -1,3 +1,5 @@
+#ifndef DISABLE_DBOX_RC
+
 #ifndef __rcdbox_h
 #define __rcdbox_h
 
@@ -55,3 +57,5 @@ public:
 };
 
 #endif
+
+#endif // DISABLE_DBOX_RC

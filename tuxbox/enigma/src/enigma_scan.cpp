@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.13 2003/04/13 13:03:07 ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.14 2003/05/09 16:53:08 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -60,7 +60,11 @@ void eZapScan::sel_close()
 
 void eZapScan::sel_scan()
 {
+#ifndef DISABLE_LCD
 	TransponderScan setup(LCDTitle, LCDElement);
+#else
+	TransponderScan setup;
+#endif
 	hide();
 	setup.exec();
 	show();
@@ -94,7 +98,9 @@ void eZapScan::sel_satconfig()
 {
 	hide();
 	eSatelliteConfigurationManager satconfig;
+#ifndef DISABLE_LCD
 	satconfig.setLCD(LCDTitle, LCDElement);
+#endif
 	satconfig.show();
 	satconfig.exec();
 	satconfig.hide();
@@ -105,7 +111,9 @@ void eZapScan::sel_tpeditdlg()
 {
 	hide();
 	eTransponderEditWindow wnd;
+#ifndef DISABLE_LCD
 	wnd.setLCD(LCDTitle, LCDElement);
+#endif
 	wnd.show();
 	wnd.exec();
 	wnd.hide();
@@ -160,7 +168,9 @@ void eZapScan::sel_rotorConfig()
 	if (lnb)
 	{
 		RotorConfig c(lnb);
+#ifndef DISABLE_LCD
 		c.setLCD( LCDTitle, LCDElement );
+#endif
 		c.show();
 		c.exec();
 		c.hide();

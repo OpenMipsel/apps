@@ -8,7 +8,9 @@ eListBoxBase::eListBoxBase(eWidget* parent, const eWidget* descr, int takefocus,
 :   eDecoWidget(parent, takefocus, deco),
 		top(childs.end()), bottom(childs.end()), current(childs.end()), recalced(0),
 		descr(descr),
+#ifndef DISABLE_LCD
 		tmpDescr(0),
+#endif
 		colorActiveB(eSkin::getActive()->queryScheme("global.selected.background")),
 		colorActiveF(eSkin::getActive()->queryScheme("global.selected.foreground")),
 		movemode(0),
@@ -370,11 +372,13 @@ void eListBoxBase::redrawWidget(gPainter *target, const eRect &where)
 			target->clip(rect & rc);
 			if ( entry == current )
 			{
+#ifndef DISABLE_LCD
 				if ( LCDTmp ) // LCDTmp is only valid, when we have the focus
 					LCDTmp->setText( entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), 1 ) );
 				else if ( parent->LCDElement && have_focus )
 					parent->LCDElement->setText( entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), 1 ) );
 				else
+#endif
 					entry->redraw(target, rect, colorActiveB, colorActiveF, getBackgroundColor(), getForegroundColor(), ( have_focus ? 1 : ( MaxEntries > 1 ? 2 : 0 ) )	);
 			}
 			else
@@ -393,6 +397,7 @@ void eListBoxBase::redrawWidget(gPainter *target, const eRect &where)
 
 void eListBoxBase::gotFocus()
 {
+#ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)  // detect if LCD Avail
 		if (descr)
 		{
@@ -410,7 +415,7 @@ void eListBoxBase::gotFocus()
 			tmpDescr->setText( descr->getText() );
 			tmpDescr->show();
 		}
-
+#endif
 	have_focus++;
 
 	if (!childs.empty())
@@ -437,6 +442,7 @@ void eListBoxBase::gotFocus()
 
 void eListBoxBase::lostFocus()
 {
+#ifndef DISABLE_LCD
 	if ( descr )
 	{
 		delete LCDTmp;
@@ -444,6 +450,7 @@ void eListBoxBase::lostFocus()
 		delete tmpDescr;
 		tmpDescr=0;
 	}
+#endif
 	have_focus--;
 
 	if (!childs.empty())
@@ -460,9 +467,10 @@ void eListBoxBase::lostFocus()
 				if (entry == current)
 					invalidateEntry(i);
 		}
-
+#ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)
 		parent->LCDElement->setText("");
+#endif
 }
 
 void eListBoxBase::init()

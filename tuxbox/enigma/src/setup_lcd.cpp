@@ -1,3 +1,4 @@
+#ifndef DISABLE_LCD
 #include <setup_lcd.h>
 
 #include <lib/gui/slider.h>
@@ -154,3 +155,5 @@ void eZapLCDSetup::abortPressed()
 	update(lcdbrightness, lcdcontrast);
 	close(0);
 }
+
+#endif //DISABLE_LCD

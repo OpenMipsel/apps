@@ -787,10 +787,10 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 				if (e && !e->empty())
 				{
 					eEPGSelector wnd((eServiceReferenceDVB&)selected);
-
+#ifndef DISABLE_LCD
 					if (LCDElement && LCDTitle)
 						wnd.setLCD(LCDTitle, LCDElement);
-
+#endif
 					hide();
 					wnd.show();
 					wnd.exec();

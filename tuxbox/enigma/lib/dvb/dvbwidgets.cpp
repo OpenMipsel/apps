@@ -11,9 +11,11 @@
 eTransponderWidget::eTransponderWidget(eWidget *parent, int edit, int type)
 	:eWidget(parent), type(type), edit(edit)
 {
+#ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
-	
+#endif
+
 	eLabel *l = 0;
 
 	if ( type & deliverySatellite )

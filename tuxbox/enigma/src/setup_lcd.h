@@ -1,3 +1,5 @@
+#ifndef DISABLE_LCD
+
 #ifndef __setuplcd_h
 #define __setuplcd_h
 
@@ -36,3 +38,5 @@ private:
 };
 
 #endif
+
+#endif //DISABLE_LCD

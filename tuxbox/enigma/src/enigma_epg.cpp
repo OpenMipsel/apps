@@ -120,12 +120,16 @@ int eZapEPG::eventHandler(const eWidgetEvent &event)
 			selEntry(+1);
 		else if ((event.action == &i_cursorActions->ok) && eventvalid)
 		{
+			eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current_service->service);
+			eEventDisplay ei(service ? service->service_name.c_str() : "", current_service->service, 0, (EITEvent*)current_service->current_entry->event);
+
+#ifndef DISABLE_LCD
 			eZapLCD* pLCD = eZapLCD::getInstance();
 			pLCD->lcdMain->hide();
 			pLCD->lcdMenu->show();
-			eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current_service->service);
-			eEventDisplay ei(service ? service->service_name.c_str() : "", current_service->service, 0, (EITEvent*)current_service->current_entry->event);
 			ei.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
+
 			hide();
 			ei.show();
 			int ret;

@@ -223,7 +223,9 @@ void eTransponderEditWindow::addPressed()
 	if ( !tp )
 		return;
 	eTPEditDialog dlg( &t );
+#ifndef DISABLE_LCD
 	dlg.setLCD( LCDTitle, LCDElement );
+#endif
 	dlg.show();
 	int ret = dlg.exec();
 	dlg.hide();
@@ -255,7 +257,9 @@ void eTransponderEditWindow::editPressed()
 	if ( !tp )
 		return;
 	eTPEditDialog dlg( tp );
+#ifndef DISABLE_LCD
 	dlg.setLCD( LCDTitle, LCDElement );
+#endif
 	dlg.show();
 	int ret = dlg.exec();
 	dlg.hide();

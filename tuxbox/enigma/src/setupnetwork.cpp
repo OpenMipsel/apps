@@ -1,3 +1,5 @@
+#ifndef DISABLE_NETWORK
+
 #include <setupnetwork.h>
 
 #include <netinet/in.h>
@@ -169,3 +171,4 @@ void eZapNetworkSetup::abortPressed()
 	close(0);
 }
 
+#endif // DISABLE_NETWORK

@@ -274,7 +274,7 @@ private:
 
 	// eRecordingStatus *recstatus;
 
-	eProgress *Progress, VolumeBar;
+	eProgress *Progress, *VolumeBar;
 	eMessageBox *pMsg, *pRotorMsg;
 
 	eLock messagelock;
@@ -331,8 +331,9 @@ private:
 	int showOSDOnEITUpdate;
 	int serviceFlags;
 	int isSeekable() const { return serviceFlags & eServiceHandler::flagIsSeekable; }
+#ifndef DISABLE_LCD
 	eZapLCD lcdmain;
-
+#endif
 	void eraseBackground(gPainter *, const eRect &where);
 	void setEIT(EIT *);
 	void handleNVODService(SDTEntry *sdtentry);

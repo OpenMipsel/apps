@@ -152,9 +152,10 @@ void eNumber::invalidateNum()
 
 int eNumber::eventHandler(const eWidgetEvent &event)
 {
+#ifndef DISABLE_LCD
 	if (LCDTmp)
 		((eNumber*) LCDTmp)->eventHandler(event);
-
+#endif
 	switch (event.type)
 	{
 	case eWidgetEvent::changedSize:
@@ -224,9 +225,10 @@ eNumber::~eNumber()
 
 int eNumber::keyDown(int key)
 {
+#ifndef DISABLE_LCD
 	if (LCDTmp)
 		((eNumber*) LCDTmp)->keyDown(key);
-
+#endif
 	switch (key)
 	{
 	case eRCInput::RC_0 ... eRCInput::RC_9:
@@ -301,6 +303,7 @@ void eNumber::gotFocus()
 	else
 		invalidate(getNumberRect(active));
 
+#ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)  // detect if LCD Avail
 	{
 		LCDTmp = new eNumber(parent->LCDElement, len, min, max, maxdigits, &(number[0]), isactive, 0, 0);
@@ -333,10 +336,12 @@ void eNumber::gotFocus()
 		((eNumber*)LCDTmp)->have_focus=1;
 		LCDTmp->show();
 	}
+	#endif //DISABLE_LCD
 }
 
 void eNumber::lostFocus()
 {
+#ifndef DISABLE_LCD
 	if (LCDTmp)
 	{
 		delete LCDTmp;
@@ -347,6 +352,7 @@ void eNumber::lostFocus()
 			tmpDescr=0;
 		}
 	}
+#endif
 	have_focus--;
 
 	if (deco && deco_selected)

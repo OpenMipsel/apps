@@ -1174,9 +1174,11 @@ static eString screenshot(eString request, eString dirpath, eString opts, eHTTPC
 {
 	std::map<eString,eString> opt=getRequestOptions(opts);
 	gPixmap *p=0;
+#ifndef DISABLE_LCD
 	if (opt["mode"]=="lcd")
 		p=&gLCDDC::getInstance()->getPixmap();
 	else
+#endif
 		p=&gFBDC::getInstance()->getPixmap();
 	
 	if (!p)
