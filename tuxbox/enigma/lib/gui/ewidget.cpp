@@ -811,6 +811,7 @@ gPainter *eWidget::getPainter(eRect area)
 		return 0;
 
 	gPainter *p=new gPainter(*r->target, myclip);
+	p->setLogicalZero(getAbsolutePosition());
 	if (!area.isNull())
 		p->clip(area);
 	p->setForegroundColor(foregroundColor);
