@@ -496,7 +496,15 @@ void eDVBServiceController::scanPMT()
 			isca+=checkCA(calist, pe->ES_info);
 			for (ePtrList<Descriptor>::iterator i(pe->ES_info); i != pe->ES_info.end(); ++i)
 			{
-				if ( (i->Tag()==DESCR_AC3) && ( (!ac3_audio) || (pe->elementary_PID == audiopid) ) )
+				int isac3=0;
+				
+				if (i->Tag()==DESCR_AC3)
+					isac3=1;
+				if (i->Tag() == DESCR_REGISTRATION)
+					if (!memcmp(((RegistrationDescriptor*)&*i)->format_identifier, "DTS", 3))
+						isac3=1;
+				
+				if (isac3 && ( (!ac3_audio) || (pe->elementary_PID == audiopid) ) )
 				{
 					ac3_audio=pe;
 				}

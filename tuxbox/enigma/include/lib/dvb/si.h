@@ -292,6 +292,15 @@ public:
 	std::map< eString, int > entryMap; // Country Code : age
 };
 
+class RegistrationDescriptor: public Descriptor
+{
+public:
+	RegistrationDescriptor(descr_gen_struct *descr);
+	eString toString();
+	char format_identifier[4];
+	eString additional_identification_info;
+};
+
 class PATEntry
 {
 public:

@@ -101,6 +101,8 @@ Descriptor *Descriptor::create(descr_gen_t *descr)
 		return new ParentalRatingDescriptor((descr_gen_struct*)descr);
 	case DESCR_CONTENT:
 		return new ContentDescriptor((descr_gen_struct*)descr);
+	case DESCR_REGISTRATION:
+		return new RegistrationDescriptor((descr_gen_struct*)descr);
 	case DESCR_STUFFING:
 	case DESCR_COUNTRY_AVAIL:
 	case DESCR_MOSAIC:
@@ -752,6 +754,27 @@ eString ParentalRatingDescriptor::toString()
 	eString res="ParentalRatingDescriptor";
 	for ( std::map<eString,int>::iterator it(entryMap.begin()); it != entryMap.end(); it++)
 		res += eString().sprintf("\n  Country: %s, Age: %i",it->first.c_str(), it->second);
+	return res;
+}
+
+RegistrationDescriptor::RegistrationDescriptor( descr_gen_struct *descr)
+	: Descriptor(DESCR_REGISTRATION)
+{
+  const char *data = ((char*)(descr+1));
+	int len=descr->descriptor_length;
+	if (len < 4)
+		return;
+	memcpy(format_identifier, data, 4);
+	additional_identification_info.assign(data+4, len-4);
+}
+
+eString RegistrationDescriptor::toString()
+{
+	eString res="RegistrationDescriptor\n  format_identifier: ";
+	res+=eString().assign(format_identifier, 4);
+	res+="\n  additional_identification_info: ";
+	res+=additional_identification_info;
+	res+="\n";
 	return res;
 }
 
