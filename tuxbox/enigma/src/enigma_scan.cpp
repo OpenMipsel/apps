@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.15 2003/05/10 00:12:59 tripledes Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.16 2003/05/10 00:55:53 ghostrider Exp $
  */
 
 #include <enigma_scan.h>
@@ -47,8 +47,7 @@ eZapScan::eZapScan()
 		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup..."), _("goto Motor Setup")))->selected, eZapScan::sel_rotorConfig);
 	}
 	
-	if(eDVB::getInstance()->getmID() != 6)
-		CONNECT((new eListBoxEntryMenu(&list, _("SID...")))->selected, eZapScan::sel_bouquet);
+//	CONNECT((new eListBoxEntryMenu(&list, _("SID...")))->selected, eZapScan::sel_bouquet);
 }
 
 eZapScan::~eZapScan()

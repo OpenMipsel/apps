@@ -176,8 +176,8 @@ void eEPGSelector::fillEPGList()
 		setText(eString(_("EPG - "))+service->service_name);
  	eDebug("get EventMap for onid: %02x, sid: %02x", current.getOriginalNetworkID().get(), current.getServiceID().get());
 
-	const eventMap* evt = eEPGCache::getInstance()->getEventMap(current);
-	eventMap::const_iterator It;
+	const timeMap* evt = eEPGCache::getInstance()->getTimeMap(current);
+	timeMap::const_iterator It;
 	if (evt)
 		It = evt->begin();
 
@@ -194,8 +194,8 @@ void eEPGSelector::fillEPGList()
 				{
 					TimeShiftedEventDescriptor *descriptor = (TimeShiftedEventDescriptor*) descr;
 //					eServiceReferenceDVB ref( current.getTransportStreamID().get(), current.getOriginalNetworkID().get(), descriptor->reference_event_id, 4 );
-					const eventMap *parent = eEPGCache::getInstance()->getEventMap(eZapMain::getInstance()->refservice);
-					eventMap::const_iterator pIt;
+					const timeMap *parent = eEPGCache::getInstance()->getTimeMap(eZapMain::getInstance()->refservice);
+					timeMap::const_iterator pIt;
 					if ( parent )
 					{
 						pIt = parent->find( descriptor->reference_event_id );
@@ -230,10 +230,10 @@ void eEPGSelector::fillEPGList()
 				for (std::list<NVODReferenceEntry>::const_iterator it( RefList->begin() ); it != RefList->end(); it++ )
 				{
 					eServiceReferenceDVB ref( ((eServiceReferenceDVB&)current).getDVBNamespace(), it->transport_stream_id, it->original_network_id, it->service_id, 5 );
-					const eventMap *eMap = eEPGCache::getInstance()->getEventMap( ref );
+					const timeMap *eMap = eEPGCache::getInstance()->getTimeMap( ref );
 					if (eMap)
 					{
-						for ( eventMap::const_iterator refIt( eMap->begin() ); refIt != eMap->end(); refIt++)
+						for ( timeMap::const_iterator refIt( eMap->begin() ); refIt != eMap->end(); refIt++)
 						{
 							EITEvent refEvt(*refIt->second);
 							for (ePtrList<Descriptor>::iterator d(refEvt.descriptor); d != refEvt.descriptor.end(); ++d)
@@ -265,9 +265,6 @@ void eEPGSelector::fillEPGList()
 	}
 	else for (It = evt->begin(); It != evt->end(); It++)
 		new eListBoxEntryEPG(*It->second, events, current);
-
-// sort Events..
-	((eListBox<eListBoxEntryEPG>*)events)->sort();
 }
 
 void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)

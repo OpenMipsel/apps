@@ -781,9 +781,9 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			else if (event.action == &i_serviceSelectorActions->showEPGSelector && !movemode && !editMode)
 			{
 #ifndef USE_MULTI_EPG
-				const eventMap* e=0;
+				const timeMap* e=0;
 				if (selected.type == eServiceReference::idDVB)
-				 	e = eEPGCache::getInstance()->getEventMap((eServiceReferenceDVB&)selected);
+				 	e = eEPGCache::getInstance()->getTimeMap((eServiceReferenceDVB&)selected);
 				if (e && !e->empty())
 				{
 					eEPGSelector wnd((eServiceReferenceDVB&)selected);

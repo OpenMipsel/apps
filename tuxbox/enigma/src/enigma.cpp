@@ -202,8 +202,8 @@ eZap::eZap(int argc, char **argv)
 					"you may start a HTTP session now if you send a \"break\".\r\n";
 			write(fd, banner, strlen(banner));
 			serialhttpd = new eHTTPConnection(fd, 0, httpd, 1);
-			//char *i="GET /log/debug HTTP/1.0\n\n";
-			//serialhttpd->inject(i, strlen(i));
+			char *i="GET /log/debug HTTP/1.0\n\n";
+			serialhttpd->inject(i, strlen(i));
 		}
 	}
 

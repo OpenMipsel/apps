@@ -3426,10 +3426,10 @@ void eZapMain::showEPG()
 	ePtrList<EITEvent> events;
 	if (isEPG)
 	{
-		const eventMap* pMap = eEPGCache::getInstance()->getEventMap( ref );
+		const timeMap* pMap = eEPGCache::getInstance()->getTimeMap( ref );
 		if (pMap)  // EPG vorhanden
 		{
-			eventMap::const_iterator It = pMap->begin();
+			timeMap::const_iterator It = pMap->begin();
 
 			while (It != pMap->end())
 			{
@@ -4465,7 +4465,7 @@ void eZapMain::clockUpdate()
 			&& eZapStandby::getInstance() ) //  in standby
 		{
 			int num = t->tm_hour*100+t->tm_min;
-			eDebug("write number to led-display");
+			eDebug("write time to led-display");
 			int fd=::open("/dev/dbox/fp0",O_RDWR);
 			::ioctl(fd,4,&num);
 			::close(fd);

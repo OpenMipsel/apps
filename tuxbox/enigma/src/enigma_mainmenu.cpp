@@ -128,11 +128,18 @@ eMainMenu::eMainMenu()
 	if (eSkin::getActive()->build(this, "eZapMainMenu"))
 		eFatal("unable to load main menu");
 
-#ifdef DISABLE_FILE
-	char *pixmap_name[]={"tv", "radio", "info", "shutdown", "setup", "games", "scart", "timer"};
-#else
-	char *pixmap_name[]={"tv", "radio", "file", "info", "shutdown", "setup", "games", "scart", "timer"};
+	char *pixmap_name[]={
+		"tv",
+		"radio",
+#ifndef DISABLE_FILE
+		"file",
 #endif
+		"info",
+		"shutdown",
+		"setup",
+		"games",
+		"scart",
+		"timer"};
 
 	for (int i=0; i<MENU_ENTRIES; i++)
 	{

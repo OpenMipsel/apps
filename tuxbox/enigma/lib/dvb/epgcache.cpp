@@ -89,7 +89,12 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 		eit_event_size = HILO(eit_event->descriptors_loop_length)+EIT_LOOP_SIZE;
 
 		duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
-		TM = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
+		TM = parseDVBtime(
+			eit_event->start_time_1,
+			eit_event->start_time_2,
+			eit_event->start_time_3,
+			eit_event->start_time_4,
+			eit_event->start_time_5);
 
 		if ( (TM+duration < now || TM > now+14*24*60*60) && TM != 3599 )
 			goto next;
@@ -98,7 +103,7 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 		{
 			// hier wird immer eine eventMap zurück gegeben.. entweder eine vorhandene..
 			// oder eine durch [] erzeugte
-			eventMap &servicemap = eventDB[service];
+			std::pair<eventMap,timeMap> &servicemap = eventDB[service];
 
 			// look in 1st descriptor tag.. i hope all time shifted events have the
 			// time shifted event descriptor at the begin of the descriptors..
@@ -118,12 +123,17 @@ int eEPGCache::sectionRead(__u8 *data, int source)
 
 // delete first the old event...
 			__u16 event_id = HILO(eit_event->event_id);
-			eventMap::iterator it = servicemap.find(event_id);
-			if ( it != servicemap.end() )
+			eventMap::iterator it = servicemap.first.find(event_id);
+			if ( it != servicemap.first.end() )
+			{
+				servicemap.second.erase(it->second->getStartTime());
 				delete it->second;
+			}
 
+			eventData *evt = new eventData(eit_event, eit_event_size, source);
 // add new...
-			servicemap[event_id] = new eventData(eit_event, eit_event_size, source);
+			servicemap.first[event_id] = evt;
+			servicemap.second[TM] = evt;
 		}
 next:
 		ptr += eit_event_size;
@@ -159,7 +169,7 @@ bool eEPGCache::finishEPG()
 			else
 				It++;
 		}
-		if (!eventDB[current_service].empty())
+		if (!eventDB[current_service].first.empty())
 			/*emit*/ EPGAvail(1);
 
 		/*emit*/ EPGUpdated( &temp );
@@ -177,15 +187,15 @@ void eEPGCache::cleanLoop()
 		const eit_event_struct* cur_event;
 		int duration;
 		time_t TM;
-		tmpMap temp;		
+		tmpMap temp;
 
 		for (eventCache::iterator DBIt = eventDB.begin(); DBIt != eventDB.end(); DBIt++)
-			for (eventMap::iterator It = DBIt->second.begin(); It != DBIt->second.end();)
+			for (timeMap::iterator It = DBIt->second.second.begin(); It != DBIt->second.second.end();)
 			{
 				cur_event = (*It->second).get();
 
 				duration = fromBCD( cur_event->duration_1)*3600 + fromBCD(cur_event->duration_2)*60 + fromBCD(cur_event->duration_3);
-				TM = parseDVBtime( cur_event->start_time_1, cur_event->start_time_2,cur_event->start_time_3,cur_event->start_time_4,cur_event->start_time_5);
+				TM = (*It->second).getStartTime();
 				time_t now = time(0)+eDVB::getInstance()->time_difference;
 
 				if ( TM == 3599 )  // check if NVOD Entry valid..
@@ -195,7 +205,7 @@ void eEPGCache::cleanLoop()
 						eventCache::iterator evIt = eventDB.find(uniqueEPGKey( it->service_id, it->original_network_id, current_service.opos ));
 						if ( evIt != eventDB.end() )
 						{
-							for ( eventMap::iterator emIt( evIt->second.begin() ); emIt != evIt->second.end(); emIt++)
+							for ( eventMap::iterator emIt( evIt->second.first.begin() ); emIt != evIt->second.first.end(); emIt++)
 							{
 								EITEvent refEvt(*emIt->second);
 								for (ePtrList<Descriptor>::iterator d(refEvt.descriptor); d != refEvt.descriptor.end(); ++d)
@@ -204,7 +214,9 @@ void eEPGCache::cleanLoop()
 									if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
 									{
 										if ( ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id == HILO(cur_event->event_id))
-											goto endCleanLoop;  // event is not outdated... do not delete
+											// event is valid...
+											// we must check all other NVOD Events too
+											goto nextEvent;
 									}
 								}
 							}
@@ -217,14 +229,22 @@ void eEPGCache::cleanLoop()
 				{
 removeEntry:
 					eDebug("[EPGC] delete old event");
-					delete It->second;				// release Heap Memory for this entry   (new ....)
-					DBIt->second.erase(It);   // remove entry from map
+					// remove entry from eventMap
+					DBIt->second.first.erase(It->second->getEventID());
+					// release Heap Memory for this entry   (new ....)
+					delete It->second;
+					// remove entry from timeMap
+					DBIt->second.second.erase(TM);
+					// add this (changed) service to temp map...
 					temp[DBIt->first]=std::pair<time_t, int>(now, NOWNEXT);
-					It=DBIt->second.begin();  // start at begin
+					It=DBIt->second.second.begin();  // start at begin
 				}
-				else  // valid entry in map
-endCleanLoop:
-					It=DBIt->second.end();  // ends this clean loop
+				else  // valid entry found
+							// we must not check any other event in this map
+							// beginTime is sort key...
+					break;
+nextEvent:
+				;
 			}
 
 		if (temp.size())
@@ -238,7 +258,7 @@ endCleanLoop:
 eEPGCache::~eEPGCache()
 {
 	for (eventCache::iterator evIt = eventDB.begin(); evIt != eventDB.end(); evIt++)
-		for (eventMap::iterator It = evIt->second.begin(); It != evIt->second.end(); It++)
+		for (eventMap::iterator It = evIt->second.first.begin(); It != evIt->second.first.end(); It++)
 			delete It->second;
 }
 
@@ -246,19 +266,14 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, int event_
 {
 	uniqueEPGKey key( service );
 
-	eventCache::iterator It =	eventDB.find( key );
-	if ( It != eventDB.end() && !It->second.empty() ) // entrys cached?
+	eventCache::iterator It = eventDB.find( key );
+	if ( It != eventDB.end() && !It->second.first.empty() ) // entrys cached?
 	{
-		eventMap::iterator i( It->second.find( event_id ));
-		if ( i != It->second.end() )
+		eventMap::iterator i( It->second.first.find( event_id ));
+		if ( i != It->second.first.end() )
 		{
 			if ( service.getServiceType() == 4 ) // nvod ref
-			{
-				EITEvent *evt = new EITEvent( *i->second );
-				int start_time = evt->start_time;
-				delete evt;
-				return lookupEvent( service, start_time );
-			}
+				return lookupEvent( service, i->second->getStartTime() );
 			else
 				return new EITEvent( *i->second );
 		}
@@ -274,8 +289,8 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 	uniqueEPGKey key(service);
 
 	// check if EPG for this service is ready...
-	eventCache::iterator It =	eventDB.find( key );
-	if ( It != eventDB.end() && !It->second.empty() ) // entrys cached ?
+	eventCache::iterator It = eventDB.find( key );
+	if ( It != eventDB.end() && !It->second.first.empty() ) // entrys cached ?
 	{
 		if (!t)
 			t = time(0)+eDVB::getInstance()->time_difference;
@@ -288,7 +303,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 				eventCache::iterator evIt = eventDB.find(uniqueEPGKey( it->service_id, it->original_network_id, key.opos ));
 				if ( evIt != eventDB.end() )
 				{
-					for ( eventMap::iterator emIt( evIt->second.begin() ); emIt != evIt->second.end(); emIt++)
+					for ( eventMap::iterator emIt( evIt->second.first.begin() ); emIt != evIt->second.first.end(); emIt++)
 					{
 						EITEvent refEvt(*emIt->second);
 						if ( t >= refEvt.start_time && t <= refEvt.start_time+refEvt.duration)
@@ -299,7 +314,7 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 								if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
 								{
 									int event_id = ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id;
-									for ( eventMap::iterator i( It->second.begin() ); i != It->second.end(); i++)
+									for ( eventMap::iterator i( It->second.first.begin() ); i != It->second.first.end(); i++)
 									{
 										if ( HILO( i->second->get()->event_id ) == event_id )
 										{
@@ -320,11 +335,11 @@ EITEvent *eEPGCache::lookupEvent(const eServiceReferenceDVB &service, time_t t)
 			}
 		}
 
-		for ( eventMap::iterator i( It->second.begin() ); i != It->second.end(); i++)
+		for ( eventMap::iterator i( It->second.first.begin() ); i != It->second.first.end(); i++)
 		{
 			const eit_event_struct* eit_event = i->second->get();
 			int duration = fromBCD(eit_event->duration_1)*3600+fromBCD(eit_event->duration_2)*60+fromBCD(eit_event->duration_3);
-			time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);					
+			time_t begTime = parseDVBtime( eit_event->start_time_1, eit_event->start_time_2,	eit_event->start_time_3, eit_event->start_time_4,	eit_event->start_time_5);
 			if ( t >= begTime && t <= begTime+duration) // then we have found
 				return new EITEvent( *i->second );
 		}
@@ -354,14 +369,14 @@ void eEPGCache::enterService(const eServiceReferenceDVB &service, int err)
 			eDebug("[EPGC] next update in %i sec", update/1000);
 	}
 
-	if (It != serviceLastUpdated.end() && !eventDB[current_service].empty())
+	if (It != serviceLastUpdated.end() && !eventDB[current_service].first.empty())
 	{
-		eDebug("[EPGC] service has EPG");
+		eDebug("[EPGC] yet cached");
 		/*emit*/ EPGAvail(1);
 	}
 	else
 	{
-		eDebug("[EPGC] service has no EPG %d, %d", It != serviceLastUpdated.end(), !eventDB[current_service].empty() );
+		eDebug("[EPGC] not cached yet");
 		/*emit*/ EPGAvail(0);
 	}
 }

@@ -671,6 +671,7 @@ int eFrontend::tune(eTransponder *trans,
 		// reset all diseqc devices
 		if (type==feSatellite)
 			InitDiSEqC();
+		needreset=0;
 	}
 	transponder=trans;
 

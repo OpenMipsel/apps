@@ -3,6 +3,7 @@
 #include <lib/base/i18n.h>
 
 #include <lib/driver/eavswitch.h>
+#include <lib/dvb/edvb.h>
 #include <lib/driver/rc.h>
 #include <lib/driver/streamwd.h>
 #include <lib/gui/elabel.h>
@@ -47,7 +48,7 @@ eZapVideoSetup::eZapVideoSetup(): eWindow(0)
 	entrys[1]=new eListBoxEntryText(colorformat, _("RGB"), (void*)2);
 	entrys[2]=new eListBoxEntryText(colorformat, _("SVideo"), (void*)3);
 	
-	if(eDVB::getInstance()->getmID() != 6)	
+	if(eDVB::getInstance()->getmID() == 5)
 		entrys[3]=new eListBoxEntryText(colorformat, _("YPbPr"), (void*)4);
 
 	colorformat->setCurrent(entrys[v_colorformat-1]);

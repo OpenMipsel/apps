@@ -178,10 +178,10 @@ void eZapEPG::buildService(serviceentry &service, time_t start, time_t end)
 #endif
 	service.entries.setAutoDelete(1);
 	eEPGCache *epgcache=eEPGCache::getInstance();
-	const eventMap *evmap = epgcache->getEventMap(service.service);
+	const timeMap *evmap = epgcache->getTimeMap(service.service);
 	if (!evmap)
 		return;
-	for (eventMap::const_iterator event(evmap->begin()); event != evmap->end(); ++event)
+	for (timeMap::const_iterator event(evmap->begin()); event != evmap->end(); ++event)
 	{
 		const EITEvent *ev = epgcache->lookupEvent(service.service, event->first);
 		if (!ev)

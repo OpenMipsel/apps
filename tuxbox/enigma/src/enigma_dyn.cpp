@@ -750,11 +750,11 @@ static eString getcurepg(eString request, eString dirpath, eString opt, eHTTPCon
 	result+=eString("</span>");
 	result+=eString("<br>\n");
 
-	const eventMap* evt=eEPGCache::getInstance()->getEventMap(sapi->service);
+	const timeMap* evt=eEPGCache::getInstance()->getTimeMap(sapi->service);
 	if(!evt)
 		return eString("epg not ready yet");
 
-	eventMap::const_iterator It;
+	timeMap::const_iterator It;
 
 	for(It=evt->begin(); It!= evt->end(); It++)
 	{

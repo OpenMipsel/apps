@@ -4,8 +4,6 @@
 #include <lib/gui/ewindow.h>
 #include <lib/gui/listbox.h>
 #include <lib/gui/statusbar.h>
-#include <lib/driver/eavswitch.h>
-#include <lib/dvb/edvb.h>
 
 class eNumber;
 class eButton;
