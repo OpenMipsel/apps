@@ -300,7 +300,8 @@
 		<img name="lcd_enigma_logo" src="logo.png" nomerge="yes" />
 		<img name="lcd_menu" src="lcdmenu.png" nomerge="yes" />
 		<img name="lcd_scart" src="../video.png" nomerge="yes" />
-		<img name="speaker" src="speaker.png" nomerge="yes" />
+		<img name="speaker" src="../lcd-speaker.png" nomerge="yes" />
+		<img name="lcd-clock" src="../lcd-clock.png" nomerge="yes" />
 
 		<img name="eListBox.arrow.updown" src="lbarrow.png" />
 		<img name="eListBox.arrow.left" src="lbarrow_left.png" />

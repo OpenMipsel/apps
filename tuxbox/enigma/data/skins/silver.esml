@@ -32,6 +32,7 @@
 
 		<map name="lcd.main.service_name" font="lcd" size="30" />
 		<map name="lcd.main.clock" font="lcd" size="28" />
+		<map name="lcd.standby.clock" font="lcd" size="69" />
 	</fontalias>
 
 	<colors>
@@ -302,8 +303,8 @@
 		<img name="lcd_enigma_logo" src="logo.png" nomerge="yes" />
 		<img name="lcd_menu" src="lcdmenu.png" nomerge="yes" />
 		<img name="lcd_scart" src="../video.png" nomerge="yes" />
-		<img name="speaker" src="speaker.png" nomerge="yes" />
-		<img name="lcd-clock" src="lcd-clock.png" nomerge="yes" />
+		<img name="speaker" src="../lcd-speaker.png" nomerge="yes" />
+		<img name="lcd-clock" src="../lcd-clock.png" nomerge="yes" />
 
 		<img name="eListBox.arrow.updown" src="lbarrow.png" />
 		<img name="eListBox.arrow.left" src="lbarrow_left.png" />
@@ -423,6 +424,12 @@
 			<eLabel position="0:0" size="120:17" pixmap="lcd_enigma_logo" />
 		  <eLabel position="4:20" size="112:38" pixmap="lcd_scart" />	
 		</eZapLCDScart>
+	</object>
+
+	<object name="enigma_lcd_standby">
+		<eZapLCDStandby position="0:0" size="120:64">
+			<eLabel position="10:0" size="e:e" font="lcd.standby.clock" name="clock" />	
+		</eZapLCDStandby>
 	</object>
 
 	<object name="ezap_main">
