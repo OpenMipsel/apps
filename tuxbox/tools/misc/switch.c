@@ -21,11 +21,11 @@
  *
  *
  *   $Log: switch.c,v $
- *   Revision 1.1  2001/03/03 00:11:15  gillem
- *   Initial revision
+ *   Revision 1.1.1.1  2001/03/03 00:11:15  gillem
  *
  *
- *   $Revision: 1.1 $
+ *
+ *   $Revision: 1.1.1.1 $
  *
  */
 
