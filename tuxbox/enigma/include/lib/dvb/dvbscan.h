@@ -59,8 +59,9 @@ class eDVBScanController: public eDVBController, public Object
 	
 	std::list<eTransponder> knownTransponder;
 	std::list<eTransponder> changedTransponder;
+	std::list<eTransponder>::iterator current;
 
-	int handleSDT(eTransponder *&transponder, const SDT *sdt);
+	int handleSDT(const SDT *sdt);
 
 public:
 	enum

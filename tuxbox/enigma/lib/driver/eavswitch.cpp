@@ -365,8 +365,14 @@ int eAVSwitch::setAspectRatio(eAVAspectRatio as)
 {
 	int saa;
 	aspect=as;
-	saa = (aspect==r169) ? SAA_WSS_169F : SAA_WSS_OFF;
+
+	unsigned int disableWSS = 0;
+	eConfig::getInstance()->getKey("/elitedvb/video/disableWSS", disableWSS );
+
+	saa = (aspect==r169) ? SAA_WSS_169F :
+		( disableWSS ? SAA_WSS_OFF : SAA_WSS_43F );
 	ioctl(saafd,SAAIOSWSS,&saa);
+
 	return setTVPin8((active && (!input))?((aspect==r169)?6:12):0);
 }
 

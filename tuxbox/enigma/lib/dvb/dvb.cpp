@@ -493,7 +493,7 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 				ainversion="0";
 			if (!amodulation)
 				amodulation="3";
-			int frequency=atoi(afrequency)/1000,
+			int frequency=atoi(afrequency)/*/1000*/,
 					symbol_rate=atoi(asymbol_rate),
 					inversion=atoi(ainversion),
 					modulation=atoi(amodulation);
@@ -518,7 +518,8 @@ int existNetworks::addNetwork(tpPacket &packet, XMLTreeNode *node, int type)
 			if (!ainversion)
 				ainversion="2";
 			int frequency=atoi(afrequency), symbol_rate=atoi(asymbol_rate),
-					polarisation=atoi(apolarisation), fec_inner=atoi(afec_inner), inversion=atoi(ainversion);
+					polarisation=atoi(apolarisation), fec_inner=atoi(afec_inner),
+					inversion=atoi(ainversion);
 			t.setSatellite(frequency, symbol_rate, polarisation, fec_inner, orbital_position, inversion);
 			break;
 		}
@@ -1065,7 +1066,7 @@ void eServicePath::setString( const eString& str )
 	while( ( i2 = str.find(';', i ) ) != eString::npos )
 	{
 		eServiceReference e(str.mid( i, i2-i ));
-		path.push( e );
+		path.push_back( e );
 		i=i2;
 		++i;
 	}
@@ -1112,7 +1113,7 @@ eServicePath::eServicePath( const eString& str )
 
 eServicePath::eServicePath(const eServiceReference &ref)
 {
-	path.push(ref);
+	path.push_back(ref);
 }
 
 eString eServicePath::toString()
@@ -1121,8 +1122,8 @@ eString eServicePath::toString()
 	eString erg;
 	if ( path.size() )
 	{
-		eString tmp = path.top().toString()+";";
-		path.pop();
+		eString tmp = path.back().toString()+";";
+		path.pop_back();
 		erg=toString()+=tmp;
 	}
 	return erg;
@@ -1131,7 +1132,7 @@ eString eServicePath::toString()
 bool eServicePath::up()
 {
 	if (path.size()>1)
-		path.pop();
+		path.pop_back();
 	else
 		return false;
 	return true;
@@ -1139,13 +1140,20 @@ bool eServicePath::up()
 
 void eServicePath::down(const eServiceReference &ref)
 {
-	path.push(ref);
+	path.push_back(ref);
 }
 
 eServiceReference eServicePath::current() const
 {
 	if (path.size())
-		return path.top();
+		return path.back();
+	return eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot);
+}
+
+eServiceReference eServicePath::bottom() const
+{
+	if (path.size())
+		return path.front();
 	return eServiceStructureHandler::getRoot(eServiceStructureHandler::modeRoot);
 }
 

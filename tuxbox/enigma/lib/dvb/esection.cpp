@@ -131,7 +131,7 @@ eSection::~eSection()
 int eSection::start( const char* dmxdev )
 {
 	if (timer && (version==-1) && !(flags&SECREAD_NOTIMEOUT))
-		timer->start((pid==0x14)?60000:10000, true);
+		timer->start((pid==0x14)?90000:10000, true);
 	return setFilter(pid, tableid, tableidext, version, dmxdev);
 }
 

@@ -34,12 +34,12 @@ eFrontend::eFrontend(int type, const char *demod, const char *sec)
 		perror(demod);
 		return;
 	}
-/*
+
 	FrontendInfo fe_info;
 
 	if ( ioctl(fd, FE_GET_INFO, fe_info) < 0 ) 
 		perror("FE_GET_INFO");
-
+/*
 	switch ( fe_info.hwType )
 	{
 		case FE_QAM:
@@ -85,7 +85,7 @@ void eFrontend::timeout()
 		eDebug("+");
 		state=stateIdle;
 
-		if ( transponder->satellite.valid )
+		if ( transponder->satellite.valid && !eDVB::getInstance()->getScanAPI() )
 		{
 			FrontendParameters front;
 			if (ioctl(fd, FE_GET_FRONTEND, &front)<0)
@@ -93,18 +93,20 @@ void eFrontend::timeout()
 			else
 			{
 				eDebug("FE_GET_FRONTEND OK");
-/*				eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
+				eSatellite * sat = eTransponderList::getInstance()->findSatellite(transponder->satellite.orbital_position);
 				if (sat)
 				{
 					eLNB *lnb = sat->getLNB();
 					if (lnb)
 					{
+//						eDebug("oldFreq = %d", transponder->satellite.frequency );
 						transponder->satellite.frequency = transponder->satellite.frequency > lnb->getLOFThreshold() ?
 								front.Frequency + lnb->getLOFHi() :
 								front.Frequency + lnb->getLOFLo();
+//						eDebug("newFreq = %d", transponder->satellite.frequency );
 					}
 				}
-				transponder->satellite.fec = front.u.qpsk.FEC_inner;
+/*				transponder->satellite.fec = front.u.qpsk.FEC_inner;
 				transponder->satellite.symbol_rate = front.u.qpsk.SymbolRate;*/
 				transponder->satellite.inversion=front.Inversion;
 //				eDebug("NEW INVERSION = %d", front.Inversion );
@@ -1039,7 +1041,7 @@ send:
 	state=stateTuning;
 //	tries=30000000*2 / SymbolRate; // 1.0 second timeout
 //	tries=tries<5?5:tries;
-	tries=35;
+	tries=20;
 //	eDebug("tries=%d", tries);
 	timer->start(50, true);
 

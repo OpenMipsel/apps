@@ -11,6 +11,7 @@ pm(0), entries(OpenEntries), current(0)
 	if ( eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth",0) )
 		button.loadDeco();
 	button.setBlitFlags(BF_ALPHATEST);
+
 	pm=eSkin::getActive()->queryImage("eComboBox.arrow");
 	button.setPixmap(pm);
 	listbox.hide();
@@ -79,7 +80,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 		case eWidgetEvent::changedPosition:
 		case eWidgetEvent::changedSize:
 		{
-			eListBoxEntryText* cur = listbox.getCurrent();
+			eListBoxEntryText* cur = listbox.getCount()?listbox.getCurrent():0;
 			listbox.resize( eSize( getSize().width(), eListBoxEntryText::getEntryHeight()*entries+listbox.getDeco().borderBottom+listbox.getDeco().borderTop ) );
 			int smButtonDeco = eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth", pm?pm->x:0 );
 			if (deco)

@@ -173,7 +173,7 @@ public:
 			if ( abs( frequency-c.frequency ) > 1000 )
 				return 0;
 //   		eDebug("symbol_rate -> %i != %i", symbol_rate, c.symbol_rate );
-			if (symbol_rate != c.symbol_rate)
+			if ( abs(symbol_rate-c.symbol_rate) > 2000 )
 				return 0;
 //   		eDebug("polarisation -> %i != %i", polarisation, c.polarisation );
 			if (polarisation != c.polarisation)
@@ -182,7 +182,8 @@ public:
 			if (fec != c.fec)
 				return 0;
 //   		eDebug("inversion -> %i != %i", inversion, c.inversion );
-			if (inversion != c.inversion)
+			// dont compare inversion when one have AUTO
+			if (inversion != 2 && c.inversion != 2 && inversion != c.inversion)
 				return 0;
 //			eDebug("orbital_position -> %i != %i", orbital_position, c.orbital_position);
 			if (orbital_position != c.orbital_position)
@@ -246,10 +247,11 @@ public:
 	{
 //		eDebug("onid = %i, c.onid = %i, tsid = %i, c.tsid = %i", original_network_id.get(), transport_stream_id.get(), c.original_network_id.get(), c.transport_stream_id.get() );
 		if ( original_network_id != -1 && c.original_network_id != -1 && transport_stream_id != -1 && c.transport_stream_id != -1)
-//		{
+		{
 //	  	eDebug("TSID / ONID Vergleich");
-			return ( (original_network_id == c.original_network_id) && (transport_stream_id == c.transport_stream_id) );
-//		}
+				return ( original_network_id == c.original_network_id &&
+										transport_stream_id == c.transport_stream_id );
+		}
 		else
 		{
 			if (satellite.valid && c.satellite.valid)
@@ -257,8 +259,7 @@ public:
 			if (cable.valid && c.cable.valid)
 				return cable == c.cable;
 		}
-
-		return 1;		
+		return 1;
 	}
 
 	bool operator<(const eTransponder &c) const
@@ -505,7 +506,7 @@ public:
 
 class eServicePath
 {
-	std::stack<eServiceReference> path;
+	std::list<eServiceReference> path;
 public:
 	eServicePath()	{	}
 	eServicePath( const eString& data );
@@ -515,6 +516,8 @@ public:
 	bool up();
 	void down(const eServiceReference &ref);
 	eServiceReference current() const;
+	eServiceReference top() const { return current(); }
+	eServiceReference bottom() const;
 	int size() const;
 };
 
