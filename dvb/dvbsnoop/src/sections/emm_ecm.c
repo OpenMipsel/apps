@@ -1,5 +1,5 @@
 /*
-$Id: emm_ecm.c,v 1.4.2.1 2003/07/06 05:23:31 obi Exp $
+$Id: emm_ecm.c,v 1.4.2.2 2003/07/06 05:49:33 obi Exp $
 
 
    -- EMM / ECM Data packet
@@ -8,6 +8,9 @@ $Id: emm_ecm.c,v 1.4.2.1 2003/07/06 05:23:31 obi Exp $
 
 
 $Log: emm_ecm.c,v $
+Revision 1.4.2.2  2003/07/06 05:49:33  obi
+CAMT fix and indentation
+
 Revision 1.4.2.1  2003/07/06 05:23:31  obi
 merge from cvs head
 
@@ -69,7 +72,7 @@ void decode_EMM_ECM (u_char *b, int len)
 
 
 
- out_nl (3,"EMM/ECM-decoding....");
+ out_nl (3,"CAMT-decoding....");
  out_S2B_NL (3,"Table_ID: ",e.table_id, dvbstrTableID (e.table_id));
 
  out_SB_NL (3,"section_syntax_indicator: ",e.section_syntax_indicator);
@@ -77,8 +80,10 @@ void decode_EMM_ECM (u_char *b, int len)
  out_SB_NL (6,"reserved_2: ",e.reserved_2);
  out_SW_NL (5,"Section_length: ",e.section_length);
 
-
+ indent (+1);
+ out_nl (3, "CA_message_section_data:");
  printhexdump_buf (3,b+3,e.section_length);
+ indent (-1);
 
  //  !!! decoding the complete ECM/EMM stream may be illegal
  //      so we don't do this!
