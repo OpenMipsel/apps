@@ -2092,19 +2092,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 	}
 	g_info.box_Type = atoi(mID);
 
-	g_info.gtx_ID = -1;
-	if (!getEnvironment("gtxID", &g_info.gtx_ID))
-		return 1;
-
-	g_info.enx_ID = -1;
-	if (!getEnvironment("enxID", &g_info.enx_ID))
-		return 1;
-
-	g_info.fe = 0;
-	if (!getEnvironment("fe", &g_info.fe))
-		return 1;
-
-	dprintf( DEBUG_DEBUG, "[neutrino] box_Type: %d, gtxID: %d, enxID: %d, fe: %d\n", g_info.box_Type, g_info.gtx_ID, g_info.enx_ID, g_info.fe);
+	dprintf( DEBUG_DEBUG, "[neutrino] box_Type: %d\n", g_info.box_Type);
 
 
 
@@ -3371,7 +3359,7 @@ bool CNeutrinoApp::changeNotify(std::string OptionName, void *Data)
 int main(int argc, char **argv)
 {
 	setDebugLevel(DEBUG_NORMAL);
-	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.4 2003/02/18 17:17:54 thegoodguy Exp $\n\n");
+	dprintf( DEBUG_NORMAL, "NeutrinoNG $Id: neutrino.cpp,v 1.414.2.5 2003/02/18 17:25:34 thegoodguy Exp $\n\n");
 
 	//dhcp-client beenden, da sonst neutrino beim hochfahren stehenbleibt
 	system("killall -9 udhcpc >/dev/null 2>/dev/null");
