@@ -166,7 +166,7 @@ static unsigned long c88599[128]={
 0x00e0, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 0x00e9, 0x00ea, 0x00eb, 0x00ec, 0x00ed, 0x00ee, 0x00ef, 
 0x011f, 0x00f1, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb, 0x00fc, 0x0131, 0x015f, 0x00ff};
 
-		// UPC Direct / HBO strange two-character encoding. 0xC2 means acute, 0xCF caron.
+		// UPC Direct / HBO strange two-character encoding. 0xC2 means acute, 0xC8 doule 'dot', 0xCA small 'circle', 0xCD double 'acute', 0xCF acute.
 		// many thanks to the czechs who helped me while solving this.
 static inline unsigned int doCzech(int c1, int c2)
 {
@@ -182,7 +182,7 @@ static inline unsigned int doCzech(int c1, int c2)
 		case 'I': return 0x00CD;
 		case 'i': return 0x00ED;
 		case 'O': return 0x00D3;
-		case 'o': return 0x00E3;
+		case 'o': return 0x00F3; // corrected, was 0x00E3
 		case 'U': return 0x00DA;
 		case 'u': return 0x00FA;
 		case 'Y': return 0x00DD;
@@ -190,6 +190,38 @@ static inline unsigned int doCzech(int c1, int c2)
 		default:
 			return 0;
 		}
+	case 0xC8: // double 'dot'
+		switch (c2)
+		{
+		case 'A': return 0x00C4;
+		case 'a': return 0x00E4;
+		case 'E': return 0x00CB;
+		case 'e': return 0x00EB;
+		case 'O': return 0x00D6;
+		case 'o': return 0x00F6;
+		case 'U': return 0x00DC;
+		case 'u': return 0x00FC;
+		default:
+			return 0;
+		}
+	case 0xCA: // small 'circle'
+		switch (c2)               
+		{                         
+		case 'U': return 0x016E;  
+		case 'u': return 0x016F;  
+		default:                  
+			return 0;             
+		}                         
+	case 0xCD: // double 'acute'
+		switch (c2)               
+		{                         
+		case 'O': return 0x0150;  
+		case 'o': return 0x0151;  
+		case 'U': return 0x0170;  
+		case 'u': return 0x0171;  
+		default:                  
+			return 0;             
+		}                         
 	case 0xCF: // caron
 		switch (c2)
 		{
@@ -260,7 +292,7 @@ eString convertDVBUTF8(unsigned char *data, int len)
 	for (; i<len; ++i)
 	{
 		unsigned long code=0;
-		if ((table == 5) && ((data[i] == 0xC2) || (data[i] == 0xCF)) && (i+1 < len))
+		if ((table == 5) && ((data[i] == 0xC2) || (data[i] == 0xC8) || (data[i] == 0xCA) || (data[i] == 0xCD) || (data[i] == 0xCF)) && (i+1 < len))
 				// braindead czech encoding...
 			if ((code=doCzech(data[i], data[i+1])))
 				++i;
