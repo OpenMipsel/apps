@@ -1,6 +1,6 @@
 /*
 
-        $Id: settings.cpp,v 1.12.2.1 2003/02/18 16:21:08 alexw Exp $
+        $Id: settings.cpp,v 1.12.2.2 2003/02/18 17:27:14 thegoodguy Exp $
 
 	Neutrino-GUI  -   DBoxII-Project
 
@@ -22,15 +22,12 @@
 */
 
 
-#include <string>
-
-#include <global.h>
-
 #include "settings.h"
 
 CScanSettings::CScanSettings(void)
 	: configfile('\t')
 {
+	delivery_system = DVB_S;
 	satNameNoDiseqc[0] = 0;
 	for( int i=0; i<MAX_SATELLITES; i++)
 	{
@@ -90,26 +87,37 @@ void CScanSettings::toSatList( CZapitClient::ScanSatelliteList& satList) const
 	}
 }
 
-void CScanSettings::useDefaults()
+void CScanSettings::useDefaults(const delivery_system_t _delivery_system)
 {
-	bouquetMode = CZapitClient::BM_DONTTOUCHBOUQUETS;
-	diseqcMode = NO_DISEQC;
-	diseqcRepeat = 0;
+	delivery_system = _delivery_system;
+	bouquetMode     = CZapitClient::BM_DONTTOUCHBOUQUETS;
+	diseqcMode      = NO_DISEQC;
+	diseqcRepeat    = 0;
 
-	if (g_info.fe==1)
-		strcpy( satNameNoDiseqc, "Astra 19.2E");
-	else
-		strcpy( satNameNoDiseqc, "Telekom/Ish");
+	switch (delivery_system)
+	{
+	case DVB_C:
+		strcpy(satNameNoDiseqc, "Telekom/Ish");
+		break;
+	case DVB_S:
+		strcpy(satNameNoDiseqc, "Astra 19.2E");
+		break;
+	case DVB_T:
+		strcpy(satNameNoDiseqc, "");
+		break;
+	}
 }
 
-bool CScanSettings::loadSettings(const std::string fileName)
+bool CScanSettings::loadSettings(const std::string fileName, const delivery_system_t _delivery_system)
 {
+	useDefaults(delivery_system);
+
 	if(!configfile.loadConfig(fileName))
 	{
 		return false;
 	}
 
-	if(configfile.getInt32("fe",-1) != g_info.fe)
+	if (configfile.getInt32("delivery_system",-1) != delivery_system)
 	{
 		// configfile is not for this delivery system
 		configfile.clear();
@@ -138,7 +146,7 @@ bool CScanSettings::loadSettings(const std::string fileName)
 
 bool CScanSettings::saveSettings(const std::string fileName)
 {
-	configfile.setInt32( "fe", g_info.fe );
+	configfile.setInt32("delivery_system", delivery_system);
 	configfile.setInt32( "diseqcMode", diseqcMode );
 	configfile.setInt32( "diseqcRepeat", diseqcRepeat );
 	configfile.setInt32( "bouquetMode", bouquetMode );
