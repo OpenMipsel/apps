@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.21 2003/05/17 21:25:03 alexvrs Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.22 2003/05/19 03:58:17 ghostrider Exp $
  */
 
 #include <enigma_setup.h>
@@ -310,7 +310,9 @@ void eZapSetup::sel_harddisk()
 {
 	hide();
 	eHarddiskSetup setup;
-
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
 	if (!setup.getNr())
 	{
 		eMessageBox msg(_("sorry, no harddisks found!"), _("Harddisk setup..."));

@@ -17,6 +17,7 @@ class eListBoxEntryEPG:public eListBoxEntry
 	EITEvent event;
 	tm start_time;
 	eString descr;
+	eString hlp;
 	const eString &redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited);
 	static int getEntryHeight();
 	eServiceReference service;

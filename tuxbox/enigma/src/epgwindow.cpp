@@ -111,19 +111,16 @@ extern const char *dayStrShort[];
 const eString &eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
 	drawEntryRect(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, hilited);
-	
-	eString hlp;
+
 	int xpos=rect.left()+10;
 	if (!paraDate)
 	{
 		paraDate = new eTextPara( eRect( 0, 0, dateXSize, rect.height()) );
 		paraDate->setFont( TimeFont );
-		eString tmp;
-		tmp.sprintf("%s %02d.%02d,", dayStrShort[start_time.tm_wday], start_time.tm_mday, start_time.tm_mon+1);
-		paraDate->renderString( tmp );
+		hlp.sprintf("%02d.%02d,", start_time.tm_mday, start_time.tm_mon+1);
+		paraDate->renderString( eString(dayStrShort[start_time.tm_wday])+' '+hlp );
 		paraDate->realign( eTextPara::dirRight );
 		TimeYOffs = ((rect.height() - paraDate->getBoundBox().height()) / 2 ) - paraDate->getBoundBox().top();
-		hlp+=tmp;
 	}
 	rc->renderPara(*paraDate, ePoint( xpos, rect.top() + TimeYOffs ) );
 	xpos+=dateXSize+paraDate->getBoundBox().height();
@@ -162,11 +159,11 @@ const eString &eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor 
 		paraDescr->setFont( DescrFont );
 		paraDescr->renderString(descr);
 		DescrYOffs = 0; // ((rect.height() - paraDescr->getBoundBox().height()) / 2 ) - paraDescr->getBoundBox().top();
+		hlp=hlp+' '+descr;
 	}
 	rc->renderPara(*paraDescr, ePoint( xpos, rect.top() + DescrYOffs ) );
 
-	static eString ret = hlp+" "+descr;
-	return ret;
+	return hlp;
 }
 
 void eEPGSelector::fillEPGList()

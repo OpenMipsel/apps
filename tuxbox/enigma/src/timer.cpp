@@ -977,8 +977,6 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 {
 	drawEntryRect(rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, hilited);
 
-	eString hlp;
-
 	int xpos=rect.left()+10;
 
 	if ( entry->type & ePlaylistEntry::stateFinished )
@@ -997,13 +995,12 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 	time_t t = entry->time_begin+entry->duration;
 	tm stop_time = *localtime(&t);
 
-	eString descr;
 	if (!paraDescr)
 	{
-		descr = getRight( entry->service.descr, '/' );
+		hlp = getRight( entry->service.descr, '/' );
 		paraDescr = new eTextPara( eRect( 0 ,0, rect.width(), rect.height()/2) );
 		paraDescr->setFont( DescrFont );
-		paraDescr->renderString( descr );
+		paraDescr->renderString( hlp );
 		DescrYOffs = ((rect.height()/2 - paraDescr->getBoundBox().height()) / 2 ) - paraDescr->getBoundBox().top();
 	}
 	rc->renderPara(*paraDescr, ePoint( xpos, rect.top() + DescrYOffs + rect.height()/2 ) );
@@ -1034,7 +1031,7 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 			tmp.sprintf("%02d.%02d,", start_time.tm_mday, start_time.tm_mon+1);
 		paraDate->renderString( tmp );
 		TimeYOffs = ((rect.height()/2 - paraDate->getBoundBox().height()) / 2 ) - paraDate->getBoundBox().top();
-		hlp+=tmp;
+		hlp=tmp+' '+hlp;
 	}
 	dateXSize = paraDate->getBoundBox().width();
 	rc->renderPara(*paraDate, ePoint( xpos, rect.top() + TimeYOffs ) );
@@ -1047,7 +1044,7 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 		eString tmp;
 		tmp.sprintf("%02d:%02d - %02d:%02d", start_time.tm_hour, start_time.tm_min, stop_time.tm_hour, stop_time.tm_min);
 		paraTime->renderString( tmp );
-		hlp+=tmp;
+		hlp=hlp+' '+tmp;
 	}
 	rc->renderPara(*paraTime, ePoint( xpos, rect.top() + TimeYOffs ) );
 	xpos+=timeXSize+paraTime->getBoundBox().height();
@@ -1074,8 +1071,7 @@ const eString &eListBoxEntryTimer::redraw(gPainter *rc, const eRect& rect, gColo
 	if ( paraService )
 		rc->renderPara(*paraService, ePoint( xpos, rect.top() + TimeYOffs ) );
 
-	static eString ret = hlp + " "+descr;
-	return ret;
+	return hlp;
 }
 
 static int weekday (int d, int m, int y)
@@ -1170,6 +1166,9 @@ void eTimerListView::entrySelected(eListBoxEntryTimer *entry)
 	{
 		hide();
 		eTimerEditView e( entry->entry );
+#ifndef DISABLE_LCD
+		e.setLCD( LCDTitle, LCDElement );
+#endif
 		e.show();
 		if ( !e.exec() )
 			fillTimerList();

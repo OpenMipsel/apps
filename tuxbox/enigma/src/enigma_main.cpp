@@ -441,8 +441,8 @@ const eString &NVODStream::redraw(gPainter *rc, const eRect& rect, gColor coActi
 	listbox->remove( this );
 	eit.start();
 
-	static eString ret = _("not valid!");
-	return ret;
+	static eString ret;
+	return ret = _("not valid!");
 }
 
 void NVODStream::selfDestroy()

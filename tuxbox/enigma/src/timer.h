@@ -88,6 +88,7 @@ class eListBoxEntryTimer: public eListBoxEntry
 	ePlaylistEntry *entry;
 	const eString &redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited);
 	static int getEntryHeight();
+	eString hlp;
 public:
 	bool operator < ( const eListBoxEntry& ref ) const
 	{

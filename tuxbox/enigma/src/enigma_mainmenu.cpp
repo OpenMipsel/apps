@@ -203,8 +203,7 @@ void eMainMenu::sel_info()
 {
 	eZapInfo info;
 #ifndef DISABLE_LCD
-	eZapLCD *pLCD=eZapLCD::getInstance();
-	info.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+	info.setLCD(LCDTitle, LCDElement);
 #endif
 	hide();
 	info.show();
@@ -228,8 +227,7 @@ void eMainMenu::sel_setup()
 		{
 			eZapSetup setup;
 #ifndef DISABLE_LCD
-			eZapLCD *pLCD=eZapLCD::getInstance();
-			setup.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+			setup.setLCD(LCDTitle, LCDElement);
 #endif
 			setup.show();
 			i=setup.exec();
@@ -243,8 +241,7 @@ void eMainMenu::sel_setup()
 void eMainMenu::sel_plugins()
 {
 #ifndef DISABLE_LCD
-	eZapLCD *pLCD=eZapLCD::getInstance();
-	eZapPlugins plugins(1, pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+	eZapPlugins plugins(1, LCDTitle, LCDElement);
 #else
 	eZapPlugins plugins(1);
 #endif
@@ -258,8 +255,7 @@ void eMainMenu::sel_timer()
 	hide();
 	eTimerListView setup;
 #ifndef DISABLE_LCD
-	eZapLCD *pLCD=eZapLCD::getInstance();
-	setup.setLCD(pLCD->LCDTitle, pLCD->LCDElement);
+	setup.setLCD(LCDTitle, LCDElement);
 #endif
 	setup.show();
 	setup.exec();

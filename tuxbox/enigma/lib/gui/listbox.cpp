@@ -889,8 +889,8 @@ const eString &eListBoxEntryTextStream::redraw(gPainter *rc, const eRect& rect, 
 	rc->setForegroundColor(state?coActiveF:coNormalF);
 	rc->renderText(rect, text.str());
 
-	static eString ret = text.str();
-	return ret;
+	static eString ret;
+	return ret = text.str();
 }
 
 void eListBoxEntryText::SetText(const eString& txt)
