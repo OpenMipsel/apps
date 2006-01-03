@@ -9,7 +9,7 @@ AC_PROG_CC
 TUXBOX_APPS_DRIVER
 TUXBOX_APPS_DVB
 
-TUXBOX_APPS_LIB_PKGCONFIG(PLUGINS,tuxbox-plugins)
+# TUXBOX_APPS_LIB_PKGCONFIG(PLUGINS,tuxbox-plugins)
 TUXBOX_APPS_LIB_PKGCONFIG(TUXBOX,tuxbox)
 
 AC_OUTPUT([
@@ -21,4 +21,3 @@ test/Makefile
 tuxinfo/Makefile
 graphics/Makefile
 ])
-

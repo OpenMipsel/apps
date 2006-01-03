@@ -20,15 +20,25 @@ TUXBOX_APPS_DVB
 TUXBOX_APPS_DRIVER
 TUXBOX_APPS_CAPTURE
 
-TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
+#TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
+
+# needed by tuxmail
 TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
-TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
+#TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
+
+# needed by enigma-demo
 TUXBOX_APPS_LIB_PKGCONFIG(SIGC,sigc++-1.2)
 if test "$BOXTYPE" = "dbox2"; then
 TUXBOX_APPS_LIB_PKGCONFIG(TUXBOX,tuxbox)
 fi
+
+# needed by enigma-demo
 TUXBOX_APPS_LIB_PKGCONFIG(XMLTREE,tuxbox-xmltree)
+
+# needed by vncviewer
 TUXBOX_APPS_LIB_PKGCONFIG(CONFIGFILE,tuxbox-configfile)
+
+# needed by tuxtxt
 TUXBOX_APPS_LIB_PKGCONFIG(TUXTXT,tuxbox-tuxtxt)
 
 CPPFLAGS="$CPPFLAGS $TUXTXT_CFLAGS"
