@@ -20,7 +20,8 @@ TUXBOX_APPS_DVB
 TUXBOX_APPS_DRIVER
 TUXBOX_APPS_CAPTURE
 
-#TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
+# needed by enigma/movieplayer
+TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
 
 # needed by tuxmail
 TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
