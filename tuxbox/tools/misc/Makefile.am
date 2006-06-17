@@ -1,4 +1,4 @@
-bin_PROGRAMS = aviafbtool fbclear lcddump saa switch rcsim aviaext audioplay
+bin_PROGRAMS = aviafbtool fbclear lcddump saa switch rcsim aviaext audioplay avswitch
 
 aviafbtool_SOURCES = aviafbtool.c
 aviaext_SOURCES = aviaext.c
@@ -9,3 +9,4 @@ saa_SOURCES = saa.c
 switch_SOURCES = switch.c
 rcsim_SOURCES = rcsim.c
 audioplay_SOURCES = audioplay.c
+avswitch_SOURCES = avswitch.cpp
