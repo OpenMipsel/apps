@@ -38,4 +38,7 @@ avs_settings.cpp: io-config.xml do-inits.mm
 scart.conf: io-config.xml do-scart-conf.mm
 	$(MMX) -M do-scart-conf.mm -F xml -S $< -F txt -T $@
 
+maintainer-clean-local:
+	rm -f scart.conf avs_settings.cpp
+
 endif
