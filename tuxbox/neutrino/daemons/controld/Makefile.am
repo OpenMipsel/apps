@@ -27,3 +27,15 @@ install-data-local:
 	install -d $(CONFIGDIR)
 	install -m 644 $(srcdir)/scart.conf $(CONFIGDIR)
 
+if MAINTAINER_MODE
+# Metamorphosis can be downloaded from http://www.ovidius.com
+# Of course, configure should locate mmx ;-)
+MMX = /usr/local/mm/bin/mmx
+
+avs_settings.cpp: io-config.xml do-inits.mm
+	$(MMX) -M do-inits.mm -F xml -S $< -F txt -T $@
+
+scart.conf: io-config.xml do-scart-conf.mm
+	$(MMX) -M do-scart-conf.mm -F xml -S $< -F txt -T $@
+
+endif

@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE io-config SYSTEM "io-config.dtd">
+<io-config>
+  <vendor name="nokia">
+    <operating-mode mode="dvb">
+      <tv-format format="cvbs">
+        <v1 value="1"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+	<v3 value="0"/>	<!-- 2 and 4 are useless, unfortunatelly -->
+      </tv-format>
+      <tv-format format="rgb">
+        <v1 value="5"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="svideo">
+        <v1 value="4"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="yuv_vbs">
+        <v1 value="5"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="yuv_cvbs">
+        <v1 value="5"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <a1 value="1"/>
+      <a2 value="1"/>
+      <a3 value="1"/>
+      <fblk value="0"/>
+    </operating-mode>
+    <operating-mode mode="scart">
+      <tv-format format="cvbs">
+        <v1 value="3"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="3"/>
+      </tv-format>
+      <tv-format format="rgb">
+        <v1 value="3"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="3"/>
+      </tv-format>
+      <tv-format format="svideo">
+        <v1 value="3"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="3"/>
+      </tv-format>
+      <tv-format format="yuv_vbs">
+        <v1 value="3"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="3"/>
+      </tv-format>
+      <tv-format format="yuv_cvbs">
+        <v1 value="3"/>
+         <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="3"/>
+      </tv-format>
+      <a1 value="2"/>
+      <a2 value="2"/>
+      <a3 value="0"/>
+      <fblk value="2"/>
+    </operating-mode>
+  </vendor>
+  <vendor name="sagem">
+    <operating-mode mode="dvb">
+      <tv-format format="cvbs">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="0"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="rgb">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="0"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="svideo">
+        <v1 value="1"/> <!-- 4 would be an alternative -->
+        <vcr-format format="cvbs">
+          <v2 value="0"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="yuv_vbs">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="yuv_cvbs">
+        <v1 value="0"/>
+         <vcr-format format="cvbs">
+          <v2 value="0"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <a1 value="0"/>
+      <a2 value="0"/>
+      <a3 value="0"/>
+      <fblk value="0"/>
+    </operating-mode>
+    <operating-mode mode="scart">
+      <tv-format format="cvbs">
+        <v1 value="2"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="rgb">
+        <v1 value="2"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="svideo">
+        <v1 value="2"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="yuv_vbs">
+        <v1 value="2"/>
+        <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <tv-format format="yuv_cvbs">
+        <v1 value="2"/>
+         <vcr-format format="cvbs">
+          <v2 value="7"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="7"/>
+        </vcr-format>
+	<v3 value="0"/>
+      </tv-format>
+      <a1 value="1"/>
+      <a2 value="4"/>
+      <a3 value="0"/>
+      <fblk value="3"/>
+    </operating-mode>
+  </vendor>
+  <vendor name="philips">
+    <operating-mode mode="dvb">
+      <tv-format format="cvbs">
+        <v1 value="1"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+        <v3 value="1"/>
+      </tv-format>
+      <tv-format format="rgb">
+        <v1 value="1"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+        <v3 value="1"/>
+      </tv-format>
+      <tv-format format="svideo">
+        <v1 value="1"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+        <v3 value="2"/>
+      </tv-format>
+      <tv-format format="yuv_vbs">
+        <v1 value="1"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+        <v3 value="1"/>
+      </tv-format>
+      <tv-format format="yuv_cvbs">
+        <v1 value="1"/>
+        <vcr-format format="cvbs">
+          <v2 value="1"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="1"/>
+        </vcr-format>
+        <v3 value="1"/>
+      </tv-format>
+      <a1 value="1"/>
+      <a2 value="1"/>
+      <a3 value="1"/>
+      <fblk value="0"/>
+    </operating-mode>
+    <operating-mode mode="scart">
+      <tv-format format="cvbs">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="2"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+        <v3 value="3"/>
+      </tv-format>
+      <tv-format format="rgb">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="2"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+        <v3 value="3"/>
+      </tv-format>
+      <tv-format format="svideo">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="2"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+        <v3 value="3"/>
+      </tv-format>
+      <tv-format format="yuv_vbs">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="2"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+        <v3 value="3"/>
+      </tv-format>
+      <tv-format format="yuv_cvbs">
+        <v1 value="0"/>
+        <vcr-format format="cvbs">
+          <v2 value="2"/>
+        </vcr-format>
+        <vcr-format format="svideo">
+          <v2 value="2"/>
+        </vcr-format>
+        <v3 value="3"/>
+      </tv-format>
+      <a1 value="3"/> <!-- 2 "should" be the correct one, 3 is traditional -->
+      <a2 value="0"/>
+      <a3 value="0"/>
+      <fblk value="3"/>
+    </operating-mode>
+  </vendor>
+</io-config>

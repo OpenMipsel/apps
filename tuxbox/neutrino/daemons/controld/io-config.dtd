@@ -1,0 +1,54 @@
+<!ELEMENT io-config (vendor+) >
+
+<!ELEMENT vendor (operating-mode, operating-mode) >
+
+<!ATTLIST vendor
+        name (nokia|philips|sagem) #REQUIRED >
+
+<!ELEMENT operating-mode (tv-format+, a1, a2, a3, fblk) >
+
+<!ATTLIST operating-mode
+        mode (dvb|scart) #REQUIRED >
+
+<!ELEMENT tv-format (v1, vcr-format, vcr-format, v3) >
+
+<!ELEMENT v1 EMPTY >
+
+<!ELEMENT vcr-format (v2) >
+
+<!ATTLIST vcr-format
+        format (cvbs|svideo) #REQUIRED >
+
+<!ATTLIST tv-format
+        format (cvbs|svideo|rgb|yuv_cvbs|yuv_vbs) #REQUIRED >
+
+<!ELEMENT v2 EMPTY >
+
+<!ELEMENT v3 EMPTY >
+
+<!ELEMENT fblk EMPTY >
+
+<!ELEMENT a1 EMPTY >
+<!ELEMENT a2 EMPTY >
+<!ELEMENT a3 EMPTY >
+
+<!ATTLIST v1
+        value (0|1|2|3|4|5|6|7) #REQUIRED >
+
+<!ATTLIST v2
+        value (0|1|2|3|4|5|6|7) #REQUIRED >
+
+<!ATTLIST v3
+        value (0|1|2|3|4|5|6|7) #REQUIRED >
+
+<!ATTLIST a1
+        value (0|1|2|3|4|5|6|7) #REQUIRED >
+
+<!ATTLIST a2
+        value (0|1|2|3|4|5|6|7) #REQUIRED >
+
+<!ATTLIST a3
+        value (0|1|2|3|4|5|6|7) #REQUIRED >
+
+<!ATTLIST fblk
+        value (0|1|2|3) #REQUIRED >
