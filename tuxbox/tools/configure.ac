@@ -22,4 +22,5 @@ test/Makefile
 tuxinfo/Makefile
 graphics/Makefile
 kb2rcd/Makefile
+cdkVcInfo/Makefile
 ])
