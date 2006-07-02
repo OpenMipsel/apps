@@ -90,6 +90,7 @@ enigma/weather/Makefile
 enigma/weather/icons/Makefile
 enigma/dreamflash/Makefile
 enigma/movieplayer/Makefile
+pluginx/Makefile
 tuxbox-plugins.pc
 ])
 
