@@ -1,3 +1,5 @@
+sbin_SCRIPTS = init_hdd.sh
+
 bin_PROGRAMS = aviafbtool fbclear lcddump saa switch rcsim aviaext audioplay avswitch
 
 aviafbtool_SOURCES = aviafbtool.c
