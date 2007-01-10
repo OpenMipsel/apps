@@ -76,6 +76,7 @@ tuxcom/Makefile
 vncviewer/Makefile
 vncviewer/rfb/Makefile
 enigma/Makefile
+enigma/bitrate/Makefile
 enigma/demo/Makefile
 enigma/dreamdata/Makefile
 enigma/ngrabstart/Makefile
