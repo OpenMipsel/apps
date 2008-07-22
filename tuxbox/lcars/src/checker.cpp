@@ -15,6 +15,29 @@
  ***************************************************************************/
 /*
 $Log: checker.cpp,v $
+Revision 1.12.4.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.14  2008/22/07/23:35:00 fergy
+Lcars back to live's :-)
+
+Revision 1.13  2003/10/16 00:33:23  obi
+bugfix
+
+Revision 1.12  2003/01/06 05:03:11  TheDOC
+dreambox compatible
+
+Revision 1.11  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.10  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
+Revision 1.9  2002/10/20 02:03:37  TheDOC
+Some fixes and stuff
+
 Revision 1.8  2002/09/18 10:48:37  obi
 use devfs devices
 
@@ -48,17 +71,10 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <sys/ioctl.h>
 #include <memory.h>
 #include <stdio.h>
-#include <ost/dmx.h>
-#include <ost/video.h>
-#include <ost/frontend.h>
-#include <ost/audio.h>
-#include <ost/sec.h>
-#include <ost/sec.h>
-#include <ost/ca.h>
-#include <dbox/avs_core.h>
-#include <dbox/event.h>
 #include <iostream>
+#include <dbox/event.h>
 
+#include "devices.h"
 #include "checker.h"
 #include "pthread.h"
 
@@ -94,15 +110,22 @@ int checker::startEventThread()
 void checker::fnc(int i, int mode_16_9)
 {
 	int	avs = open("/dev/dbox/avs0",O_RDWR);
-	int vid = open("/dev/dvb/card0/video0", O_RDWR);
+	int vid = open(VIDEO_DEV, O_RDWR);
+	if (!vid)
+		std::cout << "Couldn't open video-device for 16:9-change" << std::endl;
 	ioctl(avs, AVSIOSFNC, &i);
+	int format = 0;
+
 	if (i == 1)
-		ioctl(vid, VIDEO_SET_DISPLAY_FORMAT, VIDEO_CENTER_CUT_OUT);
+		format = VIDEO_CENTER_CUT_OUT;
 	if (i == 0)
 		if (mode_16_9 == 2)
-			ioctl(vid, VIDEO_SET_DISPLAY_FORMAT, VIDEO_LETTER_BOX);
+			format = VIDEO_LETTER_BOX;
 		else
-			ioctl(vid, VIDEO_SET_DISPLAY_FORMAT, VIDEO_PAN_SCAN);
+			format = VIDEO_PAN_SCAN;
+
+	if (!ioctl(vid, VIDEO_SET_DISPLAY_FORMAT, &format))
+		std::cout << "Couldn't set display format" << std::endl;
 	close(avs);
 	close(vid);
 }

@@ -15,6 +15,29 @@
  ***************************************************************************/
 /*
 $Log: settings.cpp,v $
+Revision 1.13.4.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.14  2003/03/08 17:31:18  waldi
+use tuxbox and frontend infos
+
+Revision 1.13  2003/01/26 00:00:20  thedoc
+mv bugs /dev/null
+
+Revision 1.12  2003/01/05 21:37:07  TheDOC
+setting ips is now possible
+
+Revision 1.11  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.10  2002/11/26 20:03:14  TheDOC
+some debug-output and small fixes
+
+Revision 1.9  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.8  2002/09/18 10:48:37  obi
 use devfs devices
 
@@ -47,17 +70,10 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 
 */
 #include <stdio.h>
-#include <dbox/info.h>
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <ost/dmx.h>
-#include <ost/video.h>
-#include <ost/frontend.h>
-#include <ost/audio.h>
-#include <ost/sec.h>
-#include <ost/sec.h>
-#include <ost/ca.h>
 #include <memory.h>
 #include <sstream>
 #include <sys/socket.h>
@@ -67,56 +83,19 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <net/if.h> 
 #include <arpa/inet.h>
 
-
+#include "devices.h"
 #include "settings.h"
 #include "help.h"
 #include "cam.h"
 
+#define need_TUXBOX_GET
+#include <tuxbox.h>
+
+TUXBOX_GET(dbox2_gt);
+
 settings::settings(cam *c)
 {
 	cam_obj = c;
-	FILE *fp;
-	char buffer[100];
-	int type = -1;
-	isGTX = false;
-
-	//printf("----------------> SETTINGS <--------------------\n");
-	fp = fopen("/proc/bus/dbox", "r");
-	while (!feof(fp))
-	{
-		fgets(buffer, 100, fp);
-		sscanf(buffer, "fe=%d", &type);
-		sscanf(buffer, "mID=%d", &box);
-
-
-
-		int gtx = 0;
-		sscanf(buffer, "gtxID=%x\n", &gtx);
-		if (gtx != 0)
-		{
-			if ((unsigned int)gtx != 0xffffffff)
-			{
-				isGTX = true;
-			}
-			else
-			{
-				isGTX = false;
-			}
-		}
-
-	}
-	fclose(fp);
-
-	//if (box == 3)
-	//printf ("Sagem-Box\n");
-	//else if (box == 1)
-	//printf("Nokia-Box\n");
-	//else if (box == 2)
-	//printf("Philips-Box\n");
-	//else
-	//printf("Unknown Box\n");
-
-	isCable = (type == DBOX_FE_CABLE);
 
 	CAID = cam_obj->getCAID();
 	//printf("Set-CAID: %x\n", CAID);
@@ -128,13 +107,14 @@ settings::settings(cam *c)
 	setting.gwip = 0;
 	setting.serverip = 0;
 	setting.dnsip = 0;
-	if (box == NOKIA)
+
+	switch (tuxbox_get_vendor())
 	{
+	case TUXBOX_VENDOR_NOKIA:
 		setting.rcRepeat = true;
 		setting.supportOldRc = true;
-	}
-	else if (box == SAGEM || box == PHILIPS)
-	{
+		break;
+	default:
 		setting.rcRepeat = false;
 		setting.supportOldRc = false;
 	}
@@ -158,23 +138,22 @@ int settings::getEMMpid(int TS)
 int settings::find_emmpid(int ca_system_id) {
 	char buffer[1000];
 	int fd, r = 1000, count;
-	struct dmxSctFilterParams flt;
+	struct dmx_sct_filter_params flt;
 
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	fd=open(DEMUX_DEV, O_RDWR);
 	if (fd<0)
 	{
-		perror("/dev/dvb/card0/demux0");
+		perror(DEMUX_DEV);
 		return -fd;
 	}
-
-	memset(&flt.filter.filter, 0, DMX_FILTER_SIZE);
-	memset(&flt.filter.mask, 0, DMX_FILTER_SIZE);
-
+	
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
+	
 	flt.pid=1;
 	flt.filter.filter[0]=1;
 	flt.filter.mask[0]  =0xFF;
 	flt.timeout=10000;
-	flt.flags=DMX_ONESHOT;
+	flt.flags=DMX_ONESHOT|DMX_IMMEDIATE_START;
 
 	if (ioctl(fd, DMX_SET_FILTER, &flt)<0)
 	{
@@ -182,10 +161,10 @@ int settings::find_emmpid(int ca_system_id) {
 		return 1;
 	}
 
-	ioctl(fd, DMX_START, 0);
+	//ioctl(fd, DMX_START, 0);
 	if ((r=read(fd, buffer, r))<=0)
 	{
-		perror("read");
+		perror("[settings.cpp] read (find_emmpid)");
 		return 1;
 	}
 
@@ -205,16 +184,6 @@ int settings::find_emmpid(int ca_system_id) {
 	return 0;
 }
 
-bool settings::boxIsCable()
-{
-	return isCable;
-}
-
-bool settings::boxIsSat()
-{
-	return !isCable;
-}
-
 int settings::getCAID()
 {
 	return CAID;
@@ -222,7 +191,7 @@ int settings::getCAID()
 
 int settings::getTransparentColor()
 {
-	if (isGTX)
+	if (tuxbox_get_dbox2_gt() == TUXBOX_DBOX2_GT_GTX)
 		return 0xFC0F;
 	else
 		return 0;
@@ -233,7 +202,7 @@ void settings::setIP(char n1, char n2, char n3, char n4)
 	std::stringstream ostr;
 	ostr << "ifconfig eth0 " << (int)n1 << "." << (int)n2 << "." << (int)n3 << "." << (int)n4 << " &" << std::ends;
 	std::string command = ostr.str();
-	//std::cout << command << std::endl;
+	std::cout << command << std::endl;
 
 	setting.ip = (n1 << 24) | (n2 << 16) | (n3 << 8) | n4;
 
@@ -281,7 +250,7 @@ void settings::setgwIP(char n1, char n2, char n3, char n4)
 	std::stringstream ostr;
 	ostr << "route add default gw " << (int)n1 << "." << (int)n2 << "." << (int)n3 << "." << (int)n4 << std::ends;
 	std::string command = ostr.str();
-	//std::cout << command << std::endl;
+	std::cout << command << std::endl;
 	system(command.c_str());
 
 	setting.gwip = (n1 << 24) | (n2 << 16) | (n3 << 8) | n4;
@@ -297,7 +266,7 @@ void settings::setdnsIP(char n1, char n2, char n3, char n4)
 	std::stringstream ostr;
 	ostr << "echo \"nameserver " << (int)n1 << "." << (int)n2 << "." << (int)n3 << "." << (int)n4 << "\" > /etc/resolv.conf" << std::ends;
 	std::string command = ostr.str();
-	//std::cout << command << std::endl;
+	std::cout << command << std::endl;
 	system(command.c_str());
 
 	setting.dnsip = (n1 << 24) | (n2 << 16) | (n3 << 8) | n4;

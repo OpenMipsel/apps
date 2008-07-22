@@ -1,3 +1,8 @@
+/*
+Revision 1.0  2008/07/22 23:50:45  fergy
+Replaced mtd stuff for compatible building
+*/
+
 #ifndef UPDATE_H
 #define UPDATE_H
 
@@ -17,7 +22,7 @@
 #include <zlib.h>
 #include <string>
 #include <sstream>
-#include <linux/mtd/mtd.h>
+#include <mtd/mtd-user.h>
 #include <curl/curl.h>
 #include "rc.h"
 #include "osd.h"

@@ -15,6 +15,24 @@
  ***************************************************************************/
 /*
 $Log: scan.cpp,v $
+Revision 1.18.4.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.19  2003/03/08 17:31:18  waldi
+use tuxbox and frontend infos
+
+Revision 1.18  2002/11/26 20:03:14  TheDOC
+some debug-output and small fixes
+
+Revision 1.17  2002/10/31 19:53:37  TheDOC
+Cablescan should work now with the current (buggy?) drivers (it actually
+works for me)
+
+Revision 1.16  2002/10/20 02:03:37  TheDOC
+Some fixes and stuff
+
 Revision 1.15  2002/06/15 02:33:03  TheDOC
 some changes + bruteforce-channelscan for cable
 
@@ -130,7 +148,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 	osd_obj->setScanChannelNumber(0);
 
 
-	if (setting->boxIsCable())
+	if (tuner_obj->getType() == FE_QAM)
 	{
 		start_symbol = 6900;
 		osd_obj->createPerspective();
@@ -164,19 +182,21 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 					osd_obj->setPerspectiveName(message);
 					osd_obj->addCommand("SHOW perspective");
 	
-					tuner_obj->tune(start_frequency, start_symbol);
-					//std::cout << "Checking frequ: " << start_frequency << " with symbol: " << start_symbol << std::endl;
-	
-					number = nit_obj->getTransportStreams(&tmp_channels);
-					if (tmp_channels.numberTransponders() > 0)
+					if (tuner_obj->tune(start_frequency, start_symbol))
 					{
-						osd_obj->setScanTSNumber(tmp_channels.numberTransponders());
-						tmp_channels.dumpTS();
-						break;
+						//std::cout << "Checking frequ: " << start_frequency << " with symbol: " << start_symbol << std::endl;
+						
+						number = nit_obj->getTransportStreams(&tmp_channels);
+						if (tmp_channels.numberTransponders() > 0)
+						{
+							osd_obj->setScanTSNumber(tmp_channels.numberTransponders());
+							tmp_channels.dumpTS();
+							break;
+						}
 					}
 					start_frequency += 80;
 					if (start_frequency > 4000)
-						break;
+					break;
 				}
 			}
 		}
@@ -216,20 +236,21 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 				osd_obj->setPerspectiveName(message);
 				osd_obj->addCommand("SHOW perspective");
 
-				tuner_obj->tune(i, 6900);
-
-				if (pat_obj->readPAT())
+				if (tuner_obj->tune(i, 6900))
 				{
-					channels tmp_channels2(setting, pat_obj, pmt_obj);
-					sdt_obj->getChannels(&tmp_channels2);
-					tmp_channels.addTS(pat_obj->getTS(), sdt_obj->getONID(), i, 6900);
-					std::cout << "Found TS: " << pat_obj->getTS() << " " << sdt_obj->getONID() << " " << i << " " << 6900 << std::endl;
-					osd_obj->setScanTSNumber(tmp_channels.numberTransponders());
+					if (pat_obj->readPAT())
+					{
+						channels tmp_channels2(setting, pat_obj, pmt_obj);
+						sdt_obj->getChannels(&tmp_channels2);
+						tmp_channels.addTS(pat_obj->getTS(), sdt_obj->getONID(), i, 6900);
+						std::cout << "Found TS: " << pat_obj->getTS() << " " << sdt_obj->getONID() << " " << i << " " << 6900 << std::endl;
+						osd_obj->setScanTSNumber(tmp_channels.numberTransponders());
+					}
 				}
 			}
 		}
 	}
-	else if (setting->boxIsSat())
+	else if (tuner_obj->getType() == FE_QPSK)
 	{
 		int max_chans = 2;
 
@@ -296,13 +317,15 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 
 				//printf ("Start tuning\n");
 
-				tuner_obj->tune(start_frq[i], start_sym[i], start_pol[i], start_fe[i], dis);
+				if (tuner_obj->tune(start_frq[i], start_sym[i], start_pol[i], start_fe[i], dis))
+				{
 
-				//printf("FInished tuning\n");
+					//printf("FInished tuning\n");
 
-				//printf ("Start NIT\n");
-				number = nit_obj->getTransportStreams(&tmp_channels, dis);
-				//printf ("End NIT\n");
+					//printf ("Start NIT\n");
+					number = nit_obj->getTransportStreams(&tmp_channels, dis);
+					//printf ("End NIT\n");
+				}
 			}
 
 			i++;
@@ -334,59 +357,60 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 	tmp_channels.setTuner(tuner_obj);
 	do
 	{
-		tmp_channels.tuneCurrentTS();
-
-		//printf("getChannels - Start\n");
-		sdt_obj->getChannels(&tmp_channels);
-
-		if (type == FULL)
+		if(tmp_channels.tuneCurrentTS())
 		{
-			//std::cout << "Full Channel Scan" << std::endl;
-			pat_obj->readPAT();
-			for (int i = numberChannels; i < tmp_channels.numberChannels(); i++)
+			//printf("getChannels - Start\n");
+			sdt_obj->getChannels(&tmp_channels);
+
+			if (type == FULL)
 			{
-				tmp_channels.setCurrentChannel(i);
-				tmp_channels.setCurrentPMT(pat_obj->getPMT(tmp_channels.getCurrentSID()));
-
-				pmt_data pmt_entry;
-				if (tmp_channels.getCurrentPMT() != 0)
+				//std::cout << "Full Channel Scan" << std::endl;
+				pat_obj->readPAT();
+				for (int i = numberChannels; i < tmp_channels.numberChannels(); i++)
 				{
-					pmt_entry = pmt_obj->readPMT(tmp_channels.getCurrentPMT());
+					tmp_channels.setCurrentChannel(i);
+					tmp_channels.setCurrentPMT(pat_obj->getPMT(tmp_channels.getCurrentSID()));
 
-					tmp_channels.setCurrentPCR(pmt_entry.PCR);
-
-					tmp_channels.deleteCurrentAPIDs();
-					for (int j = 0; j < pmt_entry.pid_counter; j++)
+					pmt_data pmt_entry;
+					if (tmp_channels.getCurrentPMT() != 0)
 					{
-						if (pmt_entry.type[j] == 0x02)
+						pmt_entry = pmt_obj->readPMT(tmp_channels.getCurrentPMT());
+
+						tmp_channels.setCurrentPCR(pmt_entry.PCR);
+
+						tmp_channels.deleteCurrentAPIDs();
+						for (int j = 0; j < pmt_entry.pid_counter; j++)
 						{
-							tmp_channels.setCurrentVPID(pmt_entry.PID[j]);
+							if (pmt_entry.type[j] == 0x02)
+							{
+								tmp_channels.setCurrentVPID(pmt_entry.PID[j]);
+							}
+							else if (pmt_entry.type[j] == 0x04 || pmt_entry.type[j] == 0x03)
+							{
+								tmp_channels.addCurrentAPID(pmt_entry.PID[j]);
+							}
 						}
-						else if (pmt_entry.type[j] == 0x04 || pmt_entry.type[j] == 0x03)
+
+						for (int j = 0; j < pmt_entry.ecm_counter; j++)
 						{
-							tmp_channels.addCurrentAPID(pmt_entry.PID[j]);
+							if (setting->getCAID() == pmt_entry.CAID[j])
+								tmp_channels.addCurrentCA(pmt_entry.CAID[j], pmt_entry.ECM[j]);
 						}
 					}
-
-					for (int j = 0; j < pmt_entry.ecm_counter; j++)
+					else
 					{
-						if (setting->getCAID() == pmt_entry.CAID[j])
-							tmp_channels.addCurrentCA(pmt_entry.CAID[j], pmt_entry.ECM[j]);
+						tmp_channels.deleteCurrentAPIDs();
+						tmp_channels.setCurrentVPID(0x1fff);
+						tmp_channels.addCurrentAPID(0x1fff);
 					}
+
+
+					numberChannels = tmp_channels.numberChannels();
+
 				}
-				else
-				{
-					tmp_channels.deleteCurrentAPIDs();
-					tmp_channels.setCurrentVPID(0x1fff);
-					tmp_channels.addCurrentAPID(0x1fff);
-				}
-
-
-				numberChannels = tmp_channels.numberChannels();
-
 			}
-		}
 
+		}
 		osd_obj->setScanChannelNumber(tmp_channels.numberChannels());
 		//printf("getChannels - Finish\n");
 		count++;

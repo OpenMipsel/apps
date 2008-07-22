@@ -15,6 +15,23 @@
  ***************************************************************************/
 /*
 $Log: hardware.cpp,v $
+Revision 1.11.4.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.12  2003/03/08 17:31:18  waldi
+use tuxbox and frontend infos
+
+Revision 1.11  2003/01/26 04:08:16  thedoc
+correct sagem vcr-scart-routing
+
+Revision 1.10  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.9  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.8  2002/09/18 10:48:37  obi
 use devfs devices
 
@@ -47,6 +64,8 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 
 */
 #include "hardware.h"
+
+#include "devices.h"
 
 hardware::hardware(settings *s, variables *v)
 {
@@ -147,15 +166,16 @@ bool hardware::switch_vcr()
 {
 	int i = 0, j = 0, nothing, nothinga, fblk = 2;
 
-	//printf("Getbox: %d\n", setting->getBox());
 	if (!vcr_on)
 	{
 		//printf("on\n");
 		old_fblk = getfblk();
 		avs = open("/dev/dbox/avs0",O_RDWR);
-		if (setting->getBox() == SAGEM) // Sagem
+
+		switch (tuxbox_get_vendor())
 		{
-			i = 2;
+		case TUXBOX_VENDOR_SAGEM:
+			i = 0;
 			j = 1;
 			nothing = 7;
 			ioctl(avs,AVSIOSFBLK,&fblk);
@@ -163,9 +183,9 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW1,&i);
 			ioctl(avs,AVSIOSASW1,&j);
 			ioctl(avs,AVSIOSASW2,&nothinga);
-		}
-		else if (setting->getBox() == NOKIA) // Nokia
-		{
+			break;
+
+		case TUXBOX_VENDOR_NOKIA:
 			i = 3;
 			j = 2;
 			nothing = 1;
@@ -175,25 +195,30 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW1,&i);
 			ioctl(avs,AVSIOSASW1,&j);
 			ioctl(avs,AVSIOSASW2,&nothinga);
-		}
-		else if (setting->getBox() == PHILIPS) // Philips
-		{
-			nothing = 3;
+			break;
 
+		case TUXBOX_VENDOR_PHILIPS:
 			i = 2;
 			j = 2;
+			nothing = 3;
 			ioctl(avs,AVSIOSFBLK,&fblk);
 			ioctl(avs,AVSIOSVSW3,&nothing);
 			ioctl(avs,AVSIOSVSW2,&i);
 			ioctl(avs,AVSIOSASW2,&j);
+			break;
+
+		default:
+			break;
 		}
 	}
 	else
 	{
 		setOutputMode(old_fblk);
 		avs = open("/dev/dbox/avs0",O_RDWR);
-		if (setting->getBox() == SAGEM)
+
+		switch (tuxbox_get_vendor())
 		{
+		case TUXBOX_VENDOR_SAGEM:
 			i = 0;
 			j = 0;
 			nothing = 0;
@@ -202,10 +227,9 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW2,&nothing);
 			ioctl(avs,AVSIOSVSW1,&i);
 			ioctl(avs,AVSIOSASW1,&j);
+			break;
 
-		}
-		else if (setting->getBox() == NOKIA)
-		{
+		case TUXBOX_VENDOR_NOKIA:
 			i = 5;
 			j = 1;
 			nothing = 1;
@@ -215,9 +239,9 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW1,&i);
 			ioctl(avs,AVSIOSASW1,&j);
 			ioctl(avs,AVSIOSASW2,&nothinga);
-		}
-		else if (setting->getBox() == PHILIPS)
-		{
+			break;
+
+		case TUXBOX_VENDOR_PHILIPS:
 			i = 1;
 			j = 1;
 			nothing = 1;
@@ -226,6 +250,10 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW3,&nothing);
 			ioctl(avs,AVSIOSVSW2,&i);
 			ioctl(avs,AVSIOSASW2,&j);
+			break;
+
+		default:
+			break;
 		}
 	}
 	//printf ("i: %d - j: %d\n", i, j);
@@ -293,22 +321,24 @@ void hardware::setOutputMode(int i)
 {
 	int setmode = 0;
 
-	if (setting->getBox() == NOKIA)
+	switch (tuxbox_get_vendor())
 	{
+	case TUXBOX_VENDOR_NOKIA:
 		if (i == OUTPUT_FBAS)
 			setmode = 0;
 		else
 			setmode = 3;
-	}
-	else if (setting->getBox() == PHILIPS)
-	{
+		break;
+
+	case TUXBOX_VENDOR_PHILIPS:
 		if (i == OUTPUT_FBAS)
 			setmode = 0;
 		else
 			setmode = 1;
-	}
-	else if (setting->getBox() == SAGEM)
-	{
+		break;
+
+	default:
+		break;
 	}
 
 	setfblk(setmode);
@@ -332,25 +362,27 @@ int hardware::getfblk()
 	close(avs);
 
 	int outputtype = 0;
-	if (setting->getBox() == NOKIA)
+
+	switch (tuxbox_get_vendor())
 	{
+	case TUXBOX_VENDOR_NOKIA:
 		if (fblk == 3)
 			outputtype = OUTPUT_RGB;
 		else if (fblk == 0)
 			outputtype = OUTPUT_FBAS;
-	}
-	else if (setting->getBox() == PHILIPS)
-	{
+		break;
+
+	case TUXBOX_VENDOR_PHILIPS:
 		if (fblk == 1)
 			outputtype = OUTPUT_RGB;
 		else if (fblk == 0)
 			outputtype = OUTPUT_FBAS;
+		break;
 
+	default:
+		break;
 	}
-	else if (setting->getBox() == SAGEM)
-	{
 
-	}
 	return outputtype;
 }
 
@@ -369,7 +401,7 @@ void hardware::useDD(bool use)
 {
 	if (old_DD_state == use)
 		return;
-	int fd = open("/dev/dvb/card0/audio0", O_RDWR);
+	int fd = open(AUDIO_DEV, O_RDWR);
 	if (use)
 	{
 		ioctl(fd, AUDIO_SET_BYPASS_MODE, 0);

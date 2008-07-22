@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include <dbox/lcd-ks0713.h>
+// fergy
+#include <dbox/fp.h>
 
 lcd::lcd()
 {

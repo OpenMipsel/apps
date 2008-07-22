@@ -15,7 +15,12 @@
  ***************************************************************************/
 /*
 $Log: zap.cpp,v $
-Revision 1.15.2.1  2003/10/07 20:45:23  thedoc
+Revision 1.15.2.1.2.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.16  2003/10/07 20:39:28  thedoc
 
 someone added premiere-ca support, which was not supposed to be supported in lcars, sorry...
 

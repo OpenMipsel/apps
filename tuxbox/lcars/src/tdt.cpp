@@ -15,6 +15,20 @@
  ***************************************************************************/
 /*
 $Log: tdt.cpp,v $
+Revision 1.8.6.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.9  2008/07/22 23:45:09  fergy
+Replaced definitions for compatible building
+
+Revision 1.8  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.7  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.6  2002/09/18 17:31:03  TheDOC
 replaced O_RDONLY with O_RDWR on demux-device-open, stupid me
 
@@ -39,8 +53,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <sys/ioctl.h>
 #include <memory.h>
 #include <stdio.h>
-
-#include <ost/dmx.h>
+#include <sys/time.h>
 
 #include "tdt.h"
 #include "help.h"
@@ -75,7 +88,7 @@ void* tdt::start_timereader( void * this_ptr )
 		while(acttime < 100000)
 		{
 			// Lies den TDT
-			if ((fd=open("/dev/dvb/card0/demux0", O_RDWR)) < 0)
+			if ((fd=open("/dev/dvb/adapter0/demux0", O_RDWR)) < 0)
 				perror("TDT open");
 
 			memset (&flt.filter, 0, sizeof (struct dmxFilter));

@@ -15,8 +15,14 @@
  ***************************************************************************/
 /*
 $Log: main.cpp,v $
-Revision 1.31.2.1  2003/06/29 18:36:33  thedoc
-today is the day :)
+Revision 1.31.2.1.2.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.32  2003/07/07 23:53:11  thedoc
+
+lcd-support for lcars in HEAD
 
 Revision 1.31  2003/01/05 22:48:34  TheDOC
 mtd number
@@ -163,7 +169,7 @@ int main(int argc, char **argv)
 
 
 	plugins plugins;
-	
+
 	cam cam;
 	sdt sdt;
 	nit nit;
@@ -179,6 +185,7 @@ int main(int argc, char **argv)
 	rc rc(&hardware, &settings);
 
 	//printf("Starting OSD\n");
+
 	lcd lcd;
 	lcd.loadFont(FONTDIR "/ds9.ttf");
 

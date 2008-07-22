@@ -1,8 +1,8 @@
 /***************************************************************************
     copyright            : (C) 2001 by TheDOC
     email                : thedoc@chatville.de
-	homepage			 : www.chatville.de
-	modified by			 : -
+    homepage		 : www.chatville.de
+    modified by		 : -
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,6 +16,47 @@
 /*
 
 $Log: tuner.cpp,v $
+Revision 1.25.4.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.27  2008/07/22 23:49:36  fergy
+Replaced definitions for compatible building
+
+Revision 1.26  2003/03/08 17:31:18  waldi
+use tuxbox and frontend infos
+
+Revision 1.25  2003/02/07 14:07:23  alexw
+for those with new api
+
+Revision 1.24  2003/02/07 13:55:16  alexw
+frontend needs to be opened only once
+
+Revision 1.23  2003/01/26 00:00:20  thedoc
+mv bugs /dev/null
+
+Revision 1.22  2003/01/05 22:22:09  TheDOC
+stupid drivers
+
+Revision 1.21  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.20  2002/11/26 20:03:14  TheDOC
+some debug-output and small fixes
+
+Revision 1.19  2002/11/16 02:35:13  obi
+clear event before ioctl
+
+Revision 1.18  2002/11/16 00:20:05  obi
+fe events
+
+Revision 1.17  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
+Revision 1.16  2002/10/20 02:03:37  TheDOC
+Some fixes and stuff
+
 Revision 1.15  2002/10/13 01:30:34  obi
 build fix
 
@@ -38,7 +79,7 @@ Revision 1.9  2001/12/20 19:20:49  obi
 defined OLD_TUNER_API in Makefile.am instead of tuner.cpp
 
 Revision 1.8  2001/12/17 01:30:02  obi
-use /dev/dvb/card0/frontend0 for new tuner api.
+use /dev/dvb/adapter0/frontend0 for new tuner api.
 code for the new tuner api is still disabled by default.
 
 Revision 1.7  2001/12/16 16:09:16  rasc
@@ -68,9 +109,31 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 tuner::tuner(settings *s)
 {
 	setting = s;
+	
+#ifdef HAVE_LINUX_DVB_VERSION_H
+	if ((frontend = open(FRONTEND_DEV, O_RDWR|O_NONBLOCK)) < 0)
+	{
+		perror("OPEN FRONTEND DEVICE");
+		exit(1);
+	}
+
+	dvb_frontend_info info;
+	if (ioctl(frontend, FE_GET_INFO, &info))
+	{
+		perror("ioctl");
+		exit(1);
+	}
+
+	type = info.type;
+#endif
 }
 
-CodeRate tuner::getFEC(int fec)
+tuner::~tuner()
+{
+	close(frontend);
+}
+
+fe_code_rate_t tuner::getFEC(int fec)
 {
 	switch (fec)
 	{
@@ -97,8 +160,132 @@ CodeRate tuner::getFEC(int fec)
 // -- New Tuning API
 // -- 2001-12-16 rasc
 // polarization = 0 -> H, polarization = 1 -> V
-int tuner::tune(int frequ, int symbol, int polarization, int fec, int dis)
+bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int fec, int dis)
 {
+	#ifdef HAVE_LINUX_DVB_VERSION_H
+	struct dvb_frontend_parameters frontp;
+	struct dvb_frontend_event event;
+	struct dvb_diseqc_master_cmd cmd;
+	fe_sec_mini_cmd_t mini_cmd;
+	fe_sec_tone_mode_t tone_mode;
+	fe_sec_voltage_t voltage;
+
+	if (type == FE_QPSK)
+	{
+		// $$$ rasc
+		// Das Verhalten von Sectone (22KHz) sollte konfigurierbar sein.
+		// Ebenso die ZF fuer die LNBs (1 + 2) fuer jeweils Hi und Lo - Band
+		// die Werte hier sind Standard fuer das Ku-Band, allerdings waere es
+		// interessant auch andere Werte zu haben (z.B. 10 GHz ZF, oder 4 GHz ZF)
+		// Dies ist sinnvoll, wenn man die dbox fuer den Sat-DX Empfang, oder
+		// aeltere LNBs (naja) nutzen moechte.
+
+		if (frequ > 11700)
+		{
+			frontp.frequency = (frequ * 1000)-10600000;
+			tone_mode = SEC_TONE_ON;
+		}
+		else
+		{
+			frontp.frequency = (frequ * 1000)-9750000;
+			tone_mode = SEC_TONE_OFF;
+		}
+
+		if (polarization == 0)
+			voltage = SEC_VOLTAGE_18;
+		else
+			voltage = SEC_VOLTAGE_13;
+
+		frontp.u.qpsk.fec_inner = getFEC(fec);
+
+		// -- symbol rate (SAT)
+		frontp.u.qpsk.symbol_rate = symbol * 1000;
+
+		// diseqc
+		cmd.msg_len = 4;
+		cmd.msg[0] = 0xe0;
+		cmd.msg[1] = 0x10;
+		cmd.msg[2] = 0x38;
+		cmd.msg[3] = 0xf0
+				| ((dis * 4) & 0x0f)
+				| ((voltage == SEC_VOLTAGE_18) ? 2 : 0)
+				| ((tone_mode == SEC_TONE_ON)  ? 1 : 0);
+
+		mini_cmd = (dis / 4) % 2 ? SEC_MINI_B : SEC_MINI_A;
+
+		if (ioctl(frontend, FE_SET_TONE, SEC_TONE_OFF) < 0)
+			perror("FE_SET_TONE");
+
+		if (ioctl(frontend, FE_SET_VOLTAGE, voltage) < 0)
+			perror("FE_SET_VOLTAGE");
+		
+		usleep(15 * 1000);
+		
+		if (ioctl(frontend, FE_DISEQC_SEND_MASTER_CMD, &cmd) < 0)
+			perror("FE_DISEQC_SEND_MASTER_CMD");
+		
+		usleep(15 * 1000);
+		
+		if (ioctl(frontend, FE_DISEQC_SEND_BURST, mini_cmd) < 0)
+			perror("FE_DISEQC_SEND_BURST");
+		
+		usleep(15 * 1000);
+		
+		if (ioctl(frontend, FE_SET_TONE, tone_mode) < 0)
+			perror("FE_SET_TONE");
+	}
+
+	if (type == FE_QAM)
+	{
+		frontp.frequency = frequ * 100000;
+		frontp.u.qam.symbol_rate = symbol * 1000;
+		frontp.u.qam.fec_inner = getFEC(fec);
+		frontp.u.qam.modulation = QAM_64;
+	}
+
+	// -- Spektrum Inversion
+	// -- should be configurable, fixed for now (rasc)
+	frontp.inversion = (fe_spectral_inversion_t) setting->getInversion();
+
+	while (1) {
+		if (ioctl(frontend, FE_GET_EVENT, &event) == -1)
+			break;
+	}
+
+	if (ioctl(frontend, FE_SET_FRONTEND, &frontp) < 0) {
+		perror("FE_SET_FRONTEND");
+		return 0;
+	}
+
+	do {
+		memset(&event, 0, sizeof(event));
+		ioctl(frontend, FE_GET_EVENT, &event);
+	}
+	while (!(event.status & (FE_HAS_LOCK | FE_TIMEDOUT)));
+
+	printf (" Frequ: %u   ifreq: %u  Pol: %d  FEC: %d  Sym: %u  dis: %d\n",
+	        frequ, frontp.frequency, (int)polarization , (int)fec,
+	        symbol, (int)dis);
+
+	printf ("... Tuner-Lock Status: %d\n",event.status);
+
+	uint16_t state1, state2;
+
+	if (ioctl(frontend, FE_READ_SNR, &state1) < 0)
+		perror("FE_READ_SNR");
+
+	if (ioctl(frontend, FE_READ_SIGNAL_STRENGTH, &state2) < 0)
+		perror("FE_READ_SIGNAL_STRENGTH");
+
+	printf ("... S/N: %d  SigStrength: %d \n",state1,state2);
+	if (event.status & FE_HAS_LOCK)
+		std::cout << "Has lock" << std::endl;
+	else
+		std::cout << "Doesn't have lock" << std::endl;
+
+	return (event.status & FE_HAS_LOCK);
+#elif HAVE_OST_DMX_H
+
 	int device;
 	int frontend;
 	struct secCmdSequence seq;
@@ -106,7 +293,7 @@ int tuner::tune(int frequ, int symbol, int polarization, int fec, int dis)
 	FrontendParameters frontp;
 	int status;
 
-	if (setting->boxIsSat())
+	if (type == FE_QPSK)
 	{
 
 		// $$$ rasc
@@ -172,8 +359,10 @@ int tuner::tune(int frequ, int symbol, int polarization, int fec, int dis)
 		close(device);
 	}
 
-	if (setting->boxIsCable())
+	if (type == FE_QAM)
 	{
+		if (frequ < 1500) // sorry, but the old drivers are buggy :(
+			return false;
 		frontp.Frequency = frequ * 100;
 		frontp.u.qam.SymbolRate = symbol * 1000;
 		frontp.u.qam.FEC_inner = getFEC(fec);
@@ -195,7 +384,7 @@ int tuner::tune(int frequ, int symbol, int polarization, int fec, int dis)
 	{
 		frontp.Inversion = INVERSION_AUTO;
 	}
-	if ((frontend = open("/dev/dvb/card0/frontend0", O_RDWR)) < 0)
+	if ((frontend = open(FRONTEND_DEV, O_RDWR|O_NONBLOCK)) < 0)
 	{
 		perror("OPEN FRONTEND DEVICE");
 		exit(1);
@@ -211,7 +400,6 @@ int tuner::tune(int frequ, int symbol, int polarization, int fec, int dis)
 		perror("FE_READ_STATUS");
 	}
 
-#ifdef DEBUG
 	printf (" Frequ: %ld   ifreq: %ld  Pol: %d  FEC: %d  Sym: %ld  dis: %d  (param: 0x%02x)\n",
 	        (long)frequ,(long)frontp.Frequency,(int)polarization ,(int)fec,
 	        (long)symbol, (int)dis,(int)cmd.u.diseqc.params[0]);
@@ -231,10 +419,13 @@ int tuner::tune(int frequ, int symbol, int polarization, int fec, int dis)
 	}
 
 	printf ("... S/N: %d  SigStrength: %d \n",state1,state2);
-#endif
 
 	close(frontend);
 
 	return (status & FE_HAS_SIGNAL);
+
+
+#endif
 }
+
 

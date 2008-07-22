@@ -15,6 +15,14 @@
  ***************************************************************************/
 /*
 $Log: serial.cpp,v $
+Revision 1.4.6.1  2008/07/22 22:05:44  fergy
+Lcars is live again :-)
+Again can be builded with Dreambox branch.
+I don't know if Dbox can use it for real, but let give it a try on Dreambox again
+
+Revision 1.5  2008/07/22 23:41:40  fergy
+Removed slash, as we need those commands ( or just ";" but, let leave Them... )
+
 Revision 1.4  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -200,9 +208,9 @@ void *serial::startlistening(void *object)
 						start += res;
 
 						if (res == 1)
-							//printf("%d\n", buffer[0]);
+							printf("%d\n", buffer[0]);
 
-							//printf("res: %d start: %d\n", res, start);
+							printf("res: %d start: %d\n", res, start);
 
 
 						}
