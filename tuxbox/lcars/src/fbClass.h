@@ -1,23 +1,27 @@
 #ifndef FB_H
 #define FB_H
 
+#include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-#include <linux/kd.h>
+//#include <linux/kd.h>
 #include <linux/fb.h>
+#include <linux/vt.h>
+#include <stdint.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
 #include <iostream>
-//#include <png.h>
+//#include <dbox/fb.h>
 
 #include <string>
 #include <sstream>
 #include <map>
 
 #include <config.h>
+#include "gui/icons.h"
 #include "variables.h"
 
 #include <ft2build.h>
@@ -29,16 +33,17 @@
 #define FB_DEV "/dev/fb/0"
 #define COLORFADE 5
 #define MAXFADE 20
+#define fb_pixel_t uint16_t
 
 class fbClass
 {
 	int fbfd;
-	struct fb_var_screeninfo vinfo; // tats„chliche vinfo
-	struct fb_fix_screeninfo finfo; // tats„chliche finfo
-	struct fb_var_screeninfo old_vinfo; // gesicherte vinfo
-	struct fb_fix_screeninfo old_finfo; // gesicherte finfo
+	struct fb_var_screeninfo vinfo;
+	struct fb_fix_screeninfo finfo;
+	struct fb_var_screeninfo old_vinfo;
+	struct fb_fix_screeninfo old_finfo;
 
-	char *fbp; // Pointer auf memorymapped framebuffer
+	char *fbp;
 
 	int bytes_per_pixel;
 	long int x_calc[720], y_calc[576];
@@ -74,12 +79,12 @@ class fbClass
 		int advancex;
 		int bearingY;
 
-		char bitmap[2000]; // very ugly, I know... :(
+		char bitmap[2000];
 	};
 	std::multimap<char, struct font_cache> cache;
 	typedef std::multimap<char, struct font_cache>::iterator It;
 
-	int fade_down[256]; // runtergerechnete farben
+	int fade_down[256];
 	char fades[MAXFADE][COLORFADE];
 	std::multimap<float, int> ycorrector;
 
@@ -87,39 +92,48 @@ class fbClass
 
 public:
 	fbClass(variables *v, int x = 720, int y = 576, int bpp = 8);
-	//fbClass(variables *v, int x = 640, int y = 400, int bpp = 8);
 	~fbClass();
 
 	void test();
 
 	void runCommand(std::string command_string);
 
-	// Paletten-Funktionen
+	// Paletten-Functions
 	void setPalette(int color, int r, int g, int b, int transp);
 	void setFade(int color, int r_start, int g_start, int b_start, int r_stop, int g_stop, int b_stop);
 	void setTransparent(int color) { transparent_color = color; }
 	void setMode(int x, int y, int bpp);
 
-	// Mal-Funktionen
+	// Mal-Functions
 	void clearScreen();
 	void fillScreen(int color);
 	void setPixel(int x, int y, int color);
 	void fillBox(int x1, int y1, int x2, int y2, int color);
 
-	// Rueckgabe-Funktionen
+	// Back-Functions
 	unsigned short int getPixel(int x, int y);
 	int getMaxX();
 	int getMaxY();
 	int getHandle() { return fbfd; }
 	int getWidth(char c);
 
-	// Text Funktionen
+	// Text Functions
 	void loadFonts(std::string standardfont, std::string vtfont);
 	void setTextSize(float setfactor);
 	void draw_bitmap(font_cache font, int x, int y, int color);
 	void putText(int xpos, int ypos, int color, int i, int max_size = -1, int alignment = 0);
 	void putText(int xpos, int ypos, int color, char text[150], int max_size = -1, int alignment = 0);
 	void putText(int xpos, int ypos, int color, std::string text, int max_size = -1, int alignment = 0);
+	// Icon stuff
+	void setIconBasePath(const std::string & iconPath);
+	bool paintIcon(const char * const filename, const int x, const int y, const unsigned char offset = 1);
+	bool paintIcon(const std::string & filename, const int x, const int y, const unsigned char offset = 1);
+	bool paintIcon8(const std::string & filename, const int x, const int y, const unsigned char offset = 0);
+	void loadPal(const std::string & filename, const unsigned char offset = 0, const unsigned char endidx = 255);
+	bool loadPicture2Mem(const std::string & filename, fb_pixel_t * const memp);
+	bool loadPicture2FrameBuffer(const std::string & filename);
+	bool loadPictureToMem(const std::string & filename, const uint16_t width, const uint16_t height, const uint16_t stride, fb_pixel_t * const memp);
+	bool savePictureFromMem(const std::string & filename, const fb_pixel_t * const memp);
 };
 
 #endif

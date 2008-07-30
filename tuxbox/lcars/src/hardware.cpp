@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: hardware.cpp,v $
+Revision 1.11.4.2  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.11.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -102,7 +108,6 @@ int hardware::getVCRStatus()
 	ioctl(fp, FP_IOCTL_GET_VCR, &val);
 
 	close(fp);
-	//std::cout << "VCR-Val: " << val << std::endl;
 	return val;
 }
 
@@ -168,7 +173,6 @@ bool hardware::switch_vcr()
 
 	if (!vcr_on)
 	{
-		//printf("on\n");
 		old_fblk = getfblk();
 		avs = open("/dev/dbox/avs0",O_RDWR);
 
@@ -256,8 +260,6 @@ bool hardware::switch_vcr()
 			break;
 		}
 	}
-	//printf ("i: %d - j: %d\n", i, j);
-
 
 	vcr_on = !vcr_on;
 	close(avs);

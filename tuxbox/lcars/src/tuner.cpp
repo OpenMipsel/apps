@@ -16,6 +16,12 @@
 /*
 
 $Log: tuner.cpp,v $
+Revision 1.25.4.2  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.25.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -338,6 +344,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		cmd.u.diseqc.numParams=1;
 		cmd.u.diseqc.params[0]=0xF0
 		                       | ((dis*4) & 0x0F)
+				       | ((seq.voltage == SEC_VOLTAGE_13)     ? 3 : 0)
 		                       | ((seq.voltage == SEC_VOLTAGE_18)     ? 2 : 0)
 		                       | ((seq.continuousTone == SEC_TONE_ON) ? 1 : 0);
 
@@ -366,7 +373,6 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		frontp.Frequency = frequ * 100;
 		frontp.u.qam.SymbolRate = symbol * 1000;
 		frontp.u.qam.FEC_inner = getFEC(fec);
-		// frontp.u.qam.FEC_outer = FEC_AUTO;
 		frontp.u.qam.QAM = QAM_64;
 	}
 

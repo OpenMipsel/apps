@@ -23,7 +23,6 @@ std::string variables::getvalue(std::string name)
 	else
 		value = vars.find(name)->second;
 	pthread_mutex_unlock(&mutex);
-	//std::cout << "Getting Value of " << name << std::endl;
 	return value;
 }
 
@@ -42,7 +41,6 @@ void variables::setvalue(std::string name, std::string value)
 	pthread_mutex_lock(&mutex);
 	vars[name] = value;
 	pthread_mutex_unlock(&mutex);
-	//std::cout << "Setting Value of " << name << " to " << value << std::endl;
 }
 
 bool variables::isavailable(std::string name)
@@ -66,13 +64,13 @@ std::string variables::waitForEvent()
 	std::string return_string;
 	bool doit = true;
 
-	/*while(doit)
+	while(doit)
 	{
 		pthread_mutex_lock(&events_mutex);
 		doit = (events.size() == 0);
 		pthread_mutex_unlock(&events_mutex);
 		usleep(1000);
-	}*/
+	}
 	if (doit)
 		pthread_mutex_lock(&event_wait_mutex);
 	pthread_mutex_lock(&events_mutex);

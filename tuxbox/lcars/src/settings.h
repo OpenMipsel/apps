@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: settings.h,v $
+Revision 1.6.4.2  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.6.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -64,9 +70,9 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include "cam.h"
 
 #include <tuxbox.h>
-#include <tuxbox/info_dbox2.h>
+#include <tuxbox/info.h>
 
-tuxbox_dbox2_gt_t tuxbox_get_dbox2_gt (void);
+tuxbox_submodel submodel (void);
 
 struct setting_s
 {

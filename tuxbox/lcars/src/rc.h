@@ -15,6 +15,21 @@
  ***************************************************************************/
 /*
 $Log: rc.h,v $
+Revision 1.8.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
+Revision 1.8  2003/01/05 20:49:55  TheDOC
+and the old rc-devices
+
+Revision 1.7  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.6  2003/01/05 02:41:53  TheDOC
+lcars supports inputdev now
+
 Revision 1.5  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -43,8 +58,88 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #ifndef RC_H
 #define RC_H
 
+#include <pthread.h>
+
 #include "hardware.h"
 #include "settings.h"
+
+#ifdef HAVE_LINUX_DVB_VERSION_H
+
+#include <linux/input.h>
+
+#define	NUMBER_RCS	1
+
+#define	RC_1		KEY_1
+#define	RC_2		KEY_2
+#define	RC_3		KEY_3
+#define	RC_4		KEY_4
+#define	RC_5		KEY_5
+#define	RC_6		KEY_6
+#define	RC_7		KEY_7
+#define	RC_8		KEY_8
+#define	RC_9		KEY_9
+#define	RC_0		KEY_0
+#define	RC_STANDBY	KEY_POWER
+#define	RC_HOME		KEY_HOME
+#define	RC_DBOX		KEY_SETUP
+#define	RC_RED		398
+#define	RC_GREEN	399
+#define	RC_YELLOW	400
+#define	RC_BLUE		401
+#define	RC_OK		352
+#define	RC_VOLPLUS	KEY_VOLUMEUP
+#define	RC_VOLMINUS	KEY_VOLUMEDOWN
+#define	RC_MUTE		KEY_MUTE
+#define	RC_HELP		KEY_HELP
+#define	RC_UP		KEY_UP
+#define	RC_DOWN		KEY_DOWN
+#define	RC_RIGHT	KEY_RIGHT
+#define	RC_LEFT		KEY_LEFT
+#define RC_PGUP		KEY_PAGEUP
+#define RC_PGDOWN	KEY_PAGEDOWN
+
+class rc
+{
+	int fp;
+	unsigned short last_read;
+	int rc_codes[NUMBER_RCS][25];
+
+	pthread_t rcThread;
+	pthread_mutex_t mutex;
+
+	static void* start_rcqueue( void * );
+	settings *setting;
+
+public:
+	bool rcstop;
+	pthread_mutex_t blockingmutex;
+	int key;
+	hardware *hardware_obj;
+
+	rc(hardware *h, settings *s);
+	~rc();
+
+	int parseKey(std::string key);
+
+	void stoprc();
+	void startrc();
+
+	int start_thread();
+	int getHandle() { return fp; }
+	void restart();
+
+	void cheat_command(unsigned short cmd);
+	// Waits for the RC to receive a command and returns it
+	unsigned short read_from_rc();
+	unsigned short read_from_rc2();
+	unsigned short get_last();
+	int command_available();
+
+	// Returns -1 if the latest command isn't a number, returns number else
+	int get_number();
+};
+
+#elif HAVE_OST_DMX_H
 
 #define	NUMBER_RCS	2
 
@@ -104,6 +199,33 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #define RC2_UPUP	0x5c54
 #define RC2_DOWNDOWN 0x5c53
 
+#define	RC_1 RC1_1
+#define	RC_2 RC1_2
+#define	RC_3 RC1_3
+#define	RC_4 RC1_4
+#define	RC_5 RC1_5
+#define	RC_6 RC1_6
+#define	RC_7 RC1_7
+#define	RC_8 RC1_8
+#define	RC_9 RC1_9
+#define	RC_0 RC1_0
+#define	RC_STANDBY RC1_STANDBY
+#define	RC_HOME RC1_HOME
+#define	RC_DBOX RC1_DBOX
+#define	RC_RED RC1_RED
+#define	RC_GREEN RC1_GREEN
+#define	RC_YELLOW RC1_YELLOW
+#define	RC_BLUE RC1_BLUE
+#define	RC_OK RC1_OK
+#define	RC_VOLPLUS RC1_VOLPLUS
+#define	RC_VOLMINUS RC1_VOLMINUS
+#define	RC_MUTE RC1_MUTE
+#define	RC_HELP RC1_HELP
+#define	RC_UP RC1_UP
+#define	RC_DOWN RC1_DOWN
+#define	RC_RIGHT RC1_RIGHT
+#define	RC_LEFT RC1_LEFT
+
 // 3 keys on the front of the box
 #define FRONT_STANDBY 0xff9d
 #define FRONT_DOWN 0xffab
@@ -155,5 +277,7 @@ public:
 	// Returns -1 if the latest command isn't a number, returns number else
 	int get_number();
 };
+#endif
 
 #endif
+

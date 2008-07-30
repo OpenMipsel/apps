@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: checker.cpp,v $
+Revision 1.12.4.2  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.12.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -76,7 +82,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 
 #include "devices.h"
 #include "checker.h"
-#include "pthread.h"
+#include <pthread.h>
 
 #define BSIZE 10000
 
@@ -93,7 +99,6 @@ checker::checker(settings *s, hardware *h)
 void checker::set_16_9_mode(int mode)
 {
 	mode_16_9 = mode;
-	//printf("set 16:9: %d\n", mode_16_9);
 }
 
 int checker::startEventThread()
@@ -133,7 +138,6 @@ void checker::fnc(int i, int mode_16_9)
 
 int checker::get_16_9_mode()
 {
-	//printf("16_9: %d\n", mode_16_9);
 	return mode_16_9;
 }
 
@@ -154,23 +158,17 @@ void* checker::startEventChecker(void* object)
 	while(1)
 	{
 		read(fd, &event, sizeof(event_t));
-		//std::cout << "Event: " << event.event << std::endl;
+
 		if (event.event == EVENT_VCR_CHANGED)
 		{
-			//std::cout << "Event: EVENT_VCR_CHANGED" << std::endl;
 			switch (c->hardware_obj->getVCRStatus())
 			{
 			case VCR_STATUS_ON:
-				//std::cout << "Event: EVENT_VCR_ON" << std::endl;
-				//std::cout << "Status: " << (c->hardware_obj->getAvsStatus() & 0x0c) << std::endl;
 				if (c->hardware_obj->vcrIsOn())
 				{
-					//std::cout << "ON" << std::endl;
 					c->hardware_obj->fnc(2);
-
 				}
 				else
-					//std::cout << "Off" << std::endl;
 					if (c->setting->getSwitchVCR())
 						if (!c->hardware_obj->vcrIsOn())
 						{
@@ -180,15 +178,12 @@ void* checker::startEventChecker(void* object)
 						}
 				break;
 			case VCR_STATUS_OFF:
-				//std::cout << "Event: EVENT_VCR_OFF" << std::endl;
-				//std::cout << "Status: " << (c->hardware_obj->getAvsStatus() & 0x0c) << std::endl;
+
 				if (!c->hardware_obj->vcrIsOn())
 				{
-					//std::cout << "ON" << std::endl;
 					c->hardware_obj->fnc(0);
 				}
 				else
-					//std::cout << "Off" << std::endl;
 					if (c->setting->getSwitchVCR())
 						if (c->hardware_obj->vcrIsOn())
 						{
@@ -197,57 +192,30 @@ void* checker::startEventChecker(void* object)
 						}
 				break;
 			case VCR_STATUS_16_9:
-				//std::cout << "Event: EVENT_VCR_16:9" << std::endl;
-				//std::cout << "Status: " << (c->hardware_obj->getAvsStatus() & 0x0c) << std::endl;
+
 				if (c->hardware_obj->vcrIsOn())
 				{
-					//std::cout << "ON" << std::endl;
 					c->hardware_obj->fnc(1);
-
 				}
 				else
-					//std::cout << "Off" << std::endl;
-					//std::cout << "16:9 switch on vcr" << std::endl;
-
 					break;
 			}
 		}
 		else if (event.event == EVENT_ARATIO_CHANGE)
 		{
-			//std::cout << "ARATIO-Change Event: " << c->laststat << " - " << c->laststat_mode << std::endl;
 
 			c->aratioCheck();
-
 		}
-		//else
-		//std::cout << "UNKNOWN EVENT!!!! PLEASE REPORT!!! " << event.event << std::endl;
-
-		/*		else if (event.event == EVENT_SBVCR_CHANGE)
-				{
-					//std::cout << "Event: EVENT_SBVCR_CHANGE" << std::endl;
-					//std::cout << "Status: " << (c->hardware_obj->getAvsStatus() & 0x0c) << std::endl;
-					if (c->hardware_obj->vcrIsOn())
-					{
-						// TODO add code when driver supports it
-						//std::cout << "ON" << std::endl;
-
-					}
-					else
-						//std::cout << "Off" << std::endl;
-					//std::cout << "16:9 switch on vcr" << std::endl;
-				}*/
-
-		/*else if (event.event == EVENT_VCR_OFF)
+		else if (event.event == EVENT_VCR_CHANGED)
 		{
-		//std::cout << "Event: EVENT_VCR_OFF" << std::endl;
-		//std::cout << "Status: " << (c->hardware_obj->getAvsStatus() & 0x0c) << std::endl;
+
 		if (c->setting->getSwitchVCR())
 			if (c->hardware_obj->vcrIsOn())
 			{
 				c->hardware_obj->switch_vcr();
 				c->set_16_9_mode(old_vcr_mode);
 			}
-		}*/
+		}
 	}
 	close(fd);
 }

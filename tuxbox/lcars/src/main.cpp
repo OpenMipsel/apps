@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: main.cpp,v $
+Revision 1.31.2.1.2.2  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.31.2.1.2.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -121,6 +127,7 @@ Revision 1.6  2001/11/15 00:43:45  TheDOC
 #include <sys/ioctl.h>
 #include <string>
 #include <stdio.h>
+#include <config.h>
 
 #include "devices.h"
 #include "sdt.h"
@@ -149,11 +156,6 @@ Revision 1.6  2001/11/15 00:43:45  TheDOC
 #include "ir.h"
 #include "lcd.h"
 
-#include "config.h"
-
-//#include <stdio.h>
-
-
 int main(int argc, char **argv)
 {
 	variables variables;
@@ -163,10 +165,6 @@ int main(int argc, char **argv)
 	int number = -1;
 	std::string font = FONTDIR "/ds9.ttf";
 	std::string vtfont = FONTDIR "/ds9.ttf";
-
-	//std::cout << "Fonts: " << font << std::endl;
-
-
 
 	plugins plugins;
 
@@ -184,16 +182,12 @@ int main(int argc, char **argv)
 
 	rc rc(&hardware, &settings);
 
-	//printf("Starting OSD\n");
-
-	lcd lcd;
-	lcd.loadFont(FONTDIR "/ds9.ttf");
+	lcddisplay lcd;
 
 	fbClass fb(&variables);
 	fb.setPalette(255, 0, 0, 0, 0xff);
 	fb.setTransparent(255);
 	fb.clearScreen();
-	fb.loadFonts(font, vtfont);
 	//fb.setFade(1, 22, 5, 57, 63, 63, 63);
 	//fb.fillBox(100, 100, 200, 200, 1);
 	//sleep(10);
@@ -213,9 +207,6 @@ int main(int argc, char **argv)
 
 	pig pig;
 	pig.hide();
-
-	//printf("Ending OSD\n");
-
 
 	int test = open(DEMUX_DEV, O_RDWR);
 	if (test < 0)
@@ -264,7 +255,6 @@ int main(int argc, char **argv)
 	}
 	close(test);
 
-	//printf("Starting\n");
 	tuner tuner(&settings);
 	zap zap(settings, osd, tuner, cam);
 
@@ -289,7 +279,6 @@ int main(int argc, char **argv)
 		int com = rc.read_from_rc();
 		if (com == RC_HELP)
 		{
-			//printf("Emergency channel-scan\n");
 			channels = scan.scanChannels(NORMAL);
 			channels.setStuff(&eit, &cam, &hardware, &osd, &zap, &tuner, &variables);
 			channels.saveDVBChannels();
@@ -307,7 +296,6 @@ int main(int argc, char **argv)
 	if (channels.numberChannels() == 0 || channels.numberTransponders() == 0)
 	{
 		channels = scan.scanChannels();
-		//printf("Number Channels: %d\n", channels.numberChannels());
 		channels.setStuff(&eit, &cam, &hardware, &osd, &zap, &tuner, &variables);
 		channels.saveDVBChannels();
 		channels.saveTS();
@@ -321,9 +309,6 @@ int main(int argc, char **argv)
 	channels.tuneCurrentTS();
 
 	//settings.getEMMpid();
-
-	//printf("container-chans: %d\n", (*container.channels_obj).numberChannels());
-
 	timer timer(&hardware, &channels, &zap, &tuner, &osd, &variables);
 	timer.loadTimer();
 	timer.start_thread();

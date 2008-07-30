@@ -5,60 +5,80 @@
 // Classes
 enum
 {
-    NOTHING,
-    OSD,
-    HARDWARE,
-    RC,
-    SETTINGS,
-    CONTROL,
-    SCAN,
-    CHANNELS,
-    UPDATE,
-    TIMER,
-    PLUGINS,
-    EIT,
-    FB,
-    IF,
-    ELSE,
-    IR,
+	NOTHING,
+	OSD,
+	HARDWARE,
+	RC,
+	SETTINGS,
+	CONTROL,
+	SCAN,
+	CHANNELS,
+	UPDATE,
+	TIMER,
+	PLUGINS,
+	EIT,
+	FB,
+	IF,
+	ELSE,
+	IR,
 	SDT,
 	TUNER,
-	ZAP
+	ZAP,
+	ROTOR,
+	CI,
+	TELETEXT
 };
 
 // Commands
 enum
 {
-    C_direct, // 0
-    C_Wait, // 1
-    C_Menu, // 2
-    C_Update, // 3
-    C_Timers, // 4
-    C_Add, // 5
-    C_Set, // 6
-    C_Scan, // 7
-    C_Settings, // 8
-    C_Plugins, // 9
-    C_Save, // 10
-    C_Load, // 11
-    C_Zap, // 12
-    C_Mode, // 13
-    C_Switch, // 14
-    C_Show, // 15
-    C_Hide, // 16
-    C_Channellist, // 17
-    C_Perspectives, // 18
-    C_Dump, // 19
-    C_Shutdown, // 20
-    C_Read, // 21
-    C_Var, // 22
-    C_Sub, // 23
-    C_Send, // 24
-    C_Fillbox, // 25
-    C_Puttext, // 26
-    C_Get, // 27
-	C_Tune, // 28
-	C_Stop // 29
+	C_direct,
+	C_Wait,
+	C_Menu,
+	C_Update,
+	C_Timers,
+	C_Add,
+	C_Set,
+	C_Scan,
+	C_Settings,
+	C_Plugins,
+	C_Save,
+	C_Load,
+	C_Zap,
+	C_Mode,
+	C_Switch,
+	C_Show,
+	C_Hide,
+	C_Channellist,
+	C_Perspectives,
+	C_Dump,
+	C_Shutdown,
+	C_Read,
+	C_Var,
+	C_Sub,
+	C_Send,
+	C_Fillbox,
+	C_Puttext,
+	C_Get,
+	C_Tune,
+	C_Stop,
+/*	Rotor & Diseq commands	*/
+	C_Left,
+	C_Right,
+	C_West,
+	C_East,
+	C_Burst,
+	C_Tone,
+	C_Circular,
+	C_Manual,
+	C_Automatic,
+	C_Satellite,
+	C_Cable,
+	C_Terrestrial,
+	C_Bruteforce,
+/*	Extended box commands	*/
+	C_Reboot,
+	C_Standby
 };
 
 #endif

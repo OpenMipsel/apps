@@ -2,7 +2,10 @@ INCLUDES = \
 	@CURL_CFLAGS@ \
 	@FREETYPE_CFLAGS@ \
 	@PLUGINS_CFLAGS@ \
-	@TUXBOX_CFLAGS@ 
+	@TUXBOX_CFLAGS@ \
+	@CONFIGFILE_CFLAGS@ \
+	@CONNECTION_CFLAGS@ \
+	@LCDDISPLAY_CFLAGS@
 
 bin_PROGRAMS = lcars
 
@@ -15,14 +18,17 @@ lcars_SOURCES = \
 	ir.cpp cam.cpp lcd.cpp tdt.cpp container.cpp serial.cpp showview.cpp 
 
 lcars_CFLAGS = -Werror
-#	-DOLD_VBI
-	-DDREAMBOX
 
 lcars_LDADD = \
 	@CURL_LIBS@ \
 	@FREETYPE_LIBS@ \
 	@TUXBOX_LIBS@ \
-	-lpthread -ldl
+	@CONNECTION_LIBS@ \
+	@CONFIGFILE_LIBS@ \
+	@CRAMFS_LIBS@ \
+	@UCODES_LIBS@ \
+	@LCDDISPLAY_LIBS@ \
+	 -ldl -lpthread -lcrypt
 
 install-data-local:
 	install -d $(CONFIGDIR)/lcars

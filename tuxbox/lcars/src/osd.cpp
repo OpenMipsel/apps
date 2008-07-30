@@ -15,6 +15,15 @@
  ***************************************************************************/
 /*
 $Log: osd.cpp,v $
+Revision 1.10.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
+Revision 1.10  2002/10/20 02:03:37  TheDOC
+Some fixes and stuff
+
 Revision 1.9  2002/06/15 02:33:03  TheDOC
 some changes + bruteforce-channelscan for cable
 
@@ -47,6 +56,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
+#include <pthread.h>
 
 #include "osd.h"
 
@@ -80,6 +90,7 @@ void* osd::start_osdqueue( void * this_ptr )
 		}
 		o->executeQueue();
 	}
+	return 0;
 }
 
 osd::osd(settings &set, fbClass *f, variables *v) :setting(set)
@@ -804,7 +815,7 @@ void osd::setServiceName(std::string  name)
 {
 	serviceName = name;
 	vars->setvalue("%SERVICENAME%", name);
-	//vars->addEvent("OSD_PROGINFO_SERVICENAME");
+	vars->addEvent("OSD_PROGINFO_SERVICENAME");
 
 	if (proginfo_shown)
 	{
@@ -828,7 +839,7 @@ void osd::setServiceNumber(int number)
 {
 	serviceNumber = number;
 	vars->setvalue("%SERVICENUMBER%", number);
-	//vars->addEvent("OSD_PROGINFO_SERVICENUMBER");
+	vars->addEvent("OSD_PROGINFO_SERVICENUMBER");
 
 	if (proginfo_shown)
 	{
@@ -856,7 +867,7 @@ void osd::setChannelsAvailable(bool available)
 void osd::setTeletext(bool available)
 {
 	teletext = available;
-	//vars->addEvent("OSD_PROGINFO_TELETEXT");
+	vars->addEvent("OSD_PROGINFO_TELETEXT");
 
 	if (proginfo_shown)
 	{
@@ -874,7 +885,7 @@ void osd::setTeletext(bool available)
 void osd::setPerspectiveAvailable(bool available)
 {
 	perspectiveAvailable = available;
-	//vars->addEvent("OSD_PROGINFO_PERSPECTIVE");
+	vars->addEvent("OSD_PROGINFO_PERSPECTIVE");
 
 	if (vars->getvalue("%SHOWHELP") == "true")
 	{
@@ -933,7 +944,7 @@ void osd::setNowTime(time_t starttime)
 	strftime(nowtime, sizeof nowtime, "%H:%M", t);
 	vars->setvalue("%NOWTIME%", nowtime);
 
-	//vars->addEvent("OSD_PROGINFO_NOWTIME");
+	vars->addEvent("OSD_PROGINFO_NOWTIME");
 
 	if (proginfo_shown)
 	{
@@ -957,7 +968,7 @@ void osd::setNowDescription(std::string  description)
 {
 	nowDescription = description;
 	vars->setvalue("%NOWDESCRIPTION%", nowDescription);
-	//vars->addEvent("OSD_PROGINFO_NOWDESCRIPTION");
+	vars->addEvent("OSD_PROGINFO_NOWDESCRIPTION");
 
 	if (proginfo_shown)
 	{
@@ -985,7 +996,7 @@ void osd::setNextTime(time_t starttime)
 	t = localtime(&nextTime);
 	strftime(nexttime, sizeof nexttime, "%H:%M", t);
 	vars->setvalue("%NEXTTIME%", nexttime);
-	//vars->addEvent("OSD_PROGINFO_NEXTTIME");
+	vars->addEvent("OSD_PROGINFO_NEXTTIME");
 
 
 	if (proginfo_shown)
@@ -1010,7 +1021,7 @@ void osd::setNextDescription(std::string  description)
 {
 	nextDescription = description;
 	vars->setvalue("%NEXTDESCRIPTION%", nextDescription);
-	//vars->addEvent("OSD_PROGINFO_NEXTDESCRIPTION");
+	vars->addEvent("OSD_PROGINFO_NEXTDESCRIPTION");
 
 
 	if (proginfo_shown)
@@ -1035,7 +1046,7 @@ void osd::setLanguage(std::string language_name)
 {
 	strcpy(language, language_name.c_str());
 	vars->setvalue("%LANGUAGE%", language);
-	//vars->addEvent("OSD_PROGINFO_LANGUAGE");
+	vars->addEvent("OSD_PROGINFO_LANGUAGE");
 
 	if (proginfo_shown)
 	{
@@ -1064,7 +1075,7 @@ void osd::setParentalRating(int rating)
 {
 	par_rating = rating;
 	vars->setvalue("%PARENTALRATING%", rating);
-	//vars->addEvent("OSD_PROGINFO_PARENTALRATING");
+	vars->addEvent("OSD_PROGINFO_PARENTALRATING");
 
 	if (proginfo_shown)
 	{
@@ -1108,7 +1119,7 @@ void osd::showProgramInfo()
 	vars->setvalue("%NEXTDESCRIPTION%", nextDescription);
 	vars->setvalue("%LANGUAGE%", language);
 
-	//vars->addEvent("OSD_PROGINFO_SHOW");
+	vars->addEvent("OSD_PROGINFO_SHOW");
 
 	if (prog_com_list_show.size() < 1)
 	{
@@ -1251,7 +1262,7 @@ void osd::showProgramInfo()
 void osd::hideProgramInfo()
 {
 	proginfo_shown = false;
-	//vars->addEvent("OSD_PROGINFO_HIDE");
+	vars->addEvent("OSD_PROGINFO_HIDE");
 	vars->setvalue("%PROGINFO_SHOWN", "false");
 
 	if (prog_com_list_hide.size() < 1)
@@ -1398,14 +1409,14 @@ void osd::showPerspective()
 	fb->fillBox(170, 500, 550, 520, 0);
 	fb->fillBox(550, 500, 560, 520, 1);
 
-	//char pname[400];
-	//strcpy(pname, perspective_name.c_str());
+	char pname[400];
+	strcpy(pname, perspective_name.c_str());
 	fb->setTextSize(0.4);
-	//fb->runCommand("SETTEXTSIZE 0.4");
-	/*std::stringstream ostr;
+	fb->runCommand("SETTEXTSIZE 0.4");
+	std::stringstream ostr;
 	ostr << "PUTTEXT 175 504 0 370 0 " << perspective_name << std::ends;
 	std::string tmp = ostr.str();
-	fb->runCommand(tmp.c_str());*/
+	fb->runCommand(tmp.c_str());
 	fb->putText(175, 504, 0, perspective_name.c_str(), 370);
 }
 

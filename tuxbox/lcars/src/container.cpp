@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: container.cpp,v $
+Revision 1.4.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.4  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -30,7 +36,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 */
 #include "container.h"
 
-container::container(zap *z, channels *c, fbClass *f, osd *o, settings *s, tuner *t, pat *pa, pmt *pm, eit *e, scan *sc)
+container::container(zap *z, channels *c, fbClass *f, osd *o, settings *s, tuner *t, pat *pa, pmt *pm, eit *e, scan *sc/*,ber *ber, sig *sig, snr *snr, pic *pic*/)
 {
 	zap_obj = z;
 	channels_obj = c;
@@ -42,5 +48,9 @@ container::container(zap *z, channels *c, fbClass *f, osd *o, settings *s, tuner
 	pmt_obj = pm;
 	eit_obj = e;
 	scan_obj = sc;
-	//printf("CONTAINER: %d\n", (*channels_obj).numberChannels());
+/*	ber_obj = ber;
+	sig_obj = sig;
+	snr_obj = snr;
+	pic_obj = pic;
+*/
 }

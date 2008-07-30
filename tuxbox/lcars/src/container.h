@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: container.h,v $
+Revision 1.4.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.4  2002/03/03 22:57:59  TheDOC
 lcars 0.20
 
@@ -41,6 +47,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include "pmt.h"
 #include "eit.h"
 #include "scan.h"
+//#include "gui/infowindow.h"
 
 class container
 {
@@ -56,7 +63,12 @@ public:
 	pmt *pmt_obj;
 	eit *eit_obj;
 	scan *scan_obj;
+/*	ber *ber_obj;
+	sig *sig_obj;
+	snr *snr_obj;
+	pic *pic_obj;
+*/
 
-	container(zap *z, channels *c, fbClass *f, osd *o, settings *s, tuner *t, pat *pa, pmt *pm, eit *e, scan *sc);
+	container(zap *z, channels *c, fbClass *f, osd *o, settings *s, tuner *t, pat *pa, pmt *pm, eit *e, scan *sc/*,ber *ber, sig *sig, snr *snr, pic *pic*/);
 };
 #endif

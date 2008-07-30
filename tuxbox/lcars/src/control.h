@@ -31,8 +31,8 @@
 #include <vector>
 #include <map>
 
-// Warum zur H÷lle schmeisst mir gcc da nen Fehler, wenn ich die struct
-// in die Klasse nehme?! Gut, machen wir's halt global :(
+/*	@DOC, Because of old cvs structure, We leave here global classes ;)	
+	But this is only for now. In the future, We'll switch to new one.	*/
 struct command_class
 {
 	int if_type;
@@ -73,9 +73,8 @@ class control
 	pig *pig_obj;
 	teletext *teletext_obj;
 	sdt *sdt_obj;
-	lcd *lcd_obj;
+	lcddisplay *lcddisplay_obj;
 
-	// Modes
 	typedef std::vector<command_class> commandlist;
 	typedef std::vector<std::string> string_commandlist;
 	typedef std::map<int, commandlist> keylist;
@@ -98,16 +97,10 @@ class control
 	void runMode(int modeNumber);
 	void runMode();
 	std::map<int, mode> modes;
-
-	// Subs
 	std::map<std::string, commandlist> subs;
 	void loadSubs();
-
-
-	// Helps
 	void dumpchannel(int channelnr);
 
-	// Menue
 	struct menu_entry
 	{
 		int type;
@@ -126,31 +119,19 @@ class control
 	};
 	std::map<int, menu> menus;
 
-	// Menues laden
 	void loadMenus();
-
-	// Menue oeffnen und starten
 	void openMenu(int menuNumber);
-
-	// Aktuelle Menuedaten laden
 	void getMenu(int menuNumber);
-
-	// Menue schliessen
 	void closeMenu();
-
-
-	// Aktuelles Kommando sofort ausfuehren
 	bool checkSetting(std::string var);
-
 	bool lastcheck;
-
 	pthread_t thread;
 	static void *startlistening(void *object);
 public:
 	variables *vars;
 	void run();
 	void startThread();
-	control (osd *o, rc *r, hardware *h, settings *s, scan *s1, channels *c, eit *e, cam *c1, zap *z, tuner *t, update *u, timer *t1, plugins *p, checker *c2, fbClass *f, variables *v, ir *i, pig *p1, teletext *t2, sdt *s2, lcd *l);
+	control (osd *o, rc *r, hardware *h, settings *s, scan *s1, channels *c, eit *e, cam *c1, zap *z, tuner *t, update *u, timer *t1, plugins *p, checker *c2, fbClass *f, variables *v, ir *i, pig *p1, teletext *t2, sdt *s2, lcddisplay *l);
 
 	int runCommand(command_class command, bool value = true);
 	command_class parseCommand(std::string cmd);

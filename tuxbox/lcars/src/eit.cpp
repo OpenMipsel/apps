@@ -15,6 +15,18 @@
  ***************************************************************************/
 /*
 $Log: eit.cpp,v $
+Revision 1.15.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
+Revision 1.15  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.14  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.13  2002/10/14 01:19:15  woglinde
 
 
@@ -62,9 +74,9 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <sys/ioctl.h>
 #include <memory.h>
 #include <stdio.h>
+#include <pthread.h>
 
-#include <ost/dmx.h>
-
+#include "devices.h"
 #include "eit.h"
 #include "help.h"
 #include "osd.h"
@@ -96,7 +108,6 @@ void* eit::start_eitqueue( void * this_ptr )
 		while(e->isEmpty() && time(0) < next_time)
 		{
 			usleep(1000);
-			////printf("time: %d - nexttime: %d\n", time(0), next_time);
 		}
 		if (time(0) >= next_time)
 			e->addCommand("RECEIVE last");
@@ -120,7 +131,6 @@ void eit::addCommand(std::string command)
 	while(!command_queue.empty())
 		command_queue.pop();
 	command_queue.push(command);
-	//printf("EIT-Command: %s\n", command.c_str());
 }
 
 void eit::executeQueue()
@@ -155,36 +165,25 @@ void eit::executeCommand()
 void eit::receiveNow(int SID)
 {
 	long fd, r;
-	struct dmxSctFilterParams flt;
-	//unsigned char sec_buffer[10][BSIZE];
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 
 	number_perspectives = 0;
 	curr_linkage = 0;
-	// Lies den EIT
-
-	//printf("Checking mutex\n");
 	pthread_mutex_lock( &mutex );
-	//printf("Mutex passed\n");
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	fd=open(DEMUX_DEV, O_RDWR);
 
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 
 	eventlist.clear();
-	//printf("Anfangs-Events: %i\n", eventlist.size());
 	flt.pid            = 0x12;
 	flt.filter.filter[0] = 0x4e;
 	flt.filter.mask[0] = 0xFF;
 	flt.timeout        = 10000;
-	//flt.timeout        = 0;
-	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC; //| DMX_ONESHOT;
+	flt.timeout        = 0;
+	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC | DMX_ONESHOT;
 
 	ioctl(fd, DMX_SET_FILTER, &flt);
-
-	//int sec_counter = 0;
-	//int last_section = -1;
-	//int counter = 0;
-	//bool first = false;
 
 	int start_sid, start_section_number;
 	r = BSIZE;
@@ -212,10 +211,6 @@ void eit::receiveNow(int SID)
 
 		int count = 13;
 
-		////printf("------------\nSID_EIT: %x\n", ((buffer[3] << 8) | buffer[4]));
-		////printf("TS_EIT: %x\n", ((buffer[8] << 8) | buffer[9]));
-		////printf("ONID_EIT: %x\n------------\n", ((buffer[10] << 8) | buffer[11]));
-
 		if (SID == ((buffer[3] << 8) | buffer[4]))
 		{
 			event tmp_event;
@@ -224,11 +219,9 @@ void eit::receiveNow(int SID)
 			int time = (buffer[count + 5] << 16) | (buffer[count + 6] << 8) | buffer[count + 7];
 			int mjd = (buffer[count + 3] << 8) | buffer[count + 4];
 			time_t starttime = dvbtimeToLinuxTime(mjd, time) + ((*setting).getTimeOffset() * 60L);
-			//printf("Offset: %d\n", (*setting).getTimeOffset());
 
 			tmp_event.duration = (((buffer[count + 8] & 0xf0) >> 4) * 10 + (buffer[count + 8] & 0xf)) * 3600 + (((buffer[count + 9] & 0xf0) >> 4) * 10 + (buffer[count + 9] & 0xf)) * 60 + (((buffer[count + 10] & 0xf0) >> 4) * 10 + (buffer[count + 10] & 0xf));
-			//printf("Duration: %02x %02x %02x\n", buffer[count + 8], buffer[count + 9], buffer[count + 10]);
-			//printf("Duration: %d\n", tmp_event.duration);
+
 			tmp_event.starttime = starttime;
 
 			tmp_event.eventid = (buffer[count + 1] << 8) | buffer[count + 2];
@@ -237,10 +230,9 @@ void eit::receiveNow(int SID)
 			int start = 26;
 			int descriptors_length = ((buffer[13 + 11] & 0xf) << 8) | buffer[13 + 12];
 			int text_length = 0;
-			//printf("Descriptoren-L„nge: %x\n", ((buffer[13 + 11] & 0xf) << 8) | buffer[13 + 12]);
+
 			while (start < 20 + descriptors_length)
 			{
-				//printf("Type: %x\n", buffer[start]);
 				if (buffer[start] == 0x4d) // short_event_descripto
 				{
 					std::string tmp_string;
@@ -248,8 +240,6 @@ void eit::receiveNow(int SID)
 					for (int i = 0; i < event_name_length; i++)
 						tmp_event.event_name[i] = buffer[start + 6 + i];
 					tmp_event.event_name[event_name_length] = '\0';
-					//printf("eit: %s\n", tmp_event.event_name);
-
 
 					int text_length = buffer[start + 6 + event_name_length];
 					for (int i = 0; i < text_length; i++)
@@ -258,34 +248,28 @@ void eit::receiveNow(int SID)
 
 
 				}
-				else if (buffer[start] == 0x4a/* && ((buffer[count + 11] & 0xe0) >> 5) == 0x04*/) // linkage
+				else if (buffer[start] == 0x4a && ((buffer[count + 11] & 0xe0) >> 5) == 0x04) // linkage
 				{
-					//printf("---> linkage_descriptor: <---\n");
-					//memset (&linkage_descr[number_perspectives], 0, sizeof (struct linkage));
+					memset (&linkage_descr[number_perspectives], 0, sizeof (struct linkage));
 					tmp_event.linkage_descr[tmp_event.number_perspectives].TS = (buffer[start + 2] << 8) | buffer[start + 3];
 					tmp_event.linkage_descr[tmp_event.number_perspectives].ONID = (buffer[start + 4] << 8) | buffer[start + 5];
 					tmp_event.linkage_descr[tmp_event.number_perspectives].SID = (buffer[start + 6] << 8) | buffer[start + 7];
-					//printf("TS: %x\nSID: %x\n", tmp_event.linkage_descr[tmp_event.number_perspectives].TS, tmp_event.linkage_descr[tmp_event.number_perspectives].SID);
 
 					char name[100];
 					if (buffer[start + 8] != 0xb0)
 					{
 						for (int i = 9; i <= buffer[start + 1]; i++)
 						{
-							//printf ("%02x ", buffer[start + i]);
 						}
-						//printf("\n");
 					}
 					else // Formel 1 Perspektiven - Linkage type 0xb0
 					{
-						//printf("Linkage\n");
 						for (int i = 9; i <= buffer[start + 1] + 1; i++)
 						{
 							name[i - 9] = buffer[start + i]; // Namen der Perspektiven
 						}
 						name[buffer[start + 1] - 7] = '\0';
 						strcpy(tmp_event.linkage_descr[tmp_event.number_perspectives].name, name);
-						////printf("%s\n", pname.c_str());
 					}
 					tmp_event.number_perspectives++;
 				}
@@ -301,31 +285,20 @@ void eit::receiveNow(int SID)
 				}
 				else if (buffer[start] == 0x50) // component_descriptor - audio-names
 				{
-					/*//printf("---> component_descriptor: <---\n");
-					//printf ("reserved_future_use: %01x\n", (buffer[start + 2] & 0xf0) >> 4);
-					//printf ("stream_content: %01x\n", buffer[start + 2] & 0xf);
-					//printf ("component_type: %02x\n", buffer[start + 3]);
-					//printf ("component_tag: %02x\n", buffer[start + 4]);
-					//printf ("language_code: %c%c%c\n", buffer[start + 5], buffer[start + 6], buffer[start + 7]);
-					//printf ("text: ");
-					*/
 					tmp_event.component_tag[tmp_event.number_components] = buffer[start + 4];
 					tmp_event.stream_content[tmp_event.number_components] = buffer[start + 2] & 0xf;
 					tmp_event.component_type[tmp_event.number_components] = buffer[start + 3];
-					//printf("Found component TAG: %x\n", buffer[start + 4]);
 
 					for (int i = 7; i <= buffer[start + 1]; i++)
 					{
 						tmp_event.audio_description[tmp_event.number_components][i-7] = buffer[start + 1 + i];
 					}
 					tmp_event.audio_description[tmp_event.number_components][buffer[start + 1] - 6] = '\0';
-					//printf("%s\n", tmp_event.audio_description[tmp_event.number_components]);
 					tmp_event.number_components++;
 
 				}
 				else if (buffer[start] == 0x55)
 				{
-					//printf("---> parental_rating_descriptor: <---\n");
 					for (int i = 0; i < buffer[start + 1] / 4; i++)
 					{
 						if (buffer[start + 2 + i * 4] == 'D' && buffer[start + 3 + i * 4] == 'E' && buffer[start + 4 + i * 4] == 'U')
@@ -337,12 +310,9 @@ void eit::receiveNow(int SID)
 
 
 			}
-			//printf("Number of perspectives: %d\n", number_perspectives);
 			tmp_event.event_extended_text[text_length] = '\0';
 			if (eventlist.count((int)tmp_event.starttime) == 0)
 				eventlist.insert(std::pair<int, struct event>((int) tmp_event.starttime, tmp_event));
-			//printf("Gefunden: %x\n", ((buffer[3] << 8) | buffer[4]));
-
 		}
 
 	} while((!((start_sid == ((buffer[3] << 8) | buffer[4])) && (start_section_number == buffer[6]))) && !quit && (sec_count < 100));
@@ -351,9 +321,8 @@ void eit::receiveNow(int SID)
 	close(fd);
 	pthread_mutex_unlock( &mutex );
 
-	//printf("eitrun\n");
 	std::multimap<int, struct event>::iterator it = eventlist.begin();
-	//printf("Gefundene Events: %i\n", eventlist.size());
+
 	for (int i = 0; i < (int)eventlist.size(); i++)
 	{
 		if (i == 0)
@@ -364,7 +333,6 @@ void eit::receiveNow(int SID)
 		t = localtime(&(*it).second.starttime);
 		char acttime[10];
 		strftime(acttime, sizeof acttime, "%H:%M %d.%m", t);
-		//printf("%s - %d - %s\n", acttime, (*it).second.eventid, (*it).second.event_name);
 		it++;
 	}
 	(*osd_obj).setNowTime(now.starttime);
@@ -384,7 +352,7 @@ void eit::receiveNow(int SID)
 	vars->setvalue("%NOWEVENTNAME", now.event_name);
 	vars->setvalue("%NOWSHORTTEXT", now.event_short_text);
 	vars->setvalue("%NOWEXTENDEDTEXT", now.event_extended_text);
-	//vars->setvalue("%NOWDESCRIPTION", now.event_extended_text);
+	vars->setvalue("%NOWDESCRIPTION", now.event_extended_text);
 	vars->setvalue("%NOWSTARTTIME", now.starttime);
 	vars->setvalue("%NOWDURATION", now.duration);
 	vars->setvalue("%NOWLINKAGE", now.number_perspectives);
@@ -403,7 +371,7 @@ void eit::receiveNow(int SID)
 	vars->setvalue("%NEXTEVENTNAME", next.event_name);
 	vars->setvalue("%NEXTSHORTTEXT", next.event_short_text);
 	vars->setvalue("%NEXTEXTENDEDTEXT", next.event_extended_text);
-	//vars->setvalue("%NEXTDESCRIPTION", now.event_extended_text);
+	vars->setvalue("%NEXTDESCRIPTION", now.event_extended_text);
 	vars->setvalue("%NEXTSTARTTIME", next.starttime);
 	vars->setvalue("%NEXTDURATION", next.duration);
 	vars->setvalue("%NEXTLINKAGE", next.number_perspectives);
@@ -445,9 +413,6 @@ void eit::receiveNow(int SID)
 	}
 
 	gotNow = true;
-
-
-	//printf("endeit\n");
 }
 
 void eit::setAudioComponent(int comp)
@@ -465,7 +430,7 @@ void eit::setAudioComponent(int comp)
 
 bool eit::isMultiPerspective()
 {
-	return (now.number_perspectives > 1); //(now.running_status == 0x4 && now.number_perspectives > 1);
+	return /*(now.number_perspectives > 1);*/ (now.running_status == 0x4 && now.number_perspectives > 1);
 }
 
 void eit::beginLinkage()
@@ -477,21 +442,20 @@ linkage eit::nextLinkage()
 {
 	return (now.linkage_descr[curr_linkage++]);
 }
-/*
+
 void eit::readSchedule(int SID, osd *osd)
 {
 	long fd, r;
-	struct dmxSctFilterParams flt;
-	//unsigned char sec_buffer[10][BSIZE];
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 
 	(*osd).createPerspective();
 	(*osd).setPerspectiveName("Reading Scheduling Information...");
 	(*osd).showPerspective();
 
-	fd=open("/dev/dvb/card0/demux0", O_RDONLY);
+	fd=open(DEMUX_DEV, O_RDWR);
 	
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 	
 	eventlist.clear();
 
@@ -499,8 +463,7 @@ void eit::readSchedule(int SID, osd *osd)
 	flt.filter.filter[0] = 0x50;
 	flt.filter.mask[0] = 0xF0;
 	flt.timeout        = 0;
-	//flt.timeout        = 0;
-	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC; //| DMX_ONESHOT;
+	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC | DMX_ONESHOT;
 	
 	ioctl(fd, DMX_SET_FILTER, &flt);
 	
@@ -523,16 +486,12 @@ void eit::readSchedule(int SID, osd *osd)
 	do
 	{
 		memset (&buffer, 0, BSIZE);
-		////printf("\n");
 		r = read(fd, buffer, 3);
 		int section_length = ((buffer[1] & 0xf) << 8) | buffer[2];
 		r = read(fd, buffer + 3, section_length);
 	
 		if (SID == ((buffer[3] << 8) | buffer[4]))
 		{
-			////printf("SID: %04x - table_id: %02x - section_number: %02x - last_section_number: %02x - segment_last_section: %02x - last_table: %02x\n", (buffer[3] << 8) | buffer[4], buffer[0], buffer[6], buffer[7], buffer[12], buffer[13]);
-			////printf("%d\n", buffer[0] & 0xf);
-
 			if (!(finished[buffer[0] & 0xf]))
 			{
 				if (starting_element[buffer[0] & 0xf] == buffer[6])
@@ -557,8 +516,7 @@ void eit::readSchedule(int SID, osd *osd)
 					time_t starttime = dvbtimeToLinuxTime(mjd, time) + ((*setting).getTimeOffset() * 60L);
 	
 					tmp_event.duration = (((buffer[count + 8] & 0xf0) >> 4) * 10 + (buffer[count + 8] & 0xf)) * 3600 + (((buffer[count + 9] & 0xf0) >> 4) * 10 + (buffer[count + 9] & 0xf)) * 60 + (((buffer[count + 10] & 0xf0) >> 4) * 10 + (buffer[count + 10] & 0xf));
-					////printf("Duration: %02x %02x %02x\n", buffer[count + 8], buffer[count + 9], buffer[count + 10]);
-					////printf("Duration: %d\n", tmp_event.duration);
+
 					tmp_event.starttime = starttime;
 
 					tmp_event.eventid = (buffer[count + 1] << 8) | buffer[count + 2];
@@ -576,8 +534,6 @@ void eit::readSchedule(int SID, osd *osd)
 							for (int i = 0; i < event_name_length; i++)
 								tmp_event.event_name[i] = buffer[start + 6 + i];
 							tmp_event.event_name[event_name_length] = '\0';
-							////printf("eit: %s\n", tmp_event.event_name);
-					
 			
 							int text_length = buffer[start + 6 + event_name_length];
 							for (int i = 0; i < text_length; i++)
@@ -588,8 +544,7 @@ void eit::readSchedule(int SID, osd *osd)
 						}
 						else if (buffer[start] == 0x4a && ((buffer[count + 11] & 0xe0) >> 5) == 0x04) // linkage
 						{
-							////printf("---> linkage_descriptor: <---\n");
-							//memset (&linkage_descr[number_perspectives], 0, sizeof (struct linkage));
+							memset (&linkage_descr[number_perspectives], 0, sizeof (struct linkage));
 							linkage_descr[number_perspectives].TS = (buffer[start + 2] << 8) | buffer[start + 3];
 							linkage_descr[number_perspectives].ONID = (buffer[start + 4] << 8) | buffer[start + 5];
 							linkage_descr[number_perspectives].SID = (buffer[start + 6] << 8) | buffer[start + 7];
@@ -599,9 +554,7 @@ void eit::readSchedule(int SID, osd *osd)
 							{
 								for (int i = 9; i <= buffer[start + 1]; i++)
 								{
-									////printf ("%02x ", buffer[start + i]);
 								}
-								////printf("\n");
 							}
 							else // Formel 1 Perspektiven - Linkage type 0xb0
 							{
@@ -611,7 +564,6 @@ void eit::readSchedule(int SID, osd *osd)
 								}
 								name[buffer[start + 1] - 7] = '\0';
 								strcpy(linkage_descr[number_perspectives].name, name);
-								////printf("%s\n", pname.c_str());
 							}
 							number_perspectives++;
 						}
@@ -630,14 +582,12 @@ void eit::readSchedule(int SID, osd *osd)
 							tmp_event.component_tag[tmp_event.number_components] = buffer[start + 4];
 							tmp_event.stream_content[tmp_event.number_components] = buffer[start + 2] & 0xf;
 							tmp_event.component_type[tmp_event.number_components] = buffer[start + 3];
-							////printf("Found component TAG: %x\n", buffer[start + 4]);
 		
 							for (int i = 7; i <= buffer[start + 1]; i++)
 							{
 								tmp_event.audio_description[tmp_event.number_components][i-7] = buffer[start + 1 + i];
 							}
 							tmp_event.audio_description[tmp_event.number_components][buffer[start + 1] - 6] = '\0';
-							////printf("%s\n", tmp_event.audio_description[tmp_event.number_components]);
 							tmp_event.number_components++;
 			
 						}
@@ -647,18 +597,15 @@ void eit::readSchedule(int SID, osd *osd)
 						
 					}
 			
-					////printf("Number of perspectives: %d\n", number_perspectives);
 					tmp_event.event_extended_text[text_length] = '\0';
 					if (eventlist.count((int)tmp_event.starttime) == 0)
 						eventlist.insert(std::pair<int, struct event>((int) tmp_event.starttime, tmp_event));
-					////printf("Gefunden: %x\n", ((buffer[3] << 8) | buffer[4]));
+
 					count += count + descriptors_length - 1;
-					////printf("count: %d - r: %d\n", count, r);
 					
 					} while (count < r - 2);
-					//sleep(10);
+					sleep(10);
 				}
-				////printf("Taken\n");
 			}
 		}
 		quit = true;
@@ -670,7 +617,7 @@ void eit::readSchedule(int SID, osd *osd)
 	} while(!quit);
 	(*osd).hidePerspective();
 }
-*/
+
 void eit::dumpSchedule(int TS, int ONID, int SID, osd *osd)
 {
 	struct sid new_sid;
@@ -683,7 +630,7 @@ void eit::dumpSchedule(int TS, int ONID, int SID, osd *osd)
 		event tmp_event = it->second;
 		osd->addScheduleInformation(tmp_event.starttime, tmp_event.event_name, tmp_event.eventid);
 	}
-	/*std::multimap<struct sid, std::multimap<time_t, int>, ltstr>::iterator it = sid_eventid.find(new_sid);
+	std::multimap<struct sid, std::multimap<time_t, int>, ltstr>::iterator it = sid_eventid.find(new_sid);
 	{
 		for (std::multimap<time_t, int>::iterator it2 = (*it).second.begin(); it2 != (*it).second.end(); ++it2)
 		{
@@ -693,15 +640,14 @@ void eit::dumpSchedule(int TS, int ONID, int SID, osd *osd)
 				osd->addScheduleInformation(tmp_event.starttime, tmp_event.event_name, tmp_event.eventid);
 			}
 		}
-	}*/
+	}
 }
 
 
 void eit::dumpSchedule(int SID, osd *osd)
 {
 	long fd, r;
-	struct dmxSctFilterParams flt;
-	//unsigned char sec_buffer[10][BSIZE];
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 	time_eventid.clear();
 	eventid_event.clear();
@@ -711,16 +657,15 @@ void eit::dumpSchedule(int SID, osd *osd)
 	osd->addCommand("SHOW perspective");
 
 	pthread_mutex_lock( &mutex );
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	fd=open(DEMUX_DEV, O_RDWR);
 
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 
 	flt.pid            = 0x12;
 	flt.filter.filter[0] = 0x50;
 	flt.filter.mask[0] = 0xF0;
 	flt.timeout        = 10000;
-	//flt.timeout        = 0;
-	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC; //| DMX_ONESHOT;
+	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC | DMX_ONESHOT;
 
 	ioctl(fd, DMX_SET_FILTER, &flt);
 
@@ -734,8 +679,6 @@ void eit::dumpSchedule(int SID, osd *osd)
 	bool finished[number_tables];
 	int starting_element[number_tables];
 
-	//printf("Number of tables: %d\n", number_tables);
-
 	for (int i = 0; i < number_tables ; i++)
 	{
 		starting_element[i] = -1;
@@ -743,7 +686,7 @@ void eit::dumpSchedule(int SID, osd *osd)
 	}
 
 	int timeout = time(0) + 20;
-	//printf("Start-Dump\n");
+
 	do
 	{
 		memset (&buffer, 0, BSIZE);
@@ -772,8 +715,6 @@ void eit::dumpSchedule(int SID, osd *osd)
 				{
 					starting_element[buffer[0] & 0xf] = tmp_header.section_number;
 				}
-
-				// Start Event
 				event tmp_event;
 				memset (&tmp_event, 0, sizeof (struct event));
 
@@ -824,7 +765,7 @@ void eit::dumpSchedule(int SID, osd *osd)
 							tmp_event.event_short_text[text_length] = '\0';
 
 						}
-						else if (buffer[desc_counter + end_counter] == 0x4a/* && ((buffer[count + 11] & 0xe0) >> 5) == 0x04*/) // linkage
+						else if (buffer[desc_counter + end_counter] == 0x4a && ((buffer[counter + 11] & 0xe0) >> 5) == 0x04) // linkage
 						{
 							tmp_event.number_perspectives++;
 						}
@@ -842,20 +783,18 @@ void eit::dumpSchedule(int SID, osd *osd)
 							}
 
 						}
-						else if (buffer[desc_counter + end_counter] == 0x50) // component_descriptor - audio-names
+						else if (buffer[desc_counter + end_counter] == 0x50)
 						{
 							int start = desc_counter + end_counter;
 							tmp_event.component_tag[tmp_event.number_components] = buffer[start + 4];
 							tmp_event.stream_content[tmp_event.number_components] = buffer[start + 2] & 0xf;
 							tmp_event.component_type[tmp_event.number_components] = buffer[start + 3];
-							//printf("Found component TAG: %x\n", buffer[start + 4]);
 
 							for (int i = 7; i <= buffer[start + 1]; i++)
 							{
 								tmp_event.audio_description[tmp_event.number_components][i-7] = buffer[start + 1 + i];
 							}
 							tmp_event.audio_description[tmp_event.number_components][buffer[start + 1] - 6] = '\0';
-							//printf("%s\n", tmp_event.audio_description[tmp_event.number_components]);
 							tmp_event.number_components++;
 
 						}
@@ -893,7 +832,6 @@ void eit::dumpSchedule(int SID, osd *osd)
 						}
 						if (tmp_event.SID == SID)
 						{
-							eventid_event[tmp_event.eventid] = tmp_event; //.insert(std::pair<int, struct event>(tmp_event.eventid, tmp_event));
 							time_eventid[tmp_event.starttime] = tmp_event.eventid;
 						}
 					}
@@ -950,15 +888,10 @@ void eit::dumpEvent(int eventid)
 
 void eit::dumpNextEvent(int eventid)
 {
-	//std::cout << "*********************Getting Next Eventid" << std::endl;
-	//std::cout << "eventid: " << eventid << std::endl;
-	//std::cout << "count1: " << eventid_event.count(eventid) << std::endl;
 	if (eventid_event.count(eventid) == 0)
 		return;
 	std::map<int, struct event>::iterator it = eventid_event.find(eventid);
 
-	//std::cout << "starttime: " << it->second.starttime << std::endl;
-	//std::cout << "count2: " << time_eventid.count(it->second.starttime) << std::endl;
 	if (time_eventid.count(it->second.starttime) == 0)
 		return;
 	std::map<time_t, int>::iterator it2 = time_eventid.find(it->second.starttime);
@@ -967,8 +900,6 @@ void eit::dumpNextEvent(int eventid)
 	else
 		it2++;
 
-	//std::cout << "eventid2: " << it2->second << std::endl;
-	//std::cout << "count2: " << eventid_event.count(it2->second) << std::endl;
 	if (eventid_event.count(it2->second) == 0)
 		return;
 	std::map<int, struct event>::iterator it3 = eventid_event.find(it2->second);
@@ -996,15 +927,10 @@ void eit::dumpNextEvent(int eventid)
 
 void eit::dumpPrevEvent(int eventid)
 {
-	//std::cout << "*********************Getting Next Eventid" << std::endl;
-	//std::cout << "eventid: " << eventid << std::endl;
-	//std::cout << "count1: " << eventid_event.count(eventid) << std::endl;
 	if (eventid_event.count(eventid) == 0)
 		return;
 	std::map<int, struct event>::iterator it = eventid_event.find(eventid);
 
-	//std::cout << "starttime: " << it->second.starttime << std::endl;
-	//std::cout << "count2: " << time_eventid.count(it->second.starttime) << std::endl;
 	if (time_eventid.count(it->second.starttime) == 0)
 		return;
 	std::map<time_t, int>::iterator it2 = time_eventid.find(it->second.starttime);
@@ -1013,8 +939,6 @@ void eit::dumpPrevEvent(int eventid)
 	else
 		it2--;
 
-	//std::cout << "eventid2: " << it2->second << std::endl;
-	//std::cout << "count2: " << eventid_event.count(it2->second) << std::endl;
 	if (eventid_event.count(it2->second) == 0)
 		return;
 	std::map<int, struct event>::iterator it3 = eventid_event.find(it2->second);

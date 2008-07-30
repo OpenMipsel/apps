@@ -15,6 +15,24 @@
  ***************************************************************************/
 /*
 $Log: pig.cpp,v $
+Revision 1.8.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
+Revision 1.8  2003/01/06 05:03:11  TheDOC
+dreambox compatible
+
+Revision 1.7  2003/01/05 20:00:11  TheDOC
+hmpf
+
+Revision 1.6  2003/01/05 19:52:47  TheDOC
+forgot include
+
+Revision 1.5  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
 Revision 1.4  2002/03/03 22:56:27  TheDOC
 lcars 0.20
 
@@ -29,10 +47,53 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 
 */
 #include "pig.h"
+#include "devices.h"
 
+#ifdef HAVE_LINUX_DVB_VERSION_H
 pig::pig()
 {
-	fd = open("/dev/dbox/pig0", O_RDWR);
+	fd = open(PIG_DEV, O_RDWR);
+}
+
+pig::~pig()
+{
+	close(fd);
+}
+
+void pig::show()
+{
+	//avia_pig_show(fd);
+}
+
+void pig::hide()
+{
+	//avia_pig_hide(fd);
+}
+
+void pig::setSize(int x, int y)
+{
+	//avia_pig_set_size(fd, x, y);
+}
+
+void pig::setPosition(int x, int y)
+{
+	//avia_pig_set_pos(fd, x, y);
+}
+
+void pig::setStack(int i)
+{
+	//avia_pig_set_stack(fd, i);
+}
+
+void pig::setSource(int x1, int y1, int x2, int y2)
+{
+}
+
+#elif HAVE_OST_DMX_H
+#ifndef HAVE_DREAMBOX_HARDWARE
+pig::pig()
+{
+	fd = open(PIG_DEV, O_RDWR);
 }
 
 pig::~pig()
@@ -68,3 +129,44 @@ void pig::setStack(int i)
 void pig::setSource(int x1, int y1, int x2, int y2)
 {
 }
+#else
+pig::pig()
+{
+
+}
+
+pig::~pig()
+{
+
+}
+
+void pig::show()
+{
+
+}
+
+void pig::hide()
+{
+
+}
+
+void pig::setSize(int x, int y)
+{
+
+}
+
+void pig::setPosition(int x, int y)
+{
+
+}
+
+void pig::setStack(int i)
+{
+
+}
+
+void pig::setSource(int x1, int y1, int x2, int y2)
+{
+}
+#endif
+#endif

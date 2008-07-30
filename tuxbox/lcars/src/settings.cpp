@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: settings.cpp,v $
+Revision 1.13.4.2  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.13.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -91,14 +97,13 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #define need_TUXBOX_GET
 #include <tuxbox.h>
 
-TUXBOX_GET(dbox2_gt);
+TUXBOX_GET(submodel);
 
 settings::settings(cam *c)
 {
 	cam_obj = c;
 
 	CAID = cam_obj->getCAID();
-	//printf("Set-CAID: %x\n", CAID);
 
 	oldTS = -1;
 	usediseqc = true;
@@ -108,12 +113,19 @@ settings::settings(cam *c)
 	setting.serverip = 0;
 	setting.dnsip = 0;
 
-	switch (tuxbox_get_vendor())
+	switch (tuxbox_vendor())
 	{
 	case TUXBOX_VENDOR_NOKIA:
 		setting.rcRepeat = true;
 		setting.supportOldRc = true;
 		break;
+	case TUXBOX_VENDOR_PHILIPS:
+		setting.rcRepeat = true;
+		setting.supportOldRc = true;
+		break;
+	case TUXBOX_VENDOR_DREAM_MM:
+		setting.rcRepeat = true;
+		setting.supportOldRc = false;
 	default:
 		setting.rcRepeat = false;
 		setting.supportOldRc = false;
@@ -128,7 +140,6 @@ int settings::getEMMpid(int TS)
 {
 	if (EMM < 2 || oldTS != TS || TS == -1)
 	{
-		//printf("Getting EMM\n");
 		EMM = find_emmpid(CAID);
 		oldTS = TS;
 	}
@@ -161,7 +172,7 @@ int settings::find_emmpid(int ca_system_id) {
 		return 1;
 	}
 
-	//ioctl(fd, DMX_START, 0);
+	ioctl(fd, DMX_START, 0);
 	if ((r=read(fd, buffer, r))<=0)
 	{
 		perror("[settings.cpp] read (find_emmpid)");
@@ -188,15 +199,15 @@ int settings::getCAID()
 {
 	return CAID;
 }
-
+/*	FIX ME!!!!
 int settings::getTransparentColor()
 {
-	if (tuxbox_get_dbox2_gt() == TUXBOX_DBOX2_GT_GTX)
+	if (submodel() == TUXBOX_SUBMODEL_DREAMBOX_DM7000 || TUXBOX_SUBMODEL_DREAMBOX_DM7020)
 		return 0xFC0F;
 	else
 		return 0;
 }
-
+*/
 void settings::setIP(char n1, char n2, char n3, char n4)
 {
 	std::stringstream ostr;
@@ -207,36 +218,28 @@ void settings::setIP(char n1, char n2, char n3, char n4)
 	setting.ip = (n1 << 24) | (n2 << 16) | (n3 << 8) | n4;
 
 	system(command.c_str());
-	/*struct sockaddr_in sin;
+	struct sockaddr_in sin;
 	int sk;
-	unsigned char *ptr;
 	struct ifreq ifr;
 
 	memset(&ifr, 0x00, sizeof ifr);
 	memset(&sin, 0x00, sizeof sin);
 
 	sin.sin_family = AF_INET;
-	//sin.sin_len    = sizeof sin;
 	char test[] = "192.168.40.4";
 	if (inet_aton(test, &sin.sin_addr)==0) { // 0 if error occurs
-		//printf("failed conversion\n");
 	}
 
 	strcpy(ifr.ifr_name, "eth0");
 	memcpy(&ifr.ifr_addr, &sin, sizeof(ifr.ifr_addr));
-	//printf("IP: %x\n", ifr.ifr_addr);
 	if ((sk = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
-		//printf("no socket\n");
 	}
 
 	if (ioctl(sk, SIOCSIFADDR, &ifr)==-1) {
-		//printf("didn't set IP: %s\n", strerror(errno));
 	}
 
 	memcpy(&sin, &ifr.ifr_addr, sizeof(sin));
-	//ptr = inet_ntoa((unsigned char*) sin.sin_addr);
-	////printf("IP Address is :%s\n",ptr);
-	close (sk);*/
+	close (sk);
 
 }
 
@@ -364,7 +367,6 @@ void settings::loadSettings()
 			}
 			if (ipcount != 4)
 			{
-				//std::cout << "Error in Config-File on " << cmd << std::endl;
 				continue;
 			}
 			else

@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: eit.h,v $
+Revision 1.7.6.1  2008/07/30 18:24:25  fergy
+Mostly removed debug messages
+Tuned-up lcd.cpp & lcd.h code
+Globaly removed trash from code
+Added stuff for future progress of Lcars
+
 Revision 1.7  2002/06/08 14:40:23  TheDOC
 made lcars tuxvision-compatible
 
@@ -44,6 +50,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include "settings.h"
 #include "variables.h"
 
+#include <pthread.h>
 #include <time.h>
 #include <string>
 #include <map>
@@ -83,6 +90,7 @@ struct event
 	int par_rating;
 	int number_perspectives;
 	linkage linkage_descr[10];
+//	unsigned short insert;
 };
 
 struct eit_header
@@ -182,6 +190,7 @@ public:
 	event getNext() { return next; }
 	void receiveNow(int SID);
 	bool gotNow;
+	int counter;
 
 	event waitForNow() { while(!gotNow) usleep(1000); return now; }
 
@@ -196,7 +205,7 @@ public:
 	void beginLinkage();
 	int numberPerspectives() { return now.number_perspectives; }
 	linkage nextLinkage();
-	//void readSchedule(int SID, osd *osd);
+	void readSchedule(int SID, osd *osd);
 	void dumpSchedule(int TS, int ONID, int SID, osd *osd);
 	event getEvent(int eventid);
 	void dumpEvent(int eventid);
