@@ -15,7 +15,7 @@
  ***************************************************************************/
 /*
 $Log: eit.h,v $
-Revision 1.7.6.1  2008/07/30 18:24:25  fergy
+Revision 1.7.6.2  2008/07/30 18:49:17  fergy
 Mostly removed debug messages
 Tuned-up lcd.cpp & lcd.h code
 Globaly removed trash from code

@@ -15,7 +15,7 @@
  ***************************************************************************/
 /*
 $Log: settings.cpp,v $
-Revision 1.13.4.2  2008/07/30 18:24:25  fergy
+Revision 1.13.4.3  2008/07/30 18:49:18  fergy
 Mostly removed debug messages
 Tuned-up lcd.cpp & lcd.h code
 Globaly removed trash from code
