@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: pig.cpp,v $
+Revision 1.8.6.4  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.8.6.3  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -60,27 +66,27 @@ pig::~pig()
 
 void pig::show()
 {
-	//avia_pig_show(fd);
+	avia_pig_show(fd);
 }
 
 void pig::hide()
 {
-	//avia_pig_hide(fd);
+	avia_pig_hide(fd);
 }
 
 void pig::setSize(int x, int y)
 {
-	//avia_pig_set_size(fd, x, y);
+	avia_pig_set_size(fd, x, y);
 }
 
 void pig::setPosition(int x, int y)
 {
-	//avia_pig_set_pos(fd, x, y);
+	avia_pig_set_pos(fd, x, y);
 }
 
 void pig::setStack(int i)
 {
-	//avia_pig_set_stack(fd, i);
+	avia_pig_set_stack(fd, i);
 }
 
 void pig::setSource(int x1, int y1, int x2, int y2)

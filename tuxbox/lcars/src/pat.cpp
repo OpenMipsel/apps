@@ -15,6 +15,21 @@
  ***************************************************************************/
 /*
 $Log: pat.cpp,v $
+Revision 1.11.6.1  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
+Revision 1.11  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.10  2002/11/26 20:03:14  TheDOC
+some debug-output and small fixes
+
+Revision 1.9  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.8  2002/09/18 17:31:03  TheDOC
 replaced O_RDONLY with O_RDWR on demux-device-open, stupid me
 
@@ -47,10 +62,9 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <stdio.h>
 #include <iostream>
 
-#include <ost/dmx.h>
-
 #include <map>
 
+#include "devices.h"
 #include "pat.h"
 
 #define BSIZE 10000
@@ -58,19 +72,19 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 bool pat::readPAT()
 {
 	int fd, r;
-	struct dmxSctFilterParams flt;
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	fd=open(DEMUX_DEV, O_RDWR);
 	if (fd < 0)
 	{
 		perror("open readPAT-open");
 	}
-	//ioctl(fd,DMX_STOP,0);
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	ioctl(fd,DMX_STOP,0);
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 	r = BSIZE;
 	flt.pid            = 0x0;
-	//flt.filter.filter[0] = 0x0;
+	flt.filter.filter[0] = 0x0;
 	flt.filter.mask[0] = 0xff;
 	flt.timeout        = 1000;
 	flt.flags          = DMX_IMMEDIATE_START;
@@ -81,8 +95,6 @@ bool pat::readPAT()
 	}
 	r=read(fd, buffer, r);
 
-	close(fd);
-	close(fd);
 	close(fd);
 
 	int transport_stream_id = (buffer[3] << 8) | buffer[4];

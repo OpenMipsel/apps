@@ -110,14 +110,14 @@ void fbClass::runCommand(std::string command_string)
 			values_int[i] = atoi(value.c_str());
 		}
 		std::getline(iss, value, '\n');
-		/*float size;
-		sscanf(value.c_str(), "%f", &size);*/
+		float size;
+		sscanf(value.c_str(), "%f", &size);
 		std::getline(iss, value, '\n');
 
 		if (vars->isavailable(value))
 			value = vars->getvalue(value);
-		/*if (size != factor)
-			setTextSize(size);*/
+		if (size != factor)
+			setTextSize(size);
 
 		putText(values_int[0], values_int[1], values_int[2], value, values_int[3], values_int[4]);
 	}

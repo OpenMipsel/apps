@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: hardware.cpp,v $
+Revision 1.11.4.5  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.11.4.4  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -223,7 +229,7 @@ bool hardware::switch_vcr()
 			j = 0;
 			nothing = 0;
 
-			//ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSFBLK,&fblk);
 			ioctl(avs,AVSIOSVSW2,&nothing);
 			ioctl(avs,AVSIOSVSW1,&i);
 			ioctl(avs,AVSIOSASW1,&j);
@@ -234,7 +240,7 @@ bool hardware::switch_vcr()
 			j = 1;
 			nothing = 1;
 			nothinga = 2;
-			//ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSFBLK,&fblk);
 			ioctl(avs,AVSIOSVSW2,&nothing);
 			ioctl(avs,AVSIOSVSW1,&i);
 			ioctl(avs,AVSIOSASW1,&j);
@@ -246,7 +252,7 @@ bool hardware::switch_vcr()
 			j = 1;
 			nothing = 1;
 
-			//ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSFBLK,&fblk);
 			ioctl(avs,AVSIOSVSW3,&nothing);
 			ioctl(avs,AVSIOSVSW2,&i);
 			ioctl(avs,AVSIOSASW2,&j);

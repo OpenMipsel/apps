@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: eit.cpp,v $
+Revision 1.15.6.4  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.15.6.3  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -228,7 +234,7 @@ void eit::receiveNow(int SID)
 			int text_length = 0;
 			while (start < 20 + descriptors_length)
 			{
-				if (buffer[start] == 0x4d) // short_event_descripto
+				if (buffer[start] == 0x4d) // short_event_descriptor
 				{
 					std::string tmp_string;
 					int event_name_length = buffer[start + 5];
@@ -257,18 +263,18 @@ void eit::receiveNow(int SID)
 						{
 						}
 					}
-					else // Formel 1 Perspektiven - Linkage type 0xb0
+					else // Formel 1 Perspective - Linkage type 0xb0
 					{
 						for (int i = 9; i <= buffer[start + 1] + 1; i++)
 						{
-							name[i - 9] = buffer[start + i]; // Namen der Perspektiven
+							name[i - 9] = buffer[start + i]; // Name of Perspective
 						}
 						name[buffer[start + 1] - 7] = '\0';
 						strcpy(tmp_event.linkage_descr[tmp_event.number_perspectives].name, name);
 					}
 					tmp_event.number_perspectives++;
 				}
-				else if (buffer[start] == 0x4e) // extended_event_descripto
+				else if (buffer[start] == 0x4e) // extended_event_descriptor
 				{
 					int pos = start + 6 + buffer[start + 6];
 
@@ -519,7 +525,7 @@ void eit::readSchedule(int SID, osd *osd)
 					int text_length = 0;
 					while (start < count + descriptors_length)
 					{
-						if (buffer[start] == 0x4d) // short_event_descripto
+						if (buffer[start] == 0x4d) // short_event_descriptor
 						{	
 							std::string tmp_string;
 							int event_name_length = buffer[start + 5];
@@ -548,18 +554,18 @@ void eit::readSchedule(int SID, osd *osd)
 								{
 								}
 							}
-							else // Formel 1 Perspektiven - Linkage type 0xb0
+							else // Formel 1 Perspective - Linkage type 0xb0
 							{
 								for (int i = 9; i <= buffer[start + 1] + 1; i++)
 								{
-									name[i - 9] = buffer[start + i]; // Namen der Perspektiven
+									name[i - 9] = buffer[start + i]; // Name of Perspective
 								}
 								name[buffer[start + 1] - 7] = '\0';
 								strcpy(linkage_descr[number_perspectives].name, name);
 							}
 							number_perspectives++;
 						}
-						else if (buffer[start] == 0x4e) // extended_event_descripto
+						else if (buffer[start] == 0x4e) // extended_event_descriptor
 						{
 							int pos = start + 6 + buffer[start + 6];
 							

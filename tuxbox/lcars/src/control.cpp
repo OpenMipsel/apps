@@ -1070,8 +1070,6 @@ int control::runCommand(command_class command, bool val)
 				lcd_obj->putText(8, 13, 0, ostr.str());
 				lcd_obj->setTextSize(12);
 				lcd_obj->putText(8, 33, 0, channels_obj->getCurrentServiceName());
-				//lcd_obj->setTextSize(12);
-				//lcd_obj->putText(80, 58, 0, "23:39");
 			}
 			else if (command.args[0] == "Audio")
 			{

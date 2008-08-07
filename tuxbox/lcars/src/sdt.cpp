@@ -15,6 +15,18 @@
  ***************************************************************************/
 /*
 $Log: sdt.cpp,v $
+Revision 1.10.6.1  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
+Revision 1.10  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.9  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.8  2002/09/18 17:31:03  TheDOC
 replaced O_RDONLY with O_RDWR on demux-device-open, stupid me
 
@@ -46,8 +58,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <memory.h>
 #include <stdio.h>
 
-#include <ost/dmx.h>
-
+#include "devices.h"
 #include "sdt.h"
 #include "channels.h"
 
@@ -56,13 +67,12 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 int sdt::getChannels(channels *channels)
 {
 	int fd, r;
-	struct dmxSctFilterParams flt;
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 
-	// Lies den SDT
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	fd=open(DEMUX_DEV, O_RDWR);
 
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 	r = BSIZE;
 	flt.pid            = 0x11;
 	flt.filter.filter[0] = 0x42;
@@ -92,7 +102,7 @@ int sdt::getChannels(channels *channels)
 		int length = ((buffer[start + 3] & 0xf) << 8) | buffer[start + 4], counter = 0;;
 		while (length > counter)
 		{
-			if (buffer[start + 5 + counter] == 0x48) // Service Descripto
+			if (buffer[start + 5 + counter] == 0x48)
 			{
 				type = buffer[start + 5 + counter + 2];
 
@@ -115,7 +125,7 @@ int sdt::getChannels(channels *channels)
 					strcpy(serviceName, "N/A");
 
 			}
-			else if (buffer[start + 5 + counter] == 0x53) // CA
+			else if (buffer[start + 5 + counter] == 0x53)
 			{
 				emmpids = buffer[start + 5 + counter + 1] / 2;
 				for (int i = 0; i < emmpids; i++)
@@ -123,7 +133,7 @@ int sdt::getChannels(channels *channels)
 					caid[i] = (buffer[start + 5 + counter + 2 + i * 2] << 8) | buffer[start + 5 + counter + 2 + i * 2 + 1];
 				}
 			}
-			else if (buffer[start + 5 + counter] == 0x4b) // nvod-service
+			else if (buffer[start + 5 + counter] == 0x4b)
 			{
 				nvods = buffer[start + 5 + counter + 1] / 6;
 				if (nvods > 8)
@@ -140,7 +150,7 @@ int sdt::getChannels(channels *channels)
 		std::string  sname(serviceName);
 		std::string  pname(providerName);
 
-		if (type != -1) // no nvod-services
+		if (type != -1)
 		{
 			(*channels).addChannel();
 			(*channels).setCurrentTS(transport_stream_id);
@@ -168,15 +178,14 @@ int sdt::getChannels(channels *channels)
 void sdt::getNVODs(channels *channels)
 {
 	int fd, r;
-	struct dmxSctFilterParams flt;
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 
-	// Lies den SDT
-	//printf("Reading SDT\n");
-	//printf("looking for SID %x\n", (*channels).getCurrentSID());
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	printf("Reading SDT\n");
+	printf("looking for SID %x\n", (*channels).getCurrentSID());
+	fd=open(DEMUX_DEV, O_RDWR);
 
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 	r = BSIZE;
 	flt.pid            = 0x11;
 	flt.filter.filter[0] = 0x42;
@@ -191,7 +200,7 @@ void sdt::getNVODs(channels *channels)
 	int start = 11;
 	while (start < r - 5)
 	{
-		//printf("SID: %x\n", (buffer[start] << 8) | buffer[start + 1]);
+		printf("SID: %x\n", (buffer[start] << 8) | buffer[start + 1]);
 		int type = -1;
 		char providerName[200];
 		char serviceName[200];
@@ -205,7 +214,7 @@ void sdt::getNVODs(channels *channels)
 		int length = ((buffer[start + 3] & 0xf) << 8) | buffer[start + 4], counter = 0;;
 		while (length > counter)
 		{
-			if (buffer[start + 5 + counter] == 0x48) // Service Descriptor
+			if (buffer[start + 5 + counter] == 0x48)
 			{
 				type = buffer[start + 5 + counter + 2];
 
@@ -228,7 +237,7 @@ void sdt::getNVODs(channels *channels)
 					strcpy(serviceName, "N/A");
 
 			}
-			else if (buffer[start + 5 + counter] == 0x53) // CA
+			else if (buffer[start + 5 + counter] == 0x53)
 			{
 				emmpids = buffer[start + 5 + counter + 1] / 2;
 				for (int i = 0; i < emmpids; i++)
@@ -236,7 +245,7 @@ void sdt::getNVODs(channels *channels)
 					caid[i] = (buffer[start + 5 + counter + 2 + i * 2] << 8) | buffer[start + 5 + counter + 2 + i * 2 + 1];
 				}
 			}
-			else if (buffer[start + 5 + counter] == 0x4b) // nvod-service
+			else if (buffer[start + 5 + counter] == 0x4b)
 			{
 				nvods = buffer[start + 5 + counter + 1] / 6;
 				if (nvods > 8)
@@ -256,7 +265,7 @@ void sdt::getNVODs(channels *channels)
 
 		if (type != -1 && (*channels).getCurrentSID() == ((buffer[start] << 8) | buffer[start + 1]))
 		{
-			//printf("Name: %s\n", serviceName);
+			printf("Name: %s\n", serviceName);
 			(*channels).clearCurrentNVODs();
 			(*channels).setCurrentNVODCount(nvods);
 			for (int i = 0; i < nvods; i++)

@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: network.cpp,v $
+Revision 1.18.6.2  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.18.6.1  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -177,7 +183,7 @@ std::string network::replace_vars(std::string tmp_string)
 					work_string = work_string.substr(1);
 					position++;
 				}
-				//std::cout << work_string << std::endl;
+				std::cout << work_string << std::endl;
 			}
 		}
 	} while(!quit);
@@ -264,10 +270,10 @@ void *network::startlistening(void *object)
 			perror("read()");
 			exit(5);
 		}
-		//printf("Bytes read: %d\n", read_size);
+		printf("Bytes read: %d\n", read_size);
 
 		buffer[read_size] = '\0';
-		//printf("%s", buffer);
+		printf("%s", buffer);
 
 		int parm_count = 0;
 		int act_pos = 0;
@@ -323,8 +329,8 @@ void *network::startlistening(void *object)
 
 				if (path[1] == "" && counter2 == 2)
 				{
-					//printf("GET root\n");
-					/*write(inbound_connection, headerok.c_str(), headerok.length());
+					printf("GET root\n");
+					write(inbound_connection, headerok.c_str(), headerok.length());
 					write(inbound_connection, (*n->setting).getVersion().c_str(), (*n->setting).getVersion().length());
 					strcpy(writebuffer, "<br><br><a href=\"/channels/gethtmlchannels\">Channellist</a>");
 					write(inbound_connection, writebuffer, strlen(writebuffer));
@@ -333,7 +339,7 @@ void *network::startlistening(void *object)
 					n->writetext("<br><br><a href=\"/epg/now\">EPG Now</a>");
 					n->writetext("<br><br><a href=\"/epg/next\">EPG Next</a>");
 					strcpy(writebuffer, "<br><br><a href=\"/channels/lcars.dvb\">Channellist in DVB2000-format</a>");
-					write(inbound_connection, writebuffer, strlen(writebuffer));*/
+					write(inbound_connection, writebuffer, strlen(writebuffer));
 					path[1] = "file";
 					path[2] = "start.htm";
 					counter2 = 4;
@@ -397,7 +403,6 @@ void *network::startlistening(void *object)
 					}
 					else if (path[2].substr(0, 3) == "epg")
 					{
-						//int number = atoi(path[2].substr(4).c_str());
 						write(inbound_connection, headertextok.c_str(), headertextok.length());
 
 						event tmp_event = n->eit_obj->waitForNow();
@@ -751,7 +756,7 @@ void *network::startlistening(void *object)
 			{
 				post = true;
 				postline = command[i];
-				//std::cout << "Postline: " << postline << std::endl;
+				std::cout << "Postline: " << postline << std::endl;
 			}
 		}
 		if (post)
@@ -768,7 +773,7 @@ void *network::startlistening(void *object)
 			int counter2 = 0;
 			while(std::getline(iss2, path[counter2++], '/'));
 
-			//std::cout << "PATH[1]: " << path[1] << std::endl;
+			std::cout << "PATH[1]: " << path[1] << std::endl;
 			if (path[1] == "command")
 			{
 				std::string parameters(command[parm_count - 1]);
@@ -781,7 +786,7 @@ void *network::startlistening(void *object)
 					var_list.insert(var_list.end(), tmp_string);
 				for (int i = 0; (unsigned int) i < var_list.size(); i++)
 				{
-					//std::cout << "command2" << std::endl;
+					std::cout << "command2" << std::endl;
 					std::stringstream iss2(var_list[i]);
 					std::getline(iss2, tmp_string, '=');
 					if (tmp_string == "command")
@@ -799,13 +804,13 @@ void *network::startlistening(void *object)
 				if (tmp_string == "command")
 				{
 					std::replace(command.begin(), command.end(), '+', ' ');
-					//std::cout << "Command: " << command << std::endl;
+					std::cout << "Command: " << command << std::endl;
 					n->control_obj->runCommand(n->control_obj->parseCommand(command));
 				}
 				else if (tmp_string == "sub")
 				{
 					std::replace(command.begin(), command.end(), '+', ' ');
-					//std::cout << "Command: " << command << std::endl;
+					std::cout << "Command: " << command << std::endl;
 					n->control_obj->runSub(command);
 				}
 				std::string response = "<html><body><form action=\"http://192.168.40.4/command\" method=post><input type=text name=command size=80><br><input type=submit name=submit value=\"Befehl ausfuehren\"><br></form><form action=\"http://192.168.40.4/command\" method=post><input type=text name=sub size=80><br><input type=submit name=submit value=\"Sub starten\"></form></body></html>";
@@ -813,18 +818,15 @@ void *network::startlistening(void *object)
 				write(inbound_connection, response.c_str(), response.length());
 
 			}
-			/*else if (path[1] == "SID2")
+			else if (path[1] == "SID2")
 			{
 				std::string request(buffer);
 				std::string xml = request.substr(request.find("\r\n\r\n"));
-				//std::cout << "Parsing\n" << std::endl;
-				n->xmlrpc_obj.setInput(xml);
-				n->xmlrpc_obj.parse();
-				//std::cout << "End Parsing\n" << std::endl;
-				xml = n->xmlrpc_obj.getOutput();
+				std::cout << "Parsing\n" << std::endl;
+				std::cout << "End Parsing\n" << std::endl;
 
-				////std::cout << xml << std::endl;
-				//std::cout << "Making HTTP\n" << std::endl;
+				std::cout << xml << std::endl;
+				std::cout << "Making HTTP\n" << std::endl;
 				std::stringstream ostr;
 				ostr.clear();
 
@@ -837,10 +839,10 @@ void *network::startlistening(void *object)
 				ostr << xml << std::ends;
 
 				std::string send = ostr.str();
-				//std::cout << "Sending now XML\n" << std::endl;
-				////std::cout << send << std::endl;
+				std::cout << "Sending now XML\n" << std::endl;
+				std::cout << send << std::endl;
 				write(inbound_connection, send.c_str(), send.length());
-			}*/
+			}
 
 		}
 

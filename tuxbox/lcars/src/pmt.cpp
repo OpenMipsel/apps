@@ -15,6 +15,18 @@
  ***************************************************************************/
 /*
 $Log: pmt.cpp,v $
+Revision 1.10.6.1  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
+Revision 1.10  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
+Revision 1.9  2002/11/12 19:09:02  obi
+ported to dvb api v3
+
 Revision 1.8  2002/09/18 17:31:03  TheDOC
 replaced O_RDONLY with O_RDWR on demux-device-open, stupid me
 
@@ -46,8 +58,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <memory.h>
 #include <stdio.h>
 
-#include <ost/dmx.h>
-
+#include "devices.h"
 #include "pmt.h"
 
 #define BSIZE 10000
@@ -55,13 +66,12 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 pmt_data pmt::readPMT(int pmt_pid)
 {
 	int fd, r;
-	struct dmxSctFilterParams flt;
+	struct dmx_sct_filter_params flt;
 	unsigned char buffer[BSIZE];
 
-	// Lies den PMT
-	fd=open("/dev/dvb/card0/demux0", O_RDWR);
+	fd=open(DEMUX_DEV, O_RDWR);
 
-	memset (&flt.filter, 0, sizeof (struct dmxFilter));
+	memset (&flt.filter, 0, sizeof (struct dmx_filter));
 	r = BSIZE;
 	flt.pid            = pmt_pid;
 	flt.filter.filter[0] = 0x2;
@@ -86,7 +96,7 @@ pmt_data pmt::readPMT(int pmt_pid)
 	int start = 12;
 	while (start < 12 + descriptors_length)
 	{
-		if (buffer[start] == 0x09) // CA
+		if (buffer[start] == 0x09)
 		{
 			tmp_pmt.CAID[tmp_pmt.ecm_counter] = (buffer[start + 2] << 8) | buffer[start + 3];
 			tmp_pmt.ECM[tmp_pmt.ecm_counter++] = ((buffer[start + 4] & 0x1f) << 8) | buffer[start + 5];
@@ -107,13 +117,13 @@ pmt_data pmt::readPMT(int pmt_pid)
 		int descriptors_length = ((buffer[count + 3] & 0xf) << 8 | buffer[count + 4]);
 		while (start < count + 5 + descriptors_length)
 		{
-			if (buffer[start] == 0x52) // stream_identifier_descripto
+			if (buffer[start] == 0x52)
 			{
 				tmp_pmt.component[tmp_pmt.pid_counter] = buffer[start + 2];
 			}
-			else if (buffer[start] == 0x56) // teletext_descripto
+			else if (buffer[start] == 0x56)
 			{
-				//printf("---> teletext_descriptor: <---\n");
+				printf("---> teletext descriptor: <---\n");
 				for (int i = start + 3; i < start + 3 + buffer[start + 1]; i += 5)
 				{
 				}

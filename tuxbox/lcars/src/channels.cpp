@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: channels.cpp,v $
+Revision 1.22.6.4  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.22.6.3  2008/08/07 17:56:43  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -258,8 +264,8 @@ void channels::setPerspective(int number)
 		int SID = getCurrentNVOD_SID(number);
 		if (old_TS != TS || old_ONID != ONID)
 		{
-			//std::cout << "New TS selected" << std::endl;
-			//std::cout << "The new TS is: " << tmp_link.TS << std::endl;
+			std::cout << "New TS selected" << std::endl;
+			std::cout << "The new TS is: " << tmp_link.TS << std::endl;
 			tune(TS, ONID);
 		}
 		old_ONID = ONID;
@@ -499,10 +505,10 @@ void channels::zapCurrentAudio(int pid)
 
 	if (current_mode == CHANNEL)
 	{
-		//if (basic_channellist[cur_pos].DD[pid])
-		//printf("Dolby Digital ON ......................................\n");
-		//else
-		//printf("Dolby Digital OFF ......................................\n");
+		if (basic_channellist[cur_pos].DD[pid])
+		printf("Dolby Digital ON ......................................\n");
+		else
+		printf("Dolby Digital OFF ......................................\n");
 		hardware_obj->useDD(getCurrentDD(apid));
 		zap_obj->zap_audio(getCurrentVPID(), getCurrentAPID(apid), ECM, getCurrentSID(), getCurrentONID());
 
@@ -533,10 +539,8 @@ void channels::zapCurrentAudio(int pid)
 				VPID = NVOD_pmt.PID[i];
 			else if (NVOD_pmt.type[i] == 0x04 || NVOD_pmt.type[i] == 0x03 || NVOD_pmt.type[i] == 0x06)
 			{
-				//printf("an APID: %04x\n", pmt_entry.PID[i]);
 				APID.insert(APID.end(), NVOD_pmt.PID[i]);
 			}
-			//printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
 		}
 		zap_obj->zap_audio(VPID, APID[apid] , ECM, getCurrentNVOD_SID(curr_perspective), getCurrentNVOD_ONID(curr_perspective));
 	}
@@ -1227,9 +1231,9 @@ bool channels::tune(int TS, int ONID)
 	std::multimap<struct transponder, struct transportstream>::iterator it = basic_TSlist.find(trans);
 
 	//std::cout << basic_TSlist.size() << std::endl;
-	//std::cout << "ONID: " << trans.ONID << std::endl;
-	//std::cout << "TS: " << trans.TS << std::endl;
-	//std::cout << "Tuning (channel) to " << (*it).second.FREQU << " - " << (*it).second.SYMBOL << std::endl;
+	std::cout << "ONID: " << trans.ONID << std::endl;
+	std::cout << "TS: " << trans.TS << std::endl;
+	std::cout << "Tuning (channel) to " << (*it).second.FREQU << " - " << (*it).second.SYMBOL << std::endl;
 	return tuner_obj->tune((*it).second.FREQU, (*it).second.SYMBOL, (*it).second.POLARIZATION, (*it).second.FEC, (*cur_pos_TS).second.diseqc);
 }
 
@@ -1373,7 +1377,7 @@ void channels::saveTS()
 		tmp_ts = it->second;
 		fwrite(&tmp_ts, sizeof(transportstream), 1, fp);
 
-		//printf("TS: %d - FREQU: %ld - SYMBOL: %d - POL: %d - FEC: %d\n", (*it).second.trans.TS, (*it).second.FREQU, (*it).second.SYMBOL, (*it).second.POLARIZATION, (*it).second.FEC);
+		printf("TS: %d - FREQU: %ld\n SYMBOL: %d\n POL: %d\n FEC: %d\n", (*it).second.trans.TS, (*it).second.FREQU, (*it).second.SYMBOL, (*it).second.POLARIZATION, (*it).second.FEC);
 	}
 
 	fclose(fp);

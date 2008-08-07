@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: settings.cpp,v $
+Revision 1.13.4.5  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.13.4.4  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -278,7 +284,7 @@ void settings::setIP(char n1, char n2, char n3, char n4)
 
 	sin.sin_family = AF_INET;
 	char test[] = "192.168.1.1";
-	if (inet_aton(test, &sin.sin_addr)==0) { // 0 if error occurs
+	if (inet_aton(test, &sin.sin_addr)==0) {
 	}
 
 	strcpy(ifr.ifr_name, "eth0");
@@ -419,7 +425,7 @@ void settings::loadSettings()
 			}
 			if (ipcount != 4)
 			{
-				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings\n" << cmd << std::endl;
 	printf("----------------> IP SETTINGS <--------------------\n");
 				continue;
 			}
@@ -458,7 +464,7 @@ void settings::loadSettings()
 			else if (parm == "false")
 				setting.supportOldRc = false;
 			else
-				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings\n" << cmd << std::endl;
 	printf("----------------> OLD RC SUPPORT <--------------------\n");
 		}
 		else if (cmd == "RCRepeat")
@@ -468,7 +474,7 @@ void settings::loadSettings()
 			else if (parm == "false")
 				setting.rcRepeat = false;
 			else
-				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings\n" << cmd << std::endl;
 	printf("----------------> RC REPEAT <--------------------\n");
 		}
 		else if (cmd == "SwitchVCR")
@@ -478,7 +484,7 @@ void settings::loadSettings()
 			else if (parm == "false")
 				setting.switch_vcr = false;
 			else
-				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings\n" << cmd << std::endl;
 	printf("----------------> SWITCH VCR <--------------------\n");
 		}
 		else if (cmd == "ProxyServer")
@@ -503,7 +509,7 @@ void settings::loadSettings()
 		}
 		else
 		{
-			std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+			std::cout << "Error in Config-File on load settings\n" << cmd << std::endl;
 	printf("----------------> GLOBAL SETTINGS ERROR <--------------------\n");
 		}
 	}

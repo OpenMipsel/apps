@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: osd.cpp,v $
+Revision 1.10.6.4  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.10.6.3  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -99,7 +105,7 @@ osd::osd(settings &set, fbClass *f, variables *v) :setting(set)
 	proginfo_shown = false;
 	vars->setvalue("%PROGINFO_SHOWN", "false");
 	proginfo_hidetime = time(0) + 10000;
-	//printf("OSD\n");
+	printf("OSD\n");
 	//fb->setMode(720, 576, 16);
 	fb->clearScreen();
 
@@ -165,7 +171,7 @@ void osd::loadSkin(std::string filename)
 				list.insert(list.end(), line_str);
 		} while (strncmp(line, "***", 3));
 
-		//printf("Commando: %s\n", command.c_str());
+		printf("Command: %s\n", command.c_str());
 		if (command == "general:\n")
 		{
 			for (int i = 0; i < (int) list.size(); i++)
@@ -175,12 +181,12 @@ void osd::loadSkin(std::string filename)
 		}
 		else if (command == "proginfo_show:\n")
 		{
-			//printf("Proginfo\n");
+			printf("Proginfo\n");
 			setProgramCommandListShow(list);
 		}
 		else if (command == "proginfo_hide:\n")
 		{
-			//printf("Proginfo2\n");
+			printf("Proginfo2\n");
 			setProgramCommandListHide(list);
 		}
 		else if (command == "proginfo_servicenumber:\n")
@@ -220,7 +226,7 @@ void osd::loadSkin(std::string filename)
 void osd::addCommand(std::string command)
 {
 	command_queue.push(command);
-	//printf("Command: %s\n", command.c_str());
+	printf("Command: %s\n", command.c_str());
 }
 
 void osd::executeQueue()
@@ -686,7 +692,7 @@ void osd::executeCommand()
 	}
 	else
 	{
-		//printf("--------->UNKNOWN OSD-COMMAND<----------\n");
+		printf("--------->UNKNOWN OSD-COMMAND<----------\n");
 	}
 
 }
@@ -1003,7 +1009,7 @@ void osd::setNextTime(time_t starttime)
 		if (prog_com_list_nexttime.size() < 1)
 		{
 			fb->fillBox(65, 495, 125, 515, 0);
-			fb->putText(70, 497, 0, nexttime); // Uhrzeit des n„chsten Programms
+			fb->putText(70, 497, 0, nexttime);
 		}
 		else
 		{
@@ -1028,7 +1034,7 @@ void osd::setNextDescription(std::string  description)
 		if (prog_com_list_nextdescription.size() < 1)
 		{
 			fb->fillBox(149, 495, 650, 515, 0);
-			fb->putText(150, 497, 0, nextDescription, 490); // Erste Zeile des n„chsten Programms
+			fb->putText(150, 497, 0, nextDescription, 490);
 		}
 		else
 		{
@@ -1121,13 +1127,12 @@ void osd::showProgramInfo()
 
 	if (prog_com_list_show.size() < 1)
 	{
-		//printf("%d - %s\n", serviceNumber, serviceName.c_str());
-		//printf("Now (%d): %s\n", (int)nowTime, nowDescription.c_str());
-		//printf("Next (%d): %s\n", (int)nextTime, nextDescription.c_str());
+		printf("%d - %s\n", serviceNumber, serviceName.c_str());
+		printf("Now (%d): %s\n", (int)nowTime, nowDescription.c_str());
+		printf("Next (%d): %s\n", (int)nextTime, nextDescription.c_str());
 
 		char pname[30], now[200], next[200];
 
-		//fb->fillBox(100, 100, 200, 200, 9);
 		fb->fillBox(65, 420, 650, 550, 0);
 		for (int j = 0; j <= 10; j++)
 		{
@@ -1171,10 +1176,10 @@ void osd::showProgramInfo()
 		sprintf(number, "%d", serviceNumber);
 		fb->putText(77, 32, 0, number, 43);
 
-		fb->putText(560, 32, 0, acttime); // aktuelle Uhrzeit
+		fb->putText(560, 32, 0, acttime);
 
-		fb->putText(70, 427, 0, nowtime); // Uhrzeit des laufenden Programms
-		fb->putText(70, 497, 0, nexttime); // Uhrzeit des n„chsten Programms
+		fb->putText(70, 427, 0, nowtime);
+		fb->putText(70, 497, 0, nexttime);
 
 		strcpy(now, nowDescription.c_str());
 		strcpy(next, nextDescription.c_str());
@@ -1200,9 +1205,9 @@ void osd::showProgramInfo()
 		}
 
 
-		fb->putText(150, 427, 0, now, 490); // Erste Zeile des aktuellen Programms
+		fb->putText(150, 427, 0, now, 490);
 
-		fb->putText(150, 497, 0, next, 490); // Erste Zeile des n„chsten Programms
+		fb->putText(150, 497, 0, next, 490);
 
 		if (vars->getvalue("%SHOWHELP") == "true")
 		{
@@ -1265,7 +1270,7 @@ void osd::hideProgramInfo()
 
 	if (prog_com_list_hide.size() < 1)
 	{
-		//printf("Hiding program info\n");
+		printf("Hide program info\n");
 		fb->fillBox(30, 28, 670, 52, -1);
 		fb->fillBox(30, 380, 719, 575, -1);
 	}
@@ -1375,7 +1380,7 @@ void osd::showNumberEntry()
 
 void osd::hideNumberEntry()
 {
-	//printf("Hiding number entry\n");
+	printf("Hide number entry\n");
 	fb->fillBox(33, 30, 350, 100, -1);
 }
 
@@ -1567,7 +1572,7 @@ void osd::showEPG()
 	nlcounter = 0;
 	int last = 0;
 	int length = 0;
-	//printf("Start\n");
+	printf("Start\n");
 	for (int i = 0; i < (int) event_extended_text.length(); i++)
 	{
 		if (event_extended_text[i] == ' ')
@@ -1594,7 +1599,7 @@ void osd::showEPG()
 		}
 
 	}
-	////printf("%d\n", nlcounter);
+	printf("%d\n", nlcounter);
 
 	last = 0;
 	int i;
@@ -1609,7 +1614,7 @@ void osd::showEPG()
 	}
 	for (i = 0; i < stop; i++)
 	{
-		////printf("%d - %d\n", i, newlines[i]);
+		printf("%d - %d\n", i, newlines[i]);
 		fb->putText(115, 150 + 20 * i, 7, event_extended_text.substr(last, newlines[i] - last));
 		last = newlines[i] + 1;
 	}
@@ -1617,7 +1622,7 @@ void osd::showEPG()
 	{
 		fb->putText(115, 150 + 20 * (i), 7, event_extended_text.substr(newlines[i - 1] + 1));
 	}
-	//printf("Ende\n");
+	printf("End\n");
 	shown = 0;
 }
 
@@ -1647,7 +1652,7 @@ void osd::showPrevEPGPage()
 	}
 	for (i = shown * 15; i < stop; i++)
 	{
-		//printf("%d - %d\n", i, newlines[i]);
+		printf("%d - %d\n", i, newlines[i]);
 		fb->putText(115, 150 + 20 * (i - shown * 15), 7, event_extended_text.substr(last, newlines[i] - last));
 		last = newlines[i] + 1;
 	}
@@ -1683,7 +1688,7 @@ void osd::showNextEPGPage()
 	}
 	for (i = shown * 15; i < stop; i++)
 	{
-		//printf("%d - %d\n", i, newlines[i]);
+		printf("%d - %d\n", i, newlines[i]);
 		fb->putText(115, 150 + 20 * (i - shown * 15), 7, event_extended_text.substr(last, newlines[i] - last));
 		last = newlines[i] + 1;
 	}
@@ -1965,7 +1970,7 @@ void osd::setScanTSNumber(int number)
 
 void osd::showScan()
 {
-	//printf("+-+-+-+-+ Draw Channelscan\n");
+	printf("+-+-+-+-+ Draw Channelscan\n");
 	fb->fillBox(200, 300, 500, 500, 5);
 	fb->fillBox(210, 460, 490, 490, 0);
 	fb->putText(300, 305, 5, "Channel-Scan");
@@ -1991,7 +1996,7 @@ void osd::createSchedule()
 
 void osd::addScheduleInformation(time_t starttime, std::string description, int eventid)
 {
-	//printf("Add: %s\n", description.c_str());
+	printf("Add: %s\n", description.c_str());
 	scheduling tmp_sched;
 	tmp_sched.starttime = starttime;
 	tmp_sched.description = description;
@@ -2001,11 +2006,11 @@ void osd::addScheduleInformation(time_t starttime, std::string description, int 
 
 void osd::selectScheduleInformation(int select, bool redraw)
 {
-	//printf("Selektiere %d von %d\n", select, selected_sched);
-	//if (redraw)
-	//printf("With redraw\n");
-	//else
-	//printf("Without redraw\n");
+	printf("Selected %d from %d\n", select, selected_sched);
+	if (redraw)
+	printf("With redraw\n");
+	else
+	printf("Without redraw\n");
 
 	if (sched.size() == 0)
 		return;
@@ -2037,37 +2042,37 @@ void osd::selectScheduleInformation(int select, bool redraw)
 
 int osd::numberSchedulePages()
 {
-	//printf("9\n");
+	printf("9\n");
 	return (int) ((float)sched.size() / 15) + 1;
 }
 
 void osd::showSchedule(int page)
 {
-	//printf("Begin showing\n");
+	printf("Begin showing\n");
 	shown_page = page;
-	//printf("1\n");
+	printf("1\n");
 	if (shown_page < 0)
 	{
-		//printf("2\n");
+		printf("2\n");
 		shown_page = 0;
 		return;
 	}
 	else if (shown_page >= numberSchedulePages())
 	{
-		//printf("3\n");
+		printf("3\n");
 		shown_page = numberSchedulePages() - 1;
-		//printf("10\n");
+		printf("10\n");
 		return;
 	}
 
 	fb->fillBox(100, 100, 630, 420, 5);
-	//printf("4\n");
+	printf("4\n");
 	int max = 15;
 	if ((page + 1) * 15 > (int)sched.size())
 		max = sched.size() % 15;
-	//printf("Page: %d - Sched.size: %d\n", page, sched.size());
+	printf("Page: %d - Sched.size: %d\n", page, sched.size());
 	fb->setTextSize(0.4);
-	//printf("Max: %d\n", max);
+	printf("Max: %d\n", max);
 	for (int i = 0; i < max; i++)
 	{
 
@@ -2078,7 +2083,7 @@ void osd::showSchedule(int page)
 		fb->putText(105, 107 + i * 20, 5, text);
 		fb->putText(210, 107 + i * 20, 5, sched[page * 15 + i].description, 410);
 	}
-	//printf("End showing\n");
+	printf("End showing\n");
 }
 
 void osd::hideSchedule()
@@ -2093,7 +2098,7 @@ void osd::selectNextScheduleInformation()
 	if ((shown_page + 1) * 15 > (int)sched.size())
 		max = sched.size() % 15;
 
-	//printf("Max: %d - Selected_sched: %d - shown_page: %d - numberSchedulePages: %d\n", max, selected_sched, shown_page, numberSchedulePages());
+	printf("Max: %d - Selected_sched: %d\n shown_page: %d\n numberSchedulePages: %d\n", max, selected_sched, shown_page, numberSchedulePages());
 
 	if (selected_sched + 1 < max)
 		selectScheduleInformation(selected_sched + 1);
@@ -2274,8 +2279,8 @@ void osd::showAbout()
 	fb->putText(170, 270, 5, "Drivers and stuff by the Tuxbox-Team");
 
 	fb->setTextSize(0.4);
-	fb->putText(175, 330, 5, "Info's about LCARS: http://www.chatville.de");
-	fb->putText(180, 350, 5, "Info's about tuxbox: http://dbox2.elxsi.de");
+	fb->putText(175, 330, 5, "Info's about LCARS: http://cablelinux.info");
+	fb->putText(180, 350, 5, "Info's about Dreambox: http://www.dream-multimedia-tv.de");
 }
 
 void osd::hideAbout()

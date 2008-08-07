@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: main.cpp,v $
+Revision 1.31.2.1.2.5  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.31.2.1.2.4  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -201,10 +207,6 @@ int main(int argc, char **argv)
 
 	update update(&osd, &rc, &settings);
 	update.cramfsmtd = 2;
-	//osd.loadSkin("/home/projekte/lcarsneu/skin.lcars");
-	//command_list list;
-	//list.insert(list.end(), "FILLBOX 100 100 200 200 1");
-	//osd.setProgramCommandList(list);
 
 	pig pig;
 	pig.hide();
@@ -242,7 +244,7 @@ int main(int argc, char **argv)
 			char command[100];
 			sprintf(command, "ifconfig eth0 %d.%d.%d.%d", osd.getIPPart(0), osd.getIPPart(1), osd.getIPPart(2), osd.getIPPart(3));
 			printf("%s\n", command);
-			//system(command);
+			system(command);
 
 
 		}
@@ -335,7 +337,7 @@ int main(int argc, char **argv)
 	}
 
 	int apid = 0;
-//	linkage perspective[10];
+	linkage perspective[10];
 	int number_perspectives = 0;
 	int position;
 	int selected;
@@ -343,7 +345,7 @@ int main(int argc, char **argv)
 	int old_TS = 0;
 	pmt_data pmt_entry;
 	int ECM = 0;
-	event now, next/*, nowref*/;
+	event now, next, nowref;
 	int component[10];
 	char audio_description[20];
 	int curr_nvod = 0, nvod_count = 0;
@@ -358,7 +360,6 @@ int main(int argc, char **argv)
 	bool leave = false;
 	bool schedule_read = false;
 	char text[20];
-//	int txtfd;
 
 	hardware.setOutputMode(settings.getOutputFormat());
 	rc.start_thread();
@@ -399,7 +400,7 @@ int main(int argc, char **argv)
 			if (channels.getCurrentTXT() != 0)
 			{
 				osd.addCommand("COMMAND proginfo set_teletext true");			
-				//teletext.startReinsertion(channels.getCurrentTXT());
+				teletext.startReinsertion(channels.getCurrentTXT());
 			}
 			else
 				osd.addCommand("COMMAND proginfo set_teletext false");
@@ -603,7 +604,7 @@ int main(int argc, char **argv)
 					
 					for (int i = 0; i < nvod_count; i++)
 					{
-						//printf("NVOD: TS: %x - SID: %x\n", channels.getCurrentNVOD_TS(i),channels.getCurrentNVOD_SID(i));
+						printf("NVOD: TS: %x - SID: %x\n", channels.getCurrentNVOD_TS(i),channels.getCurrentNVOD_SID(i));
 						nvods[i].TS = channels.getCurrentNVOD_TS(i);
 						nvods[i].SID = channels.getCurrentNVOD_SID(i);
 					}
@@ -624,12 +625,12 @@ int main(int argc, char **argv)
 			osd.setNumberEntry(number);
 			osd.setNumberText(channels.getServiceName(number));
 			osd.addCommand("SHOW number");
-			//printf("%d\n", final_number);
+			printf("%d\n", final_number);
 			do
 			{
 				act_time = time(0);
 				while ((!rc.command_available()) && (time(0) - act_time < 2));
-				//printf("%d\n", (int) (time(0) - act_time));
+				printf("%d\n", (int) (time(0) - act_time));
 				if (time(0) - act_time >= 2)
 					finish = true;
 				else if (rc.command_available())
@@ -871,7 +872,7 @@ int main(int argc, char **argv)
 						apid = 0;
 
 					channels.zapCurrentAudio(apid);
-					//zap.zap_audio(perspective[curr_perspective].VPID, perspective[curr_perspective].APID[apid] , ECM, perspective[curr_perspective].SID, perspective[curr_perspective].ONID);
+					zap.zap_audio(perspective[curr_perspective].VPID, perspective[curr_perspective].APID[apid] , ECM, perspective[curr_perspective].SID, perspective[curr_perspective].ONID);
 						
 
 				}
@@ -882,7 +883,7 @@ int main(int argc, char **argv)
 						apid = channels.getCurrentAPIDcount() - 1;
 
 					channels.zapCurrentAudio(apid);
-					//zap.zap_audio(perspective[curr_perspective].VPID, perspective[curr_perspective].APID[apid] , ECM, perspective[curr_perspective].SID, perspective[curr_perspective].ONID);
+					zap.zap_audio(perspective[curr_perspective].VPID, perspective[curr_perspective].APID[apid] , ECM, perspective[curr_perspective].SID, perspective[curr_perspective].ONID);
 							
 				}
 			} while(key != RC1_GREEN && number == -1 && key != RC1_BLUE && key != RC1_STANDBY && key != RC1_DOWN && key != RC1_UP);
@@ -933,14 +934,14 @@ int main(int argc, char **argv)
 			break;
 			
 		case 6:
-			//printf("Warten auf timeout...\n");
+			printf("Waiting for timeout...\n");
 			act_time = time(0);
 			while ((!rc.command_available()) && (time(0) - act_time < 3));
 			osd.addCommand("HIDE perspective");
 			mode = 5;
 			break;
 		case 7: // NVOD
-			//printf("NVOD\n");
+			printf("NVOD\n");
 
 			do
 			{
@@ -1037,7 +1038,7 @@ int main(int argc, char **argv)
 			
 			} while(key != RC1_GREEN && number == -1 && key != RC1_STANDBY && key != RC1_BLUE && key != RC1_OK);
 			osd.addCommand("HIDE perspective");
-			//printf("%d\n", number);
+			printf("%d\n", number);
 			if (key == RC1_GREEN)
 			{
 				mode = 0;
@@ -1075,13 +1076,13 @@ int main(int argc, char **argv)
 				}				
 			}
 
-			//printf("----------------------\n");
-			//printf("APID: %d\n", apid);
-			//printf("Current NVOD: %d\n", curr_nvod);
+			printf("----------------------\n");
+			printf("APID: %d\n", apid);
+			printf("Current NVOD: %d\n", curr_nvod);
 			if (old_TS != nvods[curr_nvod].TS)
 				channels.tune(nvods[curr_nvod].TS, nvods[curr_nvod].ONID);
 			
-			//printf("Tuning to TS: %d\n", nvods[curr_nvod].TS);
+			printf("Tuning to TS: %d\n", nvods[curr_nvod].TS);
 			
 			
 			zap.close_dev();
@@ -1103,27 +1104,27 @@ int main(int argc, char **argv)
 					nvods[curr_nvod].VPID = pmt_entry.PID[i];
 				else if (pmt_entry.type[i] == 0x04 || pmt_entry.type[i] == 0x03)
 				{
-					//printf("an APID: %04x\n", pmt_entry.PID[i]);
+					printf("an APID: %04x\n", pmt_entry.PID[i]);
 					nvods[curr_nvod].DD[APIDcount] = false;
 					nvods[curr_nvod].APID[APIDcount++] = pmt_entry.PID[i];
 				}
 				else if (pmt_entry.type[i] == 0x06)
 				{
-					//printf("an APID: %04x\n", pmt_entry.PID[i]);
+					printf("on APID: %04x\n", pmt_entry.PID[i]);
 					nvods[curr_nvod].DD[APIDcount] = true;
 					nvods[curr_nvod].APID[APIDcount++] = pmt_entry.PID[i];
 					
 				}
-				//printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
+				printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
 			}
 
-			//printf("ECMs: %d\n", pmt_entry.ecm_counter);
+			printf("ECMs: %d\n", pmt_entry.ecm_counter);
 				
 			for (int i = 0; i < pmt_entry.ecm_counter; i++)
 			{
 				if (settings.getCAID() == pmt_entry.CAID[i])
 					ECM = pmt_entry.ECM[i];
-				//printf("CAID: %04x - ECM: %04x\n", pmt_entry.CAID[i], pmt_entry.ECM[i]);
+				printf("CAID: %04x - ECM: %04x\n", pmt_entry.CAID[i], pmt_entry.ECM[i]);
 
 			}
 			
@@ -1147,10 +1148,10 @@ int main(int argc, char **argv)
 			
 			for (int i = 0; i < next.number_components; i++)
 			{
-				//printf("Component_tag: %x\n", nowref.component_tag[i]);
+				printf("Component_tag: %x\n", nowref.component_tag[i]);
 				if (next.component_tag[i] == video_component)
 				{
-					//printf("Video_component_type: %d\n", next.component_type[i]);
+					printf("Video_component_type: %d\n", next.component_type[i]);
 				}
 				else if (now.component_tag[i] == component[apid])
 				{
@@ -1160,10 +1161,10 @@ int main(int argc, char **argv)
 			
 			for (int i = 0; i < now.number_components; i++)
 			{
-				//printf("Component_tag: %x\n", nowref.component_tag[i]);
+				printf("Component_tag: %x\n", nowref.component_tag[i]);
 				if (now.component_tag[i] == video_component)
 				{
-					//printf("Video_component_type: %d\n", now.component_type[i]);
+					printf("Video_component_type: %d\n", now.component_type[i]);
 				}
 				else if (now.component_tag[i] == component[apid])
 				{
@@ -1340,10 +1341,10 @@ int main(int argc, char **argv)
 				}
 				else if (number == 5)
 				{
-					//printf("Teletext\n");
+					printf("Teletext\n");
 					if (channels.getCurrentTXT() != 0)
 					{
-					//	teletext.getTXT(channels.getCurrentTXT());
+						teletext.getTXT(channels.getCurrentTXT());
 					}
 				}
 				else if (number == 6)
@@ -1352,12 +1353,12 @@ int main(int argc, char **argv)
 				}
 				else if (number == 7 && update.cramfsmtd)
 				{
-					//printf("7 pressed\n");
+					printf("7 pressed\n");
 					update.run(UPDATE_MANUALFILES);
 				}
 				else if (number == 8 && update.cramfsmtd)
 				{
-					//printf("8 pressed\n");
+					printf("8 pressed\n");
 					update.run(UPDATE_INET);
 				}
 				else if (number == 9)
@@ -1563,7 +1564,7 @@ int main(int argc, char **argv)
 			
 			break;
 		case 11: // Wait for key or timeout
-			//printf("Warten auf timeout...\n");
+			printf("Wait for timeout...\n");
 			act_time = time(0);
 			while ((!rc.command_available()) && (time(0) - act_time < 3));
 			osd.hideVolume();
@@ -1646,7 +1647,6 @@ int main(int argc, char **argv)
 			osd.addMenuEntry(1, "IP Setup");
 			osd.addMenuEntry(2, "Gateway Setup");
 			osd.addMenuEntry(3, "DNS Setup");
-/*	TODO: Fix cramfs declaration	*/
 			if (update.cramfsmtd)
 			{
 				osd.addMenuEntry(0, "LCARS UPDATE", 3);
@@ -1949,7 +1949,7 @@ int main(int argc, char **argv)
 			plugins.loadPlugins();
 			osd.createMenu();
 			osd.setMenuTitle("Plug-Ins");
-			//printf ("NOP: %d\n", plugins.getNumberOfPlugins());
+			printf ("NOP: %d\n", plugins.getNumberOfPlugins());
 			for (int i = 0; i < plugins.getNumberOfPlugins(); i++)
 			{
 				
@@ -2016,7 +2016,7 @@ int main(int argc, char **argv)
 
 					plugins.setfb(fb.getHandle());
 					plugins.setrc(rc.getHandle());
-					//printf("Handle: %d\n", rc.getHandle());
+					printf("Handle: %d\n", rc.getHandle());
 					plugins.setlcd(-1);
 					plugins.setvtxtpid(channels.getCurrentTXT());
 					rc.stoprc();
@@ -2136,11 +2136,11 @@ int main(int argc, char **argv)
 	else
 		on_time = 0;
 
-	//printf("on_time: %d\n", timer.getTime() - time(0));
-	//printf("on_time: %d\n", on_time);
+	printf("on time: %d\n", timer.getTime() - time(0));
+	printf("on time: %d\n", on_time);
 	ioctl(fpfd, FP_IOCTL_SET_WAKEUP_TIMER, &on_time);
 	ioctl(fpfd, FP_IOCTL_GET_WAKEUP_TIMER, &on_time);
-	//printf("on_time: %d\n", on_time);
+	printf("on time: %d\n", on_time);
 	sleep(1);
 	ioctl(fpfd,FP_IOCTL_POWEROFF);
 	close(fpfd);

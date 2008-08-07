@@ -16,7 +16,7 @@ lcars_SOURCES = \
 	osd.cpp sdt.cpp zap.cpp nit.cpp pat.cpp pmt.cpp \
 	eit.cpp settings.cpp channels.cpp rc.cpp help.cpp fbClass.cpp \
 	tot.cpp checker.cpp tuner.cpp update.cpp control.cpp variables.cpp \
-	ir.cpp cam.cpp lcd.cpp tdt.cpp container.cpp serial.cpp showview.cpp 
+	ir.cpp cam.cpp lcd.cpp tdt.cpp container.cpp serial.cpp showview.cpp
 
 lcars_CFLAGS = -Werror
 	-DHAVE_DREAMBOX_HARDWARE

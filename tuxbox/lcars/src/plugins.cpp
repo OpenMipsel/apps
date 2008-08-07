@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: plugins.cpp,v $
+Revision 1.9.2.1.2.5  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.9.2.1.2.4  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -71,8 +77,8 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 
 void plugins::loadPlugins()
 {
-	//printf("Checking plugins-directory\n");
-	//printf("Dir: %s\n", PLUGINDIR "/");
+	printf("Checking plugins-directory\n");
+	printf("Dir: %s\n", PLUGINDIR "/");
 
 	struct dirent **namelist;
 
@@ -104,7 +110,7 @@ void plugins::loadPlugins()
 			plugin_list.insert(plugin_list.end(), new_plugin);
 		}
 	}
-	//printf("%d plugins found...\n", number_of_plugins);
+	printf("%d plugins found...\n", number_of_plugins);
 
 }
 
@@ -218,41 +224,7 @@ void plugins::parseCfg(plugin *plugin_data)
 
 	inFile.close();
 
-	/*//printf("Name: %s\n", plugin_data->cfgfile.c_str());
-	fd = fopen(plugin_data->cfgfile.c_str(), "rt");
-
-	char text[512];
-	while(fgets(text, 512, fd))
-	{
-		char tmp_text[512];
-		sscanf(text, "pluginversion=%d\n", &(plugin_data->version));
-		
-		if (sscanf(text, "name=%s\n", tmp_text))
-			plugin_data->name = std::string(tmp_text);
-
-		if (sscanf(text, "desc=%s\n", tmp_text))
-			plugin_data->description = std::string(tmp_text);
-
-		if (sscanf(text, "depend=%s\n", tmp_text))
-			plugin_data->depend = std::string(tmp_text);
-
-		sscanf(text, "type=%d\n", &(plugin_data->type));
-
-		sscanf(text, "needfb=%d\n", &(plugin_data->fb));
-
-		sscanf(text, "needrc=%d\n", &(plugin_data->rc));
-
-		sscanf(text, "needlcd=%d\n", &(plugin_data->lcd));
-		sscanf(text, "needvtxtpid=%d\n", &(plugin_data->vtxtpid));
-		
-		sscanf(text, "pigon=%d\n", &(plugin_data->showpig));
-		sscanf(text, "pigsize=%dx%d\n", &(plugin_data->sizex), &(plugin_data->sizey));
-		sscanf(text, "pigpos=%d,%d\n", &(plugin_data->posx), &(plugin_data->posy));
-		
-	}
-
-	local_plugin_data = plugin_data;
-	fclose(fd);*/
+	printf("Name: %s\n", plugin_data->cfgfile.c_str());
 }
 
 PluginParam* plugins::makeParam(const char * const id, PluginParam *next)
@@ -334,20 +306,20 @@ void plugins::startPlugin(int number)
 		startparam = makeParam(P_ID_END_Y, startparam);
 	}
 
-	//PluginParam *par = startparam;
-	/*for( ; par; par=par->next )
+	PluginParam *par = startparam;
+	for( ; par; par=par->next )
 	{
-		//printf ("id: %s - val: %s\n", par->id, par->val);
-		//printf("%d\n", par->next);
-	}*/
+		printf ("id: %s - val: %s\n", par->id, par->val);
+		printf("%d\n", par->next);
+	}
 
-	//std::cout << "Mark-2" << std::endl;
+	std::cout << "Mark-2" << std::endl;
 
 	std::string pluginname = plugin_list[number].filename;
 
 	strcpy(depstring, plugin_list[number].depend.c_str());
 
-	//std::cout << "Mark-1" << std::endl;
+	std::cout << "Mark-1" << std::endl;
 
 	argc=0;
 	if ( depstring[0] )
@@ -363,7 +335,7 @@ void plugins::startPlugin(int number)
 
 			*np=0;
 			p=np+1;
-			if ( argc == 20 )	// mehr nicht !
+			if ( argc == 20 )
 				break;
 		}
 	}
@@ -388,7 +360,6 @@ void plugins::startPlugin(int number)
 		if (!handle)
 		{
 			fputs (dlerror(), stderr);
-			//should unload libs!
 			break;
 		}
 		execPlugin = (PluginExec) dlsym(handle, "plugin_exec");
@@ -396,16 +367,13 @@ void plugins::startPlugin(int number)
 		{
 			fputs(error, stderr);
 			dlclose(handle);
-			//should unload libs!
 			break;
 		}
-		//printf("try exec...\n");
+		printf("try exec...\n");
 		execPlugin(startparam);
 		dlclose(handle);
-		//printf("exec done...\n");
-		//restore framebuffer...
-		//redraw menue...
-		break;	// break every time - never loop - run once !!!
+		printf("exec done...\n");
+		break;
 	}
 
 	/* unload shared libs */

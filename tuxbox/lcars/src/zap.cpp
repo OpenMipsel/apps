@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: zap.cpp,v $
+Revision 1.15.2.1.2.3  2008/08/07 20:25:30  fergy
+Mostly clear of not needed lines
+Added back debug messages ( just for dev. )
+Enambled some disabled stuff from before
+Code cleaning
+
 Revision 1.15.2.1.2.2  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -287,7 +293,7 @@ void zap::zap_to(pmt_data pmt, int VPID, int APID, int PCR, int ECM, int SID, in
 	printf("Zap to\nSID: %04x\nVPID: %04x\nAPID: %04x\nECM: %04x\nONID: %04x\n\n", SID, VPID, APID, ECM, ONID);
 
 	
-	//ioctl(audio,AUDIO_SET_BYPASS_MODE, 0);
+	ioctl(audio,AUDIO_SET_BYPASS_MODE, 0);
 	if (usevideo)
 	{
 #ifdef HAVE_LINUX_DVB_VERSION_H
@@ -390,7 +396,7 @@ void zap::zap_to(pmt_data pmt, int VPID, int APID, int PCR, int ECM, int SID, in
 			perror("[zap.cpp]AUDIO_PLAY");
 	}
 
-	//ioctl(audio,AUDIO_SET_BYPASS_MODE, 1);
+	ioctl(audio,AUDIO_SET_BYPASS_MODE, 1);
 
 	printf("Zapping...\n");
 	old_TS = TS;
@@ -406,7 +412,7 @@ void zap::zap_audio(int VPID, int APID, int ECM, int SID, int ONID)
 	printf("----------------> OPENING AVS <--------------------\n");
 	ioctl(avs,AVSIOSMUTE,&i);
 	close(avs);
-	//ioctl(aud, AUDIO_STOP, true);
+	ioctl(aud, AUDIO_STOP, true);
 	ioctl(audio, DMX_STOP, 0);
 
 	printf("Zapp on\nSID: %04x\nVPID: %04x\nAPID: %04x\nECM: %04x\nONID: %04x\n\n", SID, VPID, APID, ECM, ONID);
@@ -424,7 +430,7 @@ void zap::zap_audio(int VPID, int APID, int ECM, int SID, int ONID)
 	ioctl(audio, DMX_SET_PES_FILTER, &pes_filter);
 
 	ioctl(audio, DMX_START, true);
-	//ioctl(aud, AUDIO_PLAY, true);
+	ioctl(aud, AUDIO_PLAY, true);
 	usleep(300000);
 	i = AVS_UNMUTE;
 	avs = open(AVS_DEV,O_RDWR);
