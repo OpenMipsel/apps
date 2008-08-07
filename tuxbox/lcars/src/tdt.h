@@ -15,6 +15,10 @@
  ***************************************************************************/
 /*
 $Log: tdt.h,v $
+Revision 1.4.6.2  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.4.6.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -39,8 +43,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #ifndef TDT_H
 #define TDT_H
 
-#include <ost/dmx.h>
-
+#include <linux/dvb/dmx.h>
 class tdt
 {
 	pthread_t timeThread;

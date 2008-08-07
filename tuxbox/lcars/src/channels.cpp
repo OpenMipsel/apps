@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: channels.cpp,v $
-Revision 1.22.6.2  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.22.6.3  2008/08/07 17:56:43  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.22  2003/01/26 00:00:19  thedoc
 mv bugs /dev/null
@@ -289,25 +287,25 @@ void channels::setPerspective(int number)
 				VPID = NVOD_pmt.PID[i];
 			else if (NVOD_pmt.type[i] == 0x04 || NVOD_pmt.type[i] == 0x03 || NVOD_pmt.type[i] == 0x06)
 			{
-				//printf("an APID: %04x\n", pmt_entry.PID[i]);
+				printf("an APID: %04x\n", pmt_entry.PID[i]);
 				APID.insert(APID.end(), NVOD_pmt.PID[i]);
 				APIDcount++;
 			}
-			//printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
+			printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
 		}
 	
-		//printf("ECMs: %d\n", pmt_entry.ecm_counter);
+		printf("ECMs: %d\n", pmt_entry.ecm_counter);
 		for (int i = 0; i < NVOD_pmt.ecm_counter; i++)
 		{
 			if (setting->getCAID() == NVOD_pmt.CAID[i])
 				ECM = NVOD_pmt.ECM[i];
-			//printf("CAID: %04x - ECM: %04x\n", pmt_entry.CAID[i], pmt_entry.ECM[i]);
+			printf("CAID: %04x - ECM: %04x\n", pmt_entry.CAID[i], pmt_entry.ECM[i]);
 		}
 			osd_obj->addCommand("HIDE perspective");
 			osd_obj->createPerspective();
 			osd_obj->setPerspectiveName(tmp_link.name);
 			osd_obj->addCommand("SHOW perspective");
-		//printf("%s\n", tmp_link.name);
+		printf("%s\n", tmp_link.name);
 		apid = 0;
 		if (APIDcount == 1)
 			zap_obj->zap_to(NVOD_pmt, VPID, APID[apid], PCR, ECM, SID, ONID, TS);
@@ -384,14 +382,14 @@ void channels::zapCurrentChannel()
 					component[number_components++] = pmt_entry.component[i];
 				}
 			
-				//printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
+				printf("type: %d - PID: %04x\n", pmt_entry.type[i], pmt_entry.PID[i]);
 			}
 		
 				for (int i = 0; i < pmt_entry.ecm_counter; i++)
 			{
 				if (setting->getCAID() == pmt_entry.CAID[i])
 					ECM = pmt_entry.ECM[i];
-				//printf("CAID: %04x - ECM: %04x\n", pmt_entry.CAID[i], pmt_entry.ECM[i]);
+				printf("CAID: %04x - ECM: %04x\n", pmt_entry.CAID[i], pmt_entry.ECM[i]);
 			}
 			basic_channellist[cur_pos].PCR = pmt_entry.PCR;
 		
@@ -592,7 +590,7 @@ dvbchannel channels::getDVBChannel(int number)
 void channels::addChannel()
 {
 	struct channel new_channel;
-	//printf("New Channel number %d\n", numberChannels());
+	printf("New Channel number %d\n", numberChannels());
 	memset (&new_channel, 0, sizeof(struct channel));
 
 	new_channel.channelnumber = numberChannels();
@@ -663,17 +661,17 @@ void channels::updateChannel(int number, channel channel_data)
 
 int channels::getChannelNumber(int TS, int ONID, int SID)
 {
-	//printf("Wanted: TS: %x - ONID: %x - SID: %x\n", TS, ONID, SID);
+	printf("Wanted: TS: %x - ONID: %x - SID: %x\n", TS, ONID, SID);
 
 
-	//printf ("Found: %d\n",  services_list.count(SID));
+	printf ("Found: %d\n",  services_list.count(SID));
 
 	std::pair<std::multimap<int, int>::iterator, std::multimap<int, int>::iterator> ip = services_list.equal_range(SID);
 	for (std::multimap<int, int>::iterator it = ip.first; it != ip.second; ++it)
 	{
 		int pos = (*it).second;
 		setCurrentChannel(pos);
-		//printf("Checking Position %d - TS: %x - ONID: %x\n", pos, getCurrentTS(), getCurrentONID());
+		printf("Checking Position %d - TS: %x - ONID: %x\n", pos, getCurrentTS(), getCurrentONID());
 		if (getCurrentTS() == TS && getCurrentONID() == ONID)
 			return pos;
 
@@ -684,7 +682,7 @@ int channels::getChannelNumber(int TS, int ONID, int SID)
 
 bool channels::setCurrentChannel(int channelnumber)
 {
-	//printf("SetCurrentChannel to %d\n", channelnumber);
+	printf("SetCurrentChannel to %d\n", channelnumber);
 	if ((channelnumber > numberChannels() - 1) || (channelnumber < 0))
 		return false;
 	cur_pos = channelnumber;
@@ -702,7 +700,7 @@ void channels::setCurrentChannelViaSID(int SID)
 
 void channels::setCurrentTS(int TS)
 {
-	//printf("setCurrentTS to %d\n", TS);
+	printf("setCurrentTS to %d\n", TS);
 	basic_channellist[cur_pos].TS = TS;
 }
 
@@ -713,35 +711,35 @@ void channels::setCurrentPMTdata(pmt_data pmt)
 
 void channels::setCurrentONID(int ONID)
 {
-	//printf("setCurrentONID to %d\n", ONID);
+	printf("setCurrentONID to %d\n", ONID);
 	basic_channellist[cur_pos].ONID = ONID;
 }
 
 void channels::setCurrentSID(int SID)
 {
-	//printf("setCurrentSID to %d\n", SID);
+	printf("setCurrentSID to %d\n", SID);
 	basic_channellist[cur_pos].SID = SID;
 	services_list.insert(std::pair<int, int>(SID, cur_pos));
 }
 
 void channels::setCurrentPMT(int PMT)
 {
-	//printf("setCurrentPMT to %d\n", PMT);
+	printf("setCurrentPMT to %d\n", PMT);
 	basic_channellist[cur_pos].PMT = PMT;
 }
 
 void channels::setCurrentVPID(int VPID)
 {
-	//printf("setCurrentVPID to %d \n", VPID);
+	printf("setCurrentVPID to %d \n", VPID);
 	basic_channellist[cur_pos].VPID = VPID;
-	//printf("end setCurrentVPID to %d \n", VPID);
+	printf("end setCurrentVPID to %d \n", VPID);
 }
 
 void channels::addCurrentAPID(int APID, int number)
 {
 	if (number == -1)
 		number = getCurrentAPIDcount();
-	//printf("addCurrentAPID %d to %04x\n", number, APID);
+	printf("addCurrentAPID %d to %04x\n", number, APID);
 	basic_channellist[cur_pos].APID.insert(basic_channellist[cur_pos].APID.end(), APID);// = APID;
 	basic_channellist[cur_pos].DD[number] = false;
 }
@@ -769,7 +767,7 @@ void channels::setCurrentTXT(int TXT)
 
 void channels::addCurrentCA(int CAID, int ECM, int number)
 {
-	//printf("addCurrentCA to %d - %d\n", CAID, ECM);
+	printf("addCurrentCA to %d - %d\n", CAID, ECM);
 	if (number == -1)
 		number = getCurrentCAcount();
 	basic_channellist[cur_pos].CAID[number] = CAID;
@@ -783,13 +781,13 @@ void channels::setCurrentEIT(int EIT)
 
 void channels::setCurrentType(int type)
 {
-	//printf("setCurrentType to %d \n", type);
+	printf("setCurrentType to %d \n", type);
 	basic_channellist[cur_pos].type = type;
 }
 
 void channels::addCurrentNVOD(int NVOD_TS, int NVOD_ONID, int NVOD_SID, int number)
 {
-	//printf("addCurrentNVOD to %d - %d\n", NVOD_TS, NVOD_SID);
+	printf("addCurrentNVOD to %d - %d\n", NVOD_TS, NVOD_SID);
 	if (number == -1)
 		number = basic_channellist[cur_pos].NVOD_count;
 	basic_channellist[cur_pos].NVOD_TS[number] = NVOD_TS;
@@ -799,20 +797,20 @@ void channels::addCurrentNVOD(int NVOD_TS, int NVOD_ONID, int NVOD_SID, int numb
 
 void channels::setCurrentNVODCount(int count)
 {
-	//printf("setCurrentNVODCount to %d\n", count);
+	printf("setCurrentNVODCount to %d\n", count);
 	basic_channellist[cur_pos].NVOD_count = count;
 }
 
 
 void channels::setCurrentServiceName(std::string serviceName)
 {
-	//printf("setCurrentServiceName\n");
+	printf("setCurrentServiceName\n");
 	strcpy(basic_channellist[cur_pos].serviceName, serviceName.c_str());
 }
 
 void channels::setCurrentProviderName(std::string providerName)
 {
-	//printf("setCurrentProviderName\n");
+	printf("setCurrentProviderName\n");
 	strcpy(basic_channellist[cur_pos].providerName, providerName.c_str());
 }
 
@@ -1254,7 +1252,7 @@ void channels::saveDVBChannels()
 {
 	FILE *fp;
 
-	//printf("Save File\n");
+	printf("Save File\n");
 	fp = fopen(CONFIGDIR "/lcars/lcars.dvb", "wb");
 	for (std::vector<struct channel>::iterator it = basic_channellist.begin(); it != basic_channellist.end(); ++it)
 	{
@@ -1267,7 +1265,7 @@ void channels::saveDVBChannels()
 		trans.ONID = it->ONID;
 		std::multimap<struct transponder, struct transportstream>::iterator ts = basic_TSlist.find(trans);
 
-		//printf("SID: %x\n", (*it).SID);
+		printf("SID: %x\n", (*it).SID);
 		chan.init[0] = 'D';
 		chan.init[1] = 'V';
 		chan.init[2] = 'S';
@@ -1299,7 +1297,7 @@ void channels::saveDVBChannels()
 		chan.ONID = (*it).ONID;
 
 		fwrite(&chan, sizeof(dvbchannel), 1, fp);
-		//printf("Size: %d\n", sizeof(dvbchannel));
+		printf("Size: %d\n", sizeof(dvbchannel));
 	}
 	fclose(fp);
 }
@@ -1308,10 +1306,10 @@ void channels::loadDVBChannels()
 {
 	int fd;
 
-	//printf("Loading Channels\n");
+	printf("Loading Channels\n");
 	if ((fd = open(CONFIGDIR "/lcars/lcars.dvb", O_RDONLY)) < 0)
 	{
-		//printf("No channels available!\n");
+		printf("No channels available!\n");
 		return;
 	}
 	dvbchannel chan;
@@ -1359,14 +1357,14 @@ void channels::loadDVBChannels()
 		}
 	}
 	close(fd);
-	//printf("Channels loaded\n");
+	printf("Channels loaded\n");
 }
 
 void channels::saveTS()
 {
 	FILE *fp;
 
-	//printf("Save TS File\n");
+	printf("Save TS File\n");
 	fp = fopen(CONFIGDIR "/lcars/transponders.dvb2", "wb");
 
 	for (std::multimap<struct transponder, struct transportstream>::iterator it = basic_TSlist.begin(); it != basic_TSlist.end(); ++it)
@@ -1386,10 +1384,10 @@ void channels::loadTS()
 	basic_TSlist.clear();
 	int fd;
 
-	//printf("Loading TS\n");
+	printf("Loading TS\n");
 	if ((fd = open(CONFIGDIR "/lcars/transponders.dvb2", O_RDONLY)) < 0)
 	{
-		//printf("No TS available!\n");
+		printf("No TS available!\n");
 		return;
 	}
 	transportstream tmp_ts;

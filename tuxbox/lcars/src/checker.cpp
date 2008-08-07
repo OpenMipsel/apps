@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: checker.cpp,v $
-Revision 1.12.4.3  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.12.4.4  2008/08/07 17:56:43  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.12.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
@@ -151,8 +149,9 @@ void* checker::startEventChecker(void* object)
 	if((fd = open("/dev/dbox/event0", O_RDWR)) < 0)
 	{
 		perror("open");
-		return false;
+		pthread_exit(NULL);
 	}
+
 	int old_vcr_mode = c->get_16_9_mode();
 
 	while(1)
@@ -218,6 +217,7 @@ void* checker::startEventChecker(void* object)
 		}
 	}
 	close(fd);
+	pthread_exit(NULL);
 }
 
 void checker::aratioCheck()

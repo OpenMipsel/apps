@@ -15,6 +15,10 @@
  ***************************************************************************/
 /*
 $Log: rc.cpp,v $
+Revision 1.10.2.1.2.1  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.10.2.1  2003/02/28 14:58:13  thedoc
 Fix for compiler-warning in rel
 
@@ -65,6 +69,9 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <fcntl.h>
 #include <iostream>
 
+#ifdef HAVE_DREAMBOX_HARDWARE
+#include <dbox/fp.h>
+#endif
 #ifdef HAVE_LINUX_DVB_VERSION_H
 
 rc::rc(hardware *h, settings *s)
@@ -95,7 +102,7 @@ rc::rc(hardware *h, settings *s)
 	            RC_9,
 	            RC_STANDBY,
 	            RC_HOME,
-	            RC_DBOX,
+	            RC_MENU,
 	            RC_RED,
 	            RC_GREEN,
 	            RC_YELLOW,
@@ -208,9 +215,9 @@ int rc::parseKey(std::string key)
 	{
 		return RC_HOME;
 	}
-	else if (key == "DBOX")
+	else if (key == "MENU")
 	{
-		return RC_DBOX;
+		return RC_MENU;
 	}
 	else if (key == "RED")
 	{
@@ -385,7 +392,7 @@ rc::rc(hardware *h, settings *s)
 	            RC1_9,
 	            RC1_STANDBY,
 	            RC1_HOME,
-	            RC1_DBOX,
+	            RC1_MENU,
 	            RC1_RED,
 	            RC1_GREEN,
 	            RC1_YELLOW,
@@ -412,7 +419,7 @@ rc::rc(hardware *h, settings *s)
 	            RC2_9,
 	            RC2_STANDBY,
 	            RC2_HOME,
-	            RC2_DBOX,
+	            RC2_MENU,
 	            RC2_RED,
 	            RC2_GREEN,
 	            RC2_YELLOW,
@@ -478,7 +485,6 @@ void* rc::start_rcqueue( void * this_ptr )
 		r->key = r->read_from_rc2();
 		//std::cout << "Key: " << r->key << std::endl;
 	}
-	return NULL;
 }
 
 int rc::parseKey(std::string key)
@@ -531,9 +537,9 @@ int rc::parseKey(std::string key)
 	{
 		return RC1_HOME;
 	}
-	else if (key == "DBOX")
+	else if (key == "MENU")
 	{
-		return RC1_DBOX;
+		return RC1_MENU;
 	}
 	else if (key == "RED")
 	{
@@ -647,7 +653,6 @@ void* rc::start_keyboardqueue( void * this_ptr )
 		}
 		//printf("%d\n", character);
 	}
-	return NULL;
 }
 
 void rc::cheat_command(unsigned short cmd)
@@ -779,8 +784,8 @@ int rc::old_to_new(int read_code)
 		return RC1_STANDBY;
 	case RC2_HOME:
 		return RC1_HOME;
-	case RC2_DBOX:
-		return RC1_DBOX;
+	case RC2_MENU:
+		return RC1_MENU;
 	case RC2_RED:
 		return RC1_RED;
 	case RC2_GREEN:

@@ -15,6 +15,10 @@
  ***************************************************************************/
 /*
 $Log: tuner.h,v $
+Revision 1.8.4.2  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.8.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -61,7 +65,6 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <sys/poll.h>
 #include <memory.h>
 
-#include <ost/frontend.h>
 
 #include "devices.h"
 #include "settings.h"
@@ -70,12 +73,10 @@ class tuner
 {
 	settings *setting;
 	int frontend;
-	FrontendType type;
 public:
 	tuner(settings *s);
 	~tuner();
-	CodeRate getFEC(int fec);
-	FrontendType getType() { return type; };
+	fe_code_rate_t getFEC(int fec);
 	bool tune(unsigned int frequ, unsigned int symbol, int polarization = -1, int fec = 0, int diseqc = 0);
 };
 

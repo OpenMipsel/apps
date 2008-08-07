@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: eit.cpp,v $
-Revision 1.15.6.2  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.15.6.3  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.15  2003/01/05 19:28:45  TheDOC
 lcars should be old-api-compatible again
@@ -74,7 +72,6 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <sys/ioctl.h>
 #include <memory.h>
 #include <stdio.h>
-#include <pthread.h>
 
 #include "devices.h"
 #include "eit.h"
@@ -181,7 +178,7 @@ void eit::receiveNow(int SID)
 	flt.filter.mask[0] = 0xFF;
 	flt.timeout        = 10000;
 	flt.timeout        = 0;
-	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC | DMX_ONESHOT;
+	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC;
 
 	ioctl(fd, DMX_SET_FILTER, &flt);
 
@@ -221,7 +218,6 @@ void eit::receiveNow(int SID)
 			time_t starttime = dvbtimeToLinuxTime(mjd, time) + ((*setting).getTimeOffset() * 60L);
 
 			tmp_event.duration = (((buffer[count + 8] & 0xf0) >> 4) * 10 + (buffer[count + 8] & 0xf)) * 3600 + (((buffer[count + 9] & 0xf0) >> 4) * 10 + (buffer[count + 9] & 0xf)) * 60 + (((buffer[count + 10] & 0xf0) >> 4) * 10 + (buffer[count + 10] & 0xf));
-
 			tmp_event.starttime = starttime;
 
 			tmp_event.eventid = (buffer[count + 1] << 8) | buffer[count + 2];
@@ -230,7 +226,6 @@ void eit::receiveNow(int SID)
 			int start = 26;
 			int descriptors_length = ((buffer[13 + 11] & 0xf) << 8) | buffer[13 + 12];
 			int text_length = 0;
-
 			while (start < 20 + descriptors_length)
 			{
 				if (buffer[start] == 0x4d) // short_event_descripto
@@ -322,7 +317,6 @@ void eit::receiveNow(int SID)
 	pthread_mutex_unlock( &mutex );
 
 	std::multimap<int, struct event>::iterator it = eventlist.begin();
-
 	for (int i = 0; i < (int)eventlist.size(); i++)
 	{
 		if (i == 0)
@@ -442,7 +436,6 @@ linkage eit::nextLinkage()
 {
 	return (now.linkage_descr[curr_linkage++]);
 }
-
 void eit::readSchedule(int SID, osd *osd)
 {
 	long fd, r;
@@ -516,7 +509,6 @@ void eit::readSchedule(int SID, osd *osd)
 					time_t starttime = dvbtimeToLinuxTime(mjd, time) + ((*setting).getTimeOffset() * 60L);
 	
 					tmp_event.duration = (((buffer[count + 8] & 0xf0) >> 4) * 10 + (buffer[count + 8] & 0xf)) * 3600 + (((buffer[count + 9] & 0xf0) >> 4) * 10 + (buffer[count + 9] & 0xf)) * 60 + (((buffer[count + 10] & 0xf0) >> 4) * 10 + (buffer[count + 10] & 0xf));
-
 					tmp_event.starttime = starttime;
 
 					tmp_event.eventid = (buffer[count + 1] << 8) | buffer[count + 2];
@@ -600,7 +592,6 @@ void eit::readSchedule(int SID, osd *osd)
 					tmp_event.event_extended_text[text_length] = '\0';
 					if (eventlist.count((int)tmp_event.starttime) == 0)
 						eventlist.insert(std::pair<int, struct event>((int) tmp_event.starttime, tmp_event));
-
 					count += count + descriptors_length - 1;
 					
 					} while (count < r - 2);
@@ -617,7 +608,6 @@ void eit::readSchedule(int SID, osd *osd)
 	} while(!quit);
 	(*osd).hidePerspective();
 }
-
 void eit::dumpSchedule(int TS, int ONID, int SID, osd *osd)
 {
 	struct sid new_sid;
@@ -665,7 +655,7 @@ void eit::dumpSchedule(int SID, osd *osd)
 	flt.filter.filter[0] = 0x50;
 	flt.filter.mask[0] = 0xF0;
 	flt.timeout        = 10000;
-	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC | DMX_ONESHOT;
+	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC;
 
 	ioctl(fd, DMX_SET_FILTER, &flt);
 
@@ -686,7 +676,6 @@ void eit::dumpSchedule(int SID, osd *osd)
 	}
 
 	int timeout = time(0) + 20;
-
 	do
 	{
 		memset (&buffer, 0, BSIZE);
@@ -832,6 +821,7 @@ void eit::dumpSchedule(int SID, osd *osd)
 						}
 						if (tmp_event.SID == SID)
 						{
+							eventid_event[tmp_event.eventid] = tmp_event; //.insert(std::pair<int, struct event>(tmp_event.eventid, tmp_event));
 							time_eventid[tmp_event.starttime] = tmp_event.eventid;
 						}
 					}

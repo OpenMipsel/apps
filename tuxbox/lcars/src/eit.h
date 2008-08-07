@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: eit.h,v $
-Revision 1.7.6.2  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.7.6.3  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.7  2002/06/08 14:40:23  TheDOC
 made lcars tuxvision-compatible
@@ -50,7 +48,6 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include "settings.h"
 #include "variables.h"
 
-#include <pthread.h>
 #include <time.h>
 #include <string>
 #include <map>
@@ -90,7 +87,6 @@ struct event
 	int par_rating;
 	int number_perspectives;
 	linkage linkage_descr[10];
-//	unsigned short insert;
 };
 
 struct eit_header

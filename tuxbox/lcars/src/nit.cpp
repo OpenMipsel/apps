@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: nit.cpp,v $
-Revision 1.9.6.2  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.9.6.3  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.9  2003/01/05 19:28:45  TheDOC
 lcars should be old-api-compatible again
@@ -77,7 +75,7 @@ int nit::getTransportStreams(channels *channels, int diseqc)
 	flt.filter.filter[0] = 0x41;
 	flt.filter.mask[0] = 0xF0;
 	flt.timeout        = 10000;
-	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC | DMX_ONESHOT;
+	flt.flags          = DMX_IMMEDIATE_START | DMX_CHECK_CRC;
 
 	ioctl(fd, DMX_SET_FILTER, &flt);
 
@@ -143,5 +141,7 @@ int nit::getTransportStreams(channels *channels, int diseqc)
 	} while( buffer[7] != sec_counter++);
 	ioctl(fd,DMX_STOP,0);
 	close (fd);
+	printf("Found Transponders: %d\n", countTS);
+
 	return countTS;
 }

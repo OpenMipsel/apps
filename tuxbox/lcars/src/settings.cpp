@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: settings.cpp,v $
-Revision 1.13.4.3  2008/07/30 18:49:18  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.13.4.4  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.13.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
@@ -97,11 +95,53 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #define need_TUXBOX_GET
 #include <tuxbox.h>
 
-TUXBOX_GET(submodel);
+TUXBOX_GET(dbox2_gt);
 
 settings::settings(cam *c)
 {
 	cam_obj = c;
+	FILE *fp;
+	char buffer[100];
+	int type = -1;
+	isGTX = false;
+
+	printf("----------------> SETTINGS <--------------------\n");
+	fp = fopen("/proc/bus/dreambox", "r");
+	while (!feof(fp))
+	{
+		fgets(buffer, 100, fp);
+		sscanf(buffer, "fe=%d", &type);
+		sscanf(buffer, "mID=%d", &box);
+
+
+
+		int gtx = 0;
+		sscanf(buffer, "gtxID=%x\n", &gtx);
+		if (gtx != 0)
+		{
+			if ((unsigned int)gtx != 0xffffffff)
+			{
+				isGTX = true;
+			}
+			else
+			{
+				isGTX = false;
+			}
+		}
+
+	}
+	fclose(fp);
+
+	if (box == 3)
+	printf ("Sagem-Box\n");
+	else if (box == 1)
+	printf("Nokia-Box\n");
+	else if (box == 2)
+	printf("Philips-Box\n");
+	else
+	printf("Dream Multimedia Box\n");
+
+	isCable = (type == DBOX_FE_CABLE);
 
 	CAID = cam_obj->getCAID();
 
@@ -113,7 +153,7 @@ settings::settings(cam *c)
 	setting.serverip = 0;
 	setting.dnsip = 0;
 
-	switch (tuxbox_vendor())
+	switch (tuxbox_get_vendor())
 	{
 	case TUXBOX_VENDOR_NOKIA:
 		setting.rcRepeat = true;
@@ -125,7 +165,7 @@ settings::settings(cam *c)
 		break;
 	case TUXBOX_VENDOR_DREAM_MM:
 		setting.rcRepeat = true;
-		setting.supportOldRc = false;
+		setting.supportOldRc = true;
 	default:
 		setting.rcRepeat = false;
 		setting.supportOldRc = false;
@@ -195,19 +235,29 @@ int settings::find_emmpid(int ca_system_id) {
 	return 0;
 }
 
+bool settings::boxIsCable()
+{
+	return isCable;
+}
+
+bool settings::boxIsSat()
+{
+	return !isCable;
+}
+
 int settings::getCAID()
 {
 	return CAID;
 }
-/*	FIX ME!!!!
+/*	FIX ME!!!!	*/
 int settings::getTransparentColor()
 {
-	if (submodel() == TUXBOX_SUBMODEL_DREAMBOX_DM7000 || TUXBOX_SUBMODEL_DREAMBOX_DM7020)
+	if (tuxbox_get_dbox2_gt() == TUXBOX_DBOX2_GT_GTX)
 		return 0xFC0F;
 	else
 		return 0;
 }
-*/
+
 void settings::setIP(char n1, char n2, char n3, char n4)
 {
 	std::stringstream ostr;
@@ -220,13 +270,14 @@ void settings::setIP(char n1, char n2, char n3, char n4)
 	system(command.c_str());
 	struct sockaddr_in sin;
 	int sk;
+	unsigned char *ptr;
 	struct ifreq ifr;
 
 	memset(&ifr, 0x00, sizeof ifr);
 	memset(&sin, 0x00, sizeof sin);
 
 	sin.sin_family = AF_INET;
-	char test[] = "192.168.40.4";
+	char test[] = "192.168.1.1";
 	if (inet_aton(test, &sin.sin_addr)==0) { // 0 if error occurs
 	}
 
@@ -339,6 +390,7 @@ void settings::loadSettings()
 	int linecount = 0;
 
 	inFile.open(CONFIGDIR "/lcars/lcars.conf");
+	printf("----------------> OPENING Lcars.conf <--------------------\n");
 
 	while(linecount < 20 && getline(inFile, line[linecount++]));
 
@@ -367,6 +419,8 @@ void settings::loadSettings()
 			}
 			if (ipcount != 4)
 			{
+				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+	printf("----------------> IP SETTINGS <--------------------\n");
 				continue;
 			}
 			else
@@ -404,7 +458,8 @@ void settings::loadSettings()
 			else if (parm == "false")
 				setting.supportOldRc = false;
 			else
-				std::cout << "Error in Config-File on " << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+	printf("----------------> OLD RC SUPPORT <--------------------\n");
 		}
 		else if (cmd == "RCRepeat")
 		{
@@ -413,7 +468,8 @@ void settings::loadSettings()
 			else if (parm == "false")
 				setting.rcRepeat = false;
 			else
-				std::cout << "Error in Config-File on " << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+	printf("----------------> RC REPEAT <--------------------\n");
 		}
 		else if (cmd == "SwitchVCR")
 		{
@@ -422,7 +478,8 @@ void settings::loadSettings()
 			else if (parm == "false")
 				setting.switch_vcr = false;
 			else
-				std::cout << "Error in Config-File on " << cmd << std::endl;
+				std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+	printf("----------------> SWITCH VCR <--------------------\n");
 		}
 		else if (cmd == "ProxyServer")
 		{
@@ -446,7 +503,8 @@ void settings::loadSettings()
 		}
 		else
 		{
-			std::cout << "Error in Config-File on " << cmd << std::endl;
+			std::cout << "Error in Config-File on load settings" << cmd << std::endl;
+	printf("----------------> GLOBAL SETTINGS ERROR <--------------------\n");
 		}
 	}
 

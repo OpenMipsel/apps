@@ -17,6 +17,7 @@ Replaced mtd stuff for compatible building
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <libcramfs.h>
 
 /* zlib required.. */
 #include <zlib.h>

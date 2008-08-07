@@ -22,7 +22,7 @@ control::control (osd *o, rc *r, hardware *h, settings *s, scan *s1, channels *c
 	pig_obj = p1;
 	teletext_obj = t2;
 	sdt_obj = s2;
-	lcddisplay_obj = l;
+	lcd_obj = l;
 
 	last_read.TS = -1;
 	last_read.ONID = -1;
@@ -594,6 +594,8 @@ int control::runCommand(command_class command, bool val)
 
 			ioctl(fpfd, FP_IOCTL_SET_WAKEUP_TIMER, &on_time);
 			ioctl(fpfd, FP_IOCTL_GET_WAKEUP_TIMER, &on_time);
+			sleep(1);
+			ioctl(fpfd,FP_IOCTL_POWEROFF);
 			close(fpfd);
 			sleep(1);
 			reboot(RB_POWER_OFF);
@@ -1059,8 +1061,17 @@ int control::runCommand(command_class command, bool val)
 					teletext_obj->stopReinsertion();
 					osd_obj->addCommand("COMMAND proginfo set_teletext false");
 				}
+				lcd_obj->loadFromFile(DATADIR "/lcars/lcdbackground.raw");
+				lcd_obj->writeToLCD();
+
+				lcd_obj->setTextSize(10);
 				std::stringstream ostr;
 				ostr << ((int)channels_obj->getCurrentChannelNumber());
+				lcd_obj->putText(8, 13, 0, ostr.str());
+				lcd_obj->setTextSize(12);
+				lcd_obj->putText(8, 33, 0, channels_obj->getCurrentServiceName());
+				//lcd_obj->setTextSize(12);
+				//lcd_obj->putText(80, 58, 0, "23:39");
 			}
 			else if (command.args[0] == "Audio")
 			{
@@ -1896,8 +1907,8 @@ void control::openMenu(int menuNumber)
 			}
 			plugins_obj->setfb(fb_obj->getHandle());
 			plugins_obj->setrc(rc_obj->getHandle());
-			int lcddisplayfd = open("/dev/dbox/lcddisplay0", O_RDWR);
-			plugins_obj->setlcddisplay(lcddisplayfd);
+			int lcdfd = open("/dev/dbox/lcd0", O_RDWR);
+			plugins_obj->setlcd(lcdfd);
 			plugins_obj->setvtxtpid(channels_obj->getCurrentTXT());
 			rc_obj->stoprc();
 			plugins_obj->startPlugin(number - 1);
@@ -1907,7 +1918,7 @@ void control::openMenu(int menuNumber)
 			}
 			rc_obj->startrc();
 			rc_obj->restart();
-			close(lcddisplayfd);
+			close(lcdfd);
 			osd_obj->initPalette();
 			usleep(400000);
 			fb_obj->clearScreen();

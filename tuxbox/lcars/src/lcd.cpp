@@ -1,242 +1,234 @@
 #include "lcd.h"
-#include "gui/lcd/font.h"
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <iostream>
+
+#include <dbox/lcd-ks0713.h>
 
 lcddisplay::lcddisplay()
 {
-	if((fd = open("/dev/dbox/lcd0",O_RDWR)) < 0)
+	fd = open(LCD_DEV, O_RDWR);
+	if (fd < 0)
 	{
-		perror("lcddisplay (/dev/dbox/lcd0)");
-		return;
+		std::cerr << "[lcd.cpp] Couldn't open LCD" << std::endl;
+		exit(1);
 	}
-
-	if ( ioctl(fd,LCD_IOCTL_CLEAR) < 0)
+	int i = LCD_MODE_BIN;
+	if (ioctl(fd, LCD_IOCTL_ASC_MODE,&i) < 0)
 	{
-		perror ( "clear failed");
+		std::cerr << "[lcd.cpp] Couldn't switch to binary drawing mode" << std::endl;
+		exit(1);
 	}
 	
-	int i=LCD_MODE_BIN;
-	if ( ioctl(fd,LCD_IOCTL_ASC_MODE,&i) < 0 )
-		perror ("graphic mode failed");
+	width = LCD_COLS;
+	height = LCD_ROWS * 8;
+	s = (unsigned char*)malloc(LCD_BUFFER_SIZE);
 
-	iconBasePath = "";
+	int error = FT_Init_FreeType( &library );
+	if (error)
+	{
+		std::cerr << "[lcd.cpp] Error initializing Freetype-library" << std::endl;
+		exit(1);
+	}
+
+	clear();
+	writeToLCD();
+
+	std::cout << "[lcd.cpp] Initialized LCARS-LCD - Size " << width << "x" << height << std::endl;
 }
-
 
 lcddisplay::~lcddisplay()
 {
 	close(fd);
 }
 
-int lcddisplay::invalid_col (int x)
-{	
-	if( x > LCD_COLS ) 
-		return -1;
-	if( x < 0 )
-		return -1;
-	return 0;
+void lcddisplay::clearDirect()
+{
+	if (ioctl(fd, LCD_IOCTL_CLEAR) < 0)
+	{
+		std::cerr << "[lcd.cpp] Couldn't clear LCD" << std::endl;
+	}
 }
 
-int lcddisplay::invalid_row (int y)
+void lcddisplay::setDirectPixel(int x, int y, int val)
 {
-	if( y > LCD_ROWS * 8 )
-		return -1;
-	if( y < 0)
-		return -1;
-	return 0;   
+	lcd_pixel pixel;
+	pixel.x = x;
+	pixel.y = y;
+	pixel.v = val;
+	if (ioctl(fd, LCD_IOCTL_SET_PIXEL, pixel) < 0)
+	{
+		std::cerr << "[lcd.cpp] Couldn't set Pixel on  LCD" << std::endl;
+	}
+	
 }
 
-void lcddisplay::convert_data ()
+void lcddisplay::clear()
 {
-	int x,y,z;
-	char tmp2[4];
-	for(x=0;x < LCD_COLS;x++) {   
-		for(y=0;y < LCD_ROWS;y++) {
-			tmp2[y] = 0;
-			for(z=0;z <= 7;z++) {
-				if(raw[x][y * 8 + z] == 1){
-					tmp2[y]|=1<<z;
+	memset(s, 0, LCD_BUFFER_SIZE);
+}
+
+void lcddisplay::setPixel(int x, int y)
+{
+	std::cout << (y % 8) << std::endl;
+}
+
+void lcddisplay::writeToLCD()
+{
+	::write(fd, s, LCD_BUFFER_SIZE);
+}
+
+void lcddisplay::readFromLCD()
+{
+	::read(fd, s, LCD_BUFFER_SIZE);
+	for (int i = 0; i < LCD_BUFFER_SIZE; i++)
+		if (s[i] != 0)
+			std::cout << i << " - " << ((int)s[i]) << std::endl;
+}
+
+void lcddisplay::	writeToFile(std::string filename)
+{
+	int f = open(filename.c_str(), O_WRONLY | O_CREAT);
+	::write(f, (void*)s, LCD_BUFFER_SIZE);
+	close(f);
+}
+
+void lcddisplay::loadFromFile(std::string filename)
+{
+	int f = open(filename.c_str(), O_RDONLY);
+	::read(f, (void*)s, LCD_BUFFER_SIZE);
+	close(f);
+	
+}
+
+void lcddisplay::loadFrom8bitFile(std::string filename)
+{
+	int f = open(filename.c_str(), O_RDONLY);
+	unsigned char tmp_line[LCD_COLS];
+	for (int i = 0; i < LCD_ROWS; i++)
+	{
+		for (int line = 1; line < 256; line*=2)
+		{
+			::read(f, (void*)tmp_line, LCD_COLS);
+			for (int j = 0; j < LCD_COLS; j++)
+			{
+				s[i * LCD_COLS + j] |= ((tmp_line[j] >= 128) ? line : 0);
+			}
+		}
+	}
+	close(f);
+	
+}
+
+int lcddisplay::loadFont(std::string filename)
+{
+	FT_Face *face = new FT_Face;
+	
+	int error = FT_New_Face(library, filename.c_str(), 0, face);
+	if (error == FT_Err_Unknown_File_Format)
+	{
+		std::cerr << "[lcd.cpp] Error in font fileformat opening " << filename << std::endl;
+	}
+	else if (error)
+	{
+		std::cerr << "[lcd.cpp] Error opening " << filename << std::endl;
+	}
+
+	font_faces.push_back(face);
+	font_cache *tmp_font_cache = new font_cache;
+	fonts.push_back(tmp_font_cache);
+
+	return (font_faces.size() - 1);
+}
+
+void lcddisplay::setTextSize(int size)
+{
+	current_textsize = size;
+	//	error = FT_Set_Pixel_Sizes(face, 0, current_textsize);
+}
+
+void lcddisplay::putText(int x, int y, int font, std::string text)
+{
+	font_cache *curr_font_cache = fonts[font];
+	int pen_x = x;
+	int pen_y = y;
+	for (unsigned int i = 0; i < text.size(); i++)
+	{
+		FT_GlyphSlot *slot = new FT_GlyphSlot;
+		struct character ch;
+		
+		bool found = false;
+		font_characters *curr_font_characters;
+		if (curr_font_cache->size() != 0 && curr_font_cache->count(current_textsize) != 0) // font of this size available
+		{
+			curr_font_characters = (*curr_font_cache)[current_textsize];
+			if (curr_font_characters->size() != 0 && curr_font_characters->count(text[i]) != 0) // character available
+			{
+				found = true;
+				ch = (*curr_font_characters)[text[i]];
+			}
+		}
+		else // font of this size not available
+		{
+			font_characters *tmp_font_characters = new font_characters;
+			(*curr_font_cache).insert(std::pair<int, font_characters*>(current_textsize, tmp_font_characters));
+			curr_font_characters = tmp_font_characters;
+		}
+
+		if (!found) // we don't have the character so we have to cache it first
+		{
+			FT_Face face = (*font_faces[font]);
+			int error = FT_Set_Pixel_Sizes(face, 0, current_textsize); // Set the font size
+			if (error)
+			{
+				std::cerr << "[lcd.cpp] Couldn't set font size" << std::endl;
+				return;
+			}
+			error = FT_Load_Char(face, text[i], FT_LOAD_RENDER);//| FT_LOAD_MONOCHROME ); // render character
+			if (error)
+			{
+				std::cerr << "[lcd.cpp] Couldn't render character " << text[i] << std::endl;
+				continue;  // ignore errors
+			}
+			*slot = face->glyph;
+			ch.left = (*slot)->bitmap_left;
+			ch.top = (*slot)->bitmap_top;
+			ch.width = (&(*slot)->bitmap)->width;
+			ch.size = current_textsize;
+			ch.rows = (&(*slot)->bitmap)->rows;
+			ch.pitch = (&(*slot)->bitmap)->pitch;
+			ch.advancex = (*slot)->advance.x >> 6;
+			ch.bearingY = (*slot)->metrics.horiBearingY;
+			int position = 0;
+			for (int y_pos = 0; y_pos < ch.rows; y_pos++)
+			{
+				int y_position = y_pos * ch.pitch;
+				for (int x_pos = 0; x_pos < ch.pitch; x_pos++)
+				{
+					ch.bitmap[position++] = (&(*slot)->bitmap)->buffer[x_pos+y_position];
 				}
 			}
-			lcd[y][x] = tmp2[y];
+
+			curr_font_characters->insert(std::pair<char, character>(text[i], ch));
 		}
+		
+		draw_bitmap(&ch, pen_x + ch.left, pen_y - ch.top );
+
+		pen_x += ch.advancex; 
 	}
 }
 
-void lcddisplay::update()
+void lcddisplay::draw_bitmap(character *ch, int x, int y)
 {
-	convert_data();
-	write(fd, lcd, 120*64/8);
-}
-
-int lcddisplay::sgn (int arg) 
-{
-	if(arg<0)
-		return -1;
-	if(arg>0)
-		return 1;
-	return 0;
-}
-
-
-void lcddisplay::draw_point (int x,int y, int state)
-{
-	if(state == LCD_PIXEL_INV)
+	for (int y_pos = 0; y_pos < ch->rows; y_pos++)
 	{
-		if(raw[x][y] == LCD_PIXEL_ON) 
-			raw[x][y] = LCD_PIXEL_OFF;
-		else
-			raw[x][y] = LCD_PIXEL_ON;
-	}
-	else
-		raw[x][y] = state;
-}
-
-void lcddisplay::draw_line (int x1, int y1, int x2, int y2, int state)  
-{   
-	int dx,dy,sdx,sdy,px,py,dxabs,dyabs,i;
-	float slope;
-   
-	if(invalid_col(x1) || invalid_col(x2))
-		return;
-
-	if(invalid_row(y1) || invalid_row(y2))
-		return;
-	
-	dx=x2-x1;      
-	dy=y2-y1;      
-	dxabs=abs(dx);
-	dyabs=abs(dy);
-	sdx=sgn(dx);
-	sdy=sgn(dy);
-	if (dxabs>=dyabs) 
+		int y_position = y_pos * ch->pitch;
+		for (int x_pos = 0; x_pos < ch->pitch; x_pos++)
 		{
-		slope=(float)dy / (float)dx;
-		for(i=0;i!=dx;i+=sdx) {	     
-			px=i+x1;
-			py=int( slope*i+y1 );
-			draw_point(px,py,state);
+			if (ch->bitmap[x_pos+y_position] >= 128 && (x + x_pos) < width)
+				setDirectPixel(x + x_pos, y + y_pos, 1);
 		}
 	}
-	else
-		{	
-		slope=(float)dx / (float)dy;
-		for(i=0;i!=dy;i+=sdy) {
-			px=int(slope*i+x1);
-			py=i+y1;
-			draw_point(px,py,state);
-		}
-	}
-}
-
-
-void lcddisplay::draw_fill_rect (int left,int top,int right,int bottom,int state) {
-	int x,y;
-	for(x = left + 1;x < right;x++) {  
-		for(y = top + 1;y < bottom;y++) {
-			draw_point(x,y,state);
-		}
-	}
-}
-
-
-void lcddisplay::draw_rectangle (int left,int top, int right, int bottom, int linestate,int fillstate)
-{
-	
-	if(invalid_col(left) || invalid_col(right))
-		return;
-
-	if(invalid_row(top) || invalid_row(bottom))
-		return;
-
-	draw_line(left,top,right,top,linestate);
-	draw_line(left,top,left,bottom,linestate);
-	draw_line(right,top,right,bottom,linestate);
-	draw_line(left,bottom,right,bottom,linestate);
-	draw_fill_rect(left,top,right,bottom,fillstate);  
-}  
-
-
-void lcddisplay::draw_polygon(int num_vertices, int *vertices, int state) 
-{
-	int i;
-	for(i=0;i<num_vertices-1;i++) {
-		draw_line(vertices[(i<<1)+0],
-			vertices[(i<<1)+1],
-			vertices[(i<<1)+2],
-			vertices[(i<<1)+3],
-			state);
-	}
-   
-	draw_line(vertices[0],
-		vertices[1],
-		vertices[(num_vertices<<1)-2],
-		vertices[(num_vertices<<1)-1],
-		state);
-}
-
-void lcddisplay::draw_char(int x, int y, char c)
-{
-	unsigned char *data=&font[8*c];
-	for (int ay=0; ay<8; ay++)
-		for (int ax=0; ax<8; ax++) 
-			if ( (!invalid_col(x+ax)) && (!invalid_row(y+ay)))
-				draw_point(x+ax, y+ay, data[ay]&(1<<(7-ax))?PIXEL_ON:PIXEL_OFF);
-}
-
-void lcddisplay::draw_string(int x, int y, char *string)
-{
-	while (*string)
-	{
-		draw_char(x, y, *string++);
-		x+=8;
-	}
-}
-
-void lcddisplay::paintIcon(string filename, int x, int y, int col)
-{
-	short width, height;
-	unsigned char tr;
-
-	int fd;
-	filename = iconBasePath + filename;
-
-	fd = open(filename.c_str(), O_RDONLY );
-	
-	if (fd==-1)
-	{
-		printf("\nerror while loading icon: %s\n\n", filename.c_str() );
-		return;
-	}
-
-	read(fd, &width,  2 );
-	read(fd, &height, 2 );
-	read(fd, &tr, 1 );
-
-	width= ((width & 0xff00) >> 8) | ((width & 0x00ff) << 8);
-	height=((height & 0xff00) >> 8) | ((height & 0x00ff) << 8);
-
-	unsigned char pixbuf[200];
-	for (int count=0; count<height; count ++ )
-	{
-		read(fd, &pixbuf, width >> 1 );
-		unsigned char *pixpos = (unsigned char*) &pixbuf;
-		for (int count2=0; count2<width >> 1; count2 ++ )
-		{
-			unsigned char compressed = *pixpos;
-			unsigned char pix1 = (compressed & 0xf0) >> 4;
-			unsigned char pix2 = (compressed & 0x0f);
-
-			if (pix1 == col)
-				draw_point(x+(count2<<1),y+count, PIXEL_ON);
-			else
-				draw_point (x+(count2<<1),y+count, PIXEL_OFF);
-			if (pix2 == col)
-				draw_point(x+(count2<<1)+1,y+count, PIXEL_ON);
-			else
-				draw_point (x+(count2<<1)+1,y+count, PIXEL_OFF);
-			pixpos++;
-		}
-	}
-	
-	close(fd);
 }

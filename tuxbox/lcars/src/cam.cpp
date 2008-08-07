@@ -10,7 +10,8 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <memory.h>
-
+#include <ost/ca.h>
+#include <config.h>
 #include "devices.h"
 
 #include "cam.h"
@@ -139,12 +140,14 @@ cam::cam()
 	cmdEMM.unknowna = 0x1;
 	cmdEMM.unknownb = 0x4;
 
+#ifdef HAVE_DREAMBOX_HARDWARE
 	camfd = open(CAM_DEV, O_RDWR);
 
 	if (camfd < 0) {
 		perror(CAM_DEV);
 		exit(1);
 	}
+#endif
 }
 
 cam::~cam()

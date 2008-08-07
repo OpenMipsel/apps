@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: showview.cpp,v $
-Revision 1.5.6.2  2008/07/30 18:49:18  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.5.6.3  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.6  2008/07/29 20:37:20  fergy
 variable 'bottom' removed as it is unused for now
@@ -1847,6 +1845,7 @@ int showview::generateCode(time_t begin, int duration)
 	top2 = (bin2[2] << 4) | (bin[1] << 3) | (bin2[1] << 2) | (bin[0] << 1) | bin2[0];
 	newtop = (bin2[9] << 9) | (bin[4] << 8) | (bin[3] << 7) | (bin2[8] << 6) | (bin2[7] << 5) | (bin2[6] << 4) | (bin2[5] << 3) | (bin2[4] << 2) | (bin2[3] << 1) | bin[2];
 
+	int bottom = ((*tm_time).tm_mday - 1) * 32 + 1;
 
 	int year = (*tm_time).tm_year % 100;
 	int count = year % 16 + 1;

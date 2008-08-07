@@ -1,27 +1,22 @@
 #ifndef FB_H
 #define FB_H
 
-#include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-//#include <linux/kd.h>
+#include <linux/kd.h>
 #include <linux/fb.h>
-#include <linux/vt.h>
-#include <stdint.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
 #include <iostream>
-//#include <dbox/fb.h>
 
 #include <string>
 #include <sstream>
 #include <map>
 
 #include <config.h>
-#include "gui/icons.h"
 #include "variables.h"
 
 #include <ft2build.h>
@@ -33,7 +28,6 @@
 #define FB_DEV "/dev/fb/0"
 #define COLORFADE 5
 #define MAXFADE 20
-#define fb_pixel_t uint16_t
 
 class fbClass
 {
@@ -124,16 +118,6 @@ public:
 	void putText(int xpos, int ypos, int color, int i, int max_size = -1, int alignment = 0);
 	void putText(int xpos, int ypos, int color, char text[150], int max_size = -1, int alignment = 0);
 	void putText(int xpos, int ypos, int color, std::string text, int max_size = -1, int alignment = 0);
-	// Icon stuff
-	void setIconBasePath(const std::string & iconPath);
-	bool paintIcon(const char * const filename, const int x, const int y, const unsigned char offset = 1);
-	bool paintIcon(const std::string & filename, const int x, const int y, const unsigned char offset = 1);
-	bool paintIcon8(const std::string & filename, const int x, const int y, const unsigned char offset = 0);
-	void loadPal(const std::string & filename, const unsigned char offset = 0, const unsigned char endidx = 255);
-	bool loadPicture2Mem(const std::string & filename, fb_pixel_t * const memp);
-	bool loadPicture2FrameBuffer(const std::string & filename);
-	bool loadPictureToMem(const std::string & filename, const uint16_t width, const uint16_t height, const uint16_t stride, fb_pixel_t * const memp);
-	bool savePictureFromMem(const std::string & filename, const fb_pixel_t * const memp);
 };
 
 #endif

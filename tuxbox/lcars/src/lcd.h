@@ -1,60 +1,67 @@
-#ifndef __lcddisplay__
-#define __lcddisplay__
+#ifndef LCD_H
+#define LCD_H
 
-#include <sys/ioctl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <time.h>
-#include <unistd.h>
-#include <math.h>
 #include <string>
-#include <dbox/lcd-ks0713.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include <vector>
+#include <map>
 
-using namespace std;
+#define LCD_DEV "/dev/dbox/lcd0"
 
 class lcddisplay
 {
-	private:
-		unsigned char raw[132][64];
-		unsigned char lcd[LCD_ROWS][LCD_COLS];
-		int fd;
-		string	iconBasePath;
-	public:
-		
-		enum
-		{
-			PIXEL_ON = LCD_PIXEL_ON,
-			PIXEL_OFF = LCD_PIXEL_OFF,
-			PIXEL_INV = LCD_PIXEL_INV
-		};
-		
-		lcddisplay();
-		~lcddisplay();
+	int fd;
 
-		int invalid_col(int x);
-		int invalid_row(int y);
-		void convert_data();
-		int sgn(int arg);
-		void setIconBasePath(string bp){iconBasePath=bp;};
-		void update();
-		int loadFont(std::string filename);
-		void writeToFile(std::string filename);
-		void loadFromFile(std::string filename);
-		void setTextSize(int size);
-		void putText(int x, int y, int font, std::string text);
-		void writeTolcddisplay();
-		void draw_point (int x,int y, int state);
-		void draw_line (int x1, int y1, int x2, int y2, int state);
-		void draw_fill_rect (int left,int top,int right,int bottom,int state);
-		void draw_rectangle (int left,int top, int right, int bottom, int linestate,int fillstate);
-		void draw_polygon(int num_vertices, int *vertices, int state);
-		void draw_char(int x, int y, char c);
-		void draw_string(int x, int y, char *string);
+	unsigned char *s;
 
-		void paintIcon(string filename, int x, int y, int col);
+	// Freetype-stuff
+	FT_Library library;
+
+	struct character
+	{
+		int size;
+
+		int top;
+		int left;
+		int width;
+		int rows;
+		int pitch;
+		int advancex;
+		int bearingY;
+
+		char bitmap[2000]; // very ugly, I know... :(
+	};
+
+	std::vector<FT_Face*> font_faces;
+	typedef std::map<char, character> font_characters;
+	typedef std::map<int, font_characters*> font_cache; // <size, <char-index, character>>
+	std::vector<font_cache*> fonts;
+
+	int current_textsize;
+public:
+	int width, height;
+
+	lcddisplay();
+	~lcddisplay();
+
+	void clearDirect();
+	void setDirectPixel(int x, int y, int val);
+
+	void clear();
+	void setPixel(int x, int y);
+	void writeToLCD();
+	void readFromLCD();
+	void writeToFile(std::string filename);
+	void loadFromFile(std::string filename);
+	void loadFrom8bitFile(std::string filename);
+
+	int loadFont(std::string filename);
+	void setTextSize(int size);
+
+	void putText(int x, int y, int font, std::string text);
+	void draw_bitmap(character *ch, int x, int y);
+
 };
 
 #endif

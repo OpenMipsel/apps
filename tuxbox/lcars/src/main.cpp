@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: main.cpp,v $
-Revision 1.31.2.1.2.3  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.31.2.1.2.4  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.31.2.1.2.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
@@ -155,6 +153,7 @@ Revision 1.6  2001/11/15 00:43:45  TheDOC
 #include "variables.h"
 #include "ir.h"
 #include "lcd.h"
+#include "control.h"
 
 int main(int argc, char **argv)
 {
@@ -183,11 +182,13 @@ int main(int argc, char **argv)
 	rc rc(&hardware, &settings);
 
 	lcddisplay lcd;
+	lcd.loadFont(FONTDIR "/ds9.ttf");
 
 	fbClass fb(&variables);
 	fb.setPalette(255, 0, 0, 0, 0xff);
 	fb.setTransparent(255);
 	fb.clearScreen();
+	fb.loadFonts(font, vtfont);
 	//fb.setFade(1, 22, 5, 57, 63, 63, 63);
 	//fb.fillBox(100, 100, 200, 200, 1);
 	//sleep(10);
@@ -240,7 +241,7 @@ int main(int argc, char **argv)
 
 			char command[100];
 			sprintf(command, "ifconfig eth0 %d.%d.%d.%d", osd.getIPPart(0), osd.getIPPart(1), osd.getIPPart(2), osd.getIPPart(3));
-			//printf("%s\n", command);
+			printf("%s\n", command);
 			//system(command);
 
 
@@ -256,7 +257,7 @@ int main(int argc, char **argv)
 	close(test);
 
 	tuner tuner(&settings);
-	zap zap(settings, osd, tuner, cam);
+	zap zap(settings, osd, tuner, cam/*, lcd*/);
 
 	pmt pmt;
 	pat pat;
@@ -300,7 +301,7 @@ int main(int argc, char **argv)
 		channels.saveDVBChannels();
 		channels.saveTS();
 	}
-	//container container(&zap, &channels, &fb, &osd, &settings, &tuner, &pat, &pmt, &eit, &scan);
+	container container(&zap, &channels, &fb, &osd, &settings, &tuner, &pat, &pmt, &eit, &scan);
 
 	channels.setBeginTS();
 	while (channels.getCurrentFrequency() == 0)
@@ -308,17 +309,17 @@ int main(int argc, char **argv)
 
 	channels.tuneCurrentTS();
 
-	//settings.getEMMpid();
+	settings.getEMMpid();
 	timer timer(&hardware, &channels, &zap, &tuner, &osd, &variables);
 	timer.loadTimer();
 	timer.start_thread();
 	tot.start_thread();
 
-	//int mode = 0; // 0 = Main Menu
-	//int ipmode;
+	int mode = 0; // 0 = Main Menu
+	int ipmode;
 
-	//int final_number;
-	//bool finish;
+	int final_number;
+	bool finish;
 
 	int channelnumber;
 	int old_channel;
@@ -333,8 +334,8 @@ int main(int argc, char **argv)
 		old_channel = atoi(argv[1]);
 	}
 
-	/*int apid = 0;
-	linkage perspective[10];
+	int apid = 0;
+//	linkage perspective[10];
 	int number_perspectives = 0;
 	int position;
 	int selected;
@@ -342,7 +343,7 @@ int main(int argc, char **argv)
 	int old_TS = 0;
 	pmt_data pmt_entry;
 	int ECM = 0;
-	event now, next, nowref;
+	event now, next/*, nowref*/;
 	int component[10];
 	char audio_description[20];
 	int curr_nvod = 0, nvod_count = 0;
@@ -357,7 +358,7 @@ int main(int argc, char **argv)
 	bool leave = false;
 	bool schedule_read = false;
 	char text[20];
-	int txtfd;*/
+//	int txtfd;
 
 	hardware.setOutputMode(settings.getOutputFormat());
 	rc.start_thread();
@@ -370,7 +371,7 @@ int main(int argc, char **argv)
 
 	control.run();
 	exit(0);
-	/*do
+	do
 	{
 		
 		time_t act_time;
@@ -389,11 +390,11 @@ int main(int argc, char **argv)
 			}
 			
 			osd.addCommand("SHOW proginfo 5");
-			channels.setCurrentOSDProgramInfo(&osd);
-			//printf("Startzapping\n");
+			channels.setCurrentOSDProgramInfo();
+			printf("Startzapping\n");
 			channels.zapCurrentChannel();
 			scan.readUpdates();
-			//printf("Enzzapping\n");
+			printf("Endzapping\n");
 			schedule_read = false;
 			if (channels.getCurrentTXT() != 0)
 			{
@@ -403,11 +404,11 @@ int main(int argc, char **argv)
 			else
 				osd.addCommand("COMMAND proginfo set_teletext false");
 
-			//printf("Channel: %s\n", channels.getCurrentServiceName().c_str());
-			//printf("SID: %04x\n",channels.getCurrentSID());
-			//printf("PMT: %04x\n", pat.getPMT(channels.getCurrentSID()));
+			printf("Channel: %s\n", channels.getCurrentServiceName().c_str());
+			printf("SID: %04x\n",channels.getCurrentSID());
+			printf("PMT: %04x\n", pat.getPMT(channels.getCurrentSID()));
 
-			//printf("Audio-PIDs: %d\n", channels.getCurrentAPIDcount());
+			printf("Audio-PIDs: %d\n", channels.getCurrentAPIDcount());
 			
 			
 			channels.receiveCurrentEIT();
@@ -416,7 +417,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 1: // Wait for key or timeout
-			//printf("Warten auf timeout...\n");
+			printf("Warten auf timeout...\n");
 			act_time = time(0);
 			while ((!rc.command_available()) && (time(0) - act_time < 5));
 			mode = switchmode;
@@ -428,7 +429,7 @@ int main(int argc, char **argv)
 				{
 					key = rc.read_from_rc();
 					number = rc.get_number();
-					if (key == RC1_DBOX)
+					if (key == RC1_MENU)
 					{
 						hardware.switch_vcr();
 						if (hardware.vcrIsOn())
@@ -539,7 +540,7 @@ int main(int argc, char **argv)
 
 				osd.createSchedule();
 				eit.dumpSchedule(channels.getCurrentTS(), channels.getCurrentONID(), channels.getCurrentSID(), &osd);
-				//printf("Wow\n");
+				printf("Wow\n");
 				osd.showSchedule(0);
 				osd.selectScheduleInformation(0);
 				mode = 12;
@@ -654,7 +655,6 @@ int main(int argc, char **argv)
 						finish = true;
 					else if (key == RC1_BLUE && final_number == 7493)
 					{
-						update_enabled = true;
 						network.update_enabled = true;
 					}
 					else if (key == RC1_MUTE)
@@ -695,7 +695,7 @@ int main(int argc, char **argv)
 			{
 				key = rc.read_from_rc();
 				number = rc.get_number();
-				if (key == RC1_DBOX)
+				if (key == RC1_MENU)
 					hardware.switch_vcr();
 				if (key == RC1_UP)
 				{
@@ -820,7 +820,7 @@ int main(int argc, char **argv)
 					number = rc.get_number();
 					if (key == RC1_YELLOW)
 						osd.clearScreen();
-					else if (key == RC1_DBOX)
+					else if (key == RC1_MENU)
 					{
 						hardware.switch_vcr();
 						if (hardware.vcrIsOn())
@@ -950,7 +950,7 @@ int main(int argc, char **argv)
 					number = rc.get_number();
 					if (key == RC1_YELLOW)
 						osd.clearScreen();
-					else if (key == RC1_DBOX)
+					else if (key == RC1_MENU)
 					{
 						hardware.switch_vcr();
 						if (hardware.vcrIsOn())
@@ -1079,14 +1079,14 @@ int main(int argc, char **argv)
 			//printf("APID: %d\n", apid);
 			//printf("Current NVOD: %d\n", curr_nvod);
 			if (old_TS != nvods[curr_nvod].TS)
-				channels.tune(nvods[curr_nvod].TS);
+				channels.tune(nvods[curr_nvod].TS, nvods[curr_nvod].ONID);
 			
 			//printf("Tuning to TS: %d\n", nvods[curr_nvod].TS);
 			
 			
 			zap.close_dev();
 			
-			old_TS = nvods[curr_nvod].TS;
+			old_TS = (channels.getCurrentTS(), channels.getCurrentONID());
 
 			pat.readPAT();
 			
@@ -1130,12 +1130,12 @@ int main(int argc, char **argv)
 			hardware.useDD(nvods[curr_nvod].DD[0]);
 			if (APIDcount == 1)
 			{
-				zap.zap_to(nvods[curr_nvod].VPID, nvods[curr_nvod].APID[apid] , ECM, nvods[curr_nvod].SID, channels.getCurrentONID(), nvods[curr_nvod].TS);
+				zap.zap_to(pmt_entry, channels.getCurrentVPID(), channels.getCurrentAPID(), channels.getCurrentPCR(), channels.getCurrentECM(), channels.getCurrentSID(), channels.getCurrentONID(), channels.getCurrentTS(), channels.getCurrentAPID(1), channels.getCurrentAPID(2));
 			}
 			else if (APIDcount == 2)
-				zap.zap_to(nvods[curr_nvod].VPID, nvods[curr_nvod].APID[0] , ECM, nvods[curr_nvod].SID, channels.getCurrentONID(), nvods[curr_nvod].TS, nvods[curr_nvod].APID[1]);
+				zap.zap_to(pmt_entry, channels.getCurrentVPID(), channels.getCurrentAPID(), channels.getCurrentPCR(), channels.getCurrentECM(), channels.getCurrentSID(), channels.getCurrentONID(), channels.getCurrentTS(), channels.getCurrentAPID(1), channels.getCurrentAPID(2));
 			else
-				zap.zap_to(nvods[curr_nvod].VPID, nvods[curr_nvod].APID[0] , ECM, nvods[curr_nvod].SID, channels.getCurrentONID(), nvods[curr_nvod].TS, nvods[curr_nvod].APID[1], nvods[curr_nvod].APID[2]);
+				zap.zap_to(pmt_entry, channels.getCurrentVPID(), channels.getCurrentAPID(), channels.getCurrentPCR(), channels.getCurrentECM(), channels.getCurrentSID(), channels.getCurrentONID(), channels.getCurrentTS(), channels.getCurrentAPID(1), channels.getCurrentAPID(2));
 			
 			schedule_read = false;
 
@@ -1270,9 +1270,9 @@ int main(int argc, char **argv)
 						
 			osd.addMenuEntry(0, "Setup", 3);
 
-			if (update_enabled)
+			if (update.cramfsmtd)
 				osd.addMenuEntry(7, "Manual Update");
-			if (update_enabled)
+			if (update.cramfsmtd)
 				osd.addMenuEntry(8, "Internet Update");
 			//osd.addMenuEntry(8, "Visual Setup");
 
@@ -1350,14 +1350,14 @@ int main(int argc, char **argv)
 				{
 					mode = 16;
 				}
-				else if (number == 7 && update_enabled)
+				else if (number == 7 && update.cramfsmtd)
 				{
-					//printf("7 gedrckt\n");
+					//printf("7 pressed\n");
 					update.run(UPDATE_MANUALFILES);
 				}
-				else if (number == 8 && update_enabled)
+				else if (number == 8 && update.cramfsmtd)
 				{
-					//printf("8 gedrckt\n");
+					//printf("8 pressed\n");
 					update.run(UPDATE_INET);
 				}
 				else if (number == 9)
@@ -1535,7 +1535,7 @@ int main(int argc, char **argv)
 				{
 					osd.addCommand("HIDE menu");
 					channels = scan.scanChannels(true);
-					channels.setStuff(&eit, &cam, &hardware, &osd, &zap, &tuner);
+					channels.setStuff(&eit, &cam, &hardware, &osd, &zap, &tuner, &variables);
 					channels.saveDVBChannels();
 					osd.addCommand("SHOW menu");
 				}
@@ -1543,7 +1543,7 @@ int main(int argc, char **argv)
 				{
 					osd.addCommand("HIDE menu");
 					channels = scan.scanChannels();
-					channels.setStuff(&eit, &cam, &hardware, &osd, &zap, &tuner);
+					channels.setStuff(&eit, &cam, &hardware, &osd, &zap, &tuner, &variables);
 					channels.saveDVBChannels();
 					osd.addCommand("SHOW menu");
 				}
@@ -1646,8 +1646,8 @@ int main(int argc, char **argv)
 			osd.addMenuEntry(1, "IP Setup");
 			osd.addMenuEntry(2, "Gateway Setup");
 			osd.addMenuEntry(3, "DNS Setup");
-
-			if (update_enabled)
+/*	TODO: Fix cramfs declaration	*/
+			if (update.cramfsmtd)
 			{
 				osd.addMenuEntry(0, "LCARS UPDATE", 3);
 				osd.addMenuEntry(8, "CramFS MTD", 2);
@@ -1659,9 +1659,7 @@ int main(int argc, char **argv)
 				osd.addSwitchParameter(4, "2"); // 2
 				osd.addSwitchParameter(4, "1"); // 1
 				osd.addSwitchParameter(4, "0"); // 0
-				
-				osd.setSelected(4, cramfs);
-
+				osd.setSelected(4, update.cramfsmtd);
 				osd.addMenuEntry(9, "LCARS Update Server IP");
 			}
 
@@ -1686,17 +1684,16 @@ int main(int argc, char **argv)
 					}
 					if (key == RC1_OK)
 						number = osd.menuSelectedIndex();
-					if (number == 8 && update_enabled)
+					if (number == 8 && update.cramfsmtd)
 					{
 						if (osd.getSelected(4) >= 6)
 							osd.setSelected(4, 0);
 						else
 							osd.setSelected(4, osd.getSelected(4) + 1);
 						
-						cramfs = osd.getSelected(4);
 						update.cramfsmtd = osd.getSelected(4);
 						osd.selectEntry(4);
-					}	
+					}
 					else if (key == RC1_MUTE)
 					{
 						if (hardware.isMuted())
@@ -1748,7 +1745,7 @@ int main(int argc, char **argv)
 					ipmode = 4;
 
 				}
-				else if (number == 9 && update_enabled)
+				else if (number == 9 && update.cramfsmtd)
 				{
 					osd.addCommand("HIDE menu");
 					mode = 14;
@@ -1771,7 +1768,7 @@ int main(int argc, char **argv)
 				osd.setIPn(3, settings.getIP(3));
 				osd.setIPDescription("Please enter IP-address!");
 			}
-			else if (ipmode == 2 && update_enabled)
+			else if (ipmode == 2 && update.cramfsmtd)
 			{
 				osd.setIPn(0, settings.getserverIP(0));
 				osd.setIPn(1, settings.getserverIP(1));
@@ -2147,5 +2144,5 @@ int main(int argc, char **argv)
 	sleep(1);
 	ioctl(fpfd,FP_IOCTL_POWEROFF);
 	close(fpfd);
-	//hardware.shutdown();*/
+	hardware.shutdown();
 }

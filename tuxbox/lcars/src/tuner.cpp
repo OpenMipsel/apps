@@ -16,6 +16,10 @@
 /*
 
 $Log: tuner.cpp,v $
+Revision 1.25.4.4  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.25.4.3  2008/07/30 18:49:18  fergy
 Mostly removed debug messages
 Tuned-up lcd.cpp & lcd.h code
@@ -122,7 +126,7 @@ tuner::tuner(settings *s)
 		perror("OPEN FRONTEND DEVICE");
 		exit(1);
 	}
-
+/*
 	dvb_frontend_info info;
 	if (ioctl(frontend, FE_GET_INFO, &info))
 	{
@@ -130,7 +134,7 @@ tuner::tuner(settings *s)
 		exit(1);
 	}
 
-	type = info.type;
+	type = info.type; */
 #endif
 }
 
@@ -176,7 +180,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 	fe_sec_tone_mode_t tone_mode;
 	fe_sec_voltage_t voltage;
 
-	if (type == FE_QPSK)
+	if (setting->boxIsSat())
 	{
 		// $$$ rasc
 		// Das Verhalten von Sectone (22KHz) sollte konfigurierbar sein.
@@ -241,7 +245,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 			perror("FE_SET_TONE");
 	}
 
-	if (type == FE_QAM)
+	if (setting->boxIsCable())
 	{
 		frontp.frequency = frequ * 100000;
 		frontp.u.qam.symbol_rate = symbol * 1000;
@@ -269,11 +273,11 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 	}
 	while (!(event.status & (FE_HAS_LOCK | FE_TIMEDOUT)));
 
-	printf (" Frequ: %u   ifreq: %u  Pol: %d  FEC: %d  Sym: %u  dis: %d\n",
+	printf (" Freq: %u\n ifreq: %u\n  Pol: %d\n  FEC: %d\n  Sym: %u\n  dis: %d\n",
 	        frequ, frontp.frequency, (int)polarization , (int)fec,
 	        symbol, (int)dis);
 
-	printf ("... Tuner-Lock Status: %d\n",event.status);
+	printf ("Lock Status: %d\n",event.status);
 
 	uint16_t state1, state2;
 
@@ -283,7 +287,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 	if (ioctl(frontend, FE_READ_SIGNAL_STRENGTH, &state2) < 0)
 		perror("FE_READ_SIGNAL_STRENGTH");
 
-	printf ("... S/N: %d  SigStrength: %d \n",state1,state2);
+	printf ("S/N: %d \n  Strength: %d \n",state1,state2);
 	if (event.status & FE_HAS_LOCK)
 		std::cout << "Has lock" << std::endl;
 	else
@@ -299,7 +303,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 	FrontendParameters frontp;
 	int status;
 
-	if (type == FE_QPSK)
+	if (setting->boxIsSat())
 	{
 
 		// $$$ rasc
@@ -312,12 +316,12 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 
 		if (frequ > 11700)
 		{
-			frontp.Frequency = (frequ * 1000)-10600000;
+			frontp.Frequency = (frequ * 1000)-1;
 			seq.continuousTone = SEC_TONE_ON;
 		}
 		else
 		{
-			frontp.Frequency = (frequ * 1000)-9750000;
+			frontp.Frequency = (frequ * 1000)-9;
 			seq.continuousTone = SEC_TONE_OFF;
 		}
 
@@ -344,7 +348,6 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		cmd.u.diseqc.numParams=1;
 		cmd.u.diseqc.params[0]=0xF0
 		                       | ((dis*4) & 0x0F)
-				       | ((seq.voltage == SEC_VOLTAGE_13)     ? 3 : 0)
 		                       | ((seq.voltage == SEC_VOLTAGE_18)     ? 2 : 0)
 		                       | ((seq.continuousTone == SEC_TONE_ON) ? 1 : 0);
 
@@ -366,13 +369,14 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		close(device);
 	}
 
-	if (type == FE_QAM)
+	if (setting->boxIsCable())
 	{
 		if (frequ < 1500) // sorry, but the old drivers are buggy :(
 			return false;
 		frontp.Frequency = frequ * 100;
 		frontp.u.qam.SymbolRate = symbol * 1000;
 		frontp.u.qam.FEC_inner = getFEC(fec);
+		// frontp.u.qam.FEC_outer = FEC_AUTO;
 		frontp.u.qam.QAM = QAM_64;
 	}
 
@@ -406,11 +410,11 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		perror("FE_READ_STATUS");
 	}
 
-	printf (" Frequ: %ld   ifreq: %ld  Pol: %d  FEC: %d  Sym: %ld  dis: %d  (param: 0x%02x)\n",
+	printf (" Freq: %ld\n   ifreq: %ld\n  Pol: %d\n  FEC: %d\n  Sym: %ld\n  dis: %d\n  (param: 0x%02x)\n",
 	        (long)frequ,(long)frontp.Frequency,(int)polarization ,(int)fec,
 	        (long)symbol, (int)dis,(int)cmd.u.diseqc.params[0]);
 
-	printf ("... Tuner-Lock Status: %d\n",status);
+	printf ("Lock Status: %d\n",status);
 
 	int state1, state2;
 
@@ -424,7 +428,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		perror("FE_READ_SIGNAL_STRENGTH");
 	}
 
-	printf ("... S/N: %d  SigStrength: %d \n",state1,state2);
+	printf ("S/N: %d  SigStrength: %d \n",state1,state2);
 
 	close(frontend);
 

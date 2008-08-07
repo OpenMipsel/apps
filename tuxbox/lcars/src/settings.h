@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: settings.h,v $
-Revision 1.6.4.3  2008/07/30 18:49:18  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.6.4.4  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.6.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
@@ -70,9 +68,9 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include "cam.h"
 
 #include <tuxbox.h>
-#include <tuxbox/info.h>
+#include <tuxbox/info_dbox2.h>
 
-tuxbox_submodel submodel (void);
+tuxbox_dbox2_gt_t tuxbox_get_dbox2_gt (void);
 
 struct setting_s
 {
@@ -94,9 +92,12 @@ struct setting_s
 
 class settings
 {
+	bool isCable;
+	bool isGTX;
 	int CAID;
 	int EMM;
 	int find_emmpid(int ca_system_id);
+	int box; // 1= nokia 2=sagem
 	int oldTS;
 	bool usediseqc;
 	cam *cam_obj;
@@ -105,6 +106,8 @@ class settings
 public:
 	settings(cam *c);
 	void initme();
+	bool boxIsCable();
+	bool boxIsSat();
 	int getCAID();
 	int getTransparentColor();
 	int getEMMpid(int TS = -1);
@@ -145,6 +148,8 @@ public:
 	void setProxyPort(int port) { setting.proxy_port = port; }
 	int getProxyPort() { return setting.proxy_port; }
 
+	int getBox() { return box; }
+	bool boxIsGTX() { return isGTX; }
 	void setDiseqc(bool use) { usediseqc = use; }
 	bool useDiseqc() { return usediseqc; }
 

@@ -1,21 +1,16 @@
 #include "fbClass.h"
-#ifndef HAVE_DREAMBOX_HARDWARE
-#include <dbox/fb.h>
-#endif
-#include <png.h>
-#include <pngconf.h>
-#include <stdlib.h>
 
 fbClass::fbClass(variables *v, int x, int y, int bpp)
 {
 	int fd;
 	vars = v;
 
-/*	if ((fd = open("/dev/vc/0", O_RDWR)) < 0)
+	if ((fd = open("/dev/vc/0", O_RDWR)) < 0)
 		perror ("/dev/vc/0");
-		goto nolfb;
+	else if (ioctl(fd, KDSETMODE, KD_GRAPHICS) < 0)
+		perror("KDSETMODE");
 	close (fd);
-*/
+
 	fbfd = open(FB_DEV, O_RDWR);
 	if (!fbfd)
 	{
@@ -52,8 +47,6 @@ fbClass::fbClass(variables *v, int x, int y, int bpp)
 	{
 		fade_down[i] = (int) (((float)i / (float)255) * (COLORFADE - 1));
 	}
-/*nolfb:
-	printf("framebuffer not available.\n");*/
 }
 
 fbClass::~fbClass()

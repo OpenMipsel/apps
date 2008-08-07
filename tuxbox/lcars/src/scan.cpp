@@ -15,6 +15,10 @@
  ***************************************************************************/
 /*
 $Log: scan.cpp,v $
+Revision 1.18.4.2  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.18.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -148,7 +152,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 	osd_obj->setScanChannelNumber(0);
 
 
-	if (tuner_obj->getType() == FE_QAM)
+	if (setting->boxIsCable())
 	{
 		start_symbol = 6900;
 		osd_obj->createPerspective();
@@ -250,7 +254,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 			}
 		}
 	}
-	else if (tuner_obj->getType() == FE_QPSK)
+	else if (setting->boxIsSat())
 	{
 		int max_chans = 2;
 
@@ -271,7 +275,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 		{
 			char text[256];
 
-			//printf("Starting at co: %d\n", co);
+			printf("Starting at co: %d\n", co);
 
 			fgets(text, 255, fp);
 			if (!isdigit(*text)) continue;

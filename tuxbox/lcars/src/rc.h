@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: rc.h,v $
-Revision 1.8.6.2  2008/07/30 18:49:18  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.8.6.3  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.8  2003/01/05 20:49:55  TheDOC
 and the old rc-devices
@@ -58,8 +56,6 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #ifndef RC_H
 #define RC_H
 
-#include <pthread.h>
-
 #include "hardware.h"
 #include "settings.h"
 
@@ -81,7 +77,7 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #define	RC_0		KEY_0
 #define	RC_STANDBY	KEY_POWER
 #define	RC_HOME		KEY_HOME
-#define	RC_DBOX		KEY_SETUP
+#define	RC_MENU		KEY_SETUP
 #define	RC_RED		398
 #define	RC_GREEN	399
 #define	RC_YELLOW	400
@@ -155,7 +151,7 @@ public:
 #define	RC1_0		0x0000
 #define	RC1_STANDBY	0x0010
 #define	RC1_HOME		0x001F
-#define	RC1_DBOX		0x0018
+#define	RC1_MENU		0x0018
 #define	RC1_RED		0x0013
 #define	RC1_GREEN		0x0011
 #define	RC1_YELLOW	0x0012
@@ -182,7 +178,7 @@ public:
 #define	RC2_0		0x5c00
 #define	RC2_STANDBY	0x5c0c
 #define	RC2_HOME		0x5c20
-#define	RC2_DBOX		0x5c27
+#define	RC2_MENU		0x5c27
 #define	RC2_RED		0x5c2d
 #define	RC2_GREEN		0x5c55
 #define	RC2_YELLOW	0x5c52
@@ -211,7 +207,7 @@ public:
 #define	RC_0 RC1_0
 #define	RC_STANDBY RC1_STANDBY
 #define	RC_HOME RC1_HOME
-#define	RC_DBOX RC1_DBOX
+#define	RC_MENU RC1_MENU
 #define	RC_RED RC1_RED
 #define	RC_GREEN RC1_GREEN
 #define	RC_YELLOW RC1_YELLOW

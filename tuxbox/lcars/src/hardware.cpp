@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: hardware.cpp,v $
-Revision 1.11.4.3  2008/07/30 18:49:17  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.11.4.4  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.11.4.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
@@ -104,9 +102,7 @@ int hardware::getVCRStatus()
 {
 	int val;
 	int fp = open("/dev/dbox/fp0",O_RDWR);
-
 	ioctl(fp, FP_IOCTL_GET_VCR, &val);
-
 	close(fp);
 	return val;
 }

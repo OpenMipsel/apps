@@ -5,7 +5,8 @@ INCLUDES = \
 	@TUXBOX_CFLAGS@ \
 	@CONFIGFILE_CFLAGS@ \
 	@CONNECTION_CFLAGS@ \
-	@LCDDISPLAY_CFLAGS@
+	@LCDDISPLAY_CFLAGS@ \
+	@CRAMFS_CFLAGS@
 
 bin_PROGRAMS = lcars
 
@@ -18,6 +19,7 @@ lcars_SOURCES = \
 	ir.cpp cam.cpp lcd.cpp tdt.cpp container.cpp serial.cpp showview.cpp 
 
 lcars_CFLAGS = -Werror
+	-DHAVE_DREAMBOX_HARDWARE
 
 lcars_LDADD = \
 	@CURL_LIBS@ \
@@ -28,6 +30,7 @@ lcars_LDADD = \
 	@CRAMFS_LIBS@ \
 	@UCODES_LIBS@ \
 	@LCDDISPLAY_LIBS@ \
+	@CRAMFS_LIBS@ \
 	 -ldl -lpthread -lcrypt
 
 install-data-local:

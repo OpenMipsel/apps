@@ -15,6 +15,10 @@
  ***************************************************************************/
 /*
 $Log: zap.cpp,v $
+Revision 1.15.2.1.2.2  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.15.2.1.2.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -92,25 +96,31 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include "tuner.h"
 #include "pat.h"
 #include "pmt.h"
+#include "lcd.h"
 
 #define BSIZE 10000
 
-zap::zap(settings &set, osd &o, tuner &t, cam &c) : setting(set), osdd(o), tune(t), ca(c)
+zap::zap(settings &set, osd &o, tuner &t, cam &c/*, lcddisplay &l*/) : setting(set), osdd(o), tune(t), ca(c)/*, lcd(l)*/
 {
-	//printf("Initializing zapper...\n");
+//	lcd_obj = l;
+	printf("Initializing zapper...\n");
+//	lcd_obj->setTextSize(12);
+//	lcd_obj->putText(80, 58, 0, "Initializing...");
+//	vcaps.cap = DVB_VIDEO_CAP_SOURCE_FORMATS;
+//	ioctl(fd, DVB_VIDEO_GET_CAPS, &vcaps);
 
-	/*vid = open(VIDEO_DEV, O_RDWR);
+	vid = open(VIDEO_DEV, O_RDWR);
 	if((video = open(DEMUX_DEV, O_RDWR)) < 0) {
-		//printf("Cannot open demux device \n");
+		printf("Cannot open demux device \n");
 		exit(1);
 	}
 
 	if((audio = open(DEMUX_DEV, O_RDWR)) < 0) {
-		//printf("Cannot open demux device\n");
+		printf("Cannot open demux device\n");
 		exit(1);
 	}
 	aud = open(AUDIO_DEV, O_RDWR);
-	ioctl(vid, VIDEO_SELECT_SOURCE, (video_stream_source_t)VIDEO_SOURCE_DEMUX);*/
+	ioctl(vid, VIDEO_SELECT_SOURCE, (video_stream_source_t)VIDEO_SOURCE_DEMUX);
 	old_frequ = 0;
 	old_TS = -1;
 	usevideo = false, useaudio = false, usepcr = false;
@@ -274,7 +284,7 @@ void zap::zap_to(pmt_data pmt, int VPID, int APID, int PCR, int ECM, int SID, in
 
 	struct dmx_pes_filter_params pes_filter;
 
-	printf("Zappe auf\nSID: %04x\nVPID: %04x\nAPID: %04x\nECM: %04x\nONID: %04x\n\n", SID, VPID, APID, ECM, ONID);
+	printf("Zap to\nSID: %04x\nVPID: %04x\nAPID: %04x\nECM: %04x\nONID: %04x\n\n", SID, VPID, APID, ECM, ONID);
 
 	
 	//ioctl(audio,AUDIO_SET_BYPASS_MODE, 0);
@@ -382,7 +392,7 @@ void zap::zap_to(pmt_data pmt, int VPID, int APID, int PCR, int ECM, int SID, in
 
 	//ioctl(audio,AUDIO_SET_BYPASS_MODE, 1);
 
-	//printf("Zapping...\n");
+	printf("Zapping...\n");
 	old_TS = TS;
 	std::cout << "Zapping done" << std::endl;
 }
@@ -393,12 +403,13 @@ void zap::zap_audio(int VPID, int APID, int ECM, int SID, int ONID)
 
 	int i = AVS_MUTE;
 	int avs = open(AVS_DEV, O_RDWR);
+	printf("----------------> OPENING AVS <--------------------\n");
 	ioctl(avs,AVSIOSMUTE,&i);
 	close(avs);
 	//ioctl(aud, AUDIO_STOP, true);
 	ioctl(audio, DMX_STOP, 0);
 
-	//printf("Zappe auf\nSID: %04x\nVPID: %04x\nAPID: %04x\nECM: %04x\nONID: %04x\n\n", SID, VPID, APID, ECM, ONID);
+	printf("Zapp on\nSID: %04x\nVPID: %04x\nAPID: %04x\nECM: %04x\nONID: %04x\n\n", SID, VPID, APID, ECM, ONID);
 
 	/* apid */
 	pes_filter.pid     = APID;
@@ -417,6 +428,7 @@ void zap::zap_audio(int VPID, int APID, int ECM, int SID, int ONID)
 	usleep(300000);
 	i = AVS_UNMUTE;
 	avs = open(AVS_DEV,O_RDWR);
+	printf("----------------> AVS_MUTE <--------------------\n");
 	ioctl(avs,AVSIOSMUTE,&i);
 	close(avs);
 }

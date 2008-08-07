@@ -73,7 +73,7 @@ class control
 	pig *pig_obj;
 	teletext *teletext_obj;
 	sdt *sdt_obj;
-	lcddisplay *lcddisplay_obj;
+	lcddisplay *lcd_obj;
 
 	typedef std::vector<command_class> commandlist;
 	typedef std::vector<std::string> string_commandlist;

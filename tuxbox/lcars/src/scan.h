@@ -15,11 +15,9 @@
  ***************************************************************************/
 /*
 $Log: scan.h,v $
-Revision 1.5.6.2  2008/07/30 18:49:18  fergy
-Mostly removed debug messages
-Tuned-up lcd.cpp & lcd.h code
-Globaly removed trash from code
-Added stuff for future progress of Lcars
+Revision 1.5.6.3  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
 
 Revision 1.5  2002/06/15 02:33:03  TheDOC
 some changes + bruteforce-channelscan for cable

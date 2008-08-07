@@ -15,6 +15,10 @@
  ***************************************************************************/
 /*
 $Log: tdt.cpp,v $
+Revision 1.8.6.2  2008/08/07 17:56:44  fergy
+Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
+Added some debug lines back to find out what/where is problem on opening channel after completed scan.
+
 Revision 1.8.6.1  2008/07/22 22:05:44  fergy
 Lcars is live again :-)
 Again can be builded with Dreambox branch.
@@ -53,7 +57,6 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #include <sys/ioctl.h>
 #include <memory.h>
 #include <stdio.h>
-#include <sys/time.h>
 
 #include "tdt.h"
 #include "help.h"
@@ -81,17 +84,15 @@ void* tdt::start_timereader( void * this_ptr )
 	while(1)
 	{
 		int fd, r;
-		struct dmxSctFilterParams flt;
+		struct dmx_sct_filter_params flt;
 		unsigned char buffer[BSIZE];
 		time_t acttime = 0;
 
 		while(acttime < 100000)
 		{
 			// Lies den TDT
-			if ((fd=open("/dev/dvb/adapter0/demux0", O_RDWR)) < 0)
-				perror("TDT open");
 
-			memset (&flt.filter, 0, sizeof (struct dmxFilter));
+			memset (&flt.filter, 0, sizeof (struct dmx_filter));
 			r = BSIZE;
 			flt.pid            = 0x14;
 			flt.filter.filter[0] = 0x70;
