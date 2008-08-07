@@ -16,6 +16,10 @@
 /*
 
 $Log: tuner.cpp,v $
+Revision 1.25.4.5  2008/08/07 21:07:47  fergy
+Revert changes as Dreambox tuner don't wanna get channels.
+Now is ok
+
 Revision 1.25.4.4  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -316,12 +320,12 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 
 		if (frequ > 11700)
 		{
-			frontp.Frequency = (frequ * 1000)-1;
+			frontp.Frequency = (frequ * 1000)-10600000;
 			seq.continuousTone = SEC_TONE_ON;
 		}
 		else
 		{
-			frontp.Frequency = (frequ * 1000)-9;
+			frontp.Frequency = (frequ * 1000)-9750000;
 			seq.continuousTone = SEC_TONE_OFF;
 		}
 
