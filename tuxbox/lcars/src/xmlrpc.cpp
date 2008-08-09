@@ -15,6 +15,9 @@
  ***************************************************************************/
 /*
 $Log: xmlrpc.cpp,v $
+Revision 1.5.6.1  2008/08/09 16:40:33  fergy
+xmlrpc  is again into Makefile as We will need it in the future
+
 Revision 1.5  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -755,11 +758,11 @@ void xmlrpc::parse()
 				container_obj->channels_obj->setCurrentChannel(h.getChannelNumber());
 
 				container_obj->channels_obj->zapCurrentChannel();
-				container_obj->channels_obj->setCurrentOSDProgramInfo(container_obj->osd_obj);
+				container_obj->channels_obj->setCurrentOSDProgramInfo();
 
 				container_obj->channels_obj->receiveCurrentEIT();
-				container_obj->channels_obj->setCurrentOSDProgramEIT(container_obj->osd_obj);
-				container_obj->channels_obj->updateCurrentOSDProgramAPIDDescr(container_obj->osd_obj);
+				container_obj->channels_obj->setCurrentOSDProgramEIT();
+				container_obj->channels_obj->updateCurrentOSDProgramAPIDDescr();
 				xmlrpc_params params;
 				response.setParams(&params);
 			}
@@ -922,11 +925,11 @@ void xmlrpc::parse()
 					container_obj->channels_obj->setCurrentChannel(h.getChannelNumber());
 
 					container_obj->channels_obj->zapCurrentChannel();
-					container_obj->channels_obj->setCurrentOSDProgramInfo(container_obj->osd_obj);
+					container_obj->channels_obj->setCurrentOSDProgramInfo();
 
 					container_obj->channels_obj->receiveCurrentEIT();
-					container_obj->channels_obj->setCurrentOSDProgramEIT(container_obj->osd_obj);
-					container_obj->channels_obj->updateCurrentOSDProgramAPIDDescr(container_obj->osd_obj);
+					container_obj->channels_obj->setCurrentOSDProgramEIT();
+					container_obj->channels_obj->updateCurrentOSDProgramAPIDDescr();
 				}
 				container_obj->zap_obj->dmx_stop();
 				xmlrpc_params params;

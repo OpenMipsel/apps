@@ -16,7 +16,7 @@ lcars_SOURCES = \
 	osd.cpp sdt.cpp zap.cpp nit.cpp pat.cpp pmt.cpp \
 	eit.cpp settings.cpp channels.cpp rc.cpp help.cpp fbClass.cpp \
 	tot.cpp checker.cpp tuner.cpp update.cpp control.cpp variables.cpp \
-	ir.cpp cam.cpp lcd.cpp tdt.cpp container.cpp serial.cpp showview.cpp
+	ir.cpp cam.cpp lcd.cpp tdt.cpp container.cpp serial.cpp showview.cpp xmlrpc.cpp
 
 lcars_CFLAGS = -Werror
 	-DHAVE_DREAMBOX_HARDWARE
@@ -31,7 +31,7 @@ lcars_LDADD = \
 	@UCODES_LIBS@ \
 	@LCDDISPLAY_LIBS@ \
 	@CRAMFS_LIBS@ \
-	 -ldl -lpthread -lcrypt
+	 -ldl -lpthread -lcrypt -lucodes
 
 install-data-local:
 	install -d $(CONFIGDIR)/lcars

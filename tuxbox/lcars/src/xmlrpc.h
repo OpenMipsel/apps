@@ -15,6 +15,9 @@
  ***************************************************************************/
 /*
 $Log: xmlrpc.h,v $
+Revision 1.4.6.1  2008/08/09 16:40:33  fergy
+xmlrpc  is again into Makefile as We will need it in the future
+
 Revision 1.4  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -42,7 +45,7 @@ initial release
 #include <fstream>
 #include <sstream>
 #include <stdarg.h>
-
+#include <asm/types.h>
 #include "container.h"
 
 enum
