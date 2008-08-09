@@ -15,6 +15,9 @@
  ***************************************************************************/
 /*
 $Log: pig.cpp,v $
+Revision 1.8.6.5  2008/08/09 16:39:14  fergy
+New structure ( stoled from Neutrino )
+
 Revision 1.8.6.4  2008/08/07 20:25:30  fergy
 Mostly clear of not needed lines
 Added back debug messages ( just for dev. )
@@ -50,127 +53,171 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
  added
 
 */
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "pig.h"
-#include "devices.h"
 
-#ifdef HAVE_LINUX_DVB_VERSION_H
 pig::pig()
 {
-	fd = open(PIG_DEV, O_RDWR);
+    fd = -1;
+    status = CLOSED;
 }
 
-pig::~pig()
+
+pig::pig(int pig_nr)
 {
-	close(fd);
+    fd = -1;
+    status = CLOSED;
+    fd = pigopen (pig_nr);
 }
 
-void pig::show()
-{
-	avia_pig_show(fd);
-}
 
-void pig::hide()
+pig::pig(int pig_nr, int x, int y, int w, int h)
 {
-	avia_pig_hide(fd);
-}
-
-void pig::setSize(int x, int y)
-{
-	avia_pig_set_size(fd, x, y);
-}
-
-void pig::setPosition(int x, int y)
-{
-	avia_pig_set_pos(fd, x, y);
-}
-
-void pig::setStack(int i)
-{
-	avia_pig_set_stack(fd, i);
-}
-
-void pig::setSource(int x1, int y1, int x2, int y2)
-{
-}
-
-#elif HAVE_OST_DMX_H
-#ifndef HAVE_DREAMBOX_HARDWARE
-pig::pig()
-{
-	fd = open(PIG_DEV, O_RDWR);
-}
-
-pig::~pig()
-{
-	close(fd);
-}
-
-void pig::show()
-{
-	avia_pig_show(fd);
-}
-
-void pig::hide()
-{
-	avia_pig_hide(fd);
-}
-
-void pig::setSize(int x, int y)
-{
-	avia_pig_set_size(fd, x, y);
-}
-
-void pig::setPosition(int x, int y)
-{
-	avia_pig_set_pos(fd, x, y);
-}
-
-void pig::setStack(int i)
-{
-	avia_pig_set_stack(fd, i);
-}
-
-void pig::setSource(int x1, int y1, int x2, int y2)
-{
-}
-#else
-pig::pig()
-{
+    fd = -1;
+    status = CLOSED;
+    fd = pigopen (pig_nr);
+    set_coord (x,y, w,h);
 
 }
 
 pig::~pig()
 {
+	pigclose ();
 
 }
 
-void pig::show()
+int pig::pigopen (int pig_nr)
 {
 
+ char  *pigdevs[] = {
+		PIG_DEV "0"
+};
+		
+
+    if ( (pig_nr>0) || (pig_nr < (int)(sizeof (pigdevs)/sizeof(char *))) ) {
+    
+	if (fd < 0) {
+		fd = open( pigdevs[pig_nr], O_RDWR );
+		if (fd >= 0) {
+			status = HIDE;
+			px = py = pw = ph = 0;
+		}
+		return fd;
+	}
+
+    }
+
+    return -1;
 }
 
-void pig::hide()
+void pig::pigclose ()
+{
+   if (fd >=0 ) {
+	close (fd);
+	fd = -1;
+	status = CLOSED;
+	px = py = pw = ph = 0;
+   }
+   return;
+}
+
+void pig::_set_window (int x, int y, int w, int h)
+{
+	struct v4l2_crop crop;
+	struct v4l2_format coord;
+	int    err;
+
+	crop.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
+	err = ioctl(fd, VIDIOC_G_CROP, &crop);
+
+	crop.c.left = 0;
+	crop.c.top = 0;
+	crop.c.width = 720;
+	crop.c.height = 576;
+	err = ioctl(fd, VIDIOC_S_CROP, &crop);
+	
+	coord.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
+	err = ioctl(fd, VIDIOC_G_FMT, &coord);
+
+	coord.fmt.win.w.left = x;
+	coord.fmt.win.w.top = y;
+	coord.fmt.win.w.width  = w;
+	coord.fmt.win.w.height = h;
+
+	err = ioctl(fd, VIDIOC_S_FMT, &coord);
+}
+
+
+void pig::set_coord (int x, int y, int w, int h)
 {
 
+	if (( x != px ) || ( y != py )) {
+		px = x;
+		py = y;
+		pw = w;
+		ph = h;
+		_set_window (px,py,pw,ph);
+	}
+
 }
 
-void pig::setSize(int x, int y)
+void pig::set_xy (int x, int y)
 {
 
+	if (( x != px ) || ( y != py )) {
+		px = x;
+		py = y;
+		_set_window (px,py,pw,ph);
+	}
+
 }
 
-void pig::setPosition(int x, int y)
+void pig::set_size (int w, int h)
 {
 
+	if (( w != pw ) || ( h != ph )) {
+		pw = w;
+		ph = h;
+		_set_window (px,py,pw,ph);
+	}
+
 }
 
-void pig::setStack(int i)
+void pig::show (int x, int y, int w, int h)
 {
-
+	set_coord (x,y, w,h);
+	show ();
 }
 
-void pig::setSource(int x1, int y1, int x2, int y2)
+void pig::show (void)
 {
+	if ( fd >= 0 ) {
+		int pigmode = 1;
+		int err;
+		err = ioctl(fd, VIDIOC_OVERLAY, &pigmode);
+		status = SHOW;
+	}
 }
-#endif
-#endif
+
+void pig::hide (void)
+{
+	if ( fd >= 0 ) {
+		int pigmode = 0;
+		int err;
+		err = ioctl(fd, VIDIOC_OVERLAY, &pigmode);
+		status = HIDE;
+	}
+}
+
+
+pig::PigStatus  pig::getStatus(void)
+{
+	return status;
+
+}
+

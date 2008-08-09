@@ -15,6 +15,12 @@
  ***************************************************************************/
 /*
 $Log: pig.h,v $
+Revision 1.7.6.1  2008/08/09 16:39:14  fergy
+New structure ( stoled from Neutrino )
+
+Revision 1.7  2003/01/05 19:28:45  TheDOC
+lcars should be old-api-compatible again
+
 Revision 1.6  2002/06/02 12:18:47  TheDOC
 source reformatted, linkage-pids correct, xmlrpc removed, all debug-messages removed - 110k smaller lcars with -Os :)
 
@@ -34,24 +40,36 @@ Revision 1.2  2001/11/15 00:43:45  TheDOC
 #ifndef PIG_H
 #define PIG_H
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
+#include <linux/videodev.h>
 
-#include <dbox/avia_gt_pig.h>
+#define PIG_DEV "/dev/v4l/video"
 
 class pig
 {
-	int fd;
 public:
-	pig();
-	~pig();
-	void show();
-	void hide();
-	void setSize(int x, int y);
-	void setPosition(int x, int y);
-	void setStack(int i);
-	void setSource(int x1, int y1, int x2, int y2);
+	pig ();
+	pig (int pig_nr);
+	pig (int pig_nr, int x, int y, int w, int h);
+	~pig ();
+	int  pigopen  (int pig_nr);
+	void pigclose (void);
+	void set_coord (int x, int y, int w, int h);
+	void set_xy    (int x, int y);
+	void set_size  (int w, int h);
+	void show (void);
+	void show (int x, int y, int w, int h);
+	void hide (void);
+
+	enum PigStatus { CLOSED, HIDE, SHOW };
+	PigStatus getStatus(void);
+
+private:
+	void _set_window  (int x, int y, int w, int h);
+
+	int fd;
+	int px, py, pw, ph;
+	int stackpos;
+	PigStatus  status;
 };
 
 #endif
