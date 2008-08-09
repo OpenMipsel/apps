@@ -15,3 +15,4 @@ install-data-local:
 	install -m 0644 data/http/*.htm $(DATADIR)/lcars/http
 	install -m 0644 data/http/*.css $(DATADIR)/lcars/http
 	install -m 0644 data/fonts/*.ttf $(DATADIR)/lcars/http
+	install -m 0644 data/extras/*.conf $(CONFIGDIR)/lcars
