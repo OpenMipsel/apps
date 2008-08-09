@@ -15,6 +15,11 @@
  ***************************************************************************/
 /*
 $Log: hardware.cpp,v $
+Revision 1.11.4.6  2008/08/09 16:41:51  fergy
+Cleaning code
+Enabled some debug stuff
+Enabled some disabled features
+
 Revision 1.11.4.5  2008/08/07 20:25:30  fergy
 Mostly clear of not needed lines
 Added back debug messages ( just for dev. )
@@ -159,7 +164,7 @@ int hardware::getAudioType()
 {
 	int check = 0;
 	char buffer[100];
-	FILE* fp = fopen("/proc/bus/bitstream", "r");
+	FILE* fp = fopen("/proc/bus/bitstream", "rt");
 	while (!feof(fp))
 	{
 		fgets(buffer, 100, fp);
@@ -212,7 +217,29 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW2,&i);
 			ioctl(avs,AVSIOSASW2,&j);
 			break;
+/*		FIX ME!!!
+		case TUXBOX_VENDOR_DREAM_MM:
+			i = 0;
+			j = 1;
+			nothing = 7;
+			ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSVSW2,&nothing);
+			ioctl(avs,AVSIOSVSW1,&i);
+			ioctl(avs,AVSIOSASW1,&j);
+			ioctl(avs,AVSIOSASW2,&nothinga);
+			break;
 
+		case TUXBOX_VENDOR_TECHNOTREND:
+			i = 0;
+			j = 1;
+			nothing = 7;
+			ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSVSW2,&nothing);
+			ioctl(avs,AVSIOSVSW1,&i);
+			ioctl(avs,AVSIOSASW1,&j);
+			ioctl(avs,AVSIOSASW2,&nothinga);
+			break;
+*/
 		default:
 			break;
 		}
@@ -257,7 +284,31 @@ bool hardware::switch_vcr()
 			ioctl(avs,AVSIOSVSW2,&i);
 			ioctl(avs,AVSIOSASW2,&j);
 			break;
+/*		FIX ME!!!!		
+		case TUXBOX_VENDOR_DREAM_MM:
+			i = 5;
+			j = 1;
+			nothing = 1;
+			nothinga = 2;
+			ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSVSW2,&nothing);
+			ioctl(avs,AVSIOSVSW1,&i);
+			ioctl(avs,AVSIOSASW1,&j);
+			ioctl(avs,AVSIOSASW2,&nothinga);
+			break;
 
+		case TUXBOX_VENDOR_TECHNOTREND:
+			i = 5;
+			j = 1;
+			nothing = 1;
+			nothinga = 2;
+			ioctl(avs,AVSIOSFBLK,&fblk);
+			ioctl(avs,AVSIOSVSW2,&nothing);
+			ioctl(avs,AVSIOSVSW1,&i);
+			ioctl(avs,AVSIOSASW1,&j);
+			ioctl(avs,AVSIOSASW2,&nothinga);
+			break;
+*/
 		default:
 			break;
 		}

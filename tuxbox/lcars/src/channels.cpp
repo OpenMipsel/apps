@@ -15,6 +15,11 @@
  ***************************************************************************/
 /*
 $Log: channels.cpp,v $
+Revision 1.22.6.5  2008/08/09 16:41:51  fergy
+Cleaning code
+Enabled some debug stuff
+Enabled some disabled features
+
 Revision 1.22.6.4  2008/08/07 20:25:30  fergy
 Mostly clear of not needed lines
 Added back debug messages ( just for dev. )
@@ -665,7 +670,7 @@ void channels::updateChannel(int number, channel channel_data)
 
 int channels::getChannelNumber(int TS, int ONID, int SID)
 {
-	printf("Wanted: TS: %x - ONID: %x - SID: %x\n", TS, ONID, SID);
+	printf("Wanted: TS: %x\n ONID: %x\n SID: %x\n", TS, ONID, SID);
 
 
 	printf ("Found: %d\n",  services_list.count(SID));
@@ -675,7 +680,7 @@ int channels::getChannelNumber(int TS, int ONID, int SID)
 	{
 		int pos = (*it).second;
 		setCurrentChannel(pos);
-		printf("Checking Position %d - TS: %x - ONID: %x\n", pos, getCurrentTS(), getCurrentONID());
+		printf("Checking Position %d\n TS: %x\n ONID: %x\n", pos, getCurrentTS(), getCurrentONID());
 		if (getCurrentTS() == TS && getCurrentONID() == ONID)
 			return pos;
 
@@ -1310,7 +1315,7 @@ void channels::loadDVBChannels()
 {
 	int fd;
 
-	printf("Loading Channels\n");
+	printf("Loading Channels from file\n");
 	if ((fd = open(CONFIGDIR "/lcars/lcars.dvb", O_RDONLY)) < 0)
 	{
 		printf("No channels available!\n");
@@ -1377,7 +1382,7 @@ void channels::saveTS()
 		tmp_ts = it->second;
 		fwrite(&tmp_ts, sizeof(transportstream), 1, fp);
 
-		printf("TS: %d - FREQU: %ld\n SYMBOL: %d\n POL: %d\n FEC: %d\n", (*it).second.trans.TS, (*it).second.FREQU, (*it).second.SYMBOL, (*it).second.POLARIZATION, (*it).second.FEC);
+		printf("TS: %d\n FREQU: %ld\n SYMBOL: %d\n POL: %d\n FEC: %d\n", (*it).second.trans.TS, (*it).second.FREQU, (*it).second.SYMBOL, (*it).second.POLARIZATION, (*it).second.FEC);
 	}
 
 	fclose(fp);

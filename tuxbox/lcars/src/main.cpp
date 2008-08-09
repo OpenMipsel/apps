@@ -15,6 +15,11 @@
  ***************************************************************************/
 /*
 $Log: main.cpp,v $
+Revision 1.31.2.1.2.6  2008/08/09 16:41:51  fergy
+Cleaning code
+Enabled some debug stuff
+Enabled some disabled features
+
 Revision 1.31.2.1.2.5  2008/08/07 20:25:30  fergy
 Mostly clear of not needed lines
 Added back debug messages ( just for dev. )
@@ -395,7 +400,7 @@ int main(int argc, char **argv)
 			printf("Startzapping\n");
 			channels.zapCurrentChannel();
 			scan.readUpdates();
-			printf("Endzapping\n");
+			printf("End zapping\n");
 			schedule_read = false;
 			if (channels.getCurrentTXT() != 0)
 			{
@@ -2008,10 +2013,9 @@ int main(int argc, char **argv)
 					if (plugins.getShowPig(number - 1))
 					{
 						pig.hide();	
-						pig.setSize(plugins.getSizeX(number - 1), plugins.getSizeY(number - 1));
-						pig.setStack(1);
+						pig.set_size(plugins.getSizeX(number - 1), plugins.getSizeY(number - 1));
 						pig.show();
-						pig.setPosition(plugins.getPosX(number - 1), plugins.getPosY(number - 1));
+						pig.set_xy(plugins.getPosX(number - 1), plugins.getPosY(number - 1));
 					}
 
 					plugins.setfb(fb.getHandle());

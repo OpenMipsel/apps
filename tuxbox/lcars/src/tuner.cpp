@@ -16,6 +16,11 @@
 /*
 
 $Log: tuner.cpp,v $
+Revision 1.25.4.6  2008/08/09 16:41:51  fergy
+Cleaning code
+Enabled some debug stuff
+Enabled some disabled features
+
 Revision 1.25.4.5  2008/08/07 21:07:47  fergy
 Revert changes as Dreambox tuner don't wanna get channels.
 Now is ok
@@ -277,7 +282,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 	}
 	while (!(event.status & (FE_HAS_LOCK | FE_TIMEDOUT)));
 
-	printf (" Freq: %u\n ifreq: %u\n  Pol: %d\n  FEC: %d\n  Sym: %u\n  dis: %d\n",
+	printf ("Freq: %u\n ifreq: %u\n  Pol: %d\n  FEC: %d\n  Sym: %u\n  dis: %d\n",
 	        frequ, frontp.frequency, (int)polarization , (int)fec,
 	        symbol, (int)dis);
 
@@ -291,7 +296,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 	if (ioctl(frontend, FE_READ_SIGNAL_STRENGTH, &state2) < 0)
 		perror("FE_READ_SIGNAL_STRENGTH");
 
-	printf ("S/N: %d \n  Strength: %d \n",state1,state2);
+	printf ("S/N: %d\n  Strength: %d\n",state1,state2);
 	if (event.status & FE_HAS_LOCK)
 		std::cout << "Has lock" << std::endl;
 	else
@@ -351,9 +356,10 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		cmd.u.diseqc.cmd=0x38;
 		cmd.u.diseqc.numParams=1;
 		cmd.u.diseqc.params[0]=0xF0
-		                       | ((dis*4) & 0x0F)
-		                       | ((seq.voltage == SEC_VOLTAGE_18)     ? 2 : 0)
-		                       | ((seq.continuousTone == SEC_TONE_ON) ? 1 : 0);
+								| ((dis*4) & 0x0F)
+								| ((seq.voltage == SEC_VOLTAGE_13)     ? 3 : 0)
+								| ((seq.voltage == SEC_VOLTAGE_18)     ? 2 : 0)
+								| ((seq.continuousTone == SEC_TONE_ON) ? 1 : 0);
 
 		seq.miniCommand=SEC_MINI_NONE;
 		seq.numCommands=1;
@@ -432,7 +438,7 @@ bool tuner::tune(unsigned int frequ, unsigned int symbol, int polarization, int 
 		perror("FE_READ_SIGNAL_STRENGTH");
 	}
 
-	printf ("S/N: %d  SigStrength: %d \n",state1,state2);
+	printf ("S/N: %d\n  Signal Strength: %d\n",state1,state2);
 
 	close(frontend);
 

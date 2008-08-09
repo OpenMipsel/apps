@@ -1898,10 +1898,9 @@ void control::openMenu(int menuNumber)
 			if (plugins_obj->getShowPig(number - 1))
 			{
 				pig_obj->hide();
-				pig_obj->setSize(plugins_obj->getSizeX(number - 1), plugins_obj->getSizeY(number - 1));
-				pig_obj->setStack(1);
+				pig_obj->set_size(plugins_obj->getSizeX(number - 1), plugins_obj->getSizeY(number - 1));
 				pig_obj->show();
-				pig_obj->setPosition(plugins_obj->getPosX(number - 1), plugins_obj->getPosY(number - 1));
+				pig_obj->set_xy(plugins_obj->getPosX(number - 1), plugins_obj->getPosY(number - 1));
 			}
 			plugins_obj->setfb(fb_obj->getHandle());
 			plugins_obj->setrc(rc_obj->getHandle());

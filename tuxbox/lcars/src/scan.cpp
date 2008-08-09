@@ -15,6 +15,11 @@
  ***************************************************************************/
 /*
 $Log: scan.cpp,v $
+Revision 1.18.4.3  2008/08/09 16:41:51  fergy
+Cleaning code
+Enabled some debug stuff
+Enabled some disabled features
+
 Revision 1.18.4.2  2008/08/07 17:56:44  fergy
 Reverting last changes, as on this way it boot and scan, but NOT show main screen ( on Dreambox )
 Added some debug lines back to find out what/where is problem on opening channel after completed scan.
@@ -164,17 +169,17 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 				start_frequency = 3460;
 				if (i == 1)
 				{
-					//std::cout << "Inversion off " << std::endl;
+					std::cout << "Inversion off " << std::endl;
 					setting->setInversion(INVERSION_OFF);
 				}
 				else if (i == 0)
 				{
-					//std::cout << "Inversion auto" << std::endl;
+					std::cout << "Inversion auto" << std::endl;
 					setting->setInversion(INVERSION_AUTO);
 				}
 				else if (i == 2)
 				{
-					//std::cout << "Inversion on" << std::endl;
+					std::cout << "Inversion on" << std::endl;
 					setting->setInversion(INVERSION_ON);
 				}
 
@@ -188,7 +193,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 	
 					if (tuner_obj->tune(start_frequency, start_symbol))
 					{
-						//std::cout << "Checking frequ: " << start_frequency << " with symbol: " << start_symbol << std::endl;
+						std::cout << "Checking frequency: " << start_frequency << " with symbol: " << start_symbol << std::endl;
 						
 						number = nit_obj->getTransportStreams(&tmp_channels);
 						if (tmp_channels.numberTransponders() > 0)
@@ -236,7 +241,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 			for (int i = 500; i < 8900; i += 80)
 			{
 				char message[100];
-				sprintf(message, "Checking %d - %d", i, 6900);
+				sprintf(message, "Checking %d\n %d\n", i, 6900);
 				osd_obj->setPerspectiveName(message);
 				osd_obj->addCommand("SHOW perspective");
 
@@ -247,7 +252,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 						channels tmp_channels2(setting, pat_obj, pmt_obj);
 						sdt_obj->getChannels(&tmp_channels2);
 						tmp_channels.addTS(pat_obj->getTS(), sdt_obj->getONID(), i, 6900);
-						std::cout << "Found TS: " << pat_obj->getTS() << " " << sdt_obj->getONID() << " " << i << " " << 6900 << std::endl;
+						std::cout << "Found Transponders: " << pat_obj->getTS() << " " << sdt_obj->getONID() << " " << i << " " << 6900 << std::endl;
 						osd_obj->setScanTSNumber(tmp_channels.numberTransponders());
 					}
 				}
@@ -275,7 +280,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 		{
 			char text[256];
 
-			printf("Starting at co: %d\n", co);
+			printf("Starting at position: %d\n", co);
 
 			fgets(text, 255, fp);
 			if (!isdigit(*text)) continue;
@@ -283,10 +288,10 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 			        &start_frq[co], &start_sym[co],
 			        &start_pol[co], &start_fe[co],
 			        &start_dis[co], tmp);
-			//printf ("Scandat: Freq:%d, SymR:%d, Pol:%d, FEC:%d DiSeqc:%d\n",
-			//start_frq[co], start_sym[co],
-			//start_pol[co], start_fe[co],
-			//start_dis[co]);
+			printf ("Scandat file successfuly loaded:\n Freq:%d\n, SymR:%d\n, Pol:%d\n, FEC:%d\n DiSeqc:%d\n",
+			start_frq[co], start_sym[co],
+			start_pol[co], start_fe[co],
+			start_dis[co]);
 			co++;
 			if ((unsigned int) co >= (sizeof(start_fe)/sizeof(start_fe[0])) )
 				break;
@@ -300,8 +305,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 		//int old = channels.numberTransponders();
 		while (i < max_chans)
 		{
-			//printf("StartDef: %d\n", i);
-			//printf("numtrans: %d - old: %d\n", channels.numberTransponders(), old);
+			printf("Default start: %d\n", i);
 
 			if (start_dis[i]  < 0) {
 				dis_start = 0;
@@ -313,22 +317,22 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 			for (int dis = dis_start; dis <= dis_end; dis++)
 			{
 				char message[255];
-				sprintf(message, "Searching on %d - %d - %d - %d - %d",
+				sprintf(message, "Searching on %d\n %d\n %d\n %d\n %d\n",
 				        start_frq[i], start_sym[i],
 				        start_pol[i], start_fe[i], dis);
 				osd_obj->setPerspectiveName(message);
 				osd_obj->addCommand("SHOW perspective");
 
-				//printf ("Start tuning\n");
+				printf ("Start tuning\n");
 
 				if (tuner_obj->tune(start_frq[i], start_sym[i], start_pol[i], start_fe[i], dis))
 				{
 
-					//printf("FInished tuning\n");
+					printf("Finished tuning\n");
 
-					//printf ("Start NIT\n");
+					printf ("Start NIT\n");
 					number = nit_obj->getTransportStreams(&tmp_channels, dis);
-					//printf ("End NIT\n");
+					printf ("End NIT\n");
 				}
 			}
 
@@ -344,7 +348,7 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 	}
 
 	osd_obj->setScanTSNumber(tmp_channels.numberTransponders());
-	printf("Transponders found: %d\n", tmp_channels.numberTransponders());
+	printf("Found %d transponders: \n", tmp_channels.numberTransponders());
 	tmp_channels.dumpTS();
 	sleep(5);
 	int count = 0;
@@ -363,12 +367,12 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 	{
 		if(tmp_channels.tuneCurrentTS())
 		{
-			//printf("getChannels - Start\n");
+			printf("Get Channels - Start\n");
 			sdt_obj->getChannels(&tmp_channels);
 
 			if (type == FULL)
 			{
-				//std::cout << "Full Channel Scan" << std::endl;
+				std::cout << "Full Channel Scan" << std::endl;
 				pat_obj->readPAT();
 				for (int i = numberChannels; i < tmp_channels.numberChannels(); i++)
 				{
@@ -416,14 +420,14 @@ channels scan::scanChannels(int type, int start_frequency, int start_symbol, int
 
 		}
 		osd_obj->setScanChannelNumber(tmp_channels.numberChannels());
-		//printf("getChannels - Finish\n");
+		printf("Get Channels - Finish\n");
 		count++;
 		osd_obj->setScanProgress((int)(((float)count / numberTS) * 100));
 	} while(tmp_channels.setNextTS());
 
 	{
 		char message[100];
-		sprintf(message, "Found %d channels on %d TSs.", tmp_channels.numberChannels(), tmp_channels.numberTransponders());
+		sprintf(message, "Found %d channels on %d Transponders.", tmp_channels.numberChannels(), tmp_channels.numberTransponders());
 		osd_obj->setPerspectiveName(message);
 		osd_obj->addCommand("SHOW perspective");
 		sleep(5);
@@ -447,20 +451,20 @@ void scan::updateChannels(channels *chan)
 	int notfound[newchannels.numberChannels()];
 	int numbernotfoundchannels = 0;
 
-	//printf("Starting update-Compare\n");
+	printf("Starting update-Compare\n");
 	//printf("Old: %d - New: %d\n", (*chan).numberChannels(), newchannels.numberChannels());
 	for (int i = 0; i < (*chan).numberChannels(); i++)
 		newsort[i] = -1;
 
-	//printf("----> 1\n");
+	printf("----> 1\n");
 	for (int i = 0; i < newchannels.numberChannels(); i++)
 	{
-		//printf("%d\n", i);
+		printf("%d\n", i);
 		channel tmp_chan = newchannels.getChannelByNumber(i);
 
 		int chan_num = (*chan).getChannelNumber(tmp_chan.TS, tmp_chan.ONID, tmp_chan.SID);
 
-		//printf("Channelnumber: %d\n", chan_num);
+		printf("Channel number: %d\n", chan_num);
 		if (chan_num != -1)
 			newsort[chan_num] = i;
 		else
@@ -468,7 +472,7 @@ void scan::updateChannels(channels *chan)
 			notfound[numbernotfoundchannels++] = i;
 		}
 	}
-	//printf("----> 2\n");
+	printf("----> 2\n");
 
 
 	for (int i = 0; i < numbernotfoundchannels; i++)
@@ -476,13 +480,13 @@ void scan::updateChannels(channels *chan)
 		newsort[(*chan).numberChannels() + i] = notfound[i];
 	}
 
-	//printf("----> 3\n");
+	printf("----> 3\n");
 	channel empty_chan;
 	memset (&empty_chan, 0, sizeof(struct channel));
 	strcpy(empty_chan.serviceName, "--> Deleted");
 
-	//printf("Complete: %d\n", (*chan).numberChannels() + numbernotfoundchannels);
-	//printf("----> 4\n");
+	printf("Complete: %d\n", (*chan).numberChannels() + numbernotfoundchannels);
+	printf("----> 4\n");
 	int numbercomplete = (*chan).numberChannels() + numbernotfoundchannels;
 
 	(*chan).clearChannels();
@@ -502,7 +506,7 @@ void scan::updateChannels(channels *chan)
 	newchannels.setBeginTS();
 	for (int i = 0; i < newchannels.numberTransponders(); i++)
 	{
-		//printf("Adding TS %x ONID %x Frequ %d\n", newchannels.getCurrentSelectedTS(), newchannels.getCurrentSelectedONID(), newchannels.getCurrentFrequency());
+		printf("Adding Transponder %x\n ONID %x\n Frequency %d\n", newchannels.getCurrentSelectedTS(), newchannels.getCurrentSelectedONID(), newchannels.getCurrentFrequency());
 		(*chan).addTS(newchannels.getCurrentSelectedTS(), newchannels.getCurrentSelectedONID(), newchannels.getCurrentFrequency(), newchannels.getCurrentSymbolrate(), newchannels.getCurrentPolarization(), newchannels.getCurrentFEC());
 		newchannels.setNextTS();
 	}
