@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.8 2003/06/15 02:08:29 ghostrider Exp $
+ * $Id: setupskin.cpp,v 1.11.2.8.2.1 2008/08/19 21:24:56 fergy Exp $
  */
 
 #include <setupskin.h>
@@ -26,17 +26,21 @@
 #include <lib/gui/ebutton.h>
 #include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
+#include <lib/system/econfig.h>
+#include <lib/gdi/epng.h>
+#include <lib/gdi/gfbdc.h>
 
-extern eString getInfo(const char *file, const char *info);
+#include <lib/gui/ewidget.h>
+
 
 void eSkinSetup::loadSkins()
 {
 	eListBoxEntrySkin* selection=0;
-
+        lskins->beginAtomic();
 	const char *skinPaths[] =
 	{
 		CONFIGDIR "/enigma/skins/",
-		DATADIR "/enigma/skins/",
+		TUXBOXDATADIR "/enigma/skins/",
 		0
 	};
 
@@ -72,8 +76,9 @@ void eSkinSetup::loadSkins()
 
 			if (fileName.find(".info") != eString::npos)
 			{
-				eString esml=skinPaths[i] + getInfo(fileName.c_str(), "esml");
-				eString name=getInfo(fileName.c_str(), "name");
+				eSimpleConfigFile config(fileName.c_str());
+				eString esml = skinPaths[i] + config.getInfo("esml");
+				eString name = config.getInfo("name");
 				eDebug("esml = %s, name = %s", esml.c_str(), name.c_str());
 				if (esml.size() && name.size())
 				{
@@ -90,6 +95,9 @@ void eSkinSetup::loadSkins()
 		lskins->sort();
 	if (selection)
 		lskins->setCurrent(selection);
+	if ( current_skin )
+		free(current_skin);
+        lskins->endAtomic();
 }
 
 void eSkinSetup::accept()
@@ -97,39 +105,100 @@ void eSkinSetup::accept()
 	skinSelected(lskins->getCurrent());
 }
 
+void eSkinSetup::skinchanged(eListBoxEntrySkin *skin)
+{
+        eString icon;
+        eString command;
+        eString iconname; 
+        eString finalname;
+        int len;
+
+        iconname = skin->getESML();
+        len = iconname.find(".esml");
+        finalname= iconname.substr(0,len)+ ".png";
+
+        system(command.c_str());
+        lb3->clear();
+        gPixmap *img = 0;
+        img = loadPNG(finalname.c_str());
+        if(img)
+        { 
+           gPixmap * mp = &gFBDC::getInstance()->getPixmap();
+           gPixmapDC mydc(img);
+           gPainter p(mydc);
+           p.mergePalette(*mp);
+
+           lb3->move(ePoint(280, 15));
+           lb3->resize(eSize(256, 200));
+           lb3->setBlitFlags(BF_ALPHATEST);
+           lb3->setProperty("align", "center");
+           lb3->setPixmap(img);
+           lb3->setPixmapPosition(ePoint(1, 1));
+        }
+        else
+        {
+           gPixmap *img = loadPNG("/share/tuxbox/enigma/pictures/nopreview.png");
+           if(img)
+           {
+              gPixmap * mp = &gFBDC::getInstance()->getPixmap();
+              gPixmapDC mydc(img);
+              gPainter p(mydc);
+              p.mergePalette(*mp);
+
+              lb3->move(ePoint(280, 15));
+              lb3->resize(eSize(256, 200));
+              lb3->setBlitFlags(BF_ALPHATEST);
+              lb3->setProperty("align", "center");
+              lb3->setPixmap(img);
+              lb3->setPixmapPosition(ePoint(1, 1));
+              lb3->loadDeco();
+           }
+        }
+        lb3->show();
+}
 void eSkinSetup::skinSelected(eListBoxEntrySkin *skin)
 {
 	if (!skin)
-	{
 		close(1);
-		return;
+	else
+	{
+		eConfig::getInstance()->setKey("/ezap/ui/skin", skin->getESML().c_str());
+		eConfig::getInstance()->flush();
+		close(0);
 	}
-
-	eConfig::getInstance()->setKey("/ezap/ui/skin", skin->getESML().c_str());
-	eConfig::getInstance()->flush();
-
-	close(0);
 }
 
 eSkinSetup::eSkinSetup()
 {
+        lb3     = new eLabel(this);
+        move(ePoint(50,50));
+        cresize(eSize(590,376));
+        setText("Skin Selector");
 	baccept=new eButton(this);
 	baccept->setName("accept");
+	baccept->setText("Save");
+        baccept->setShortcut("green");
+        baccept->setShortcutPixmap("green");
+        baccept->resize(eSize(250,40));
+        baccept->move(ePoint(10,320)); 
+        baccept->loadDeco(); 
+
 	lskins=new eListBox<eListBoxEntrySkin>(this);
 	lskins->setName("skins");
-	lskins->setFlags(eListBoxBase::flagNoPageMovement);
+	lskins->setFlags(eListBoxBase::flagLostFocusOnLast);
+        lskins->move(ePoint(10,10));
+        lskins->resize(eSize(clientrect.width()-350,clientrect.height() -60));
+        lskins->loadDeco();
+
 	statusbar=new eStatusBar(this);
 	statusbar->setName("statusbar");
 
 	CONNECT(baccept->selected, eSkinSetup::accept);
 	CONNECT(lskins->selected, eSkinSetup::skinSelected);
-	
+
 	setFocus(lskins);
 
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "setup.skins"))
-		eFatal("skin load of \"setup.skins\" failed");
-
+	CONNECT(lskins->selchanged, eSkinSetup::skinchanged);
 	loadSkins();
 	
 	setHelpID(88);
@@ -143,17 +212,25 @@ int eSkinSetup::eventHandler(const eWidgetEvent &event)
 {
 	switch (event.type)
 	{
-	case eWidgetEvent::evtAction:
-		if (event.action == &i_cursorActions->left)
-			focusNext(eWidget::focusDirW);
-		else if (event.action == &i_cursorActions->right)
-			focusNext(eWidget::focusDirE);
-		else
+		case eWidgetEvent::evtAction:
+			if (event.action == &i_cursorActions->left)
+				focusNext(eWidget::focusDirW);
+			else if (event.action == &i_cursorActions->right)
+				focusNext(eWidget::focusDirE);
+			else
+				break;
+			return 1;
+		default:
 			break;
-		return 1;
-
-	default:
-		break;
 	}
-	return eWindow::eventHandler(event);
+	return eWidget::eventHandler(event);
+}
+int  eListBoxEntrySkin::eventHandler(const eWidgetEvent &event)
+{
+	switch (event.type)
+	{
+		default:
+			break;
+	}
+	return eListBoxEntry::eventHandler(event);
 }
