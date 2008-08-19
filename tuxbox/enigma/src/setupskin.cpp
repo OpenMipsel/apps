@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.8.2.1 2008/08/19 21:24:56 fergy Exp $
+ * $Id: setupskin.cpp,v 1.11.2.8.2.2 2008/08/19 21:39:48 fergy Exp $
  */
 
 #include <setupskin.h>
@@ -25,7 +25,6 @@
 #include <dirent.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/emessage.h>
-#include <lib/system/econfig.h>
 #include <lib/system/econfig.h>
 #include <lib/gdi/epng.h>
 #include <lib/gdi/gfbdc.h>
