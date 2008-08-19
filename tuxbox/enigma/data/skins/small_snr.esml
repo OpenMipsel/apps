@@ -7,6 +7,8 @@
 
 	<fonts>
 		<font file="pakenham.ttf" name="lcd" /> <!-- Found at dafont.com freeware -->
+		<font file="bluebold.ttf" name="Blue.Bold" /> <!-- Found at dafont.com freeware -->
+		<font file="bluehigh.ttf" name="Blue.Regular" /> <!-- Found at dafont.com freeware -->
 	</fonts>
 	<fontalias>
 		<map name="eServiceSelector.Entry.Description" font="Nimbus" size="19" />
@@ -146,7 +148,7 @@
 		<value name="fontsize" value="19" />
 	</values>
 
-	<images basepath="small" target="fb">
+	<images basepath="small" target="fb">	
 		<img name="eComboBox.arrow" src="combo_arrow.png" />
 		<img name="eCheckbox.checked" src="checked.png" />
 		<img name="eCheckbox.unchecked" src="unchecked.png" />
@@ -266,22 +268,37 @@
 	</object>
 
 	<object name="ezap_main">
-		<eZapMain position="0:40" size="720:471">
-            
-			<eWidget position="0:50" size="720:2" backgroundColor="hell" />
-			<eWidget position="0:53" size="720:30" backgroundColor="dunkel" />
-			<eWidget position="0:84" size="720:2" backgroundColor="hell" />
+		<eZapMain position="0:54" size="720:471">
+
+			<eWidget position="0:0" size="720:2" backgroundColor="hell" />
+			<eWidget position="0:3" size="720:30" backgroundColor="dunkel" />
+
+			<eWidget position="320:31" size="400:30" backgroundColor="dunkel" />
+			<eWidget position="320:56" size="400:2" backgroundColor="hell" />
+			<eWidget position="320:36" size="2:21" backgroundColor="hell" /> 
+
+			<eWidget position="0:34" size="720:2" backgroundColor="hell" />
 			<eWidget position="0:398" size="720:3" backgroundColor="hell" />
 			<eWidget position="0:402" size="720:48" backgroundColor="mittel" />
 			<eWidget position="0:451" size="720:16" backgroundColor="dunkel" />
 			<eWidget position="0:468" size="720:3" backgroundColor="hell" />
 		
-			<!--texte    -->     
-			<eLabel position="70:53" size="80:26" font="Nimbus;22" name="ch_number" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<!-- texte -->     
+			<eLabel position="70:3" size="80:26" font="Nimbus;22" name="ch_number" backgroundColor="dunkel" foregroundColor="dunkel+15" />
 
-			<eLabel position="155:53" size="420:26" font="Nimbus;22" name="ch_name" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel position="155:3" size="420:26" font="Nimbus;22" name="ch_name" backgroundColor="dunkel" foregroundColor="dunkel+15" />
 
-			<eLabel position="593:53" size="55:22" font="Nimbus;22" name="time" align="right"  backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel position="593:3" size="55:26" font="Nimbus;22" name="time" align="right"  backgroundColor="dunkel" foregroundColor="dunkel+15" />
+
+			<eLabel text="SNR:" position="325:36" size="40:18" name="snr_text" font="Blue.Regular;22" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel text="AGC:" position="405:36" size="40:18" name="agc_text" font="Blue.Regular;22" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel text="BER:" position="485:36" size="40:18" name="ber_text" font="Blue.Regular;22" backgroundColor="dunkel" foregroundColor="dunkel+15" />
+			<eLabel position="362:36" size="40:18" name="snr_num" font="Blue.Regular;22" />
+			<eLabel position="442:36" size="40:18" name="agc_num" font="Blue.Regular;22" />
+			<eLabel position="522:36" size="40:18" name="ber_num" font="Blue.Regular;22" />
+			<eProgress position="580:37" size="93:6" name="snr_progress" foregroundColor="mittel" backgroundColor="dunkel" border="1" />
+			<eProgress position="580:42" size="93:6" name="agc_progress" foregroundColor="mittel" backgroundColor="dunkel" border="1" />
+			<eProgress position="580:49" size="93:6" name="ber_progress" foregroundColor="mittel" backgroundColor="dunkel" border="1" />
 
 			<!-- <eProgress position="428:142" size="156:13" name="progress_bar" foregroundColor="content" border="0" /> -->
 
@@ -295,7 +312,7 @@
 			<eLabel position="622:451" size="25:15" pixmap="osd_dolby_off" name="osd_dolby_off"/>
 
 			<eLabel name="description" />
-		<!--	 -->
+			<!--	 -->
 			<eLabel position="70:451" size="8:16" pixmap="button_red" name="button_red_enabled" />
 			<eLabel position="132:451" size="8:16" pixmap="button_green" name="button_green_enabled" />
 			<eLabel position="214:451" size="8:16" pixmap="button_yellow" name="button_yellow_enabled" />
@@ -308,7 +325,7 @@
 
 			<eLabel text="EPG" position="82:452" font="Nimbus;12" size="50:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
 			<eLabel text="subservices" position="144:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
-			<eLabel text="audio track" position="226:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15"  name="AudioOrPause"/>
+			<eLabel text="audio track" position="226:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" name="AudioOrPause"/>
 			<eLabel text="plugins" position="308:452" font="Nimbus;12" size="70:15" backgroundColor="dunkel" foregroundColor="dunkel+15" />
 			
 			<eProgress position="388:454" size="150:11" name="progress_bar" foregroundColor="mittel" border="1" />
@@ -320,7 +337,7 @@
 			</eLabel>
 
 			<eWidget name="dvbInfoBar" position="70:402" size="720:48">
-				<!--Zeilen   -->
+				<!-- Zeilen -->
 				<eLabel position="0:0" size="55:23" font="Nimbus;19" name="e_now_time" backgroundColor="mittel" foregroundColor="mittel+15" />
 				<eLabel position="0:23" size="55:23" font="Nimbus;19" name="e_next_time" backgroundColor="mittel" foregroundColor="mittel+15" />
 
