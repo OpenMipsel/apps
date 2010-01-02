@@ -38,13 +38,35 @@ class eEPGSelector: public eWindow
 	eServiceReferenceDVB current;
 private:
 	void fillEPGList();
+	void fillEPGSearchList();
 	void entrySelected(eListBoxEntryEPG *entry);
 	int eventHandler(const eWidgetEvent &event);
+	eString EPGSearchName;
+	void init_eEPGSelector(eString* pSearchString);
 public:
 	eEPGSelector(const eServiceReferenceDVB &service);
+	eEPGSelector(eString SearchString); // EPG Search :-)
 	inline ~eEPGSelector(){};
 	Signal3<bool, eEPGSelector*, eServiceReference*, EITEvent *> addEventToTimerList;
 	Signal3<bool, eEPGSelector*, eServiceReference*, EITEvent *> removeEventFromTimerList;
+	eString getEPGSearchName() { return EPGSearchName; }
+};
+
+class LocalEventData
+{
+	static eString country;
+	eString ShortEventName;
+	eString ShortEventText;
+	eString ExtendedEventText;
+public:
+	static void invalidate() { primary_language=secondary_language=country=""; }
+	LocalEventData();
+	inline ~LocalEventData(){};
+	static eString primary_language;
+	static eString secondary_language;
+	/* Search first for primary, then secondary or finally any other language descriptors */
+	void getLocalData(EITEvent *, eString * a=0, eString *b=0, eString *c=0); // return short event name, short event text, and extended text
+	bool language_exists(EITEvent *, eString);
 };
 
 #endif

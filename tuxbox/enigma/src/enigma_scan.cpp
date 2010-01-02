@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.21 2003/08/29 21:25:21 ghostrider Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.21.2.1 2010/01/02 16:49:00 fergy Exp $
  */
 
 #include <enigma_scan.h>
@@ -25,52 +25,93 @@
 #include <satconfig.h>
 #include <rotorconfig.h>
 #include <scan.h>
+#include <satfind.h>
 #include <tpeditwindow.h>
+#include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gui/ewindow.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
 #include <lib/gui/emessage.h>
-#include <lib/base/i18n.h>
+#include <lib/system/info.h>
 
 eZapScan::eZapScan()
-	:eSetupWindow(_("Service Searching"), 7, 400)
+	:eSetupWindow(_("Service Searching"),
+	eSystemInfo::getInstance()->getFEType()
+		== eSystemInfo::feSatellite ? 9 : 7, 400)
+{
+	init_eZapScan();
+}
+void eZapScan::init_eZapScan()
 {
 	int entry=0;
-	move(ePoint(160, 140));
-	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )  // only when a sat box is avail we shows a satellite config
+	move(ePoint(160, 130));
+	if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )  // only when a sat box is avail we shows a satellite config
 	{
 		CONNECT((new eListBoxEntryMenu(&list, _("Satellite Configuration"), eString().sprintf("(%d) %s", ++entry, _("open satellite config"))))->selected, eZapScan::sel_satconfig);
-		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup"), eString().sprintf("(%d) %s", ++entry, _("goto Motor Setup"))))->selected, eZapScan::sel_rotorConfig);
-		CONNECT((new eListBoxEntryMenu(&list, _("Transponder Edit"), eString().sprintf("(%d) %s", ++entry, _("for automatic transponder scan"))))->selected, eZapScan::sel_transponderEdit);
-		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		CONNECT((new eListBoxEntryMenu(&list, _("Satfind"), eString().sprintf("(%d) %s", ++entry, _("open the satfinder"))))->selected, eZapScan::sel_satfind);
+		CONNECT((new eListBoxEntryMenu(&list, _("Motor Setup"), eString().sprintf("(%d) %s", ++entry, _("open Motor Setup"))))->selected, eZapScan::sel_rotorConfig);
+		CONNECT((new eListBoxEntryMenu(&list, _("Transponder Edit"), eString().sprintf("(%d) %s", ++entry, _("for automatic scan"))))->selected, eZapScan::sel_transponderEdit);
 	}
+	else if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feTerrestrial )
+	{
+		CONNECT((new eListBoxEntryMenu(&list, _("Signalfind"), eString().sprintf("(%d) %s", ++entry, _("open the signalfinder"))))->selected, eZapScan::sel_satfind);
+		(new eListBoxEntryCheck(&list, _("Disable 5V"), "/elitedvb/DVB/config/disable_5V", _("disable 5V for passive terrerstrial antennas")))
+			->selected.connect( slot(*eFrontend::getInstance(), &eFrontend::setTerrestrialAntennaVoltage) );
+	}
+	if ( eSystemInfo::getInstance()->getFEType() != eSystemInfo::feCable )
+		new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT((new eListBoxEntryMenu(&list, _("Automatic Transponder Scan"), eString().sprintf("(%d) %s", ++entry, _("open automatic transponder scan"))))->selected, eZapScan::sel_autoScan);
+	if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )  // only when a sat box is avail we shows a satellite config
+		CONNECT((new eListBoxEntryMenu(&list, _("Automatic Multisat Scan"), eString().sprintf("(%d) %s", ++entry, _("open automatic multisat transponder scan"))))->selected, eZapScan::sel_multiScan);
+
 	CONNECT((new eListBoxEntryMenu(&list, _("Manual Transponder Scan"), eString().sprintf("(%d) %s", ++entry, _("open manual transponder scan"))))->selected, eZapScan::sel_manualScan);
+}
+
+void eZapScan::sel_satfind()
+{
+	hide();
+	eSatfind s(eFrontend::getInstance());
+	s.show();
+	s.exec();
+	s.hide();
+	show();
 }
 
 void eZapScan::sel_autoScan()
 {
 #ifndef DISABLE_LCD
-	TransponderScan setup(LCDTitle, LCDElement);
+	TransponderScan setup(LCDTitle, LCDElement, TransponderScan::stateAutomatic);
 #else
-	TransponderScan setup;
+	TransponderScan setup(0,0,TransponderScan::stateAutomatic);
 #endif
 	hide();
-	setup.exec(TransponderScan::stateAutomatic);
+	setup.exec();
+	show();
+}
+
+void eZapScan::sel_multiScan()
+{
+#ifndef DISABLE_LCD
+	TransponderScan setup(LCDTitle, LCDElement, TransponderScan::stateMulti);
+#else
+	TransponderScan setup(0,0,TransponderScan::stateMulti);
+#endif
+	hide();
+	setup.exec();
 	show();
 }
 
 void eZapScan::sel_manualScan()
 {
 #ifndef DISABLE_LCD
-	TransponderScan setup(LCDTitle, LCDElement);
+	TransponderScan setup(LCDTitle, LCDElement, TransponderScan::stateManual);
 #else
-	TransponderScan setup;
+	TransponderScan setup(0,0,TransponderScan::stateManual);
 #endif
 	hide();
-	setup.exec(TransponderScan::stateManual);
+	setup.exec();
 	show();
 }
 
@@ -102,10 +143,7 @@ eLNB* eZapScan::getRotorLNB(int silent)
 	}
 	if ( c > 1 )  // we have more than one LNBs with DiSEqC 1.2
 	{
-		eMessageBox mb( _("More than one LNB have DiSEqC 1.2 enabled, please select the LNB where the motor is connected"), _("Info"), eMessageBox::iconWarning|eMessageBox::btOK );
-		mb.show();
-		mb.exec();
-		mb.hide();
+		eMessageBox::ShowBox(_("DiSEqC 1.2 is enabled on more than one LNB, please select the LNB the motor is connected to"), _("Info"), eMessageBox::iconWarning|eMessageBox::btOK );
 		eLNBSelector sel;
 		sel.show();
 		int ret = sel.exec();
@@ -116,10 +154,7 @@ eLNB* eZapScan::getRotorLNB(int silent)
 	{
 		if (!silent)
 		{
-			eMessageBox mb( _("Found no LNB with DiSEqC 1.2 enabled,\nplease goto Satellite Config first, and enable DiSEqC 1.2"), _("Warning"), eMessageBox::iconWarning|eMessageBox::btOK );
-			mb.show();
-			mb.exec();
-			mb.hide();
+			eMessageBox::ShowBox( _("Found no LNB with DiSEqC 1.2 enabled,\nplease goto Satellite Config first, and enable DiSEqC 1.2"), _("Warning"), eMessageBox::iconWarning|eMessageBox::btOK );
 		}
 		return 0;
 	}
@@ -160,9 +195,11 @@ void eZapScan::sel_rotorConfig()
 eLNBSelector::eLNBSelector()
 	:eListBoxWindow<eListBoxEntryText>(_("Select LNB"), 5, 300, true)
 {
+	init_eLNBSelector();
+}
+void eLNBSelector::init_eLNBSelector()
+{
 	move(ePoint(140, 156));
-	new eListBoxEntryText(&list, _("back"), 0, 0, _("go to prev menu") );
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	int cnt=0;
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin()); it != eTransponderList::getInstance()->getLNBs().end(); it++, cnt++ )
 	{

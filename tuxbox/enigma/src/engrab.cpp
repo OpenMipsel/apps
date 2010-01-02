@@ -9,12 +9,13 @@
 #include <lib/dvb/decoder.h>
 #include <lib/dvb/service.h>
 #include <lib/dvb/dvb.h>
-/*#include <lib/dvb/dvbservice.h>*/
+#include <lib/dvb/dvbservice.h>
 #include <lib/dvb/epgcache.h>
 //#include <lib/base/estring.h>
 //#define TMP_NgrabXML "/var/tmp/e-ngrab.xml"
 #include <lib/gui/enumber.h>
 #include <lib/gui/statusbar.h>
+#include <epgwindow.h>
 
 static eString getServiceName()
 {
@@ -39,17 +40,11 @@ static eString getEPGTitle()
 
 	if(tmp)
 	{
-		for (ePtrList<Descriptor>::const_iterator d(tmp->descriptor); d != tmp->descriptor.end(); ++d)
-		{
-			if ( d->Tag() == DESCR_SHORT_EVENT)
-			{
-				ShortEventDescriptor *s=(ShortEventDescriptor*)*d;
-				descr=s->event_name;
-				if ((s->text.length() > 0) && (s->text!=descr))
-					descr+=" - "+s->text;
-				break;
-			}
-		}
+		LocalEventData led;
+		eString text;
+		led.getLocalData(tmp, &descr, &text, 0);
+		if ((text.length() > 0) && (text != descr))
+			descr += " - "+text;
 		delete tmp;
 	}
 	return descr;
@@ -69,16 +64,24 @@ eString ENgrab::startxml( const char* descr )
 {
 	eString xmlstart;
 
-	xmlstart+="<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n";
+	xmlstart+="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	xmlstart+=" <neutrino commandversion=\"1\">\n";
 	xmlstart+="   <record command=\"record\">\n";
 	xmlstart+="    <channelname>"+getServiceName()+"</channelname>\n";//übernommen von trh
 	xmlstart+="    <epgtitle>"+(descr?eString(descr):getEPGTitle())+"</epgtitle>\n"; //übernommen von trh
 	xmlstart+="    <onidsid>123456</onidsid>\n"; // keine ahnung aber wies aussieht wird die sid und die onid nicht gebraucht von ngrab
 	xmlstart+="    <epgid>123456</epgid>\n"; // und die epgid auch nicht
-	xmlstart+="    <videopid>"+eString().sprintf("%d", Decoder::parms.vpid)+"</videopid>\n";
-	xmlstart+="    <audiopids selected=\""+eString().sprintf("%d", Decoder::parms.apid)+"\">\n";
-	xmlstart+="       <audio pid=\""+eString().sprintf("%d", Decoder::parms.apid)+"\" name=\"standard\"/>\n";
+	xmlstart+="    <videopid>"+eString().sprintf("%d", Decoder::current.vpid)+"</videopid>\n";
+	xmlstart+="    <audiopids selected=\""+eString().sprintf("%d", Decoder::current.apid)+"\">\n";
+	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+	if (!sapi || !sapi->service)
+		xmlstart+="       <audio pid=\""+eString().sprintf("%d", Decoder::current.apid)+"\" name=\"standard\"/>\n";
+	else
+	{
+		std::list<eDVBServiceController::audioStream> &audioStreams = sapi->audioStreams;
+		for (std::list<eDVBServiceController::audioStream>::iterator it = audioStreams.begin(); it != audioStreams.end(); ++it)
+			xmlstart+="       <audio pid=\""+eString().sprintf("%d", it->pmtentry->elementary_PID) + "\" name=\"" + it->text + "\"/>\n";
+	}
 	xmlstart+="    </audiopids>\n";
 	xmlstart+="  </record>\n";
 	xmlstart+=" </neutrino>\n";
@@ -99,7 +102,7 @@ eString ENgrab::stopxml()
 {
 	eString xmlstop;
 
-	xmlstop+="<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n";
+	xmlstop+="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	xmlstop+=" <neutrino commandversion=\"2\">\n";
 	xmlstop+="   <record command=\"stop\">\n";
 	xmlstop+="    <channelname></channelname>\n";

@@ -25,6 +25,8 @@ class eEventDisplay: public eWindow
 	void updateScrollbar();
 	void checkTimerIcon(EITEvent *);
 	int valid;
+	int pageHeight;
+	void init_eEventDisplay(const ePtrList<EITEvent>* e);
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:
@@ -32,6 +34,7 @@ public:
 	~eEventDisplay();
 	void setList(const ePtrList<EITEvent> &events);
 	void setEvent(EITEvent *event);
+	void setEPGSearchEvent(eServiceReferenceDVB &ref, EITEvent *event, eString Service);
 };
 
 #endif /* __enigma_event_h */

@@ -20,6 +20,13 @@ gPixmap *eListBoxEntryEPG::inTimerRec=0;
 int eListBoxEntryEPG::timeXSize=0;
 int eListBoxEntryEPG::dateXSize=0;
 
+eString LocalEventData::country;
+eString LocalEventData::primary_language;
+eString LocalEventData::secondary_language;
+eString now_text;
+int myEPGSearch;
+
+
 eAutoInitP0<epgSelectorActions> i_epgSelectorActions(eAutoInitNumbers::actions, "epg selector actions");
 
 eListBoxEntryEPG::~eListBoxEntryEPG()
@@ -59,15 +66,20 @@ int eListBoxEntryEPG::getEntryHeight()
 void eListBoxEntryEPG::build()
 {
 	start_time = *localtime(&event.start_time);
+	if (myEPGSearch) // EPGSearch
+	{
+		descr = now_text;
+		return;
+	}
+	LocalEventData led;
+	led.getLocalData(&event, &descr);
+
+	if (descr)
+		return;
 	for (ePtrList<Descriptor>::iterator d(event.descriptor); d != event.descriptor.end(); ++d)
 	{
 		Descriptor *descriptor=*d;
-		if (descriptor->Tag()==DESCR_SHORT_EVENT)
-		{
-			descr = ((ShortEventDescriptor*)descriptor)->event_name;
-			return;
-		}
-		else if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
+		if (descriptor->Tag()==DESCR_TIME_SHIFTED_EVENT)
 		{
 			// build parent Service Reference
 			eServiceReferenceDVB nvodService(
@@ -78,24 +90,17 @@ void eListBoxEntryEPG::build()
 			EITEvent* evt = eEPGCache::getInstance()->lookupEvent(nvodService, ((TimeShiftedEventDescriptor*)descriptor)->reference_event_id );
 			if (evt)
 			{
-				for (ePtrList<Descriptor>::iterator d(evt->descriptor); d != evt->descriptor.end(); ++d)
-				{
-					if (d->Tag()==DESCR_SHORT_EVENT)
-					{
-						descr = ((ShortEventDescriptor*)descriptor)->event_name;
-						break;
-					}
-				}
+				led.getLocalData(evt, &descr);
 				delete evt;
 				return;
 			}
 		}
 	}
-	descr = "no event data avail";
+	descr = "no event data available";
 }
 
 eListBoxEntryEPG::eListBoxEntryEPG(const eit_event_struct* evt, eListBox<eListBoxEntryEPG> *listbox, eServiceReference &ref)
-		:eListBoxEntry((eListBox<eListBoxEntry>*)listbox), paraDate(0), paraTime(0), paraDescr(0), event(evt), service(ref)
+		:eListBoxEntry((eListBox<eListBoxEntry>*)listbox), paraDate(0), paraTime(0), paraDescr(0), event(evt,(((eServiceReferenceDVB&)ref).getTransportStreamID().get()<<16)|((eServiceReferenceDVB&)ref).getOriginalNetworkID().get()), service(ref)
 {
 	build();
 }
@@ -146,13 +151,13 @@ const eString &eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor 
 	if ( (p = eTimerManager::getInstance()->findEvent( &service, &event )) )
 		if ( p->type & ePlaylistEntry::SwitchTimerEntry )
 		{
-	  	int ypos = (rect.height() - inTimer->y) / 2;
+			int ypos = (rect.height() - inTimer->y) / 2;
 			rc->blit( *inTimer, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 			xpos+=paraTime->getBoundBox().height()+inTimer->x;
 		}
 		else if ( p->type & ePlaylistEntry::RecTimerEntry )
 		{
-	  	int ypos = (rect.height() - inTimerRec->y) / 2;
+			int ypos = (rect.height() - inTimerRec->y) / 2;
 			rc->blit( *inTimerRec, ePoint( xpos, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);		
 			xpos+=paraTime->getBoundBox().height()+inTimerRec->x;
 		}
@@ -172,21 +177,23 @@ const eString &eListBoxEntryEPG::redraw(gPainter *rc, const eRect& rect, gColor 
 
 void eEPGSelector::fillEPGList()
 {
-  eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current);
-  if (service)
+	eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current);
+	if (service)
 		setText(eString(_("EPG - "))+service->service_name);
- 	eDebug("get EventMap for onid: %02x, sid: %02x", current.getOriginalNetworkID().get(), current.getServiceID().get());
+	eDebug("get EventMap for onid: %02x, sid: %02x", current.getOriginalNetworkID().get(), current.getServiceID().get());
 
+	eEPGCache::getInstance()->Lock();
 	const timeMap* evt = eEPGCache::getInstance()->getTimeMap(current);
 	timeMap::const_iterator It;
 	if (evt)
 		It = evt->begin();
 
+	int tsidonid = (current.getTransportStreamID().get()<<16)|current.getOriginalNetworkID().get();
 	if (current.data[0] == 5 ) // NVOD REF ENTRY
 	{
 		for (; It != evt->end(); It++)
 		{
-			EITEvent evt(*It->second);   // NVOD Service Event
+			EITEvent evt(*It->second,tsidonid);   // NVOD Service Event
 			for (ePtrList<Descriptor>::iterator d(evt.descriptor); d != evt.descriptor.end(); ++d)
 			{
 				Descriptor *descr=*d;
@@ -203,7 +210,7 @@ void eEPGSelector::fillEPGList()
 						if ( pIt != parent->end() )   // event found..
 						{
 							// build EITEvent with short and ext description )
-							EITEvent e(*pIt->second);
+							EITEvent e(*pIt->second,tsidonid);
 							// do not delete ePtrListEntrys..
 							e.descriptor.setAutoDelete(false);
 							e.start_time = evt.start_time;
@@ -219,6 +226,7 @@ void eEPGSelector::fillEPGList()
 			}
 		}
 	}
+#if 0
 	else if (current.data[0] == 4 ) //NVOD
 	{
 		for (; It != evt->end(); It++)
@@ -264,8 +272,10 @@ void eEPGSelector::fillEPGList()
 			}
 		}
 	}
+#endif
 	else for (It = evt->begin(); It != evt->end(); It++)
 		new eListBoxEntryEPG(*It->second, events, current);
+	eEPGCache::getInstance()->Unlock();
 }
 
 void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
@@ -280,6 +290,8 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 		hide();
 		eService *service=eDVB::getInstance()->settings->getTransponders()->searchService(current);
 		eEventDisplay ei(service ? service->service_name.c_str() : "", current, 0, &entry->event);
+		if (myEPGSearch)
+			ei.setEPGSearchEvent((eServiceReferenceDVB&)entry->service, &entry->event, service ? service->service_name.c_str() : "");
 #ifndef DISABLE_LCD
 		ei.setLCD(LCDTitle, LCDElement);
 #endif
@@ -296,9 +308,18 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 				break; // close EventDisplay
 
 			if (tmp)
-				ei.setEvent(&tmp->event);
+			{
+				if (myEPGSearch)
+				{
+					eService *ServiceName=eDVB::getInstance()->settings->getTransponders()->searchService((eServiceReferenceDVB&)tmp->service);
+					ei.setEPGSearchEvent((eServiceReferenceDVB&)tmp->service, &tmp->event, ServiceName ? ServiceName->service_name.c_str() : "");
+				}
+				else
+					ei.setEvent(&tmp->event);
+			}
 		}
 		ei.hide();
+		invalidate();
 		show();
 	}
 }
@@ -306,15 +327,26 @@ void eEPGSelector::entrySelected(eListBoxEntryEPG *entry)
 eEPGSelector::eEPGSelector(const eServiceReferenceDVB &service)
 	:eWindow(0), current(service)
 {
+	init_eEPGSelector(NULL);
+}
+void eEPGSelector::init_eEPGSelector(eString* pSearchString)
+{
 	events = new eListBox<eListBoxEntryEPG>(this);
 	events->setName("events");
 	events->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
 
-	if (eSkin::getActive()->build(this, "eEPGSelector"))
-		eWarning("EPG selector widget build failed!");
+	BuildSkin("eEPGSelector");
 
 	CONNECT(events->selected, eEPGSelector::entrySelected);
-	fillEPGList();
+	myEPGSearch = 0;
+	if (pSearchString)
+	{
+		myEPGSearch = 1;
+		fillEPGSearchList();
+		setText(eString(_("EPG Search")) +": " + *pSearchString);
+	}
+	else
+		fillEPGList();
 	addActionMap( &i_epgSelectorActions->map );
 #ifndef DISABLE_FILE
 	addActionToHelpList( &i_epgSelectorActions->addDVRTimerEvent );
@@ -327,34 +359,79 @@ eEPGSelector::eEPGSelector(const eServiceReferenceDVB &service)
 	setHelpID(12);
 }
 
+eEPGSelector::eEPGSelector(eString SearchString):eWindow(0)
+{
+	init_eEPGSelector(&SearchString);
+}
+void eEPGSelector::fillEPGSearchList()
+{
+	SearchEPGDATA SearchEPGDATA1;
+	SearchEPGDATA1 = eEPGSearchDATA::getInstance()->getSearchData();
+	for (SearchEPGDATA::iterator a = SearchEPGDATA1.begin(); a != SearchEPGDATA1.end(); a++)
+	{
+		EITEvent e;
+		e.start_time = a->start_time;
+		e.duration = a->duration;
+		e.event_id = -1;
+		eServiceReference Ref;
+		Ref = a->ref;
+		eService *s = eTransponderList::getInstance()->searchService( a->ref );
+		if (s)
+		{
+			Ref.descr = s->service_name + "/" + a->title;
+			now_text = s->service_name + ": " + a->title;
+			new eListBoxEntryEPG(e, events, Ref);
+		}
+	}
+	eEPGSearchDATA::getInstance()->clearList();
+}
+
 int eEPGSelector::eventHandler(const eWidgetEvent &event)
 {
 	int addtype=-1;
 	switch (event.type)
 	{
 		case eWidgetEvent::evtAction:
-#ifndef DISABLE_FILE
-			if (event.action == &i_epgSelectorActions->addDVRTimerEvent)
-				addtype = ePlaylistEntry::RecTimerEntry |
-									ePlaylistEntry::recDVR|
-									ePlaylistEntry::stateWaiting;
-			else
-#endif
-#ifndef DISABLE_NETWORK
-			if (event.action == &i_epgSelectorActions->addNGRABTimerEvent)
-				addtype = ePlaylistEntry::RecTimerEntry|
-									ePlaylistEntry::recNgrab|
-									ePlaylistEntry::stateWaiting;
-			else
-#endif
-			if (event.action == &i_epgSelectorActions->addSwitchTimerEvent)
-				addtype = ePlaylistEntry::SwitchTimerEntry|
-									ePlaylistEntry::stateWaiting;
+			if (event.action == &i_epgSelectorActions->searchEPG)
+			{
+				if (!myEPGSearch)
+				{
+					hide();
+					eEPGSearch *dd = new eEPGSearch(current,NULL, &events->getCurrent()->event);
+					dd->show();
+					int back = 2;
+					do
+					{
+						back = dd->exec();
+						EPGSearchName = dd->getSearchName();
+						if (back == 2)
+						{
+							dd->hide();
+							eMessageBox::ShowBox(EPGSearchName + eString(_(" was not found!")) , _("EPG Search"), eMessageBox::iconInfo|eMessageBox::btOK);
+							dd->show();
+						}
+					}
+					while (back == 2);
+					dd->hide();
+					delete dd;
+					if (!back)
+					{
+						close(2);
+					}
+					else
+						show();
+					break;
+				}
+			}
+			if ( (addtype = i_epgSelectorActions->checkTimerActions( event.action )) != -1 )
+				;
 			else if (event.action == &i_epgSelectorActions->removeTimerEvent)
 			{
 				if ( eTimerManager::getInstance()->removeEventFromTimerList( this, &current, &events->getCurrent()->event ) )
 					events->invalidateCurrent();
 			}
+			else if (event.action == &i_epgSelectorActions->showExtendedInfo)
+				entrySelected(events->getCurrent());
 			else
 				break;
 			if (addtype != -1)
@@ -375,4 +452,122 @@ int eEPGSelector::eventHandler(const eWidgetEvent &event)
 			break;
 	}
 	return eWindow::eventHandler(event);
+}
+    
+/* search for the presence of language from given EIT event descriptors*/
+bool LocalEventData::language_exists(EITEvent *event, eString lang)
+{
+	ShortEventName=ExtendedEventText=ShortEventText="";
+	bool retval=0;
+	for (ePtrList<Descriptor>::iterator descriptor(event->descriptor); descriptor != event->descriptor.end(); ++descriptor)
+	{
+		if (descriptor->Tag() == DESCR_SHORT_EVENT)
+		{
+			ShortEventDescriptor *ss = (ShortEventDescriptor*)*descriptor;
+			if (!lang || !strncmp(lang.c_str(), ss->language_code, 3) )
+			{
+				ShortEventName=ss->event_name;
+				ShortEventText=ss->text;
+				retval=1;
+			}
+		}
+		else if (descriptor->Tag() == DESCR_EXTENDED_EVENT)
+		{
+			ExtendedEventDescriptor *ss = (ExtendedEventDescriptor*)*descriptor;
+			if (!lang || !strncmp(lang.c_str(), ss->language_code, 3) )
+			{
+				ExtendedEventText += ss->text;
+				retval=1;
+			}
+		}
+	}
+	return retval;
+}
+
+const char MAX_LANG = 37;
+/* OSD language (see /share/locales/locales) to iso639 conversion table */    
+eString ISOtbl[MAX_LANG][2] =
+{
+	{"ar_AE","ara"},
+	{"C","eng"},
+	{"cs_CZ","ces"},     /* or 'cze' */
+	{"cs_CZ","cze"},
+	{"da_DK","dan"},
+	{"de_DE","deu"},     /* also 'ger' is valid iso639 code!! */
+	{"de_DE","ger"},
+	{"el_GR","gre"},     /* also 'ell' is valid */
+	{"el_GR","ell"},
+	{"es_ES","esl"},     /* also 'spa' is ok */
+	{"es_ES","spa"},
+	{"et_EE","est"},
+	{"fi_FI","fin"},
+	{"fr_FR","fra"},
+	{"hr_HR","hrv"},     /* or 'scr' */
+	{"hr_HR","scr"},
+	{"hu_HU","hun"},
+	{"is_IS","isl"},     /* or 'ice' */
+	{"is_IS","ice"},
+	{"it_IT","ita"},
+	{"lt_LT","lit"},
+	{"nl_NL","nld"},     /* or 'dut' */
+	{"nl_NL","dut"},
+	{"no_NO","nor"},
+	{"pl_PL","pol"},
+	{"pt_PT","por"},
+	{"ro_RO","ron"},     /* or 'rum' */
+	{"ro_RO","rum"},
+	{"ru_RU","rus"},
+	{"sk_SK","slk"},     /* or 'slo' */
+	{"sk_SK","slo"},
+	{"sl_SI","slv"},
+	{"sr_YU","srp"},     /* or 'scc' */
+	{"sr_YU","scc"},
+	{"sv_SE","swe"},
+	{"tr_TR","tur"},
+	{"ur_IN","urd"}
+};
+
+LocalEventData::LocalEventData()
+{
+	if ( !country )
+	{
+		char *str=0;
+		eConfig::getInstance()->getKey("/elitedvb/language", str); // fetch selected OSD country
+		if (!str)
+			eDebug("No OSD-language found!");
+		else
+		{
+			country=str;
+			free(str);
+			for (int i=0; i < MAX_LANG; i++)
+				if (country==ISOtbl[i][0])
+					if (!primary_language)
+						primary_language=ISOtbl[i][1];
+					else
+						secondary_language=ISOtbl[i][1];
+		}
+#if 0
+		if ( country )
+			eDebug("Country = %s",country.c_str());
+		if ( primary_language )
+			eDebug("Primary Language = %s",primary_language.c_str());
+		if ( secondary_language )
+			eDebug("Secondary Language = %s",secondary_language.c_str());
+#endif
+	}
+}
+
+/* short event name, short event text and extended event text */
+void LocalEventData::getLocalData(EITEvent *event, eString *name, eString *desc, eString *text)
+{
+	if (!language_exists(event,primary_language))
+		if (!language_exists(event,secondary_language))
+			if (!language_exists(event,"eng"))
+				language_exists(event,0);
+	if ( name )
+		*name=ShortEventName;
+	if ( desc )
+		*desc=ShortEventText;
+	if ( text )
+		*text=ExtendedEventText;
 }

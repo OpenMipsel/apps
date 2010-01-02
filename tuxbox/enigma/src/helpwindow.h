@@ -8,8 +8,8 @@ class eProgress;
 
 class eHelpWindow: public eWindow
 {
-	std::list<int> entryBeg;
-	std::list<int>::iterator cur;
+	int entryBeg[255];
+	int cur, lastEntry;
 	eLabel *label;
 	eWidget *scrollbox, *visible;
 	eProgress *scrollbar;
@@ -18,6 +18,7 @@ class eHelpWindow: public eWindow
 	eString loadHelpText(int helpIDtoLoad);
 	int eventHandler(const eWidgetEvent &event);
 	void updateScrollbar();
+	void init_eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID);
 public:
 	eHelpWindow(ePtrList<eAction> &parseActionHelpList, int helpID=0);
 	~eHelpWindow();

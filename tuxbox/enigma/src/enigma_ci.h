@@ -1,71 +1,27 @@
 #ifndef DISABLE_CI
 
-#ifndef __enigmaci_h
-#define __enigmaci_h
+#ifndef __ENIGMA_CI_H_
+#define __ENIGMA_CI_H_
 
-#include <lib/gui/ewindow.h>
-#include <lib/gui/enumber.h>
-#include <lib/gui/listbox.h>
-#include <lib/gui/statusbar.h>
+#include <src/enigma_mmi.h>
 
-class eNumber;
-class eButton;
 class eDVBCI;
 
-class eCImmi: public eWidget
-{
-public:
-	eNumber *answer;
-	eCImmi(eWidget *parent);
-};	
-
-class eListBoxMenuEntry: public eListBoxEntryText
-{
-	friend class eListBox<eListBoxMenuEntry>;
-	int entry;
-public:
-	eListBoxMenuEntry(eListBox<eListBoxMenuEntry> *parent, eString name, int entry)
-	:eListBoxEntryText((eListBox<eListBoxEntryText>*)parent, name),entry(entry)
-	{
-	}
-	
-	const int &getEntry() const {return entry;};
-};	
-
-class enigmaCImmi: public eWindow
-{
-	eButton *ok,*answok;
-	eListBox<eListBoxMenuEntry> *lentrys;
-	eStatusBar *status;
-	eLabel *tt,*stt,*bt,*cistate,*headansw;
-	eNumber *answ;
-	eCImmi *mmi;
-	eDVBCI *DVBCI;
-
-private:
-	int eventHandler(const eWidgetEvent&);
-	void okPressed();
-	void entrySelected(eListBoxMenuEntry *choice);
-	void getmmi(const char *buffer);
-	long LengthField(unsigned char *lengthfield,long maxlength,int *fieldlen);
-	void answokPressed();
-	int ci_state;
-
-public:
-	enigmaCImmi(eDVBCI *DVBCI);
-	~enigmaCImmi();
-};
+class eButton;
+class eCheckbox;
+class eWindow;
+class eStatusBar;
 
 class enigmaCI: public eWindow
 {
-	eButton *ok,*reset,*init,*app;
-	eButton *reset2,*init2,*app2;
+	eButton *app,*app2;
 
-	eStatusBar *status;
 	eDVBCI *DVBCI;
 	eDVBCI *DVBCI2;
-
+	eFixedMessagePump<const char*> ci_messages;
+	eFixedMessagePump<const char*> ci2_messages;
 private:
+	void handleTwoServicesChecked(int);
 	void okPressed();
 	void resetPressed();
 	void initPressed();
@@ -73,14 +29,27 @@ private:
 	void reset2Pressed();
 	void init2Pressed();
 	void app2Pressed();
-	void updateCIinfo(const char*);
-	void updateCI2info(const char*);
-
+	void gotCIinfoText(const char*);
+	void gotCI2infoText(const char*);
+	void updateCIinfo(const char* const&);
+	void updateCI2info(const char* const&);
+	void init_enigmaCI();
 public:
 	enigmaCI();
 	~enigmaCI();
 };
 
-#endif
+class enigmaCIMMI : public enigmaMMI
+{
+	eDVBCI *ci;
+	static std::map<eDVBCI*,enigmaCIMMI*> exist;
+	void beginExec();
+	void sendAnswer( AnswerType ans, int param, unsigned char *data );
+public:
+	static enigmaCIMMI* getInstance( eDVBCI* ci );
+	enigmaCIMMI(eDVBCI *ci);
+};
+
+#endif // __ENIGMA_CI_H_
 
 #endif // DISABLE_CI

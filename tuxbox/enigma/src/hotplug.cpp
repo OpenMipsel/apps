@@ -8,6 +8,10 @@ eHotplug *eHotplug::instance = 0;
 eHotplug::eHotplug()
 	:paramsleft(0)
 {
+	init_eHotplug();
+}
+void eHotplug::init_eHotplug()
+{
 	if (!instance)
 		instance=this;
 	else
@@ -32,7 +36,7 @@ eHotplug::eHotplug()
 		perror("[hotplug] listen");
 		return;
 	}
-	sn = new eSocketNotifier( eApp, listenfd, 19 ); // POLLIN/POLLPRI/POLLHUP
+	sn = new eSocketNotifier( eApp, listenfd, 17 ); // POLLIN/POLLPRI/POLLHUP
 	sn->start();
 	CONNECT( sn->activated, eHotplug::dataAvail );
 	eDebug("[eHotplug] created successfully");

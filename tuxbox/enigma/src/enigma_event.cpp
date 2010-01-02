@@ -1,5 +1,6 @@
 #include <enigma_event.h>
 
+#include <epgactions.h>
 #include <time.h>
 #include <timer.h>
 #include <lib/base/eerror.h>
@@ -10,17 +11,14 @@
 #include <lib/gui/eprogress.h>
 #include <lib/gui/guiactions.h>
 #include <lib/system/init_num.h>
+#include <epgwindow.h>
 
 struct enigmaEventViewActions
 {
 	eActionMap map;
-	eAction addDVRTimerEvent, addNGRABTimerEvent, addSwitchTimerEvent, removeTimerEvent, close;
+	eAction close;
 	enigmaEventViewActions():
 		map("enigmaEventView", _("enigma event view")),
-		addDVRTimerEvent(map, "addDVRTimerEvent", _("add this event as DVR Event to timer list"), eAction::prioDialog ),
-		addNGRABTimerEvent(map, "addNGRABTimerEvent", _("add this event as NGRAB Event to timer list"), eAction::prioDialog ),
-		addSwitchTimerEvent(map, "addSwitchTimerEvent", _("add this event as simple Switch Event to timer list"), eAction::prioDialog ),
-		removeTimerEvent(map, "removeTimerEvent", _("remove this event from timer list"), eAction::prioDialog ),
 		close(map, "close", _("closes the Event View"), eAction::prioDialog)
 	{
 	}
@@ -79,37 +77,24 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 				ePoint curPos = long_description->getPosition();
 				if ( curPos.y() < 0 )
 				{
-					long_description->move( ePoint( curPos.x(), curPos.y() + descr->getSize().height() ) );
+					long_description->move( ePoint( curPos.x(), curPos.y() + pageHeight ) );
 					updateScrollbar();
 				}
 			}
 			else if (total && event.action == &i_cursorActions->down)
 			{
 				ePoint curPos = long_description->getPosition();
-				if ( (total - descr->getSize().height() ) >= abs( curPos.y() - descr->getSize().height() ) )
+				if ( (total - pageHeight ) >= abs( curPos.y() - pageHeight ) )
 				{
-					long_description->move( ePoint( curPos.x(), curPos.y() - descr->getSize().height() ) );
+					long_description->move( ePoint( curPos.x(), curPos.y() - pageHeight ) );
 					updateScrollbar();
 				}
 			}
 			else if (event.action == &i_enigmaEventViewActions->close)
 				close(0);
-#ifndef DISABLE_FILE
-			else if (event.action == &i_enigmaEventViewActions->addDVRTimerEvent)
-				addtype = ePlaylistEntry::RecTimerEntry |
-									ePlaylistEntry::recDVR|
-									ePlaylistEntry::stateWaiting;
-#endif
-#ifndef DISABLE_NETWORK
-			else if (event.action == &i_enigmaEventViewActions->addNGRABTimerEvent)
-				addtype = ePlaylistEntry::RecTimerEntry|
-									ePlaylistEntry::recNgrab|
-									ePlaylistEntry::stateWaiting;
-#endif
-			else if (event.action == &i_enigmaEventViewActions->addSwitchTimerEvent)
-				addtype = ePlaylistEntry::SwitchTimerEntry|
-									ePlaylistEntry::stateWaiting;
-			else if ( event.action == &i_enigmaEventViewActions->removeTimerEvent)
+			else if ( (addtype = i_epgSelectorActions->checkTimerActions( event.action )) != -1 )
+				;
+			else if ( event.action == &i_epgSelectorActions->removeTimerEvent)
 			{
 				if ((evt || events) && eTimerManager::getInstance()->removeEventFromTimerList( this, &ref, evt?evt:*events ) )
 					timer_icon->hide();
@@ -133,54 +118,142 @@ int eEventDisplay::eventHandler(const eWidgetEvent &event)
 	return eWindow::eventHandler(event);
 }
 
+void eEventDisplay::setEPGSearchEvent(eServiceReferenceDVB &Ref, EITEvent *event, eString Service)
+{
+	ref = Ref;
+	service = Service;
+	time_t time = event->start_time+event->duration/2;
+
+	EITEvent *tmp = event->event_id != -1 ? eEPGCache::getInstance()->lookupEvent( ref, event->event_id ) : 0;
+	if ( !tmp )
+		tmp = eEPGCache::getInstance()->lookupEvent( ref, time );
+	evt = tmp;
+	valid=0;
+	long_description->hide();
+	long_description->move( ePoint(0,0) );
+	if (evt)
+	{
+		eString _title=0, _long_description="";
+		eString _eventDate="";
+		eString _eventTime="";
+		tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
+		if (begin)
+		{
+			valid |= 1;
+			_eventTime.sprintf("%02d:%02d", begin->tm_hour, begin->tm_min);
+			_eventDate=eString().sprintf("%02d.%02d.%4d", begin->tm_mday, begin->tm_mon+1, begin->tm_year+1900);
+		}
+		time_t endtime=event->start_time+event->duration;
+		tm *end=event->start_time!=-1?localtime(&endtime):0;
+		if (end)
+		{
+			valid |= 2;
+			_eventTime+=eString().sprintf(" - %02d:%02d", end->tm_hour, end->tm_min);
+		}
+		for (ePtrList<Descriptor>::iterator d(evt->descriptor); d != evt->descriptor.end(); ++d)
+		{
+			if (d->Tag()==DESCR_SHORT_EVENT)
+			{
+				ShortEventDescriptor *s=(ShortEventDescriptor*)*d;
+				valid |= 4;
+				_title=s->event_name;
+#ifndef DISABLE_LCD
+				if (LCDElement)
+				LCDElement->setText(s->text);
+#endif
+				if ((s->text.length() > 0) && (s->text!=_title))
+				{
+					valid |= 8;
+					_long_description+=s->text;
+					_long_description+="\n\n";
+				}
+			}
+			else if (d->Tag()==DESCR_EXTENDED_EVENT)
+			{
+				ExtendedEventDescriptor *ss=(ExtendedEventDescriptor*)*d;
+				valid |= 16;
+				_long_description+=ss->text;
+			}
+			else if (d->Tag() == DESCR_LINKAGE)
+			{
+				if ( !ref.path )
+				{
+					LinkageDescriptor *ld=(LinkageDescriptor*)*d;
+					if (ld->linkage_type==0xB0)
+					{
+						eServiceReferenceDVB MySubService(ref.getDVBNamespace(),
+							eTransportStreamID(ld->transport_stream_id),
+							eOriginalNetworkID(ld->original_network_id),
+							eServiceID(ld->service_id), 7);
+						ref = MySubService;
+					}
+				}
+			}
+		}
+		if (!_title)
+			_title = _("no information is available");
+		if ( !ref.path )
+			channel->setText(service);
+		eventTime->setText(_eventTime);
+		eventDate->setText(_eventDate);
+		setText(_title);
+		if (!_long_description)
+			long_description->setText(_("no description is available"));
+		else
+			long_description->setText(_long_description);
+		checkTimerIcon(evt);
+	}
+	else
+	{
+		setText(service);
+		long_description->setText(_("no description is available"));
+	}
+	updateScrollbar();
+	long_description->show();
+}
 eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const ePtrList<EITEvent>* e, EITEvent* evt )
 : eWindow(1), service(service), ref(ref), evt(evt)
+{
+	init_eEventDisplay(e);
+}
+void eEventDisplay::init_eEventDisplay(const ePtrList<EITEvent>* e)
 {
 	eventlist=0;
 	events=0;
 
-	scrollbar = new eProgress(this);
-	scrollbar->setName("scrollbar");
-	scrollbar->setStart(0);
-	scrollbar->setPerc(100);
+	scrollbar = CreateSkinnedProgress("scrollbar",0,100);
 
 	descr = new eWidget(this);
 	descr->setName("epg_description");
 
-	eventTime = new eLabel(this);
-	eventTime->setName("time");
+	eventTime = CreateSkinnedLabel("time");
 
-	eventDate = new eLabel(this);
-	eventDate->setName("date");
+	eventDate = CreateSkinnedLabel("date");
 
-	channel = new eLabel(this);
-	channel->setName("channel");
+	channel = CreateSkinnedLabel("channel");
 
-	timer_icon = new eLabel(this);
-	timer_icon->setName("timer_icon");
+	timer_icon = CreateSkinnedLabel("timer_icon");
 
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eventview"))
-		eFatal("skin load of \"eventview\" failed");
+	BuildSkin("eventview");
 
 	long_description=new eLabel(descr);
 	long_description->setFlags(RS_WRAP);
 
 	// try to recalc long description label... ( no broken text lines.. )
 	float lineheight=fontRenderClass::getInstance()->getLineHeight( long_description->getFont() );
-	int lines = descr->getSize().height() / (int)lineheight;
-	int newheight = lines * (int)lineheight + (int)(round(lineheight) - (int)lineheight);
-	descr->resize( eSize( descr->getSize().width(), newheight + (int)lineheight/6 ) );
-	long_description->resize(eSize(descr->getSize().width(), descr->getSize().height()*4));
+	int lines = (int)(descr->getSize().height() / lineheight);
+	pageHeight = (int)(lines * lineheight);
+	descr->resize( eSize( descr->getSize().width(), pageHeight+(int)(lineheight/6)));
+	long_description->resize(eSize(descr->getSize().width(), pageHeight*16));
 
 #ifndef DISABLE_FILE
-	addActionToHelpList( &i_enigmaEventViewActions->addDVRTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->addDVRTimerEvent );
 #endif
 #ifndef DISABLE_NETWORK
-	addActionToHelpList( &i_enigmaEventViewActions->addNGRABTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->addNGRABTimerEvent );
 #endif
-	addActionToHelpList( &i_enigmaEventViewActions->addSwitchTimerEvent );
-	addActionToHelpList( &i_enigmaEventViewActions->removeTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->addSwitchTimerEvent );
+	addActionToHelpList( &i_epgSelectorActions->removeTimerEvent );
 	addActionToHelpList( &i_enigmaEventViewActions->close );
 
 	if (e)
@@ -188,6 +261,7 @@ eEventDisplay::eEventDisplay(eString service, eServiceReferenceDVB &ref, const e
 	else if (evt)
 		setEvent(evt);
 	addActionMap( &i_enigmaEventViewActions->map );
+	addActionMap( &i_epgSelectorActions->map );
 	
 	setHelpID(11);
 }
@@ -200,18 +274,17 @@ eEventDisplay::~eEventDisplay()
 
 void eEventDisplay::updateScrollbar()
 {
-	total = descr->getSize().height();
+	total = pageHeight;
 	int pages=1;
 	while( total < long_description->getExtend().height() )
 	{
-		total += descr->getSize().height();
+		total += pageHeight;
 		pages++;
 	}
 
 	int start=-long_description->getPosition().y()*100/total;
-	int vis=descr->getSize().height()*100/total;
-	scrollbar->setStart(start);
-	scrollbar->setPerc(vis);
+	int vis=pageHeight*100/total;
+	scrollbar->setParams(start, vis);
 	scrollbar->show();
 	if (pages == 1)
 		total=0;
@@ -232,48 +305,77 @@ void eEventDisplay::setEvent(EITEvent *event)
 		eString _eventDate="";
 		eString _eventTime="";
 
-		tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
-		if (begin)
+		if ( ref.path )
 		{
-			valid |= 1;
-			_eventTime.sprintf("%02d:%02d", begin->tm_hour, begin->tm_min);
-			_eventDate=eString().sprintf("%02d.%02d.%4d", begin->tm_mday, begin->tm_mon+1, begin->tm_year+1900);
+			_eventDate.sprintf(_("Original duration: %d min"), event->duration/60 );
+			eSize s = eventDate->getSize();
+			eSize s2 = eventTime->getSize();
+			s2.setHeight(0);
+			s+=s2;
+			eventDate->resize(s);
 		}
-		time_t endtime=event->start_time+event->duration;
-		tm *end=event->start_time!=-1?localtime(&endtime):0;
-		if (end)
+		else
 		{
-			valid |= 2;
-			_eventTime+=eString().sprintf(" - %02d:%02d", end->tm_hour, end->tm_min);
+			tm *begin=event->start_time!=-1?localtime(&event->start_time):0;
+			if (begin)
+			{
+				valid |= 1;
+				_eventTime.sprintf("%02d:%02d", begin->tm_hour, begin->tm_min);
+				_eventDate=eString().sprintf("%02d.%02d.%4d", begin->tm_mday, begin->tm_mon+1, begin->tm_year+1900);
+			}
+			time_t endtime=event->start_time+event->duration;
+			tm *end=event->start_time!=-1?localtime(&endtime):0;
+			if (end)
+			{
+				valid |= 2;
+				_eventTime+=eString().sprintf(" - %02d:%02d", end->tm_hour, end->tm_min);
+			}
 		}
+
+		LocalEventData led;
+		eString lang=0;
+		if (led.language_exists(event,led.primary_language))
+			lang=led.primary_language;
+		else if (led.language_exists(event,led.secondary_language))
+			lang=led.secondary_language;
+		else if (led.language_exists(event,"eng"))
+			lang="eng";
 
 		for (ePtrList<Descriptor>::iterator d(event->descriptor); d != event->descriptor.end(); ++d)
 		{
 			if (d->Tag()==DESCR_SHORT_EVENT)
 			{
 				ShortEventDescriptor *s=(ShortEventDescriptor*)*d;
+                
 				valid |= 4;
-				_title=s->event_name;
+
+				if (!lang || !strncmp(lang.c_str(), s->language_code, 3))
+				{
+					_title=s->event_name;
 #ifndef DISABLE_LCD	
-				if (LCDElement)
+					if (LCDElement)
 					LCDElement->setText(s->text);
 #endif
-				if ((s->text.length() > 0) && (s->text!=_title))
-				{
-					valid |= 8;
-					_long_description+=s->text;
-					_long_description+="\n\n";
-				}
-			} else if (d->Tag()==DESCR_EXTENDED_EVENT)
+					if ((s->text.length() > 0) && (s->text!=_title))
+					{
+						valid |= 8;
+						_long_description+=s->text;
+						_long_description+="\n\n";
+					}
+				} 
+			}
+			else if (d->Tag()==DESCR_EXTENDED_EVENT)
 			{
-				valid |= 16;
 				ExtendedEventDescriptor *ss=(ExtendedEventDescriptor*)*d;
-				_long_description+=ss->item_description;
+				valid |= 16;
+				if (!lang || !strncmp(lang.c_str(), ss->language_code, 3))
+					_long_description+=ss->text;
 			}
 		}
-
 		if (!_title)
 			_title = _("no information is available");
+		if ( !ref.path )
+			channel->setText(service);
 
 		eventTime->setText(_eventTime);
 		eventDate->setText(_eventDate);
@@ -284,8 +386,6 @@ void eEventDisplay::setEvent(EITEvent *event)
 			long_description->setText(_("no description is available"));
 		else
 			long_description->setText(_long_description);
-
-		channel->setText(service);
 
 		checkTimerIcon(event);
 	} 

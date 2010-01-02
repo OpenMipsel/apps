@@ -3,10 +3,11 @@
 #include <lib/dvb/epgcache.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/servicemp3.h>
+#include <epgwindow.h>
 
 extern eString httpUnescape(const eString &string);
 extern eString httpEscape(const eString &string);
-extern std::map<eString,eString> getRequestOptions(eString opt);
+extern std::map<eString,eString> getRequestOptions(eString opt, char delimiter = '&');
 extern eString ref2string(const eServiceReference &r);
 extern eServiceReference string2ref(const eString &service);
 
@@ -154,6 +155,7 @@ class eHTTPLog: public eHTTPDataSource, public Object
 	int ok, last;
 	void recvMessage(int lvl, const eString &str);
 	eString toWrite;
+	void init_eHTTPLog();
 public:
 	eHTTPLog(eHTTPConnection *c, int mask, int format);
 	~eHTTPLog();
@@ -163,6 +165,10 @@ public:
 
 eHTTPLog::eHTTPLog(eHTTPConnection *c, int mask, int format):
 	eHTTPDataSource(c), mask(mask), format(format), ok(0)
+{
+	init_eHTTPLog();
+}
+void eHTTPLog::init_eHTTPLog()
 {
 	if (format == 0)
 		connection->local_header["Content-Type"]="text/plain";
@@ -233,13 +239,6 @@ eHTTPLog::~eHTTPLog()
 {
 }
 
-class eHTTPLogResolver: public eHTTPPathResolver
-{
-public:
-	eHTTPLogResolver();
-	eHTTPDataSource *getDataSource(eString request, eString path, eHTTPConnection *conn);
-};
-
 eHTTPLogResolver::eHTTPLogResolver()
 {
 }
@@ -262,21 +261,22 @@ eHTTPDataSource *eHTTPLogResolver::getDataSource(eString request, eString path, 
 	return 0;
 }
 
+extern eString filter_string(eString string);
+
 class ERCServiceHandle: public Object
 {
 	eString &result, search;
 	eServiceInterface &iface;
 public:
-	ERCServiceHandle(eString &result, eServiceInterface &iface, eString search): result(result), search(search), iface(iface)
+	ERCServiceHandle(eString &result, eServiceInterface &iface, eString search): result(result), search(search.upper()), iface(iface)
 	{
 	}
 	void addEntry(const eServiceReference &e)
 	{
-
 		eService *service=iface.addRef(e);
 		if (service)
 		{
-			if (service->service_name.find(search) == eString::npos)
+			if (filter_string(service->service_name).upper().find(search) == eString::npos)
 				return;
 			result += ref2string(e) + "\n";
 			result += service->service_name + "\n";
@@ -305,7 +305,7 @@ static eString erc_services(eString request, eString dirpath, eString opt, eHTTP
 	eString res = "+\n";
 	
 	ERCServiceHandle conv(res, *iface, opts["name"]);
-
+	
 	Signal1<void,const eServiceReference&> signal;
 	signal.connect(slot(conv, &ERCServiceHandle::addEntry));
 	
@@ -315,6 +315,71 @@ static eString erc_services(eString request, eString dirpath, eString opt, eHTTP
 	return res;
 }
 
+static void processEvent(eString &res, EITEvent *ev, const eString &search, int wantext)
+{
+	eString title;
+
+	LocalEventData led;
+	led.getLocalData(ev, &title);
+
+	if (title.find(search) != eString::npos)
+	{
+		res += "I: ";
+		res += eString().setNum(ev->event_id, 0x10);
+		res += "\nB: ";
+		res += eString().setNum(ev->start_time);
+		res += "\nD: ";
+		res += eString().setNum(ev->duration);
+		res += "\nN: " + title + "\n";
+		LocalEventData led;
+		eString tmpname,tmptext;
+		if (!wantext)
+		{
+			led.getLocalData(ev, &tmpname);
+			if (!tmpname.isNull())
+			{
+				res += "T: ";
+				res += tmpname;
+				res += "\n";
+			}
+		} 
+		else
+		{
+			led.getLocalData(ev, &tmpname, 0, &tmptext);
+			if (!tmptext.isNull())
+			{
+				res += "T: ";
+				res += tmpname;
+				res += "\n";
+				res += "E: ";
+				tmptext.strReplace("\n", eString("\\n"));
+				res += tmptext;
+				res +=" \n";
+			}
+		}
+		for (ePtrList<Descriptor>::const_iterator d(ev->descriptor); d != ev->descriptor.end(); ++d)
+		{
+			if (d->Tag()==DESCR_SHORT_EVENT)
+			{
+				const ShortEventDescriptor *s=(const ShortEventDescriptor*)*d;
+				res += "T: ";
+				res += s->text;
+				res += "\n";
+				if (!wantext)
+					break;
+			} else if (wantext && (d->Tag() == DESCR_EXTENDED_EVENT))
+			{
+				const ExtendedEventDescriptor *e=(ExtendedEventDescriptor*)*d;
+				res += "E: ";
+				eString t = e->text;
+				t.strReplace("\n", eString("\\n"));
+				res += t;
+				res +=" \n";
+			}
+		}
+	}
+}
+
 static eString erc_epg(eString request, eString dirpath, eString opt, eHTTPConnection *content)
 {
 	std::map<eString,eString> opts=getRequestOptions(opt);
@@ -322,84 +387,85 @@ static eString erc_epg(eString request, eString dirpath, eString opt, eHTTPConne
 	int duration = 0;
 	eString search;
 	eString res;
+	int wantext;
+	int event_id = -1;
 	
 	if (opts.find("service") == opts.end())
 		return "-specify service";
-	if ((opts.find("text") == opts.end()) && (opts.find("begin") == opts.end()))
-		return "-specify text and/or begin";
+	if ((opts.find("text") == opts.end()) && (opts.find("begin") == opts.end()) && (opts.find("event_id") == opts.end()))
+		return "-specify text and/or begin or event_id";
 	eString text = opts["text"];
 	if (opts.find("begin") != opts.end())
 		begin = atoi(opts["begin"].c_str());
 	if (opts.find("duration") != opts.end())
 		duration = atoi(opts["duration"].c_str());
 	search = opts["text"];
+	
+	if (opts.find("extended") != opts.end())
+		wantext = 1;
+	else
+		wantext = 0;
+	
+	if (opts.find("event_id") != opts.end())
+		sscanf(opts["event_id"].c_str(), "%x", &event_id);
 
 	eEPGCache *epgcache=eEPGCache::getInstance();
 	eServiceReference ref(opts["service"]);
-	const timeMap *evmap = epgcache->getTimeMap((eServiceReferenceDVB&)ref);
-	if (!evmap)
-		return "-no events for this service";
-
-	timeMap::const_iterator ibegin = evmap->begin(), iend = evmap->end();
-	if (begin != 0)
-	{
-		ibegin = evmap->lower_bound(begin);
-		if ((ibegin != evmap->end()) && (ibegin != evmap->begin()))
-			--ibegin;
-		else
-			ibegin=evmap->begin();
-
-		timeMap::const_iterator iend = evmap->upper_bound(begin + duration);
-		if (iend != evmap->end())
-			++iend;
-	}
 	
-	for (timeMap::const_iterator event(ibegin); event != iend; ++event)
+	if (event_id == -1)
 	{
-		EITEvent *ev = new EITEvent(*event->second);
-		eString title;
-		
-		for (ePtrList<Descriptor>::const_iterator d(ev->descriptor); d != ev->descriptor.end(); ++d)
-			if (d->Tag()==DESCR_SHORT_EVENT)
-			{
-				const ShortEventDescriptor *s=(const ShortEventDescriptor*)*d;
-				title = s->event_name;
-				break;
-			}
-
-		if (title.find(search) != eString::npos)
+		epgcache->Lock();
+		const timeMap *evmap = epgcache->getTimeMap((eServiceReferenceDVB&)ref);
+		if (!evmap)
 		{
-      res += "I: ";
-      res += eString().setNum(ev->event_id, 0x10);
-     	res += "\nB: ";
-			res += eString().setNum(ev->start_time);
-     	res += "\nD: ";
-			res += eString().setNum(ev->duration);
-			res += "\nN: " + title + "\n";
-			for (ePtrList<Descriptor>::const_iterator d(ev->descriptor); d != ev->descriptor.end(); ++d)
-				if (d->Tag()==DESCR_SHORT_EVENT)
-				{
-					const ShortEventDescriptor *s=(const ShortEventDescriptor*)*d;
-					res += "T: ";
-					res += s->text;
-					res += "\n";
-					break;
-				}
+			epgcache->Unlock();
+			return "-no events for this service";
 		}
-		
-		delete ev;
+		eServiceReferenceDVB &rref=(eServiceReferenceDVB&)ref;
+		timeMap::const_iterator ibegin = evmap->begin(), iend = evmap->end();
+		if (begin != 0)
+		{
+			ibegin = evmap->lower_bound(begin);
+			if ((ibegin != evmap->end()) && (ibegin != evmap->begin()))
+				--ibegin;
+			else
+				ibegin=evmap->begin();
+	
+			timeMap::const_iterator iend = evmap->upper_bound(begin + duration);
+			if (iend != evmap->end())
+				++iend;
+		}
+		int tsidonid =
+			(rref.getTransportStreamID().get()<<16)|rref.getOriginalNetworkID().get();
+		for (timeMap::const_iterator event(ibegin); event != iend; ++event)
+		{
+			EITEvent *ev = new EITEvent(*event->second, tsidonid);
+			processEvent(res, ev, search, wantext);
+			delete ev;
+		}
+		epgcache->Unlock();
+	} 
+	else
+	{
+		EITEvent *ev = epgcache->lookupEvent((eServiceReferenceDVB&)ref, event_id);
+		if (!ev)
+			return "-service or event_id invalid";
+		else
+		{
+			processEvent(res, ev, search, wantext);
+			delete ev;
+		}
 	}
 	
 	return res;
 }
 
-void ezapInitializeWeb(eHTTPD *httpd, eHTTPDynPathResolver *dyn_resolver)
+void ezapInitializeWeb(eHTTPDynPathResolver *dyn_resolver)
 {
 	dyn_resolver->addDyn("GET", "/dyn2/", web_root);
 	dyn_resolver->addDyn("GET", "/dyn2/services", xml_services);
 
 	dyn_resolver->addDyn("GET", "/erc/services", erc_services);
 	dyn_resolver->addDyn("GET", "/erc/epg", erc_epg);
-	httpd->addResolver(new eHTTPLogResolver);
 }
 

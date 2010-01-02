@@ -12,17 +12,21 @@
 #include <lib/driver/eavswitch.h>
 #include <lib/gui/elabel.h>
 #include <lib/dvb/epgcache.h>
+#include <lib/dvb/decoder.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/guiactions.h>
 #include <lib/system/init_num.h>
+#include <lib/system/info.h>
 
 struct enigmaMainmenuActions
 {
 	eActionMap map;
-	eAction close;
+	eAction close, prev, next;
 	enigmaMainmenuActions():
 		map("mainmenu", _("enigma mainmenu")),
-		close(map, "close", _("close the mainmenu"), eAction::prioDialog)
+		close(map, "close", _("close the mainmenu"), eAction::prioDialog),
+		prev(map, "prev", _("select previous entry"), eAction::prioDialog),
+		next(map, "next", _("select next entry"), eAction::prioDialog)
 	{
 	}
 };
@@ -32,15 +36,18 @@ eAutoInitP0<enigmaMainmenuActions> i_mainmenuActions(eAutoInitNumbers::actions, 
 
 void eMainMenu::setActive(int i)
 {
+	int count = MENU_ENTRIES;
+	if (!eSystemInfo::getInstance()->hasScartSwitch())
+		--count;
 	for (int a=0; a<7; a++)
 	{
-		int c=(i+a+MENU_ENTRIES-3)%MENU_ENTRIES;
+		int c=(i+a+count-3)%count;
 		if (a != 3)
 			label[a]->setPixmap(pixmaps[c][0]);	// unselected
 		else
 			label[a]->setPixmap(pixmaps[c][1]); // selected
 	}
-	
+
 	switch (i)
 	{
 	case 0:
@@ -66,28 +73,24 @@ void eMainMenu::setActive(int i)
 		description->setText(eString("(7) ") + eString(_("Games")));
 		break;
 	case 7:
-		description->setText(eString("(8) ") + eString(_("VCR")));
+		description->setText(eString("(8) ") + eString(_("Timer")));
 		break;
 	case 8:
-		description->setText(eString("(9) ") + eString(_("Timer")));
+		description->setText(eString("(9) ") + eString(_("VCR")));
+		break;
 #else
 	case 2:
 		description->setText(eString("(3) ") + eString(_("Information")));
 		break;
-//	case 3:
-//		description->setText(eString("(4) ") + eString(_("Shutdown")));
-//		break;
 	case 3:
-		description->setText(eString("(5) ") + eString(_("Setup")));
+		description->setText(eString("(4) ") + eString(_("Setup")));
 		break;
-//	case 4:
-//		description->setText(eString("(6) ") + eString(_("Games")));
-//		break;
 	case 4:
-		description->setText(eString("(7) ") + eString(_("VCR")));
+		description->setText(eString("(5) ") + eString(_("Timer")));
 		break;
 	case 5:
-		description->setText(eString("(8) ") + eString(_("Timer")));
+		description->setText(eString("(6) ") + eString(_("VCR")));
+		break;
 #endif
 	}
 #ifndef DISABLE_LCD
@@ -99,36 +102,43 @@ void eMainMenu::setActive(int i)
 }
 
 eMainMenu::eMainMenu()
-	: eWidget(0, 1)
+	: eWidget(0, 1),
+	wnd(_("Mainmenu"),
+#ifndef DISABLE_FILE	
+	eSystemInfo::getInstance()->hasScartSwitch()?11:10,
+#else
+	eSystemInfo::getInstance()->hasScartSwitch()?8:7,
+#endif
+	350),
+	wndShowTimer(eApp)
 {
-	addActionMap(&i_mainmenuActions->map);
-	addActionMap(&i_cursorActions->map);
-	addActionMap(&i_shortcutActions->map);
-	eLabel *background=new eLabel(this);
-	background->setName("background");
+	init_eMainMenu();
+}
+void eMainMenu::init_eMainMenu()
+{
+	simpleMainmenu=0;
+	eConfig::getInstance()->getKey("/ezap/osd/simpleMainMenu", simpleMainmenu);
 
-	label[0]=new eLabel(this);
-	label[0]->setName("l3");
-	label[1]=new eLabel(this);
-	label[1]->setName("l2");
-	label[2]=new eLabel(this);
-	label[2]->setName("l1");
-	label[3]=new eLabel(this);
-	label[3]->setName("m");
-	label[4]=new eLabel(this);
-	label[4]->setName("r1");
-	label[5]=new eLabel(this);
-	label[5]->setName("r2");
-	label[6]=new eLabel(this);
-	label[6]->setName("r3");
-	
-	description=new eLabel(this);
-	description->setName("description");
+	if ( !simpleMainmenu )
+	{
+		addActionMap(&i_mainmenuActions->map);
+		addActionMap(&i_cursorActions->map);
+		addActionMap(&i_shortcutActions->map);
+		CreateSkinnedLabel("background");
 
-	if (eSkin::getActive()->build(this, "eZapMainMenu"))
-		eFatal("unable to load main menu");
+		label[0]=CreateSkinnedLabel("l3");
+		label[1]=CreateSkinnedLabel("l2");
+		label[2]=CreateSkinnedLabel("l1");
+		label[3]=CreateSkinnedLabel("m");
+		label[4]=CreateSkinnedLabel("r1");
+		label[5]=CreateSkinnedLabel("r2");
+		label[6]=CreateSkinnedLabel("r3");
 
-	char *pixmap_name[]={
+		description=CreateSkinnedLabel("description");
+
+		BuildSkin("eZapMainMenu");
+
+			char *pixmap_name[]={
 		"tv",
 		"radio",
 #ifndef DISABLE_FILE
@@ -142,40 +152,116 @@ eMainMenu::eMainMenu()
 #ifndef DISABLE_FILE
 		"games",
 #endif
-		"scart",
-		"timer"};
+		"timer",
+		"scart"
+		};
 
-	for (int i=0; i<MENU_ENTRIES; i++)
-	{
-		pixmaps[i][0]=eSkin::getActive()->queryImage(eString("mainmenu.") + eString(pixmap_name[i]) );
-		pixmaps[i][1]=eSkin::getActive()->queryImage(eString("mainmenu.") + eString(pixmap_name[i]) + ".sel" );
-		if (!pixmaps[i][0])
-			eFatal("error, mainmenu bug, mainmenu.%s not defined", pixmap_name[i]);
-		if (!pixmaps[i][1])
-			eFatal("error, mainmenu bug, mainmenu.%s.sel not defined", pixmap_name[i]);
+		int count = MENU_ENTRIES;
+		if (!eSystemInfo::getInstance()->hasScartSwitch())
+			--count;
+		for (int i=0; i<count; i++)
+		{
+			pixmaps[i][0]=eSkin::getActive()->queryImage(eString("mainmenu.") + eString(pixmap_name[i]) );
+			pixmaps[i][1]=eSkin::getActive()->queryImage(eString("mainmenu.") + eString(pixmap_name[i]) + ".sel" );
+			if (!pixmaps[i][0])
+				eFatal("error, mainmenu bug, mainmenu.%s not defined", pixmap_name[i]);
+			if (!pixmaps[i][1])
+				eFatal("error, mainmenu bug, mainmenu.%s.sel not defined", pixmap_name[i]);
+			pixmaps[i][0]->uncompressdata();
+			pixmaps[i][1]->uncompressdata();
+		}
+
+		setActive(active=eZapMain::getInstance()->getMode());
 	}
-
-	setActive(active=eZapMain::getInstance()->getMode());		
+	else
+	{
+		CONNECT(wndShowTimer.timeout, eMainMenu::showWindow);
+		wnd.cmove(ePoint(180, 115));
+		int entry=0;
+		int count = MENU_ENTRIES;
+		for (int i=0; i<count; i++)
+		{
+			pixmaps[i][0]=NULL;
+			pixmaps[i][1]=NULL;
+		}
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("TV mode"), eString().sprintf("(%d) %s", ++entry, _("TV mode")) ))->selected, eMainMenu::sel_tv);
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Radio mode"), eString().sprintf("(%d) %s", ++entry, _("Radio mode")) ))->selected, eMainMenu::sel_radio);
+#ifndef DISABLE_FILE
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("File mode"), eString().sprintf("(%d) %s", ++entry, _("File mode")) ))->selected, eMainMenu::sel_file);
+		if ( eSystemInfo::getInstance()->hasScartSwitch() )
+			CONNECT((new eListBoxEntryMenu(wnd.getList(), _("VCR"), eString().sprintf("(%d) %s", ++entry, _("VCR")) ))->selected, eMainMenu::sel_vcr);
+		new eListBoxEntryMenuSeparator(wnd.getList(), eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Timer"), eString().sprintf("(%d) %s", ++entry, _("Timer")) ))->selected, eMainMenu::sel_timer);
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Setup"), eString().sprintf("(%d) %s", ++entry, _("Setup")) ))->selected, eMainMenu::sel_setup);
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Games"), eString().sprintf("(%d) %s", ++entry, _("Games")) ))->selected, eMainMenu::sel_plugins);
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Information"), eString().sprintf("(%d) %s", ++entry, _("Information")) ))->selected, eMainMenu::sel_info);
+		new eListBoxEntryMenuSeparator(wnd.getList(), eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Shutdown"), eString().sprintf("(%d) %s", ++entry, _("Shutdown")) ))->selected, eMainMenu::sel_quit);
+#else
+		if ( eSystemInfo::getInstance()->hasScartSwitch() )
+			CONNECT((new eListBoxEntryMenu(wnd.getList(), _("VCR"), eString().sprintf("(%d) %s", ++entry, _("VCR")) ))->selected, eMainMenu::sel_vcr);
+		new eListBoxEntryMenuSeparator(wnd.getList(), eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Timer"), eString().sprintf("(%d) %s", ++entry, _("Timer")) ))->selected, eMainMenu::sel_timer);
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Setup"), eString().sprintf("(%d) %s", ++entry, _("Setup")) ))->selected, eMainMenu::sel_setup);
+		new eListBoxEntryMenuSeparator(wnd.getList(), eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		CONNECT((new eListBoxEntryMenu(wnd.getList(), _("Information"), eString().sprintf("(%d) %s", ++entry, _("Information")) ))->selected, eMainMenu::sel_info);
+#endif
+	}
 	setHelpID(10);
 }
+eMainMenu::~eMainMenu()
+{
+	simpleMainmenu=0;
+	eConfig::getInstance()->getKey("/ezap/osd/simpleMainMenu", simpleMainmenu);
+
+	if ( !simpleMainmenu )
+	{
+		int count = MENU_ENTRIES;
+		if (!eSystemInfo::getInstance()->hasScartSwitch())
+			--count;
+		for (int i=0; i<count; i++)
+		{
+			if (pixmaps[i][0])
+				pixmaps[i][0]->compressdata();
+			if (pixmaps[i][1])
+				pixmaps[i][1]->compressdata();
+		}
+	}
+}
+#ifndef DISABLE_LCD
+void eMainMenu::setLCD( eWidget *LCDTitle, eWidget *LCDElement )
+{
+	eWidget::setLCD(LCDTitle, LCDElement);
+	wnd.setLCD(LCDTitle,LCDElement);
+}
+#endif
 
 void eMainMenu::sel_tv()
 {
-  eZapMain::getInstance()->setMode(eZapMain::modeTV, 1);
-	close(0);
+	eZapMain::getInstance()->setMode(eZapMain::modeTV, 1);
+	if (!simpleMainmenu)
+		close(0);
+	else
+		wnd.close(0);
 }
 
 void eMainMenu::sel_radio()
 {
-  eZapMain::getInstance()->setMode(eZapMain::modeRadio, 1);
-	close(0);
+	eZapMain::getInstance()->setMode(eZapMain::modeRadio, 1);
+	if (!simpleMainmenu)
+		close(0);
+	else
+		wnd.close(0);
 }
 
 #ifndef DISABLE_FILE
 void eMainMenu::sel_file()
 {
-  eZapMain::getInstance()->setMode(eZapMain::modeFile, 1);
-	close(0);
+	eZapMain::getInstance()->setMode(eZapMain::modeFile, 1);
+	if (!simpleMainmenu)
+		close(0);
+	else
+		wnd.close(0);
 }
 #endif
 
@@ -219,8 +305,10 @@ void eMainMenu::sel_setup()
 			setup.show();
 			i=setup.exec();
 			setup.hide();
-		}while(i==-1);      // to redisplay Setup after language change
-		setActive(active);  // --"--
+		}
+		while(i==-1);      // to redisplay Setup after language change
+		if ( !simpleMainmenu )
+			setActive(active);  // --"--
 		show();
 	}
 }
@@ -228,9 +316,9 @@ void eMainMenu::sel_setup()
 void eMainMenu::sel_plugins()
 {
 #ifndef DISABLE_LCD
-	eZapPlugins plugins(1, LCDTitle, LCDElement);
+	eZapPlugins plugins(eZapPlugins::GamePlugin, LCDTitle, LCDElement);
 #else
-	eZapPlugins plugins(1);
+	eZapPlugins plugins(eZapPlugins::GamePlugin);
 #endif
 	hide();
 	plugins.exec();
@@ -252,72 +340,102 @@ void eMainMenu::sel_timer()
 
 void eMainMenu::sel_quit()
 {
-	close(1);
+	if (!simpleMainmenu)
+		close(1);
+	else
+		wnd.close(1);
 }
 
 int eMainMenu::eventHandler(const eWidgetEvent &event)
 {
 	int num=-1;
-	switch (event.type)
+	if ( !simpleMainmenu )
 	{
-	case eWidgetEvent::willShow:
+		switch (event.type)
+		{
+			case eWidgetEvent::willShow:
 #ifndef DISABLE_LCD
-		if (LCDTitle)
-			LCDTitle->setText(_("Mainmenu"));
-		if (LCDElement)
-			LCDElement->setText( description->getText() );
+			if (LCDTitle)
+				LCDTitle->setText(_("Mainmenu"));
+			if (LCDElement)
+				LCDElement->setText( description->getText() );
 #endif
-		break;
-	case eWidgetEvent::evtAction:
-		if (event.action == &i_mainmenuActions->close)
-			close(0);
-		else if (event.action == &i_cursorActions->left)
-		{
-			active+=MENU_ENTRIES-1;
-			active%=MENU_ENTRIES;
-			setActive(active);
-		} else if (event.action == &i_cursorActions->right)
-		{
-			active++;
-			active%=MENU_ENTRIES;
-			setActive(active);
-		} else if (event.action == &i_cursorActions->ok)
-			selected(active);
-		else if (event.action == &i_cursorActions->cancel)
-			close(0);
-		else if (event.action == &i_shortcutActions->number0)
-			num=9;
-		else if (event.action == &i_shortcutActions->number1)
-			num=0;
-		else if (event.action == &i_shortcutActions->number2)
-			num=1;
-		else if (event.action == &i_shortcutActions->number3)
-			num=2;
-		else if (event.action == &i_shortcutActions->number4)
-			num=3;
-		else if (event.action == &i_shortcutActions->number5)
-			num=4;
-		else if (event.action == &i_shortcutActions->number6)
-			num=5;
-		else if (event.action == &i_shortcutActions->number7)
-			num=6;
-		else if (event.action == &i_shortcutActions->number8)
-			num=7;
-		else if (event.action == &i_shortcutActions->number9)
-			num=8;
-		else
 			break;
-		if (num != -1)
+		case eWidgetEvent::evtAction:
 		{
-			if (num < MENU_ENTRIES)
+			int count = MENU_ENTRIES;
+			if (!eSystemInfo::getInstance()->hasScartSwitch())
+				--count;
+			if (event.action == &i_mainmenuActions->close)
+				close(0);
+			else if (event.action == &i_mainmenuActions->prev)
 			{
-				setActive(active=num);
-				selected(num);
+				active+=count-1;
+				active%=count;
+				setActive(active);
 			}
+			else if (event.action == &i_mainmenuActions->next)
+			{
+				active++;
+				active%=count;
+				setActive(active);
+			}
+			else if (event.action == &i_cursorActions->ok)
+				selected(active);
+			else if (event.action == &i_cursorActions->cancel)
+				close(0);
+			else if (event.action == &i_shortcutActions->number0)
+				num=9;
+			else if (event.action == &i_shortcutActions->number1)
+				num=0;
+			else if (event.action == &i_shortcutActions->number2)
+				num=1;
+			else if (event.action == &i_shortcutActions->number3)
+				num=2;
+			else if (event.action == &i_shortcutActions->number4)
+				num=3;
+			else if (event.action == &i_shortcutActions->number5)
+				num=4;
+			else if (event.action == &i_shortcutActions->number6)
+				num=5;
+			else if (event.action == &i_shortcutActions->number7)
+				num=6;
+			else if (event.action == &i_shortcutActions->number8)
+				num=7;
+			else if (event.action == &i_shortcutActions->number9)
+				num=8;
+			else
+				break;
+			if (num != -1)
+			{
+				if (num < count)
+				{
+					setActive(active=num);
+					selected(num);
+				}
+			}
+			return 1;
 		}
-		return 1;
-	default:
-		break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		switch (event.type)
+		{
+			case eWidgetEvent::willShow:
+				wnd.show();
+				break;
+			case eWidgetEvent::willHide:
+				wnd.hide();
+				break;
+			case eWidgetEvent::execBegin:
+				wndShowTimer.start(0,true);
+				return 1;
+			default:
+				break;
+		}
 	}
 	return eWidget::eventHandler(event);
 }
@@ -349,32 +467,31 @@ void eMainMenu::selected(int i)
 		sel_plugins();
 		break;
 	case 7:
-		sel_vcr();
+		sel_timer();
 		break;
 	case 8:
-		sel_timer();
+		sel_vcr();
 		break;
 #else
 	case 2:
 		sel_info();
 		break;
-//	case 3:
-//		sel_quit();
-//		break;
 	case 3:
 		sel_setup();
 		break;
-//	case 4:
-//		sel_plugins();
-//		break;
 	case 4:
-		sel_vcr();
+		sel_timer();
 		break;
 	case 5:
-		sel_timer();
+		sel_vcr();
 		break;
 #endif
 	}
+}
+
+void eMainMenu::showWindow()
+{
+	close(wnd.exec());
 }
 
 void eMainMenu::eraseBackground(gPainter *, const eRect &where)

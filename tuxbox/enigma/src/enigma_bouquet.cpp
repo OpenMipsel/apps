@@ -5,10 +5,12 @@
 #include <lib/dvb/servicestructure.h>
 #include <lib/dvb/frontend.h>
 #include <lib/gui/actions.h>
+#include <lib/system/info.h>
 
 class eModeSelector: public eListBoxWindow<eListBoxEntryText>
 {
 	void entrySelected(eListBoxEntryText *s);
+	void init_eModeSelector();;
 public:
 	eModeSelector();
 };
@@ -16,9 +18,16 @@ public:
 eModeSelector::eModeSelector()
 	:eListBoxWindow<eListBoxEntryText>(_("Bouquet Type"), 5, 400)
 {
+	init_eModeSelector();
+}
+void eModeSelector::init_eModeSelector()
+{
 	move( ePoint(100,100) );
 	new eListBoxEntryText( &list, _("TV"), (void*)  eZapMain::modeTV );
 	new eListBoxEntryText( &list, _("Radio"), (void*) eZapMain::modeRadio );
+#ifndef DISABLE_FILE
+	new eListBoxEntryText( &list, _("File"), (void*) eZapMain::modeFile );
+#endif
 	CONNECT( list.selected, eModeSelector::entrySelected );
 }
 
@@ -32,7 +41,11 @@ void eModeSelector::entrySelected( eListBoxEntryText *e )
 
 eZapBouquetSetup::eZapBouquetSetup()
 	:eSetupWindow(_("Service Organising"), 6, 430)
-{                                        
+{
+	init_eZapBouquetSetup();
+}
+void eZapBouquetSetup::init_eZapBouquetSetup()
+{
 	move(ePoint(150, 166));
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Create new bouquet"), eString().sprintf("(%d) %s", ++entry, _("create new empty bouquet"))))->selected, eZapBouquetSetup::createNewEmptyBouquet );
@@ -40,7 +53,7 @@ eZapBouquetSetup::eZapBouquetSetup()
 	CONNECT((new eListBoxEntryMenu(&list, _("Edit bouquets"), eString().sprintf("(%d) %s", ++entry, _("sort,rename,delete services/bouquets "))))->selected, eZapBouquetSetup::editSelected );
 	if ( eConfig::getInstance()->getParentalPin() )
 	{
-		new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+		new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 		CONNECT((new eListBoxEntryMenu(&list, _("Lock/Unlock Services"), eString().sprintf("(%d) %s", ++entry,_("lock,unlock services (parental locking)"))))->selected, eZapBouquetSetup::lockUnlockServices );
 	}
 //	CONNECT((new eListBoxEntryMenu(&list, _("Duplicate Sat/Provider/Bouquet"), _("copy specific bouquet/provider/sat to bouquet list")))->selected, eZapBouquetSetup::editSelected );
@@ -58,7 +71,6 @@ void eZapBouquetSetup::editModeSelected()
 	m.hide();
 	if ( ret != -1 )
 	{
-		// get service selector reference
 		eServiceSelector &sel = *eZap::getInstance()->getServiceSelector();
 
 		if ( eZapMain::getInstance()->toggleEditMode(&sel,ret) )
@@ -85,19 +97,27 @@ void eZapBouquetSetup::editModeSelected()
 		// set new service selector path... ( bouquet list root... )
 
 		// when satellite frontend exist we show the satellites root
-		if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+		if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )
 		{
 			if ( ret == eZapMain::modeTV )
 				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, (1<<4)|(1<<1) ));
-			else
+			else if ( ret == eZapMain::modeRadio )
 				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -4, 1<<2) );
+#ifndef DISABLE_FILE
+			else
+				sel.setPath( eZapMain::getInstance()->getRoot(eZapMain::listAll, eZapMain::modeFile) );
+#endif
 		}
 		else  // cable or dvb-t
 		{
 			if ( ret == eZapMain::modeTV )
 				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, (1<<4)|(1<<1), 0xFFFFFFFF) );
-			else
+			else if ( ret == eZapMain::modeRadio )
 				sel.setPath( eServiceReference(eServiceReference::idDVB, eServiceReference::flagDirectory|eServiceReference::shouldSort, -1, 1<<2, 0xFFFFFFFF) );
+#ifndef DISABLE_FILE
+			else
+				sel.setPath( eZapMain::getInstance()->getRoot(eZapMain::listAll, eZapMain::modeFile) );
+#endif
 		}
 
 		// save current service selector style
@@ -138,7 +158,6 @@ void eZapBouquetSetup::editSelected()
 	// enable edit actions
 	eActionMapList::getInstance()->activateStyle("sselect_edit");
 
-	// get service selector reference
 	eServiceSelector &sel = *eZap::getInstance()->getServiceSelector();
 
 	// save current serviceselector Path

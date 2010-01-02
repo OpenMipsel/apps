@@ -17,41 +17,49 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_setup.cpp,v 1.25.2.36 2003/08/29 21:25:21 ghostrider Exp $
+ * $Id: enigma_setup.cpp,v 1.25.2.36.2.1 2010/01/02 16:49:00 fergy Exp $
  */
 
 #include <enigma_setup.h>
 #include <lib/dvb/edvb.h>
 #include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
+#include <lib/system/info.h>
 #include <system_settings.h>
+#include <setup_timeshift.h>
 #include <enigma_bouquet.h>
 #include <enigma_ci.h>
 #include <enigma_scan.h>
 #include <setup_extra.h>
 #include <parentallock.h>
-#include <setup_harddisk.h>
 
 eZapSetup::eZapSetup()
 	:eSetupWindow(_("Setup"), 10, 400)
 {
+	init_eZapSetup();
+}
+void eZapSetup::init_eZapSetup()
+{
 	move(ePoint(160, 100));
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Service Organising"), eString().sprintf("(%d) %s", ++entry, _("open service organising")) ))->selected, eZapSetup::service_organising);
-	CONNECT((new eListBoxEntryMenu(&list, _("Service Searching"), eString().sprintf("(%d) %s", ++entry, _("open service searching")) ))->selected, eZapSetup::service_searching);
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	if (eSystemInfo::getInstance()->getFEType() != eSystemInfo::feUnknown)
+		CONNECT((new eListBoxEntryMenu(&list, _("Service Searching"), eString().sprintf("(%d) %s", ++entry, _("open service searching")) ))->selected, eZapSetup::service_searching);
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT((new eListBoxEntryMenu(&list, _("System Settings"), eString().sprintf("(%d) %s", ++entry, _("open system settings")) ))->selected, eZapSetup::system_settings);
 #ifndef DISABLE_CI
-	if ( eDVB::getInstance()->getmID() > 4 )
+	if ( eSystemInfo::getInstance()->hasCI() )
 		CONNECT((new eListBoxEntryMenu(&list, _("Common Interface"), eString().sprintf("(%d) %s", ++entry, _("open common interface menu")) ))->selected, eZapSetup::common_interface);
 #endif
-#ifndef DISABLE_FILE
-	if ( eDVB::getInstance()->getmID() == 6 )
-		CONNECT((new eListBoxEntryMenu(&list, _("Harddisc Setup"), eString().sprintf("(%d) %s", ++entry, _("open harddisc setup")) ))->selected, eZapSetup::harddisc_setup);
-#endif
 	CONNECT((new eListBoxEntryMenu(&list, _("Parental Lock"), eString().sprintf("(%d) %s", ++entry, _("open parental setup")) ))->selected, eZapSetup::parental_lock );
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	CONNECT((new eListBoxEntryMenu(&list, _("Expert Setup"), eString().sprintf("(%d) %s", ++entry, _("open expert setup")) ))->selected, eZapSetup::expert_setup);
+#ifndef DISABLE_HDD
+#ifndef DISABLE_FILE
+	new eListBoxEntryMenuSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
+	CONNECT((new eListBoxEntryMenu(&list, _("Timeshift"), eString().sprintf("(%d) %s", ++entry, _("open timeshift setup")) ))->selected, eZapSetup::timeshift_setup);
+#endif
+#endif
 	/* emit */ setupHook(this, &entry);
 }
 
@@ -109,30 +117,6 @@ void eZapSetup::common_interface()
 }
 #endif
 
-#ifndef DISABLE_FILE
-void eZapSetup::harddisc_setup()
-{
-	hide();
-	eHarddiskSetup setup;
-#ifndef DISABLE_LCD
-	setup.setLCD(LCDTitle, LCDElement);
-#endif
-	if (!setup.getNr())
-	{
-		eMessageBox msg(_("sorry, no harddisks found!"), _("Harddisk setup..."));
-		msg.show();
-		msg.exec();
-		msg.hide();
-	} else
-	{
-		setup.show();
-		setup.exec();
-		setup.hide();
-	}
-	show();
-}
-#endif
-
 void eZapSetup::expert_setup()
 {
 	hide();
@@ -143,6 +127,7 @@ void eZapSetup::expert_setup()
 	setup.show();
 	setup.exec();
 	setup.hide();
+	eConfig::getInstance()->flush();
 	show();
 }
 
@@ -159,3 +144,19 @@ void eZapSetup::parental_lock()
 	show();
 }
 
+#ifndef DISABLE_HDD
+#ifndef DISABLE_FILE
+void eZapSetup::timeshift_setup()
+{
+	hide();
+	eZapTimeshiftSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+#endif
+#endif

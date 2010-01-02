@@ -10,8 +10,7 @@
 class eChannelInfo : public eDecoWidget
 {	
 	eLabel ctime, cname, copos, cdescr, cdolby, cstereo, cformat, cscrambled;
-
-  eString name, descr, genre, starttime;
+	eString name, descr, genre, starttime;
 	int cflags;
 
 	static const char *genresTableShort[];
@@ -26,6 +25,8 @@ class eChannelInfo : public eDecoWidget
 	EIT *eit;
 	void EITready(int err);
 	void closeEIT();
+	eString DescriptionForEPGSearch;
+	void init_eChannelInfo();
 public:
 	enum
 	{
@@ -43,6 +44,8 @@ public:
 	}
 	void update( const eServiceReferenceDVB& );
 	void clear();
+	static eString getGenre(int index) {return genresTableShort[index];}
+	eString GetDescription() {return DescriptionForEPGSearch;}
 };
 
 #endif // __APPS_ENIGMA_CHANNELINFO__

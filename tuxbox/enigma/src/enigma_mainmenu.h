@@ -2,6 +2,7 @@
 #define __enigma_mainmenu_h
 
 #include <libsig_comp.h>
+#include <setup_window.h>
 #include <lib/gui/ewidget.h>
 
 class gPixmap;
@@ -15,10 +16,14 @@ class eLabel;
 
 class eMainMenu: public eWidget
 {
+	eSetupWindow wnd;
+	eTimer wndShowTimer;
 	gPixmap *pixmaps[MENU_ENTRIES][2];
 	eLabel *label[7], *description;
+	int simpleMainmenu;
 	int active;
 	void setActive(int i);
+	void showWindow();
 	void sel_tv();
 	void sel_radio();
 #ifndef DISABLE_FILE
@@ -32,10 +37,15 @@ class eMainMenu: public eWidget
 	void sel_timer();	
 	void eraseBackground(gPainter *, const eRect &where);
 	void selected(int num);
+	void init_eMainMenu();
 protected:
 	int eventHandler(const eWidgetEvent &event);
 public:
+#ifndef DISABLE_LCD
+	void setLCD(eWidget*,eWidget*);
+#endif
 	eMainMenu();
+	~eMainMenu();
 };
 
 #endif

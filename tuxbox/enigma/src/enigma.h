@@ -14,6 +14,12 @@ class eInit;
 class eRCKey;
 class eHTTPD;
 class eHTTPConnection;
+class eHTTPDynPathResolver;
+class eHTTPFilePathResolver;
+class eHTTPXMLRPCResolver;
+class eHTTPLogResolver;
+
+extern eWidget *currentFocus;
 
 class eZap: public eApplication, public Object
 {
@@ -21,12 +27,16 @@ class eZap: public eApplication, public Object
 	static eZap *instance;
 
 	eWidget *desktop_fb;
-#ifndef DISABLE_LCD
+//#ifndef DISABLE_LCD
 	eWidget *desktop_lcd;
-#endif
-	
+//#endif
+
 	eHTTPD *httpd;
 	eHTTPConnection *serialhttpd;
+	eHTTPDynPathResolver *dyn_resolver;
+	eHTTPFilePathResolver *fileresolver;
+	eHTTPXMLRPCResolver *xmlrpcresolver;
+	eHTTPLogResolver *logresolver;
 
 	void keyEvent(const eRCKey &key);
 	void status();
@@ -36,12 +46,13 @@ class eZap: public eApplication, public Object
 	std::list<void*> plugins;
 
 	eZapMain *main;
+	void init_eZap(int argc, char **argv);
 public:
 	enum
 	{
-#ifndef DISABLE_LCD
+//#ifndef DISABLE_LCD
 		desktopLCD,
-#endif
+//#endif
 		desktopFB
 	};
 
@@ -60,13 +71,13 @@ public:
 		}
 	}
 	static eZap *getInstance();
-	eWidget *focus;
 	eServiceSelector *getServiceSelector()
 	{
-		ASSERT(serviceSelector);
 		return serviceSelector;
 	}
-	
+	void reconfigureHTTPServer();
+	int tts_fd;
+
 	eZap(int argc, char **argv);
 	~eZap();
 };

@@ -7,14 +7,21 @@
 #include <lib/dvb/epgcache.h>
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/frontend.h>
+#include <lib/system/info.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <epgwindow.h>
+#include <sselect.h>
 
 eChannelInfo::eChannelInfo( eWidget* parent, const char *deco)
 	:eDecoWidget(parent, 0, deco),
 	ctime(this), cname(this), copos(this), cdescr(this),
 	cdolby(this), cstereo(this),
 	cformat(this), cscrambled(this), eit(0)
+{
+	init_eChannelInfo();
+}
+void eChannelInfo::init_eChannelInfo()
 {
 	foregroundColor=eSkin::getActive()->queryColor("eStatusBar.foreground");
 	backgroundColor=eSkin::getActive()->queryColor("eStatusBar.background");
@@ -135,27 +142,34 @@ void eChannelInfo::ParseEITInfo(EITEvent *e)
 			
 		if(e->start_time!=0)
 		{
-			tm *time=localtime(&e->start_time);
-			starttime.sprintf("%02d:%02d", time->tm_hour, time->tm_min);
-							
-			t.sprintf("  (%dmin)", (int)(e->duration/60));
+			tm *stime=localtime(&e->start_time);
+			starttime.sprintf("%02d:%02d", stime->tm_hour, stime->tm_min);
+			int show_current_remaining=1;
+			eConfig::getInstance()->getKey("/ezap/osd/showCurrentRemaining", show_current_remaining);
+			if (show_current_remaining)
+			{
+				time_t now = time(0) + eDVB::getInstance()->time_difference;
+				int duration = e->duration - (now - e->start_time);
+				if ( duration > e->duration )
+					duration = e->duration;
+				else if ( duration < 0 )
+					duration = 0;
+				t.sprintf("  (+%dmin)", (int)(duration/60));
+			}
+			else
+				t.sprintf("  (%dmin)", (int)(e->duration/60));
 		}
 
 		if (e->free_CA_mode )
 			cflags |= cflagScrambled;
-		
+
+		LocalEventData led;
+		led.getLocalData(e, &name, &descr, 0);
+		DescriptionForEPGSearch = name;
 		for (ePtrList<Descriptor>::iterator d(e->descriptor); d != e->descriptor.end(); ++d)
 		{
-//			eDebug(d->toString().c_str());
 			Descriptor *descriptor=*d;
-			if (descriptor->Tag()==DESCR_SHORT_EVENT)
-			{
-				ShortEventDescriptor *ss=(ShortEventDescriptor*)descriptor;
-				name = ss->event_name;
-				descr += ss->text;
-				if( (!descr.isNull()) && (descr.c_str()[0])) descr += " ";
-			}
-      else if (descriptor->Tag()==DESCR_COMPONENT)
+			if (descriptor->Tag()==DESCR_COMPONENT)
 			{
 				ComponentDescriptor *cd=(ComponentDescriptor*)descriptor;
 				
@@ -217,17 +231,25 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 	
 	if (!service.path.size())
 	{
+		DescriptionForEPGSearch = "";
 		cdescr.show();
 		cname.setFlags(RS_FADE);
 		cname.resize( eSize( clientrect.width()/8*7-4, clientrect.height()/3) );
 		int opos=service.getDVBNamespace().get()>>16;
-		if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
-			copos.setText(eString().sprintf("%d.%d\xB0%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
+		if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )
+			copos.setText(eString().sprintf("%d.%d\xC2\xB0%c", abs(opos / 10), abs(opos % 10), opos>0?'E':'W') );
 		EITEvent *e = 0;
 		e = eEPGCache::getInstance()->lookupEvent(service);
+		if (e && eListBoxEntryService::nownextEPG)
+		{
+			time_t t = e->start_time+e->duration+61;
+			delete e;
+			e = eEPGCache::getInstance()->lookupEvent((const eServiceReferenceDVB&)service,t);
+		}
+			
 		if (e)  // data is in cache...
 		{
-	  	ParseEITInfo(e);
+			ParseEITInfo(e);
 			delete e;
 		}
 		else  // we parse the eit...
@@ -240,7 +262,7 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 
 			int type = ((service.getTransportStreamID()==ref.getTransportStreamID())
 				&&	(service.getOriginalNetworkID()==ref.getOriginalNetworkID())) ? EIT::tsActual:EIT::tsOther;
-	
+
 			eit = new EIT( EIT::typeNowNext, service.getServiceID().get(), type );
 			CONNECT( eit->tableReady, eChannelInfo::EITready );
 			eit->start();
@@ -252,14 +274,17 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 		cname.setFlags(RS_WRAP);
 		cname.resize( eSize( clientrect.width()/8*7-4, clientrect.height() ));
 		// should be moved to eService
-		eString filename=service.path;
-		int slice=0;
-		struct stat s;
-		int filelength=0;
-		while (!stat((filename + (slice ? eString().sprintf(".%03d", slice) : eString(""))).c_str(), &s))
+		int filelength=service.getFileLength();
+		if (filelength <= 0)
 		{
-			filelength+=s.st_size/1024;
-			slice++;
+			eString filename=service.path;
+			int slice=0;
+			struct stat64 s;
+			while (!stat64((filename + (slice ? eString().sprintf(".%03d", slice) : eString(""))).c_str(), &s))
+			{
+				filelength+=s.st_size/1024;
+				slice++;
+			}
 		}
 		int i = service.path.rfind("/");
 		i++;
@@ -272,6 +297,7 @@ void eChannelInfo::getServiceInfo( const eServiceReferenceDVB& service )
 void eChannelInfo::EITready( int err )
 {
 //	eDebug("Channelinfo eit ready: %d", err);
+	DescriptionForEPGSearch = "";
 	if (eit->ready && !eit->error)
 	{
 		if ( eit->events.size() )
@@ -286,6 +312,7 @@ void eChannelInfo::update( const eServiceReferenceDVB& service )
 	if (service)
 	{
 		current = service;
+		DescriptionForEPGSearch = "";
 		getServiceInfo(current);
 	}
 }
