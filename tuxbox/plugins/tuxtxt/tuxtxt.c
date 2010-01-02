@@ -2,55 +2,142 @@
  *                      <<< TuxTxt - Teletext Plugin >>>                      *
  *                                                                            *
  *             (c) Thomas "LazyT" Loewe 2002-2003 (LazyT@gmx.net)             *
- ******************************************************************************
- * $Log: tuxtxt.c,v $
- * Revision 1.37.2.13  2003/07/26 12:46:50  ghostrider
- * fix for dreambox PIG support (new drivers needed)
- * when you compile for dreambox add tuxtxt_la_CFLAGS = -DDREAMBOX to Makefile.am in the tuxtxt dir
- *
- * Revision 1.37.2.12  2003/07/25 11:53:32  ghostrider
- * changes for dreambox PIG
- *
- * Revision 1.37.2.11  2003/07/02 15:39:22  lazyt
- * fix language display
- *
- * Revision 1.37.2.10  2003/06/03 14:54:48  obi
- * fixed
- * tuxtxt.c: In function `MyFaceRequester':
- * tuxtxt.c:198: warning: unused parameter `request_data'
- * tuxtxt.c: In function `CleanUp':
- * tuxtxt.c:532: warning: empty body in an if-statement
- * tuxtxt.c: In function `ConfigMenu':
- * tuxtxt.c:1326: warning: empty body in an if-statement
- * tuxtxt.c: In function `CopyBB2FB':
- * tuxtxt.c:2910: warning: comparison between signed and unsigned
- * tuxtxt.c: In function `CacheThread':
- * tuxtxt.c:3427: warning: unused parameter `arg'
- *
- * Revision 1.37.2.9  2003/03/06 17:58:32  lazyt
- * fix error-detection and configmenu
- *
- * Revision 1.37.2.8  2003/03/03 11:01:44  alexw
- * add delta(1.44, 1.45): fixed "warning: comparison is always false due to limited range of data type"
- *
- * Revision 1.37.2.7  2003/02/22 21:46:40  happydude
- * implement parallel transmission reception - fixes some channels
- * improve auto detection of national subset
- * introduce new option in config menu to disable auto detection of nat subset
- * fix some bugs, loops, memory leaks
- *
- * Revision 1.37.2.6  2003/02/15 11:01:47  lazyt
- * grr, not only the configmenu was broken
- *
- * Revision 1.37.2.5  2003/02/15 09:30:55  lazyt
- * ups, what's going on with the configmenu?
- *
- * Revision 1.37.2.4  2003/02/14 20:14:39  lazyt
- * remove history
- *
+ *                                                                            *
+ *    continued 2004-2005 by Roland Meier <RolandMeier@Siemens.com>           *
+ *                       and DBLuelle <dbluelle@blau-weissoedingen.de>        *
+ *	russian and arabic support by Leonid Protasov <Lprot@mail.ru>         *
+ *                                                                            *
+ *                           TripleDragon support:                            *
+ *        (c)2009 by Stefan Seyfried <seife@tuxboxcvs.slipkontur.de>          *
+ *                                                                            *
  ******************************************************************************/
 
+
+
 #include "tuxtxt.h"
+
+#ifdef HAVE_TRIPLEDRAGON
+#include <td-compat/tdlcd-plugin-compat.c>
+#endif
+
+int getIndexOfPageInHotlist()
+{
+	int i;
+	for (i = 0; i <= maxhotlist; i++)
+	{
+		if (tuxtxt_cache.page == hotlist[i])
+			return i;
+	}
+	return -1;
+}
+
+void gethotlist()
+{
+	FILE *hl;
+	char line[100];
+
+	hotlistchanged = 0;
+	maxhotlist = -1;
+	sprintf(line, CONFIGDIR "/tuxtxt/hotlist%d.conf", tuxtxt_cache.vtxtpid);
+#if TUXTXT_DEBUG
+	printf("TuxTxt <gethotlist %s", line);
+#endif
+	if ((hl = fopen(line, "rb")) != 0)
+	{
+		do {
+			if (!fgets(line, sizeof(line), hl))
+				break;
+
+			if (1 == sscanf(line, "%x", &hotlist[maxhotlist+1]))
+			{
+				if (hotlist[maxhotlist+1] >= 0x100 && hotlist[maxhotlist+1] <= 0x899)
+				{
+#if TUXTXT_DEBUG
+					printf(" %03x", hotlist[maxhotlist+1]);
+#endif
+					maxhotlist++;
+					continue;
+				}
+			}
+#if TUXTXT_DEBUG
+			else
+				printf(" ?%s?", line);
+#endif
+		} while (maxhotlist < (sizeof(hotlist)/sizeof(hotlist[0])-1));
+		fclose(hl);
+	}
+#if TUXTXT_DEBUG
+	printf(">\n");
+#endif
+	if (maxhotlist < 0) /* hotlist incorrect or not found */
+	{
+		hotlist[0] = 0x100; /* create one */
+		hotlist[1] = 0x303;
+		maxhotlist = 1;
+	}
+}
+
+void savehotlist()
+{
+	FILE *hl;
+	char line[100];
+	int i;
+
+	hotlistchanged = 0;
+	sprintf(line, CONFIGDIR "/tuxtxt/hotlist%d.conf", tuxtxt_cache.vtxtpid);
+#if TUXTXT_DEBUG
+	printf("TuxTxt <savehotlist %s", line);
+#endif
+	if (maxhotlist != 1 || hotlist[0] != 0x100 || hotlist[1] != 0x303)
+	{
+		if ((hl = fopen(line, "wb")) != 0)
+		{
+			for (i = 0; i <= maxhotlist; i++)
+			{
+				fprintf(hl, "%03x\n", hotlist[i]);
+#if TUXTXT_DEBUG
+				printf(" %03x", hotlist[i]);
+#endif
+			}
+			fclose(hl);
+		}
+	}
+	else
+	{
+		unlink(line); /* remove current hotlist file */
+#if TUXTXT_DEBUG
+		printf(" (default - just deleted)");
+#endif
+	}
+#if TUXTXT_DEBUG
+	printf(">\n");
+#endif
+}
+
+/* hexdump of page contents to stdout for debugging */
+void dump_page()
+{
+	int r, c;
+	char *p;
+	unsigned char pagedata[23*40];
+
+	if (!tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage])
+		return;
+	tuxtxt_decompress_page(tuxtxt_cache.page,tuxtxt_cache.subpage,pagedata);
+	for (r=1; r < 24; r++)
+	{
+		p = pagedata+40*(r-1);
+		for (c=0; c < 40; c++)
+			printf(" %02x", *p++);
+		printf("\n");
+		p = renderinfo.page_char + 40*r;
+		for (c=0; c < 40; c++)
+			printf("  %c", *p++);
+		printf("\n");
+	}
+}
+
+
 
 /******************************************************************************
  * plugin_exec                                                                *
@@ -58,195 +145,235 @@
 
 void plugin_exec(PluginParam *par)
 {
-	char cvs_revision[] = "$Revision: 1.37.2.13 $", versioninfo[16];
+	char cvs_revision[] = "$Revision: 1.37.2.13.2.1 $";
 
-	//show versioninfo
+#if !TUXTXT_CFG_STANDALONE
+	int initialized = tuxtxt_init();
+	if ( initialized )
+		tuxtxt_cache.page = 0x100;
+#endif
 
-		sscanf(cvs_revision, "%*s %s", versioninfo);
-		printf("TuxTxt %s\n", versioninfo);
+	/* show versioninfo */
+	sscanf(cvs_revision, "%*s %s", versioninfo);
+	printf("TuxTxt %s\n", versioninfo);
 
-	//get params
+	tuxtxt_SetRenderingDefaults(&renderinfo);
+	/* get params */
+	tuxtxt_cache.vtxtpid = renderinfo.fb = lcd = rc = renderinfo.sx = renderinfo.ex = renderinfo.sy = renderinfo.ey = -1;
 
-		vtxtpid = fb = lcd = rc = sx = ex = sy = ey = -1;
+	for (; par; par = par->next)
+	{
+		if (!strcmp(par->id, P_ID_VTXTPID))
+			tuxtxt_cache.vtxtpid = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_FBUFFER))
+			renderinfo.fb = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_LCD))
+			lcd = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_RCINPUT))
+			rc = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_OFF_X))
+			renderinfo.sx = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_END_X))
+			renderinfo.ex = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_OFF_Y))
+			renderinfo.sy = atoi(par->val);
+		else if (!strcmp(par->id, P_ID_END_Y))
+			renderinfo.ey = atoi(par->val);
+	}
 
-		for(; par; par = par->next)
-		{
-			if(!strcmp(par->id, P_ID_VTXTPID))
-			{
-				vtxtpid = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_FBUFFER))
-			{
-				fb = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_LCD))
-			{
-				lcd = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_RCINPUT))
-			{
-				rc = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_OFF_X))
-			{
-				sx = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_END_X))
-			{
-				ex = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_OFF_Y))
-			{
-				sy = atoi(par->val);
-			}
-			else if(!strcmp(par->id, P_ID_END_Y))
-			{
-				ey = atoi(par->val);
-			}
+	if (tuxtxt_cache.vtxtpid == -1 || renderinfo.fb == -1 || rc == -1 || renderinfo.sx == -1 || renderinfo.ex == -1 || renderinfo.sy == -1 || renderinfo.ey == -1)
+	{
+		printf("TuxTxt <Invalid Param(s)>\n");
+		return;
+	}
+
+	/* initialisations */
+	if (Init() == 0){
+#if !TUXTXT_CFG_STANDALONE
+		if ( initialized ){
+			tuxtxt_close();
 		}
-
-		if(vtxtpid == -1 || fb == -1 || lcd == -1 || rc == -1 || sx == -1 || ex == -1 || sy == -1 || ey == -1)
+#endif
+		return;
+	}
+	
+	/* main loop */
+	do {
+		if (GetRCCode() == 1)
 		{
-			printf("TuxTxt <Invalid Param(s)>\n");
-			return;
-		}
-
-	//initialisations
-
-		if(Init() == 0) return;
-
-	//main loop
-
-		do
-		{
-			if(GetRCCode() == 1)
+			if (renderinfo.transpmode == 2) /* TV mode */
 			{
-				if(transpmode == 2 && RCCode != RC_MUTE) continue;
-				if(subpagetable[page] == 0xFF && RCCode == RC_OK) continue;
-
-				switch(RCCode)
+				switch (RCCode)
 				{
-					case RC_UP:		GetNextPageOne();
-									break;
+//#if TUXTXT_DEBUG /* FIXME */
+				case RC_OK:
+					if (renderinfo.showhex)
+					{
+						dump_page(); /* hexdump of page contents to stdout for debugging */
+					}
+					continue; /* otherwise ignore key */
+//#endif /* TUXTXT_DEBUG */
+				case RC_UP:
+				case RC_DOWN:
+				case RC_0:
+				case RC_1:
+				case RC_2:
+				case RC_3:
+				case RC_4:
+				case RC_5:
+				case RC_6:
+				case RC_7:
+				case RC_8:
+				case RC_9:
+				case RC_GREEN:
+				case RC_YELLOW:
+				case RC_BLUE:
+				case RC_PLUS:
+				case RC_MINUS:
+				case RC_DBOX:
+				case RC_STANDBY:
+					renderinfo.transpmode = 1; /* switch to normal mode */
+					SwitchTranspMode();
+					break;		/* and evaluate key */
 
-					case RC_DOWN:	GetPrevPageOne();
-									break;
+				case RC_MUTE:		/* regular toggle to transparent */
+					break;
 
-					case RC_RIGHT:	GetNextSubPage();
-									break;
+				case RC_HELP: /* switch to scart input and back */
+				{
+#ifdef HAVE_DBOX_HARDWARE
+					int i, n;
+					int vendor = tuxbox_get_vendor() - 1;
+					if (vendor < 3) /* scart-parameters only known for 3 dboxes, FIXME: order must be like in info.h */
+					{
+						for (i = 0; i < 6; i++) /* FIXME: FBLK seems to cause troubles */
+						{
+							if (!restoreaudio || !(i & 1)) /* not for audio if scart-audio active */
+							{
+								if ((ioctl(renderinfo.avs, avstable_ioctl_get[i], &n)) < 0) /* get current values for restoration */
+									perror("TuxTxt <ioctl(avs)>");
+								else
+									avstable_dvb[vendor][i] = n;
+							}
 
-					case RC_LEFT:	GetPrevSubPage();
-									break;
+							n = avstable_scart[vendor][i];
+							if ((ioctl(renderinfo.avs, avstable_ioctl[i], &n)) < 0)
+								perror("TuxTxt <ioctl(avs)>");
+						}
 
-					case RC_OK:		PageCatching();
-									break;
+						while (GetRCCode() != 1) /* wait for any key */
+							UpdateLCD();
 
-					case RC_0:		PageInput(0);
-									break;
+						if (RCCode == RC_HELP)
+							restoreaudio = 1;
+						else
+							restoreaudio = 0;
 
-					case RC_1:		PageInput(1);
-									break;
-
-					case RC_2:		PageInput(2);
-									break;
-
-					case RC_3:		PageInput(3);
-									break;
-
-					case RC_4:		PageInput(4);
-									break;
-
-					case RC_5:		PageInput(5);
-									break;
-
-					case RC_6:		PageInput(6);
-									break;
-
-					case RC_7:		PageInput(7);
-									break;
-
-					case RC_8:		PageInput(8);
-									break;
-
-					case RC_9:		PageInput(9);
-									break;
-
-					case RC_RED:	Prev100();
-									break;
-
-					case RC_GREEN:	Prev10();
-									break;
-
-					case RC_YELLOW:	Next10();
-									break;
-
-					case RC_BLUE:	Next100();
-									break;
-
-					case RC_PLUS:	SwitchZoomMode();
-									break;
-
-					case RC_MINUS:	SwitchScreenMode();
-									break;
-
-					case RC_MUTE:	SwitchTranspMode();
-									break;
-
-					case RC_HELP:	SwitchHintMode();
-									break;
-
-					case RC_DBOX:	ConfigMenu(0);
-									break;
-
-					case RC_STANDBY:;
+						for (i = 0; i < 6; i += (restoreaudio ? 2 : 1)) /* exit with ?: just restore video, leave audio */
+						{
+							n = avstable_dvb[vendor][i];
+							if ((ioctl(renderinfo.avs, avstable_ioctl[i], &n)) < 0)
+								perror("TuxTxt <ioctl(avs)>");
+						}
+					}
+#endif
+					continue; /* otherwise ignore exit key */
+				}
+				default:
+					continue; /* ignore all other keys */
 				}
 			}
 
-			//update page or timestring and lcd
+			switch (RCCode)
+			{
+			case RC_UP:
+				GetNextPageOne(!swapupdown);
+				break;
+			case RC_DOWN:
+				GetNextPageOne(swapupdown);
+				break;
+			case RC_RIGHT:	
+				if (renderinfo.boxed)
+				{
+				    renderinfo.subtitledelay++;				    
+		    		    // display subtitledelay
+				    renderinfo.PosY = renderinfo.StartY;
+				    char ns[10];
+				    tuxtxt_SetPosX(&renderinfo,1);
+				    sprintf(ns,"+%d    ",renderinfo.subtitledelay);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[0],&tuxtxt_atrtable[ATR_WB]);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[1],&tuxtxt_atrtable[ATR_WB]);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[2],&tuxtxt_atrtable[ATR_WB]);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[4],&tuxtxt_atrtable[ATR_WB]);
+				}
+				else
+    				    GetNextSubPage(1);	
+				break;
+			case RC_LEFT:
+				if (renderinfo.boxed)
+				{
+				    renderinfo.subtitledelay--;
+				    if (renderinfo.subtitledelay < 0) renderinfo.subtitledelay = 0;
+		    		    // display subtitledelay
+				    renderinfo.PosY = renderinfo.StartY;
+				    char ns[10];
+				    tuxtxt_SetPosX(&renderinfo,1);
+				    sprintf(ns,"+%d    ",renderinfo.subtitledelay);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[0],&tuxtxt_atrtable[ATR_WB]);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[1],&tuxtxt_atrtable[ATR_WB]);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[2],&tuxtxt_atrtable[ATR_WB]);
+				    tuxtxt_RenderCharFB(&renderinfo,ns[4],&tuxtxt_atrtable[ATR_WB]);
+				}
+				else
+				    GetNextSubPage(-1);	
+				break;
+			case RC_OK:
+				if (tuxtxt_cache.subpagetable[tuxtxt_cache.page] == 0xFF)
+					continue;
+				PageCatching();
+				break;
 
-				RenderPage();
-
+			case RC_0:
+			case RC_1:
+			case RC_2:
+			case RC_3:
+			case RC_4:
+			case RC_5:
+			case RC_6:
+			case RC_7:
+			case RC_8:
+			case RC_9:
+				PageInput(RCCode - RC_0);
+				break;
+			case RC_RED:	 ColorKey(renderinfo.prev_100);		break;
+			case RC_GREEN:	 ColorKey(renderinfo.prev_10);		break;
+			case RC_YELLOW:	 ColorKey(renderinfo.next_10);		break;
+			case RC_BLUE:	 ColorKey(renderinfo.next_100);		break;
+			case RC_PLUS:	 SwitchZoomMode();		break;
+			case RC_MINUS:	 tuxtxt_SwitchScreenMode(&renderinfo,-1);renderinfo.prevscreenmode = renderinfo.screenmode; break;
+			case RC_MUTE:	 SwitchTranspMode();	break;
+			case RC_HELP:	 SwitchHintMode();		break;
+			case RC_DBOX:	 ConfigMenu(0);			break;
+			}
 		}
-		while(RCCode != RC_HOME);
 
-	//exit
+		/* update page or timestring and lcd */
+		UpdateLCD();
+		tuxtxt_RenderPage(&renderinfo);
+	} while ((RCCode != RC_HOME) && (RCCode != RC_STANDBY));
 
-		CleanUp();
+	/* exit */
+	CleanUp();
+
+#if !TUXTXT_CFG_STANDALONE
+	if ( initialized )
+		tuxtxt_close();
+#endif
+
+ 	printf("Tuxtxt: plugin ended\n");
+
 }
 
-/******************************************************************************
- * MyFaceRequester
- ******************************************************************************/
-
-FT_Error MyFaceRequester(FTC_FaceID face_id, FT_Library library, FT_Pointer request_data, FT_Face *aface)
-{
-	FT_Error result;
-	(void)request_data;
-
-	result = FT_New_Face(library, face_id, 0, aface);
-
-	if(!result)
-	{
-		if(!strcmp(face_id, TUXTXT0))
-		{
-			face0 = *aface;
-			printf("TuxTxt <G0 (%s) loaded>\n", (char*)face_id);
-		}
-		else if(!strcmp(face_id, TUXTXT1))
-		{
-			face1 = *aface;
-			printf("TuxTxt <G1 (%s) loaded>\n", (char*)face_id);
-		}
-		else if(!strcmp(face_id, TUXTXT2))
-		{
-			face2 = *aface;
-			printf("TuxTxt <NS (%s) loaded>\n", (char*)face_id);
-		}
-	}
-	else printf("TuxTxt <open font %s failed>\n", (char*)face_id);
-
-	return result;
-}
 
 /******************************************************************************
  * Init                                                                       *
@@ -254,246 +381,177 @@ FT_Error MyFaceRequester(FTC_FaceID face_id, FT_Library library, FT_Pointer requ
 
 int Init()
 {
-	struct dmxPesFilterParams dmx_flt;
-	int error;
 	unsigned char magazine;
 
-	//init data
+	/* init data */
 
-		memset(&cachetable, 0, sizeof(cachetable));
-		memset(&subpagetable, 0xFF, sizeof(subpagetable));
-		memset(&countrycontrolbitstable, 0xFF, sizeof(countrycontrolbitstable));
-		memset(&backbuffer, black, sizeof(backbuffer));
 
-		page_atrb[32] = transp<<4 | transp;
+ 	//page_atrb[32] = transp<<4 | transp;
 
-		inputcounter = 2;
+	for (magazine = 1; magazine < 9; magazine++)
+	{
+		tuxtxt_cache.current_page  [magazine] = -1;
+		tuxtxt_cache.current_subpage [magazine] = -1;
+	}
+#if TUXTXT_CFG_STANDALONE
+/* init data */
+	memset(&tuxtxt_cache.astCachetable, 0, sizeof(tuxtxt_cache.astCachetable));
+	memset(&tuxtxt_cache.subpagetable, 0xFF, sizeof(tuxtxt_cache.subpagetable));
+	memset(&tuxtxt_cache.astP29, 0, sizeof(tuxtxt_cache.astP29));
 
-		cached_pages = 0;
+	memset(&tuxtxt_cache.basictop, 0, sizeof(tuxtxt_cache.basictop));
+	memset(&tuxtxt_cache.adip, 0, sizeof(tuxtxt_cache.adip));
+	memset(&tuxtxt_cache.flofpages, 0 , sizeof(tuxtxt_cache.flofpages));
+	memset(renderinfo.subtitlecache,0,sizeof(renderinfo.subtitlecache));
+	tuxtxt_cache.maxadippg  = -1;
+	tuxtxt_cache.bttok      = 0;
+	maxhotlist = -1;
 
-		for (magazine = 1; magazine < 9; magazine++)
+	//page_atrb[32] = transp<<4 | transp;
+	tuxtxt_cache.cached_pages  = 0;
+
+	tuxtxt_cache.page_receiving = -1;
+	tuxtxt_cache.page       = 0x100;
+#endif
+	lastpage   = tuxtxt_cache.page;
+	tuxtxt_cache.subpage    = tuxtxt_cache.subpagetable[tuxtxt_cache.page];
+	if (tuxtxt_cache.subpage == 0xff)
+	tuxtxt_cache.subpage    = 0;
+	
+	tuxtxt_cache.pageupdate = 0;
+
+	tuxtxt_cache.zap_subpage_manual = 0;
+
+	/* init lcd */
+	UpdateLCD();
+
+	/* config defaults */
+	menulanguage = 0;	/* german */
+	tuxtxt_cache.national_subset = 0;/* default */
+	swapupdown      = 0;
+	dumpl25         = 0;
+
+	/* load config */
+	if ((conf = fopen(TUXTXTCONF, "rt")) == 0)
+	{
+		perror("TuxTxt <fopen tuxtxt.conf>");
+	}
+	else
+	{
+		while(1)
 		{
-			current_page	[magazine] = -1;
-			current_subpage [magazine] = -1;
-		}
-		page_receiving = -1;
+			char line[100];
+			int ival;
 
-		page	 = 0x100;
-		lastpage = 0x100;
-		prev_100 = 0x100;
-		prev_10  = 0x100;
-		next_100 = 0x100;
-		next_10  = 0x100;
-		subpage	 = 0;
-		pageupdate = 0;
+			if (!fgets(line, sizeof(line), conf))
+				break;
 
-		zap_subpage_manual = 0;
-
-	//init lcd
-
-		UpdateLCD();
-
-	//load config
-
-		screen_mode1 = 1;
-		screen_mode2 = 1;
-		color_mode = 1;
-		national_subset = 4;
-		auto_national = 1;
-
-		if((conf = fopen(CONFIGDIR "/tuxtxt/tuxtxt.conf", "rb+")) == 0)
-		{
-			perror("TuxTxt <fopen tuxtxt.conf>");
-			return 0;
-		}
-
-		fread(&screen_mode1, 1, sizeof(screen_mode1), conf);
-		fread(&screen_mode2, 1, sizeof(screen_mode2), conf);
-		fread(&color_mode, 1, sizeof(color_mode), conf);
-		fread(&national_subset, 1, sizeof(national_subset), conf);
-		fread(&auto_national, 1, sizeof(auto_national), conf);
-
-		screen_old1 = screen_mode1;
-		screen_old2 = screen_mode2;
-		color_old = color_mode;
-		national_subset_old = national_subset;
-		auto_national_old = auto_national;
-
-	//init fontlibrary
-
-		if((error = FT_Init_FreeType(&library)))
-		{
-			printf("TuxTxt <FT_Init_FreeType: 0x%.2X>", error);
-			return 0;
-		}
-
-		if((error = FTC_Manager_New(library, 3, 2, 0, &MyFaceRequester, NULL, &manager)))
-		{
-			printf("TuxTxt <FTC_Manager_New: 0x%.2X>\n", error);
-			return 0;
-		}
-
-		if((error = FTC_SBit_Cache_New(manager, &cache)))
-		{
-			printf("TuxTxt <FTC_SBit_Cache_New: 0x%.2X>\n", error);
-			return 0;
-		}
-
-		desc0.font.face_id = TUXTXT0;
-		desc1.font.face_id = TUXTXT1;
-		desc2.font.face_id = TUXTXT2;
-		desc0.image_type = desc1.image_type = desc2.image_type = ftc_image_mono;
-		desc0.font.pix_width  = desc1.font.pix_width  = desc2.font.pix_width  = 16;
-		desc0.font.pix_height = desc1.font.pix_height = desc2.font.pix_height = 22;
-
-	//center screen
-
-		StartX = sx + (((ex-sx) - 40*desc0.font.pix_width) / 2);
-		StartY = sy + (((ey-sy) - 25*fixfontheight) / 2);
-
-	//get fixed screeninfo
-
-		if (ioctl(fb, FBIOGET_FSCREENINFO, &fix_screeninfo) == -1)
-		{
-			perror("TuxTxt <FBIOGET_FSCREENINFO>");
-			return 0;
-		}
-
-	//get variable screeninfo
-
-		if (ioctl(fb, FBIOGET_VSCREENINFO, &var_screeninfo) == -1)
-		{
-			perror("TuxTxt <FBIOGET_VSCREENINFO>");
-			return 0;
-		}
-
-	//set new colormap
-
-		if(color_mode)
-		{
-			if (ioctl(fb, FBIOPUTCMAP, &colormap_2) == -1)
+			if (1 == sscanf(line, "ScreenMode16x9Normal %i", &ival))
+				renderinfo.screen_mode1 = ival & 1;
+			else if (1 == sscanf(line, "ScreenMode16x9Divided %i", &ival))
+				renderinfo.screen_mode2 = ival & 1;
+			else if (1 == sscanf(line, "Brightness %i", &ival))
+				renderinfo.color_mode = ival;
+			else if (1 == sscanf(line, "AutoNational %i", &ival))
+				renderinfo.auto_national = ival & 1;
+			else if (1 == sscanf(line, "NationalSubset %i", &ival))
 			{
-				perror("TuxTxt <FBIOPUTCMAP>");
-				return 0;
+				if (ival >= 0 && ival <= MAX_NATIONAL_SUBSET)
+					tuxtxt_cache.national_subset = ival;
 			}
+			else if (1 == sscanf(line, "MenuLanguage %i", &ival))
+			{
+				if (ival >= 0 && ival <= MAXMENULANGUAGE)
+					menulanguage = ival;
+			}
+			else if (1 == sscanf(line, "SwapUpDown %i", &ival))
+				swapupdown = ival & 1;
+			else if (1 == sscanf(line, "ShowHexPages %i", &ival))
+				renderinfo.showhex = ival & 1;
+			else if (1 == sscanf(line, "Transparency %i", &ival))
+				renderinfo.trans_mode = ival;
+			else if (1 == sscanf(line, "TTFWidthFactor16 %i", &ival))
+				renderinfo.TTFWidthFactor16 = ival;
+			else if (1 == sscanf(line, "TTFHeightFactor16 %i", &ival))
+				renderinfo.TTFHeightFactor16 = ival;
+			else if (1 == sscanf(line, "TTFShiftX %i", &ival))
+				renderinfo.TTFShiftX = ival;
+			else if (1 == sscanf(line, "TTFShiftY %i", &ival))
+				renderinfo.TTFShiftY = ival;
+			else if (1 == sscanf(line, "Screenmode %i", &ival))
+				renderinfo.screenmode = ival;
+			else if (1 == sscanf(line, "ShowFLOF %i", &ival))
+				renderinfo.showflof = ival & 1;
+			else if (1 == sscanf(line, "Show39 %i", &ival))
+				renderinfo.show39 = ival & 1;
+			else if (1 == sscanf(line, "ShowLevel2p5 %i", &ival))
+				renderinfo.showl25 = ival & 1;
+			else if (1 == sscanf(line, "DumpLevel2p5 %i", &ival))
+				dumpl25 = ival & 1;
+			else if (1 == sscanf(line, "UseTTF %i", &ival))
+				renderinfo.usettf = ival & 1;
 		}
+		fclose(conf);
+	}
+	if (!tuxtxt_InitRendering(&renderinfo,1))
+		return 0;
+	saveconfig = 0;
+	savedscreenmode = renderinfo.screenmode;
+	tuxtxt_cache.national_subset_secondary = NAT_DEFAULT;
+
+
+	/*  if no vtxtpid for current service, search PIDs */
+	if (tuxtxt_cache.vtxtpid == 0)
+	{
+		/* get all vtxt-pids */
+		getpidsdone = -1;						 /* don't kill thread */
+		if (GetTeletextPIDs() == 0)
+		{
+			tuxtxt_EndRendering(&renderinfo);
+			return 0;
+		}
+
+		if (renderinfo.auto_national)
+			tuxtxt_cache.national_subset = pid_table[0].national_subset;
+		if (pids_found > 1)
+			ConfigMenu(1);
 		else
 		{
-			if (ioctl(fb, FBIOPUTCMAP, &colormap_1) == -1)
-			{
-				perror("TuxTxt <FBIOPUTCMAP>");
-				return 0;
-			}
+			tuxtxt_cache.vtxtpid = pid_table[0].vtxt_pid;
+			current_service = 0;
+			RenderMessage(ShowServiceName);
 		}
+	}
+	else
+	{
+		SDT_ready = 0;
+		getpidsdone = 0;
+//		tuxtxt_cache.pageupdate = 1; /* force display of message page not found (but not twice) */
 
-	//map framebuffer into memory
-
-		lfb = (unsigned char*)mmap(0, fix_screeninfo.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0);
-
-		if(!lfb)
-		{
-			perror("TuxTxt <mmap>");
-			return 0;
-		}
-
-	//open demuxer
-
-		if((dmx = open(DMX, O_RDWR)) == -1)
-		{
-			perror("TuxTxt <open DMX>");
-			return 0;
-		}
-
-	//get all vtxt-pids
-
-		if(GetTeletextPIDs() == 0)
-		{
-			FTC_Manager_Done(manager);
-			FT_Done_FreeType(library);
-			munmap(lfb, fix_screeninfo.smem_len);
-			close(dmx);
-			return 0;
-		}
-		else
-		{
-			RenderCharLCD(pids_found/10,  7, 44);
-			RenderCharLCD(pids_found%10, 19, 44);
-		}
-
-	//open avs
-
-		if((avs = open(AVS, O_RDWR)) == -1)
-		{
-			perror("TuxTxt <open AVS>");
-			return 0;
-		}
-
-		ioctl(avs, AVSIOGSCARTPIN8, &fnc_old);
-		ioctl(avs, AVSIOSSCARTPIN8, &fncmodes[screen_mode1]);
-
-	//open saa
-
-		if((saa = open(SAA, O_RDWR)) == -1)
-		{
-			perror("TuxTxt <open SAA>");
-			return 0;
-		}
-
-		ioctl(saa, SAAIOGWSS, &saa_old);
-		ioctl(saa, SAAIOSWSS, &saamodes[screen_mode1]);
-
-	//open pig
-
-		if((pig = open(PIG, O_RDWR)) == -1)
-		{
-			perror("TuxTxt <open PIG>");
-			return 0;
-		}
-
-	//setup rc
-
-		fcntl(rc, F_SETFL, O_NONBLOCK);
-		ioctl(rc, RC_IOCTL_BCODES, 1);
+	}
+#if TUXTXT_CFG_STANDALONE
+	tuxtxt_init_demuxer();
+	tuxtxt_start_thread();
+#else
+	tuxtxt_start(tuxtxt_cache.vtxtpid);
+#endif
 
 
-	//set filter & start demuxer
+	/* setup rc */
+	fcntl(rc, F_SETFL, O_NONBLOCK);
+#ifndef HAVE_TRIPLEDRAGON
+	ioctl(rc, RC_IOCTL_BCODES, 1);
+#endif
 
-		if(vtxtpid == 0)
-		{
-			if(pids_found > 1) ConfigMenu(1);
-			else
-			{
-				vtxtpid = pid_table[0].vtxt_pid;
-				strcpy(country_code, pid_table[0].country_code);
 
-				current_service = 0;
-				RenderMessage(ShowServiceName);
-			}
-		}
+	gethotlist();
+	tuxtxt_SwitchScreenMode(&renderinfo,renderinfo.screenmode);
+	renderinfo.prevscreenmode = renderinfo.screenmode;
+	
+	printf("TuxTxt: init ok\n");
 
-		dmx_flt.pid		= vtxtpid;
-		dmx_flt.input	= DMX_IN_FRONTEND;
-		dmx_flt.output	= DMX_OUT_TAP;
-		dmx_flt.pesType	= DMX_PES_OTHER;
-		dmx_flt.flags	= DMX_IMMEDIATE_START;
-
-		if(ioctl(dmx, DMX_SET_PES_FILTER, &dmx_flt) == -1)
-		{
-			perror("TuxTxt <DMX_SET_PES_FILTER>");
-			return 0;
-		}
-
-	//create decode-thread
-
-		if(pthread_create(&thread_id, NULL, CacheThread, NULL) != 0)
-		{
-			perror("TuxTxt <pthread_create>");
-			return 0;
-		}
-
-	//init successfull
-
-		return 1;
+	/* init successfull */
+	return 1;
 }
 
 /******************************************************************************
@@ -502,292 +560,353 @@ int Init()
 
 void CleanUp()
 {
-	//hide pig
+	int i, n, curscreenmode = renderinfo.screenmode;
 
-		if(screenmode) avia_pig_hide(pig);
+	/* hide and close pig */
+	if (renderinfo.screenmode)
+		tuxtxt_SwitchScreenMode(&renderinfo,0); /* turn off divided screen */
 
-	//restore videoformat
+#if TUXTXT_CFG_STANDALONE
+	tuxtxt_stop_thread();
+	tuxtxt_clear_cache();
+	if (tuxtxt_cache.dmx != -1)
+    	    close(tuxtxt_cache.dmx);
+	tuxtxt_cache.dmx = -1;
+#else
+	tuxtxt_stop();
+#endif
 
-		ioctl(avs, AVSIOSSCARTPIN8, &fnc_old);
-		ioctl(saa, SAAIOSWSS, &saa_old);
-
-	//stop decode-thread
-
-		if(pthread_cancel(thread_id) != 0)
+#ifdef HAVE_DBOX_HARDWARE
+	if (restoreaudio)
+	{
+		int vendor = tuxbox_get_vendor() - 1;
+		if (vendor < 3) /* scart-parameters only known for 3 dboxes, FIXME: order must be like in info.h */
 		{
-			perror("TuxTxt <pthread_cancel>");
-			return;
-		}
-
-		if(pthread_join(thread_id, &thread_result) != 0)
-		{
-			perror("TuxTxt <pthread_join>");
-			return;
-		}
-
-	//stop & close demuxer
-
-		ioctl(dmx, DMX_STOP);
-		close(dmx);
-
-	//close avs
-
-		close(avs);
-
-	//close saa
-
-		close(saa);
-
-	//close freetype
-
-		FTC_Manager_Done(manager);
-		FT_Done_FreeType(library);
-
-	//unmap framebuffer
-
-		munmap(lfb, fix_screeninfo.smem_len);
-
-	//free pagebuffers
-
-		for(clear_page = 0; clear_page < 0x8FF; clear_page++)
-		{
-			for(clear_subpage = 0; clear_subpage < 0x79; clear_subpage++)
+			for (i = 1; i < 6; i += 2) /* restore dvb audio */
 			{
-				if(cachetable[clear_page][clear_subpage] != 0)
-				{
-					free(cachetable[clear_page][clear_subpage]);
-					cachetable[clear_page][clear_subpage] = 0;
-				}
+				n = avstable_dvb[vendor][i];
+				if ((ioctl(renderinfo.avs, avstable_ioctl[i], &n)) < 0)
+					perror("TuxTxt <ioctl(avs)>");
 			}
 		}
+	}
+#endif
 
-	//save config
+	if (hotlistchanged)
+		savehotlist();
 
-		if(screen_mode1 != screen_old1 || screen_mode2 != screen_old2 || color_mode != color_old || national_subset != national_subset_old || auto_national != auto_national_old)
+	/* save config */
+	if (saveconfig || curscreenmode != savedscreenmode)
+	{
+		if ((conf = fopen(TUXTXTCONF, "wt")) == 0)
 		{
-			rewind(conf);
-
-			fwrite(&screen_mode1, 1, sizeof(screen_mode1), conf);
-			fwrite(&screen_mode2, 1, sizeof(screen_mode2), conf);
-			fwrite(&color_mode, 1, sizeof(color_mode), conf);
-			fwrite(&national_subset, 1, sizeof(national_subset), conf);
-			fwrite(&auto_national, 1, sizeof(auto_national), conf);
-
-			printf("TuxTxt <saving config>\n");
+			perror("TuxTxt <fopen tuxtxt.conf>");
 		}
-
-		fclose(conf);
+		else
+		{
+			printf("TuxTxt <saving config>\n");
+			fprintf(conf, "ScreenMode16x9Normal %d\n", renderinfo.screen_mode1);
+			fprintf(conf, "ScreenMode16x9Divided %d\n", renderinfo.screen_mode2);
+			fprintf(conf, "Brightness %d\n", renderinfo.color_mode);
+			fprintf(conf, "MenuLanguage %d\n", menulanguage);
+			fprintf(conf, "AutoNational %d\n", renderinfo.auto_national);
+			fprintf(conf, "NationalSubset %d\n", tuxtxt_cache.national_subset);
+			fprintf(conf, "SwapUpDown %d\n", swapupdown);
+			fprintf(conf, "ShowHexPages %d\n", renderinfo.showhex);
+			fprintf(conf, "Transparency 0x%X\n", renderinfo.trans_mode);
+			fprintf(conf, "TTFWidthFactor16 %d\n", renderinfo.TTFWidthFactor16);
+			fprintf(conf, "TTFHeightFactor16 %d\n", renderinfo.TTFHeightFactor16);
+			fprintf(conf, "TTFShiftX %d\n", renderinfo.TTFShiftX);
+			fprintf(conf, "TTFShiftY %d\n", renderinfo.TTFShiftY);
+			fprintf(conf, "Screenmode %d\n", curscreenmode);
+			fprintf(conf, "ShowFLOF %d\n", renderinfo.showflof);
+			fprintf(conf, "Show39 %d\n", renderinfo.show39);
+			fprintf(conf, "ShowLevel2p5 %d\n", renderinfo.showl25);
+			fprintf(conf, "DumpLevel2p5 %d\n", dumpl25);
+			fprintf(conf, "UseTTF %d\n", renderinfo.usettf);
+			fclose(conf);
+		}
+	}
+	tuxtxt_EndRendering(&renderinfo);
 }
-
 /******************************************************************************
  * GetTeletextPIDs                                                           *
  ******************************************************************************/
-
 int GetTeletextPIDs()
 {
-	struct dmxSctFilterParams dmx_flt;
+	struct dmx_sct_filter_params dmx_flt;
 	int pat_scan, pmt_scan, sdt_scan, desc_scan, pid_test, byte, diff, first_sdt_sec;
 
 	unsigned char PAT[1024];
-	unsigned char SDT[1024];
-	unsigned char PMT[1024];
+	unsigned char buf[1024];
+	int dmx;
 
-	//show infobar
 
-		RenderMessage(ShowInfoBar);
+	/* open demuxer */
+	if ((dmx = open(DMX, O_RDWR)) == -1)
+	{
+		perror("TuxTxt <open DMX>");
+		return 0;
+	}
+	if (ioctl(dmx, DMX_SET_BUFFER_SIZE, 64*1024) < 0)
+	{
+		perror("Tuxtxt <DMX_SET_BUFFERSIZE>");
+		close(dmx);
+		return 0;
+	}
 
-	//read PAT to get all PMT's
+	/* show infobar */
+	RenderMessage(ShowInfoBar);
 
-		memset(&dmx_flt.filter.filter, 0x00, DMX_FILTER_SIZE);
-		memset(&dmx_flt.filter.mask,   0x00, DMX_FILTER_SIZE);
+	/* read PAT to get all PMT's */
+#ifndef HAVE_TRIPLEDRAGON
+#if HAVE_DVB_API_VERSION < 3
+	memset(dmx_flt.filter.filter, 0, DMX_FILTER_SIZE);
+	memset(dmx_flt.filter.mask, 0, DMX_FILTER_SIZE);
+#else
+	memset(&dmx_flt.filter, 0x00, sizeof(struct dmx_filter));
+#endif
 
-		dmx_flt.pid				= 0x0000;
-		dmx_flt.flags			= DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
-		dmx_flt.filter.filter[0]= 0x00;
-		dmx_flt.filter.mask[0]	= 0xFF;
-		dmx_flt.timeout			= 5000;
+	dmx_flt.filter.filter[0] = 0x00;
+	dmx_flt.filter.mask[0]   = 0xFF;
+#else
+	memset(&dmx_flt, 0, sizeof(struct dmx_sct_filter_params));
+	dmx_flt.filter[0]        = 0x00;
+	dmx_flt.mask[0]          = 0xFF;
+	dmx_flt.filter_length    = 3;
+#define DMX_CHECK_CRC 0
+#endif
 
-		if(ioctl(dmx, DMX_SET_FILTER, &dmx_flt) == -1)
+	dmx_flt.pid              = 0x0000;
+	dmx_flt.flags            = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+	dmx_flt.timeout          = 5000;
+
+	if (ioctl(dmx, DMX_SET_FILTER, &dmx_flt) == -1)
+	{
+		perror("TuxTxt <DMX_SET_FILTER PAT>");
+		ioctl(dmx, DMX_STOP);
+		close(dmx);
+		return 0;
+	}
+
+	if (read(dmx, PAT, sizeof(PAT)) == -1)
+	{
+		perror("TuxTxt <read PAT>");
+		ioctl(dmx, DMX_STOP);
+		close(dmx);
+		return 0;
+	}
+
+	/* scan each PMT for vtxt-pid */
+	pids_found = 0;
+
+	for (pat_scan = 0x0A; pat_scan < 0x0A + (((PAT[0x01]<<8 | PAT[0x02]) & 0x0FFF) - 9); pat_scan += 4)
+	{
+#if TUXTXT_DEBUG
+		printf("PAT liefert:%04x, %04x \n",((PAT[pat_scan - 2]<<8) | (PAT[pat_scan - 1])),(PAT[pat_scan]<<8 | PAT[pat_scan+1]) & 0x1FFF);
+#endif
+		if (((PAT[pat_scan - 2]<<8) | (PAT[pat_scan - 1])) == 0)
+			continue;
+// workaround for Dreambox PMT "Connection timed out"-problem (not very nice, but it works...)
+#ifdef HAVE_DREAMBOX_HARDWARE
+		ioctl(dmx, DMX_STOP);
+		close(dmx);
+		if ((dmx = open(DMX, O_RDWR)) == -1)
 		{
-			perror("TuxTxt <DMX_SET_FILTER PAT>");
+			perror("TuxTxt <open DMX>");
 			return 0;
 		}
-
-		if(read(dmx, PAT, sizeof(PAT)) == -1)
+#endif
+		dmx_flt.pid               = (PAT[pat_scan]<<8 | PAT[pat_scan+1]) & 0x1FFF;
+		dmx_flt.flags             = DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+		dmx_flt.timeout           = 5000;
+#ifndef HAVE_TRIPLEDRAGON
+		dmx_flt.filter.filter[0]  = 0x02;
+		dmx_flt.filter.mask[0]    = 0xFF;
+#else
+		dmx_flt.filter[0]         = 0x02;
+		dmx_flt.mask[0]           = 0xFF;
+		dmx_flt.filter_length     = 3;
+#endif
+		if (ioctl(dmx, DMX_SET_FILTER, &dmx_flt) == -1)
 		{
-			perror("TuxTxt <read PAT>");
-			return 0;
+			perror("TuxTxt <DMX_SET_FILTER PMT>");
+			continue;
 		}
 
-	//scan each PMT for vtxt-pid
-
-		pids_found = 0;
-
-		for(pat_scan = 0x0A; pat_scan < 0x0A + (((PAT[0x01]<<8 | PAT[0x02]) & 0x0FFF) - 9); pat_scan += 4)
+		if (read(dmx, buf, sizeof(buf)) == -1)
 		{
-			if(((PAT[pat_scan - 2]<<8) | (PAT[pat_scan - 1])) == 0) continue;
-
-			dmx_flt.pid				= (PAT[pat_scan]<<8 | PAT[pat_scan+1]) & 0x1FFF;
-			dmx_flt.flags			= DMX_ONESHOT | DMX_CHECK_CRC | DMX_IMMEDIATE_START;
-			dmx_flt.filter.filter[0]= 0x02;
-			dmx_flt.filter.mask[0]	= 0xFF;
-			dmx_flt.timeout			= 5000;
-
-			if(ioctl(dmx, DMX_SET_FILTER, &dmx_flt) == -1)
+			perror("TuxTxt <read PMT>");
+			continue;
+		}
+		for (pmt_scan = 0x0C + ((buf[0x0A]<<8 | buf[0x0B]) & 0x0FFF);
+		     pmt_scan < (((buf[0x01]<<8 | buf[0x02]) & 0x0FFF) - 7);
+		     pmt_scan += 5 + buf[pmt_scan + 4])
+		{
+			if (buf[pmt_scan] == 6)
 			{
-				perror("TuxTxt <DMX_SET_FILTER PMT>");
-				continue;
-			}
-
-			if(read(dmx, PMT, sizeof(PMT)) == -1)
-			{
-				perror("TuxTxt <read PMT>");
-				continue;
-			}
-			for(pmt_scan = 0x0C + ((PMT[0x0A]<<8 | PMT[0x0B]) & 0x0FFF); pmt_scan < (((PMT[0x01]<<8 | PMT[0x02]) & 0x0FFF) - 7); pmt_scan += 5 + PMT[pmt_scan + 4])
-			{
-				if(PMT[pmt_scan] == 6)
+				for (desc_scan = pmt_scan + 5;
+				     desc_scan < pmt_scan + ((buf[pmt_scan + 3]<<8 | buf[pmt_scan + 4]) & 0x0FFF) + 5;
+				     desc_scan += 2 + buf[desc_scan + 1])
 				{
-					for(desc_scan = pmt_scan + 5; desc_scan < pmt_scan + ((PMT[pmt_scan + 3]<<8 | PMT[pmt_scan + 4]) & 0x0FFF) + 5; desc_scan += 2 + PMT[desc_scan + 1])
+					if (buf[desc_scan] == 0x56)
 					{
-						if(PMT[desc_scan] == 0x56)
-						{
-							for(pid_test = 0; pid_test < pids_found; pid_test++)
-							{
-								if(pid_table[pid_test].vtxt_pid == ((PMT[pmt_scan + 1]<<8 | PMT[pmt_scan + 2]) & 0x1FFF)) goto skip_pid;
-							}
+						char country_code[4];
 
-							pid_table[pids_found].vtxt_pid	 = (PMT[pmt_scan + 1]<<8 | PMT[pmt_scan + 2]) & 0x1FFF;
-							pid_table[pids_found].service_id = PMT[0x03]<<8 | PMT[0x04];
-							if (PMT[desc_scan + 1] == 5)
-							{
-								pid_table[pids_found].country_code[0] = PMT[desc_scan + 2] | 0x20;
-								pid_table[pids_found].country_code[1] = PMT[desc_scan + 3] | 0x20;
-								pid_table[pids_found].country_code[2] = PMT[desc_scan + 4] | 0x20;
-								pid_table[pids_found].country_code[3] = 0;
-							}
-							else
-							{
-								pid_table[pids_found].country_code[0] = 0;
-							}
-							if (pid_table[pids_found].vtxt_pid == vtxtpid)
-							{
-								printf("TuxTxt <Country code \"%s\">\n", pid_table[pids_found].country_code);
-							}
-							pids_found++;
-skip_pid:;
+						for (pid_test = 0; pid_test < pids_found; pid_test++)
+							if (pid_table[pid_test].vtxt_pid == ((buf[pmt_scan + 1]<<8 | buf[pmt_scan + 2]) & 0x1FFF))
+								goto skip_pid;
+
+						pid_table[pids_found].vtxt_pid = (buf[pmt_scan + 1]<<8 | buf[pmt_scan + 2]) & 0x1FFF;
+						pid_table[pids_found].service_id = buf[0x03]<<8 | buf[0x04];
+						if (buf[desc_scan + 1] == 5)
+						{
+							country_code[0] = buf[desc_scan + 2] | 0x20;
+							country_code[1] = buf[desc_scan + 3] | 0x20;
+							country_code[2] = buf[desc_scan + 4] | 0x20;
+							country_code[3] = 0;
+							pid_table[pids_found].national_subset = GetNationalSubset(country_code);
 						}
+						else
+						{
+							country_code[0] = 0;
+							pid_table[pids_found].national_subset = NAT_DEFAULT; /* use default charset */
+						}
+
+#if TUXTXT_DEBUG
+						printf("TuxTxt <Service %04x Country code \"%3s\" national subset %2d%s>\n",
+								 pid_table[pids_found].service_id,
+								 country_code,
+								 pid_table[pids_found].national_subset,
+								 (pid_table[pids_found].vtxt_pid == tuxtxt_cache.vtxtpid) ? " * " : ""
+								 );
+#endif
+
+						pids_found++;
+skip_pid:
+					;
 					}
 				}
 			}
 		}
+	}
 
-	//check for teletext
+	/* check for teletext */
+	if (pids_found == 0)
+	{
+		printf("TuxTxt <no Teletext on TS found>\n");
 
-		if(pids_found == 0)
+		RenderMessage(NoServicesFound);
+		sleep(3);
+		ioctl(dmx, DMX_STOP);
+		close(dmx);
+		return 0;
+	}
+
+	/* read SDT to get servicenames */
+	SDT_ready = 0;
+
+	dmx_flt.pid              = 0x0011;
+	dmx_flt.flags            = DMX_CHECK_CRC | DMX_IMMEDIATE_START;
+#ifndef HAVE_TRIPLEDRAGON
+	dmx_flt.filter.filter[0] = 0x42;
+	dmx_flt.filter.mask[0]   = 0xFF;
+#else
+	dmx_flt.filter[0]        = 0x42;
+	dmx_flt.mask[0]          = 0xFF;
+	dmx_flt.filter_length    = 3;
+#endif
+	dmx_flt.timeout          = 5000;
+
+	if (ioctl(dmx, DMX_SET_FILTER, &dmx_flt) == -1)
+	{
+		perror("TuxTxt <DMX_SET_FILTER SDT>");
+
+		RenderMessage(ShowServiceName);
+		ioctl(dmx, DMX_STOP);
+		close(dmx);
+
+		return 1;
+	}
+
+	first_sdt_sec = -1;
+	while (1)
+	{
+		if (read(dmx, buf, sizeof(buf)) == -1)
 		{
-			printf("TuxTxt <no Teletext on TS found>\n");
+			perror("TuxTxt <read SDT>");
 
-			RenderMessage(NoServicesFound);
-
-			sleep(3);
-
-			return 0;
-		}
-
-	//read SDT to get servicenames
-
-		SDT_ready = 0;
-
-		dmx_flt.pid				= 0x0011;
-		dmx_flt.flags			= DMX_CHECK_CRC | DMX_IMMEDIATE_START;
-		dmx_flt.filter.filter[0]= 0x42;
-		dmx_flt.filter.mask[0]	= 0xFF;
-		dmx_flt.timeout			= 5000;
-
-		if(ioctl(dmx, DMX_SET_FILTER, &dmx_flt) == -1)
-		{
-			perror("TuxTxt <DMX_SET_FILTER SDT>");
-
+			ioctl(dmx, DMX_STOP);
+			close(dmx);
 			RenderMessage(ShowServiceName);
-
 			return 1;
 		}
 
-		first_sdt_sec = -1;
-		while(1)
+		if (first_sdt_sec == buf[6])
+			break;
+
+		if (first_sdt_sec == -1)
+			first_sdt_sec = buf[6];
+
+		/* scan SDT to get servicenames */
+		for (sdt_scan = 0x0B; sdt_scan < ((buf[1]<<8 | buf[2]) & 0x0FFF) - 7; sdt_scan += 5 + ((buf[sdt_scan + 3]<<8 | buf[sdt_scan + 4]) & 0x0FFF))
 		{
-			if(read(dmx, SDT, 3) == -1)
+			for (pid_test = 0; pid_test < pids_found; pid_test++)
 			{
-				perror("TuxTxt <read SDT>");
-
-				ioctl(dmx, DMX_STOP);
-
-				RenderMessage(ShowServiceName);
-
-				return 1;
-			}
-
-			if(read(dmx, SDT+3, ((SDT[1] & 0x0f) << 8) | SDT[2]) == -1)
-			{
-				perror("TuxTxt <read SDT>");
-
-				ioctl(dmx, DMX_STOP);
-
-				RenderMessage(ShowServiceName);
-
-				return 1;
-			}
-
-			if (first_sdt_sec == SDT[6]) break;
-			if (first_sdt_sec == -1) first_sdt_sec = SDT[6];
-
-		//scan SDT to get servicenames
-
-			for(sdt_scan = 0x0B; sdt_scan < ((SDT[1]<<8 | SDT[2]) & 0x0FFF) - 7; sdt_scan += 5 + ((SDT[sdt_scan + 3]<<8 | SDT[sdt_scan + 4]) & 0x0FFF))
-			{
-				for(pid_test = 0; pid_test < pids_found; pid_test++)
+				if ((buf[sdt_scan]<<8 | buf[sdt_scan + 1]) == pid_table[pid_test].service_id && buf[sdt_scan + 5] == 0x48)
 				{
-					if((SDT[sdt_scan]<<8 | SDT[sdt_scan + 1]) == pid_table[pid_test].service_id && SDT[sdt_scan + 5] == 0x48)
+					diff = 0;
+					pid_table[pid_test].service_name_len = buf[sdt_scan+9 + buf[sdt_scan+8]];
+
+					for (byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
 					{
-						diff = 0;
-						pid_table[pid_test].service_name_len = SDT[sdt_scan+9 + SDT[sdt_scan+8]];
-						for(byte = 0; byte < pid_table[pid_test].service_name_len; byte++)
-						{
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5B;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ä') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7B;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5C;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ö') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7C;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'Ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x5D;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ü') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7D;
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] == (unsigned char)'ß') SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] = 0x7E;
-
-							if(SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] >= 0x80 && SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte] <= 0x9F) diff--;
-							else pid_table[pid_test].service_name[byte + diff] = SDT[sdt_scan+10 + SDT[sdt_scan + 8] + byte];
-						}
-
-						pid_table[pid_test].service_name_len += diff;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'Ä')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x5B;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'ä')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x7B;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'Ö')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x5C;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'ö')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x7C;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'Ü')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x5D;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'ü')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x7D;
+						if (buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] == (unsigned char)'ß')
+							buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] = 0x7E;
+						if (byte + diff >= 24 || buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] >= 0x80 && buf[sdt_scan+10 + buf[sdt_scan + 8] + byte] <= 0x9F)
+							diff--;
+						else
+							pid_table[pid_test].service_name[byte + diff] = buf[sdt_scan+10 + buf[sdt_scan + 8] + byte];
 					}
+
+					pid_table[pid_test].service_name_len += diff;
 				}
 			}
 		}
-		ioctl(dmx, DMX_STOP);
-		SDT_ready = 1;
+	}
+	ioctl(dmx, DMX_STOP);
+	SDT_ready = 1;
 
-	//show current servicename
+	/* show current servicename */
+	current_service = 0;
 
-		current_service = 0;
+	if (tuxtxt_cache.vtxtpid != 0)
+	{
+		while (pid_table[current_service].vtxt_pid != tuxtxt_cache.vtxtpid && current_service < pids_found)
+			current_service++;
 
-		if(vtxtpid != 0) 
-		{
-			while(pid_table[current_service].vtxt_pid != vtxtpid && current_service < pids_found)
-			{
-				current_service++;
-			}
+		if (renderinfo.auto_national && current_service < pids_found)
+			tuxtxt_cache.national_subset = pid_table[current_service].national_subset;
+		RenderMessage(ShowServiceName);
+	}
 
-			strcpy(country_code, pid_table[current_service].country_code);
-			RenderMessage(ShowServiceName);
-		}
+	getpidsdone = 1;
+
+	RenderCharLCD(pids_found/10,  7, 44);
+	RenderCharLCD(pids_found%10, 19, 44);
+	ioctl(dmx, DMX_STOP);
+	close(dmx);
 
 	return 1;
 }
@@ -800,730 +919,893 @@ int GetNationalSubset(char *cc)
 {
 	if (memcmp(cc, "cze", 3) == 0 || memcmp(cc, "ces", 3) == 0 ||
 	    memcmp(cc, "slo", 3) == 0 || memcmp(cc, "slk", 3) == 0)
-	{
 		return 0;
-	}
 	if (memcmp(cc, "eng", 3) == 0)
-	{
 		return 1;
-	}
 	if (memcmp(cc, "est", 3) == 0)
-	{
 		return 2;
-	}
 	if (memcmp(cc, "fre", 3) == 0 || memcmp(cc, "fra", 3) == 0)
-	{
 		return 3;
-	}
 	if (memcmp(cc, "ger", 3) == 0 || memcmp(cc, "deu", 3) == 0)
-	{
 		return 4;
-	}
 	if (memcmp(cc, "ita", 3) == 0)
-	{
 		return 5;
-	}
-	if (memcmp(cc, "lav", 3) == 0 ||
-	    memcmp(cc, "lit", 3) == 0) 
-	{
+	if (memcmp(cc, "lav", 3) == 0 || memcmp(cc, "lit", 3) == 0)
 		return 6;
-	}
 	if (memcmp(cc, "pol", 3) == 0)
-	{
 		return 7;
-	}
-	if (memcmp(cc, "spa", 3) == 0 ||
-	    memcmp(cc, "por", 3) == 0)
-	{
+	if (memcmp(cc, "spa", 3) == 0 || memcmp(cc, "por", 3) == 0)
 		return 8;
-	}
 	if (memcmp(cc, "rum", 3) == 0 || memcmp(cc, "ron", 3) == 0)
-	{
 		return 9;
-	}
 	if (memcmp(cc, "scc", 3) == 0 || memcmp(cc, "srp", 3) == 0 ||
 	    memcmp(cc, "scr", 3) == 0 || memcmp(cc, "hrv", 3) == 0 ||
 	    memcmp(cc, "slv", 3) == 0)
-	{
 		return 10;
-	}
 	if (memcmp(cc, "swe", 3) == 0 ||
 	    memcmp(cc, "dan", 3) == 0 ||
 	    memcmp(cc, "nor", 3) == 0 ||
 	    memcmp(cc, "fin", 3) == 0 ||
 	    memcmp(cc, "hun", 3) == 0)
-	{
 		return 11;
-	}
 	if (memcmp(cc, "tur", 3) == 0)
-	{
 		return 12;
-	}
-
-	return countryconverstiontable[countrycontrolbitstable[page][subpage]];
+	if (memcmp(cc, "rus", 3) == 0 || memcmp(cc, "bul", 3) == 0)
+	    return NAT_RB;
+	if (memcmp(cc, "ser", 3) == 0 || memcmp(cc, "cro", 3) == 0)
+	    return NAT_SC;
+	if (memcmp(cc, "ukr", 3) == 0)
+		return NAT_UA;
+	if (memcmp(cc, "gre", 3) == 0)
+		return NAT_GR;
+	if (memcmp(cc, "heb", 3) == 0)
+		return NAT_HB;
+	if (memcmp(cc, "ara", 3) == 0)
+		return NAT_AR;		
+	return NAT_DEFAULT;	/* use default charset */
 }
 
 /******************************************************************************
  * ConfigMenu                                                                 *
  ******************************************************************************/
+#if TUXTXT_DEBUG
+void charpage()
+{
+	renderinfo.PosY = renderinfo.StartY;
+	renderinfo.PosX = renderinfo.StartX;
+	char cachefill[100];
+	int fullsize =0,hexcount = 0, col, p,sp;
+	int escpage = 0;
+	tstCachedPage* pg;
+	tuxtxt_ClearFB(&renderinfo, tuxtxt_color_black);
+
+	int zipsize = 0;
+	for (p = 0; p < 0x900; p++)
+	{
+		for (sp = 0; sp < 0x80; sp++)
+		{
+			pg = tuxtxt_cache.astCachetable[p][sp];
+			if (pg)
+			{
+
+				fullsize+=23*40;
+				zipsize += tuxtxt_get_zipsize(p,sp);
+			}
+		}
+	}
+
+
+	memset(cachefill,' ',40);
+	sprintf(cachefill,"f:%d z:%d h:%d c:%d %03x",fullsize, zipsize, hexcount, tuxtxt_cache.cached_pages, escpage);
+
+	for (col = 0; col < 40; col++)
+	{
+		tuxtxt_RenderCharFB(&renderinfo,cachefill[col], &tuxtxt_atrtable[ATR_WB]);
+	}
+	tstPageAttr atr;
+	memcpy(&atr,&tuxtxt_atrtable[ATR_WB],sizeof(tstPageAttr));
+	int row;
+	atr.charset = C_G0P;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight;
+	for (row = 0; row < 16; row++)
+	{
+		renderinfo.PosY += renderinfo.fontheight;
+		tuxtxt_SetPosX(&renderinfo, 1);
+		for (col=0; col < 6; col++)
+		{
+			tuxtxt_RenderCharFB(&renderinfo,col*16+row+0x20, &atr);
+		}
+	}
+	atr.setX26 = 1;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight;
+	for (row = 0; row < 16; row++)
+	{
+		renderinfo.PosY += renderinfo.fontheight;
+		tuxtxt_SetPosX(&renderinfo, 10);
+		for (col=0; col < 6; col++)
+		{
+			tuxtxt_RenderCharFB(&renderinfo,col*16+row+0x20, &atr);
+		}
+	}
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight;
+	atr.charset = C_G2;
+	atr.setX26 = 0;
+	for (row = 0; row < 16; row++)
+	{
+		renderinfo.PosY += renderinfo.fontheight;
+		tuxtxt_SetPosX(&renderinfo, 20);
+		for (col=0; col < 6; col++)
+		{
+			tuxtxt_RenderCharFB(&renderinfo,col*16+row+0x20, &atr);
+		}
+	}
+	atr.charset = C_G3;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight;
+	for (row = 0; row < 16; row++)
+	{
+		renderinfo.PosY += renderinfo.fontheight;
+		tuxtxt_SetPosX(&renderinfo, 30);
+		for (col=0; col < 6; col++)
+		{
+			tuxtxt_RenderCharFB(&renderinfo,col*16+row+0x20, &atr);
+		}
+	}
+	do
+	{
+		GetRCCode();
+	}
+	while (RCCode != RC_OK && RCCode != RC_HOME);
+}
+#endif
+void Menu_HighlightLine(char *menu, int line, int high)
+{
+	int active_national_subset=tuxtxt_cache.national_subset;
+	char hilitline[] = "0111111111111111111111111111102";
+	int itext = Menu_Width*line; /* index start menuline */
+	int byte;
+	int national_subset_bak = tuxtxt_cache.national_subset;
+
+	renderinfo.PosX = Menu_StartX;
+	renderinfo.PosY = Menu_StartY + line*renderinfo.fontheight;
+	if (line == MenuLine[M_NAT])
+		tuxtxt_cache.national_subset = national_subset_bak;
+	else
+		tuxtxt_cache.national_subset = menusubset[menulanguage];
+	if (line == MenuLine[M_PID] && getpidsdone) { // channel names should be rendered in NAT_DEFAULT
+		active_national_subset=tuxtxt_cache.national_subset;
+		tuxtxt_cache.national_subset=NAT_DEFAULT;
+	}
+	for (byte = 0; byte < Menu_Width; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,menu[itext + byte],
+						 high ?
+						 &tuxtxt_atrtable[hilitline[byte] - '0' + ATR_MENUHIL0] :
+						 &tuxtxt_atrtable[menuatr[itext + byte] - '0' + ATR_MENU0]);
+	if (line == MenuLine[M_PID] && getpidsdone) // restore national_subset
+		tuxtxt_cache.national_subset=active_national_subset;
+	tuxtxt_cache.national_subset = national_subset_bak;
+}
+
+void Menu_UpdateHotlist(char *menu, int hotindex, int menuitem)
+{
+	int i, j, k;
+	tstPageAttr *attr;
+
+	renderinfo.PosX = Menu_StartX + 6*renderinfo.fontwidth;
+	renderinfo.PosY = Menu_StartY + (MenuLine[M_HOT]+1)*renderinfo.fontheight;
+	j = Menu_Width*(MenuLine[M_HOT]+1) + 6; /* start index in menu */
+
+	for (i = 0; i <= maxhotlist+1; i++)
+	{
+		if (i == maxhotlist+1) /* clear last+1 entry in case it was deleted */
+		{
+			attr = &tuxtxt_atrtable[ATR_MENU5];
+			memset(&menu[j], ' ', 3);
+		}
+		else
+		{
+			if (i == hotindex)
+				attr = &tuxtxt_atrtable[ATR_MENU1];
+			else
+			attr = &tuxtxt_atrtable[ATR_MENU5];
+			tuxtxt_hex2str(&menu[j+2], hotlist[i]);
+		}
+
+		for (k = 0; k < 3; k++)
+			tuxtxt_RenderCharFB(&renderinfo,menu[j+k], attr);
+
+		if (i == 4)
+		{
+			renderinfo.PosX = Menu_StartX + 6*renderinfo.fontwidth;
+			renderinfo.PosY += renderinfo.fontheight;
+			j += 2*Menu_Width - 4*4;
+		}
+		else
+		{
+			j += 4; /* one space distance */
+			renderinfo.PosX += renderinfo.fontwidth;
+		}
+	}
+
+	tuxtxt_hex2str(&menu[Menu_Width*MenuLine[M_HOT] + hotlistpagecolumn[menulanguage]], (hotindex >= 0) ? hotlist[hotindex] : tuxtxt_cache.page);
+	memcpy(&menu[Menu_Width*MenuLine[M_HOT] + hotlisttextcolumn[menulanguage]], &hotlisttext[menulanguage][(hotindex >= 0) ? 5 : 0], 5);
+	renderinfo.PosX = Menu_StartX + 20*renderinfo.fontwidth;
+	renderinfo.PosY = Menu_StartY + MenuLine[M_HOT]*renderinfo.fontheight;
+
+	Menu_HighlightLine(menu, MenuLine[M_HOT], (menuitem == M_HOT) ? 1 : 0);
+}
+
+void Menu_Init(char *menu, int current_pid, int menuitem, int hotindex)
+{
+	int byte, line, name_len, active_national_subset;
+	int national_subset_bak = tuxtxt_cache.national_subset;
+
+	memcpy(menu, configmenu[menulanguage], Menu_Height*Menu_Width);
+
+	if (getpidsdone)
+	{
+		memset(&menu[MenuLine[M_PID]*Menu_Width+3], 0x20,24);
+		if (SDT_ready)
+		{
+			name_len = pid_table[current_pid].service_name_len < 24 ? pid_table[current_pid].service_name_len : 24;	// Maximum of 24 chars will fit
+			memcpy(&menu[MenuLine[M_PID]*Menu_Width+3+(24-name_len)/2], &pid_table[current_pid].service_name, name_len);
+		}
+		else
+			tuxtxt_hex2str(&menu[MenuLine[M_PID]*Menu_Width + 13 + 3], tuxtxt_cache.vtxtpid);
+	}
+	if (!getpidsdone || current_pid == 0 || pids_found == 1)
+		menu[MenuLine[M_PID]*Menu_Width +  1] = ' ';
+
+	if (!getpidsdone || current_pid == pids_found - 1 || pids_found == 1)
+		menu[MenuLine[M_PID]*Menu_Width + 28] = ' ';
+
+
+	/* set 16:9 modi, colors & national subset */
+	memcpy(&menu[Menu_Width*MenuLine[M_SC1] + Menu_Width - 5], &configonoff[menulanguage][renderinfo.screen_mode1  ? 3 : 0], 3);
+	memcpy(&menu[Menu_Width*MenuLine[M_SC2] + Menu_Width - 5], &configonoff[menulanguage][renderinfo.screen_mode2  ? 3 : 0], 3);
+
+	menu[MenuLine[M_COL]*Menu_Width +  1] = (renderinfo.color_mode == 1  ? ' ' : 'í');
+	menu[MenuLine[M_COL]*Menu_Width + 28] = (renderinfo.color_mode == 24 ? ' ' : 'î');
+	memset(&menu[Menu_Width*MenuLine[M_COL] + 3             ], 0x7f,renderinfo.color_mode);
+	memset(&menu[Menu_Width*MenuLine[M_COL] + 3+renderinfo.color_mode  ], 0x20,24-renderinfo.color_mode);
+//	memcpy(&menu[Menu_Width*MenuLine[M_COL] + Menu_Width - 5], &configonoff[menulanguage][color_mode    ? 3 : 0], 3);
+	menu[MenuLine[M_TRA]*Menu_Width +  1] = (renderinfo.trans_mode == 1  ? ' ' : 'í');
+	menu[MenuLine[M_TRA]*Menu_Width + 28] = (renderinfo.trans_mode == 24 ? ' ' : 'î');
+	memset(&menu[Menu_Width*MenuLine[M_TRA] + 3             ], 0x7f,renderinfo.trans_mode);
+	memset(&menu[Menu_Width*MenuLine[M_TRA] + 3+renderinfo.trans_mode  ], 0x20,24-renderinfo.trans_mode);
+
+	memcpy(&menu[Menu_Width*MenuLine[M_AUN] + Menu_Width - 5], &configonoff[menulanguage][renderinfo.auto_national ? 3 : 0], 3);
+	memcpy(&menu[Menu_Width*MenuLine[M_NAT] + 2], &countrystring[tuxtxt_cache.national_subset*COUNTRYSTRING_WIDTH], COUNTRYSTRING_WIDTH);
+	if (renderinfo.auto_national)
+		menu[MenuLine[M_NAT]*Menu_Width +  1] = ' ';
+	if (renderinfo.auto_national)
+		menu[MenuLine[M_NAT]*Menu_Width + 28] = ' ';
+	if (renderinfo.showhex)
+		menu[MenuLine[M_PID]*Menu_Width + 27] = '?';
+	/* render menu */
+	renderinfo.PosY = Menu_StartY;
+	for (line = 0; line < Menu_Height; line++)
+	{
+		renderinfo.PosX = Menu_StartX;
+		if (line == MenuLine[M_NAT])
+			tuxtxt_cache.national_subset = national_subset_bak;
+		else if (line == MenuLine[M_TRA] || line == MenuLine[M_COL])
+			tuxtxt_cache.national_subset = 0;
+		else
+			tuxtxt_cache.national_subset = menusubset[menulanguage];
+
+		if ((line == MenuLine[M_PID]) && getpidsdone) {
+			active_national_subset=tuxtxt_cache.national_subset;
+			tuxtxt_cache.national_subset = NAT_DEFAULT;
+		}
+			
+		if (line == Menu_Height-2) { // version info should be rendered in NAT_DEFAULT always
+			memcpy(&menu[line*Menu_Width + 20], versioninfo, 5);
+			tuxtxt_cache.national_subset=NAT_DEFAULT;
+		}
+
+		for (byte = 0; byte < Menu_Width; byte++)
+			tuxtxt_RenderCharFB(&renderinfo,menu[line*Menu_Width + byte], &tuxtxt_atrtable[menuatr[line*Menu_Width + byte] - '0' + ATR_MENU0]);
+
+		if ((line == MenuLine[M_PID]) && getpidsdone) { //restore charset
+			tuxtxt_cache.national_subset=active_national_subset;
+		}
+		if (line == Menu_Height-2) {
+			tuxtxt_cache.national_subset=active_national_subset;
+		}
+
+		renderinfo.PosY += renderinfo.fontheight;
+	}
+	tuxtxt_cache.national_subset = national_subset_bak;
+	Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+	Menu_UpdateHotlist(menu, hotindex, menuitem);
+}
 
 void ConfigMenu(int Init)
 {
-	struct dmxPesFilterParams dmx_flt;
-	int val, byte, line, menuitem = 1;
+	int val, menuitem = M_Start;
 	int current_pid = 0;
+	int hotindex;
+	int oldscreenmode;
+	int i, name_len;
+	int national_subset_bak = tuxtxt_cache.national_subset;
+	char menu[Menu_Height*Menu_Width];
 
-	char menu[] =	"àááááááááááááááááááááááááááááâè««««««««««««««««««««««««««««««›"
-					"ã     Konfigurationsmenu     äé«¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤«›"
-					"åææææææææææææææææææææææææææææçé««««««««««««««««««««««««««««««›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ã      Teletext-Auswahl      äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ãí                          îäéZXXXXXXXXXXXXXXXXXXXXXXXXXXXXZ›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ã      Bildschirmformat      äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ã16:9 im Standard-Modus = ausäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ã16:9 im TextBild-Modus = einäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ã         Helligkeit         äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ãAnzeige 1/3 reduzieren = ausäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ã   nationaler Zeichensatz   äéËÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇË›"
-					"ã                            äéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ãautomatische Erkennung = ausäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
-					"ãí    DE (#$@[\\]^_`{|}~)    îäéËÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈÈË›"
-					"åææææææææææææææææææææææææææææçéËËËËËËËËËËËËËËËËËËËËËËËËËËËËËË›"
-					"ëìììììììììììììììììììììììììììììê›››››››››››››››››››››››››››››››";
+	if (renderinfo.auto_national && tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage] &&
+		tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage]->pageinfo.nationalvalid)
+		tuxtxt_cache.national_subset = countryconversiontable[tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage]->pageinfo.national];
 
-	//set current vtxt
-
-		if(vtxtpid == 0) vtxtpid = pid_table[0].vtxt_pid;
+	if (getpidsdone)
+	{
+		/* set current vtxt */
+		if (tuxtxt_cache.vtxtpid == 0)
+			tuxtxt_cache.vtxtpid = pid_table[0].vtxt_pid;
 		else
-		{
-			while(pid_table[current_pid].vtxt_pid != vtxtpid && current_pid < pids_found)
-			{
+			while(pid_table[current_pid].vtxt_pid != tuxtxt_cache.vtxtpid && current_pid < pids_found)
 				current_pid++;
-			}
-		}
+	}
 
-		if (SDT_ready)
-			memcpy(&menu[6*62 + 3 + (24-pid_table[current_pid].service_name_len)/2], &pid_table[current_pid].service_name, pid_table[current_pid].service_name_len);
-		else
-			sprintf(&menu[6*62 + 13], "%.4X", vtxtpid);
+	/* reset to normal mode */
+	if (renderinfo.zoommode)
+		renderinfo.zoommode = 0;
 
-		if(current_pid == 0 || pids_found == 1)				 menu[6*62 +  1] = ' ';
-		if(current_pid == pids_found - 1 || pids_found == 1) menu[6*62 + 28] = ' ';
+	if (renderinfo.transpmode)
+	{
+		renderinfo.transpmode = 0;
+		tuxtxt_ClearBB(&renderinfo,tuxtxt_color_black);
+	}
 
-	//set 16:9 modi, colors & national subset
+	oldscreenmode = renderinfo.screenmode;
+	if (renderinfo.screenmode)
+		tuxtxt_SwitchScreenMode(&renderinfo,0); /* turn off divided screen */
 
-		if(screen_mode1) memcpy(&menu[10*62 + 26], "ein", 3);
-		if(!screen_mode2) memcpy(&menu[12*62 + 26], "aus", 3);
-		if(color_mode) memcpy(&menu[16*62 + 26], "ein", 3);
-		if(auto_national) memcpy(&menu[20*62 + 26], "ein", 3);
-		if(national_subset != 4)
+	hotindex = getIndexOfPageInHotlist();
+
+	/* clear framebuffer */
+	tuxtxt_ClearFB(&renderinfo,tuxtxt_color_transp);
+	renderinfo.clearbbcolor = tuxtxt_color_black;
+	Menu_Init(menu, current_pid, menuitem, hotindex);
+
+	/* set blocking mode */
+	val = fcntl(rc, F_GETFL);
+	fcntl(rc, F_SETFL, val &~ O_NONBLOCK);
+
+	/* loop */
+	do {
+		if (GetRCCode() == 1)
 		{
-			memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
-		}
 
-		if(national_subset == 0  || auto_national) menu[21*62 +  1] = ' ';
-		if(national_subset == 12 || auto_national) menu[21*62 + 28] = ' ';
-
-	//clear framebuffer
-
-		memset(lfb, transp, var_screeninfo.xres * var_screeninfo.yres);
-
-	//reset to normal mode
-
-		if(zoommode) zoommode = 0;
-
-		if(transpmode)
-		{
-			transpmode = 0;
-
-			memset(&backbuffer, black, sizeof(backbuffer));
-		}
-
-		if(screenmode)
-		{
-			screenmode = 0;
-
-			avia_pig_hide(pig);
-
-			ioctl(avs, AVSIOSSCARTPIN8, &fncmodes[screen_mode1]);
-			ioctl(saa, SAAIOSWSS, &saamodes[screen_mode1]);
-
-			desc0.font.pix_width = desc1.font.pix_width = desc2.font.pix_width = 16;
-			desc0.font.pix_height = desc1.font.pix_height = desc2.font.pix_height = 22;
-		}
-
-	//render menu
-
-		PosY = StartY + fixfontheight*1;
-
-		for(line = 0; line < 24; line++)
-		{
-			PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-
-			for(byte = 0; byte < 31; byte++)
+			if (
+#if (RC_1 > 0)
+				RCCode >= RC_1 && /* generates a warning... */
+#endif
+				RCCode <= RC_1+M_MaxDirect) /* direct access */
 			{
-				RenderCharFB(menu[line*62 + byte], menu[line*62 + byte+31]);
+				Menu_HighlightLine(menu, MenuLine[menuitem], 0);
+				menuitem = RCCode-RC_1;
+				Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+
+				if (menuitem != M_PID) /* just select */
+					RCCode = RC_OK;
 			}
 
-			PosY += fixfontheight;
-		}
-
-	//set blocking mode
-
-		val = fcntl(rc, F_GETFL);
-		fcntl(rc, F_SETFL, val &~ O_NONBLOCK);
-
-	//loop
-
-		do
-		{
-			GetRCCode();
-
-			switch(RCCode)
+			switch (RCCode)
 			{
-				case RC_UP:		if(menuitem > 1) menuitem--;
+			case RC_UP:
+				Menu_HighlightLine(menu, MenuLine[menuitem], 0);
+				if (--menuitem < 0)
+					menuitem = M_Number-1;
+				if (renderinfo.auto_national && (menuitem == M_NAT))
+					menuitem--;
+				Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+				break;
 
-								switch(menuitem)
+			case RC_DOWN:
+				Menu_HighlightLine(menu, MenuLine[menuitem], 0);
+				if (++menuitem > M_Number-1)
+					menuitem = 0;
+				if (renderinfo.auto_national && (menuitem == M_NAT))
+					menuitem++;
+				Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+				break;
+
+			case RC_LEFT:
+				switch (menuitem)
+				{
+				case M_COL:
+					saveconfig = 1;
+					renderinfo.color_mode--;
+					if (renderinfo.color_mode < 1) renderinfo.color_mode = 1;
+					menu[MenuLine[M_COL]*Menu_Width +  1] = (renderinfo.color_mode == 1  ? ' ' : 'í');
+					menu[MenuLine[M_COL]*Menu_Width + 28] = (renderinfo.color_mode == 24 ? ' ' : 'î');
+					memset(&menu[Menu_Width*MenuLine[M_COL] + 3             ], 0x7f,renderinfo.color_mode);
+					memset(&menu[Menu_Width*MenuLine[M_COL] + 3+renderinfo.color_mode  ], 0x20,24-renderinfo.color_mode);
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+					tuxtxt_setcolors(&renderinfo,(unsigned short *)tuxtxt_defaultcolors, 0, tuxtxt_color_SIZECOLTABLE);
+					break;
+				case M_TRA:
+					saveconfig = 1;
+					renderinfo.trans_mode--;
+					if (renderinfo.trans_mode < 1) renderinfo.trans_mode = 1;
+					menu[MenuLine[M_TRA]*Menu_Width +  1] = (renderinfo.trans_mode == 1  ? ' ' : 'í');
+					menu[MenuLine[M_TRA]*Menu_Width + 28] = (renderinfo.trans_mode == 24 ? ' ' : 'î');
+					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3             ], 0x7f,renderinfo.trans_mode);
+					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3+renderinfo.trans_mode  ], 0x20,24-renderinfo.trans_mode);
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+					tuxtxt_setcolors(&renderinfo,(unsigned short *)tuxtxt_defaultcolors, 0, tuxtxt_color_SIZECOLTABLE);
+					break;
+				case M_PID:
+				{
+					if (!getpidsdone)
+					{
+						GetTeletextPIDs();
+						tuxtxt_ClearFB(&renderinfo,tuxtxt_color_transp);
+						/* set current vtxt */
+						if (tuxtxt_cache.vtxtpid == 0)
+							tuxtxt_cache.vtxtpid = pid_table[0].vtxt_pid;
+						else
+							while(pid_table[current_pid].vtxt_pid != tuxtxt_cache.vtxtpid && current_pid < pids_found)
+								current_pid++;
+						Menu_Init(menu, current_pid, menuitem, hotindex);
+					}
+					if (current_pid > 0)
+					{
+						current_pid--;
+
+						memset(&menu[MenuLine[M_PID]*Menu_Width + 3], ' ', 24);
+
+						if (SDT_ready)
+						{
+							name_len = pid_table[current_pid].service_name_len < 24 ? pid_table[current_pid].service_name_len : 24;	// Maximum of 24 chars will fit
+							memcpy(&menu[MenuLine[M_PID]*Menu_Width+3+
+								(24-name_len)/2],
+								&pid_table[current_pid].service_name, name_len);
+						}
+						else
+							tuxtxt_hex2str(&menu[MenuLine[M_PID]*Menu_Width + 13 + 3], tuxtxt_cache.vtxtpid);
+
+						if (pids_found > 1)
+						{
+							if (current_pid == 0)
+							{
+								menu[MenuLine[M_PID]*Menu_Width +  1] = ' ';
+								menu[MenuLine[M_PID]*Menu_Width + 28] = 'î';
+							}
+							else
+							{
+								menu[MenuLine[M_PID]*Menu_Width +  1] = 'í';
+								menu[MenuLine[M_PID]*Menu_Width + 28] = 'î';
+							}
+						}
+
+						Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+
+						if (renderinfo.auto_national)
+						{
+							tuxtxt_cache.national_subset = pid_table[current_pid].national_subset;
+
+							memcpy(&menu[Menu_Width*MenuLine[M_NAT] + 2], &countrystring[tuxtxt_cache.national_subset*COUNTRYSTRING_WIDTH], COUNTRYSTRING_WIDTH);
+							Menu_HighlightLine(menu, MenuLine[M_NAT], 0);
+						}
+					}
+					break;
+				}
+
+				case M_NAT:
+					saveconfig = 1;
+					if (tuxtxt_cache.national_subset >= 0)
+					{
+						tuxtxt_cache.national_subset--;
+
+						if (tuxtxt_cache.national_subset < 0)
+							tuxtxt_cache.national_subset = MAX_NATIONAL_SUBSET;
+						menu[MenuLine[M_NAT]*Menu_Width +  1] = 'í';
+						menu[MenuLine[M_NAT]*Menu_Width + 28] = 'î';
+						Menu_Init(menu, current_pid, menuitem, hotindex);
+					}
+					break;
+
+				case M_HOT: /* move towards top of hotlist */
+					if (hotindex <= 0) /* if not found, start at end */
+						hotindex = maxhotlist;
+					else
+						hotindex--;
+					Menu_UpdateHotlist(menu, hotindex, menuitem);
+					break;
+
+				case M_LNG:
+					saveconfig = 1;
+					if (--menulanguage < 0)
+						menulanguage = MAXMENULANGUAGE;
+					Menu_Init(menu, current_pid, menuitem, hotindex);
+					break;
+				} /* switch menuitem */
+				break; /* RC_LEFT */
+
+			case RC_RIGHT:
+				switch (menuitem)
+				{
+				case M_COL:
+					saveconfig = 1;
+					renderinfo.color_mode++;
+					if (renderinfo.color_mode > 24) renderinfo.color_mode = 24;
+					menu[MenuLine[M_COL]*Menu_Width +  1] = (renderinfo.color_mode == 1  ? ' ' : 'í');
+					menu[MenuLine[M_COL]*Menu_Width + 28] = (renderinfo.color_mode == 24 ? ' ' : 'î');
+					memset(&menu[Menu_Width*MenuLine[M_COL] + 3             ], 0x7f,renderinfo.color_mode);
+					memset(&menu[Menu_Width*MenuLine[M_COL] + 3+renderinfo.color_mode  ], 0x20,24-renderinfo.color_mode);
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+					tuxtxt_setcolors(&renderinfo,(unsigned short *)tuxtxt_defaultcolors, 0, tuxtxt_color_SIZECOLTABLE);
+					break;
+				case M_TRA:
+					saveconfig = 1;
+					renderinfo.trans_mode++;
+					if (renderinfo.trans_mode > 24) renderinfo.trans_mode = 24;
+					menu[MenuLine[M_TRA]*Menu_Width +  1] = (renderinfo.trans_mode == 1  ? ' ' : 'í');
+					menu[MenuLine[M_TRA]*Menu_Width + 28] = (renderinfo.trans_mode == 24 ? ' ' : 'î');
+					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3             ], 0x7f,renderinfo.trans_mode);
+					memset(&menu[Menu_Width*MenuLine[M_TRA] + 3+renderinfo.trans_mode  ], 0x20,24-renderinfo.trans_mode);
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+					tuxtxt_setcolors(&renderinfo,(unsigned short *)tuxtxt_defaultcolors, 0, tuxtxt_color_SIZECOLTABLE);
+					break;
+				case M_PID:
+					if (!getpidsdone)
+					{
+						GetTeletextPIDs();
+						tuxtxt_ClearFB(&renderinfo,tuxtxt_color_transp);
+						/* set current vtxt */
+						if (tuxtxt_cache.vtxtpid == 0)
+							tuxtxt_cache.vtxtpid = pid_table[0].vtxt_pid;
+						else
+							while(pid_table[current_pid].vtxt_pid != tuxtxt_cache.vtxtpid && current_pid < pids_found)
+								current_pid++;
+						Menu_Init(menu, current_pid, menuitem, hotindex);
+					}
+					if (current_pid < pids_found - 1)
+					{
+						current_pid++;
+
+						memset(&menu[MenuLine[M_PID]*Menu_Width + 3], ' ', 24);
+
+						if (SDT_ready)
+						{
+							name_len = pid_table[current_pid].service_name_len < 24 ? pid_table[current_pid].service_name_len : 24;	// Maximum of 24 chars will fit
+							memcpy(&menu[MenuLine[M_PID]*Menu_Width + 3 +
+								(24-name_len)/2],
+								&pid_table[current_pid].service_name, name_len);
+						}
+						else
+							tuxtxt_hex2str(&menu[MenuLine[M_PID]*Menu_Width + 13 + 3], pid_table[current_pid].vtxt_pid);
+
+						if (pids_found > 1)
+						{
+							if (current_pid == pids_found - 1)
+							{
+								menu[MenuLine[M_PID]*Menu_Width +  1] = 'í';
+								menu[MenuLine[M_PID]*Menu_Width + 28] = ' ';
+							}
+							else
+							{
+								menu[MenuLine[M_PID]*Menu_Width +  1] = 'í';
+								menu[MenuLine[M_PID]*Menu_Width + 28] = 'î';
+							}
+						}
+
+						Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+
+						if (renderinfo.auto_national)
+						{
+							if (getpidsdone)
+								tuxtxt_cache.national_subset = pid_table[current_pid].national_subset;
+							memcpy(&menu[Menu_Width*MenuLine[M_NAT] + 2], &countrystring[tuxtxt_cache.national_subset*COUNTRYSTRING_WIDTH], COUNTRYSTRING_WIDTH);
+							Menu_HighlightLine(menu, MenuLine[M_NAT], 0);
+						}
+					}
+					break;
+
+				case M_NAT:
+					saveconfig = 1;
+					if (tuxtxt_cache.national_subset <= MAX_NATIONAL_SUBSET)
+					{
+						tuxtxt_cache.national_subset++;
+
+						if (tuxtxt_cache.national_subset > MAX_NATIONAL_SUBSET)
+							tuxtxt_cache.national_subset = NAT_DEFAULT;
+						menu[MenuLine[M_NAT]*Menu_Width +  1] = 'í';
+						menu[MenuLine[M_NAT]*Menu_Width + 28] = 'î';
+						Menu_Init(menu, current_pid, menuitem, hotindex);
+					}
+					break;
+
+				case M_HOT: /* select hotindex */
+					if ((unsigned int)hotindex >= maxhotlist) /* if not found, start at 0 */
+						hotindex = 0;
+					else
+						hotindex++;
+					Menu_UpdateHotlist(menu, hotindex, menuitem);
+					break;
+
+				case M_LNG:
+					saveconfig = 1;
+					if (++menulanguage > MAXMENULANGUAGE)
+						menulanguage = 0;
+					Menu_Init(menu, current_pid, menuitem, hotindex);
+					break;
+				}
+				break; /* RC_RIGHT */
+
+			case RC_PLUS:
+				switch (menuitem)
+				{
+				case M_HOT: /* move towards end of hotlist */
+				{
+					if (hotindex<0) /* not found: add page at end */
+					{
+						if (maxhotlist < (sizeof(hotlist)/sizeof(hotlist[0])-1)) /* only if still room left */
+						{
+							hotindex = ++maxhotlist;
+							hotlist[hotindex] = tuxtxt_cache.page;
+							hotlistchanged = 1;
+							Menu_UpdateHotlist(menu, hotindex, menuitem);
+						}
+					}
+					else /* found */
+					{
+						if (hotindex < maxhotlist) /* not already at end */
+						{
+							int temp = hotlist[hotindex];
+							hotlist[hotindex] = hotlist[hotindex+1];
+							hotlist[hotindex+1] = temp;
+							hotindex++;
+							hotlistchanged = 1;
+							Menu_UpdateHotlist(menu, hotindex, menuitem);
+						}
+					}
+				}
+				break;
+				}
+				break; /* RC_PLUS */
+
+			case RC_MINUS:
+				switch (menuitem)
+				{
+				case M_HOT: /* move towards top of hotlist */
+				{
+					if (hotindex<0) /* not found: add page at top */
+					{
+						if (maxhotlist < (sizeof(hotlist)/sizeof(hotlist[0])-1)) /* only if still room left */
+						{
+							for (hotindex = maxhotlist; hotindex >= 0; hotindex--) /* move rest of list */
+							{
+								hotlist[hotindex+1] = hotlist[hotindex];
+							}
+							maxhotlist++;
+							hotindex = 0;
+							hotlist[hotindex] = tuxtxt_cache.page;
+							hotlistchanged = 1;
+							Menu_UpdateHotlist(menu, hotindex, menuitem);
+						}
+					}
+					else /* found */
+					{
+						if (hotindex > 0) /* not already at front */
+						{
+							int temp = hotlist[hotindex];
+							hotlist[hotindex] = hotlist[hotindex-1];
+							hotlist[hotindex-1] = temp;
+							hotindex--;
+							hotlistchanged = 1;
+							Menu_UpdateHotlist(menu, hotindex, menuitem);
+						}
+					}
+				}
+				break;
+				}
+				break; /* RC_MINUS */
+
+			case RC_HELP:
+				switch (menuitem)
+				{
+				case M_HOT: /* current page is added to / removed from hotlist */
+				{
+					if (hotindex<0) /* not found: add page */
+					{
+						if (maxhotlist < (sizeof(hotlist)/sizeof(hotlist[0])-1)) /* only if still room left */
+						{
+							hotlist[++maxhotlist] = tuxtxt_cache.page;
+							hotindex = maxhotlist;
+							hotlistchanged = 1;
+							Menu_UpdateHotlist(menu, hotindex, menuitem);
+						}
+					}
+					else /* found: remove */
+					{
+						if (maxhotlist > 0) /* don't empty completely */
+						{
+							int i;
+
+							for (i=hotindex; i<maxhotlist; i++) /* move rest of list */
+							{
+								hotlist[i] = hotlist[i+1];
+							}
+							maxhotlist--;
+							if (hotindex > maxhotlist)
+								hotindex = maxhotlist;
+							hotlistchanged = 1;
+							Menu_UpdateHotlist(menu, hotindex, menuitem);
+						}
+					}
+				}
+				break;
+				case M_PID:
+					renderinfo.showhex ^= 1;
+					menu[MenuLine[M_PID]*Menu_Width + 27] = (renderinfo.showhex ? '?' : ' ');
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+				break;
+#if TUXTXT_DEBUG
+				case M_LNG:
+					charpage();
+					tuxtxt_ClearFB(&renderinfo, tuxtxt_color_transp);
+					Menu_Init(menu, current_pid, menuitem, hotindex);
+				break;
+#endif
+				}
+				break; /* RC_MUTE */
+
+			case RC_OK:
+				switch (menuitem)
+				{
+				case M_PID:
+					if (!getpidsdone)
+					{
+						GetTeletextPIDs();
+						tuxtxt_ClearFB(&renderinfo,tuxtxt_color_transp);
+						/* set current vtxt */
+						if (tuxtxt_cache.vtxtpid == 0)
+							tuxtxt_cache.vtxtpid = pid_table[0].vtxt_pid;
+						else
+							while(pid_table[current_pid].vtxt_pid != tuxtxt_cache.vtxtpid && current_pid < pids_found)
+								current_pid++;
+						Menu_Init(menu, current_pid, menuitem, hotindex);
+					}
+					else if (pids_found > 1)
+					{
+							if (hotlistchanged)
+								savehotlist();
+
+						if (Init || tuxtxt_cache.vtxtpid != pid_table[current_pid].vtxt_pid)
+							{
+#if TUXTXT_CFG_STANDALONE
+								tuxtxt_stop_thread();
+								tuxtxt_clear_cache();
+#else
+								tuxtxt_stop();
+							if (Init)
+								tuxtxt_cache.vtxtpid = 0; // force clear cache
+#endif
+								/* reset data */
+
+
+								//page_atrb[32] = transp<<4 | transp;
+								renderinfo.inputcounter = 2;
+
+
+								tuxtxt_cache.page     = 0x100;
+								lastpage = 0x100;
+								renderinfo.prev_100 = 0x100;
+								renderinfo.prev_10  = 0x100;
+								renderinfo.next_100 = 0x100;
+								renderinfo.next_10  = 0x100;
+								tuxtxt_cache.subpage  = 0;
+
+								tuxtxt_cache.pageupdate = 0;
+								tuxtxt_cache.zap_subpage_manual = 0;
+								renderinfo.hintmode = 0;
+								memset(renderinfo.page_char,' ',40 * 25);
+
+								for (i = 0; i < 40*25; i++)
 								{
-									case 1:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*7;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*6 + byte], menu[62*6 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*11;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*10 + byte], menu[62*10 + byte+31]);
-											}
-											break;
-
-									case 2:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*11;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*10 + byte], menu[62*6 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*13;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*12 + byte], menu[62*12 + byte+31]);
-											}
-											break;
-
-									case 3:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*13;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*12 + byte], menu[62*6 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*17;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*16 + byte], menu[62*16 + byte+31]);
-											}
-											break;
-
-									case 4:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*17;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*16 + byte], menu[62*6 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*21;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*20 + byte], menu[62*20 + byte+31]);
-											}
-											break;
-
-									case 5: PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*21;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*22;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*21 + byte], menu[62*21 + byte+31]);
-											}
-											break;
+									renderinfo.page_atrb[i].fg = tuxtxt_color_transp;
+									renderinfo.page_atrb[i].bg = tuxtxt_color_transp;
 								}
-								break;
-
-				case RC_DOWN:	if(menuitem < 6) menuitem++;
-
-								switch(menuitem)
-								{
-									case 2:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*7;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*6 + byte], menu[62*10 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*11;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*10 + byte], menu[62*6 + byte+31]);
-											}
-											break;
-
-									case 3:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*11;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*10 + byte], menu[62*10 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*13;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*12 + byte], menu[62*6 + byte+31]);
-											}
-											break;
-
-									case 4:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*13;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*12 + byte], menu[62*12 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*17;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*16 + byte], menu[62*6 + byte+31]);
-											}
-											break;
-
-									case 5:	PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*17;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*16 + byte], menu[62*16 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*21;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
-											}
-											break;
-
-									case 6: if (auto_national)
-										{
-											menuitem--;
-										}
-										else
-										{
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*21;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*20 + byte], menu[62*20 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*22;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*21 + byte], menu[62*6 + byte+31]);
-											}
-										}
-										break;
-								}
-								break;
-
-				case RC_LEFT:	switch(menuitem)
-								{
-									case 1:	if(current_pid > 0)
-											{
-												current_pid--;
-
-												memset(&menu[6*62 + 3], ' ', 24);
-
-												if(SDT_ready) memcpy(&menu[6*62 + 3 + (24-pid_table[current_pid].service_name_len)/2], &pid_table[current_pid].service_name, pid_table[current_pid].service_name_len);
-												else		  sprintf(&menu[6*62 + 13], "%.4X", pid_table[current_pid].vtxt_pid);
-
-												if(pids_found > 1)
-												{
-													if(current_pid == 0)
-													{
-														menu[6*62 +  1] = ' ';
-														menu[6*62 + 28] = 'î';
-													}
-													else
-													{
-														menu[6*62 +  1] = 'í';
-														menu[6*62 + 28] = 'î';
-													}
-												}
-
-												PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-												PosY = StartY + fixfontheight*7;
-												for(byte = 0; byte < 31; byte++)
-												{
-													RenderCharFB(menu[62*6 + byte], menu[62*6 + byte+31]);
-												}
-
-												if(auto_national)
-												{
-													national_subset = GetNationalSubset(pid_table[current_pid].country_code);
-
-													memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
-
-    													PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-    													PosY = StartY + fixfontheight*22;
-    													for(byte = 0; byte < 31; byte++)
-    													{
-														RenderCharFB(menu[62*21 + byte], menu[62*21 + byte+31]);
-													}
-												}
-											}
-											break;
-
-									case 6:	if(national_subset > 0)
-											{
-												national_subset--;
-
-												if(national_subset == 0)
-												{
-													menu[21*62 +  1] = ' ';
-													menu[21*62 + 28] = 'î';
-												}
-												else
-												{
-													menu[21*62 +  1] = 'í';
-													menu[21*62 + 28] = 'î';
-												}
-
-												memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
-
-												PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-												PosY = StartY + fixfontheight*22;
-												for(byte = 0; byte < 31; byte++)
-												{
-													RenderCharFB(menu[62*21 + byte], menu[62*6 + byte+31]);
-												}
-											}
-											break;
-								}
-								break;
-								
-				case RC_RIGHT:	switch(menuitem)
-								{
-									case 1:	if(current_pid < pids_found - 1)
-											{
-												current_pid++;
-
-												memset(&menu[6*62 + 3], ' ', 24);
-
-												if(SDT_ready) memcpy(&menu[6*62 + 3 + (24-pid_table[current_pid].service_name_len)/2], &pid_table[current_pid].service_name, pid_table[current_pid].service_name_len);
-												else		  sprintf(&menu[6*62 + 13], "%.4X", pid_table[current_pid].vtxt_pid);
-
-												if(pids_found > 1)
-												{
-													if(current_pid == pids_found - 1)
-													{
-														menu[6*62 +  1] = 'í';
-														menu[6*62 + 28] = ' ';
-													}
-													else
-													{
-														menu[6*62 +  1] = 'í';
-														menu[6*62 + 28] = 'î';
-													}
-												}
-
-												PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-												PosY = StartY + fixfontheight*7;
-												for(byte = 0; byte < 31; byte++)
-												{
-													RenderCharFB(menu[62*6 + byte], menu[62*6 + byte+31]);
-												}
-
-												if(auto_national)
-												{
-													national_subset = GetNationalSubset(pid_table[current_pid].country_code);
-
-													memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
-
-    													PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-    													PosY = StartY + fixfontheight*22;
-    													for(byte = 0; byte < 31; byte++)
-    													{
-														RenderCharFB(menu[62*21 + byte], menu[62*21 + byte+31]);
-													}
-												}
-											}
-											break;
-
-									case 6:	if(national_subset < 12)
-											{
-												national_subset++;
-
-												if(national_subset == 12)
-												{
-													menu[21*62 +  1] = 'í';
-													menu[21*62 + 28] = ' ';
-												}
-												else
-												{
-													menu[21*62 +  1] = 'í';
-													menu[21*62 + 28] = 'î';
-												}
-
-												memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
-
-												PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-												PosY = StartY + fixfontheight*22;
-												for(byte = 0; byte < 31; byte++)
-												{
-													RenderCharFB(menu[62*21 + byte], menu[62*6 + byte+31]);
-												}
-											}
-											break;
-								}
-								break;
-
-				case RC_OK:		switch(menuitem)
-								{
-									case 1:	if(pids_found > 1)
-											{
-												if(Init)
-												{
-													vtxtpid = pid_table[current_pid].vtxt_pid;
-												}
-												else
-												{
-													unsigned char magazine;
-
-													//stop old decode-thread
-
-														if(pthread_cancel(thread_id) != 0)
-														{
-															perror("TuxTxt <pthread_cancel>");
-														}
-
-														if(pthread_join(thread_id, &thread_result) != 0)
-														{
-															perror("TuxTxt <pthread_join>");
-														}
-
-													//stop demuxer
-
-														ioctl(dmx, DMX_STOP);
-
-													//reset data
-
-														memset(&subpagetable, 0xFF, sizeof(subpagetable));
-														memset(&countrycontrolbitstable, 0xFF, sizeof(countrycontrolbitstable));
-														memset(&backbuffer, black, sizeof(backbuffer));
-
-														page_atrb[32] = transp<<4 | transp;
-
-														inputcounter = 2;
-
-														cached_pages = 0;
-
-														for (magazine = 1; magazine < 9; magazine++)
-														{
-															current_page	[magazine] = -1;
-															current_subpage [magazine] = -1;
-														}
-														page_receiving = -1;
-
-														page	 = 0x100;
-														lastpage = 0x100;
-														prev_100 = 0x100;
-														prev_10  = 0x100;
-														next_100 = 0x100;
-														next_10  = 0x100;
-														subpage	 = 0;
-
-														pageupdate = 0;
-
-														zap_subpage_manual = 0;
-
-														hintmode = 0;
-
-													//free pagebuffers
-
-														for(clear_page = 0; clear_page < 0x8FF; clear_page++)
-														{
-															for(clear_subpage = 0; clear_subpage < 0x79; clear_subpage++)
-															{
-																if(cachetable[clear_page][clear_subpage] != 0)
-																{
-																	free(cachetable[clear_page][clear_subpage]);
-																	cachetable[clear_page][clear_subpage] = 0;
-																}
-															}
-														}
-
-													//start demuxer with new vtxtpid
-
-														vtxtpid = pid_table[current_pid].vtxt_pid;
-														strcpy(country_code, pid_table[current_pid].country_code);
-
-														dmx_flt.pid		= vtxtpid;
-														dmx_flt.input	= DMX_IN_FRONTEND;
-														dmx_flt.output	= DMX_OUT_TAP;
-														dmx_flt.pesType	= DMX_PES_OTHER;
-														dmx_flt.flags	= DMX_IMMEDIATE_START;
-
-														if(ioctl(dmx, DMX_SET_PES_FILTER, &dmx_flt) == -1)
-														{
-															perror("TuxTxt <DMX_SET_PES_FILTER>");
-														}
-
-													//start new decode-thread
-
-														if(pthread_create(&thread_id, NULL, CacheThread, NULL) != 0)
-														{
-															perror("TuxTxt <pthread_create>");
-														}
-
-														pageupdate = 1;
-												}
-
-												//show new teletext
-
-													current_service = current_pid;
-													RenderMessage(ShowServiceName);
-
-													fcntl(rc, F_SETFL, O_NONBLOCK);
-													RCCode = 0;
-													return;
-											}
-											break;
-
-									case 2:	screen_mode1++;
-											screen_mode1 &= 1;
-
-											if(screen_mode1) memcpy(&menu[62*10 + 26], "ein", 3);
-											else			 memcpy(&menu[62*10 + 26], "aus", 3);
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*11;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*10 + byte], menu[62*6 + byte+31]);
-											}
-
-											ioctl(avs, AVSIOSSCARTPIN8, &fncmodes[screen_mode1]);
-											ioctl(saa, SAAIOSWSS, &saamodes[screen_mode1]);
-
-											break;
-
-									case 3:	screen_mode2++;
-											screen_mode2 &= 1;
-
-											if(screen_mode2) memcpy(&menu[62*12 + 26], "ein", 3);
-											else			 memcpy(&menu[62*12 + 26], "aus", 3);
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*13;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*12 + byte], menu[62*6 + byte+31]);
-											}
-											break;
-
-									case 4:	color_mode++;
-											color_mode &= 1;
-
-											if(color_mode) memcpy(&menu[62*16 + 26], "ein", 3);
-											else		   memcpy(&menu[62*16 + 26], "aus", 3);
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*17;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*16 + byte], menu[62*6 + byte+31]);
-											}
-
-											if(color_mode)
-											{
-												if (ioctl(fb, FBIOPUTCMAP, &colormap_2) == -1)
-												{
-													perror("TuxTxt <FBIOPUTCMAP>");
-												}
-											}
-											else
-											{
-												if (ioctl(fb, FBIOPUTCMAP, &colormap_1) == -1)
-												{
-													perror("TuxTxt <FBIOPUTCMAP>");
-												}
-											}
-											break;
-
-									case 5:	auto_national++;
-											auto_national &= 1;
-
-											if(auto_national)
-											{
-												memcpy(&menu[62*20 + 26], "ein", 3);
-                										menu[21*62 +  1] = ' ';
-										                menu[21*62 + 28] = ' ';
-												national_subset = GetNationalSubset(pid_table[current_pid].country_code);
-												memcpy(&menu[62*21 + 2], &countrystring[national_subset*26], 26);
-											}
-											else
-											{
-												memcpy(&menu[62*20 + 26], "aus", 3);
-												if (national_subset != 0)  menu[21*62 +  1] = 'í';
-												if (national_subset != 12) menu[21*62 + 28] = 'î';
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*21;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*20 + byte], menu[62*6 + byte+31]);
-											}
-
-											PosX = StartX + desc0.font.pix_width*4 + desc0.font.pix_width/2;
-											PosY = StartY + fixfontheight*22;
-											for(byte = 0; byte < 31; byte++)
-											{
-												RenderCharFB(menu[62*21 + byte], menu[62*21 + byte+31]);
-											}
-											break;
-								}
+								tuxtxt_ClearFB(&renderinfo,tuxtxt_color_transp);
+
+
+								/* start demuxer with new vtxtpid */
+								if (renderinfo.auto_national)
+									tuxtxt_cache.national_subset = pid_table[current_pid].national_subset;
+
+#if TUXTXT_CFG_STANDALONE
+								tuxtxt_cache.vtxtpid = pid_table[current_pid].vtxt_pid;
+								tuxtxt_start_thread();
+#else
+								tuxtxt_start(pid_table[current_pid].vtxt_pid);
+#endif
+							}
+//							tuxtxt_cache.pageupdate = 1;
+
+							tuxtxt_ClearBB(&renderinfo,tuxtxt_color_black);
+							gethotlist();
+
+						/* show new teletext */
+						current_service = current_pid;
+//						RenderMessage(ShowServiceName);
+
+						fcntl(rc, F_SETFL, O_NONBLOCK);
+						RCCode = -1;
+						if (oldscreenmode)
+							tuxtxt_SwitchScreenMode(&renderinfo,oldscreenmode); /* restore divided screen */
+						return;
+					}
+					break;
+
+				case M_SC1:
+					saveconfig = 1;
+					renderinfo.screen_mode1++;
+					renderinfo.screen_mode1 &= 1;
+
+					memcpy(&menu[Menu_Width*MenuLine[M_SC1] + Menu_Width - 5], &configonoff[menulanguage][renderinfo.screen_mode1  ? 3 : 0], 3);
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+#ifndef HAVE_TRIPLEDRAGON
+					ioctl(renderinfo.avs, AVSIOSSCARTPIN8, &fncmodes[renderinfo.screen_mode1]);
+					ioctl(renderinfo.saa, SAAIOSWSS, &saamodes[renderinfo.screen_mode1]);
+#endif
+					break;
+
+				case M_SC2:
+					saveconfig = 1;
+					renderinfo.screen_mode2++;
+					renderinfo.screen_mode2 &= 1;
+
+					memcpy(&menu[Menu_Width*MenuLine[M_SC2] + Menu_Width - 5], &configonoff[menulanguage][renderinfo.screen_mode2  ? 3 : 0], 3);
+					Menu_HighlightLine(menu, MenuLine[menuitem], 1);
+					break;
+
+
+				case M_AUN:
+					saveconfig = 1;
+					renderinfo.auto_national++;
+					renderinfo.auto_national &= 1;
+					if (renderinfo.auto_national)
+					{
+					 	if (getpidsdone)
+							tuxtxt_cache.national_subset = pid_table[current_pid].national_subset;
+						else
+						{
+							if (tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage] &&
+								tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage]->pageinfo.nationalvalid)
+								tuxtxt_cache.national_subset = countryconversiontable[tuxtxt_cache.astCachetable[tuxtxt_cache.page][tuxtxt_cache.subpage]->pageinfo.national];
+							else
+								tuxtxt_cache.national_subset = national_subset_bak;
+						}
+
+					}
+					Menu_Init(menu, current_pid, menuitem, hotindex);
+					break;
+				case M_HOT: /* show selected page */
+				{
+					if (hotindex >= 0) /* not found: ignore */
+					{
+						lastpage = tuxtxt_cache.page;
+						tuxtxt_cache.page = hotlist[hotindex];
+						tuxtxt_cache.subpage = tuxtxt_cache.subpagetable[tuxtxt_cache.page];
+						renderinfo.inputcounter = 2;
+						tuxtxt_cache.pageupdate = 1;
+						RCCode = RC_HOME;		 /* leave menu */
+					}
+				}
+				break;
+				} /* RC_OK */
+				break;
 			}
 		}
-		while(RCCode != RC_HOME);
+		UpdateLCD(); /* update number of cached pages */
+	} while ((RCCode != RC_HOME) && (RCCode != RC_DBOX) && (RCCode != RC_MUTE));
 
-	//reset to nonblocking mode
-
-		fcntl(rc, F_SETFL, O_NONBLOCK);
-		pageupdate = 1;
-		RCCode = 0;
+	/* reset to nonblocking mode */
+	fcntl(rc, F_SETFL, O_NONBLOCK);
+	tuxtxt_cache.pageupdate = 1;
+	RCCode = -1;
+	if (oldscreenmode)
+		tuxtxt_SwitchScreenMode(&renderinfo,oldscreenmode); /* restore divided screen */
 }
 
 /******************************************************************************
@@ -1532,384 +1814,204 @@ void ConfigMenu(int Init)
 
 void PageInput(int Number)
 {
-	static int temp_page;
 	int zoom = 0;
 
-	//clear temp_page
+	/* clear temp_page */
+	if (renderinfo.inputcounter == 2)
+		temp_page = 0;
 
-		if(inputcounter == 2) temp_page = 0;
+	/* check for 0 & 9 on first position */
+	if (Number == 0 && renderinfo.inputcounter == 2)
+	{
+		/* set page */
+		temp_page = lastpage; /* 0 toggles to last page as in program switching */
+		renderinfo.inputcounter = -1;
+	}
+	else if (Number == 9 && renderinfo.inputcounter == 2)
+	{
+		/* set page */
+		temp_page = getIndexOfPageInHotlist(); /* 9 toggles through hotlist */
 
-	//check for 0 & 9 on first position
+		if (temp_page<0 || temp_page==maxhotlist) /* from any (other) page go to first page in hotlist */
+			temp_page = (maxhotlist >= 0) ? hotlist[0] : 0x100;
+		else
+			temp_page = hotlist[temp_page+1];
 
-		if(Number == 0 && inputcounter == 2)
+		renderinfo.inputcounter = -1;
+	}
+
+	/* show pageinput */
+	if (renderinfo.zoommode == 2)
+	{
+		renderinfo.zoommode = 1;
+		tuxtxt_CopyBB2FB(&renderinfo);
+	}
+
+	if (renderinfo.zoommode == 1)
+		zoom = 1<<10;
+
+	renderinfo.PosY = renderinfo.StartY;
+
+	switch (renderinfo.inputcounter)
+	{
+	case 2:
+		tuxtxt_SetPosX(&renderinfo,1);
+		tuxtxt_RenderCharFB(&renderinfo,Number | '0', &tuxtxt_atrtable[ATR_WB]);
+		tuxtxt_RenderCharFB(&renderinfo,'-', &tuxtxt_atrtable[ATR_WB]);
+		tuxtxt_RenderCharFB(&renderinfo,'-', &tuxtxt_atrtable[ATR_WB]);
+		break;
+
+	case 1:
+		tuxtxt_SetPosX(&renderinfo,2);
+		tuxtxt_RenderCharFB(&renderinfo,Number | '0', &tuxtxt_atrtable[ATR_WB]);
+		break;
+
+	case 0:
+		tuxtxt_SetPosX(&renderinfo,3);
+		tuxtxt_RenderCharFB(&renderinfo,Number | '0', &tuxtxt_atrtable[ATR_WB]);
+		break;
+	}
+
+	/* generate pagenumber */
+	temp_page |= Number << renderinfo.inputcounter*4;
+
+	renderinfo.inputcounter--;
+
+	if (renderinfo.inputcounter < 0)
+	{
+		/* disable subpage zapping */
+		tuxtxt_cache.zap_subpage_manual = 0;
+
+		/* reset input */
+		renderinfo.inputcounter = 2;
+
+		/* set new page */
+		lastpage = tuxtxt_cache.page;
+
+		tuxtxt_cache.page = temp_page;
+		renderinfo.hintmode = 0;
+
+		/* check cache */
+		int subp = tuxtxt_cache.subpagetable[tuxtxt_cache.page];
+		if (subp != 0xFF)
 		{
-			//set page
-
-				temp_page = 0x100;
-
-				inputcounter = -1;
+			tuxtxt_cache.subpage = subp;
+			tuxtxt_cache.pageupdate = 1;
+#if TUXTXT_DEBUG
+			printf("TuxTxt <DirectInput: %.3X-%.2X>\n", tuxtxt_cache.page, tuxtxt_cache.subpage);
+#endif
 		}
-		else if(Number == 9 && inputcounter == 2)
+		else
 		{
-			//set page
-
-				temp_page = lastpage;
-
-				inputcounter = -1;
+			tuxtxt_cache.subpage = 0;
+//			RenderMessage(PageNotFound);
+#if TUXTXT_DEBUG
+			printf("TuxTxt <DirectInput: %.3X not found>\n", tuxtxt_cache.page);
+#endif
 		}
-
-	//show pageinput
-
-		if(zoommode == 2)
-		{
-			zoommode = 1;
-			CopyBB2FB();
-		}
-
-		if(zoommode == 1) zoom = 1<<10;
-
-		PosY = StartY;
-
-		switch(inputcounter)
-		{
-			case 2:	PosX = StartX + 8*desc0.font.pix_width;
-					RenderCharFB(Number | '0', black<<4 | white);
-					RenderCharFB('-', black<<4 | white);
-					RenderCharFB('-', black<<4 | white);
-					break;
-
-			case 1:	PosX = StartX + 9*desc0.font.pix_width;
-					RenderCharFB(Number | '0', black<<4 | white);
-					break;
-
-			case 0:	PosX = StartX + 10*desc0.font.pix_width;
-					RenderCharFB(Number | '0', black<<4 | white);
-					break;
-		}
-
-	//generate pagenumber
-
-		temp_page |= Number << inputcounter*4;
-
-		inputcounter--;
-
-		if(inputcounter < 0)
-		{
-			//disable subpage zapping
-
-				zap_subpage_manual = 0;
-
-			//reset input
-
-				inputcounter = 2;
-
-			//set new page
-
-				lastpage = page;
-
-				page = temp_page;
-
-			//check cache
-
-				if(subpagetable[page] != 0xFF)
-				{
-					subpage = subpagetable[page];
-					pageupdate = 1;
-					printf("TuxTxt <DirectInput: %.3X-%.2X>\n", page, subpage);
-				}
-				else
-				{
-					subpage = 0;
-					RenderMessage(PageNotFound);
-					printf("TuxTxt <DirectInput: %.3X not found>\n", page);
-				}
-		}
+	}
 }
 
 /******************************************************************************
  * GetNextPageOne                                                             *
  ******************************************************************************/
 
-void GetNextPageOne()
+void GetNextPageOne(int up)
 {
-	//disable subpage zapping
+	/* disable subpage zapping */
+	tuxtxt_cache.zap_subpage_manual = 0;
 
-		zap_subpage_manual = 0;
+	/* abort pageinput */
+	renderinfo.inputcounter = 2;
 
-	//abort pageinput
+	/* find next cached page */
+	lastpage = tuxtxt_cache.page;
 
-		inputcounter = 2;
+	int subp;
+	do {
+		if (up)
+			tuxtxt_next_dec(&tuxtxt_cache.page);
+		else
+			tuxtxt_prev_dec(&tuxtxt_cache.page);
+		subp = tuxtxt_cache.subpagetable[tuxtxt_cache.page];
+	} while (subp == 0xFF && tuxtxt_cache.page != lastpage);
 
-	//find next cached page
+	/* update page */
+	if (tuxtxt_cache.page != lastpage)
+	{
+		if (renderinfo.zoommode == 2)
+			renderinfo.zoommode = 1;
 
-		lastpage = page;
-
-		do
-		{
-			page++;
-
-			//skip hex pages
-
-				if((page & 0x00F) > 0x009) page += 0x006;
-				if((page & 0x0F0) > 0x090) page += 0x060;
-
-			//wrap around
-
-				if(page > 0x899) page = 0x100;
-
-		}while(subpagetable[page] == 0xFF && page != lastpage);
-
-	//update page
-
-		if (page != lastpage)
-		{
-			if(zoommode == 2) zoommode = 1;
-
-			subpage = subpagetable[page];
-			pageupdate = 1;
-			printf("TuxTxt <NextPageOne: %.3X-%.2X>\n", page, subpage);
-		}
-}
-
-/******************************************************************************
- * GetPrevPageOne                                                             *
- ******************************************************************************/
-
-void GetPrevPageOne()
-{
-	//disable subpage zapping
-
-		zap_subpage_manual = 0;
-
-	//abort pageinput
-
-		inputcounter = 2;
-
-	//find previous cached page
-
-		lastpage = page;
-
-		do
-		{
-			page--;
-
-			//skip hex pages
-
-				if((page & 0x00F) > 0x009) page -= 0x006;
-				if((page & 0x0F0) > 0x090) page -= 0x060;
-
-			//wrap around
-
-				if(page < 0x100) page = 0x899;
-
-		}while(subpagetable[page] == 0xFF && page != lastpage);
-
-	//update page
-
-		if (page != lastpage)
-		{
-			if(zoommode == 2) zoommode = 1;
-
-			subpage = subpagetable[page];
-			pageupdate = 1;
-			printf("TuxTxt <PrevPageOne: %.3X-%.2X>\n", page, subpage);
-		}
+		tuxtxt_cache.subpage = subp;
+		renderinfo.hintmode = 0;
+		tuxtxt_cache.pageupdate = 1;
+#if TUXTXT_DEBUG
+		printf("TuxTxt <NextPageOne: %.3X-%.2X>\n", tuxtxt_cache.page, tuxtxt_cache.subpage);
+#endif
+	}
 }
 
 /******************************************************************************
  * GetNextSubPage                                                             *
  ******************************************************************************/
-
-void GetNextSubPage()
+void GetNextSubPage(int offset)
 {
 	int loop;
 
-	//abort pageinput
+	/* abort pageinput */
+	renderinfo.inputcounter = 2;
 
-		inputcounter = 2;
+	for (loop = tuxtxt_cache.subpage + offset; loop != tuxtxt_cache.subpage; loop += offset)
+	{
+		if (loop < 0)
+			loop = 0x79;
+		else if (loop > 0x79)
+			loop = 0;
+		if (loop == tuxtxt_cache.subpage)
+			break;
 
-	//search subpage
-
-		if(subpage != 0)
+		if (tuxtxt_cache.astCachetable[tuxtxt_cache.page][loop])
 		{
-			//search next subpage
+			/* enable manual subpage zapping */
+			tuxtxt_cache.zap_subpage_manual = 1;
 
-				for(loop = subpage + 1; loop <= 0x79; loop++)
-				{
-					if(cachetable[page][loop] != 0)
-					{
-						//enable manual subpage zapping
+			/* update page */
+			if (renderinfo.zoommode == 2) /* if zoomed to lower half */
+				renderinfo.zoommode = 1; /* activate upper half */
 
-							zap_subpage_manual = 1;
-
-						//update page
-
-							if(zoommode == 2) zoommode = 1;
-
-							subpage = loop;
-							pageupdate = 1;
-							printf("TuxTxt <NextSubPage: %.3X-%.2X>\n", page, subpage);
-							return;
-					}
-				}
-
-				for(loop = 1; loop < subpage; loop++)
-				{
-					if(cachetable[page][loop] != 0)
-					{
-						//enable manual subpage zapping
-
-							zap_subpage_manual = 1;
-
-						//update page
-
-							if(zoommode == 2) zoommode = 1;
-
-							subpage = loop;
-							pageupdate = 1;
-							printf("TuxTxt <NextSubPage: %.3X-%.2X>\n", page, subpage);
-							return;
-					}
-				}
-
-				printf("TuxTxt <NextSubPage: no other SubPage>\n");
+			tuxtxt_cache.subpage = loop;
+			renderinfo.hintmode = 0;
+			tuxtxt_cache.pageupdate = 1;
+#if TUXTXT_DEBUG
+			printf("TuxTxt <NextSubPage: %.3X-%.2X>\n", tuxtxt_cache.page, tuxtxt_cache.subpage);
+#endif
+			return;
 		}
-		else
-		{
-			printf("TuxTxt <NextSubPage: no SubPages>\n");
-		}
-}
+	}
 
+#if TUXTXT_DEBUG
+	printf("TuxTxt <NextSubPage: no other SubPage>\n");
+#endif
+}
 /******************************************************************************
- * GetPrevSubPage                                                             *
+ * ColorKey                                                                   *
  ******************************************************************************/
 
-void GetPrevSubPage()
+void ColorKey(int target)
 {
-	int loop;
-
-	//abort pageinput
-
-		inputcounter = 2;
-
-	//search subpage
-
-		if(subpage != 0)
-		{
-			//search previous subpage
-
-				for(loop = subpage - 1; loop > 0x00; loop--)
-				{
-					if(cachetable[page][loop] != 0)
-					{
-						//enable manual subpage zapping
-
-							zap_subpage_manual = 1;
-
-						//update page
-
-							if(zoommode == 2) zoommode = 1;
-
-							subpage = loop;
-							pageupdate = 1;
-							printf("TuxTxt <PrevSubPage: %.3X-%.2X>\n", page, subpage);
-							return;
-					}
-				}
-
-				for(loop = 0x79; loop > subpage; loop--)
-				{
-					if(cachetable[page][loop] != 0)
-					{
-						//enable manual subpage zapping
-
-							zap_subpage_manual = 1;
-
-						//update page
-
-							if(zoommode == 2) zoommode = 1;
-
-							subpage = loop;
-							pageupdate = 1;
-							printf("TuxTxt <PrevSubPage: %.3X-%.2X>\n", page, subpage);
-							return;
-					}
-				}
-
-				printf("TuxTxt <PrevSubPage: no other SubPage>\n");
-		}
-		else
-		{
-			printf("TuxTxt <PrevSubPage: no SubPages>\n");
-		}
-}
-
-/******************************************************************************
- * Prev100                                                                    *
- ******************************************************************************/
-
-void Prev100()
-{
-	if(zoommode == 2) zoommode = 1;
-
-	lastpage = page;
-	page = prev_100;
-	subpage = subpagetable[page];
-	inputcounter = 2;
-	pageupdate = 1;
-
-	printf("TuxTxt <Prev100: %.3X>\n", page);
-}
-
-/******************************************************************************
- * Prev10                                                                     *
- ******************************************************************************/
-
-void Prev10()
-{
-	if(zoommode == 2) zoommode = 1;
-
-	lastpage = page;
-	page = prev_10;
-	subpage = subpagetable[page];
-	inputcounter = 2;
-	pageupdate = 1;
-
-	printf("TuxTxt <Prev10: %.3X>\n", page);
-}
-
-/******************************************************************************
- * Next10                                                                    *
- ******************************************************************************/
-
-void Next10()
-{
-	if(zoommode == 2) zoommode = 1;
-
-	lastpage = page;
-	page = next_10;
-	subpage = subpagetable[page];
-	inputcounter = 2;
-	pageupdate = 1;
-
-	printf("TuxTxt <Next10: %.3X>\n", page);
-}
-
-/******************************************************************************
- * Next100                                                                    *
- ******************************************************************************/
-
-void Next100()
-{
-	if(zoommode == 2) zoommode = 1;
-
-	lastpage = page;
-	page = next_100;
-	subpage = subpagetable[page];
-	inputcounter = 2;
-	pageupdate = 1;
-
-	printf("TuxTxt <Next100: %.3X>\n", page);
+	if (!target)
+		return;
+	if (renderinfo.zoommode == 2)
+		renderinfo.zoommode = 1;
+	lastpage     = tuxtxt_cache.page;
+	tuxtxt_cache.page         = target;
+	tuxtxt_cache.subpage      = tuxtxt_cache.subpagetable[tuxtxt_cache.page];
+	renderinfo.inputcounter = 2;
+	renderinfo.hintmode     = 0;
+	tuxtxt_cache.pageupdate   = 1;
+#if TUXTXT_DEBUG
+	printf("TuxTxt <ColorKey: %.3X>\n", tuxtxt_cache.page);
+#endif
 }
 
 /******************************************************************************
@@ -1918,184 +2020,210 @@ void Next100()
 
 void PageCatching()
 {
-	int val;
+	int active_national_subset=tuxtxt_cache.national_subset;
+	int val, byte;
+	int oldzoommode = renderinfo.zoommode;
 
-	//abort pageinput
+	renderinfo.pagecatching = 1;
 
-		inputcounter = 2;
+	/* abort pageinput */
+	renderinfo.inputcounter = 2;
 
-	//show info line
+	/* show info line */
+	renderinfo.zoommode = 0;
+	renderinfo.PosX = renderinfo.StartX;
+	renderinfo.PosY = renderinfo.StartY + 24*renderinfo.fontheight;
+	for (byte = 0; byte < 40-renderinfo.nofirst; byte++) {
+		tuxtxt_cache.national_subset=menusubset[menulanguage]; //render page catching line in correct language
+		tuxtxt_RenderCharFB(&renderinfo,catchmenutext[menulanguage][byte], &tuxtxt_atrtable[catchmenutext[menulanguage][byte+40] - '0' + ATR_CATCHMENU0]);
+		tuxtxt_cache.national_subset=active_national_subset;
+	}
+	renderinfo.zoommode = oldzoommode;
 
-		pagecatching = 1;
-		CopyBB2FB();
+	/* check for pagenumber(s) */
+	catch_row    = 1;
+	catch_col    = 0;
+	catched_page = 0;
+	pc_old_row = pc_old_col = 0; /* no inverted page number to restore yet */
+	CatchNextPage(0, 1);
 
-	//check for pagenumber(s)
+	if (!catched_page)
+	{
+		renderinfo.pagecatching = 0;
+		tuxtxt_cache.pageupdate = 1;
+		return;
+	}
 
-		CatchNextPage(1);
+	/* set blocking mode */
+	val = fcntl(rc, F_GETFL);
+	fcntl(rc, F_SETFL, val &~ O_NONBLOCK);
 
-		if(!catched_page)
+	/* loop */
+	do {
+		GetRCCode();
+
+		switch (RCCode)
 		{
-			pagecatching = 0;
-			CopyBB2FB();
+		case RC_LEFT:
+			CatchNextPage(0, -1);
+			break;
+		case RC_RIGHT:
+			CatchNextPage(0, 1);
+			break;
+		case RC_UP:
+			CatchNextPage(-1, -1);
+			break;
+		case RC_DOWN:
+			CatchNextPage(1, 1);
+			break;
+		case RC_0:
+		case RC_1:
+		case RC_2:
+		case RC_3:
+		case RC_4:
+		case RC_5:
+		case RC_6:
+		case RC_7:
+		case RC_8:
+		case RC_9:
+		case RC_RED:
+		case RC_GREEN:
+		case RC_YELLOW:
+		case RC_BLUE:
+		case RC_PLUS:
+		case RC_MINUS:
+		case RC_DBOX:
+		case RC_HOME:
+		case RC_HELP:
+		case RC_MUTE:
+			fcntl(rc, F_SETFL, O_NONBLOCK);
+			tuxtxt_cache.pageupdate = 1;
+			renderinfo.pagecatching = 0;
+			RCCode = -1;
 			return;
 		}
+		UpdateLCD();
+	} while (RCCode != RC_OK);
 
-	//set blocking mode
+	/* set new page */
+	if (renderinfo.zoommode == 2)
+		renderinfo.zoommode = 1;
 
-		val = fcntl(rc, F_GETFL);
-		fcntl(rc, F_SETFL, val &~ O_NONBLOCK);
+	lastpage     = tuxtxt_cache.page;
+	tuxtxt_cache.page         = catched_page;
+	renderinfo.hintmode = 0;
+	tuxtxt_cache.pageupdate = 1;
+	renderinfo.pagecatching = 0;
 
-	//loop
+	int subp = tuxtxt_cache.subpagetable[tuxtxt_cache.page];
+	if (subp != 0xFF)
+		tuxtxt_cache.subpage = subp;
+	else
+		tuxtxt_cache.subpage = 0;
 
-		do
-		{
-			GetRCCode();
-
-			switch(RCCode)
-			{
-				case RC_UP:		CatchPrevPage();
-								break;
-
-				case RC_DOWN:	CatchNextPage(0);
-								break;
-
-				case RC_HOME:	fcntl(rc, F_SETFL, O_NONBLOCK);
-								pageupdate = 1;
-								pagecatching = 0;
-								RCCode = 0;
-								return;
-			}
-		}
-		while(RCCode != RC_OK);
-
-	//set new page
-
-		if(zoommode == 2) zoommode = 1;
-
-		lastpage = page;
-		page = catched_page;
-		if(subpagetable[page] != 0xFF) subpage = subpagetable[page];
-		else						   subpage = 0;
-		pageupdate = 1;
-		pagecatching = 0;
-
-	//reset to nonblocking mode
-
-		fcntl(rc, F_SETFL, O_NONBLOCK);
+	/* reset to nonblocking mode */
+	fcntl(rc, F_SETFL, O_NONBLOCK);
 }
 
 /******************************************************************************
  * CatchNextPage                                                              *
  ******************************************************************************/
 
-void CatchNextPage(int Init)
+void CatchNextPage(int firstlineinc, int inc)
 {
-	int tmp_page, pages_found=0;
+	int tmp_page, allowwrap = 1; /* allow first wrap around */
 
-	//init
+	/* catch next page */
+	for(;;)
+	{
+		unsigned char *p = &(renderinfo.page_char[catch_row*40 + catch_col]);
+		tstPageAttr a = renderinfo.page_atrb[catch_row*40 + catch_col];
 
-		if(Init)
+		if (!(a.charset == C_G1C || a.charset == C_G1S) && /* no mosaic */
+			 (a.fg != a.bg) && /* not hidden */
+			 (*p >= '1' && *p <= '8' && /* valid page number */
+			  *(p+1) >= '0' && *(p+1) <= '9' &&
+			  *(p+2) >= '0' && *(p+2) <= '9') &&
+			 (catch_row == 0 || (*(p-1) < '0' || *(p-1) > '9')) && /* non-numeric char before and behind */
+			 (catch_row == 37 || (*(p+3) < '0' || *(p+3) > '9')))
 		{
-			catch_row = 1;
-			catch_col = 0;
-			catched_page = 0;
-		}
+			tmp_page = ((*p - '0')<<8) | ((*(p+1) - '0')<<4) | (*(p+2) - '0');
 
-	//catch next page
-
-		for( ; catch_row < 24; catch_row++)
-		{
-			for( ; catch_col < 40; catch_col++)
+#if 0
+			if (tmp_page != catched_page)	/* confusing to skip identical page numbers - I want to reach what I aim to */
+#endif
 			{
-				if(!(page_atrb[catch_row*40 + catch_col] & 1<<8) && (page_char[catch_row*40 + catch_col] >= '0' && page_char[catch_row*40 + catch_col] <= '9' && page_char[catch_row*40 + catch_col + 1] >= '0' && page_char[catch_row*40 + catch_col + 1] <= '9' && page_char[catch_row*40 + catch_col + 2] >= '0' && page_char[catch_row*40 + catch_col + 2] <= '9') && (page_char[catch_row*40 + catch_col - 1] < '0' || page_char[catch_row*40 + catch_col - 1] > '9') && (page_char[catch_row*40 + catch_col + 3] < '0' || page_char[catch_row*40 + catch_col + 3] > '9'))
-				{
-					tmp_page = ((page_char[catch_row*40 + catch_col] - '0')<<8) | ((page_char[catch_row*40 + catch_col + 1] - '0')<<4) | (page_char[catch_row*40 + catch_col + 2] - '0');
-
-					if(tmp_page != catched_page && tmp_page >= 0x100 && tmp_page <= 0x899)
-					{
-						catched_page = tmp_page;
-						pages_found++;
-
-						RenderCatchedPage();
-
-						catch_col += 3;
-
-						printf("TuxTxt <PageCatching: %.3X\n", catched_page);
-
-						return;
-					}
-				}
+				catched_page = tmp_page;
+				RenderCatchedPage();
+				catch_col += inc;	/* FIXME: limit */
+#if TUXTXT_DEBUG
+				printf("TuxTxt <PageCatching: %.3X\n", catched_page);
+#endif
+				return;
 			}
+		}
 
+		if (firstlineinc > 0)
+		{
+			catch_row++;
+			catch_col = 0;
+			firstlineinc = 0;
+		}
+		else if (firstlineinc < 0)
+		{
+			catch_row--;
+			catch_col = 37;
+			firstlineinc = 0;
+		}
+		else
+			catch_col += inc;
+
+		if (catch_col > 37)
+		{
+			catch_row++;
 			catch_col = 0;
 		}
-
-		if(Init)
+		else if (catch_col < 0)
 		{
-			printf("TuxTxt <PageCatching: no PageNumber>\n");
-			return;
+			catch_row--;
+			catch_col = 37;
 		}
 
-	//wrap around
-
-		catch_row = 1;
-		catch_col = 0;
-
-		if(!pages_found) return;
-
-		pages_found = 0;
-
-		CatchNextPage(0);
+		if (catch_row > 23)
+		{
+			if (allowwrap)
+			{
+				allowwrap = 0;
+				catch_row = 1;
+				catch_col = 0;
+			}
+			else
+			{
+#if TUXTXT_DEBUG
+				printf("TuxTxt <PageCatching: no PageNumber>\n");
+#endif
+				return;
+			}
+		}
+		else if (catch_row < 1)
+		{
+			if (allowwrap)
+			{
+				allowwrap = 0;
+				catch_row = 23;
+				catch_col =37;
+			}
+			else
+			{
+#if TUXTXT_DEBUG
+				printf("TuxTxt <PageCatching: no PageNumber>\n");
+#endif
+				return;
+			}
+		}
+	}
 }
 
-/******************************************************************************
- * CatchPrevPage                                                              *
- ******************************************************************************/
-
-void CatchPrevPage()
-{
-	int tmp_page, pages_found=0;
-
-	//catch prev page
-
-		for( ; catch_row > 0; catch_row--)
-		{
-			for( ; catch_col > 0; catch_col--)
-			{
-				if(!(page_atrb[catch_row*40 + catch_col] & 1<<8) && (page_char[catch_row*40 + catch_col] >= '0' && page_char[catch_row*40 + catch_col] <= '9' && page_char[catch_row*40 + catch_col + 1] >= '0' && page_char[catch_row*40 + catch_col + 1] <= '9' && page_char[catch_row*40 + catch_col + 2] >= '0' && page_char[catch_row*40 + catch_col + 2] <= '9') && (page_char[catch_row*40 + catch_col - 1] < '0' || page_char[catch_row*40 + catch_col - 1] > '9') && (page_char[catch_row*40 + catch_col + 3] < '0' || page_char[catch_row*40 + catch_col + 3] > '9'))
-				{
-					tmp_page = ((page_char[catch_row*40 + catch_col] - '0')<<8) | ((page_char[catch_row*40 + catch_col + 1] - '0')<<4) | (page_char[catch_row*40 + catch_col + 2] - '0');
-
-					if(tmp_page != catched_page && tmp_page >= 0x100 && tmp_page <= 0x899)
-					{
-						catched_page = tmp_page;
-						pages_found++;
-
-						RenderCatchedPage();
-
-						catch_col -= 3;
-
-						printf("TuxTxt <PageCatching: %.3X\n", catched_page);
-
-						return;
-					}
-				}
-			}
-
-			catch_col = 39;
-		}
-
-	//wrap around
-
-		catch_row = 23;
-		catch_col = 39;
-
-		if(!pages_found) return;
-
-		pages_found = 0;
-
-		CatchPrevPage();
-}
 
 /******************************************************************************
  * RenderCatchedPage                                                          *
@@ -2103,46 +2231,62 @@ void CatchPrevPage()
 
 void RenderCatchedPage()
 {
-	static int old_row, old_col;
 	int zoom = 0;
 
-	//handle zoom
+	/* handle zoom */
+	if (renderinfo.zoommode)
+		zoom = 1<<10;
 
-		if(zoommode) zoom = 1<<10;
+	if (pc_old_row || pc_old_col) /* not at first call */
+	{
+		/* restore pagenumber */
+		tuxtxt_SetPosX(&renderinfo,pc_old_col);
 
-	//restore pagenumber
+		if (renderinfo.zoommode == 2)
+			renderinfo.PosY = renderinfo.StartY + (pc_old_row-12)*renderinfo.fontheight*((zoom>>10)+1);
+		else
+			renderinfo.PosY = renderinfo.StartY + pc_old_row*renderinfo.fontheight*((zoom>>10)+1);
 
-		PosX = StartX + old_col*desc0.font.pix_width;
-		if(zoommode == 2) PosY = StartY + (old_row-12)*fixfontheight*((zoom>>10)+1);
-		else			  PosY = StartY + old_row*fixfontheight*((zoom>>10)+1);
+		tuxtxt_RenderCharFB(&renderinfo,renderinfo.page_char[pc_old_row*40 + pc_old_col    ], &renderinfo.page_atrb[pc_old_row*40 + pc_old_col    ]);
+		tuxtxt_RenderCharFB(&renderinfo,renderinfo.page_char[pc_old_row*40 + pc_old_col + 1], &renderinfo.page_atrb[pc_old_row*40 + pc_old_col + 1]);
+		tuxtxt_RenderCharFB(&renderinfo,renderinfo.page_char[pc_old_row*40 + pc_old_col + 2], &renderinfo.page_atrb[pc_old_row*40 + pc_old_col + 2]);
+	}
 
-		RenderCharFB(page_char[old_row*40 + old_col    ], page_atrb[old_row*40 + old_col    ]);
-		RenderCharFB(page_char[old_row*40 + old_col + 1], page_atrb[old_row*40 + old_col + 1]);
-		RenderCharFB(page_char[old_row*40 + old_col + 2], page_atrb[old_row*40 + old_col + 2]);
+	pc_old_row = catch_row;
+	pc_old_col = catch_col;
 
-		old_row = catch_row;
-		old_col = catch_col;
+	/* mark pagenumber */
+	if (renderinfo.zoommode == 1 && catch_row > 11)
+	{
+		renderinfo.zoommode = 2;
+		tuxtxt_CopyBB2FB(&renderinfo);
+	}
+	else if (renderinfo.zoommode == 2 && catch_row < 12)
+	{
+		renderinfo.zoommode = 1;
+		tuxtxt_CopyBB2FB(&renderinfo);
+	}
+	tuxtxt_SetPosX(&renderinfo,catch_col);
 
-	//mark pagenumber
 
-		if(zoommode == 1 && catch_row > 11)
-		{
-			zoommode = 2;
-			CopyBB2FB();
-		}
-		else if(zoommode == 2 && catch_row < 12)
-		{
-			zoommode = 1;
-			CopyBB2FB();
-		}
+	if (renderinfo.zoommode == 2)
+		renderinfo.PosY = renderinfo.StartY + (catch_row-12)*renderinfo.fontheight*((zoom>>10)+1);
+	else
+		renderinfo.PosY = renderinfo.StartY + catch_row*renderinfo.fontheight*((zoom>>10)+1);
 
-		PosX = StartX + catch_col*desc0.font.pix_width;
-		if(zoommode == 2) PosY = StartY + (catch_row-12)*fixfontheight*((zoom>>10)+1);
-		else			  PosY = StartY + catch_row*fixfontheight*((zoom>>10)+1);
+	tstPageAttr a0 = renderinfo.page_atrb[catch_row*40 + catch_col    ];
+	tstPageAttr a1 = renderinfo.page_atrb[catch_row*40 + catch_col + 1];
+	tstPageAttr a2 = renderinfo.page_atrb[catch_row*40 + catch_col + 2];
+	int t;
 
-		RenderCharFB(page_char[catch_row*40 + catch_col    ], (page_atrb[catch_row*40 + catch_col    ] & 1<<10) | ((page_atrb[catch_row*40 + catch_col    ] & 0x0F)<<4) | ((page_atrb[catch_row*40 + catch_col    ] & 0xF0)>>4));
-		RenderCharFB(page_char[catch_row*40 + catch_col + 1], (page_atrb[catch_row*40 + catch_col + 1] & 1<<10) | ((page_atrb[catch_row*40 + catch_col + 1] & 0x0F)<<4) | ((page_atrb[catch_row*40 + catch_col + 1] & 0xF0)>>4));
-		RenderCharFB(page_char[catch_row*40 + catch_col + 2], (page_atrb[catch_row*40 + catch_col + 2] & 1<<10) | ((page_atrb[catch_row*40 + catch_col + 2] & 0x0F)<<4) | ((page_atrb[catch_row*40 + catch_col + 2] & 0xF0)>>4));
+	/* exchange colors */
+	t = a0.fg; a0.fg = a0.bg; a0.bg = t;
+	t = a1.fg; a1.fg = a1.bg; a1.bg = t;
+	t = a2.fg; a2.fg = a2.bg; a2.bg = t;
+
+	tuxtxt_RenderCharFB(&renderinfo,renderinfo.page_char[catch_row*40 + catch_col    ], &a0);
+	tuxtxt_RenderCharFB(&renderinfo,renderinfo.page_char[catch_row*40 + catch_col + 1], &a1);
+	tuxtxt_RenderCharFB(&renderinfo,renderinfo.page_char[catch_row*40 + catch_col + 2], &a2);
 }
 
 /******************************************************************************
@@ -2151,72 +2295,22 @@ void RenderCatchedPage()
 
 void SwitchZoomMode()
 {
-	if(subpagetable[page] != 0xFF)
+	if (tuxtxt_cache.subpagetable[tuxtxt_cache.page] != 0xFF)
 	{
-		//toggle mode
+		/* toggle mode */
+		renderinfo.zoommode++;
 
-			zoommode++;
-			if(zoommode == 3) zoommode = 0;
+		if (renderinfo.zoommode == 3)
+			renderinfo.zoommode = 0;
 
-			printf("TuxTxt <SwitchZoomMode: %d>\n", zoommode);
-
-		//update page
-
-			CopyBB2FB();
+#if TUXTXT_DEBUG
+		printf("TuxTxt <SwitchZoomMode: %d>\n", renderinfo.zoommode);
+#endif
+		/* update page */
+		tuxtxt_cache.pageupdate = 1; /* FIXME */
 	}
 }
 
-/******************************************************************************
- * SwitchScreenMode                                                           *
- ******************************************************************************/
-
-void SwitchScreenMode()
-{
-	//reset transparency mode
-
-		if(transpmode) transpmode = 0;
-
-	//toggle mode
-
-		screenmode++;
-		screenmode &= 1;
-
-		printf("TuxTxt <SwitchScreenMode: %d>\n", screenmode);
-
-	//update page
-
-		pageupdate = 1;
-
-	//clear backbuffer
-
-		memset(&backbuffer, screenmode?transp:black, sizeof(backbuffer));
-
-	//set mode
-
-		if(screenmode)
-		{
-			desc0.font.pix_width = desc1.font.pix_width = desc2.font.pix_width = 8;
-			desc0.font.pix_height = desc1.font.pix_height = desc2.font.pix_height = 21;
-
-			avia_pig_set_pos(pig, (StartX+322), StartY);
-			avia_pig_set_size(pig, 320, 526);
-			avia_pig_set_stack(pig, 2);
-			avia_pig_show(pig);
-
-			ioctl(avs, AVSIOSSCARTPIN8, &fncmodes[screen_mode2]);
-			ioctl(saa, SAAIOSWSS, &saamodes[screen_mode2]);
-		}
-		else
-		{
-			desc0.font.pix_width = desc1.font.pix_width = desc2.font.pix_width = 16;
-			desc0.font.pix_height = desc1.font.pix_height = desc2.font.pix_height = 22;
-
-			avia_pig_hide(pig);
-
-			ioctl(avs, AVSIOSSCARTPIN8, &fncmodes[screen_mode1]);
-			ioctl(saa, SAAIOSWSS, &saamodes[screen_mode1]);
-		}
-}
 
 /******************************************************************************
  * SwitchTranspMode                                                           *
@@ -2224,31 +2318,46 @@ void SwitchScreenMode()
 
 void SwitchTranspMode()
 {
-	if(!screenmode)
+	if (renderinfo.screenmode)
 	{
-		//toggle mode
+		renderinfo.prevscreenmode = renderinfo.screenmode;
+		tuxtxt_SwitchScreenMode(&renderinfo,0); /* turn off divided screen */
+	}
+	/* toggle mode */
+	if (!renderinfo.transpmode)
+		renderinfo.transpmode = 2;
+	else
+		renderinfo.transpmode--; /* backward to immediately switch to TV-screen */
 
-			transpmode++;
-			if(transpmode == 3) transpmode = 0;
+#if TUXTXT_DEBUG
+	printf("TuxTxt <SwitchTranspMode: %d>\n", renderinfo.transpmode);
+#endif
 
-			printf("TuxTxt <SwitchTranspMode: %d>\n", transpmode);
-
-		//set mode
-
-			if(!transpmode)
-			{
-				memset(&backbuffer, black, sizeof(backbuffer));
-				pageupdate = 1;
-			}
-			else if(transpmode == 1)
-			{
-				memset(&backbuffer, transp, sizeof(backbuffer));
-				pageupdate = 1;
-			}
-			else
-			{
-				memset(lfb, transp, var_screeninfo.xres * var_screeninfo.yres);
-			}
+	/* set mode */
+	if (!renderinfo.transpmode) /* normal text-only */
+	{
+		tuxtxt_ClearBB(&renderinfo,tuxtxt_cache.FullScrColor);
+		tuxtxt_cache.pageupdate = 1;
+	}
+	else if (renderinfo.transpmode == 1) /* semi-transparent BG with FG text */
+	{
+		/* restore videoformat */
+#ifndef HAVE_TRIPLEDRAGON
+		ioctl(renderinfo.avs, AVSIOSSCARTPIN8, &renderinfo.fnc_old);
+		ioctl(renderinfo.saa, SAAIOSWSS, &renderinfo.saa_old);
+#endif
+		tuxtxt_ClearBB(&renderinfo,tuxtxt_color_transp);
+		tuxtxt_cache.pageupdate = 1;
+	}
+	else /* TV mode */
+	{
+		/* restore videoformat */
+#ifndef HAVE_TRIPLEDRAGON
+		ioctl(renderinfo.avs, AVSIOSSCARTPIN8, &renderinfo.fnc_old);
+		ioctl(renderinfo.saa, SAAIOSWSS, &renderinfo.saa_old);
+#endif
+		tuxtxt_ClearFB(&renderinfo,tuxtxt_color_transp);
+		renderinfo.clearbbcolor = tuxtxt_cache.FullScrColor;
 	}
 }
 
@@ -2258,360 +2367,26 @@ void SwitchTranspMode()
 
 void SwitchHintMode()
 {
-	//toggle mode
+	/* toggle mode */
+	renderinfo.hintmode ^= 1;
+#if TUXTXT_DEBUG
+	printf("TuxTxt <SwitchHintMode: %d>\n", renderinfo.hintmode);
+#endif
 
-		hintmode++;
-		hintmode &= 1;
-
-		printf("TuxTxt <SwitchHintMode: %d>\n", hintmode);
-
-	//update page
-
-		pageupdate = 1;
-}
-
-/******************************************************************************
- * RenderCharFB                                                               *
- ******************************************************************************/
-
-void RenderCharFB(int Char, int Attribute)
-{
-	int Row, Pitch, Bit, x = 0, y = 0;
-	int error;
-
-	//load char
-
-		if((Attribute>>8) & 3)
-		{
-			//G1
-
-			if(Char == 0x40 || (Char >= 0x5B && Char <= 0x5F))
-			{
-				switch(Char)
-				{
-					case 0x40:	Char = 0x02;
-								break;
-
-					case 0x5B:	Char = 0x03;
-								break;
-
-					case 0x5C:	Char = 0x04;
-								break;
-
-					case 0x5D:	Char = 0x05;
-								break;
-
-					case 0x5E:	Char = 0x06;
-								break;
-
-					case 0x5F:	Char = 0x07;
-				}
-
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc2, Char + national_subset*13 + 1, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (NS): 0x%.2X>\n", error);
-				PosX += desc2.font.pix_width;
-				return;
-			}
-		}
-		else
-		{
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc1, Char + ((((Attribute>>8) & 3) - 1) * 96) + 1
-, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (G1): 0x%.2X>\n", error);
-				PosX += desc1.font.pix_width;
-				return;
-			}
-		}
-	}
-	else
+	if (!renderinfo.hintmode)	/* toggle evaluation of level 2.5 information by explicitly switching off hintmode */
 	{
-		//G0
-
-		if((Char >= 0x23 && Char <= 0x24) || Char == 0x40 || (Char >= 0x5B && Char <= 0x60) || (Char >= 0x7B && Char <= 0x7E))
-		{
-			switch(Char)
-			{
-				case 0x23:	Char = 0x00;
-							break;
-
-				case 0x24:	Char = 0x01;
-							break;
-
-				case 0x40:	Char = 0x02;
-							break;
-
-				case 0x5B:	Char = 0x03;
-							break;
-
-				case 0x5C:	Char = 0x04;
-							break;
-
-				case 0x5D:	Char = 0x05;
-							break;
-
-				case 0x5E:	Char = 0x06;
-							break;
-
-				case 0x5F:	Char = 0x07;
-							break;
-
-				case 0x60:	Char = 0x08;
-							break;
-
-				case 0x7B:	Char = 0x09;
-							break;
-
-				case 0x7C:	Char = 0x0A;
-							break;
-
-				case 0x7D:	Char = 0x0B;
-							break;
-
-				case 0x7E:	Char = 0x0C;
-			}
-
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc2, Char + national_subset*13
- + 1, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (NS): 0x%.2X>\n", error);
-				PosX += desc2.font.pix_width;
-				return;
-			}
-		}
-		else
-		{
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc0, Char + 1, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (G0): 0x%.2X>\n", error);
-				PosX += desc0.font.pix_width;
-				return;
-			}
-		}
+		renderinfo.showl25 ^= 1;
+		saveconfig = 1;
+#if TUXTXT_DEBUG
+		printf("TuxTxt <ShowLevel2p5: %d>\n", renderinfo.showl25);
+#endif
 	}
-
-	//render char
-
-		for(Row = 0; Row < fixfontheight; Row++)
-		{
-			for(Pitch = 0; Pitch < sbit->pitch; Pitch++)
-			{
-				for(Bit = 7; Bit >= 0; Bit--)
-				{
-					if((sbit->buffer[Row * sbit->pitch + Pitch]) & 1<<Bit)
-					{
-						*(lfb + (x+PosX) + ((y+PosY)*var_screeninfo.xres)) = Attribute & 15;
-
-						if(zoommode && (Attribute & 1<<10))
-						{
-							*(lfb + (x+PosX) + ((y+PosY+1)*var_screeninfo.xres)) = Attribute & 15;
-							*(lfb + (x+PosX) + ((y+PosY+2)*var_screeninfo.xres)) = Attribute & 15;
-							*(lfb + (x+PosX) + ((y+PosY+3)*var_screeninfo.xres)) = Attribute & 15;
-						}
-						else if(zoommode || (Attribute & 1<<10)) *(lfb + (x+PosX) + ((y+PosY+1)*var_screeninfo.xres)) = Attribute & 15;
-					}
-					else
-					{
-						if(transpmode == 1)
-						{
-							Attribute &= 0xFF0F;
-							Attribute |= transp<<4;
-						}
-
-						*(lfb + (x+PosX) + ((y+PosY)*var_screeninfo.xres)) = Attribute>>4 & 15;
-
-						if(zoommode && (Attribute & 1<<10))
-						{
-							*(lfb + (x+PosX) + ((y+PosY+1)*var_screeninfo.xres)) = Attribute>>4 & 15;
-							*(lfb + (x+PosX) + ((y+PosY+2)*var_screeninfo.xres)) = Attribute>>4 & 15;
-							*(lfb + (x+PosX) + ((y+PosY+3)*var_screeninfo.xres)) = Attribute>>4 & 15;
-						}
-						else if(zoommode || (Attribute & 1<<10)) *(lfb + (x+PosX) + ((y+PosY+1)*var_screeninfo.xres)) = Attribute>>4 & 15;
-					}
-
-					x++;
-				}
-			}
-
-			x = 0;
-			y++;
-
-			if(zoommode && (Attribute & 1<<10)) y += 3;
-			else if(zoommode || (Attribute & 1<<10)) y++;
-		}
-
-	PosX += desc0.font.pix_width;
+	/* update page */
+	tuxtxt_cache.pageupdate = 1;
 }
 
-/******************************************************************************
- * RenderCharBB                                                               *
- ******************************************************************************/
 
-void RenderCharBB(int Char, int Attribute)
-{
-	int Row, Pitch, Bit, x = 0, y = 0;
-	int error;
 
-	//skip doubleheight chars in lower line
-
-		if(Char == 0xFF)
-		{
-			PosX += desc0.font.pix_width;
-			return;
-		}
-
-	//load char
-
-		if((Attribute>>8) & 3)
-		{
-			//G1
-
-			if(Char == 0x40 || (Char >= 0x5B && Char <= 0x5F))
-			{
-				switch(Char)
-				{
-					case 0x40:	Char = 0x02;
-								break;
-
-					case 0x5B:	Char = 0x03;
-								break;
-
-					case 0x5C:	Char = 0x04;
-								break;
-
-					case 0x5D:	Char = 0x05;
-								break;
-
-					case 0x5E:	Char = 0x06;
-								break;
-
-					case 0x5F:	Char = 0x07;
-				}
-
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc2, Char + national_subset*13 + 1, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (NS): 0x%.2X>\n", error);
-				PosX += desc2.font.pix_width;
-				return;
-			}
-		}
-		else
-		{
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc1, Char + ((((Attribute>>8) & 3) - 1) * 96) + 1
-, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (G1): 0x%.2X>\n", error);
-				PosX += desc1.font.pix_width;
-				return;
-			}
-		}
-	}
-	else
-	{
-		//G0
-
-		if((Char >= 0x23 && Char <= 0x24) || Char == 0x40 || (Char >= 0x5B && Char <= 0x60) || (Char >= 0x7B && Char <= 0x7E))
-		{
-			switch(Char)
-			{
-				case 0x23:	Char = 0x00;
-							break;
-
-				case 0x24:	Char = 0x01;
-							break;
-
-				case 0x40:	Char = 0x02;
-							break;
-
-				case 0x5B:	Char = 0x03;
-							break;
-
-				case 0x5C:	Char = 0x04;
-							break;
-
-				case 0x5D:	Char = 0x05;
-							break;
-
-				case 0x5E:	Char = 0x06;
-							break;
-
-				case 0x5F:	Char = 0x07;
-							break;
-
-				case 0x60:	Char = 0x08;
-							break;
-
-				case 0x7B:	Char = 0x09;
-							break;
-
-				case 0x7C:	Char = 0x0A;
-							break;
-
-				case 0x7D:	Char = 0x0B;
-							break;
-
-				case 0x7E:	Char = 0x0C;
-			}
-
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc2, Char + national_subset*13
- + 1, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (NS): 0x%.2X>\n", error);
-				PosX += desc2.font.pix_width;
-				return;
-			}
-		}
-		else
-		{
-			if((error = FTC_SBit_Cache_Lookup(cache, &desc0, Char + 1, &sbit)))
-			{
-				printf("TuxTxt <FTC_SBit_Cache_Lookup (G0): 0x%.2X>\n", error);
-				PosX += desc0.font.pix_width;
-				return;
-			}
-		}
-	}
-
-	//render char
-
-		for(Row = 0; Row < fixfontheight; Row++)
-		{
-			for(Pitch = 0; Pitch < sbit->pitch; Pitch++)
-			{
-				for(Bit = 7; Bit >= 0; Bit--)
-				{
-					if((sbit->buffer[Row * sbit->pitch + Pitch]) & 1<<Bit)
-					{
-						backbuffer[(x+PosX) + ((y+PosY)*var_screeninfo.xres)] = Attribute & 15;
-
-						if(Attribute & 1<<10) backbuffer[(x+PosX) + ((y+PosY+1)*var_screeninfo.xres)] = Attribute & 15;
-					}
-					else
-					{
-						if(transpmode == 1 && PosY < StartY + 24*fixfontheight)
-						{
-							Attribute &= 0xFF0F;
-							Attribute |= transp<<4;
-						}
-
-						backbuffer[(x+PosX) + ((y+PosY)*var_screeninfo.xres)] = Attribute>>4 & 15;
-
-						if(Attribute & 1<<10) backbuffer[(x+PosX) + ((y+PosY+1)*var_screeninfo.xres)] = Attribute>>4 & 15;
-					}
-
-					x++;
-				}
-			}
-
-			x = 0;
-			y++;
-
-			if(Attribute & 1<<10) y++;
-		}
-
-	PosX += desc0.font.pix_width;
-}
 
 /******************************************************************************
  * RenderCharLCD                                                             *
@@ -2621,17 +2396,31 @@ void RenderCharLCD(int Digit, int XPos, int YPos)
 {
 	int x, y;
 
-	//render digit to lcd backbuffer
-
-		for(y = 0; y < 15; y++)
+	/* render digit to lcd backbuffer */
+	for (y = 0; y < 15; y++)
+	{
+		for (x = 0; x < 10; x++)
 		{
-			for(x = 0; x < 10; x++)
-			{
-				if(lcd_digits[Digit*15*10 + x + y*10]) lcd_backbuffer[XPos + x + ((YPos+y)/8)*120] |= 1 << ((YPos+y)%8);
-				else								   lcd_backbuffer[XPos + x + ((YPos+y)/8)*120] &= ~(1 << ((YPos+y)%8));
-			}
+			if (lcd_digits[Digit*15*10 + x + y*10])
+				lcd_backbuffer[XPos + x + ((YPos+y)/8)*120] |= 1 << ((YPos+y)%8);
+			else
+				lcd_backbuffer[XPos + x + ((YPos+y)/8)*120] &= ~(1 << ((YPos+y)%8));
 		}
+	}
 }
+
+#if 0
+void RenderCharLCDsmall(int Char, int XPos, int YPos)
+{
+	int old_width = fontwidth;
+	int old_height = fontheight;
+	setfontwidth(fontwidth_small_lcd);
+	typettf.font.pix_height = fontheight = fontwidth_small_lcd;
+	RenderChar(Char, 0, 0, -(YPos<<8 | XPos));
+	setfontwidth(old_width);
+	typettf.font.pix_height = fontheight = old_height;
+}
+#endif
 
 /******************************************************************************
  * RenderMessage                                                              *
@@ -2640,340 +2429,125 @@ void RenderCharLCD(int Digit, int XPos, int YPos)
 void RenderMessage(int Message)
 {
 	int byte;
-	int fbcolor, timecolor, menucolor;
-	char message_1[] = "àáááááááááááááááááááááááááááááááááááâè";
+	int fbcolor, timecolor, menuatr;
+	int pagecolumn;
+	const char *msg;
+
+
+/*                     00000000001111111111222222222233333333334 */
+/*                     01234567890123456789012345678901234567890 */
+	char message_1[] = "àááááááá www.tuxtxt.net x.xxx ááááááâè";
 	char message_2[] = "ã                                   äé";
-	char message_3[] = "ã   suche nach Teletext-Anbietern   äé";
+/* 	char message_3[] = "ã   suche nach Teletext-Anbietern   äé"; */
 	char message_4[] = "ã                                   äé";
 	char message_5[] = "åæææææææææææææææææææææææææææææææææææçé";
 	char message_6[] = "ëììììììììììììììììììììììììììììììììììììê";
 
-	char message_7[] = "ã kein Teletext auf dem Transponder äé";
-	char message_8[] = "ã  warte auf Empfang von Seite 100  äé";
+/* 	char message_7[] = "ã kein Teletext auf dem Transponder äé"; */
+/* 	char message_8[] = "ã  warte auf Empfang von Seite 100  äé"; */
+/* 	char message_9[] = "ã     Seite 100 existiert nicht!    äé"; */
 
-	//reset zoom
+	memcpy(&message_1[24], versioninfo, 5);
+	/* reset zoom */
+	renderinfo.zoommode = 0;
 
-		zoommode = 0;
-
-	//set colors
-
-#ifndef DREAMBOX
-		if(screenmode == 1)
-		{
-			fbcolor   = black;
-			timecolor = black<<4 | black;
-			menucolor = menu1;
-		}
-		else
+	/* set colors */
+#if defined(HAVE_DBOX_HARDWARE) || defined(HAVE_TRIPLEDRAGON)
+	if (renderinfo.screenmode)
+	{
+		fbcolor   = tuxtxt_color_black;
+		timecolor = tuxtxt_color_black<<4 | tuxtxt_color_black;
+		menuatr = ATR_MSGDRM0;
+	}
+	else
 #endif
-		{
-			fbcolor   = transp;
-			timecolor = transp<<4 | transp;
-			menucolor = menu3;
-		}
+	{
+		fbcolor   = tuxtxt_color_transp;
+		timecolor = tuxtxt_color_transp<<4 | tuxtxt_color_transp;
+		menuatr = ATR_MSG0;
+	}
 
-	//clear framebuffer
+	/* clear framebuffer */
+	tuxtxt_ClearFB(&renderinfo,fbcolor);
 
-		memset(lfb, fbcolor, var_screeninfo.xres * var_screeninfo.yres);
+	/* hide header */
+	renderinfo.page_atrb[32].fg = tuxtxt_color_transp;
+	renderinfo.page_atrb[32].bg = tuxtxt_color_transp;
 
-	//hide timestring
 
-		page_atrb[32] = timecolor;
+	/* set pagenumber */
+	if (Message == ShowServiceName)
+	{
+		pagecolumn = message8pagecolumn[menulanguage];
+		msg = message_8[menulanguage];
+		memcpy(&message_4, msg, sizeof(message_4));
+		tuxtxt_hex2str(message_4+pagecolumn, tuxtxt_cache.page);
 
-	//set pagenumber
+		if (SDT_ready)
+			memcpy(&message_2[2 + (35 - pid_table[current_service].service_name_len)/2],
+					 &pid_table[current_service].service_name, pid_table[current_service].service_name_len);
+		else if (Message == ShowServiceName)
+			tuxtxt_hex2str(&message_2[17+3], tuxtxt_cache.vtxtpid);
 
-		if(Message == PageNotFound || Message == ShowServiceName)
-		{
-			memset(&message_3[1], ' ', 35);
+		msg = &message_3_blank[0];
+	}
+	else if (Message == NoServicesFound)
+		msg = &message_7[menulanguage][0];
+	else
+		msg = &message_3[menulanguage][0];
 
-			message_8[31] = (page >> 8) | '0';
-			message_8[32] = (page & 0x0F0)>>4 | '0';
-			message_8[33] = (page & 0x00F) | '0';
-			memcpy(&message_4, &message_8, sizeof(message_8));
+	/* render infobar */
+	renderinfo.PosX = renderinfo.StartX + renderinfo.fontwidth+5;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight*16;
 
-			if(SDT_ready) memcpy(&message_2[2 + (35 - pid_table[current_service].service_name_len)/2], &pid_table[current_service].service_name, pid_table[current_service].service_name_len);
-			else		  sprintf(&message_2[17], "%.4X", pid_table[current_service].vtxt_pid);
-		}
-		else if(Message == NoServicesFound) memcpy(&message_3, &message_7, sizeof(message_7));
+	int active_national_subset=tuxtxt_cache.national_subset;	// version string should be rendered in NAT_DEFAULT
+	tuxtxt_cache.national_subset=NAT_DEFAULT;
 
-	//render infobar
+	for (byte = 0; byte < 37; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,message_1[byte], &tuxtxt_atrtable[menuatr + ((byte >= 9 && byte <= 28) ? 1 : 0)]);
+	tuxtxt_RenderCharFB(&renderinfo,message_1[37], &tuxtxt_atrtable[menuatr + 2]);
 
-		PosX = StartX + desc0.font.pix_width+5;
-		PosY = StartY + fixfontheight*16;
-		for(byte = 0; byte < 37; byte++)
-		{
-			RenderCharFB(message_1[byte], menucolor<<4 | menu2);
-		}
-		RenderCharFB(message_1[37], fbcolor<<4 | menu2);
+	tuxtxt_cache.national_subset=menusubset[menulanguage]; //render message in menulanguage
 
-		PosX = StartX + desc0.font.pix_width+5;
-		PosY = StartY + fixfontheight*17;
-		RenderCharFB(message_2[0], menucolor<<4 | menu2);
-		for(byte = 1; byte < 36; byte++)
-		{
-			RenderCharFB(message_2[byte], menucolor<<4 | white);
-		}
-		RenderCharFB(message_2[36], menucolor<<4 | menu2);
-		RenderCharFB(message_2[37], fbcolor<<4 | menu2);
+	renderinfo.PosX = renderinfo.StartX + renderinfo.fontwidth+5;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight*17;
+	tuxtxt_RenderCharFB(&renderinfo,message_2[0], &tuxtxt_atrtable[menuatr + 0]);
+	for (byte = 1; byte < 36; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,message_2[byte], &tuxtxt_atrtable[menuatr + 3]);
+	tuxtxt_RenderCharFB(&renderinfo,message_2[36], &tuxtxt_atrtable[menuatr + 0]);
+	tuxtxt_RenderCharFB(&renderinfo,message_2[37], &tuxtxt_atrtable[menuatr + 2]);
 
-		PosX = StartX + desc0.font.pix_width+5;
-		PosY = StartY + fixfontheight*18;
-		RenderCharFB(message_3[0], menucolor<<4 | menu2);
-		for(byte = 1; byte < 36; byte++)
-		{
-			RenderCharFB(message_3[byte], menucolor<<4 | white);
-		}
-		RenderCharFB(message_3[36], menucolor<<4 | menu2);
-		RenderCharFB(message_3[37], fbcolor<<4 | menu2);
+	renderinfo.PosX = renderinfo.StartX + renderinfo.fontwidth+5;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight*18;
+	tuxtxt_RenderCharFB(&renderinfo,msg[0], &tuxtxt_atrtable[menuatr + 0]);
+	for (byte = 1; byte < 36; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,msg[byte], &tuxtxt_atrtable[menuatr + 3]);
+	tuxtxt_RenderCharFB(&renderinfo,msg[36], &tuxtxt_atrtable[menuatr + 0]);
+	tuxtxt_RenderCharFB(&renderinfo,msg[37], &tuxtxt_atrtable[menuatr + 2]);
 
-		PosX = StartX + desc0.font.pix_width+5;
-		PosY = StartY + fixfontheight*19;
-		RenderCharFB(message_4[0], menucolor<<4 | menu2);
-		for(byte = 1; byte < 36; byte++)
-		{
-			RenderCharFB(message_4[byte], menucolor<<4 | white);
-		}
-		RenderCharFB(message_4[36], menucolor<<4 | menu2);
-		RenderCharFB(message_4[37], fbcolor<<4 | menu2);
+	renderinfo.PosX = renderinfo.StartX + renderinfo.fontwidth+5;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight*19;
+	tuxtxt_RenderCharFB(&renderinfo,message_4[0], &tuxtxt_atrtable[menuatr + 0]);
+	for (byte = 1; byte < 36; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,message_4[byte], &tuxtxt_atrtable[menuatr + 3]);
+	tuxtxt_RenderCharFB(&renderinfo,message_4[36], &tuxtxt_atrtable[menuatr + 0]);
+	tuxtxt_RenderCharFB(&renderinfo,message_4[37], &tuxtxt_atrtable[menuatr + 2]);
 
-		PosX = StartX + desc0.font.pix_width+5;
-		PosY = StartY + fixfontheight*20;
-		for(byte = 0; byte < 37; byte++)
-		{
-			RenderCharFB(message_5[byte], menucolor<<4 | menu2);
-		}
-		RenderCharFB(message_5[37], fbcolor<<4 | menu2);
+	renderinfo.PosX = renderinfo.StartX + renderinfo.fontwidth+5;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight*20;
+	for (byte = 0; byte < 37; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,message_5[byte], &tuxtxt_atrtable[menuatr + 0]);
+	tuxtxt_RenderCharFB(&renderinfo,message_5[37], &tuxtxt_atrtable[menuatr + 2]);
 
-		PosX = StartX + desc0.font.pix_width+5;
-		PosY = StartY + fixfontheight*21;
-		for(byte = 0; byte < 38; byte++)
-		{
-			RenderCharFB(message_6[byte], fbcolor<<4 | menu2);
-		}
+	renderinfo.PosX = renderinfo.StartX + renderinfo.fontwidth+5;
+	renderinfo.PosY = renderinfo.StartY + renderinfo.fontheight*21;
+	for (byte = 0; byte < 38; byte++)
+		tuxtxt_RenderCharFB(&renderinfo,message_6[byte], &tuxtxt_atrtable[menuatr + 2]);
+
+	tuxtxt_cache.national_subset=active_national_subset; // restore charset
 }
 
-/******************************************************************************
- * RenderPage                                                                 *
- ******************************************************************************/
 
-void RenderPage()
-{
-	int row, col, byte;
-
-	//update lcd
-
-		UpdateLCD();
-
-	//update page or timestring
-
-		if(transpmode != 2 && pageupdate && page_receiving != page && inputcounter == 2)
-		{
-			//get national subset
-
-				if (auto_national) national_subset = GetNationalSubset(country_code);
-
-			//reset update flag
-
-				pageupdate = 0;
-
-			//decode page
-
-				if(subpagetable[page] != 0xFF) DecodePage();
-				else
-				{
-					RenderMessage(PageNotFound);
-					return;
-				}
-
-			//render page
-
-				PosY = StartY;
-
-				for(row = 0; row < 24; row++)
-				{
-					PosX = StartX;
-
-					for(col = 0; col < 40; col++)
-					{
-						RenderCharBB(page_char[row*40 + col], page_atrb[row*40 + col]);
-					}
-
-					PosY += fixfontheight;
-				}
-
-			//update framebuffer
-
-				CopyBB2FB();
-		}
-		else if(transpmode != 2 && zoommode != 2)
-		{
-			//update timestring
-
-				PosX = StartX + 32*desc0.font.pix_width;
-				PosY = StartY;
-
-				for(byte = 0; byte < 8; byte++)
-				{
-					RenderCharFB(timestring[byte], page_atrb[32]);
-				}
-		}
-}
-
-/******************************************************************************
- * CreateLine25                                                               *
- ******************************************************************************/
-
-void CreateLine25()
-{
-	int byte;
-	int cancel_page;
-
-	char line25_1[] = "   ?00<      ??0<      >??0      >?00   ((((((((((1111111111AAAAAAAAAAXXXXXXXXXX";
-#ifndef DREAMBOX
-	char line25_2[] = " ïð w{hlen   ñò anzeigen   óô abbrechen ¤¨¨¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤";
-#else
-	char line25_2[] = " ïð w{hlen   ñò anzeigen   õö abbrechen ¤¨¨¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤¤¨¨¤¤¤¤¤¤¤¤¤¤¤";
-#endif
-
-	//get prev 100th
-
-		prev_100 = page & 0xF00;
-		cancel_page = (page & 0xF00) + 0x100;
-		if (cancel_page == 0x900) cancel_page = 0x100;
-
-		if(!(page & 0x0FF) || subpagetable[prev_100] == 0xFF)
-		{
-			do
-			{
-				prev_100 -= 0x100;
-
-				if(prev_100 == 0x000) prev_100 = 0x800;
-			}
-			while(subpagetable[prev_100] == 0xFF && prev_100 != cancel_page);
-		}
-		if (prev_100 == cancel_page) prev_100 = page & 0xF00;
-
-		line25_1[3] = (prev_100 >> 8) | '0';
-
-	//get next 100th
-
-		next_100 = page & 0xF00;
-		cancel_page = next_100;
-
-		do
-		{
-			next_100 += 0x100;
-
-			if(next_100 == 0x900) next_100 = 0x100;
-		}
-		while(subpagetable[next_100] == 0xFF && next_100 != cancel_page);
-		if (next_100 == cancel_page) next_100 = (page & 0xF00) + 0x100;
-		if (next_100 == 0x900) next_100 = 0x100;
-
-		line25_1[34] = (next_100 >> 8) | '0';
-
-	//get prev 10th
-
-		prev_10 = page & 0xFF0;
-		cancel_page = (page & 0xFF0) + (((page & 0x0F0) == 0x90) ? 0x70 : 0x10);
-		if (cancel_page == 0x900) cancel_page = 0x100;
-
-		if(!(page & 0x00F) || subpagetable[prev_10] == 0xFF)
-		{
-			do
-			{
-				if((prev_10 & 0x0F0) == 0x000) prev_10 -= 0x70;
-				else						   prev_10 -= 0x10;
-
-				if(prev_10 <= 0x090)		   prev_10 = 0x890;
-			}
-			while(subpagetable[prev_10] == 0xFF && prev_10 != cancel_page);
-		}
-		if (prev_10 == cancel_page) prev_10 = page & 0xFF0;
-
-		line25_1[13] = (prev_10 >> 8) | '0';
-		line25_1[14] = ((prev_10 & 0x0F0)>>4) | '0';
-
-	//get next 10th
-
-		next_10 = page & 0xFF0;
-		cancel_page = next_10;
-
-		do
-		{
-			if((next_10 & 0x0F0) == 0x090) next_10 += 0x70;
-			else						   next_10 += 0x10;
-
-			if(next_10 >= 0x900)		   next_10 = 0x100;
-		}
-		while(subpagetable[next_10] == 0xFF && next_10 != cancel_page);
-		if (next_10 == cancel_page) next_10 = (page & 0xFF0) + (((page & 0x0F0) == 0x90) ? 0x70 : 0x10);
-		if (next_10 == 0x900) next_10 = 0x100;
-
-		line25_1[24] = (next_10 >> 8) | '0';
-		line25_1[25] = ((next_10 & 0x0F0)>>4) | '0';
-
-	//render line 25
-
-		PosX = StartX;
-		PosY = StartY + 24*fixfontheight;
-
-		for(byte = 0; byte < 40; byte++)
-		{
-			if(boxed)			  RenderCharBB(' ', transp<<4 | transp);
-			else if(pagecatching) RenderCharBB(line25_2[byte], line25_2[byte + 40]);
-			else				  RenderCharBB(line25_1[byte], line25_1[byte + 40]);
-		}
-}
-
-/******************************************************************************
- * CopyBB2FB                                                                  *
- ******************************************************************************/
-
-void CopyBB2FB()
-{
-	int src;
-	unsigned int dst = 0;
-	int fillcolor = black;
-
-	//line 25
-
-		CreateLine25();
-
-	//copy backbuffer to framebuffer
-
-		if(!zoommode)
-		{
-			memcpy(lfb, &backbuffer, sizeof(backbuffer));
-			return;
-		}
-		else if(zoommode == 1)
-		{
-			src = StartY*var_screeninfo.xres;
-		}
-		else
-		{
-			src = StartY*var_screeninfo.xres + 12*fixfontheight*var_screeninfo.xres;
-		}
-
-		if(transpmode) fillcolor = transp;
-
-		memset(lfb, fillcolor, StartY*var_screeninfo.xres);
-
-		do
-		{
-			memcpy(lfb + StartY*var_screeninfo.xres + dst, backbuffer + src, var_screeninfo.xres);
-			dst += var_screeninfo.xres;
-			memcpy(lfb + StartY*var_screeninfo.xres + dst, backbuffer + src, var_screeninfo.xres);
-			dst += var_screeninfo.xres;
-			src += var_screeninfo.xres;
-		}
-		while(dst < var_screeninfo.xres * 24*fixfontheight);
-
-		memcpy(lfb + StartY*var_screeninfo.xres + dst, backbuffer + StartY*var_screeninfo.xres + 24*fixfontheight*var_screeninfo.xres, var_screeninfo.xres*fixfontheight);
-
-		memset(lfb + (StartY + 25*fixfontheight)*var_screeninfo.xres, fillcolor, var_screeninfo.xres*var_screeninfo.yres - (StartY + 25*fixfontheight)*var_screeninfo.xres);
-}
 
 /******************************************************************************
  * UpdateLCD                                                                  *
@@ -2984,717 +2558,322 @@ void UpdateLCD()
 	static int init_lcd = 1, old_cached_pages = -1, old_page = -1, old_subpage = -1, old_subpage_max = -1, old_hintmode = -1;
 	int  x, y, subpage_max = 0, update_lcd = 0;
 
-	//init or update lcd
+	if (lcd == -1) return; // for Dreamboxes without LCD-Display (5xxx)
+	/* init or update lcd */
+	if (init_lcd)
+	{
+		init_lcd = 0;
 
-		if(init_lcd)
+		for (y = 0; y < 64; y++)
 		{
-			init_lcd = 0;
+			int lcdbase = (y/8)*120;
+			int lcdmask = 1 << (y%8);
 
-			for(y = 0; y < 64; y++)
+			for (x = 0; x < 120; )
 			{
-				for(x = 0; x < 120; x++)
+				int rommask;
+				int rombyte = lcd_layout[x/8 + y*120/8];
+
+				for (rommask = 0x80; rommask; rommask >>= 1)
 				{
-					if(lcd_layout[x + y*120]) lcd_backbuffer[x + (y/8)*120] |= 1 << (y%8);
-					else					  lcd_backbuffer[x + (y/8)*120] &= ~(1 << (y%8));
+					if (rombyte & rommask)
+						lcd_backbuffer[x + lcdbase] |= lcdmask;
+					else
+						lcd_backbuffer[x + lcdbase] &= ~lcdmask;
+					x++;
 				}
 			}
-
-			write(lcd, &lcd_backbuffer, sizeof(lcd_backbuffer));
-
-			for(y = 15; y <= 58; y++)
-			{
-				for(x = 1; x < 118; x++)
-				{
-					lcd_backbuffer[x + (y/8)*120] &= ~(1 << (y%8));
-				}
-			}
-
-			for(x = 3; x <= 116; x++)
-			{
-				lcd_backbuffer[x + (39/8)*120] |= 1 << (39%8);
-			}
-
-			for(y = 42; y <= 60; y++)
-			{
-				lcd_backbuffer[35 + (y/8)*120] |= 1 << (y%8);
-			}
-
-			for(y = 42; y <= 60; y++)
-			{
-				lcd_backbuffer[60 + (y/8)*120] |= 1 << (y%8);
-			}
-
-			RenderCharLCD(10, 43, 20);
-			RenderCharLCD(11, 79, 20);
-
-			return;
 		}
+
+#ifdef HAVE_TRIPLEDRAGON
+		dbox2_to_tdLCD(lcd, lcd_backbuffer);
+#else
+		write(lcd, &lcd_backbuffer, sizeof(lcd_backbuffer));
+#endif
+
+		for (y = 16; y < 56; y += 8)	/* clear rectangle in backbuffer */
+			for (x = 1; x < 118; x++)
+				lcd_backbuffer[x + (y/8)*120] = 0;
+
+		for (x = 3; x <= 116; x++)
+			lcd_backbuffer[x + (39/8)*120] |= 1 << (39%8);
+
+		for (y = 42; y <= 60; y++)
+			lcd_backbuffer[35 + (y/8)*120] |= 1 << (y%8);
+
+		for (y = 42; y <= 60; y++)
+			lcd_backbuffer[60 + (y/8)*120] |= 1 << (y%8);
+
+		RenderCharLCD(10, 43, 20);
+		RenderCharLCD(11, 79, 20);
+
+		return;
+	}
+	else
+	{
+		int p;
+
+		if (renderinfo.inputcounter == 2)
+			p = tuxtxt_cache.page;
 		else
+			p = temp_page + (0xDD >> 4*(1-renderinfo.inputcounter)); /* partial pageinput (filled with spaces) */
+
+		/* page */
+		if (old_page != p)
 		{
-			//page
+			RenderCharLCD(p>>8,  7, 20);
+			RenderCharLCD((p&0x0F0)>>4, 19, 20);
+			RenderCharLCD(p&0x00F, 31, 20);
 
-				if(old_page != page)
-				{
-					RenderCharLCD(page>>8,  7, 20);
-					RenderCharLCD((page&0x0F0)>>4, 19, 20);
-					RenderCharLCD(page&0x00F, 31, 20);
-
-					old_page = page;
-					update_lcd = 1;
-				}
-
-			//current subpage
-
-				if(old_subpage != subpage)
-				{
-					if(!subpage)
-					{
-						RenderCharLCD(0,  55, 20);
-						RenderCharLCD(1,  67, 20);
-					}
-					else
-					{
-						RenderCharLCD(subpage>>4,  55, 20);
-						RenderCharLCD(subpage&0x0F,  67, 20);
-					}
-
-					old_subpage = subpage;
-					update_lcd = 1;
-				}
-
-			//max subpage
-
-				for(x = 0; x <= 0x79; x++)
-				{
-					if(cachetable[page][x] != 0) subpage_max = x;
-				}
-
-				if(old_subpage_max != subpage_max)
-				{
-					if(!subpage_max)
-					{
-						RenderCharLCD(0,  91, 20);
-						RenderCharLCD(1, 103, 20);
-					}
-					else
-					{
-						RenderCharLCD(subpage_max>>4,  91, 20);
-						RenderCharLCD(subpage_max&0x0F, 103, 20);
-					}
-
-					old_subpage_max = subpage_max;
-					update_lcd = 1;
-				}
-
-			//cachestatus
-
-				if(old_cached_pages != cached_pages)
-				{
-					RenderCharLCD(cached_pages/1000, 67, 44);
-					RenderCharLCD(cached_pages%1000/100, 79, 44);
-					RenderCharLCD(cached_pages%100/10, 91, 44);
-					RenderCharLCD(cached_pages%10, 103, 44);
-
-					old_cached_pages = cached_pages;
-					update_lcd = 1;
-				}
-
-			//mode
-
-				if(old_hintmode != hintmode)
-				{
-					if(hintmode) RenderCharLCD(12, 43, 44);
-					else		 RenderCharLCD(13, 43, 44);
-
-					old_hintmode = hintmode;
-					update_lcd = 1;
-				}
+			old_page = p;
+			update_lcd = 1;
 		}
 
-		if(update_lcd)
+		/* current subpage */
+		if (old_subpage != tuxtxt_cache.subpage)
 		{
-			write(lcd, &lcd_backbuffer, sizeof(lcd_backbuffer));
-		}
-}
-
-/******************************************************************************
- * DecodePage                                                                 *
- ******************************************************************************/
-
-void DecodePage()
-{
-	int row, col;
-	int hold, clear, loop;
-	int foreground, background, doubleheight, charset, mosaictype;
-	unsigned char held_mosaic;
-
-	//copy page to decode buffer
-
-		if(zap_subpage_manual) memcpy(&page_char, cachetable[page][subpage], PAGESIZE);
-		else				   memcpy(&page_char, cachetable[page][subpagetable[page]], PAGESIZE);
-
-	//update timestring
-
-		memcpy(&page_char[32], &timestring, 8);
-
-	//check for newsflash & subtitle
-
-		if(dehamming[page_char[11-6]] & 12 && !screenmode) boxed = 1;
-		else											   boxed = 0;
-
-	//modify header
-
-		if(boxed) memset(&page_char, ' ', 40);
-		else      memcpy(&page_char, " TuxTxt ", 8);
-
-	//decode
-
-		for(row = 0; row < 24; row++)
-		{
-			//start-of-row default conditions
-
-				foreground = white;
-				background = black;
-				doubleheight = 0;
-				charset = 0;
-				mosaictype = 0;
-				hold = 0;
-				held_mosaic = ' ';
-
-				if(boxed == 1 && memchr(&page_char[row*40], start_box, 40) == 0)
-				{
-					foreground = transp;
-					background = transp;
-				}
-
-			for(col = 0; col < 40; col++)
+			if (!tuxtxt_cache.subpage)
 			{
-				if(page_char[row*40 + col] < ' ')
-				{
-					switch(page_char[row*40 + col])
-					{
-						case alpha_black:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = black;
-												charset = 0;
-												break;
+				RenderCharLCD(0, 55, 20);
+				RenderCharLCD(1, 67, 20);
+			}
+			else
+			{
+				if (tuxtxt_cache.subpage >= 0xFF)
+					tuxtxt_cache.subpage = 1;
+				else if (tuxtxt_cache.subpage > 99)
+					tuxtxt_cache.subpage = 0;
 
-						case alpha_red:			page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = red;
-												charset = 0;
-												break;
-
-						case alpha_green:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = green;
-												charset = 0;
-												break;
-
-						case alpha_yellow:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = yellow;
-												charset = 0;
-												break;
-
-						case alpha_blue:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = blue;
-												charset = 0;
-												break;
-
-						case alpha_magenta:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = magenta;
-												charset = 0;
-												break;
-
-						case alpha_cyan:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = cyan;
-												charset = 0;
-												break;
-
-						case alpha_white:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = white;
-												charset = 0;
-												break;
-
-						case flash:				page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												//todo
-												break;
-
-						case steady:			//todo
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case end_box:			page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												if(boxed)
-												{
-													foreground = transp;
-													background = transp;
-												}
-												break;
-
-						case start_box:			page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												if(boxed) for(clear = 0; clear < col; clear++) page_atrb[row*40 + clear] = transp<<4 | transp;
-												break;
-
-						case normal_size:		doubleheight = 0;
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case double_height:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												doubleheight = 1;
-												break;
-
-						case double_width:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												//todo
-												break;
-
-						case double_size:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												//todo
-												break;
-
-						case mosaic_black:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = black;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_red:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = red;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_green:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = green;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_yellow:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = yellow;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_blue:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = blue;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_magenta:	page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = magenta;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_cyan:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = cyan;
-												charset = 1 + mosaictype;
-												break;
-
-						case mosaic_white:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												foreground = white;
-												charset = 1 + mosaictype;
-												break;
-
-						case conceal:			if(!hintmode) foreground = background;
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case contiguous_mosaic:	mosaictype = 0;
-												if(charset) charset = 1;
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case separated_mosaic:	mosaictype = 1;
-												if(charset) charset = 2;
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case esc:				page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												//todo
-												break;
-
-						case black_background:	background = black;
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case new_background:	background = foreground;
-												page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												break;
-
-						case hold_mosaic:		page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												hold = 1;
-												break;
-
-						case release_mosaic:	page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-												hold = 2;
-					}
-
-					//handle spacing attributes
-
-						if(hold && charset) page_char[row*40 + col] = held_mosaic;
-						else				page_char[row*40 + col] = ' ';
-
-						if(hold == 2) hold = 0;
-				}
-				else
-				{
-					page_atrb[row*40 + col] = doubleheight<<10 | charset<<8 | background<<4 | foreground;
-
-					//set new held-mosaic char
-
-						if(charset) held_mosaic = page_char[row*40 + col];
-
-					//skip doubleheight chars in lower line
-
-						if(doubleheight) page_char[(row+1)*40 + col] = 0xFF;
-				}
+				RenderCharLCD(tuxtxt_cache.subpage>>4, 55, 20);
+				RenderCharLCD(tuxtxt_cache.subpage&0x0F, 67, 20);
 			}
 
-			//copy attribute to lower line if doubleheight
-
-				if(memchr(&page_char[(row+1)*40], 0xFF, 40) != 0)
-				{
-					for(loop = 0; loop < 40; loop++)
-					{
-						page_atrb[(row+1)*40 + loop] = (page_atrb[row*40 + loop] & 0xF0) | (page_atrb[row*40 + loop] & 0xF0)>>4;
-					}
-
-					row++;
-				}
+			old_subpage = tuxtxt_cache.subpage;
+			update_lcd = 1;
 		}
+
+		/* max subpage */
+		for (x = 0; x <= 0x79; x++)
+		{
+			if (tuxtxt_cache.astCachetable[tuxtxt_cache.page][x])
+				subpage_max = x;
+		}
+
+		if (old_subpage_max != subpage_max)
+		{
+			if (!subpage_max)
+			{
+				RenderCharLCD(0,  91, 20);
+				RenderCharLCD(1, 103, 20);
+			}
+			else
+			{
+				RenderCharLCD(subpage_max>>4,  91, 20);
+				RenderCharLCD(subpage_max&0x0F, 103, 20);
+			}
+
+			old_subpage_max = subpage_max;
+			update_lcd = 1;
+		}
+
+		/* cachestatus */
+		if (old_cached_pages != tuxtxt_cache.cached_pages)
+		{
+			#if 0
+			int s;
+			int p = tuxtxt_cache.cached_pages;
+			for (s=107; s >= 107-4*fontwidth_small_lcd; s -= fontwidth_small_lcd)
+			{
+				int c = p % 10;
+				if (p)
+					RenderCharLCDsmall('0'+c, s, 44);
+				else
+					RenderCharLCDsmall(' ', s, 44);
+				p /= 10;
+			}
+			#else
+			RenderCharLCD(tuxtxt_cache.cached_pages/1000, 67, 44);
+			RenderCharLCD(tuxtxt_cache.cached_pages%1000/100, 79, 44);
+			RenderCharLCD(tuxtxt_cache.cached_pages%100/10, 91, 44);
+			RenderCharLCD(tuxtxt_cache.cached_pages%10, 103, 44);
+			#endif
+
+			old_cached_pages = tuxtxt_cache.cached_pages;
+			update_lcd = 1;
+		}
+
+		/* mode */
+		if (old_hintmode != renderinfo.hintmode)
+		{
+			if (renderinfo.hintmode)
+				RenderCharLCD(12, 43, 44);
+			else
+				RenderCharLCD(13, 43, 44);
+
+			old_hintmode = renderinfo.hintmode;
+			update_lcd = 1;
+		}
+	}
+
+	if (update_lcd)
+#ifdef HAVE_TRIPLEDRAGON
+		dbox2_to_tdLCD(lcd, lcd_backbuffer);
+#else
+		write(lcd, &lcd_backbuffer, sizeof(lcd_backbuffer));
+#endif
 }
+
 
 /******************************************************************************
  * GetRCCode                                                                  *
  ******************************************************************************/
-
+#ifndef HAVE_TRIPLEDRAGON
 int GetRCCode()
 {
+#if HAVE_DVB_API_VERSION < 3
 	static unsigned short LastKey = -1;
-
-	//get code
-
-		if(read(rc, &RCCode, 2) == 2)
+#else
+	struct input_event ev;
+	static __u16 rc_last_key = KEY_RESERVED;
+#endif
+	/* get code */
+#if HAVE_DVB_API_VERSION < 3
+	if (read(rc, &RCCode, 2) == 2)
+	{
+		if (RCCode != LastKey)
 		{
-			if(RCCode != LastKey)
+			LastKey = RCCode;
+
+			if ((RCCode & 0xFF00) == 0x5C00)
 			{
-				LastKey = RCCode;
-
-				//translation required?
-
-					if((RCCode & 0xFF00) == 0x5C00)
-					{
-						switch(RCCode)
-						{
-							case RC1_UP:		RCCode = RC_UP;
-												break;
-
-							case RC1_DOWN:		RCCode = RC_DOWN;
-												break;
-
-							case RC1_RIGHT:		RCCode = RC_RIGHT;
-												break;
-
-							case RC1_LEFT:		RCCode = RC_LEFT;
-												break;
-
-							case RC1_OK:		RCCode = RC_OK;
-												break;
-
-							case RC1_0:			RCCode = RC_0;
-												break;
-
-							case RC1_1:			RCCode = RC_1;
-												break;
-
-							case RC1_2:			RCCode = RC_2;
-												break;
-
-							case RC1_3:			RCCode = RC_3;
-												break;
-
-							case RC1_4:			RCCode = RC_4;
-												break;
-
-							case RC1_5:			RCCode = RC_5;
-												break;
-
-							case RC1_6:			RCCode = RC_6;
-												break;
-
-							case RC1_7:			RCCode = RC_7;
-												break;
-
-							case RC1_8:			RCCode = RC_8;
-												break;
-
-							case RC1_9:			RCCode = RC_9;
-												break;
-
-							case RC1_RED:		RCCode = RC_RED;
-												break;
-
-							case RC1_GREEN:		RCCode = RC_GREEN;
-												break;
-
-							case RC1_YELLOW:	RCCode = RC_YELLOW;
-												break;
-
-							case RC1_BLUE:		RCCode = RC_BLUE;
-												break;
-
-							case RC1_PLUS:		RCCode = RC_PLUS;
-												break;
-
-							case RC1_MINUS:		RCCode = RC_MINUS;
-												break;
-
-							case RC1_MUTE:		RCCode = RC_MUTE;
-												break;
-
-							case RC1_HELP:		RCCode = RC_HELP;
-												break;
-
-							case RC1_DBOX:		RCCode = RC_DBOX;
-												break;
-
-							case RC1_HOME:		RCCode = RC_HOME;
-												break;
-
-							case RC1_STANDBY:	RCCode = RC_STANDBY;
-						}
-					}
-					else
-					{
-						RCCode &= 0x003F;
-					}
-			}
-			else
+				switch (RCCode)
+#else
+	if (read(rc, &ev, sizeof(ev)) == sizeof(ev))
+	{
+		if (ev.value)
+		{
+			if (ev.code != rc_last_key)
 			{
-				RCCode = -1;
-			}
-
-			//command received
-
+				rc_last_key = ev.code;
+				switch (ev.code)
+#endif
+				{
+				case KEY_UP:		RCCode = RC_UP;		break;
+				case KEY_DOWN:		RCCode = RC_DOWN;	break;
+				case KEY_LEFT:		RCCode = RC_LEFT;	break;
+				case KEY_RIGHT:		RCCode = RC_RIGHT;	break;
+				case KEY_OK:		RCCode = RC_OK;		break;
+				case KEY_0:		RCCode = RC_0;		break;
+				case KEY_1:		RCCode = RC_1;		break;
+				case KEY_2:		RCCode = RC_2;		break;
+				case KEY_3:		RCCode = RC_3;		break;
+				case KEY_4:		RCCode = RC_4;		break;
+				case KEY_5:		RCCode = RC_5;		break;
+				case KEY_6:		RCCode = RC_6;		break;
+				case KEY_7:		RCCode = RC_7;		break;
+				case KEY_8:		RCCode = RC_8;		break;
+				case KEY_9:		RCCode = RC_9;		break;
+				case KEY_RED:		RCCode = RC_RED;	break;
+				case KEY_GREEN:		RCCode = RC_GREEN;	break;
+				case KEY_YELLOW:	RCCode = RC_YELLOW;	break;
+				case KEY_BLUE:		RCCode = RC_BLUE;	break;
+				case KEY_VOLUMEUP:	RCCode = RC_PLUS;	break;
+				case KEY_VOLUMEDOWN:	RCCode = RC_MINUS;	break;
+				case KEY_MUTE:		RCCode = RC_MUTE;	break;
+				case KEY_HELP:		RCCode = RC_HELP;	break;
+				case KEY_SETUP:		RCCode = RC_DBOX;	break;
+				case KEY_HOME:		RCCode = RC_HOME;	break;
+				case KEY_POWER:		RCCode = RC_STANDBY;	break;
+				}
 				return 1;
+			}
+#if HAVE_DVB_API_VERSION < 3
+			else
+				RCCode &= 0x003F;
+#endif
 		}
+#if HAVE_DVB_API_VERSION < 3
+		else
+			RCCode = -1;
+
+		return 1;
+#else
 		else
 		{
-			//no command received
-
-				usleep(1000000/100);
-				return 0;
+			RCCode = -1;
+			rc_last_key = KEY_RESERVED;
 		}
-}
-
-/******************************************************************************
- * CacheThread                                                                *
- ******************************************************************************/
-
-void *CacheThread(void *arg)
-{
-	unsigned char pes_packet[184];
-	unsigned char vtxt_row[1+45];
-	int line, byte, bit;
-	int b1, b2, b3, b4;
-	int packet_number;
-	unsigned char magazine;
-	(void)arg;
-
-	while(1)
-	{
-		//check stopsignal
-
-			pthread_testcancel();
-
-		//read packet
-
-			read(dmx, &pes_packet, sizeof(pes_packet));
-
-		//analyze it
-
-			for(line = 0; line < 4; line++)
-			{
-				if((pes_packet[line*0x2E] == 0x02 || pes_packet[line*0x2E] == 0x03) && (pes_packet[line*0x2E + 1] == 0x2C))
-				{
-					//clear rowbuffer
-
-						memset(&vtxt_row, 0, sizeof(vtxt_row));
-
-					//convert row from lsb to msb (begin with magazin number)
-
-						for(byte = 4; byte <= 45; byte++)
-						{
-							for(bit = 0; bit <= 7; bit++)
-							{
-								if(pes_packet[line*0x2E + byte] & 1<<bit)
-								{
-									vtxt_row[byte] |= 128>>bit;
-								}
-							}
-						}
-
-					//get packet number
-
-						b1 = dehamming[vtxt_row[4]];
-						b2 = dehamming[vtxt_row[5]];
-
-						if(b1 == 0xFF || b2 == 0xFF)
-						{
-							printf("TuxTxt <Biterror in Packet>\n");
-							continue;
-						}
-
-						b1 &= 8;
-
-						packet_number = b1>>3 | b2<<1;
-
-					//get magazine number
-
-						magazine = dehamming[vtxt_row[4]] & 7;
-						if (!magazine) magazine = 8;
-
-					//analyze row
-
-						if(packet_number == 0)
-						{
-							//check parity
-
-								for(byte = 14; byte <= 45; byte++)
-								{
-									if((vtxt_row[byte]&1) ^ ((vtxt_row[byte]>>1)&1) ^ ((vtxt_row[byte]>>2)&1) ^ ((vtxt_row[byte]>>3)&1) ^ ((vtxt_row[byte]>>4)&1) ^ ((vtxt_row[byte]>>5)&1) ^ ((vtxt_row[byte]>>6)&1) ^ (vtxt_row[byte]>>7)) vtxt_row[byte] &= 127;
-									else vtxt_row[byte] = ' ';
-								}
-
-							//get pagenumber
-
-								b1 = dehamming[vtxt_row[4]];
-								b2 = dehamming[vtxt_row[7]];
-								b3 = dehamming[vtxt_row[6]];
-
-								if(b1 == 0xFF || b2 == 0xFF || b3 == 0xFF)
-								{
-									current_page[magazine] = page_receiving = -1;
-									printf("TuxTxt <Biterror in Page>\n");
-									continue;
-								}
-
-								b1 &= 7;
-
-								if(b2 > 9 || b3 > 9)
-								{
-									current_page[magazine] = page_receiving = -1;
-									continue;
-								}
-								else
-								{
-									current_page[magazine] = page_receiving = b1<<8 | b2<<4 | b3;
-								}
-
-								if(current_page[magazine] < 0x100)
-								{
-									current_page[magazine] += 0x800;
-									page_receiving += 0x800;
-								}
-
-							//get subpagenumber
-
-								b1 = dehamming[vtxt_row[11]];
-								b2 = dehamming[vtxt_row[10]];
-								b3 = dehamming[vtxt_row[9]];
-								b4 = dehamming[vtxt_row[8]];
-
-								if(b1 == 0xFF || b2 == 0xFF || b3 == 0xFF || b4 == 0xFF)
-								{
-									current_subpage[magazine] = -1;
-									printf("TuxTxt <Biterror in SubPage>\n");
-									continue;
-								}
-
-								b1 &= 3;
-								b3 &= 7;
-
-								if(b1 != 0 || b2 != 0 || b3 > 7 || b4 > 9)
-								{
-									current_subpage[magazine] = -1;
-									continue;
-								}
-								else
-								{
-									current_subpage[magazine] = b1<<12 | b2<<8 | b3<<4 | b4;
-								}
-
-							//get country control bits
-
-								b1 = dehamming[vtxt_row[13]];
-
-								if (b1 == 0xFF)
-								{
-									countrycontrolbitstable[current_page[magazine]][current_subpage[magazine]] = 0xff;
-									printf("TuxTxt <Biterror in CountryFlags>\n");
-								}
-								else
-								{
-									countrycontrolbitstable[current_page[magazine]][current_subpage[magazine]] = ((b1 >> 3) & 0x01) | (((b1 >> 2) & 0x01) << 1) | (((b1 >> 1) & 0x01) << 2);
-								}
-
-							//check cachetable and allocate memory if needed
-
-								if(cachetable[current_page[magazine]][current_subpage[magazine]] == 0)
-								{
-									cachetable[current_page[magazine]][current_subpage[magazine]] = malloc(PAGESIZE);
-									memset(cachetable[current_page[magazine]][current_subpage[magazine]], ' ', PAGESIZE);
-									cached_pages++;
-								}
-
-							//store current subpage for this page
-
-								subpagetable[current_page[magazine]] = current_subpage[magazine];
-
-							//copy timestring
-
-								memcpy(&timestring, &vtxt_row[38], 8);
-
-							//set update flag
-
-								if(current_page[magazine] == page)
-								{
-									pageupdate = 1;
-
-									if(!zap_subpage_manual) subpage = current_subpage[magazine];
-								}
-
-							//check controlbits
-
-								if(dehamming[vtxt_row[9]] & 8)	//C4 -> erase page
-								{
-									memset(cachetable[current_page[magazine]][current_subpage[magazine]], ' ', PAGESIZE);
-								}
-						}
-						else if(packet_number < 24)
-						{
-							//check parity
-
-								for(byte = 6; byte <= 45; byte++)
-								{
-									if((vtxt_row[byte]&1) ^ ((vtxt_row[byte]>>1)&1) ^ ((vtxt_row[byte]>>2)&1) ^ ((vtxt_row[byte]>>3)&1) ^ ((vtxt_row[byte]>>4)&1) ^ ((vtxt_row[byte]>>5)&1) ^ ((vtxt_row[byte]>>6)&1) ^ (vtxt_row[byte]>>7)) vtxt_row[byte] &= 127;
-									else vtxt_row[byte] = ' ';
-								}
-						}
-
-					//copy row to pagebuffer
-
-						if(current_page[magazine] != -1 && current_subpage[magazine] != -1 && packet_number < 24)
-						{
-							memcpy(cachetable[current_page[magazine]][current_subpage[magazine]] + packet_number*40, &vtxt_row[6], 40);
-
-							//set update flag
-
-								if(current_page[magazine] == page)
-								{
-									pageupdate = 1;
-
-									if(!zap_subpage_manual) subpage = current_subpage[magazine];
-								}
-
-						}
-				}
-			}
+#endif
 	}
+
+	RCCode = -1;
+	usleep(1000000/100);
 
 	return 0;
 }
+#else /* tripledragon */
+int GetRCCode()
+{
+	static unsigned short LastKey = -1;
+	if (read(rc, &RCCode, 2) == 2)
+	{
+		// fprintf(stderr, "rccode: %04x\n", RCCode);
+		if (RCCode != LastKey)
+		{
+			LastKey = RCCode;
+			if ((RCCode & 0xFF00) == 0x0000)
+			{
+				switch (RCCode)
+				{
+				case 0x18:		RCCode = RC_UP;		break;
+				case 0x1c:		RCCode = RC_DOWN;	break;
+				case 0x19:		RCCode = RC_LEFT;	break;
+				case 0x1b:		RCCode = RC_RIGHT;	break;
+				case 0x1a:		RCCode = RC_OK;		break;
+				case 0x0e:		RCCode = RC_0;		break;
+				case 0x02:		RCCode = RC_1;		break;
+				case 0x03:		RCCode = RC_2;		break;
+				case 0x04:		RCCode = RC_3;		break;
+				case 0x05:		RCCode = RC_4;		break;
+				case 0x06:		RCCode = RC_5;		break;
+				case 0x07:		RCCode = RC_6;		break;
+				case 0x09:		RCCode = RC_7;		break;
+				case 0x0a:		RCCode = RC_8;		break;
+				case 0x0b:		RCCode = RC_9;		break;
+				case 0x1f:		RCCode = RC_RED;	break;
+				case 0x20:		RCCode = RC_GREEN;	break;
+				case 0x21:		RCCode = RC_YELLOW;	break;
+				case 0x22:		RCCode = RC_BLUE;	break;
+				case 0x29:		RCCode = RC_PLUS;	break; // [=X=] key -> double height
+				case 0x27:		RCCode = RC_MINUS;	break; // [txt] key -> split mode
+				case 0x11:		RCCode = RC_MUTE;	break;
+				case 0x28:		RCCode = RC_MUTE;	break; // [ /=] key
+				case 0x14:		RCCode = RC_HELP;	break;
+				case 0x2a:		RCCode = RC_HELP;	break; // [==?] key
+				case 0x12:		RCCode = RC_DBOX;	break;
+				case 0x15:		RCCode = RC_HOME;	break;
+				case 0x01:		RCCode = RC_STANDBY;	break;
+				}
+				return 1;
+			}
+		}
+		else
+			RCCode = -1;
+
+		return 1;
+	}
+
+	RCCode = -1;
+	usleep(1000000/100);
+
+	return 0;
+}
+#endif
+
+/* Local Variables: */
+/* indent-tabs-mode:t */
+/* tab-width:3 */
+/* c-basic-offset:3 */
+/* comment-column:0 */
+/* fill-column:120 */
+/* End: */

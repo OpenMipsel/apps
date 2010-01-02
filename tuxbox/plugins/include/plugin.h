@@ -1,11 +1,12 @@
+
 #ifndef TPLUGIN_H
 #define TPLUGIN_H
 
 typedef struct _PluginParam
 {
-	const char	*id;
-	char				*val;
-	struct _PluginParam	*next;
+	const char          * id;
+	char                * val;
+	struct _PluginParam * next;
 
 } PluginParam;
 
@@ -32,12 +33,14 @@ typedef int	(*PluginExec)( PluginParam *par );
 #define P_ID_END_Y		"end_y"			// screen-end-offset y
 #define	P_ID_RCBLK_ANF	"rcblk_anf"		// Key-Repeatblocker Anfang
 #define	P_ID_RCBLK_REP	"rcblk_rep"     // Key-Repeatblocker Wiederholung
+#define P_ID_SUBPID	"pid_sub"
 
 typedef enum plugin_type
 {
 	PLUGIN_TYPE_DISABLED = 0,
 	PLUGIN_TYPE_GAME     = 1,
 	PLUGIN_TYPE_TOOL     = 2,
+	PLUGIN_TYPE_SCRIPT   = 3,
 }
 plugin_type_t;
 
