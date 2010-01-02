@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/un.h>
 #include <netdb.h>
 #include <fcntl.h>
 
@@ -16,22 +17,22 @@
 
 class eSocket: public Object
 {
-	int mystate;
-	int issocket;
-	unsigned int last_break;
 private:
-	int socketdesc;
+	int issocket;
+	int last_break;
 	eIOBuffer readbuffer;
 	eIOBuffer writebuffer;
 	int writebusy;
-	sockaddr_in  serv_addr;
 protected:
+	int socketdesc;
+	int mystate;
 	eSocketNotifier	*rsn;
+	eMainloop *mainloop;
 	virtual void notifier(int);
 public:
-	eSocket(eMainloop *ml);
+	eSocket(eMainloop *ml, int domain = AF_INET);
 	eSocket(int socket, int issocket, eMainloop *ml);
-	~eSocket();
+	virtual ~eSocket();
 	int connectToHost(eString hostname, int port);
 	int getDescriptor();
 	int writeBlock(const char *data, unsigned int len);
@@ -48,7 +49,7 @@ public:
 	
 	void inject(const char *data, int len);
 	
-	enum State {	Idle, HostLookup, Connecting,
+	enum State { Invalid, Idle, HostLookup, Connecting,
 			Listening, Connection, Closing };
 	int state();
 	
@@ -58,6 +59,15 @@ public:
 	Signal0<void> hangup;
 	Signal1<void,int> bytesWritten_;
 	Signal1<void,int> error_;
+};
+
+class eUnixDomainSocket: public eSocket
+{
+public:
+	eUnixDomainSocket(eMainloop *ml);
+	eUnixDomainSocket(int socket, int issocket, eMainloop *ml);
+	~eUnixDomainSocket();
+	int connectToPath(eString path);
 };
 
 #endif /* __socket_h */

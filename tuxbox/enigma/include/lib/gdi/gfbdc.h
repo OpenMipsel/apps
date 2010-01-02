@@ -14,6 +14,7 @@ class gFBDC: public gPixmapDC
 	int brightness, gamma, alpha;
 	void calcRamp();
 	void setPalette();
+	void init_gFBDC();
 public:
 	void reloadSettings();
 	void setAlpha(int alpha);
@@ -29,6 +30,7 @@ public:
 	gFBDC();
 	~gFBDC();
 	static gFBDC *getInstance();
+	int islocked() { return fb->islocked(); }
 };
 
 

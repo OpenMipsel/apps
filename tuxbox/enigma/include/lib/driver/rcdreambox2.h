@@ -1,3 +1,6 @@
+#include <config.h>
+#if HAVE_DVB_API_VERSION < 3
+
 #ifndef DISABLE_DREAMBOX_RC
 
 #ifndef __rcdreambox2_h
@@ -49,3 +52,5 @@ public:
 #endif
 
 #endif // DISABLE_DREAMBOX_RC
+
+#endif // API_V3

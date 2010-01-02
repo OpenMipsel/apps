@@ -26,7 +26,7 @@ enum eVSystem
 class eAVSwitch
 {
 	static eAVSwitch *instance;
-	int volume, VCRVolume, mute;
+	int volume, VCRVolume, mute, useOst, audioChannel;
 
 	int avsfd, saafd;
 	eVSystem system;
@@ -37,6 +37,7 @@ class eAVSwitch
 	void muteAvsAudio(bool);
 	void muteOstAudio(bool);
 	bool loadScartConfig();
+	void init_eAVSwitch();
 protected:
 	enum {NOKIA, SAGEM, PHILIPS} Type;
 	int scart[6];
@@ -65,6 +66,7 @@ public:
 	 */
 	void changeVolume(int abs, int vol);
 
+	int setTVPin8CheckVCR(int vol);
 	int setTVPin8(int vol);
 	int setColorFormat(eAVColorFormat cf);
 	int setAspectRatio(eAVAspectRatio as);
@@ -72,6 +74,9 @@ public:
 	eVSystem getVSystem() { return system; }
 	int setActive(int active);
 	int setInput(int v);	// 0: dbox, 1: vcr
+	int getInput() { return input; }
+	void selectAudioChannel( int chan ); // 0 MonoLeft, 1 Stereo, 2 MonoRight
+	int getAudioChannel() const { return audioChannel; }
 	void changeVCRVolume(int abs, int vol);
 	void toggleMute();
 	void setVideoFormat( int );
@@ -92,7 +97,7 @@ public:
 		dvb[0] = 5;
 		dvb[1] = 1;
 		dvb[2] = 1;
-		dvb[3] = 0;
+		dvb[3] = 1;
 		dvb[4] = 1;
 		dvb[5] = 1;
 		init();

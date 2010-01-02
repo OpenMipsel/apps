@@ -39,13 +39,17 @@
 			<action name="down" key="down" flags="mr" />
 			<action name="left" key="left" flags="mr" />
 			<action name="right" key="right" flags="mr" />
+			<action name="ok" key="ok" flags="m" />
+			<action name="cancel" key="home" flags="mr" />
+		</actionmap>
+
+		<actionmap name="textedit">
 			<action name="insertchar" key="+" flags="mr" />
 			<action name="deletechar" key="-" flags="mr" />
 			<action name="capslock" key="yellow" flags="mr" />
-			<action name="ok" key="ok" flags="m" />
-			<action name="cancel" key="home" flags="m" />
+			<action name="swapnum" key="blue" flags="mr" />
 		</actionmap>
-	
+
 		<actionmap name="focus">
 			<action name="up" key="up" flags="mr" />
 			<action name="down" key="down" flags="mr" />
@@ -60,6 +64,8 @@
 
 		<actionmap name="mainmenu">
 			<action name="close" key="d-box" flags="mr" />
+			<action name="prev" key="left" flags="mr" />
+			<action name="next" key="right" flags="mr" />
 		</actionmap>
 
 		<actionmap name="enigmaMain">
@@ -176,7 +182,8 @@
 			<action name="green" key="green" flags="m" />
 			<action name="yellow" key="yellow" flags="m" />
 			<action name="blue" key="blue" flags="m" />
-			<action name="escape" key="home" flags="m" />
+			<action name="menu" key="d-box" flags="m" />
+			<action name="escape" key="home" flags="mr" />
 		</actionmap>
 
 		<actionmap name="rotorMenu" >
@@ -193,10 +200,6 @@
 		</actionmap>
 
 		<actionmap name="enigmaEventView">
-			<action name="addDVRTimerEvent" key="green" flags="m" />
-			<action name="addNGRABTimerEvent" key="yellow" flags="m" />
-			<action name="addSwitchTimerEvent" key="blue" flags="m" />
-			<action name="removeTimerEvent" key="red" flags="m" />
 			<action name="close" key="?" flags="m" />
 		</actionmap>
 

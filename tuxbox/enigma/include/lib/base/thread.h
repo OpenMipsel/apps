@@ -8,16 +8,18 @@ class eThread
 	pthread_t the_thread;
 	static void *wrapper(void *ptr);
 	int alive;
+	static void thread_completed(void *p);
 public:
 	bool thread_running() { return alive; }
 	eThread();
 	virtual ~eThread();
-	
-	void run();
+
+	void run(int prio=0, int policy=0);
 
 	virtual void thread()=0;
-	
-	void kill();
+	virtual void thread_finished() { }
+
+	void kill(bool sendcancel=false);
 };
 
 #endif

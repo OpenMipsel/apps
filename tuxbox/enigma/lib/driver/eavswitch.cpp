@@ -1,18 +1,28 @@
 #include <lib/driver/eavswitch.h>
 
+#include <config.h>
+#if HAVE_DVB_API_VERSION < 3
 #define VIDEO_DEV "/dev/dvb/card0/video0"
 #define AUDIO_DEV "/dev/dvb/card0/audio0"
+#include <ost/audio.h>
+#include <ost/video.h>
+#else
+#define VIDEO_DEV "/dev/dvb/adapter0/video0"
+#define AUDIO_DEV "/dev/dvb/adapter0/audio0"
+#include <linux/dvb/audio.h>
+#include <linux/dvb/video.h>
+#endif
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <dbox/avs_core.h>
-#include <ost/audio.h>
-#include <ost/video.h>
 #include <sys/ioctl.h>
-
+#include <lib/base/eerror.h>
+#include <lib/base/estring.h>
 #include <lib/system/econfig.h>
-#include <lib/dvb/edvb.h>
+#include <lib/system/info.h>
 #include <lib/dvb/decoder.h>
+#include <lib/driver/streamwd.h>
 
 /* sucks */
 
@@ -47,16 +57,24 @@ eAVSwitch *eAVSwitch::instance=0;
 
 eAVSwitch::eAVSwitch()
 {
+	init_eAVSwitch();
+}
+void eAVSwitch::init_eAVSwitch()
+{
 	input=0;
 	active=0;
+	audioChannel=0;
 	if (!instance)
 		instance=this;
 
 	avsfd=open("/dev/dbox/avs0", O_RDWR);
 
 	saafd=open("/dev/dbox/saa0", O_RDWR);
-	
+
 	system = vsPAL;
+
+	useOst =
+		eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000;
 }
 
 void eAVSwitch::init()
@@ -75,7 +93,8 @@ void eAVSwitch::init()
 		volume=10;
 
 	setInput(0);
-	setActive(1);		// in setActive is volume or mute set to current state
+	setActive(1);
+	changeVolume(0,0);
 }
 
 eAVSwitch *eAVSwitch::getInstance()
@@ -106,51 +125,72 @@ void eAVSwitch::reloadSettings()
 	setVSystem(system);
 }
 
+void eAVSwitch::selectAudioChannel( int c )
+{
+#if HAVE_DVB_API_VERSION < 3
+	audioChannelSelect_t chan=AUDIO_STEREO;
+#else
+	audio_channel_select_t chan=AUDIO_STEREO;
+#endif
+	switch(c)
+	{
+		case 0: // Mono Left
+			chan = AUDIO_MONO_LEFT;
+			break;
+		case 1: // Stereo
+			break;
+		case 2: // Mono Right
+			chan = AUDIO_MONO_RIGHT;
+			break;
+	}
+	audioChannel=c;
+	
+	int fd = Decoder::getAudioDevice();
+
+	if ( fd == -1 )
+		fd = open( AUDIO_DEV, O_RDWR );
+
+	int ret=ioctl(fd, AUDIO_CHANNEL_SELECT, chan);
+	if(ret)
+		eDebug("AUDIO_CHANNEL_SELECT failed (%m)");
+
+	if (Decoder::getAudioDevice() == -1)
+		close(fd);
+}
+
 int eAVSwitch::setVolume(int vol)
 {
-	int mID = eDVB::getInstance()->getmID();
-
 	vol=63-vol/(65536/64);
 	if (vol<0)
 		vol=0;
 	if (vol>63)
 		vol=63;
 
-	if (mID == 5 || mID == 6)  // Dreambox
+	if ( useOst )
 	{
-		if ((vol == 63) && !mute)
-		{
-			mute = 1;
-			muteOstAudio(1);
-		}
-		else
-		{
-			if (mute)
-			{
-				mute = 0;
-				muteOstAudio(0);
-			}
+#if HAVE_DVB_API_VERSION < 3   
+		audioMixer_t mix;
+#else
+		audio_mixer_t mix;
+#endif
+		mix.volume_left=(vol*vol)/64;
 
-			audioMixer_t mix;
-			mix.volume_left=(vol*vol)/64;
-			mix.volume_right=(vol*vol)/64;
+		mix.volume_right=(vol*vol)/64;
 
-			int fd = Decoder::getAudioDevice();
+		int fd = Decoder::getAudioDevice();
 
-			if ( fd == -1 )
-				fd = open( AUDIO_DEV, O_RDWR );
+		if ( fd == -1 )
+			fd = open( AUDIO_DEV, O_RDWR );
 
-			int ret=ioctl(fd, AUDIO_SET_MIXER, &mix);
-			if(ret)
-				perror("AUDIO_SET_MIXER");
-			
-			if (Decoder::getAudioDevice() == -1)
-				close(fd);
+		int ret=ioctl(fd, AUDIO_SET_MIXER, &mix);
+		if(ret)
+			eDebug("AUDIO_SET_MIXER failed(%m)");
 
-			return ret;
-		}
+		if (Decoder::getAudioDevice() == -1)
+			close(fd);
+
+		return ret;
 	}
-
 	return ioctl(avsfd, AVSIOSVOL, &vol);
 }
 
@@ -160,12 +200,10 @@ void eAVSwitch::changeVolume(int abs, int vol)
 	{
 		case 0:
 			volume+=vol;
-			if (mute)
-				toggleMute();
-		break;
+			break;
 		case 1:
 			volume=vol;
-		break;
+			break;
 	}
 
 	if (volume<0)
@@ -174,9 +212,16 @@ void eAVSwitch::changeVolume(int abs, int vol)
 	if (volume>63)
 		volume=63;
 
-	setVolume( (63-volume) * 65536/64 );
+//	if (volume) 
+//	{
+		if ( (!mute && volume == 63)
+			|| (mute && volume != 63 ) )
+			toggleMute();
 
-	sendVolumeChanged();
+		sendVolumeChanged();
+//	}
+
+	setVolume( (63-volume) * 65536/64 );
 }
 
 void eAVSwitch::changeVCRVolume(int abs, int vol)
@@ -202,7 +247,6 @@ void eAVSwitch::changeVCRVolume(int abs, int vol)
 	/*emit*/ volumeChanged(mute, VCRVolume);
 }
 
-
 void eAVSwitch::muteOstAudio(bool b)
 {
 	int fd = Decoder::getAudioDevice();
@@ -226,11 +270,21 @@ void eAVSwitch::sendVolumeChanged()
 
 void eAVSwitch::toggleMute()
 {
-	int mID = eDVB::getInstance()->getmID();
-
+	if ( input == 1 ) //Scart
+	{
+		switch ( eSystemInfo::getInstance()->getHwType() )
+		{
+			case eSystemInfo::dbox2Nokia:
+			case eSystemInfo::dbox2Sagem:
+			case eSystemInfo::dbox2Philips:
+				break;
+			default:
+				return;
+		}
+	}
 	if (mute)
 	{
-		if ( mID == 5 || mID == 6 )
+		if ( useOst )
 			muteOstAudio(0);
 		else
 			muteAvsAudio(0);
@@ -239,7 +293,7 @@ void eAVSwitch::toggleMute()
 	}
 	else
 	{
-		if ( mID == 5 || mID == 6 )
+		if ( useOst )
 			muteOstAudio(1);
 		else
 			muteAvsAudio(1);
@@ -251,6 +305,18 @@ void eAVSwitch::toggleMute()
 
 void eAVSwitch::muteAvsAudio(bool m)
 {
+	if ( input == 1 ) //Scart 
+	{
+		switch ( eSystemInfo::getInstance()->getHwType() )
+		{
+			case eSystemInfo::dbox2Nokia:
+			case eSystemInfo::dbox2Sagem:
+			case eSystemInfo::dbox2Philips:
+				break;
+			default:
+				return;
+		}
+	}
 	int a;
 
 	if(m)
@@ -264,7 +330,13 @@ void eAVSwitch::muteAvsAudio(bool m)
 		return;
 	}
 }
-
+int eAVSwitch::setTVPin8CheckVCR(int vol)
+{
+	int isVCRActive = eStreamWatchdog::getInstance()->getVCRActivity();
+	if (active && input && isVCRActive)
+		return 1;
+	return setTVPin8(vol);
+}
 int eAVSwitch::setTVPin8(int vol)
 {
 /* results from philips:	fnc=0 -> 0V
@@ -273,6 +345,8 @@ int eAVSwitch::setTVPin8(int vol)
 				fnc=3 -> 12V
 */
 	int fnc;
+	if ( vol == -1 ) // switch to last aspect
+		vol = aspect == r169?6:12;
 	switch (vol)
 	{
 	case 0:
@@ -281,6 +355,7 @@ int eAVSwitch::setTVPin8(int vol)
 	case 6:
 		fnc=(Type==PHILIPS?2:1);
 		break;
+	default:
 	case 12:
 		fnc=(Type==PHILIPS?3:2);
 		break;
@@ -317,11 +392,7 @@ int eAVSwitch::setColorFormat(eAVColorFormat c)
 }
 
 int eAVSwitch::setInput(int v)
-{	
-	int mID = eDVB::getInstance()->getmID();
-
-	input = v;
-
+{
 	eDebug("[eAVSwitch] setInput %d, avsfd=%d", v, avsfd);
 	switch (v)
 	{
@@ -335,15 +406,17 @@ int eAVSwitch::setInput(int v)
 		changeVolume(1, volume);  // set Volume to TV Volume
 		if (mute)
 		{
-			if ( mID == 5 || mID == 6 )
+			if ( useOst )
 				muteOstAudio(1);
 			else
 				muteAvsAudio(1);
 			sendVolumeChanged();
 		}
 		reloadSettings();						// reload ColorSettings
+		input=v;
 		break;
 	case 1:   // Switch to VCR
+		input=v;
 		v = (Type == SAGEM)? 0 : 2;
 		ioctl(avsfd, AVSIOSFBLK, &v);
 		ioctl(avsfd, AVSIOSVSW1, scart);
@@ -354,13 +427,12 @@ int eAVSwitch::setInput(int v)
 		ioctl(avsfd, AVSIOSASW3, scart+5);
 		if (mute)
 		{
-			if ( mID == 5 || mID == 6 )
+			if ( useOst )
 				muteOstAudio(0);
 			else
 				muteAvsAudio(0);
 		}
 		changeVCRVolume(1, VCRVolume);
-		break;
 	}
 	return 0;
 }
@@ -375,29 +447,44 @@ int eAVSwitch::setAspectRatio(eAVAspectRatio as)
 
 	saa = (aspect==r169) ? SAA_WSS_169F :
 		( disableWSS ? SAA_WSS_OFF : SAA_WSS_43F );
-	ioctl(saafd,SAAIOSWSS,&saa);
+	if ( ioctl(saafd,SAAIOSWSS,&saa) < 0 )
+		eDebug("SAAIOSWSS failed (%m)");
 
-	return setTVPin8((active && (!input))?((aspect==r169)?6:12):0);
+	return setTVPin8CheckVCR((active && (!input))?((aspect==r169)?6:12):0);
 }
 
 void eAVSwitch::setVSystem(eVSystem _system)
 {
-	unsigned int palM = 0;
-	eConfig::getInstance()->getKey("/elitedvb/video/palM", palM );
+	unsigned int tvsystem = 0;
+	eConfig::getInstance()->getKey("/elitedvb/video/tvsystem", tvsystem );
+	
+	int saa;
+	// we *want* to set _system, but let's see if we support this
+	if ((_system == vsPAL) && (tvsystem & 1))
+		saa = SAA_PAL;
+	else if ((_system == vsNTSC) && (tvsystem & 2))
+		saa = SAA_NTSC;
+	else if ((_system == vsNTSC) && (tvsystem & 4))
+		saa = SAA_PAL_M;
+				// we give up.
+	else if (tvsystem & 1)
+		saa = SAA_PAL;
+	else if (tvsystem & 2)
+		saa = SAA_NTSC;
+				// we are broken.
+	else
+		saa = SAA_PAL;
+		
+	if ( ::ioctl(saafd, SAAIOSENC, &saa) < 0 )
+		eDebug("SAAIOSENC failed (%m)");
 
-//	if (system != _system)
-	{
-		int saa = (_system == vsNTSC) ? (palM ? SAA_PAL_M : SAA_NTSC) : SAA_PAL;
-		if ( ::ioctl(saafd, SAAIOSENC, &saa) < 0 )
-			eDebug("SAAIOSENC failed (%m)");
-	}
 	system = _system;
 }
 
 int eAVSwitch::setActive(int a)
 {
 	active=a;
-	return setTVPin8((active && (!input))?((aspect==r169)?6:12):0);
+	return setTVPin8CheckVCR((active && (!input))?((aspect==r169)?6:12):0);
 }
 
 bool eAVSwitch::loadScartConfig()

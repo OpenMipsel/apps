@@ -12,11 +12,12 @@ class eStreamWatchdog: public Object
 	int handle;
 	int isanamorph;
 	static eStreamWatchdog *instance;
+	void init_eStreamWatchdog();
 private:
 	void check(int);
-	int getVCRActivity();
 public:
-	void reloadSettings();
+	int getVCRActivity();
+	void reloadSettings(int aspect=-1);
 	eStreamWatchdog();
 	~eStreamWatchdog();
 	static eStreamWatchdog *getInstance();

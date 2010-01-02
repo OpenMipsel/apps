@@ -3,17 +3,24 @@
 #ifndef __codec_h
 #define __codec_h
 
+#include <libsig_comp.h>
+#include <set>
+#include <unistd.h>
+
 class eIOBuffer;
 
 class eAudioDecoder
 {
 protected:
 	int speed;
+	off64_t filelength;
+	int sec_duration;
+	int sec_currentpos;
 public:
 	eAudioDecoder();
 	virtual ~eAudioDecoder();
-	
-	virtual int decodeMore(int last, int maxsamples)=0; // returns number of samples(!) written to IOBuffer (out)
+
+	virtual int decodeMore(int last, int maxsamples, Signal1<void,unsigned int>*cb=0)=0; // returns number of samples(!) written to IOBuffer (out)
 	virtual void resync()=0; // clear (secondary) decoder buffers
 
 	struct pcmSettings
@@ -26,6 +33,8 @@ public:
 	virtual int getMinimumFramelength()=0;
 	void setSpeed(int _speed) { speed=_speed; }	
 	virtual int getAverageBitrate()=0;
+	int getSecondsCurrent() {return sec_currentpos;}
+	int getSecondsDuration() {return sec_duration;}
 };
 
 #endif

@@ -3,7 +3,6 @@
 
 #include <string.h>
 #include <list>
-#include <string>
 #include <functional>
 #include <set>
 
@@ -62,7 +61,7 @@ public:
 	{
 		keys[style].insert(key);
 	}
-
+	eAction* setDescription(char *desc) { description = desc; return this;}
 	Signal0<void> handler;
 
 //	keylist &getKeyList();
@@ -71,9 +70,10 @@ public:
 
 typedef std::multiset<eAction::directedAction,eAction::priorityComperator> eActionPrioritySet;
 
-typedef std::map<std::string, std::pair<int, std::string> > eKeymap;
+typedef std::map<eString, std::pair<int, eString> > eKeymap;
 
 class XMLTreeNode;
+class XMLTreeParser;
 
 class eActionMap
 {
@@ -95,9 +95,7 @@ public:
 	eAction *findAction(const char *id) const;
 	const char *getDescription() const { return description; }
 	const char *getIdentifier() const { return identifier; }
-	void reloadConfig();
 	void loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *node, const eString& s="");
-	void saveConfig();
 };
 
 class eActionMapList
@@ -115,8 +113,11 @@ class eActionMapList
 
 	std::map<eString, eString> existingStyles;
 	std::set<eString> currentStyles;
+	ePtrList<XMLTreeParser> xmlfiles;
+	XMLTreeNode *searchDevice(const eString &id);
 
 	static eActionMapList *instance;
+	void init_eActionMapList();
 public:
 	eActionMapList();
 	~eActionMapList();
@@ -128,6 +129,7 @@ public:
 	void addActionMap(const char *, eActionMap * );
 	void removeActionMap(const char *);
 	int loadXML(const char *filename);
+	int loadDevice(eRCDevice *device);
 	eActionMap *findActionMap(const char *id) const;
 	actionMapList &getActionMapList() { return actionmaps; }
 

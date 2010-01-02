@@ -4,8 +4,7 @@
 #define __glcddc_h
 
 #include "grc.h"
-
-class eLCD;
+#include <lib/gdi/lcd.h>
 
 class gLCDDC: public gPixmapDC
 {
@@ -13,11 +12,13 @@ class gLCDDC: public gPixmapDC
 	static gLCDDC *instance;
 	int update;
 	void exec(gOpcode *opcode);
+	void init_gLCDDC();
 public:
 	gLCDDC(eLCD *lcd);
 	~gLCDDC();
 	void setUpdate(int update);
 	static gLCDDC *getInstance();
+	int islocked() { return lcd->islocked(); }
 };
 
 

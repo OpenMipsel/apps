@@ -23,6 +23,7 @@ protected:
 public:
 	int lock();
 	void unlock();
+	int islocked() { return locked; }
 
 	eLCD(eSize size);
 	virtual ~eLCD();
@@ -38,6 +39,7 @@ class eDBoxLCD: public eLCD
 {
 	static eDBoxLCD *instance;
 	unsigned char inverted;
+	void init_eDBoxLCD();
 public:
 	static eDBoxLCD *getInstance();
 	int switchLCD(int state);

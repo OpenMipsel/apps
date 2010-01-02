@@ -1,14 +1,17 @@
 #ifndef __FONT_H
 #define __FONT_H
 
-#include <freetype/freetype.h>
-#include <freetype/ftcache.h>
-#include <freetype/cache/ftcglyph.h>
-#include <freetype/cache/ftcimage.h>
-#include <freetype/cache/ftcmanag.h>
-#include <freetype/cache/ftcsbits.h>
-#include <freetype/cache/ftlru.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_CACHE_H
+#include FT_CACHE_IMAGE_H
+#include FT_CACHE_SMALL_BITMAPS_H
 #include <vector>
+
+/* tested with freetype 2.3.9, and 2.1.4 */
+#if FREETYPE_MAJOR >= 2 && FREETYPE_MINOR >= 3
+#define FT_NEW_CACHE_API
+#endif
 
 #include <lib/gdi/fb.h>
 #include <lib/base/esize.h>
@@ -37,12 +40,17 @@ class fontRenderClass
 
 	FT_Library library;
 	FTC_Manager			cacheManager;				/* the cache manager							 */
-	FTC_Image_Cache	imageCache;					/* the glyph image cache					 */
-	FTC_SBit_Cache	 sbitsCache;				/* the glyph small bitmaps cache	 */
+	FTC_ImageCache	imageCache;					/* the glyph image cache */
+	FTC_SBitCache	 sbitsCache;				/* the glyph small bitmaps cache */
 
 	FTC_FaceID getFaceID(const eString &face);
+#ifdef FT_NEW_CACHE_API
+	FT_Error getGlyphBitmap(FTC_ImageType font, FT_ULong glyph_index, FTC_SBit *sbit);
+#else
 	FT_Error getGlyphBitmap(FTC_Image_Desc *font, FT_ULong glyph_index, FTC_SBit *sbit);
+#endif
 	static fontRenderClass *instance;
+	void init_fontRenderClass();
 public:
 	float getLineHeight(const gFont& font);
 	eString AddFont(const eString &filename, const eString &name, int scale);
@@ -80,7 +88,9 @@ class eLCD;
 class eTextPara
 {
 	Font *current_font, *replacement_font;
+#ifndef FT_NEW_CACHE_API
 	FT_Face current_face, replacement_face;
+#endif
 	int use_kerning;
 	int previous;
 	static eString replacement_facename;
@@ -91,17 +101,24 @@ class eTextPara
 	int left;
 	glyphString glyphs;
 	int refcnt;
+	eRect boundBox;
+	int bboxValid;
 
 	int appendGlyph(Font *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags);
 	void newLine(int flags);
 	void setFont(Font *font, Font *replacement_font);
-	eRect boundBox;
 	void calc_bbox();
-	int bboxValid;
+	void clear();
 public:
+#ifdef FT_NEW_CACHE_API
+	eTextPara(eRect area, ePoint start=ePoint(-1, -1))
+		: current_font(0), replacement_font(0),
+			area(area), cursor(start), maximum(0, 0), left(start.x()), refcnt(0), bboxValid(0)
+#else
 	eTextPara(eRect area, ePoint start=ePoint(-1, -1))
 		: current_font(0), replacement_font(0), current_face(0), replacement_face(0),
 			area(area), cursor(start), maximum(0, 0), left(start.x()), refcnt(0), bboxValid(0)
+#endif
 	{
 	}
 	~eTextPara();
@@ -113,8 +130,6 @@ public:
 
 	void setFont(const gFont &font);
 	int renderString(const eString &string, int flags=0);
-
-	void clear();
 
 	void blit(gPixmapDC &dc, const ePoint &offset, const gRGB &background, const gRGB &foreground);
 
@@ -129,7 +144,6 @@ public:
 	{
 		if (!bboxValid)
 			calc_bbox();
-
 		return boundBox;
 	}
 
@@ -142,7 +156,11 @@ public:
 class Font
 {
 public:
+#ifdef FT_NEW_CACHE_API
+	FTC_ImageTypeRec font;
+#else
 	FTC_Image_Desc font;
+#endif
 	fontRenderClass *renderer;
 	int ref;
 	FT_Error getGlyphBitmap(FT_ULong glyph_index, FTC_SBit *sbit);

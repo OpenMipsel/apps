@@ -9,16 +9,18 @@
  */
 class eButton: public eLabel
 {
-#ifndef DISABLE_LCD
+//#ifndef DISABLE_LCD
 	eLabel*	tmpDescr; // used for LCD with description
-#endif
+//#endif
 protected:
 	gColor focusB, focusF, normalB, normalF;
 	eLabel *descr;
 	int eventHandler(const eWidgetEvent &event);
 	void gotFocus();
 	void lostFocus();
+	void init_eButton();
 public:
+	int setProperty(const eString &prop, const eString &val);
 	/**
 	 * \brief Constructs a button.
 	 *

@@ -1,3 +1,7 @@
+#include <config.h>
+
+#if HAVE_DVB_API_VERSION < 3
+
 #ifndef DISABLE_DBOX_RC
 
 #ifndef __rcdbox_h
@@ -59,3 +63,5 @@ public:
 #endif
 
 #endif // DISABLE_DBOX_RC
+
+#endif // API_V3

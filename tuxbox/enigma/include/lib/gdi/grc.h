@@ -8,11 +8,12 @@
 */
 
 #include <pthread.h>
+#include <unistd.h>
+#include <string.h>
 #include <stack>
 #include <list>
 
 #include <lib/base/estring.h>
-#include <lib/base/ringbuffer.h>
 #include <lib/base/erect.h>
 #include <lib/system/elock.h>
 #include <lib/gdi/gpixmap.h>
@@ -65,10 +66,10 @@ struct gOpcode
 		{
 			gFont font;
 			eRect area;
-			eString text;
+			char *text;
 			gRGB foregroundColor, backgroundColor;
 			prenderText(const gFont &font, const eRect &area, const eString &text, const gRGB &foregroundColor, const gRGB &backgroundColor):
-				font(font), area(area), text(text), foregroundColor(foregroundColor), backgroundColor(backgroundColor) { }
+				font(font), area(area), text(text.length()?strdup(text.c_str()):0), foregroundColor(foregroundColor), backgroundColor(backgroundColor) { }
 		} *renderText;
 
 		struct prenderPara
@@ -120,37 +121,70 @@ struct gOpcode
 	gDC *dc;
 };
 
+#define MAXSIZE 1024
+
 class gRC
 {
-	static gRC *instance;
-	
 	static void *thread_wrapper(void *ptr);
-	pthread_t the_thread;
 	void *thread();
-	
-	eLock queuelock;
-	
-	queueRingBuffer<gOpcode> queue;
+
+	static gRC *instance;
+	gOpcode queue[MAXSIZE];
+	pthread_t the_thread;
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
+	int rp, wp;
 public:
+	bool mustDraw() { return rp != wp; }
 	gRC();
 	virtual ~gRC();
 
 	void submit(const gOpcode &o)
 	{
-		static int collected=0;
-		queue.enqueue(o);
-		collected++;
-		if (o.opcode==gOpcode::end)
+		while(1)
 		{
-			queuelock.unlock(collected);
-#ifdef SYNC_PAINT
-			thread();
-#endif
-			collected=0;
+			pthread_mutex_lock(&mutex);
+			int tmp=wp+1;
+			if ( tmp == MAXSIZE )
+				tmp=0;
+			if ( tmp == rp )
+			{
+				pthread_mutex_unlock(&mutex);
+				//printf("render buffer full...\n");
+				//fflush(stdout);
+				usleep(1000);  // wait 1 msec 
+				continue;
+			}
+			int free=rp-wp;
+			if ( free <= 0 )
+				free+=MAXSIZE;
+			queue[wp++]=o;
+			if ( wp == MAXSIZE )
+				wp = 0;
+			if (o.opcode==gOpcode::end||o.opcode==gOpcode::shutdown)
+				pthread_cond_signal(&cond);
+			pthread_mutex_unlock(&mutex);
+			break;
 		}
 	}
 
 	static gRC &getInstance();
+};
+
+class gDC
+{
+protected:
+	eLock dclock;
+public:
+	virtual void exec(gOpcode *opcode)=0;
+	virtual gPixmap &getPixmap()=0;
+	virtual eSize getSize()=0;
+	virtual const eRect &getClip()=0;
+	virtual gRGB getRGB(gColor col)=0;
+	virtual ~gDC();
+	virtual int islocked() { return 0; }
+	void lock() { dclock.lock(1); }
+	void unlock() { dclock.unlock(1); }
 };
 
 class gPainter
@@ -183,8 +217,10 @@ public:
 	
 	void clear();
 	
-	void gPainter::blit(gPixmap &pixmap, ePoint pos, eRect clip=eRect(), int flags=0)
+	void blit(gPixmap &pixmap, ePoint pos, eRect clip=eRect(), int flags=0)
 	{
+		if ( dc.islocked() )
+			return;
 		gOpcode o;
 		o.dc=&dc;
 		o.opcode=gOpcode::blit;
@@ -208,21 +244,6 @@ public:
 	void clippop();
 
 	void flush();
-};
-
-class gDC
-{
-protected:
-	eLock dclock;
-public:
-	virtual void exec(gOpcode *opcode)=0;
-	virtual gPixmap &getPixmap()=0;
-	virtual eSize getSize()=0;
-	virtual const eRect &getClip()=0;
-	virtual gRGB getRGB(gColor col)=0;
-	virtual ~gDC();
-	void lock() { dclock.lock(1); }
-	void unlock() { dclock.unlock(1); }
 };
 
 class gPixmapDC: public gDC

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: console.cpp,v 1.1.2.4 2003/07/17 11:23:48 ghostrider Exp $
+ * $Id: console.cpp,v 1.1.2.4.2.1 2010/01/02 18:29:07 fergy Exp $
  */
 
 #include <lib/base/console.h>
@@ -27,6 +27,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <string.h>
 
 int bidirpipe(int pfd[], char *cmd , char *argv[])
 {
@@ -42,6 +45,7 @@ int bidirpipe(int pfd[], char *cmd , char *argv[])
 		return(-1);
 	else if (pid == 0) /* child process */
 	{
+		setsid();
 		if ( close(0) == -1 || close(1) == -1 || close(2) == -1 )
 			_exit(0);
 
@@ -53,7 +57,10 @@ int bidirpipe(int pfd[], char *cmd , char *argv[])
 				close(pfderr[0]) == -1 || close(pfderr[1]) == -1 )
 			_exit(0);
 
-		execv(cmd,argv);
+		for (unsigned int i=3; i < 90; ++i )
+			close(i);
+
+		execvp(cmd,argv);
 		_exit(0);
 	}
 	if (close(pfdout[0]) == -1 || close(pfdin[1]) == -1 || close(pfderr[1]) == -1)
@@ -67,10 +74,15 @@ int bidirpipe(int pfd[], char *cmd , char *argv[])
 }
 
 eConsoleAppContainer::eConsoleAppContainer( const eString &cmd )
-:pid(-1), killstate(0), outbuf(0)
+:pid(-1), killstate(0)
+{
+	init_eConsoleAppContainer(cmd);
+}
+void eConsoleAppContainer::init_eConsoleAppContainer( const eString &cmd )
 {
 //	eDebug("cmd = %s", cmd.c_str() );
-	memset(fd, 0, sizeof(fd) );
+	for (int i=0; i < 3; ++i)
+		fd[i]=-1;
 	int cnt=2; // path to app + terminated 0
 	eString str(cmd?cmd:"");
 
@@ -83,6 +95,15 @@ eConsoleAppContainer::eConsoleAppContainer( const eString &cmd )
 	if (!str.length())
 		return;
 
+	std::map<char,char> brackets;
+	brackets.insert(std::pair<char,char>('\'','\''));
+	brackets.insert(std::pair<char,char>('"','"'));
+	brackets.insert(std::pair<char,char>('`','`'));
+	brackets.insert(std::pair<char,char>('(',')'));
+	brackets.insert(std::pair<char,char>('{','}'));
+	brackets.insert(std::pair<char,char>('[',']'));
+	brackets.insert(std::pair<char,char>('<','>'));
+
 	unsigned int idx=0;
 	eString path = str.left( (idx = str.find(' ')) != eString::npos ? idx : str.length() );
 //	eDebug("path = %s", path.c_str() );
@@ -91,9 +112,19 @@ eConsoleAppContainer::eConsoleAppContainer( const eString &cmd )
 //	eDebug("cmds = %s", cmds.c_str() );
 
 	idx = 0;
+	std::map<char,char>::iterator it = brackets.find(cmds[idx]);
 	while ( (idx = cmds.find(' ',idx) ) != eString::npos )  // count args
 	{
-		cnt++;
+		if (it != brackets.end())
+		{
+			if (cmds[idx-1] == it->second)
+				it = brackets.end();
+		}
+		if (it == brackets.end())
+		{
+			cnt++;
+			it = brackets.find(cmds[idx+1]);
+		}
 		idx++;
 	}
 
@@ -115,61 +146,112 @@ eConsoleAppContainer::eConsoleAppContainer( const eString &cmd )
 	{
 		cnt=1;  // do not overwrite path in argv[0]
 
-		while ( (idx = cmds.find(' ')) != eString::npos )  // parse all args..
+		it = brackets.find(cmds[0]);
+		idx=0;
+		while ( (idx = cmds.find(' ',idx)) != eString::npos )  // parse all args..
 		{
-			argv[cnt] = new char[ idx ];
-//			eDebug("idx=%d, arg = %s", idx, cmds.left(idx).c_str() );
-			strcpy( argv[cnt++], cmds.left( idx ).c_str() );
-			cmds = cmds.mid(idx+1);
-//			eDebug("str = %s", cmds.c_str() );
+			bool bracketClosed=false;
+			if ( it != brackets.end() )
+			{
+				if (cmds[idx-1]==it->second)
+				{
+					it = brackets.end();
+					bracketClosed=true;
+				}
+			}
+			if ( it == brackets.end() )
+			{
+				eString tmp = cmds.left(idx);
+				if (bracketClosed)
+				{
+					tmp.erase(0,1);
+					tmp.erase(tmp.length()-1, 1);
+					bracketClosed=false;
+				}
+				argv[cnt] = new char[ tmp.length()+1 ];
+//				eDebug("idx=%d, arg = %s", idx, tmp.c_str() );
+				strcpy( argv[cnt++], tmp.c_str() );
+				cmds = cmds.mid(idx+1);
+//				eDebug("str = %s", cmds.c_str() );
+				it = brackets.find(cmds[0]);
+				idx=0;
+			}
+			else
+				idx++;
+		}
+		if ( it != brackets.end() )
+		{
+			cmds.erase(0,1);
+			cmds.erase(cmds.length()-1, 1);
 		}
 		// store the last arg
 		argv[cnt] = new char[ cmds.length() ];
 		strcpy( argv[cnt], cmds.c_str() );
 	}
+	else
+		cnt=1;
 
   // get one read ,one write and the err pipe to the prog..
+
+//	int tmp=0;
+//	while(argv[tmp])
+//		eDebug("%d is %s", tmp, argv[tmp++]);
   
-	if ( (pid = bidirpipe(fd, argv[0], argv)) == -1 )
-	{
-		while ( cnt-- > 0 )
-			delete [] argv[cnt];
-		delete [] argv;
-		return;
-	}
+	pid = bidirpipe(fd, argv[0], argv);
 
-	while ( cnt-- > 0 )  // release heap memory
-		delete [] argv[cnt];
+	while ( cnt >= 0 )  // release heap memory
+		delete [] argv[cnt--];
 	delete [] argv;
+	
+	if ( pid == -1 )
+		return;
 
-	eDebug("pipe in = %d, out = %d, err = %d", fd[0], fd[1], fd[2]);
+//	eDebug("pipe in = %d, out = %d, err = %d", fd[0], fd[1], fd[2]);
 
 	in = new eSocketNotifier(eApp, fd[0], 19 );  // 19 = POLLIN, POLLPRI, POLLHUP
-	out = new eSocketNotifier(eApp, fd[1], eSocketNotifier::Write);  // POLLOUT
+	out = new eSocketNotifier(eApp, fd[1], eSocketNotifier::Write, false);  // POLLOUT
 	err = new eSocketNotifier(eApp, fd[2], 19 );  // 19 = POLLIN, POLLPRI, POLLHUP
 	CONNECT(in->activated, eConsoleAppContainer::readyRead);
 	CONNECT(out->activated, eConsoleAppContainer::readyWrite);
 	CONNECT(err->activated, eConsoleAppContainer::readyErrRead);
-	signal(SIGCHLD, SIG_IGN);   // no zombie when child killed
 }
 
 eConsoleAppContainer::~eConsoleAppContainer()
 {
-	if ( running() )
-	{
-		killstate=-1;
-		kill();
-	}
-	if ( outbuf )
-		delete [] outbuf;
+	kill();
+	delete in;
+	delete out;
+	delete err;
 }
 
 void eConsoleAppContainer::kill()
 {
-	killstate=-1;
-	system( eString().sprintf("kill %d", pid).c_str() );
-	eDebug("user kill console App");
+	if ( killstate != -1 )
+	{
+		eDebug("user kill(SIGKILL) console App");
+		killstate=-1;
+		/*
+		 * Use a negative pid value, to signal the whole process group
+		 * ('pid' might not even be running anymore at this point)
+		 */
+		::kill(-pid, SIGKILL);
+		closePipes();
+	}
 }
+
+void eConsoleAppContainer::sendCtrlC()
+{
+	if ( killstate != -1 )
+	{
+		eDebug("user send SIGINT(Ctrl-C) to console App");
+		/*
+		 * Use a negative pid value, to signal the whole process group
+		 * ('pid' might not even be running anymore at this point)
+		 */
+		::kill(-pid, SIGINT);
+	}
+}
+
 
 void eConsoleAppContainer::closePipes()
 {
@@ -177,11 +259,11 @@ void eConsoleAppContainer::closePipes()
 	out->stop();
 	err->stop();
 	::close(fd[0]);
-	fd[0]=0;
+	fd[0]=-1;
 	::close(fd[1]);
-	fd[1]=0;
+	fd[1]=-1;
 	::close(fd[2]);
-	fd[2]=0;
+	fd[2]=-1;
 	eDebug("pipes closed");
 }
 
@@ -192,7 +274,7 @@ void eConsoleAppContainer::readyRead(int what)
 //		eDebug("what = %d");
 		char buf[2048];
 		int readed = read(fd[0], buf, 2048);
-		eDebug("%d bytes read", readed);
+//		eDebug("%d bytes read", readed);
 		if ( readed != -1 && readed )
 		{
 /*			for ( int i = 0; i < readed; i++ )
@@ -206,7 +288,20 @@ void eConsoleAppContainer::readyRead(int what)
 	{
 		eDebug("child has terminated");
 		closePipes();
-		/*emit*/ appClosed(killstate);
+		int childstatus;
+		int retval = killstate;
+		/*
+		 * We have to call 'wait' on the child process, in order to avoid zombies.
+		 * Also, this gives us the chance to provide better exit status info to appClosed.
+		 */
+		if (::waitpid(pid, &childstatus, 0) > 0)
+		{
+			if (WIFEXITED(childstatus))
+			{
+				retval = WEXITSTATUS(childstatus);
+			}
+		}
+		/*emit*/ appClosed(retval);
 	}
 }
 
@@ -217,7 +312,7 @@ void eConsoleAppContainer::readyErrRead(int what)
 //		eDebug("what = %d");
 		char buf[2048];
 		int readed = read(fd[2], buf, 2048);
-		eDebug("%d bytes read", readed);
+//		eDebug("%d bytes read", readed);
 		if ( readed != -1 && readed )
 		{
 /*			for ( int i = 0; i < readed; i++ )
@@ -229,28 +324,33 @@ void eConsoleAppContainer::readyErrRead(int what)
 	}
 }
 
-void eConsoleAppContainer::write( const eString & str )
+void eConsoleAppContainer::write( const char *data, int len )
 {
-	outbuf = new char[ str.length()];
-	strcpy( outbuf, str.c_str() );
+	char *tmp = new char[len];
+	memcpy(tmp, data, len);
+	outbuf.push(queue_data(tmp,len));
+	out->start();
 }
 
 void eConsoleAppContainer::readyWrite(int what)
 {
-	if (what == 4 && outbuf)
+	if (what == POLLOUT && outbuf.size() )
 	{
-		if ( ::write( fd[1], outbuf, strlen(outbuf) ) != (int) strlen(outbuf) )
+		queue_data d = outbuf.front();
+		outbuf.pop();
+		if ( ::write( fd[1], d.data, d.len ) != d.len )
 		{
 			/* emit */ dataSent(-1);
-			eDebug("writeError");
+//			eDebug("writeError");
 		}
 		else
 		{
 			/* emit */ dataSent(0);
-			eDebug("write ok");
+//			eDebug("write ok");
 		}
 
-		delete outbuf;
-		outbuf=0;
+		delete [] d.data;
 	}
+	if ( !outbuf.size() )
+		out->stop();
 }

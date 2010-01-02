@@ -56,7 +56,10 @@ class eSkin
 
 	eNamedColor *searchColor(const eString &name);
 
+	int findColorDistance(const gRGB &rgb);
+
 	static eSkin *active;
+	void init_eSkin();
 public:
 	eSkin();
 	~eSkin();

@@ -16,7 +16,7 @@ private:
 	void redrawWidget(gPainter *, const eRect &rect);
 	eRect getNumberRect(int n);
 	int eventHandler(const eWidgetEvent &event);
-	int number[24];
+	int number[32];
 	int len, dspace, space_selected, active;
 	gColor cursorB, cursorF, normalB, normalF;
 	int oldmax;	
@@ -26,12 +26,15 @@ private:
 	int base;
 	eWidget* descr;
 	eLabel* tmpDescr; // used for description Label in LCD
-  bool neg;
+	bool neg;
+	int saved_keyboard_mode;
+	void init_eNumber(int _len, int _min, int _max, int _maxdigits, int *init);
 protected:
 	int getActive()	{ return active; }
 	int keyDown(int key);
 	void gotFocus();
 	void lostFocus();
+	int setProperty(const eString &prop, const eString &value);
 public:
 	static void unpack(__u32 l, int *t);
 	static void pack(__u32 &l, int *t);

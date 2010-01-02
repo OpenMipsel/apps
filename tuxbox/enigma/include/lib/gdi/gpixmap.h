@@ -69,6 +69,7 @@ struct gLookup
 	gColor *lookup;
 	gLookup(int size, const gPalette &pal, const gRGB &start, const gRGB &end);
 	gLookup();
+	~gLookup() { delete [] lookup; }
 	void build(int size, const gPalette &pal, const gRGB &start, const gRGB &end);
 };
 
@@ -109,6 +110,12 @@ struct gPixmap
 	
 	eLock contentlock;
 	int final;
+	bool cancompress;
+	int compressedsize;
+
+	void compressdata();
+	void uncompressdata();
+	__u8* uncompressdatanoreplace() const;
 	
 	gPixmap *lock();
 	void unlock();

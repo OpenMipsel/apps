@@ -4,12 +4,17 @@
 #include <string>
 #include <stdarg.h>
 #include <stdio.h>
+#include <set>
+#include <map>
 #include "eerror.h"
-
-int strnicmp(const char*, const char*, int);
 
 class eString : public std::string
 {
+public:
+	static std::map<eString, int> CountryCodeDefaultMapping;
+	static std::map<int, int> TransponderDefaultMapping; // more priority as country..
+	static std::set<int> TransponderUseTwoCharMapping;
+	static int readEncodingFile();
 public:
 // constructors
 	inline eString()	{}	
@@ -33,8 +38,8 @@ public:
 	int icompare(const eString& s);
 };
 
-eString convertDVBUTF8(unsigned char *data, int len, int table=5);
-eString convertUTF8DVB(const eString &string);  // with default ISO8859-5
+eString convertDVBUTF8(const unsigned char *data, int len, int table=0, int tsidonid=0); // with default ISO8859-1/Latin1
+eString convertUTF8DVB(const eString &string, int table=0); // with default ISO8859-1/Latin1
 eString convertLatin1UTF8(const eString &string);
 int isUTF8(const eString &string);
 
@@ -73,7 +78,7 @@ inline eString eString::left(unsigned int len) const
 {
 //	Returns a substring that contains the len leftmost characters of the string.
 //	The whole string is returned if len exceeds the length of the string.
- 	return len >= length() ? *this : substr(0, len);
+	return len >= length() ? *this : (const eString&) substr(0, len);
 }
 
 //////////////////////////////////////// eString mid ////////////////////////////////////////////////////////////
@@ -101,7 +106,7 @@ inline eString eString::right(unsigned int len) const
 //	Returns a substring that contains the len rightmost characters of the string.
 //	The whole string is returned if len exceeds the length of the string.
 	register unsigned int strlen = length();
-	return len >= strlen ? *this : substr(strlen-len, len);
+	return len >= strlen ? *this : (const eString&) substr(strlen-len, len);
 }
 
 inline bool eString::isNull() const
