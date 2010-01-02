@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_scan.cpp,v 1.10.2.21.2.1 2010/01/02 16:49:00 fergy Exp $
+ * $Id: enigma_scan.cpp,v 1.10.2.21.2.2 2010/01/02 17:21:04 fergy Exp $
  */
 
 #include <enigma_scan.h>

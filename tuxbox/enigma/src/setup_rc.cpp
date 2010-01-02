@@ -34,51 +34,25 @@ void eZapRCSetup::update()
 	eRCInput::getInstance()->config.set(rdelay, rrate);
 }
 
-eZapRCSetup::eZapRCSetup(): eWindow(0)
+eZapRCSetup::eZapRCSetup()
+	:eWindow(0)
 {
-	setText(_("Remotecontrol Setup"));
-	cmove(ePoint(140, 136));
-	cresize(eSize(470, 345));
+	init_eZapRCSetup();
+}
 
-	int fd=eSkin::getActive()->queryValue("fontsize", 20);
-
+void eZapRCSetup::init_eZapRCSetup()
+{
 	eConfig::getInstance()->getKey("/ezap/rc/repeatRate", rrate);
 	eConfig::getInstance()->getKey("/ezap/rc/repeatDelay", rdelay);
 	rrate = 250 - rrate;
 
-	lrrate=new eLabel(this);
-	lrrate->setText(_("Repeat Rate:"));
-	lrrate->move(ePoint(20, 20));
-	lrrate->resize(eSize(170, fd+4));
-
-	lrdelay=new eLabel(this);
-	lrdelay->setText(_("Repeat Delay:"));
-	lrdelay->move(ePoint(20, 60));
-	lrdelay->resize(eSize(170, fd+4));
-
-	srrate=new eSlider(this, lrrate, 0, 250 );
-	srrate->setName("rrate");
-	srrate->move(ePoint(200, 20));
-	srrate->resize(eSize(220, fd+4));
-	srrate->setHelpText(_("set RC repeat rate ( left / right )"));
+	srrate=CreateSkinnedSlider("srrate", "lrrate", 0, 250 );
 	CONNECT( srrate->changed, eZapRCSetup::repeatChanged );
 	
-	srdelay=new eSlider(this, lrdelay, 0, 1000 );
-	srdelay->setName("rdelay");
-	srdelay->move(ePoint(200, 60));
-	srdelay->resize(eSize(220, fd+4));
-	srdelay->setHelpText(_("set RC repeat delay ( left / right )"));
+	srdelay=CreateSkinnedSlider("srdelay", "lrdelay", 0, 1000 );
 	CONNECT( srdelay->changed, eZapRCSetup::delayChanged );
 
-	lrcStyle=new eLabel(this);
-	lrcStyle->move(ePoint(20, 100));
-	lrcStyle->resize(eSize(220, fd+4));
-	lrcStyle->setText("Remotecontrol Style:");
-	rcStyle=new eComboBox(this, 4, lrcStyle);
-	rcStyle->move(ePoint(20, 140));
-	rcStyle->resize(eSize(220, 35));
-	rcStyle->setHelpText(_("select your favourite RC style (ok)"));
-	rcStyle->loadDeco();
+	rcStyle=CreateSkinnedComboBoxWithLabel("rcStyle", 4, "lrcStyle");
 	CONNECT( rcStyle->selchanged, eZapRCSetup::styleChanged );
 	eListBoxEntryText *current=0;
 	const std::set<eString> &activeStyles=eActionMapList::getInstance()->getCurrentStyles();
@@ -93,39 +67,17 @@ eZapRCSetup::eZapRCSetup(): eWindow(0)
 		else
 			new eListBoxEntryText( *rcStyle, it->second, (void*) &it->first );
 	}
-	if (current)
-		rcStyle->setCurrent( current );
-
-	lNextCharTimeout = new eLabel(this);
-	lNextCharTimeout->move(ePoint(20,220));
-	lNextCharTimeout->resize(eSize(280,35));
-	lNextCharTimeout->setText(_("Next Char Timeout:"));
-
 	unsigned int t;
 	if (eConfig::getInstance()->getKey("/ezap/rc/TextInputField/nextCharTimeout", t) )
 		t=0;
-	NextCharTimeout = new eNumber(this,1,0,3999,4,0,0,lNextCharTimeout);
-	NextCharTimeout->move(ePoint(315,220));
-	NextCharTimeout->resize(eSize(65,35));
-	NextCharTimeout->loadDeco();
-	NextCharTimeout->setHelpText(_("Cursor to next char timeout(msek) in textinputfields)"));
-	NextCharTimeout->setNumber(t);
+	NextCharTimeout = CreateSkinnedNumberWithLabel("NextCharTimeout",t,1,0,3999,4,0,0, "lNextCharTimeout");
 	CONNECT(NextCharTimeout->selected, eZapRCSetup::nextField);
 
-	ok=new eButton(this);
-	ok->setText(_("save"));
-	ok->setShortcut("green");
-	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, clientrect.height()-80));
-	ok->resize(eSize(220, 40));
-	ok->setHelpText(_("save changes and return"));
-	ok->loadDeco();
-	CONNECT(ok->selected, eZapRCSetup::okPressed);
+	CONNECT(CreateSkinnedButton("ok")->selected, eZapRCSetup::okPressed);
 
-	statusbar=new eStatusBar(this);
-	statusbar->move( ePoint(0, clientrect.height()-30 ) );
-	statusbar->resize( eSize( clientrect.width(), 30) );
-	statusbar->loadDeco();
+	BuildSkin("eZapRCSetup");
+	if (current)
+		rcStyle->setCurrent( current );
 
 	srdelay->setValue(rdelay);
 	srrate->setValue(rrate);

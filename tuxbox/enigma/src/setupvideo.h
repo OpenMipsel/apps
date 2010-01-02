@@ -11,22 +11,20 @@ class eCheckbox;
 
 class eZapVideoSetup: public eWindow
 {
-	eButton *ok;
-	eStatusBar *status;
-	eCheckbox *c_disableWSS, *ac3default, *palM;
-	eListBox<eListBoxEntryText> *colorformat, *pin8;
+	eListBox<eListBoxEntryText> *colorformat, *pin8, *tvsystem;
 
-	unsigned int v_colorformat, v_pin8, v_disableWSS, v_palM;
-	eStatusBar *statusbar;
+	unsigned int v_colorformat, v_pin8, v_disableWSS, v_tvsystem, v_VCRSwitching;
 private:
 	void ac3defaultChanged( int i );
 	void CFormatChanged( eListBoxEntryText * );
 	void VPin8Changed( eListBoxEntryText *);
 	void DisableWSSChanged(int);
-	void palMChanged(int);
+	void TVSystemChanged( eListBoxEntryText * );
+	void VCRChanged(int);	
 	void okPressed();
+	void showTestpicture();
 	int eventHandler( const eWidgetEvent &e );
-
+	void init_eZapVideoSetup();
 public:
 	eZapVideoSetup();
 	~eZapVideoSetup();

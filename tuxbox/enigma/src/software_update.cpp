@@ -17,21 +17,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: software_update.cpp,v 1.1.2.3 2003/08/11 20:09:47 ghostrider Exp $
+ * $Id: software_update.cpp,v 1.1.2.3.2.1 2010/01/02 17:21:04 fergy Exp $
  */
 
 #include <software_update.h>
+#include <flashtool.h>
 #include <lib/gui/emessage.h>
 #include <upgrade.h>
 
 eSoftwareUpdate::eSoftwareUpdate()
-	:eSetupWindow(_("Software Update"), 5, 400)
+	:eSetupWindow(_("Software Update"), 6, 400)
+{
+	init_eSoftwareUpdate();
+}
+void eSoftwareUpdate::init_eSoftwareUpdate()
 {
 	move(ePoint(140, 100));
 #ifndef DISABLE_NETWORK
 	int entry=0;
 	CONNECT((new eListBoxEntryMenu(&list, _("Internet Update"), eString().sprintf("(%d) %s", ++entry, _("open internet update")) ))->selected, eSoftwareUpdate::internet_update );
 	CONNECT((new eListBoxEntryMenu(&list, _("Manual Update"), eString().sprintf("(%d) %s", ++entry, _("open manual update")) ))->selected, eSoftwareUpdate::manual_update );
+#ifdef ENABLE_FLASHTOOL
+	CONNECT((new eListBoxEntryMenu(&list, _("Expert Flash Save/Restore"), eString().sprintf("(%d) %s", ++entry, _("open expert flash tool")) ))->selected, eSoftwareUpdate::flash_tool);
+#endif
 #endif
 }
 
@@ -39,7 +47,7 @@ eSoftwareUpdate::eSoftwareUpdate()
 void eSoftwareUpdate::internet_update()
 {
 	hide();
-	eUpgrade up;
+	eUpgrade up(false);
 #ifndef DISABLE_LCD
 	up.setLCD(LCDTitle, LCDElement);
 #endif
@@ -52,15 +60,12 @@ void eSoftwareUpdate::internet_update()
 void eSoftwareUpdate::manual_update()
 {
 	hide();
-	eMessageBox box(_("Upload your Image via FTP or Samba to the '/tmp' folder."
+	int ret = eMessageBox::ShowBox(_("Upload your Image via FTP or Samba to the '/tmp' folder."
 										"Then rename it to 'root.cramfs' and press ok."
-										"In the upcomming list select 'manual update' and follow the instructions."), _("Manual update"), eMessageBox::iconInfo|eMessageBox::btOK );
-	box.show();
-	int ret = box.exec();
-	box.hide();
+										"In the following list select 'manual update' and follow the instructions."), _("Manual update"), eMessageBox::iconInfo|eMessageBox::btOK );
 	if ( ret == eMessageBox::btOK )
 	{
-		eUpgrade up;
+		eUpgrade up(true);
 #ifndef DISABLE_LCD
 		up.setLCD(LCDTitle, LCDElement);
 #endif
@@ -71,3 +76,19 @@ void eSoftwareUpdate::manual_update()
 	show();
 }
 #endif
+
+#ifdef ENABLE_FLASHTOOL
+void eSoftwareUpdate::flash_tool()
+{
+	hide();
+	eFlashtoolMain setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	show();
+}
+#endif
+

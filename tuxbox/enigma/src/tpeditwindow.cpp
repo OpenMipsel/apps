@@ -54,75 +54,23 @@ bool eListBoxEntryTransponder::operator < ( const eListBoxEntry& e ) const
 eSatEditDialog::eSatEditDialog( tpPacket *tp )
 	:eWindow(0), tp(tp)
 {
-	setText(_("Satellite Edit"));
-	cmove(ePoint(100,100));
-	cresize(eSize(470,360));
-	name = new eTextInputField(this);
-	name->move(ePoint(10,10));
-	name->resize(eSize(clientrect.size().width()-20, 35));
-	name->setHelpText(_("press ok to change satellite name"));
+	init_eSatEditDialog();
+}
+void eSatEditDialog::init_eSatEditDialog()
+{
+	name = CreateSkinnedTextInputField("name",tp->name.c_str());
 	name->setMaxChars(50);
-	name->loadDeco();
-	name->setText( tp->name );
-	name->setUseableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/-°");
-	eLabel *l = new eLabel(this);
-	l->move( ePoint(10, 55) );
-	l->resize( eSize(250, 35) );
-	l->setText(_("Orbital Position:"));
-	OrbitalPos = new eNumber( this, 1, 0, 3600, 4, 0, 0, l);
-	OrbitalPos->setHelpText(_("enter orbital position without dot (19.2\xB0 = 192)"));
-	OrbitalPos->move( ePoint(270, 55) );
-	OrbitalPos->resize( eSize(70, 35) );
-	OrbitalPos->loadDeco();
-	OrbitalPos->setNumber( abs(tp->orbital_position) );
-	direction = new eComboBox( this, 2, 0 );
-	direction->move( ePoint(350,55) );
-	direction->resize( eSize (110, 35) );
-	direction->setHelpText(_("press ok to change direction"));
-	direction->loadDeco();
+	name->setUseableChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/()-°");
+	OrbitalPos = CreateSkinnedNumberWithLabel( "OrbitalPos",abs(tp->orbital_position), 1, 0, 3600, 4, 0, 0, "lOrbitalPos");
+	direction = CreateSkinnedComboBox( "direction", 2);
 	new eListBoxEntryText( *direction, _("East"), (void*)0, 0, _("East") );
 	new eListBoxEntryText( *direction, _("West"), (void*)1, 0, _("West") );
 	direction->setCurrent( (void*) (tp->orbital_position<0) );
-	eSize cwidth=eSize(clientrect.width()-20,30);
-	doNetworkSearch = new eCheckbox(this);
-	doNetworkSearch->move(ePoint(10,95));
-	doNetworkSearch->resize( cwidth );
-	doNetworkSearch->setText(_("Network search"));
-	doNetworkSearch->setHelpText(_("scan Network Information Table(s)\nthis is recommend"));
-	doNetworkSearch->setCheck( tp->scanflags&eDVBScanController::flagNetworkSearch );
-	useONIT = new eCheckbox(this);
-	useONIT->move(ePoint(10, 135));
-	useONIT->resize( cwidth );
-	useONIT->setText(_("Extended networks search"));
-	useONIT->setHelpText(_("scan NITs of other transponders\nthis is slower, but sometimes needed)"));
-	useONIT->setCheck( tp->scanflags&eDVBScanController::flagUseONIT );
-	skipKnownNIT = new eCheckbox(this);
-	skipKnownNIT->move(ePoint(10, 175));
-	skipKnownNIT->resize( cwidth );
-	skipKnownNIT->setText(_("Skip known Networks"));
-	skipKnownNIT->setHelpText(_("dont scan NITs from known Networks\nfaster scan"));
-	skipKnownNIT->setCheck(tp->scanflags&eDVBScanController::flagSkipKnownNIT);
-	useBAT = new eCheckbox(this);
-	useBAT->move(ePoint(10,215) );
-	useBAT->resize( cwidth );
-	useBAT->setText(_("Use BAT"));
-	useBAT->setHelpText(_("use Provider DVB Bouquet Tables if exist"));
-	useBAT->setCheck(tp->scanflags&eDVBScanController::flagUseBAT?1:0 );
-	save = new eButton(this);
-	save->setText(_("save"));
-	save->move( ePoint(10,255) );
-	save->resize( eSize( 200, 40 ));
-	save->loadDeco();
-	save->setShortcut("green");
-	save->setShortcutPixmap("green");
-	save->setHelpText(_("save changes and return"));
-	CONNECT(save->selected, eSatEditDialog::savePressed );
-	sbar=new eStatusBar(this);
-	sbar->move( ePoint(0, clientrect.height()-50) );
-	sbar->resize( eSize( clientrect.width(), 50) );
-	sbar->removeFlags(RS_FADE);
-	sbar->setFlags(RS_WRAP);
-	sbar->loadDeco();
+	doNetworkSearch = CreateSkinnedCheckbox("doNetworkSearch",tp->scanflags&eDVBScanController::flagNetworkSearch);
+	useONIT = CreateSkinnedCheckbox("useONIT", tp->scanflags&eDVBScanController::flagUseONIT );
+	useBAT = CreateSkinnedCheckbox("useBAT",tp->scanflags&eDVBScanController::flagUseBAT?1:0 );
+	CONNECT(CreateSkinnedButton("save")->selected, eSatEditDialog::savePressed );
+	BuildSkin("eSatEditDialog");
 }
 
 void eSatEditDialog::savePressed()
@@ -137,14 +85,16 @@ void eSatEditDialog::savePressed()
 		tp->scanflags |= eDVBScanController::flagUseONIT;
 	if ( useBAT->isChecked() )
 		tp->scanflags |= eDVBScanController::flagUseBAT;
-	if ( skipKnownNIT->isChecked() )
-		tp->scanflags |= eDVBScanController::flagSkipKnownNIT;
 	tp->name=name->getText();
 	close(0);
 }
 
 eTPEditDialog::eTPEditDialog( eTransponder *tp )
 	:eWindow(0), tp(tp)
+{
+	init_eTPEditDialog();
+}
+void eTPEditDialog::init_eTPEditDialog()
 {
 	setText(_("Transponder Edit"));
 	cmove( ePoint( 120, 200 ) );
@@ -196,27 +146,23 @@ eAutoInitP0<TransponderEditWindowActions> i_TransponderEditWindowActions(eAutoIn
 eTransponderEditWindow::eTransponderEditWindow()
 	:eWindow(0), changed(0)
 {
+	init_eTransponderEditWindow();
+}
+void eTransponderEditWindow::init_eTransponderEditWindow()
+{
 	addActionMap(&i_TransponderEditWindowActions->map);
-	sat = new eButton(this);
-	sat->setName("sat");
+	sat = CreateSkinnedButton("sat");
 	CONNECT(sat->selected, eTransponderEditWindow::satPressed);
-	add = new eButton(this);
-	add->setName("add");
-	CONNECT(add->selected, eTransponderEditWindow::addPressed);
-	edit = new eButton(this);
-	edit->setName("edit");
-	CONNECT(edit->selected, eTransponderEditWindow::editPressed);
-	remove = new eButton(this);
-	remove->setName("remove");
-	CONNECT(remove->selected, eTransponderEditWindow::removePressed);
+	CONNECT(CreateSkinnedButton("add")->selected, eTransponderEditWindow::addPressed);
+	CONNECT(CreateSkinnedButton("edit")->selected, eTransponderEditWindow::editPressed);
+	CONNECT(CreateSkinnedButton("remove")->selected, eTransponderEditWindow::removePressed);
 	satellites = new eListBox<eListBoxEntryText>( this, 0, 0 );
 	satellites->setName("satlist");
 	transponders = new eListBox<eListBoxEntryTransponder>( this, 0, 0 );
 	transponders->setName("transponderlist");
 	transponders->FakeFocus( 0 );
 	satellites->FakeFocus( 1 );
-	if ( eSkin::getActive()->build( this, "TransponderWindow") )
-		eFatal("eTransponderEditWindow build failed");
+	BuildSkin("TransponderWindow");
 
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
 	eTransponder *tp=0;
@@ -253,25 +199,19 @@ int eTransponderEditWindow::eventHandler( const eWidgetEvent & event )
 		case eWidgetEvent::execDone:
 			if ( changed )
 			{
-				eMessageBox mb(_("Save changed Transponders?"),
+				int ret = eMessageBox::ShowBox(_("Save changed Transponders?"),
 					_("Transponders changed"),
 					eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion,
 					eMessageBox::btYes );
-				mb.show();
-				int ret = mb.exec();
-				mb.hide();
+				eTransponderList::getInstance()->invalidateNetworks();
 				if ( ret == eMessageBox::btNo || ret == -1 )
 					return 0;
 				if ( eTransponderList::getInstance()->saveNetworks() )
 				{
-					eMessageBox mb(_("Transponders couldn't be written to file!"),
+					eMessageBox::ShowBox(_("Transponders couldn't be written to file!"),
 						_("Write Error"),
 						eMessageBox::btOK|eMessageBox::iconWarning);
-					mb.show();
-					mb.exec();
-					mb.hide();
 				}
-				eTransponderList::getInstance()->reloadNetworks();
 			}
 			return 0;
 		case eWidgetEvent::evtAction:
@@ -428,14 +368,18 @@ void eTransponderEditWindow::removePressed()
 	if ( !packet )
 		return;
 	std::list<eTransponder>::iterator it =
-		std::find(
-			packet->possibleTransponders.begin(),
-			packet->possibleTransponders.end(),
-			*tp);
+		packet->possibleTransponders.begin();
+	for ( ; it != packet->possibleTransponders.end(); ++it )
+		if ( &(*it) == tp )
+			break;
 	if ( it == packet->possibleTransponders.end() )
 		return;
 	packet->possibleTransponders.erase(it);
-	transponders->remove( te );
+	if ( transponders->getNext() )
+		transponders->goNext();
+	else
+		transponders->goPrev();
+	transponders->remove( te, true );
 	changed++;
 }
 

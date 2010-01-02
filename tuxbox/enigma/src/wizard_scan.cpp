@@ -4,10 +4,12 @@
 #include <lib/gdi/font.h>
 #include <lib/gui/listbox.h>
 #include <lib/system/init_num.h>
+#include <lib/system/info.h>
 #include <lib/system/econfig.h>
 #include <satconfig.h>
 #include <scan.h>
 #include <enigma_scan.h>
+#include <enigma_main.h>
 
 class eDiseqcChoice: public eListBoxEntry
 {
@@ -68,15 +70,17 @@ gFont eDiseqcChoice::font;
 
 eWizardSelectDiseqc::eWizardSelectDiseqc()
 {
+	init_eWizardSelectDiseqc();
+}
+void eWizardSelectDiseqc::init_eWizardSelectDiseqc()
+{
 	diseqclist=new eListBox<eDiseqcChoice>(this);
 	diseqclist->setName("choices");
 	diseqclist->setColumns(3);
 	
-	description=new eLabel(this);
-	description->setName("description");
+	description=CreateSkinnedLabel("description");
 
-	if (eSkin::getActive()->build(this, "eWizardDiseqc"))
-		eFatal("skin load of \"eWizardDiseqc\" failed");
+	BuildSkin("eWizardDiseqc");
 		
 	eDiseqcChoice *current;
 	current=new eDiseqcChoice(diseqclist, eDiseqcChoice::none);
@@ -127,17 +131,19 @@ class eWizardScanInit
 public:
 	eWizardScanInit()
 	{
-		int diseqc=0;
-		if ( eFrontend::getInstance()->Type() == eFrontend::feCable )
+		if ( eApp->isAppQuitNowSet() )
 			return;
-again: // gotos considered harmless.. :)
+		int res = 0;
+		int diseqc=0;
 		eConfig::getInstance()->getKey("/elitedvb/wizards/diseqc", diseqc);
-		if (diseqc < 1)
+		if (diseqc)
+			return;
+		if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )
 		{
-			int res = 0;
-
+// gotos considered harmless.. :)
+again_wizard: 
 			res=eWizardSelectDiseqc::run();
-			
+
 			if (res >= 0)
 			{
 				eSatelliteConfigurationManager satconfig;
@@ -154,36 +160,44 @@ again: // gotos considered harmless.. :)
 					satconfig.extSetComplexity(3); // diseqc 1.2
 					break;
 				}
-
-again_satconfig:
-				satconfig.show();
-				res=satconfig.exec();
-				satconfig.hide();
-				
-				if (res != 1)
-					goto again;
-
+				do
 				{
-					eLNB *l=eZapScan::getRotorLNB(1);
-					if (l)
+					satconfig.show();
+					res=satconfig.exec();
+					satconfig.hide();
+
+					if (res != 1)
+						goto again_wizard;
+
 					{
-						RotorConfig c(l);
-						c.show();
-						c.exec();
-						c.hide();
+						eLNB *l=eZapScan::getRotorLNB(1);
+						if (l)
+						{
+							RotorConfig c(l);
+							c.show();
+							c.exec();
+							c.hide();
+						}
+					}
+
+					{
+						TransponderScan scan(0, 0, TransponderScan::stateMenu);
+						res=scan.exec();
 					}
 				}
+				while (res);
 
-				{
-					TransponderScan scan(0, 0);
-					res=scan.exec(TransponderScan::stateAutomatic);
-				}
-				if (!res)
-					goto again_satconfig;
 			}
-			diseqc=1;
-			eConfig::getInstance()->setKey("/elitedvb/wizards/diseqc", diseqc);
 		}
+		else if ( eSystemInfo::getInstance()->getFEType() != eSystemInfo::feUnknown )
+		{
+			TransponderScan scan(0, 0, TransponderScan::stateMenu);
+			res=scan.exec();
+		}
+
+		eZapMain::getInstance()->showServiceSelector( eServiceSelector::dirFirst, eZapMain::pathAll );
+		diseqc=1;
+		eConfig::getInstance()->setKey("/elitedvb/wizards/diseqc", diseqc);
 	}
 };
 

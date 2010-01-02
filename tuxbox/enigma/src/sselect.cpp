@@ -4,24 +4,33 @@
 #include <enigma.h>
 #include <enigma_epg.h>
 #include <enigma_main.h>
+#include <enigma_plugins.h>
 #include <sselect.h>
 
+#include <lib/picviewer/pictureviewer.h>
 #include <lib/base/i18n.h>
+#include <lib/driver/rc.h>
+#include <lib/dvb/edvb.h>
+#include <lib/dvb/dvb.h>
+#include <lib/dvb/service.h>
+#include <lib/dvb/dvbservice.h>
+#include <lib/dvb/epgcache.h>
+#include <lib/dvb/frontend.h>
+#include <lib/dvb/serviceplaylist.h>
+#include <lib/dvb/record.h>
+#include <lib/dvb/servicemp3.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/actions.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/elabel.h>
-#include <lib/dvb/edvb.h>
-#include <lib/dvb/dvb.h>
-#include <lib/dvb/dvbservice.h>
-#include <lib/dvb/epgcache.h>
-#include <lib/dvb/frontend.h>
-#include <lib/driver/rc.h>
+#include <lib/gui/numberactions.h>
+#include <lib/system/info.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
-#include <lib/dvb/service.h>
-#include <lib/gui/numberactions.h>
-#include <lib/dvb/serviceplaylist.h>
+#include <enigma_streamer.h>
+#include <enigma_picmanager.h>
+#include <epgwindow.h>
+#include <epgsearch.h>
 
 gFont eListBoxEntryService::serviceFont;
 gFont eListBoxEntryService::descrFont;
@@ -29,9 +38,14 @@ gFont eListBoxEntryService::numberFont;
 gPixmap *eListBoxEntryService::folder=0;
 gPixmap *eListBoxEntryService::marker=0;
 gPixmap *eListBoxEntryService::locked=0;
+gPixmap *eListBoxEntryService::newfound=0;
 int eListBoxEntryService::maxNumSize=0;
 std::set<eServiceReference> eListBoxEntryService::hilitedEntrys;
 eListBoxEntryService *eListBoxEntryService::selectedToMove=0;
+int eListBoxEntryService::nownextEPG = 0;
+eStreamer streamer;
+bool streaming = false;
+eServiceReference streamingRef;
 
 struct EPGStyleSelectorActions
 {
@@ -45,61 +59,76 @@ struct EPGStyleSelectorActions
 };
 eAutoInitP0<EPGStyleSelectorActions> i_EPGStyleSelectorActions(eAutoInitNumbers::actions, "EPG Style Selector actions");
 
-class eEPGStyleSelector: public eListBoxWindow<eListBoxEntryText>
+eEPGStyleSelector::eEPGStyleSelector(int ssel)
+		:eListBoxWindow<eListBoxEntryText>(_("EPG Style"), 6, 350, true)
+		,ssel(ssel)
 {
-public:
-	eEPGStyleSelector()
-		:eListBoxWindow<eListBoxEntryText>(_("EPG Style"), 5, 350, true)
-	{
-		addActionMap( &i_EPGStyleSelectorActions->map );
-		move(ePoint(100,100));
-		int last=1;
-		eListBoxEntryText*sel=0;
+	init_eEPGStyleSelector();
+}
+void eEPGStyleSelector::init_eEPGStyleSelector()
+{
+	addActionMap( &i_EPGStyleSelectorActions->map );
+	move(ePoint(100, 100));
+	int last=1;
+	if ( ssel )
 		eConfig::getInstance()->getKey("/ezap/serviceselector/lastEPGStyle", last);
-		new eListBoxEntryText(&list,_("Channel EPG"), (void*)1, 0, _("open EPG for selected Channel") );
-		sel = new eListBoxEntryText(&list,_("Multi EPG"), (void*)2, 0, _("open EPG for next five channels") );
-		if ( last==2 )
-			list.setCurrent(sel);
-		CONNECT( list.selected, eEPGStyleSelector::entrySelected );
-	}
-	int eventHandler( const eWidgetEvent &event )
+	else
+		eConfig::getInstance()->getKey("/ezap/lastEPGStyle", last);
+	eListBoxEntryText *sel[4];
+	sel[0] = new eListBoxEntryText(&list,_("Channel EPG"), (void*)1, 0, _("open EPG for selected Channel") );
+	sel[1] = new eListBoxEntryText(&list,_("Multi EPG"), (void*)2, 0, _("open EPG for next five channels") );
+	sel[2] = new eListBoxEntryText(&list,_("EPG Search"), (void*)4, 0, _("Search event in EPG cache") );
+
+	// only show external EPG Entry when it realy exist..
+	eZapPlugins plugins(eZapPlugins::StandardPlugin);
+	if ( plugins.execPluginByName("extepg.cfg",true) == "OK"
+		|| plugins.execPluginByName("_extepg.cfg",true) == "OK" )
+		sel[3] = new eListBoxEntryText(&list,_("External EPG"), (void*)3, 0, _("open external plugin EPG") );
+	list.setCurrent(sel[last-1]);
+	CONNECT( list.selected, eEPGStyleSelector::entrySelected );
+}
+
+int eEPGStyleSelector::eventHandler( const eWidgetEvent &event )
+{
+	switch (event.type)
 	{
-		switch (event.type)
-		{
-			case eWidgetEvent::evtAction:
-				if ( event.action == &i_EPGStyleSelectorActions->infoPressed )
-					entrySelected( list.getCurrent() );
-				else
-					break;
-				return 1;
-			default:
+		case eWidgetEvent::evtAction:
+			if ( event.action == &i_EPGStyleSelectorActions->infoPressed )
+				entrySelected( list.getCurrent() );
+			else
 				break;
-		}
-		return eWindow::eventHandler( event );
+			return 1;
+		default:
+			break;
 	}
-	void entrySelected( eListBoxEntryText* e )
+	return eWindow::eventHandler( event );
+}
+
+void eEPGStyleSelector::entrySelected( eListBoxEntryText* e )
+{
+	if (e)
 	{
-		if (e)
+		if ( (int)e->getKey() != 4) // EPG search
 		{
-			int last=1;
-			eConfig::getInstance()->getKey("/ezap/serviceselector/lastEPGStyle", last);
-			if ( last != (int) e->getKey() )
+			if ( ssel )
 				eConfig::getInstance()->setKey("/ezap/serviceselector/lastEPGStyle", (int)e->getKey());
-			close( (int)e->getKey() );
+			else
+				eConfig::getInstance()->setKey("/ezap/lastEPGStyle", (int)e->getKey());
 		}
-		else
-			close(-1);
+		close( (int)e->getKey() );
 	}
-};
+	else
+		close(-1);
+}
 
 struct serviceSelectorActions
 {
 	eActionMap map;
-	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu, 
+	eAction nextBouquet, prevBouquet, pathUp, showEPGSelector, showMenu,
 			addService, addServiceToUserBouquet, modeTV, modeRadio,
 			modeFile, toggleStyle, toggleFocus, gotoPrevMarker, gotoNextMarker,
 			showAll, showSatellites, showProvider, showBouquets, deletePressed,
-			markPressed, renamePressed, newMarkerPressed;
+			markPressed, renamePressed, insertPressed;
 	serviceSelectorActions():
 		map("serviceSelector", _("service selector")),
 		nextBouquet(map, "nextBouquet", _("switch to next bouquet"), eAction::prioDialogHi),
@@ -116,7 +145,7 @@ struct serviceSelectorActions
 		toggleFocus(map, "toggleFocus", _("toggle focus between service and bouquet list (in combi column style)"), eAction::prioDialog),
 		gotoPrevMarker(map, "gotoPrevMarker", _("go to the prev Marker if exist.. else goto first service"), eAction::prioDialogHi),
 		gotoNextMarker(map, "gotoNextMarker", _("go to the next Marker if exist.. else goto last service"), eAction::prioDialogHi),
-		
+
 		showAll(map, "showAll", _("show all services"), eAction::prioDialog),
 		showSatellites(map, "showSatellites", _("show satellite list"), eAction::prioDialog),
 		showProvider(map, "showProvider", _("show provider list"), eAction::prioDialog),
@@ -125,16 +154,20 @@ struct serviceSelectorActions
 		deletePressed(map, "delete", _("delete selected entry"), eAction::prioDialog),
 		markPressed(map, "mark", _("mark selected entry for move"), eAction::prioDialog),
 		renamePressed(map, "rename", _("rename selected entry"), eAction::prioDialog),
-		newMarkerPressed(map, "marker", _("create new marker entry"), eAction::prioDialog)
+		insertPressed(map, "marker", _("create new marker entry"), eAction::prioDialog)
 	{
 	}
 };
 eAutoInitP0<serviceSelectorActions> i_serviceSelectorActions(eAutoInitNumbers::actions, "service selector actions");
 
-eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num)
+eListBoxEntryService::eListBoxEntryService(eListBoxExt<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num)
 	:eListBoxEntry((eListBox<eListBoxEntry>*)lb), numPara(0),
 	namePara(0), descrPara(0), nameXOffs(0), flags(flags),
 	num(num), curEventId(-1), service(service)
+{
+	init_eListBoxEntryService();
+}
+void eListBoxEntryService::init_eListBoxEntryService()
 {
 	static char strfilter[4] = { 0xC2, 0x87, 0x86, 0x00 };
 	if (!(flags & flagIsReturn))
@@ -143,13 +176,13 @@ eListBoxEntryService::eListBoxEntryService(eListBox<eListBoxEntryService> *lb, c
 		sort=eString().sprintf("%06d", service->service_number);
 #else
 		if( service.descr )
-			sort = service.descr;
+			sort = service.descr.c_str();
 		else
 		{
 			const eService *pservice=eServiceInterface::getInstance()->addRef(service);
 			if ( pservice )
 			{
-				sort=pservice?pservice->service_name:"";
+				sort=pservice?pservice->service_name.c_str():"";
 				eServiceInterface::getInstance()->removeRef(service);
 			}
 		}
@@ -204,6 +237,40 @@ void eListBoxEntryService::invalidateDescr()
 		descrPara=0;
 	}
 }
+struct eListBoxEntryService_countServices
+{
+	Signal1<void,const eServiceReference&> &callback;
+	int type;
+	int DVBNamespace;
+	int* count;
+	bool onlyNew;
+	eListBoxEntryService_countServices(int type, int DVBNamespace, int* count,bool onlyNew=false)
+	: callback(callback), type(type), DVBNamespace(DVBNamespace), count(count),onlyNew(onlyNew)
+	{
+	}
+	void operator()(const eServiceReference &service)
+	{
+		eService *s = eTransponderList::getInstance()->searchService( service );
+		if ( !s )  // dont show "removed services"
+			return;
+		else if ( s->dvb && s->dvb->dxflags & eServiceDVB::dxDontshow )
+			return;
+		if ( onlyNew && !(s->dvb && s->dvb->dxflags & eServiceDVB::dxNewFound ) )
+			return;
+		int t = ((eServiceReferenceDVB&)service).getServiceType();
+		int nspace = ((eServiceReferenceDVB&)service).getDVBNamespace().get()&0xFFFF0000;
+		if (t < 0)
+			t=0;
+		if (t >= 31)
+			t=31;
+		if ( type & (1<<t) && // right dvb service type
+				 ( (DVBNamespace==(int)0xFFFFFFFF) || // ignore namespace
+				 ( (DVBNamespace&(int)0xFFFF0000) == nspace ) // right satellite
+				 )
+			 )
+			 (*count)++;
+	}
+};
 
 const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int hilited)
 {
@@ -235,7 +302,7 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 		int ypos = (rect.height() - marker->y) / 2;
 		rc->blit( *marker, ePoint(10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
 	}
-	else if (flags & flagShowNumber && listbox->getColumns() == 1)
+	else if (flags & flagShowNumber && listbox->getColumns() == 1 )
 	{
 		int n=-1;
 		if (flags & flagOwnNumber)
@@ -258,20 +325,51 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 		}
 	}
 
+	int newNameXOffs = nameXOffs;
+	if ( pservice && pservice->dvb && pservice->dvb->dxflags & eServiceDVB::dxNewFound && newfound )
+	{
+		int ypos = (rect.height() - locked->y) / 2;
+		rc->blit( *newfound, ePoint(rect.left() + nameXOffs, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
+		newNameXOffs += newfound->x+5;
+	}
+
 	if (!namePara)
 	{
 		eString sname;
-
 		if (service.descr.length())
 			sname=service.descr;
 		else if (pservice)
-			sname=pservice->service_name;
+		{
+			int count = 0;
+			switch (service.type)
+			{
+			case eServiceReference::idDVB:
+				switch (service.data[0])
+				{
+				case -2:  // all TV or all Radio Services
+					eTransponderList::getInstance()->forEachServiceReference(eListBoxEntryService_countServices(service.data[1], service.data[2], &count));
+					sname= eString().sprintf("%s (%d)",pservice->service_name.c_str(),count);
+					break;
+				case -5:  // all TV or all Radio Services (only services marked as new)
+					eTransponderList::getInstance()->forEachServiceReference(eListBoxEntryService_countServices(service.data[1], service.data[2], &count, true ));
+					sname= eString().sprintf("%s (%d)",pservice->service_name.c_str(),count);
+					break;
+				default:
+					sname=pservice->service_name;
+					break;
+				}
+				break;
+			default:
+				sname=pservice->service_name;
+				break;
+			}
+		}
 		else if (flags & flagIsReturn)
 			sname=_("[GO UP]");
 		else
 			sname=_("(removed service)");
 
-		namePara = new eTextPara( eRect( 0, 0, rect.width()-nameXOffs, rect.height() ) );
+		namePara = new eTextPara( eRect( 0, 0, rect.width()-newNameXOffs, rect.height() ) );
 		namePara->setFont( serviceFont );
 		namePara->renderString( sname );
 		if (flags & flagIsReturn )
@@ -279,12 +377,12 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 		nameYOffs = ((rect.height() - namePara->getBoundBox().height()) / 2 ) - namePara->getBoundBox().top();	
 	}
 	// we can always render namePara
-	rc->renderPara(*namePara, ePoint( rect.left() + nameXOffs, rect.top() + nameYOffs ) );
+	rc->renderPara(*namePara, ePoint( rect.left() + newNameXOffs, rect.top() + nameYOffs ) );
 
 	if ( service.isLocked() && locked && eConfig::getInstance()->getParentalPin() )
 	{
 		int ypos = (rect.height() - locked->y) / 2;
-		rc->blit( *locked, ePoint(nameXOffs+namePara->getBoundBox().width()+10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
+		rc->blit( *locked, ePoint(newNameXOffs+namePara->getBoundBox().width()+10, rect.top()+ypos ), eRect(), gPixmap::blitAlphaTest);
 	}
 
 	if ( listbox->getColumns() == 1 )
@@ -300,30 +398,41 @@ const eString &eListBoxEntryService::redraw(gPainter *rc, const eRect &rect, gCo
 				EITEvent *e=eEPGCache::getInstance()->lookupEvent((const eServiceReferenceDVB&)service);
 				if (e)
 				{
-					for (ePtrList<Descriptor>::iterator d(e->descriptor); d != e->descriptor.end(); ++d)
+					if (eListBoxEntryService::nownextEPG)
 					{
-						if (d->Tag()==DESCR_SHORT_EVENT)
+						time_t t = e->start_time+e->duration+61;
+						delete e;
+						e = eEPGCache::getInstance()->lookupEvent((const eServiceReferenceDVB&)service,t);
+					}
+					if (e)
+					{
+						eString descr;
+						LocalEventData led;
+						led.getLocalData(e, &descr);
+						if (descr.length())
 						{
-							ShortEventDescriptor *ss=(ShortEventDescriptor*)*d;
-							if ( ss->event_name )
-								sdescr='('+ss->event_name+')';
-							break;
+							if (eListBoxEntryService::nownextEPG)
+							{
+								tm *t=localtime(&e->start_time);
+								eString nexttime;
+								nexttime.sprintf("%02d:%02d", t->tm_hour, t->tm_min);
+								sdescr='('+nexttime+' '+descr+')';
+							}
+							else
+								sdescr='('+descr+')';
+							curEventId = e->event_id;
+							descrPara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
+							descrPara->setFont( descrFont );
+							descrPara->renderString( sdescr );
+							descrXOffs = newNameXOffs+namePara->getBoundBox().width();
+							if ( service.isLocked() && locked && eConfig::getInstance()->getParentalPin() )
+								descrXOffs = descrXOffs + locked->x;
+							if (numPara)
+								descrXOffs += numPara->getBoundBox().height();
+							descrYOffs = ((rect.height() - descrPara->getBoundBox().height()) / 2 ) - descrPara->getBoundBox().top();
 						}
+						delete e;
 					}
-					if (sdescr.length())
-					{
-						curEventId = e->event_id;
-						descrPara = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
-						descrPara->setFont( descrFont );
-						descrPara->renderString( sdescr );
-						descrXOffs = nameXOffs+namePara->getBoundBox().width();
-						if ( service.isLocked() && locked && eConfig::getInstance()->getParentalPin() )
-							descrXOffs = descrXOffs + locked->x;
-						if (numPara)
-							descrXOffs += numPara->getBoundBox().height();
-						descrYOffs = ((rect.height() - descrPara->getBoundBox().height()) / 2 ) - descrPara->getBoundBox().top();
-					}
-					delete e;
 				}
 			}
 		}
@@ -359,7 +468,7 @@ void eServiceSelector::setKeyDescriptions( bool editMode )
 		case eZapMain::modeTV:
 		case eZapMain::modeRadio:
 			key[0]->setText(_("All Services"));
-			if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+			if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )
 				key[1]->setText(_("Satellites"));
 			else
 				key[1]->setText("");
@@ -371,49 +480,83 @@ void eServiceSelector::setKeyDescriptions( bool editMode )
 			key[0]->setText(_("Root"));
 			key[1]->setText(_("Movies"));
 			key[2]->setText(_("Playlist"));
-			key[3]->setText(_("Root"));
+			key[3]->setText(_("Bouquets"));
 			break;
 #endif
 	}
 }
 
+extern bool onSameTP(const eServiceReferenceDVB& ref1, const eServiceReferenceDVB &ref2); // implemented in timer.cpp
+
 void eServiceSelector::addService(const eServiceReference &ref)
 {
+#ifndef DISABLE_FILE
+	if ( eZap::getInstance()->getServiceSelector() == this &&
+		eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+	{
+		eServiceReferenceDVB temp;
+		eServiceReferenceDVB &Ref = (eServiceReferenceDVB&) ref;
+		eServiceReferenceDVB &rec =
+			eDVB::getInstance()->recorder && !eZapMain::getInstance()->isRecordingPermanentTimeshift() ? eDVB::getInstance()->recorder->recRef :
+			streaming ? (eServiceReferenceDVB&) streamingRef :
+			temp;
+		if ( rec && !onSameTP(Ref,rec) )
+			return;
+	}
+#endif
+	if (serviceentryflags & eListBoxEntryService::flagSameTransponder)
+	{
+		// only add Services on current transponder
+		eServiceReferenceDVB &Ref = (eServiceReferenceDVB&) ref;
+		eServiceReferenceDVB &cur = (eServiceReferenceDVB&) eServiceInterface::getInstance()->service;
+
+		if ( !onSameTP(Ref,cur) )
+			return;
+	}
+
 	if ( ref.isLocked() && (eConfig::getInstance()->pLockActive() & 2) )
 		return;
 
-	int flags=serviceentryflags;
+	int flags=serviceentryflags & ~eListBoxEntryService::flagSameTransponder;
 
 	if ( ref.flags & eServiceReference::isDirectory)
 		flags &= ~ eListBoxEntryService::flagShowNumber;
-
 	new eListBoxEntryService(services, ref, flags);
 }
 
 void eServiceSelector::addBouquet(const eServiceReference &ref)
 {
-	new eListBoxEntryService(bouquets, ref, serviceentryflags);
+	if ( ref.isLocked() && (eConfig::getInstance()->pLockActive() & 2) )
+		return;
+	if ( ref.flags & eServiceReference::canDescent && ref.flags & eServiceReference::isDirectory )
+		new eListBoxEntryService(bouquets, ref, serviceentryflags);
 }
 
-struct renumber: public std::unary_function<const eListBoxEntryService&, void>
+struct renumber
 {
 	int &num;
 	bool invalidate;
-	renumber(int &num, bool invalidate=false)
-		:num(num), invalidate(invalidate)
+	ePlaylist *pl;
+	std::list<ePlaylistEntry>::const_iterator it;
+	renumber(int &num, ePlaylist *pl, bool invalidate=false)
+		:num(num), invalidate(invalidate), pl(pl), it(pl->getConstList().begin())
 	{
 	}
-
 	bool operator()(eListBoxEntryService& s)
 	{
 		if (!s.service || s.service.flags == eServiceReference::isMarker )
 			return 0;
 		if ( !(s.service.flags & (eServiceReference::isDirectory)) )
 		{
-			s.num = ++num;
+			while ( !(it->service == s.service) )
+			{
+				if ( !(it->service.flags & eServiceReference::isMarker) )
+					++num;
+				++it;
+			}
+			s.num = num;
 			s.invalidate();
 		}
-
 		return 0;
 	}
 };
@@ -424,6 +567,7 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 	eServicePath p = path;
 
 	eServiceReference ref;
+	streaming = eStreamer::getInstance()->getServiceReference(streamingRef);
 
 	// build complete path ... for window titlebar..
 	do
@@ -441,37 +585,68 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 		windowDescr.erase( windowDescr.rfind(">") );
 	setText( windowDescr );
 
+	ref=_ref;
+
 	services->beginAtomic();
 	services->clearList();
 
-	if ( eZapMain::getInstance()->getMode() == eZapMain::modeFile
-		&& !movemode && path.size() > 1 && style != styleCombiColumn )
-		goUpEntry = new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
-	else
-		goUpEntry = 0;
+	if ( !movemode )
+	{
+		if ( path.size() > 1 && style != styleCombiColumn )
+		{
+			goUpEntry = new eListBoxEntryService(services, eServiceReference(), eListBoxEntryService::flagIsReturn);
+		}
+		else
+			goUpEntry = 0;
+	}
 
 	eServiceInterface *iface=eServiceInterface::getInstance();
 	ASSERT(iface);
-	
+
 	Signal1<void,const eServiceReference&> signal;
 	CONNECT(signal, eServiceSelector::addService);
-	
-	ref=_ref;
+
 	serviceentryflags=eListBoxEntryService::flagShowNumber;
-
-	if (ref.type == eServicePlaylistHandler::ID) // playlists have own numbers
-		serviceentryflags|=eListBoxEntryService::flagOwnNumber;
-
-	iface->enterDirectory(ref, signal);
-	iface->leaveDirectory(ref);	// we have a copy.
+	if (ref.data[0] == -6 && eZapMain::getInstance()->getMode() != eZapMain::modeFile)
+	{
+		serviceentryflags|=eListBoxEntryService::flagSameTransponder;
+	}
+	if ( eZap::getInstance()->getServiceSelector() == this
+		&& (eDVB::getInstance()->recorder || ref.data[0] == -6)  && !eZapMain::getInstance()->isRecordingPermanentTimeshift()
+		&& eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+	{
+		int mask = eZapMain::getInstance()->getMode() == eZapMain::modeTV ? (1<<4)|(1<<1) : ( 1<<2 );
+		eServiceReference bla(eServiceReference::idDVB,
+				eServiceReference::flagDirectory|eServiceReference::shouldSort,
+				-2, mask, 0xFFFFFFFF );
+		iface->enterDirectory(bla, signal);
+		iface->leaveDirectory(bla);
+		services->sort();
+	}
+	else
+	{
+		if (ref.type == eServicePlaylistHandler::ID) // playlists have own numbers
+			serviceentryflags|=eListBoxEntryService::flagOwnNumber;
+		iface->enterDirectory(ref, signal);
+		iface->leaveDirectory(ref);	// we have a copy.
+	}
 
 	if (ref.flags & eServiceReference::shouldSort)
 		services->sort();
 
 	if (serviceentryflags & eListBoxEntryService::flagOwnNumber)
 	{
-		int num=0;
-		services->forEachEntry( renumber(num) );
+		int num = this == eZap::getInstance()->getServiceSelector() ?
+			getFirstBouquetServiceNum(ref,-1) :
+			getFirstBouquetServiceNum(ref,path.bottom().data[1] == (1<<2) ?
+				eZapMain::modeRadio : path.bottom().data[1] == (1<<1)|(1<<4) ?
+				eZapMain::modeTV : eZapMain::modeFile );
+		ePlaylist *pl = (ePlaylist*) eServiceInterface::getInstance()->addRef( path.top() );
+		if ( pl )
+		{
+			services->forEachEntry( renumber(num, pl) );
+			eServiceInterface::getInstance()->removeRef( path.top() );
+		}
 	}
 
 /*	// now we calc the x size of the biggest number we have;
@@ -491,9 +666,18 @@ void eServiceSelector::fillServiceList(const eServiceReference &_ref)
 
 void eServiceSelector::updateNumbers()
 {
-	int num=0;
+	int num = (this == eZap::getInstance()->getServiceSelector()) ?
+		getFirstBouquetServiceNum(path.top(),-1) :
+		getFirstBouquetServiceNum(path.top(),path.bottom().data[1] == (1<<2) ?
+			eZapMain::modeRadio : path.bottom().data[1] == (1<<1)|(1<<4) ?
+			eZapMain::modeTV : eZapMain::modeFile );
 	services->beginAtomic();
-	services->forEachEntry( renumber(num, true) );
+	ePlaylist *pl = (ePlaylist*) eServiceInterface::getInstance()->addRef( path.top() );
+	if ( pl )
+	{
+		services->forEachEntry( renumber(num, pl, true) );
+		eServiceInterface::getInstance()->removeRef( path.top() );
+	}
 	services->invalidateContent();
 	services->endAtomic();
 }
@@ -520,7 +704,7 @@ void eServiceSelector::fillBouquetList( const eServiceReference& _ref)
 	bouquets->endAtomic();
 }
 
-struct moveFirstChar: public std::unary_function<const eListBoxEntryService&, void>
+struct moveFirstChar
 {
 	char c;
 
@@ -539,7 +723,7 @@ struct moveFirstChar: public std::unary_function<const eListBoxEntryService&, vo
 	}
 };
 
-struct moveServiceNum: public std::unary_function<const eListBoxEntryService&, void>
+struct moveServiceNum
 {
 	int num;
 
@@ -563,7 +747,7 @@ bool eServiceSelector::selectService(int num)
 	return services->forEachEntry( moveServiceNum( num ) ) == eListBoxBase::OK;
 }
 
-struct findServiceNum: public std::unary_function<const eListBoxEntryService&, void>
+struct findServiceNum
 {
 	int& num;
 	const eServiceReference& service;
@@ -592,7 +776,7 @@ int eServiceSelector::getServiceNum( const eServiceReference &ref )
 
 void eServiceSelector::gotoChar(char c)
 {
-	eDebug("gotoChar %d", c);
+//	eDebug("gotoChar %d", c);
 	switch(c)
 	{
 		case 2:// A,B,C
@@ -660,7 +844,7 @@ void eServiceSelector::gotoChar(char c)
 	}
 }
 
-struct updateEPGChangedService: public std::unary_function<eListBoxEntryService&, void>
+struct updateEPGChangedService
 {
 	int cnt;
 	eEPGCache* epg;
@@ -677,32 +861,56 @@ struct updateEPGChangedService: public std::unary_function<eListBoxEntryService&
 		{
 			tmpMap::const_iterator it;
 			if (updatedEntrys)
-			 it = updatedEntrys->find( (const eServiceReferenceDVB&)l.service );
+				it = updatedEntrys->find( (const eServiceReferenceDVB&)l.service );
 			if ( (updatedEntrys && it != updatedEntrys->end()) )  // entry is updated
 			{
-				EITEvent *e=eEPGCache::getInstance()->lookupEvent((const eServiceReferenceDVB&)l.service );
+				eventData *e=(eventData*)eEPGCache::getInstance()->lookupEvent((const eServiceReferenceDVB&)l.service, (time_t)0, true );
 				if (e)
 				{
-					if ( e->event_id != l.curEventId )
+					if ( e->getEventID() != l.curEventId )
 					{
 						if ( redrawOnly )
 							((eListBox<eListBoxEntryService>*) l.listbox)->invalidateEntry(cnt);
 						else
 							l.invalidateDescr();
 					}
-					delete e;
 				}
 			}
-			cnt++;
 		}
+		cnt++;
 		return 0;
 	}
 };
 
-void eServiceSelector::EPGUpdated( const tmpMap *m)
+void eServiceSelector::EPGUpdated()
 {
-	services->forEachEntry( updateEPGChangedService( m ) );
-	services->forEachVisibleEntry( updateEPGChangedService( m, true ) );
+	eEPGCache *epgcache = eEPGCache::getInstance();
+	epgcache->Lock();
+	tmpMap *tmp = epgcache->getUpdatedMap();
+	services->forEachEntry( updateEPGChangedService( tmp ) );
+	services->forEachVisibleEntry( updateEPGChangedService( tmp, true ) );
+	tmp->clear();
+	epgcache->Unlock();
+}
+
+struct invalidateServiceDescr
+{
+	invalidateServiceDescr()
+	{
+	}
+
+	bool operator()(eListBoxEntryService& l)
+	{
+		l.invalidateDescr();
+		return 0;
+	}
+};
+void eServiceSelector::SwitchNowNext()
+{
+	eListBoxEntryService::nownextEPG = 1-eListBoxEntryService::nownextEPG;
+	services->forEachEntry( invalidateServiceDescr() );
+	services->invalidate();
+	updateCi();
 }
 
 void eServiceSelector::pathUp()
@@ -721,6 +929,24 @@ void eServiceSelector::pathUp()
 			setFocus(bouquets);
 	}
 }
+struct moveServicePath
+{
+	eString path;
+
+	moveServicePath(eString path): path(path)
+	{
+	}
+
+	bool operator()(const eListBoxEntryService& s)
+	{
+		if (s.service.path == path)
+		{
+			( (eListBox<eListBoxEntryService>*) s.listbox)->setCurrent(&s);
+			return 1;
+		}
+		return 0;
+	}
+};
 
 void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 {
@@ -728,10 +954,37 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 	{
 		if (entry->flags & eListBoxEntryService::flagIsReturn)
 		{
+			// dont change path in radio and tv mode when recording is running
+			if ( eZap::getInstance()->getServiceSelector() == this
+				&& eDVB::getInstance()->recorder  && !eZapMain::getInstance()->isRecordingPermanentTimeshift()
+				&& eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+				return;
 			pathUp();
 			return;
 		}
 		eServiceReference ref=entry->service;
+
+#ifndef DISABLE_FILE
+#ifdef HAVE_DREAMBOX_HARDWARE
+		if ((ref.type == 0x2000) && (eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000)) // picviewer
+#else
+		if (ref.type == 0x2000) // picviewer
+#endif
+		{
+			hide();
+			ePictureViewer e(ref.path);
+#ifndef DISABLE_LCD
+			e.setLCD( LCDTitle, LCDElement );
+#endif
+			e.show();
+			e.exec();
+			e.hide();
+			eString path = e.GetCurrentFile();
+			services->forEachEntry( moveServicePath( path ) ); 
+			show();
+			return;
+		}
+#endif
 
 		if (plockmode)
 		{
@@ -739,11 +992,9 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 			if ( ref.flags & eServiceReference::isDirectory )
 			{
 				hide();
-				eMessageBox mb(_("Select No or press Abort to lock/unlock the complete directory"), _("Enter Directory"),  eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo );
-				mb.show();
-				if ( mb.exec() == eMessageBox::btYes )
+				int ret = eMessageBox::ShowBox(_("Select No or press Abort to lock/unlock the complete directory"), _("Enter Directory"),  eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo );
+				if ( ret == eMessageBox::btYes )
 					doit=0;
-				mb.hide();
 				show();
 			}
 			if ( doit )
@@ -778,7 +1029,7 @@ void eServiceSelector::serviceSelected(eListBoxEntryService *entry)
 					eZapMain::getInstance()->toggleMoveMode(this);
 				return;
 			}
-			else
+			else if ( ref )
 			{
 				services->setMoveMode(1);
 				eListBoxEntryService::selectedToMove=entry;
@@ -830,15 +1081,23 @@ void eServiceSelector::serviceSelChanged(eListBoxEntryService *entry)
 		selected = (((eListBoxEntryService*)entry)->service);
 		ci->clear();
 
-		if ( selected.type == eServiceReference::idDVB &&
-					(!(selected.flags & eServiceReference::flagDirectory)))
+		if ( (!(selected.flags & eServiceReference::flagDirectory)) &&
+				 (( selected.type == eServiceReference::idDVB )
+#ifndef DISABLE_FILE
+			|| 	( selected.type == eServiceReference::idUser &&
+						( (selected.data[0] == eMP3Decoder::codecMPG)
+						||(selected.data[0] == eMP3Decoder::codecMP3)
+						||(selected.data[0] == eMP3Decoder::codecOGG) ) )
+#endif
+							) )
 			ciDelay.start(selected.path.size() ? 100 : 500, true );
 	}
 }
 
 void eServiceSelector::updateCi()
 {
-	ci->update((const eServiceReferenceDVB&)selected);
+	if ( isVisible() )
+		ci->update((const eServiceReferenceDVB&)selected);
 }
 
 void eServiceSelector::forEachServiceRef( Signal1<void,const eServiceReference&> callback, bool fromBeg )
@@ -937,6 +1196,11 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->prevBouquet && !movemode && path.size() > 1)
 			{
+				// dont change path in radio and tv mode when recording is running
+				if ( eZap::getInstance()->getServiceSelector() == this
+					&& eDVB::getInstance()->recorder && !eZapMain::getInstance()->isRecordingPermanentTimeshift()
+					&& eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+					return 1;
 				ci->clear();
 				services->beginAtomic();
 				if (style == styleCombiColumn)
@@ -949,20 +1213,30 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					path.up();
 					fillServiceList(path.current());
 					selectService( last );
-					eListBoxEntryService* p = services->goPrev();
-					if (p && (p->flags&eListBoxEntryService::flagIsReturn))
-						p=services->goPrev();
+					eListBoxEntryService* p=0;
+					do
+						p = services->goPrev();
+					while ( p && ( p->flags&eListBoxEntryService::flagIsReturn || 
+									( p->service != last && 
+										!(p->service.flags & eServiceReference::canDescent) &&
+										!(p->service.flags & eServiceReference::isDirectory))));
 					if (p)
 					{
 						path.down( p->service );
 						fillServiceList( p->service );
-						selectService( eServiceInterface::getInstance()->service );
+						if (!selectService( eServiceInterface::getInstance()->service ))
+							next();
 					}
 				}
 				services->endAtomic();
 			}
 			else if (event.action == &i_serviceSelectorActions->nextBouquet && !movemode && path.size()>1 )
 			{
+				// dont change path in radio and tv mode when recording is running
+				if ( eZap::getInstance()->getServiceSelector() == this
+					&& eDVB::getInstance()->recorder  && !eZapMain::getInstance()->isRecordingPermanentTimeshift()
+					&& eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+					return 1;
 				ci->clear();
 				services->beginAtomic();
 				if (style == styleCombiColumn)
@@ -975,44 +1249,81 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					path.up();
 					fillServiceList(path.current());
 					selectService( last );
-					eListBoxEntryService* p = services->goNext();
-					if (p && (p->flags&eListBoxEntryService::flagIsReturn))
-						p=services->goNext();
+					eListBoxEntryService* p=0;
+					do
+						p = services->goNext();
+					while ( p && ( p->flags&eListBoxEntryService::flagIsReturn || 
+									( p->service != last && 
+										!(p->service.flags & eServiceReference::canDescent) &&
+										!(p->service.flags & eServiceReference::isDirectory))));
 					if (p)
 					{
 						path.down( p->service );
 						fillServiceList( p->service );
-						selectService( eServiceInterface::getInstance()->service );
+						if (!selectService( eServiceInterface::getInstance()->service ))
+							next();
 					}
 				}
 				services->endAtomic();
 			}
-			else if (event.action == &i_serviceSelectorActions->showEPGSelector && !movemode && !editMode)
+			else if (event.action == &i_serviceSelectorActions->showEPGSelector && !isFileSelector
+				&& !movemode && !editMode && this == eZap::getInstance()->getServiceSelector() )
 			{
 				hide();
-				eEPGStyleSelector e;
-#ifndef DISABLE_LCD
-				e.setLCD( LCDTitle, LCDElement );
+#ifndef DISABLE_FILE
+#ifdef HAVE_DREAMBOX_HARDWARE
+				if ((selected.type == 0x2000) && (eSystemInfo::getInstance()->getHwType() >= eSystemInfo::DM7000))  // Picture
+#else
+				if (selected.type == 0x2000) // Picture
 #endif
-				e.show();
-				int ret = e.exec();
-				e.hide();
-				switch ( ret )
 				{
-					case 1:
-						/*emit*/ showEPGList((eServiceReferenceDVB&)selected);
-						show();
-						break;
-					case 2:
-						showMultiEPG();
-						break;
-					default:
-						show();
-						break;
+					ePicViewerSettings f;
+#ifndef DISABLE_LCD
+					f.setLCD( LCDTitle, LCDElement );
+#endif
+					f.show();
+					f.exec();
+					f.hide();
+
+					show();
+				}
+				else
+#endif
+				{
+					eEPGStyleSelector e(1);
+#ifndef DISABLE_LCD
+					e.setLCD( LCDTitle, LCDElement );
+#endif
+					e.show();
+					int ret = e.exec();
+					e.hide();
+					switch ( ret )
+					{
+						case 1:
+							/*emit*/ showEPGList((eServiceReferenceDVB&)selected);
+							show();
+							break;
+						case 2:
+							showMultiEPG();
+							break;
+						case 4:
+							EPGSearchEvent(selected);
+							break;
+						default:
+							show();
+							break;
+					}
 				}
 			}
 			else if (event.action == &i_serviceSelectorActions->pathUp)
+			{
+				// dont change path in radio and tv mode when recording is running
+				if ( eZap::getInstance()->getServiceSelector() == this
+					&& eDVB::getInstance()->recorder  && !eZapMain::getInstance()->isRecordingPermanentTimeshift()
+					&& eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+					return 1;
 				pathUp();
+			}
 			else if (event.action == &i_serviceSelectorActions->toggleStyle && !movemode && !editMode)
 			{
 				int newStyle = lastSelectedStyle;
@@ -1029,27 +1340,47 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 						setFocus( bouquets );
 					else
 						setFocus( services );
+				if ( style == styleSingleColumn )
+					SwitchNowNext();
 			}
-			else if (event.action == &i_serviceSelectorActions->showMenu && focus != bouquets && !plockmode )
+			else if (event.action == &i_serviceSelectorActions->showMenu  && !isFileSelector && focus != bouquets && !plockmode )
 			{
 				hide();
 				/*emit*/ showMenu(this);
 				show();
 			}
-			else if (event.action == &i_serviceSelectorActions->addService && !movemode && !editMode)
+			else if (event.action == &i_serviceSelectorActions->addService && !isFileSelector && !movemode && !editMode)
 				/*emit*/ addServiceToPlaylist(selected);
-			else if (event.action == &i_serviceSelectorActions->addServiceToUserBouquet && !movemode && !editMode)
+			else if (event.action == &i_serviceSelectorActions->addServiceToUserBouquet && !isFileSelector && !movemode && !editMode)
 			{
 				hide();
 				/*emit*/ addServiceToUserBouquet(&selected, 0);
 				show();
 			}
-			else if (event.action == &i_serviceSelectorActions->modeTV && !movemode && !editMode)
-				/*emit*/ setMode(eZapMain::modeTV);
-			else if (event.action == &i_serviceSelectorActions->modeRadio && !movemode && !editMode)
-				/*emit*/ setMode(eZapMain::modeRadio);
+			else if (event.action == &i_serviceSelectorActions->modeTV  && !isFileSelector && !movemode && !editMode)
+			{
+				if ( this == eZap::getInstance()->getServiceSelector() )
+					/*emit*/ setMode(eZapMain::modeTV);
+				else
+				{
+					setPath(eServiceReference(eServiceReference::idDVB,
+						eServiceReference::flagDirectory|eServiceReference::shouldSort,
+						-2, (1<<4)|(1<<1), 0xFFFFFFFF ));
+				}
+			}
+			else if (event.action == &i_serviceSelectorActions->modeRadio && !isFileSelector && !movemode && !editMode)
+			{
+				if ( this == eZap::getInstance()->getServiceSelector() )
+					/*emit*/ setMode(eZapMain::modeRadio);
+				else
+				{
+					setPath(eServiceReference(eServiceReference::idDVB,
+						eServiceReference::flagDirectory|eServiceReference::shouldSort,
+						-2, 1<<2, 0xFFFFFFFF ));
+				}
+			}
 #ifndef DISABLE_FILE
-			else if (event.action == &i_serviceSelectorActions->modeFile && !movemode && !editMode)
+			else if (event.action == &i_serviceSelectorActions->modeFile  && !isFileSelector && !movemode && !editMode)
 				/*emit*/ setMode(eZapMain::modeFile);
 #endif
 			else if (event.action == &i_serviceSelectorActions->gotoPrevMarker)
@@ -1106,28 +1437,47 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 			}
 			else if (event.action == &i_serviceSelectorActions->showAll && !movemode)
 			{
-				enterPath = /*emit*/ getRoot(listAll);
+				if ( this == eZap::getInstance()->getServiceSelector() )
+					enterPath = /*emit*/ getRoot(listAll, -1);
+				else
+					enterPath = /*emit*/ getRoot(listAll, path.bottom().data[1] == (1<<2) ? eZapMain::modeRadio :
+						path.bottom().data[1] == (1<<1)|(1<<4) ? eZapMain::modeTV : eZapMain::modeFile );
 				if ( style == styleCombiColumn && eZapMain::getInstance()->getMode() == eZapMain::modeFile )
 					enterPath.down(eServiceReference());
 			}
 			else if (event.action == &i_serviceSelectorActions->showSatellites && !movemode)
 			{
-				if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
-				{
-					enterPath = /*emit*/ getRoot(listSatellites);
-					if ( style == styleCombiColumn && eZapMain::getInstance()->getMode() != eZapMain::modeFile )
-						enterPath.down(eServiceReference());
-				}
+				if ( this == eZap::getInstance()->getServiceSelector() )
+					enterPath = /*emit*/ getRoot(listSatellites,-1);
+				else
+					enterPath = /*emit*/ getRoot(listSatellites, path.bottom().data[1] == (1<<2) ? eZapMain::modeRadio :
+					path.bottom().data[1] == (1<<1)|(1<<4) ? eZapMain::modeTV : eZapMain::modeFile );
+
+				// On Cable and Terrestrial Boxes dont handle green button.. expect in file mode..
+				if ( eSystemInfo::getInstance()->getFEType() != eSystemInfo::feSatellite && enterPath.size() &&
+					enterPath.bottom().data[0] == -4 ) // Satellite list..
+					enterPath=eServicePath(); // clear enterPath
+
+				if ( style == styleCombiColumn && eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+					enterPath.down(eServiceReference());
 			}
 			else if (event.action == &i_serviceSelectorActions->showProvider && !movemode)
 			{
-				enterPath = /*emit*/ getRoot(listProvider);
+				if ( this == eZap::getInstance()->getServiceSelector() )
+					enterPath = /*emit*/ getRoot(listProvider,-1);
+				else
+					enterPath = /*emit*/ getRoot(listProvider, path.bottom().data[1] == (1<<2) ? eZapMain::modeRadio :
+						path.bottom().data[1] == (1<<1)|(1<<4) ? eZapMain::modeTV : eZapMain::modeFile );
 				if ( style == styleCombiColumn && eZapMain::getInstance()->getMode() != eZapMain::modeFile )
 					enterPath.down(eServiceReference());
 			}
 			else if (event.action == &i_serviceSelectorActions->showBouquets && !movemode)
 			{
-				enterPath = /*emit*/ getRoot(listBouquets);
+				if ( this == eZap::getInstance()->getServiceSelector() )
+					enterPath = /*emit*/ getRoot(listBouquets,-1);
+				else
+					enterPath = /*emit*/ getRoot(listBouquets, path.bottom().data[1] == (1<<2) ? eZapMain::modeRadio :
+						path.bottom().data[1] == (1<<1)|(1<<4) ? eZapMain::modeTV : eZapMain::modeFile );
 				if ( style == styleCombiColumn )
 					enterPath.down(eServiceReference());
 			}
@@ -1137,6 +1487,8 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					eZapMain::getInstance()->toggleMoveMode(this);
 				if (editMode)
 					eZapMain::getInstance()->toggleEditMode(this);
+				if (eListBoxEntryService::nownextEPG)
+					SwitchNowNext();
 				break;
 			}
 			else if ( event.action == &i_serviceSelectorActions->markPressed )
@@ -1146,10 +1498,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					if (path.current().type == eServicePlaylistHandler::ID)
 					{
 						if ( movemode )
-						{
-							eZapMain::getInstance()->toggleMoveMode(this);
-							updateNumbers();
-						}
+							serviceSelected( services->getCurrent() );
 						else
 						{
 							eZapMain::getInstance()->toggleMoveMode(this);
@@ -1169,15 +1518,40 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 					/*emit*/ renameService( this );
 				show();
 			}
-			else if ( event.action == &i_serviceSelectorActions->newMarkerPressed )
+			else if ( event.action == &i_serviceSelectorActions->insertPressed )
 			{
 				if ( path.current().type == eServicePlaylistHandler::ID )
 					/*emit*/ newMarkerPressed( this );
+				else if ( selected.flags & eServiceReference::flagDirectory )
+				{
+					if ( selected.type == eServiceReference::idDVB
+						&& (selected.data[0] == -2 || selected.data[0] == -3) )
+						/*emit*/ copyToBouquetList(this);
+				}
+				else if ( selected.type == eServiceReference::idDVB
+#ifndef DISABLE_FILE
+					|| ( selected.type == eServiceReference::idUser &&
+						( (selected.data[0] == eMP3Decoder::codecMPG)
+						||(selected.data[0] == eMP3Decoder::codecMP3)
+						||(selected.data[0] == eMP3Decoder::codecOGG) ) ) )
+#else
+					)
+#endif
+				{
+					hide();
+					/*emit*/ addServiceToUserBouquet(&selected, 0);
+					show();
+				}
 			}
 			else
 				break;
 			if (enterPath.size())
 			{
+				// dont change path in radio and tv mode when recording is running
+				if ( eZap::getInstance()->getServiceSelector() == this
+					&& eDVB::getInstance()->recorder  && !eZapMain::getInstance()->isRecordingPermanentTimeshift()
+					&& eZapMain::getInstance()->getMode() != eZapMain::modeFile )
+					return 1;
 				ci->clear();
 				if ( path.bottom() == enterPath.bottom() )
 					pathUp();
@@ -1211,7 +1585,7 @@ int eServiceSelector::eventHandler(const eWidgetEvent &event)
 	return eWindow::eventHandler(event);
 }
 
-struct _selectService: public std::unary_function<const eListBoxEntryService&, void>
+struct _selectService
 {
 	eServiceReference service;
 
@@ -1230,7 +1604,8 @@ struct _selectService: public std::unary_function<const eListBoxEntryService&, v
 	}
 };
 
-struct copyEntry: public std::unary_function<const eListBoxEntryService&, void>
+#if 0
+struct copyEntry
 {
 	std::list<eServiceReference> &dest;
 
@@ -1280,6 +1655,7 @@ bool eServiceSelector::selServiceRec( eServiceReference &ref )
 	}
 	return false;
 }
+#endif
 
 bool eServiceSelector::selectService(const eServiceReference &ref)
 {
@@ -1330,31 +1706,37 @@ void eServiceSelector::setStyle(int newStyle, bool force)
 			eListBoxEntryService::folder = eSkin::getActive()->queryImage("sselect_folder");
 			eListBoxEntryService::marker = eSkin::getActive()->queryImage("sselect_marker");
 			eListBoxEntryService::locked = eSkin::getActive()->queryImage("sselect_locked");
+			eListBoxEntryService::newfound = eSkin::getActive()->queryImage("sselect_newfound");
 			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Number");
 			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.singleColumn.Entry.Name");
+			i_serviceSelectorActions->toggleFocus.setDescription(_("toggle between now and next epg entries in single column list"));
 		}
 		else if (newStyle == styleMultiColumn)
 		{
 			eListBoxEntryService::folder = 0;
 			eListBoxEntryService::marker = eSkin::getActive()->queryImage("sselect_marker_small");
 			eListBoxEntryService::locked = eSkin::getActive()->queryImage("sselect_locked_small");
+			eListBoxEntryService::newfound = eSkin::getActive()->queryImage("sselect_newfound_small");
 			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Number");
 			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.multiColumn.Entry.Name");
+			i_serviceSelectorActions->toggleFocus.setDescription(_("toggle focus between service and bouquet list (in combi column style)"));
 		}
 		else
 		{
 			eListBoxEntryService::folder = 0;
 			eListBoxEntryService::marker = eSkin::getActive()->queryImage("sselect_marker_small");
 			eListBoxEntryService::locked = eSkin::getActive()->queryImage("sselect_locked_small");
+			eListBoxEntryService::newfound = eSkin::getActive()->queryImage("sselect_newfound_small");
 			eListBoxEntryService::numberFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Number");
 			eListBoxEntryService::serviceFont = eSkin::getActive()->queryFont("eServiceSelector.combiColumn.Entry.Name");
+			i_serviceSelectorActions->toggleFocus.setDescription(_("toggle focus between service and bouquet list (in combi column style)"));
 		}
-		services = new eListBox<eListBoxEntryService>(this);
+		services = new eListBoxExt<eListBoxEntryService>(this);
 		services->setName("services");
 		services->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
 		services->hide();
 
-		bouquets = new eListBox<eListBoxEntryService>(this);
+		bouquets = new eListBoxExt<eListBoxEntryService>(this);
 		bouquets->setName("bouquets");
 		bouquets->setActiveColor(eSkin::getActive()->queryScheme("eServiceSelector.highlight.background"), eSkin::getActive()->queryScheme("eServiceSelector.highlight.foreground"));
 		bouquets->hide();
@@ -1376,22 +1758,17 @@ void eServiceSelector::setStyle(int newStyle, bool force)
 		if ( showButtons )
 		{
 			styleName+="_buttons";
-			key[0] = new eLabel(this);
-			key[0]->setName("key_red");
-			key[1] = new eLabel(this);
-			key[1]->setName("key_green");
-			key[2] = new eLabel(this);
-			key[2]->setName("key_yellow");
-			key[3] = new eLabel(this);
-			key[3]->setName("key_blue");
+			key[0] = CreateSkinnedLabel("key_red");
+			key[1] = CreateSkinnedLabel("key_green");
+			key[2] = CreateSkinnedLabel("key_yellow");
+			key[3] = CreateSkinnedLabel("key_blue");
 			for (int i=0; i < 4; i++)
 				key[i]->show();
 		}
 		else
 			key[0] = key[1] = key[2] = key[3] = 0;
 
-		if (eSkin::getActive()->build(this, styleName.c_str()))
-			eFatal("Service selector widget \"%s\" build failed!",styleName.c_str());
+		BuildSkin(styleName.c_str());
 
 		style = newStyle;
 		CONNECT(services->selected, eServiceSelector::serviceSelected);
@@ -1402,13 +1779,13 @@ void eServiceSelector::setStyle(int newStyle, bool force)
 		if ( services->isVisible() )
 			setFocus(services);
 		setKeyDescriptions();
- }
+	}
 	ci->show();
 }
 
 void eServiceSelector::bouquetSelChanged( eListBoxEntryService *entry)
 {
-	if ( entry && entry->service != eServiceReference() )
+	if ( entry && entry->service )
 	{
 		ci->clear();
 		services->beginAtomic();
@@ -1423,6 +1800,8 @@ void eServiceSelector::bouquetSelChanged( eListBoxEntryService *entry)
 
 void eServiceSelector::actualize()
 {
+	if ( movemode & 2 )
+		return;
 	if (style == styleCombiColumn)
 	{
 		bouquets->beginAtomic();
@@ -1452,7 +1831,12 @@ eServiceSelector::eServiceSelector()
 	:eWindow(0), result(0), services(0), bouquets(0)
 	,style(styleInvalid), lastSelectedStyle(styleSingleColumn)
 	,BrowseChar(0), BrowseTimer(eApp), ciDelay(eApp), movemode(0)
-	,editMode(0), plockmode(0)
+	,editMode(0), plockmode(0),isFileSelector(false)
+{
+	init_eServiceSelector();
+}
+
+void eServiceSelector::init_eServiceSelector()
 {
 	ci = new eChannelInfo(this);
 	ci->setName("channelinfo");
@@ -1460,36 +1844,42 @@ eServiceSelector::eServiceSelector()
 	CONNECT(eDVB::getInstance()->bouquetListChanged, eServiceSelector::actualize);
 	CONNECT(BrowseTimer.timeout, eServiceSelector::ResetBrowseChar);
 	CONNECT(ciDelay.timeout, eServiceSelector::updateCi );
-	CONNECT(eEPGCache::getInstance()->EPGUpdated, eServiceSelector::EPGUpdated);
 
 	addActionMap(&i_serviceSelectorActions->map);
 	addActionMap(&i_numberActions->map);
 
 	setHelpID(33);
-	addActionToHelpList(&i_serviceSelectorActions->deletePressed);
-	addActionToHelpList(&i_serviceSelectorActions->markPressed);
-	addActionToHelpList(&i_serviceSelectorActions->renamePressed);
-	addActionToHelpList(&i_serviceSelectorActions->newMarkerPressed);
+	if ( !eZap::getInstance()->getServiceSelector() )
+	{
+		addActionToHelpList(&i_serviceSelectorActions->deletePressed);
+		addActionToHelpList(&i_serviceSelectorActions->markPressed);
+		addActionToHelpList(&i_serviceSelectorActions->renamePressed);
+		addActionToHelpList(&i_serviceSelectorActions->insertPressed);
+	}
 	addActionToHelpList(&i_serviceSelectorActions->showAll);
-	if ( eFrontend::getInstance()->Type() == eFrontend::feSatellite )
+	if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite )
 		addActionToHelpList(&i_serviceSelectorActions->showSatellites);
 	addActionToHelpList(&i_serviceSelectorActions->showProvider);
 	addActionToHelpList(&i_serviceSelectorActions->showBouquets);
-	addActionToHelpList(&i_serviceSelectorActions->showMenu);
+	if ( !eZap::getInstance()->getServiceSelector() )
+		addActionToHelpList(&i_serviceSelectorActions->showMenu);
 	addActionToHelpList(&i_serviceSelectorActions->toggleStyle);
 	addActionToHelpList(&i_serviceSelectorActions->toggleFocus);
 	addActionToHelpList(&i_serviceSelectorActions->gotoPrevMarker);
 	addActionToHelpList(&i_serviceSelectorActions->gotoNextMarker);
-	addActionToHelpList(&i_serviceSelectorActions->showEPGSelector);
+	if ( !eZap::getInstance()->getServiceSelector() )
+		addActionToHelpList(&i_serviceSelectorActions->showEPGSelector);
 	addActionToHelpList(&i_serviceSelectorActions->pathUp);
 	addActionToHelpList(&i_serviceSelectorActions->modeTV);
 	addActionToHelpList(&i_serviceSelectorActions->modeRadio);
 #ifndef DISABLE_FILE
-	addActionToHelpList(&i_serviceSelectorActions->modeFile);
+	if ( !eZap::getInstance()->getServiceSelector() )
+		addActionToHelpList(&i_serviceSelectorActions->modeFile);
 #endif
 	
 	key[0] = key[1] = key[2] = key[3] = 0;
 
+	CONNECT(eDVB::getInstance()->serviceListChanged, eServiceSelector::actualize );
 	eActionMapList::getInstance()->activateStyle("sselect_default");
 }
 
@@ -1500,22 +1890,14 @@ eServiceSelector::~eServiceSelector()
 void eServiceSelector::enterDirectory(const eServiceReference &ref)
 {
 	path.down(ref);
-	doSPFlags(ref);
-	services->beginAtomic();
-	actualize();
-	if (!selectService( eServiceInterface::getInstance()->service ))
-		services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
-	services->endAtomic();
+	setPath(path);
 }
 
 void eServiceSelector::showMultiEPG()
 {
 	eZapEPG epg;
 
-	epg.move(ePoint(50, 50));
-	epg.resize(eSize(620, 470));
-
-	int direction = 1;
+	int direction = 2;
 	epg.show();
 	do
 	{
@@ -1534,32 +1916,49 @@ void eServiceSelector::showMultiEPG()
 		show();
 }
 
-void eServiceSelector::doSPFlags(const eServiceReference &ref)
+void eServiceSelector::EPGSearchEvent(eServiceReference ref)
 {
-#if 0
-	const eService *pservice=eServiceInterface::getInstance()->addRef(ref);
-	if (pservice)
+	eString EPGSearchName = "";
+	eEPGSearch dd(ref, ci->GetDescription());
+	dd.show();
+	int back = 2;
+	do
 	{
-		switch (pservice->spflags & eService::spfColMask)
+		back = dd.exec();
+		EPGSearchName = dd.getSearchName();
+		if (back == 2)
 		{
-		case eService::spfColSingle:
-			setStyle(styleSingleColumn);
-			break;
-		case eService::spfColMulti:
-			setStyle(styleMultiColumn);
-			break;
-		case eService::spfColCombi:
-			setStyle(styleCombiColumn);
-			break;
-		case eService::spfColDontChange:
-			setStyle(lastSelectedStyle);
-			break;
+			dd.hide();
+			eMessageBox::ShowBox(EPGSearchName + eString(_(" was not found!")) , _("EPG Search"), eMessageBox::iconInfo|eMessageBox::btOK);
+			dd.show();
 		}
 	}
-	eServiceInterface::getInstance()->removeRef(ref);
+	while (back == 2);
+	dd.hide();
+	if (!back)
+	{
+		// Zeige EPG Ergebnis an
+#ifndef DISABLE_LCD
+		eZapLCD* pLCD = eZapLCD::getInstance();
+		bool bMain = pLCD->lcdMain->isVisible();
+		bool bMenu = pLCD->lcdMenu->isVisible();
+		pLCD->lcdMain->hide();
+		pLCD->lcdMenu->show();
 #endif
+		eEPGSelector eEPGSelectorSearch(EPGSearchName);
+#ifndef DISABLE_LCD
+		eEPGSelectorSearch.setLCD(pLCD->lcdMenu->Title, pLCD->lcdMenu->Element);
+#endif
+		eEPGSelectorSearch.show(); eEPGSelectorSearch.exec(); eEPGSelectorSearch.hide();
+#ifndef DISABLE_LCD
+		if (!bMenu)
+			pLCD->lcdMenu->hide();
+		if ( bMain )
+			pLCD->lcdMain->show();
+#endif
+		}
+	show();
 }
-
 void eServiceSelector::ResetBrowseChar()
 {
 	BrowseChar=0;
@@ -1612,7 +2011,8 @@ const eServiceReference *eServiceSelector::next()
 		s=services->goNext();
 	while ( s != cur && s &&
 			( s->flags & eListBoxEntryService::flagIsReturn ||
-				s->service.flags == eServiceReference::isMarker ) );
+				s->service.flags == eServiceReference::isMarker ||
+				s->service.flags & eServiceReference::isNotPlayable ) );
 
 	services->endAtomic();
 	if (s)
@@ -1630,7 +2030,8 @@ const eServiceReference *eServiceSelector::prev()
 		s=services->goPrev();
 	while ( s != cur && s &&
 			( s->flags & eListBoxEntryService::flagIsReturn ||
-				s->service.flags & eServiceReference::isMarker ) );
+				s->service.flags & eServiceReference::isMarker ||
+				s->service.flags & eServiceReference::isNotPlayable ) );
 
 	services->endAtomic();
 	if (s)
@@ -1642,22 +2043,70 @@ const eServiceReference *eServiceSelector::prev()
 void eServiceSelector::setPath(const eServicePath &newpath, const eServiceReference &select)
 {
 	path=newpath;
-	doSPFlags(path.current());
 	if (services)
 	{
+		bool ret=false;
 		services->beginAtomic();
 		actualize();
-		selectService(select);
+		if (select)
+			ret=selectService(select);
+		else
+		{
+			eServiceReference &sref = eServiceInterface::getInstance()->service;
+			if (!(ret=selectService(sref)))
+			{
+				if ( sref.type == eServiceReference::idDVB && !sref.path )
+				{
+					eServiceReferenceDVB &dvb_ref = (eServiceReferenceDVB&) sref;
+					eString tmp;
+					tmp.sprintf("1:15:fffffffe:12:%x:0:0:0:0:0:", dvb_ref.getDVBNamespace().get());
+					eServiceReference sat_ref(tmp);
+					if (!(ret=selectService(sat_ref)))
+					{
+						eServiceDVB *service = eTransponderList::getInstance()->searchService(sref);
+						if ( service )
+						{
+							eBouquet *b = eDVB::getInstance()->settings->getBouquet(eString(service->service_provider).upper());
+							if (b)
+							{
+								tmp.sprintf("1:15:fffffffd:12:%x:%x:0:0:0:0:", b->bouquet_id, dvb_ref.getDVBNamespace().get() );
+								eServiceReference bref(tmp);
+								if (!(ret=selectService(bref)))
+								{
+									tmp.sprintf("1:15:fffffffd:12:%x:ffffffff:0:0:0:0:", b->bouquet_id, dvb_ref.getDVBNamespace().get() );
+									eServiceReference bref(tmp);
+									ret=selectService(bref);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (!ret)
+			services->moveSelection( eListBox<eListBoxEntryService>::dirFirst );
+
+		// we have a problem when selection not changes..
+		// the listbox don't emit "selected"... then our current
+		// selected entry is not valid.. to prevent this we set
+		// it manual...
+		eListBoxEntryService *cur = services->getCurrent();
+		if ( cur )
+			selected = cur->service;
+		else
+			selected = eServiceReference();
+
 		services->endAtomic();
 	}
 }
 
 void eServiceSelector::removeCurrent(bool selNext)
 {
-	services->beginAtomic();
 	eListBoxEntryService *cur = services->getCurrent();
 	if ( !cur )
 		return;
+	services->beginAtomic();
 	if ( selNext )
 		services->goNext();
 	else
@@ -1679,8 +2128,10 @@ void eServiceSelector::invalidateCurrent( eServiceReference ref )
 
 int eServiceSelector::toggleMoveMode()
 {
-	services->beginAtomic();
+	if ( editMode )  // don't editmode and movemode at the same time..
+		eZapMain::getInstance()->toggleEditMode(this);
 
+	services->beginAtomic();
 	movemode^=1;
 	if (!movemode)
 	{
@@ -1690,7 +2141,7 @@ int eServiceSelector::toggleMoveMode()
 			services->append( goUpEntry, true, true );
 	}
 	else if ( goUpEntry )
-		services->remove(goUpEntry, true);
+		services->take(goUpEntry, true);
 
 	services->endAtomic();
 	return movemode;
@@ -1698,6 +2149,102 @@ int eServiceSelector::toggleMoveMode()
 
 int eServiceSelector::toggleEditMode()
 {
+	if ( movemode )  // don't editmode and movemode at the same time..
+		eZapMain::getInstance()->toggleMoveMode(this);
 	editMode^=1;
 	return editMode;
 }
+#ifndef DISABLE_FILE
+eFileSelector::eFileSelector(eString startPath) : eServiceSelector()
+{
+	init_eFileSelector(startPath);
+}
+void eFileSelector::init_eFileSelector(eString startPath)
+{
+	isFileSelector = true;
+	if (startPath.empty() || startPath[startPath.length() -1] != '/')
+		startPath+= "/";
+	eString tmp = startPath;
+	eString tmp2 = "";
+	while (!tmp.empty())
+	{
+		int pos =tmp.find_first_of('/');
+		tmp2 = tmp2+tmp.substr(0,pos) + "/";
+		eServiceReference startDirRef =eServiceReference(eServiceReference::idFile, eServiceReference::isDirectory|eServiceReference::canDescent|eServiceReference::mustDescent|eServiceReference::shouldSort|eServiceReference::sort1, tmp2);
+		enterDirectory(startDirRef);
+		tmp = tmp.substr(pos+1);
+	}
+	getRoot.connect( slot( *this, &eFileSelector::getDirRoot) );
+	setStyle(eServiceSelector::styleSingleColumn);
+}
+
+void eFileSelector::setKeyDescriptions( bool editMode )
+{
+	if (!(key[0] && key[1] && key[2] && key[3]))
+		return;
+
+	if ( editMode )
+	{
+		eServiceSelector::setKeyDescriptions(editMode);
+		return;
+	}
+	
+	key[0]->setText(_("Root"));
+	key[1]->setText(_("Select"));
+	key[2]->setText(_("New Directory"));
+	key[3]->setText(_("Delete"));
+}
+eServicePath eFileSelector::getDirRoot(int list, int _mode)
+{
+	eServicePath b;
+	switch (list)
+	{
+	case listAll:
+		b.down(eServiceReference(eServiceReference::idFile, eServiceReference::isDirectory|eServiceReference::canDescent|eServiceReference::mustDescent|eServiceReference::shouldSort|eServiceReference::sort1, "/"));
+		break;
+	case listSatellites:
+		result = &selected;
+		close(0);
+		break;
+	case listProvider:
+		{
+			TextEditWindow wnd(_("Enter name of new directory:"));
+			wnd.setText(_("Create Directory"));
+			wnd.show();
+			int ret = wnd.exec();
+			wnd.hide();
+			if ( !ret )
+			{
+				eString cmd = eString().sprintf("mkdir \"%s/%s\"",getPath().current().path.c_str(),wnd.getEditText().c_str());
+				if ( system(cmd.c_str()) )
+				{
+					eMessageBox::ShowBox(strerror(errno),_("Error creating directory"),eMessageBox::btOK|eMessageBox::iconError);
+				}
+				else
+					actualize();
+			}
+		}
+		break;
+	case listBouquets:
+		{
+			if  (selected.type != eServiceReference::idFile)
+				break;
+			eString s;
+			s.sprintf(_("You are trying to delete '%s'.\nReally do this?"),selected.path.c_str() );
+			int r = eMessageBox::ShowBox(s, _("Delete"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btNo);
+			if (r == eMessageBox::btYes)
+			{
+				eString cmd = eString().sprintf("rm -f -r \"%s\"",selected.path.c_str());
+				if ( system(cmd.c_str()) )
+				{
+					eMessageBox::ShowBox(strerror(errno),_("Error") ,eMessageBox::btOK|eMessageBox::iconError);
+				}
+				else
+					actualize();
+			}
+		}
+		break;
+	}
+	return b;
+}
+#endif

@@ -8,21 +8,31 @@
 #include <lib/gui/eprogress.h>
 #include <lib/gui/eskin.h>
 #include <lib/dvb/decoder.h>
-#include <lib/gdi/font.h>
-#include <libmd5sum.h>
 #include <lib/dvb/edvb.h>
+#include <lib/system/info.h>
+#include <lib/gdi/font.h>
+#include <lib/gdi/epng.h>
+#include <lib/gdi/gfbdc.h>
+#include <lib/gdi/fb.h>
+#include <libmd5sum.h>
+
 #include <sys/mman.h>
 
-#include <linux/mtd/mtd.h>
+#include <linux/version.h>
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,7)) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18))
+#include <linux/compiler.h>
+#endif
+#include <mtd/mtd-user.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
 
-#define TMP_IMAGE "/var/tmp/root.cramfs"
-#define TMP_IMAGE_ALT "/var/tmp/cdk.cramfs"
-#define TMP_CHANGELOG "/var/tmp/changelog"
+#define TMP_IMAGE "/tmp/root.cramfs"
+#define TMP_IMAGE_ALT "/tmp/cdk.cramfs"
+#define TMP_CHANGELOG "/tmp/changelog"
 
 class ProgressWindow: public eWindow
 {
+	void init_ProgressWindow( const char *wtext );
 public:
 	eProgress progress;
 	ProgressWindow( const char * );
@@ -30,6 +40,10 @@ public:
 
 ProgressWindow::ProgressWindow( const char *wtext )
 	:eWindow(0), progress(this)
+{
+	init_ProgressWindow(wtext);
+}
+void ProgressWindow::init_ProgressWindow( const char *wtext )
 {
 	move(ePoint(100,250));
 	cresize(eSize(470,50));
@@ -74,6 +88,10 @@ eListBoxEntryImage::eListBoxEntryImage
 }
 
 eHTTPDownload::eHTTPDownload(eHTTPConnection *c, const char *filename): eHTTPDataSource(c), filename(filename)
+{
+	init_eHTTPDownload(c,filename);
+}
+void eHTTPDownload::init_eHTTPDownload(eHTTPConnection *c,const char *filename)
 {
 	if (c->remote_header.count("Content-Length"))
 		total=atoi(c->remote_header["Content-Length"].c_str());
@@ -120,8 +138,12 @@ void eHTTPDownloadXML::haveData(void *data, int len)
 	}
 }
 
-eUpgrade::eUpgrade()
+eUpgrade::eUpgrade(bool manual)
 :http(0), changelog(0)
+{
+	init_eUpgrade(manual);
+}
+void eUpgrade::init_eUpgrade(bool manual)
 {
 	status = new eStatusBar(this);
 	status->setFlags(eStatusBar::flagOwnerDraw);
@@ -133,36 +155,33 @@ eUpgrade::eUpgrade()
 	CONNECT(images->selected, eUpgrade::imageSelected);
 	CONNECT(images->selchanged, eUpgrade::imageSelchanged);
 	
-	imagehelp=new eLabel(this);
-	imagehelp->setName("imagehelp");
-	imagehelp->setText(_("Please select the software version to upgrade to:"));
+	imagehelp=CreateSkinnedLabel("imagehelp",_("Please select the software version to upgrade to:"));
 
-	progress=new eProgress(this);
-	progress->setName("progress");
+	progress=CreateSkinnedProgress("progress");
 	progress->hide();
 	
-	progresstext=new eLabel(this);
-	progresstext->setName("progresstext");
+	progresstext=CreateSkinnedLabel("progresstext");
 	progresstext->hide();
 	
 	changes=new eLabel(this, RS_WRAP);
 	changes->setName("changes");
 	
-	abort=new eButton(this);
-	abort->setName("abort");
+	abort=CreateSkinnedButton("abort");
 	CONNECT(abort->selected, eUpgrade::abortDownload);
 	abort->hide();
 
-	if (eSkin::getActive()->build(this, "eUpgrade"))
-		eFatal("skin load of \"eUpgrade\" failed");
+	BuildSkin("eUpgrade");
 
 	catalog=0;
 	changelog=0;
-	
+
+	mIDStr=eSystemInfo::getInstance()->getmidStr();
+
 	eString caturl=getVersionInfo("catalog");
-	if (caturl.length())
+
+	if (caturl.length() && !manual )
 		loadCatalog(caturl.c_str());
-		
+
 	ourversion=getVersionInfo("version");
 	
 	struct stat s;
@@ -245,8 +264,7 @@ void eUpgrade::catalogTransferDone(int err)
 	if ((!err) && http && (http->code == 200) && datacatalog && !datacatalog->error)
 	{
 		XMLTreeNode *root=catalog->RootNode();
-		eString mytarget=eDVB::getInstance()->getInfo("mID").right(1);
-
+		eString mytarget=mIDStr;
 		images->beginAtomic();
 		for (XMLTreeNode *r=root->GetChild(); r; r=r->GetNext())
 		{
@@ -310,6 +328,8 @@ void eUpgrade::catalogTransferDone(int err)
 	http=0;
 }
 
+void flashImage(int checkmd5);
+
 void eUpgrade::imageTransferDone(int err)
 {
 	progress->hide();
@@ -356,7 +376,7 @@ void eUpgrade::changelogTransferDone(int err)
 			}
 			fclose(f);
 		}
-		displayChangelog(ourversion.mid(4), selectedversion.mid(4), eDVB::getInstance()->getInfo("mID").right(1));
+		displayChangelog(ourversion.mid(4), selectedversion.mid(4), mIDStr);
 	}
 	changelog=0;
 }
@@ -379,7 +399,7 @@ void eUpgrade::imageSelected(eListBoxEntryImage *img)
 void eUpgrade::imageSelchanged(eListBoxEntryImage *img)
 {
 	selectedversion=img->version;
-	displayChangelog(ourversion.mid(4), selectedversion.mid(4), eDVB::getInstance()->getInfo("mID").right(1));
+	displayChangelog(ourversion.mid(4), selectedversion.mid(4), mIDStr);
 }
 
 void eUpgrade::setStatus(const eString &string)
@@ -410,10 +430,7 @@ void eUpgrade::setError(int err)
 	{
 		if (current_url.length())
 			errmsg+="\n(URL: " + current_url + ")";
-		eMessageBox box(errmsg, _("Error!"), eMessageBox::btOK|eMessageBox::iconError);
-		box.show();
-		box.exec();
-		box.hide();
+		eMessageBox::ShowBox(errmsg, _("Error!"), eMessageBox::btOK|eMessageBox::iconError);
 	}
 }
 
@@ -474,6 +491,15 @@ void eUpgrade::abortDownload()
 	imagehelp->show();
 }
 
+bool erase(char mtd[30], const char *titleText);
+
+#ifdef USE_EXTERNAL_FLASHTOOL
+static int flashext=1;
+#else
+static int flashext=0;
+#endif
+// when you will use the external flashtool you must set this here to 1
+
 void eUpgrade::flashImage(int checkmd5)
 {
 	setStatus(_("checking consistency of file..."));
@@ -481,60 +507,50 @@ void eUpgrade::flashImage(int checkmd5)
 	if (checkmd5 && md5_file (TMP_IMAGE, 1, (unsigned char*) &md5))
 	{
 		setStatus(_("write error while downloading..."));
-		eMessageBox mb(
+		hide();
+		eMessageBox::ShowBox(
 			_("write error while downloading..."),
 			_("Error!"),
 			eMessageBox::btOK|eMessageBox::iconError);
-		hide();
-		mb.show();
-		mb.exec();
-		mb.hide();
 		show();
 	} else
 	{
 		if (checkmd5 && memcmp(md5, expected_md5, 16))
 		{
 			setStatus(_("Data error. The checksum didn't match."));
-			eMessageBox mb(
+			hide();
+			eMessageBox::ShowBox(
 				_("Data error. The checksum didn't match."),
 				_("Error!"),
 				eMessageBox::btOK|eMessageBox::iconError);
-			hide();
-			mb.show();
-			mb.exec();
-			mb.hide();
 			show();
 		} else
 		{
 			setStatus(_("Checksum OK. Ready to upgrade."));
-			eMessageBox mb(
+			hide();
+			int res = eMessageBox::ShowBox(
 				_("Are you sure you want to upgrade to this new version?"),
 				_("Ready to upgrade"),
 				eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion);
 			int mtdsize;
-			hide();
-			mb.show();
-			int res=mb.exec();
-			mb.hide();
 			if (res == eMessageBox::btYes)
 			{
-				eMessageBox mb(
-					_("Please wait... do NOT switch off the receiver!"),
-					_("upgrade in progress"), eMessageBox::iconInfo);
-				mb.show();
 				::sync();
 				Decoder::Flush();
 				char mtd[20];
-				switch (eDVB::getInstance()->getmID())
+				int mID = atoi(mIDStr.c_str());
+				switch (mID)
 				{
-				case 1:		// d-box2
+				case 1:   // d-box2
 				case 2:
 				case 3:
 					strcpy(mtd,"/dev/mtd/2");
 					mtdsize=0x6e0000;
 					break;
-				case 5:		// dreambox
-				case 6:
+				case 5:   // dm7000
+				case 6:   // dm56xx
+				case 7:   // dm500
+				case 8:   // tr272S
 					strcpy(mtd,"/dev/mtd/0");
 					mtdsize=0x600000;
 					break;
@@ -546,11 +562,7 @@ void eUpgrade::flashImage(int checkmd5)
 
 				if( (fd1 = open( TMP_IMAGE, O_RDONLY )) < 0 )
 				{
-					mb.hide();
-					eMessageBox box(_("Can't read flashimage.img!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
-					box.show();
-					box.exec();
-					box.hide();
+					eMessageBox::ShowBox(_("Can't read flashimage.img!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
 					close(0);
 					return;
 				}
@@ -560,78 +572,176 @@ void eUpgrade::flashImage(int checkmd5)
 
 				if(filesize==0)
 				{
+					eMessageBox::ShowBox(_("flashimage.img has filesize of 0byte!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
+					return;
+				}
+
+				if ( flashext )
+				{
+					::close(fd1);
+					__u8 data[720*576];
+					gPixmap pixmap;
+					pixmap.x=720;
+					pixmap.y=576;
+					pixmap.bpp=8;
+					pixmap.bypp=1;
+					pixmap.stride=720;
+					pixmap.data=data;
+					pixmap.clut.colors=256;
+					pixmap.clut.data=gFBDC::getInstance()->getPixmap().clut.data;
+					gPixmapDC outputDC(&pixmap);
+					eWidget virtualRoot;
+					virtualRoot.move(ePoint(0, 0));
+					virtualRoot.resize(eSize(720, 576));
+					virtualRoot.setTarget(&outputDC);
+					virtualRoot.makeRoot();
+					virtualRoot.setBackgroundColor(gColor(0));
+					virtualRoot.show();
+					{
+						eMessageBox mb(
+							_("Please wait... do NOT switch off the receiver!"),
+							_("upgrade in progress"), eMessageBox::iconInfo);
+						mb.show();
+						{
+							ProgressWindow wnd(_("Erasing Flash..."));
+							wnd.show();
+							while(gRC::getInstance().mustDraw())
+								usleep(1000);
+//							if ( !savePNG("/tmp/update1.png", &pixmap) )
+//								eDebug("saved update pic 1");
+							int fd = open("/tmp/update1.raw", O_CREAT|O_WRONLY|O_TRUNC);
+							if ( fd >= 0 )
+							{
+								ePoint pos = wnd.progress.getAbsolutePosition();
+								int x = 2+pos.x(); // borderwidth+xpos..
+								int y = 2+pos.y(); // borderwidth+ypos..
+								int fillColor = eSkin::getActive()->queryScheme("eProgress.left").color;
+								int width = wnd.progress.getSize().width()-4;
+								int height = wnd.progress.getSize().height()-4;
+								write(fd, &x, sizeof(x));
+								write(fd, &y, sizeof(y));
+								write(fd, &width, sizeof(width));
+								write(fd, &height, sizeof(height));
+								write(fd, &fillColor, sizeof(fillColor));
+								write(fd, pixmap.data, 720*576*pixmap.bpp/8);
+								::close(fd);
+							}
+						}
+						{
+							ProgressWindow wnd(_("Writing Software to Flash..."));
+							wnd.show();
+							while(gRC::getInstance().mustDraw())
+								usleep(1000);
+//							if ( !savePNG("/tmp/update2.png", &pixmap) )
+//								eDebug("saved update pic 2");
+							int fd = open("/tmp/update2.raw", O_CREAT|O_WRONLY|O_TRUNC);
+							if ( fd >= 0 )
+							{
+								ePoint pos = wnd.progress.getAbsolutePosition();
+								int x = 2+pos.x(); // borderwidth+xpos..
+								int y = 2+pos.y(); // borderwidth+ypos..
+								int fillColor = eSkin::getActive()->queryScheme("eProgress.left").color;
+								int width = wnd.progress.getSize().width()-4;
+								int height = wnd.progress.getSize().height()-4;
+								write(fd, &x, sizeof(x));
+								write(fd, &y, sizeof(y));
+								write(fd, &width, sizeof(width));
+								write(fd, &height, sizeof(height));
+								write(fd, &fillColor, sizeof(fillColor));
+								write(fd, pixmap.data, 720*576*pixmap.bpp/8);
+								::close(fd);
+							}
+						}
+					}
+					pixmap.clut.data=0;
+					int fd = open("/tmp/mtd.txt", O_WRONLY|O_CREAT|O_TRUNC);
+					if ( fd >= 0 )
+					{
+						write(fd, mtd, strlen(mtd));
+						::close(fd);
+					}
+					struct fb_cmap* cmap = fbClass::getInstance()->CMAP();
+					fd = open("/tmp/cmap", O_WRONLY|O_CREAT|O_TRUNC);
+					if ( fd >= 0 )
+					{
+						write(fd, &cmap->start, sizeof(cmap->start));
+						write(fd, &cmap->len, sizeof(cmap->len));
+						write(fd, cmap->red, cmap->len*sizeof(__u16));
+						write(fd, cmap->green, cmap->len*sizeof(__u16));
+						write(fd, cmap->blue, cmap->len*sizeof(__u16));
+						write(fd, cmap->transp, cmap->len*sizeof(__u16));
+						::close(fd);
+					}
+					eZap::getInstance()->getDesktop(eZap::desktopFB)->makeRoot();
+					fbClass::getInstance()->lock();
+				}
+				else
+				{
+					eMessageBox mb(
+						_("Please wait... do NOT switch off the receiver!"),
+						_("upgrade in progress"), eMessageBox::iconInfo);
+					mb.show();
+
+					// without this nice we have not enough priority for
+					// file operations... then the update ist very slow on the
+					// dreambox
+					nice(-10);
+					eEPGCache::getInstance()->messages.send(eEPGCache::Message(eEPGCache::Message::pause));
+
+					system("cp /sbin/rebootSE /tmp/reboot");
+
+					if(!erase(mtd,_("Erasing Flash...")))
+					{
+						mb.hide();
+						eMessageBox::ShowBox(_("Erase error!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
+						close(0);
+						return;
+					}
+
+					if( (fd2 = open(mtd, O_RDWR )) < 0 )
+					{
+						mb.hide();
+						eMessageBox::ShowBox(_("Can't open mtd!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
+						close(0);
+						return;
+					}
+
+					mtd_info_t meminfo;
+					if( ioctl( fd2, MEMGETINFO, &meminfo ) != 0 )
+					{
+						close(0);
+						return;
+					}
+
+					ProgressWindow wnd(_("Writing Software to Flash..."));
+					wnd.show();
+
+					char buf[meminfo.erasesize];
+
+					int fsize=filesize;
+
+					eDebug("flashing now...");
+
+					int rbytes=0;
+					while( ( rbytes = read( fd1, buf, sizeof(buf) ) ) )
+					{
+						fsize -= write( fd2, buf, rbytes );
+						wnd.progress.setPerc( ((filesize-fsize)*100)/filesize );
+					}
+					::close(fd1);
+					::close(fd2);
+
+					nice(0);
+
 					mb.hide();
-					eMessageBox box(_("flashimage.img has filesize of 0byte!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
-					box.show();
-					box.exec();
-					box.hide();
-					close(0);
-					return;
+					wnd.hide();
+
+					eMessageBox::ShowBox(
+						_("upgrade successful!\nrestarting..."),
+						_("upgrade ok"),
+					eMessageBox::btOK|eMessageBox::iconInfo);
 				}
-
-				// without this nice we have not enough priority for
-				// file operations... then the update ist very slow on the
-				// dreambox
-				nice(-10);
-
-				if(!erase(mtd))
-				{
-					mb.hide();
-					eMessageBox box(_("Erase error!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
-					box.show();
-					box.exec();
-					box.hide();
-					close(0);
-					return;
-				}
-
-				if( (fd2 = open(mtd, O_RDWR )) < 0 )
-				{
-					mb.hide();
-					eMessageBox box(_("Can't open mtd!"), _("Flash"), eMessageBox::iconInfo|eMessageBox::btOK );
-					box.show();
-					box.exec();
-					box.hide();
-					close(0);
-					return;
-				}
-
-				mtd_info_t meminfo;
-				if( ioctl( fd2, MEMGETINFO, &meminfo ) != 0 )
-				{
-					close(0);
-					return;
-				}
-
-				ProgressWindow wnd(_("Writing Software to Flash..."));
-				wnd.show();
-
-				char buf[meminfo.erasesize];
-
-				int fsize=filesize;
-
-				eDebug("flashing now...");
-
-				int rbytes=0;
-				while( ( rbytes = read( fd1, buf, sizeof(buf) ) ) )
-				{
-					fsize -= write( fd2, buf, rbytes );
-					wnd.progress.setPerc( ((filesize-fsize)*100)/filesize );
-				}
-
-				nice(0);
-
-				mb.hide();
-				wnd.hide();
-
-				eMessageBox mbend(
-					_("upgrade successful!\nrestarting..."),
-					_("upgrade ok"),
-				eMessageBox::btOK|eMessageBox::iconInfo);
-				mbend.show();
-				mbend.exec();
-				mbend.hide();
-				eZap::getInstance()->quit(1);
+				eZap::getInstance()->quit(3);
 //				system("/sbin/reboot");
 //				system("/bin/reboot");
 //				exit(0);
@@ -641,7 +751,7 @@ void eUpgrade::flashImage(int checkmd5)
 	}
 }
 
-bool eUpgrade::erase(char mtd[30])
+bool erase(char mtd[30], const char *titleText)
 {
 	int fd;
 	mtd_info_t meminfo;
@@ -653,7 +763,7 @@ bool eUpgrade::erase(char mtd[30])
 	if( ioctl( fd, MEMGETINFO, &meminfo ) != 0 )
 		return false;
 
-	ProgressWindow wnd(_("Erasing Flash..."));
+	ProgressWindow wnd(titleText);
 	wnd.show();
 
 	erase.length = meminfo.erasesize;
@@ -667,14 +777,14 @@ bool eUpgrade::erase(char mtd[30])
 
 		if(ioctl( fd, MEMERASE, &erase) != 0)
 		{
-			close(fd);
+			::close(fd);
 			wnd.hide();
 			return false;
 		}
 	}
 	wnd.hide();
 
-	close(fd);
+	::close(fd);
 
 	return true;
 }

@@ -6,7 +6,7 @@
 
 int eWizardTimezone::run()
 {
-	eZapTimeZoneSetup settimezone;
+	eZapTimeZoneSetup settimezone(false);
 	char *timezone=0;
 	if ( eConfig::getInstance()->getKey("/elitedvb/timezone", timezone) )
 	{
@@ -19,8 +19,8 @@ int eWizardTimezone::run()
 	{
 		free(timezone);
 		eDebug("Dont run Timezone Setup.. timezone is already selected");
+		settimezone.setTimeZone();
 	}
-	settimezone.setTimeZone();
 	return 0;
 }
 
@@ -33,4 +33,4 @@ public:
 	}
 };
 
-eAutoInitP0<eWizardTimezoneInit> init_eWizardTimeZoneInit(eAutoInitNumbers::wizard, "wizard: timezone");
+eAutoInitP0<eWizardTimezoneInit> init_eWizardTimeZoneInit(eAutoInitNumbers::wizard+2, "wizard: timezone");

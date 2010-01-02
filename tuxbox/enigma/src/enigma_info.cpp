@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: enigma_info.cpp,v 1.6.2.27.2.1 2010/01/02 16:49:00 fergy Exp $
+ * $Id: enigma_info.cpp,v 1.6.2.27.2.2 2010/01/02 17:21:04 fergy Exp $
  */
 
 #include <enigma_info.h>

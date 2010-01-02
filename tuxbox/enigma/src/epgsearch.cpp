@@ -1,5 +1,5 @@
 /*
- * $Id: epgsearch.cpp,v 1.3.2.1 2010/01/02 16:49:00 fergy Exp $
+ * $Id: epgsearch.cpp,v 1.3.2.2 2010/01/02 17:21:04 fergy Exp $
  *
  * (C) 2008 by Dr. Best  <dr.best@dreambox-tools.info>
  *

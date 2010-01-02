@@ -29,8 +29,9 @@ class eTransponderEditWindow: public eWindow
 {
 	eListBox<eListBoxEntryText> *satellites;
 	eListBox<eListBoxEntryTransponder> *transponders;
-	eButton *sat, *add, *edit, *remove;
+	eButton *sat;
 	int changed;
+	void init_eTransponderEditWindow();
 public:
 	eTransponderEditWindow();
 	~eTransponderEditWindow();
@@ -51,6 +52,7 @@ class eTPEditDialog: public eWindow
 	eButton *save;
 	eTransponder *tp;
 	void savePressed();
+	void init_eTPEditDialog();
 public:
 	eTPEditDialog( eTransponder *tp );
 };
@@ -59,12 +61,11 @@ class eSatEditDialog: public eWindow
 {
 	eTextInputField *name;
 	eNumber *OrbitalPos;
-	eCheckbox *skipKnownNIT, *useBAT, *useONIT, *doNetworkSearch;
+	eCheckbox *useBAT, *useONIT, *doNetworkSearch;
 	eComboBox *direction;
-	eButton *save;
-	eStatusBar *sbar;
 	tpPacket *tp;
 	void savePressed();
+	void init_eSatEditDialog();
 public:
 	eSatEditDialog( tpPacket *tp );
 };

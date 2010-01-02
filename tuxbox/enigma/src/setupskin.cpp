@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setupskin.cpp,v 1.11.2.8.2.2 2008/08/19 21:39:48 fergy Exp $
+ * $Id: setupskin.cpp,v 1.11.2.8.2.3 2010/01/02 17:21:04 fergy Exp $
  */
 
 #include <setupskin.h>
@@ -27,8 +27,6 @@
 #include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
 #include <lib/gdi/epng.h>
-#include <lib/gdi/gfbdc.h>
-
 #include <lib/gui/ewidget.h>
 
 
@@ -56,10 +54,7 @@ void eSkinSetup::loadSkins()
 			if (i)
 			{
 				eDebug("error reading skin directory");
-				eMessageBox msg("error reading skin directory", "error");
-				msg.show();
-				msg.exec();
-				msg.hide();
+				eMessageBox::ShowBox("error reading skin directory", "error");
 			}
 			continue;
 		}
@@ -106,8 +101,6 @@ void eSkinSetup::accept()
 
 void eSkinSetup::skinchanged(eListBoxEntrySkin *skin)
 {
-        eString icon;
-        eString command;
         eString iconname; 
         eString finalname;
         int len;
@@ -116,10 +109,12 @@ void eSkinSetup::skinchanged(eListBoxEntrySkin *skin)
         len = iconname.find(".esml");
         finalname= iconname.substr(0,len)+ ".png";
 
-        system(command.c_str());
-        lb3->clear();
-        gPixmap *img = 0;
+        preview->clear();
+
+        if (img) delete img;
         img = loadPNG(finalname.c_str());
+        if(!img)
+		img = loadPNG("/share/tuxbox/enigma/pictures/nopreview.png");
         if(img)
         { 
            gPixmap * mp = &gFBDC::getInstance()->getPixmap();
@@ -127,33 +122,10 @@ void eSkinSetup::skinchanged(eListBoxEntrySkin *skin)
            gPainter p(mydc);
            p.mergePalette(*mp);
 
-           lb3->move(ePoint(280, 15));
-           lb3->resize(eSize(256, 200));
-           lb3->setBlitFlags(BF_ALPHATEST);
-           lb3->setProperty("align", "center");
-           lb3->setPixmap(img);
-           lb3->setPixmapPosition(ePoint(1, 1));
+           preview->setPixmap(img);
+           preview->setPixmapPosition(ePoint(1, 1));
         }
-        else
-        {
-           gPixmap *img = loadPNG("/share/tuxbox/enigma/pictures/nopreview.png");
-           if(img)
-           {
-              gPixmap * mp = &gFBDC::getInstance()->getPixmap();
-              gPixmapDC mydc(img);
-              gPainter p(mydc);
-              p.mergePalette(*mp);
-
-              lb3->move(ePoint(280, 15));
-              lb3->resize(eSize(256, 200));
-              lb3->setBlitFlags(BF_ALPHATEST);
-              lb3->setProperty("align", "center");
-              lb3->setPixmap(img);
-              lb3->setPixmapPosition(ePoint(1, 1));
-              lb3->loadDeco();
-           }
-        }
-        lb3->show();
+        preview->show();
 }
 void eSkinSetup::skinSelected(eListBoxEntrySkin *skin)
 {
@@ -167,32 +139,23 @@ void eSkinSetup::skinSelected(eListBoxEntrySkin *skin)
 	}
 }
 
-eSkinSetup::eSkinSetup()
+eSkinSetup::eSkinSetup():img(0)
 {
-        lb3     = new eLabel(this);
-        move(ePoint(50,50));
-        cresize(eSize(590,376));
-        setText("Skin Selector");
-	baccept=new eButton(this);
-	baccept->setName("accept");
-	baccept->setText("Save");
-        baccept->setShortcut("green");
-        baccept->setShortcutPixmap("green");
-        baccept->resize(eSize(250,40));
-        baccept->move(ePoint(10,320)); 
-        baccept->loadDeco(); 
+	init_eSkinSetup();
+}
+void eSkinSetup::init_eSkinSetup()
+{
+	preview = CreateSkinnedLabel("preview");
+	preview->setBlitFlags(BF_ALPHATEST);
 
 	lskins=new eListBox<eListBoxEntrySkin>(this);
 	lskins->setName("skins");
 	lskins->setFlags(eListBoxBase::flagLostFocusOnLast);
-        lskins->move(ePoint(10,10));
-        lskins->resize(eSize(clientrect.width()-350,clientrect.height() -60));
-        lskins->loadDeco();
 
-	statusbar=new eStatusBar(this);
-	statusbar->setName("statusbar");
+	CONNECT(CreateSkinnedButton("accept")->selected, eSkinSetup::accept);
 
-	CONNECT(baccept->selected, eSkinSetup::accept);
+	BuildSkin("eSkinSetup");
+
 	CONNECT(lskins->selected, eSkinSetup::skinSelected);
 
 	setFocus(lskins);
@@ -205,6 +168,7 @@ eSkinSetup::eSkinSetup()
 
 eSkinSetup::~eSkinSetup()
 {
+        if (img) delete img;
 }
 
 int eSkinSetup::eventHandler(const eWidgetEvent &event)

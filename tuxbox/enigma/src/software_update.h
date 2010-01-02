@@ -9,8 +9,12 @@ private:
 #ifndef DISABLE_NETWORK
 	void internet_update();
 	void manual_update();
+#ifdef ENABLE_FLASHTOOL
+	void flash_tool();
+#endif
 #endif
 //	void satellite_update();
+	void init_eSoftwareUpdate();
 public:
 	eSoftwareUpdate();
 };

@@ -44,79 +44,34 @@ void eZapLCDSetup::update(int brightness, int contrast)
 	eDBoxLCD::getInstance()->setLCDParameter(brightness, contrast);
 }
 
-eZapLCDSetup::eZapLCDSetup(): eWindow(0)
+eZapLCDSetup::eZapLCDSetup()
+	:eWindow(0)
 {
-	setText(_("LC-Display Setup"));
-	move(ePoint(150, 136));
-	cresize(eSize(400, 280));
+	init_eZapLCDSetup();
+}
 
-	int fd=eSkin::getActive()->queryValue("fontsize", 20);
-
+void eZapLCDSetup::init_eZapLCDSetup()
+{
 	eConfig::getInstance()->getKey("/ezap/lcd/brightness", lcdbrightness);
 	eConfig::getInstance()->getKey("/ezap/lcd/contrast", lcdcontrast);
 	eConfig::getInstance()->getKey("/ezap/lcd/standby", lcdstandby );
-	int tmp;
-	eConfig::getInstance()->getKey("/ezap/lcd/inverted", tmp );
-	lcdinverted = (unsigned char) tmp;
 
-	bbrightness=new eLabel(this);
-	bbrightness->setText(_("Brightness:"));
-	bbrightness->move(ePoint(20, 20));
-	bbrightness->resize(eSize(110, fd+4));
 
-	bcontrast=new eLabel(this);
-	bcontrast->setText(_("Contrast:"));
-	bcontrast->move(ePoint(20, 60));
-	bcontrast->resize(eSize(110, fd+4));
+	p_brightness=CreateSkinnedSlider("brightness", "lbrightness", 0, LCD_BRIGHTNESS_MAX );
+	CONNECT(p_brightness->changed, eZapLCDSetup::brightnessChanged );
 
-	bstandby=new eLabel(this);
-	bstandby->setText(_("Standby:"));
-	bstandby->move(ePoint(20, 100));
-	bstandby->resize(eSize(110, fd+4));
+	p_contrast=CreateSkinnedSlider("contrast","lcontrast", 0, LCD_CONTRAST_MAX );
+	CONNECT(p_contrast->changed, eZapLCDSetup::contrastChanged );
 
-	p_brightness=new eSlider(this, bbrightness, 0, LCD_BRIGHTNESS_MAX );
-	p_brightness->setName("brightness");
-	p_brightness->move(ePoint(140, 20));
-	p_brightness->resize(eSize(240, fd+4));
-	p_brightness->setHelpText(_("set LCD brightness ( left / right )"));
-	CONNECT( p_brightness->changed, eZapLCDSetup::brightnessChanged );
+	p_standby=CreateSkinnedSlider("standby","lstandby", 0, LCD_BRIGHTNESS_MAX );
+	CONNECT(p_standby->changed, eZapLCDSetup::standbyChanged );
 
-	p_contrast=new eSlider(this, bcontrast, 0, LCD_CONTRAST_MAX );
-	p_contrast->setName("contrast");
-	p_contrast->move(ePoint(140, 60));
-	p_contrast->resize(eSize(240, fd+4));
-	p_contrast->setHelpText(_("set LCD contrast ( left / right )"));
-	CONNECT( p_contrast->changed, eZapLCDSetup::contrastChanged );
+	inverted=CreateSkinnedCheckbox("inverted",0,"/ezap/lcd/inverted");
+	CONNECT(inverted->checked, eZapLCDSetup::invertedChanged );
 
-	p_standby=new eSlider(this, bstandby, 0, LCD_BRIGHTNESS_MAX );
-	p_standby->setName("standby");
-	p_standby->move(ePoint(140, 100));
-	p_standby->resize(eSize(240, fd+4));
-	p_standby->setHelpText(_("set LCD brightness for Standby Mode ( left / right )"));
-	CONNECT( p_standby->changed, eZapLCDSetup::standbyChanged );
+	CONNECT(CreateSkinnedButton("ok")->selected, eZapLCDSetup::okPressed);
 
-	inverted=new eCheckbox(this);
-	inverted->move(ePoint(20, 140));
-	inverted->resize(eSize(150, fd+4));
-	inverted->setText(_("Inverted: "));
-	inverted->setCheck(lcdinverted);
-	inverted->setHelpText(_("enable/disable inverted LCD (ok)"));
-	CONNECT( inverted->checked, eZapLCDSetup::invertedChanged );
-
-	ok=new eButton(this);
-	ok->setText(_("save"));
-	ok->setShortcut("green");
-	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 195));
-	ok->resize(eSize(220, 40));
-	ok->setHelpText(_("save changes and return"));
-	ok->loadDeco();
-	CONNECT(ok->selected, eZapLCDSetup::okPressed);
-
-	statusbar=new eStatusBar(this);
-	statusbar->move( ePoint(0, clientrect.height()-30 ) );
-	statusbar->resize( eSize( clientrect.width(), 30) );
-	statusbar->loadDeco();
+	BuildSkin("eZapLCDSetup");
 
 	p_brightness->setValue(lcdbrightness);
 	p_contrast->setValue(lcdcontrast);
@@ -147,7 +102,7 @@ int eZapLCDSetup::eventHandler( const eWidgetEvent& e)
 		case eWidgetEvent::execDone:
 			eConfig::getInstance()->getKey("/ezap/lcd/brightness", lcdbrightness);
 			eConfig::getInstance()->getKey("/ezap/lcd/contrast", lcdcontrast);
-			eDBoxLCD::getInstance()->setInverted( lcdinverted );
+			eDBoxLCD::getInstance()->setInverted( inverted->isChecked()?255:0 );
 			update(lcdbrightness, lcdcontrast);
 			break;
 		default:

@@ -1,5 +1,5 @@
 /*
- * $Id: enigma_dyn_rotor.cpp,v 1.11.2.1 2010/01/02 16:49:00 fergy Exp $
+ * $Id: enigma_dyn_rotor.cpp,v 1.11.2.2 2010/01/02 17:21:04 fergy Exp $
  *
  * (C) 2005 by digi_casi <digi_casi@tuxbox.org>
  *

@@ -12,118 +12,92 @@
 #include <lib/dvb/frontend.h>
 #include <lib/dvb/dvbwidgets.h>
 #include <lib/dvb/edvb.h>
-//#include <lib/driver/rc.h>
+#include <lib/system/info.h>
 
 RotorConfig::RotorConfig(eLNB *lnb )
 	:lnb(lnb)
+{
+	init_RotorConfig(lnb);
+}
+
+void RotorConfig::init_RotorConfig(eLNB *lnb )
 {
 #ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
 #endif
-	useRotorInPower = new eCheckbox(this);
-	useRotorInPower->setName("useRotorInPower");
+	useRotorInPower = CreateSkinnedCheckbox("useRotorInPower");
 
-	lDegPerSec = new eLabel(this);
-	lDegPerSec->setName("lDegPerSec");
-	lDegPerSec->hide();
-	DegPerSec = new eNumber( this, 2, 0, 10, 3, 0, 0, lDegPerSec);
-	DegPerSec->setFlags( eNumber::flagFixedNum );
-	DegPerSec->setName("DegPerSec");
-	DegPerSec->hide();
-
-	lDeltaA = new eLabel(this);
-	lDeltaA->setName("lDeltaA");
+	lDeltaA = CreateSkinnedLabel("lDeltaA");
 	lDeltaA->hide();
-	DeltaA = new eNumber( this, 1, 0, 200, 3, 0, 0, lDeltaA);
-	DeltaA->setName("DeltaA");
+	DeltaA = CreateSkinnedNumber("DeltaA",0, 1, 0, 200, 3, 0, 0, lDeltaA);
 	DeltaA->hide();
 
-	useGotoXX = new eCheckbox(this);
-	useGotoXX->setName("useGotoXX");
+	useGotoXX = CreateSkinnedCheckbox("useGotoXX");
 
-	lLongitude = new eLabel(this);
-	lLongitude->setName("lLongitude");
+	lLongitude = CreateSkinnedLabel("lLongitude");
 	lLongitude->hide();
 
-	Longitude = new eNumber(this, 2, 0, 360, 3, 0, 0, lLongitude );
+	Longitude = CreateSkinnedNumber("Longitude",0, 2, 0, 360, 3, 0, 0, lLongitude );
 	Longitude->setFlags( eNumber::flagFixedNum );
-	Longitude->setName("Longitude");
 	Longitude->hide();
 
-	LoDirection = new eComboBox( this, 2 );
-	LoDirection->setName("LoDirection");
+	LoDirection = CreateSkinnedComboBox("LoDirection", 2 );
 	LoDirection->hide();
 	new eListBoxEntryText( *LoDirection, _("East"), (void*)eDiSEqC::EAST, 0, _("East") );
 	new eListBoxEntryText( *LoDirection, _("West"), (void*)eDiSEqC::WEST, 0, _("West") );
 
-	lLatitude = new eLabel(this);
-	lLatitude->setName("lLatitude");
+	lLatitude = CreateSkinnedLabel("lLatitude");
 	lLatitude->hide();
 
-	Latitude = new eNumber(this, 2, 0, 360, 3, 0, 0, lLatitude );
+	Latitude = CreateSkinnedNumber("Latitude",0, 2, 0, 360, 3, 0, 0, lLatitude );
 	Latitude->setFlags( eNumber::flagFixedNum );
-	Latitude->setName("Latitude");
 	Latitude->hide();
 
-	LaDirection = new eComboBox( this, 2 );
-	LaDirection->setName("LaDirection");
+	LaDirection = CreateSkinnedComboBox("LaDirection", 2 );
 	LaDirection->hide();
 	new eListBoxEntryText( *LaDirection, _("North"), (void*)eDiSEqC::NORTH, 0, _("North") );
 	new eListBoxEntryText( *LaDirection, _("South"), (void*)eDiSEqC::SOUTH, 0, _("South") );
 
 	positions = new eListBox< eListBoxEntryText >( this );
-	positions->setFlags( eListBoxBase::flagNoPageMovement );
+	positions->setFlags( eListBoxBase::flagLostFocusOnFirst|eListBoxBase::flagLostFocusOnLast );
 	positions->setName("positions");
 	positions->hide();
 
-	lStoredRotorNo = new eLabel(this);
-	lStoredRotorNo->setName("lStoredRotorNo");
+	lStoredRotorNo = CreateSkinnedLabel("lStoredRotorNo");
 	lStoredRotorNo->hide();
-	number = new eNumber( this, 1, 0, 255, 3, 0, 0, lStoredRotorNo);
-	number->setName("StoredRotorNo");
+	number = CreateSkinnedNumber("StoredRotorNo",0, 1, 0, 255, 3, 0, 0, lStoredRotorNo);
 	number->hide();
 
-	lOrbitalPosition = new eLabel(this);
-	lOrbitalPosition->setName("lOrbitalPosition");
+	lOrbitalPosition = CreateSkinnedLabel("lOrbitalPosition");
 	lOrbitalPosition->hide();
-	orbital_position = new eNumber( this, 1, 0, 3600, 4, 0, 0, lOrbitalPosition);
-
-	orbital_position->setName("OrbitalPosition");
+	orbital_position = CreateSkinnedNumber("OrbitalPosition",0, 1, 0, 3600, 4, 0, 0, lOrbitalPosition);
 	orbital_position->hide();
 
-	lDirection = new eLabel(this);
-	lDirection->setName("lDirection");
+	lDirection = CreateSkinnedLabel("lDirection");
 	lDirection->hide();
-	direction = new eComboBox( this, 2, lDirection );
-	direction->setName("Direction");
+	direction = CreateSkinnedComboBox("Direction", 2, lDirection );
 	direction->hide();
 	new eListBoxEntryText( *direction, _("East"), (void*)0, 0, _("East") );
 	new eListBoxEntryText( *direction, _("West"), (void*)1, 0, _("West") );
 
-	add = new eButton( this );
-	add->setName("add");
+	add = CreateSkinnedButton("add");
 	add->hide();
 
-	remove = new eButton ( this );
-	remove->setName("remove");
+	remove = CreateSkinnedButton("remove", 0, 0 );
 	remove->hide();
 
-	save = new eButton(this);
-	save->setName("save");
+	save = CreateSkinnedButton("save");
 
-	next = new eButton(this);
-	next->setName("next");
+	next = CreateSkinnedButton("next");
 
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "RotorConfig"))
-		eFatal("skin load of \"RotorConfig\" failed");
+	BuildSkin("RotorConfig");
 
+	orbital_position->setHelpText(_("enter orbital position without dot (19.2\xC2\xB0 = 192)"));
 	CONNECT( orbital_position->selected, RotorConfig::numSelected );
 	CONNECT( Longitude->selected, RotorConfig::numSelected );
 	CONNECT( Latitude->selected, RotorConfig::numSelected );
 	CONNECT( number->selected, RotorConfig::numSelected );
-	CONNECT( DegPerSec->selected, RotorConfig::numSelected );
 	CONNECT( DeltaA->selected, RotorConfig::numSelected );
 	CONNECT( add->selected, RotorConfig::onAdd );
 	CONNECT( remove->selected, RotorConfig::onRemove );
@@ -139,18 +113,18 @@ RotorConfig::RotorConfig(eLNB *lnb )
 	if (lnb)
 		setLNBData(lnb);
 
-	if ( eDVB::getInstance()->getmID() < 5 )
+	if ( !eSystemInfo::getInstance()->canMeasureLNBCurrent() )
 	{
 		eDebug("useRotorInputPower can only used on dreambox");
 		useRotorInPower->hide();
 	}
 }
 
-struct savePosition: public std::unary_function< eListBoxEntryText&, void>
+struct savePosition
 {
-	std::map<int,int> &map;
+	std::map<int,int,Orbital_Position_Compare> &map;
 
-	savePosition(std::map<int,int> &map): map(map)
+	savePosition(std::map<int,int,Orbital_Position_Compare> &map): map(map)
 	{
 	}
 
@@ -170,7 +144,6 @@ void RotorConfig::onSavePressed()
 	lnb->getDiSEqC().useGotoXX = useGotoXX->isChecked();
 	lnb->getDiSEqC().useRotorInPower = useRotorInPower->isChecked()?1:0;
 	lnb->getDiSEqC().useRotorInPower |= DeltaA->getNumber()<<8;
-	lnb->getDiSEqC().DegPerSec = DegPerSec->getFixedNum();
 	lnb->getDiSEqC().gotoXXLaDirection = (int) LaDirection->getCurrent()->getKey();
 	lnb->getDiSEqC().gotoXXLoDirection = (int) LoDirection->getCurrent()->getKey();
 	lnb->getDiSEqC().gotoXXLatitude = Latitude->getFixedNum();
@@ -187,8 +160,6 @@ void RotorConfig::useRotorInPowerChanged( int state )
 	eDebug("useRotorInPowerChanged to %d", state);
 	if (state)
 	{
-		lDegPerSec->hide();
-		DegPerSec->hide();
 		lDeltaA->show();
 		DeltaA->show();
 	}
@@ -196,8 +167,6 @@ void RotorConfig::useRotorInPowerChanged( int state )
 	{
 		lDeltaA->hide();
 		DeltaA->hide();
-		lDegPerSec->show();
-		DegPerSec->show();
 	}
 }
 
@@ -253,17 +222,25 @@ void RotorConfig::setLNBData( eLNB *lnb )
 	if ( lnb )
 	{
 		for ( std::map<int, int>::iterator it ( DiSEqC.RotorTable.begin() ); it != DiSEqC.RotorTable.end(); it++ )
-			new eListBoxEntryText( positions, eString().sprintf(" %d / %03d %c", it->second, abs(it->first), it->first > 0 ? 'E' : 'W'), (void*) it->first );
+			new eListBoxEntryText( positions, eString().sprintf(" %d / %d.%d%c", it->second, abs(it->first)/10, abs(it->first)%10, it->first > 0 ? 'E' : 'W'), (void*) it->first );
 
 		useGotoXX->setCheck( (int) (lnb->getDiSEqC().useGotoXX & 1 ? 1 : 0) );
 		gotoXXChanged( (int) lnb->getDiSEqC().useGotoXX & 1 );
-		useRotorInPower->setCheck( (int) lnb->getDiSEqC().useRotorInPower & 1 );
-		useRotorInPowerChanged( (int) lnb->getDiSEqC().useRotorInPower & 1 );
+		if ( eSystemInfo::getInstance()->canMeasureLNBCurrent() )
+		{
+			useRotorInPower->setCheck( (int) lnb->getDiSEqC().useRotorInPower & 1 );
+			useRotorInPowerChanged( (int) lnb->getDiSEqC().useRotorInPower & 1 );
+		}
+		else
+		{
+			useRotorInPower->setCheck( 0 );
+			useRotorInPowerChanged( 0 );
+		}
+
 		Latitude->setFixedNum( lnb->getDiSEqC().gotoXXLatitude );
 		LaDirection->setCurrent( (void*) lnb->getDiSEqC().gotoXXLaDirection );
 		Longitude->setFixedNum( lnb->getDiSEqC().gotoXXLongitude );
 		LoDirection->setCurrent( (void*) lnb->getDiSEqC().gotoXXLoDirection );
-		DegPerSec->setFixedNum( lnb->getDiSEqC().DegPerSec );
 		DeltaA->setNumber( (lnb->getDiSEqC().useRotorInPower & 0x0000FF00) >> 8 );
 	}
 	else
@@ -272,7 +249,6 @@ void RotorConfig::setLNBData( eLNB *lnb )
 		LaDirection->setCurrent(0);
 		Longitude->setFixedNum(0);
 		LoDirection->setCurrent(0);
-		DegPerSec->setFixedNum( 1.0 );
 		DeltaA->setNumber(40);
 		useGotoXX->setCheck( 1 );
 		useRotorInPower->setCheck( 0 );
@@ -317,9 +293,10 @@ void RotorConfig::onAdd()
 {
 	positions->beginAtomic();
 
-	new eListBoxEntryText( positions,eString().sprintf(" %d / %03d %c",
+	new eListBoxEntryText( positions,eString().sprintf(" %d / %d.%d%c",
 																											number->getNumber(),
-																											orbital_position->getNumber(),
+																											orbital_position->getNumber()/10,
+																											orbital_position->getNumber()%10,
 																											direction->getCurrent()->getKey() ? 'W':'E'
 																										),
 													(void*) ( direction->getCurrent()->getKey()
@@ -393,62 +370,48 @@ eAutoInitP0<rotorMenuActions> i_rotorMenuActions(eAutoInitNumbers::actions, "rot
 eRotorManual::eRotorManual(eLNB *lnb)
 	:lnb(lnb), retuneTimer(new eTimer(eApp)), transponder(0), changed(0)
 {
-	lMode = new eLabel(this);
-	lMode->setName("lMode");
+	init_eRotorManual(lnb);
+}
 
-	lSat = new eLabel(this);
-	lSat->setName("lSat");
+void eRotorManual::init_eRotorManual(eLNB *lnb)
+{
+	lSat = CreateSkinnedLabel("lSat");
 
-	lTransponder = new eLabel(this);
-	lTransponder->setName("lTransponder");
+	lTransponder = CreateSkinnedLabel("lTransponder");
 
-	lDirection = new eLabel(this);
-	lDirection->setName("lDirection");
+	lDirection = CreateSkinnedLabel("lDirection");
 
-	lCounter = new eLabel(this);
-	lCounter->setName("lCounter");
+	lCounter = CreateSkinnedLabel("lCounter");
 
 	running=false;
 
-	Mode = new eComboBox(this, 4, lMode );
-	Mode->setName("Mode");
+	Mode = CreateSkinnedComboBoxWithLabel("Mode", 4, "lMode" );
 	CONNECT(Mode->selchanged, eRotorManual::modeChanged);
 
-	num = new eNumber( this, 1, 1, 80, 2, 0, 0, lSat );
-	num->setName("num");
-	num->setNumber(1);
+	num = CreateSkinnedNumber("num",1, 1, 1, 80, 2, 0, 0, lSat );
 
 	// send no more DiSEqC Commands on transponder::tune to Rotor
 	eFrontend::getInstance()->disableRotor();
 
-	Sat = new eComboBox( this, 7, lSat );
-	Sat->setName("Sat");
+	Sat = CreateSkinnedComboBox("Sat", 7, lSat );
 	CONNECT(Sat->selchanged, eRotorManual::satChanged );
 
-	Transponder = new eComboBox(this, 5 );
-	Transponder->setName("Transponder");
+	Transponder = CreateSkinnedComboBox("Transponder", 5, lTransponder );
 	CONNECT(Transponder->selchanged, eRotorManual::tpChanged);
 
-	Direction = new eButton(this);
-	Direction->setName("Direction");
+	Direction = CreateSkinnedButton("Direction");
 
-	Exit = new eButton(this);
-	Exit->setName("Exit");
-	CONNECT( Exit->selected, eRotorManual::reject );
+	CONNECT( CreateSkinnedButton("Exit")->selected, eRotorManual::reject );
 
-	Save = new eButton(this);
-	Save->setName("Save");
+	Save = CreateSkinnedButton("Save");
 	CONNECT(Save->selected, eRotorManual::onButtonPressed );
 
-	Search = new eButton(this);
-	Search->setName("Search");
-	CONNECT( Search->selected, eRotorManual::onScanPressed );
+	CONNECT( CreateSkinnedButton("Search")->selected, eRotorManual::onScanPressed );
 
 	status = new eFEStatusWidget( this, eFrontend::getInstance() );
 	status->setName("Status");
 
-	if ( eSkin::getActive()->build(this, "RotorManual"))
-		eFatal("skin load of \"RotorManual\" failed");
+	BuildSkin("RotorManual");
 
 	Direction->setText("<    Stop    >");
 
@@ -457,7 +420,7 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	new eListBoxEntryText(*Mode, _("position"), (void*) 0, 0, _("store new sat positions"));
 	new eListBoxEntryText(*Mode, _("drive to stored pos"), (void*) 1, 0, _("drive to stored position"));
 	new eListBoxEntryText(*Mode, _("drive to satellite"), (void*) 8, 0, _("drive to stored satellite"));
-	new eListBoxEntryText(*Mode, _("drive to 0\xB0"), (void*) 2, 0, _("drives to 0\xB0"));
+	new eListBoxEntryText(*Mode, _("drive to 0\xC2\xB0"), (void*) 2, 0, _("drives to 0\xB0"));
 	new eListBoxEntryText(*Mode, _("recalculate"), (void*) 3, 0, _("recalculate stored positions rel. to current pos"));
 	new eListBoxEntryText(*Mode, _("set east limit"), (void*) 4, 0, _("set east soft limit"));
 	new eListBoxEntryText(*Mode, _("set west limit"), (void*) 5, 0, _("set west soft limit"));
@@ -466,17 +429,16 @@ eRotorManual::eRotorManual(eLNB *lnb)
 	Mode->setCurrent(0,true);
 
 	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
-	eTransponder *tp=0;
   
 	if (sapi && sapi->transponder)
-		tp = sapi->transponder;
+		transponder = sapi->transponder;
 
 	eListBoxEntryText *sel=0;
 
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
 		if ( it->getDiSEqC().DiSEqCMode == eDiSEqC::V1_2 )
 			for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
-				if ( tp && s->getOrbitalPosition() == tp->satellite.orbital_position )
+				if ( transponder && s->getOrbitalPosition() == transponder->satellite.orbital_position )
 					sel = new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
 				else
 					new eListBoxEntryText(*Sat, s->getDescription().c_str(), (void*) *s);
@@ -617,12 +579,6 @@ void eRotorManual::satChanged( eListBoxEntryText *sat)
 	Transponder->clear();
 	if (sat && sat->getKey())
 	{
-		eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
-		eTransponder *tp=0;
-
-		if (sapi && sapi->transponder)
-			tp = sapi->transponder;
-
 		eListBoxEntryText *sel=0;
 
 		eSatellite *Sat = (eSatellite*) (sat->getKey());
@@ -632,7 +588,7 @@ void eRotorManual::satChanged( eListBoxEntryText *sat)
 			if ( i->orbital_position == Sat->getOrbitalPosition() )
 			{
 				for (std::list<eTransponder>::const_iterator it( i->possibleTransponders.begin() ); it != i->possibleTransponders.end(); it++)
-					if ( tp && *tp == *it )
+					if ( transponder && *transponder == *it )
 						sel = new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
 					else
 						new eListBoxEntryText( *Transponder, eString().sprintf("%d / %d / %c", it->satellite.frequency/1000, it->satellite.symbol_rate/1000, it->satellite.polarisation?'V':'H' ), (void*)&(*it) );
@@ -653,6 +609,8 @@ void eRotorManual::tpChanged( eListBoxEntryText *tp )
 {
 	if (tp && tp->getKey() )
 	{
+		if ( transponder && *transponder == *((eTransponder*)tp->getKey()))
+			return;
 		transponder = (eTransponder*)(tp->getKey());
 		transponder->tune();
 	}
@@ -832,31 +790,15 @@ void eRotorManual::nextfield(int*)
 eStoreWindow::eStoreWindow(eLNB *lnb, int orbital_pos)
 	:lnb(lnb), orbital_pos(orbital_pos)
 {
-	cresize(eSize(360,140));
-	cmove(ePoint(150,150));
-	setText("Store Satellite");
-	lStorageLoc = new eLabel(this);
-	lStorageLoc->resize(eSize(250, 35));
-	lStorageLoc->move(ePoint(10,10));
-	lStorageLoc->setText(_("Storage Location:"));
-	StorageLoc = new eNumber( this, 1, 1, 80, 2, 0, 0, lStorageLoc );
-	StorageLoc->setHelpText(_("change storage Location or store"));
-	StorageLoc->resize(eSize(80, 35));
-	StorageLoc->move(ePoint(270, 10));
-	StorageLoc->loadDeco();
+	init_eStoreWindow();
+}
+void eStoreWindow::init_eStoreWindow()
+{
+
+	StorageLoc = CreateSkinnedNumberWithLabel("StorageLoc",0, 1, 1, 80, 2, 0, 0, "lStorageLoc" );
 	CONNECT(StorageLoc->selected, eStoreWindow::nextfield );
-	Store = new eButton(this);
-	Store->setShortcut("green");
-	Store->setShortcutPixmap("green");
-	Store->move(ePoint(10,60));
-	Store->resize(eSize(220,40));
-	Store->setText(_("store"));
-	Store->loadDeco();
-	CONNECT( Store->selected, eStoreWindow::onStorePressed );
-	eStatusBar *sbar = new eStatusBar(this);
-	sbar->move( ePoint(0, getClientSize().height()-30) );
-	sbar->resize( eSize( getClientSize().width(), 30) );
-	sbar->loadDeco();
+	CONNECT( CreateSkinnedButton("store")->selected, eStoreWindow::onStorePressed );
+	BuildSkin("eStoreWindow");
 	int i = 0;
 	while (1)
 	{
@@ -867,8 +809,11 @@ eStoreWindow::eStoreWindow(eLNB *lnb, int orbital_pos)
 				break;
 
 		if (it != lnb->getDiSEqC().RotorTable.end() )
-			continue;
-			
+		{
+			if ( it->first != orbital_pos )
+				continue;
+		}
+
 		StorageLoc->setNumber(i);
 		break;
 	}
@@ -884,29 +829,29 @@ void eStoreWindow::onStorePressed()
 	std::map<int,int>::iterator it = lnb->getDiSEqC().RotorTable.find( orbital_pos );
 	if ( it != lnb->getDiSEqC().RotorTable.end() )
 	{
-		eMessageBox mb( eString().sprintf(_("%d.%d\xB0%c is currently stored at location %d!\nWhen you store this now at Location %d, we must remove the old Location.\nAre you sure you want to do this?"),abs(orbital_pos)/10, abs(orbital_pos)%10, orbital_pos>0?'E':'W', it->second, StorageLoc->getNumber() ), _("Warning"), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
-		hide();
-		mb.show();
-		switch( mb.exec() )
+		int ret = eMessageBox::btYes;
+		if ( StorageLoc->getNumber() != it->second )
+		{
+			hide();
+			ret = eMessageBox::ShowBox( eString().sprintf(_("%d.%d\xC2\xB0%c is currently stored at location %d!\nWhen you store this now at Location %d, we must remove the old Location.\nAre you sure you want to do this?"),abs(orbital_pos)/10, abs(orbital_pos)%10, orbital_pos>0?'E':'W', it->second, StorageLoc->getNumber() ), _("Warning"), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
+			show();
+		}
+		switch( ret )
 		{
 			case eMessageBox::btYes:
 				lnb->getDiSEqC().RotorTable.erase(it);
 				lnb->getDiSEqC().useGotoXX=0;
 				lnb->getDiSEqC().RotorTable[orbital_pos] = StorageLoc->getNumber();
-				mb.hide();
-				show();
 				close(StorageLoc->getNumber());
 			break;
 			case eMessageBox::btNo:
-				mb.hide();
-				show();
-				return;
-			break;
+			default:
+				break;
 		}
 	}
 	else
 	{
-		eMessageBox mb( eString().sprintf(_("Store %d.%d\xB0%c at location %d.\n"
+		eMessageBox mb( eString().sprintf(_("Store %d.%d\xC2\xB0%c at location %d.\n"
 			"If you want another location, then say no and change the location manually.\n"
 			"Are you sure you want to store at this location?"),abs(orbital_pos)/10, abs(orbital_pos)%10, orbital_pos>0?'E':'W', StorageLoc->getNumber() ), _("Information"), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo );
 		hide();
@@ -920,6 +865,7 @@ void eStoreWindow::onStorePressed()
 				show();
 				close(StorageLoc->getNumber());
 			break;
+			default:
 			case eMessageBox::btNo:
 				mb.hide();
 				show();

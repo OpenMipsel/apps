@@ -3,17 +3,9 @@
 
 #include <lib/dvb/serviceplaylist.h>
 #include <lib/gui/listbox.h>
+#include <lib/gui/emessage.h>
 #include <sselect.h>
 #include <epgwindow.h>
-
-// DBOX2 DEEPSTANDBY DEFINES
-#ifndef FP_IOCTL_SET_WAKEUP_TIMER
-#define FP_IOCTL_SET_WAKEUP_TIMER 6
-#endif
-
-#ifndef FP_IOCTL_IS_WAKEUP
-#define FP_IOCTL_IS_WAKEUP 9
-#endif
 
 class eTextInputField;
 class eNumber;
@@ -31,7 +23,8 @@ class eTimerManager: public Object
 		zap, prepareEvent, startCountdown, setNextEvent,
 		startEvent, pauseEvent, restartEvent, stopEvent,
 		startRecording, stopRecording, restartRecording,
-		pauseRecording, spinUpHarddiscs
+		pauseRecording, spinUpHarddiscs, oldService,
+		updateDuration
 	} nextAction;
 
 	eTimer actionTimer;  // to start timer related actions
@@ -45,9 +38,12 @@ class eTimerManager: public Object
 // the timerlist self...
 	ePlaylist *timerlist;
 	eServiceReference timerlistref;
+	eServiceReference playbackRef;
 
-// nextStarting event, or the current running Event
+//	nextStarting event, or the current running Event
 	std::list<ePlaylistEntry>::iterator nextStartingEvent;
+
+	bool setdeepstandbywakeup;
 
 // all methods are NOT always connected to the eDVB Signals
 	void switchedService( const eServiceReferenceDVB&, int err );
@@ -56,28 +52,32 @@ class eTimerManager: public Object
 	long getSecondsToBegin();
 	long getSecondsToEnd();
 
-// this Method is called multiple at the start of the eTimerManager....
-	void waitClock();
-
-// handle all eit related timer stuff ( for smart Timers)
-	void EITready(int);
 	void writeToLogfile( const char *str );
 	void writeToLogfile( eString str );
+	void init_eTimerManager();
 public:
 	enum { erase, update };
 	eTimerManager();
 	~eTimerManager();
 	static eTimerManager *getInstance() { return instance; }
+	bool updateRunningEvent( int duration, int after_event );
 	bool removeEventFromTimerList( eWidget *w, const ePlaylistEntry& entry, int type=erase );
 	bool removeEventFromTimerList( eWidget *w, const eServiceReference *ref, const EITEvent *evt);
+	void cleanupEvents();
+	void clearEvents();
 	bool addEventToTimerList( eWidget *w, const eServiceReference *ref, const EITEvent *evt, int type = ePlaylistEntry::RecTimerEntry|ePlaylistEntry::recDVR|ePlaylistEntry::stateWaiting, const ePlaylistEntry *exclude=0 );
 	bool addEventToTimerList( eWidget *w, const ePlaylistEntry& entry, const ePlaylistEntry *exclude=0 );
+	int addEventToTimerList(const ePlaylistEntry& entry);
+	int deleteEventFromTimerList(const ePlaylistEntry& entry, bool force=false);
+	int modifyEventInTimerList(const ePlaylistEntry& old_entry, const ePlaylistEntry& new_entry, bool force=false);
 	bool eventAlreadyInList( eWidget *w, EITEvent &e, eServiceReference &ref );
 	void abortEvent(int err);
 	void loadTimerList();
 	void saveTimerList();
 	void timeChanged();
+	int getTimerCount() { return timerlist->getConstList().size(); }
 	ePlaylistEntry* findEvent( eServiceReference *service, EITEvent *evt );
+	void disableDeepstandbyWakeup() { setdeepstandbywakeup=false; }
 	template <class Z>
 	void forEachEntry(Z ob)
 	{
@@ -113,26 +113,29 @@ public:
 class eTimerListView:public eWindow
 {
 	eListBox<eListBoxEntryTimer>* events;
-	eButton *add, *erase;
+	eButton *cleanup;
+	void init_eTimerListView();
 public:
 	eTimerListView();
 	void fillTimerList();
 	void entrySelected(eListBoxEntryTimer *entry);
 	void addPressed();
 	void erasePressed();
+	void cleanupPressed();
 };
 
 class eTimerEditView: public eWindow
 {
 	eCheckbox *multiple, *cMo, *cTue, *cWed, *cThu, *cFr, *cSa, *cSu;
-	eComboBox *bday, *bmonth, *byear, *eday, *emonth, *eyear, *type;
+	eComboBox *bday, *bmonth, *byear, *eday, *emonth, *eyear, *type, *after_event;
 	eTextInputField *event_name;
 	eLabel *lBegin, *lEnd;
 	eNumber *btime, *etime;
-	eButton *bSelectService, *bApply, *bScanEPG;
+	eButton *bSelectService;
 	tm beginTime, endTime;
 	eServiceReference tmpService;
 	ePlaylistEntry *curEntry;
+	int event_id;
 private:
 	void scanEPGPressed();
 	void multipleChanged( int );
@@ -151,6 +154,7 @@ private:
 	bool getData( time_t& beginTime, int& duration );
 	int eventHandler( const eWidgetEvent &e );
 	void changeTime( int dir );
+	void init_eTimerEditView( ePlaylistEntry* e);
 public:
 	eTimerEditView(ePlaylistEntry* e=0);
 	eTimerEditView( const EITEvent &e, int type, eServiceReference ref );

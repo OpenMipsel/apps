@@ -1,18 +1,23 @@
 #include <setup_osd.h>
 
+#include <setup_osd_extra.h>
+
 #include <setupskin.h>
 #include <enigma.h>
+#include <enigma_main.h>
 #include <lib/base/i18n.h>
 #include <lib/dvb/edvb.h>
 #include <lib/gdi/gfbdc.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/ebutton.h>
+#include <lib/gui/echeckbox.h>
 #include <lib/gui/guiactions.h>
 #include <lib/gui/slider.h>
 #include <lib/gui/statusbar.h>
 #include <lib/gui/emessage.h>
 #include <lib/system/econfig.h>
+#include <lib/system/info.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
@@ -26,6 +31,7 @@ class PluginOffsetScreen: public eWidget
 	void redrawRightBottom( gPainter *target );
 	void redrawWidget(gPainter *target, const eRect &where);
 	gColor foreColor, backColor;
+	void init_PluginOffsetScreen();
 public:
 	PluginOffsetScreen();
 };
@@ -152,6 +158,10 @@ PluginOffsetScreen::PluginOffsetScreen()
 	:eWidget(0, 1), curPos( posLeftTop ),
 		left(20), top(20), right( 699 ), bottom( 555 )
 {
+	init_PluginOffsetScreen();
+}
+void PluginOffsetScreen::init_PluginOffsetScreen()
+{
 	foreColor = eSkin::getActive()->queryColor("eWindow.titleBarFont");
 	setForegroundColor( foreColor );
 	move(ePoint(0,0));
@@ -161,7 +171,7 @@ PluginOffsetScreen::PluginOffsetScreen()
 	descr->setForegroundColor( foreColor );
 	descr->resize(eSize(568,300));
 	descr->move(ePoint(100,100));
-	descr->setText(_("here you can center the tuxtxt rectangle...\nfor more infos press help"));
+	descr->setText(_("here you can center the tuxtxt rectangle...\npress red to select the left top edge\npress green to select the right bottom edge\nuse the cursor keys to move the selected edges"));
 	eSize ext = descr->getExtend();
 	ext+=eSize(8,4);  // the given Size of the Text is okay... but the renderer sucks...
 	descr->resize( ext );
@@ -177,91 +187,41 @@ PluginOffsetScreen::PluginOffsetScreen()
 eZapOsdSetup::eZapOsdSetup()
 	:eWindow(0)
 {
-	setText(_("OSD Settings"));
-	cmove(ePoint(140, 160));
-	cresize(eSize(460, 290));
+	init_eZapOsdSetup();
+}
 
-	int fd=eSkin::getActive()->queryValue("fontsize", 20);
-
+void eZapOsdSetup::init_eZapOsdSetup()
+{
 	alpha = gFBDC::getInstance()->getAlpha();
-	eLabel* l = new eLabel(this);
-	l->setText(_("Alpha:"));
-	l->move(ePoint(20, 20));
-	l->resize(eSize(110, fd+4));
-	sAlpha = new eSlider( this, l, 0, 512 );
-
-	if(eDVB::getInstance()->getmID() == 6)			//fb on vulcan sucks
-		sAlpha->setIncrement( 25 ); // Percent !
-	else
-		sAlpha->setIncrement( 10 ); // Percent !
-		
-	sAlpha->move( ePoint( 150, 20 ) );
-	sAlpha->resize(eSize( 290, fd+4 ) );
-	sAlpha->setHelpText(_("change the transparency correction"));
+	sAlpha = CreateSkinnedSlider("alpha","lalpha", 0, 512 );
+	sAlpha->setIncrement( eSystemInfo::getInstance()->getAlphaIncrement() ); // Percent !
 	sAlpha->setValue( alpha);
 	CONNECT( sAlpha->changed, eZapOsdSetup::alphaChanged );
 
 	brightness = gFBDC::getInstance()->getBrightness();
-	l = new eLabel(this);
-	l->setText(_("Brightness:"));
-	l->move(ePoint(20, 60));
-	l->resize(eSize(120, fd+4));
-	sBrightness = new eSlider( this, l, 0, 255 );
+	sBrightness = CreateSkinnedSlider("brightness","lbrightness", 0, 255 );
 	sBrightness->setIncrement( 5 ); // Percent !
-	sBrightness->move( ePoint( 150, 60 ) );
-	sBrightness->resize(eSize( 290, fd+4 ) );
-	sBrightness->setHelpText(_("change the brightness correction"));
 	sBrightness->setValue( brightness);
 	CONNECT( sBrightness->changed, eZapOsdSetup::brightnessChanged );
 
 	gamma = gFBDC::getInstance()->getGamma();
-	l = new eLabel(this);
-	l->setText(_("Contrast:"));
-	l->move(ePoint(20, 100));
-	l->resize(eSize(120, fd+4));
-	sGamma = new eSlider( this, l, 0, 255 );
+	sGamma = CreateSkinnedSlider("contrast","lcontast", 0, 255 );
 	sGamma->setIncrement( 5 ); // Percent !
-	sGamma->move( ePoint( 150, 100 ) );
-	sGamma->resize(eSize( 290, fd+4 ) );
-	sGamma->setHelpText(_("change the contrast"));
 	sGamma->setValue( gamma);
 	CONNECT( sGamma->changed, eZapOsdSetup::gammaChanged );
 
-	skin=new eButton(this);
-	skin->setText(_("Change skin"));
-	skin->setShortcut("blue");
-	skin->setShortcutPixmap("blue");
-	skin->move(ePoint(20, 140));
-	skin->resize(eSize(205, 40));
-	skin->loadDeco();
-	skin->setHelpText(_("press ok to open skin selector"));
-	CONNECT( skin->selected, eZapOsdSetup::skinPressed );
+	simpleMainMenu=CreateSkinnedCheckbox("simpleMainMenu",0,"/ezap/osd/simpleMainMenu");
 
-	pluginoffs=new eButton(this);
-	pluginoffs->setText(_("TuxText position"));
-	pluginoffs->setHelpText(_("here you can center the Tuxtxt (builtin videotext)"));
-	pluginoffs->setShortcut("yellow");
-	pluginoffs->setShortcutPixmap("yellow");
-	pluginoffs->move(ePoint(235, 140));
-	pluginoffs->resize(eSize(205, 40));
-	pluginoffs->loadDeco();
-	CONNECT( pluginoffs->selected, eZapOsdSetup::pluginPositionPressed );
+	CONNECT( CreateSkinnedButton("skin")->selected, eZapOsdSetup::skinPressed );
 
-	ok=new eButton(this);
-	ok->setText(_("save"));
-	ok->setShortcut("green");
-	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, 205));
-	ok->resize(eSize(205, 40));
-	ok->setHelpText(_("save changes and return"));
-	ok->loadDeco();
+	CONNECT( CreateSkinnedButton("pluginoffs")->selected, eZapOsdSetup::pluginPositionPressed );
 
-	CONNECT(ok->selected, eZapOsdSetup::okPressed);
+	CONNECT(CreateSkinnedButton("ok")->selected, eZapOsdSetup::okPressed);
 
-	statusbar=new eStatusBar(this);
-	statusbar->move( ePoint(0, clientrect.height()-30 ) );
-	statusbar->resize( eSize( clientrect.width(), 30) );
-	statusbar->loadDeco();
+	CONNECT( CreateSkinnedButton("expert")->selected, eZapOsdSetup::expertPressed );
+
+	BuildSkin("eZapOsdSetup");
+
 	setHelpID(83);
 }
 
@@ -301,6 +261,7 @@ void eZapOsdSetup::pluginPositionPressed()
 
 void eZapOsdSetup::okPressed()
 {
+	eConfig::getInstance()->setKey("/ezap/osd/simpleMainMenu", simpleMainMenu->isChecked());
 	gFBDC::getInstance()->saveSettings();
 	eConfig::getInstance()->flush();
 	close(1);
@@ -320,14 +281,29 @@ void eZapOsdSetup::skinPressed()
 	setup.hide();
 	if (!res)
 	{
-		eMessageBox msg(_("You have to restart enigma to apply the new skin\nRestart now?"), _("Skin changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
-		msg.show();
-		if ( msg.exec() == eMessageBox::btYes )
-			eZap::getInstance()->quit(2);
-		msg.hide();
+		int ret = eMessageBox::ShowBox(_("You have to restart enigma to apply the new skin\nRestart now?"), _("Skin changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
+		if ( ret == eMessageBox::btYes )
+		{
+			if ( eZapMain::getInstance()->checkRecordState() )
+				eZap::getInstance()->quit(2);
+		}
 	}
 	show();
 	setFocus(oldfocus);
+}
+
+void eZapOsdSetup::expertPressed()
+{
+	hide();
+	eOSDExpertSetup setup;
+#ifndef DISABLE_LCD
+	setup.setLCD(LCDTitle, LCDElement);
+#endif
+	setup.show();
+	setup.exec();
+	setup.hide();
+	eConfig::getInstance()->flush();
+	show();
 }
 
 int eZapOsdSetup::eventHandler( const eWidgetEvent &e )

@@ -5,41 +5,55 @@
 #include <lib/gui/listbox.h>
 #include <lib/gui/statusbar.h>
 #include <lib/dvb/epgcache.h>
-#include <channelinfo.h>
+#include <src/channelinfo.h>
 
 #include <lib/dvb/service.h>
 
 class eService;
 class eLabel;
 
+class eEPGStyleSelector: public eListBoxWindow<eListBoxEntryText>
+{
+	int ssel;
+	void init_eEPGStyleSelector();
+public:
+	eEPGStyleSelector(int ssel=0);
+	int eventHandler( const eWidgetEvent &event );
+	void entrySelected( eListBoxEntryText* e );
+};
+
 class eListBoxEntryService: public eListBoxEntry
 {
 	friend class eServiceSelector;
-	friend class eListBox<eListBoxEntryService>;
+	friend class eListBoxExt<eListBoxEntryService>;
 	friend struct moveFirstChar;
 	friend struct moveServiceNum;
+	friend struct moveServicePath;
 	friend struct _selectService;
 	friend struct updateEPGChangedService;
 	friend struct renumber;
 	eString sort;
 	static gFont serviceFont, descrFont, numberFont;
 	static int maxNumSize;
-	static gPixmap *folder, *marker, *locked;
+	static gPixmap *folder, *marker, *locked, *newfound;
 	eTextPara *numPara, *namePara, *descrPara;
 	int nameXOffs, descrXOffs, numYOffs, nameYOffs, descrYOffs;
 	int flags;
 	int num;
 	int curEventId;
+	void init_eListBoxEntryService();
 public:
+	const eString &getText() const { return sort; }
 	static eListBoxEntryService *selectedToMove;
 	static std::set<eServiceReference> hilitedEntrys;
+	static int nownextEPG;
 	int getNum() const { return num; }
 	void invalidate();
 	void invalidateDescr();
 	static int getEntryHeight();
 	eServiceReference service;
-	enum { flagShowNumber=1, flagOwnNumber=2, flagIsReturn=4 };
-	eListBoxEntryService(eListBox<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num=-1);
+	enum { flagShowNumber=1, flagOwnNumber=2, flagIsReturn=4, flagSameTransponder=8 };
+	eListBoxEntryService(eListBoxExt<eListBoxEntryService> *lb, const eServiceReference &service, int flags, int num=-1);
 	~eListBoxEntryService();
 
 	bool operator<(const eListBoxEntry &r) const
@@ -59,9 +73,12 @@ protected:
 
 class eServiceSelector: public eWindow
 {
+#ifndef DISABLE_FILE
+	friend class eFileSelector;
+#endif
 	eServiceReference selected;
 	eServiceReference *result;
-	eListBox<eListBoxEntryService> *services, *bouquets;
+	eListBoxExt<eListBoxEntryService> *services, *bouquets;
 
 	eLabel *key[4];
 	const eWidget *rfocus;
@@ -80,8 +97,6 @@ class eServiceSelector: public eWindow
 	eTimer ciDelay;
 
 	eListBoxEntryService *goUpEntry;
-protected:
-	int eventHandler(const eWidgetEvent &event);
 private:
 	void pathUp();
 	void fillServiceList(const eServiceReference &ref);
@@ -92,15 +107,20 @@ private:
 	void bouquetSelChanged( eListBoxEntryService *entry);
 	void ResetBrowseChar();
 	void gotoChar(char c);
-	void EPGUpdated( const tmpMap* );
 	void updateCi();
-	void doSPFlags(const eServiceReference &ref);
+	virtual void init_eServiceSelector();
+	void EPGSearchEvent(eServiceReference ref);
+	void SwitchNowNext();
+
 public:
-	void setKeyDescriptions(bool editMode=false);
+	void EPGUpdated();
+	int eventHandler(const eWidgetEvent &event);
+	virtual void setKeyDescriptions(bool editMode=false);
 	void forEachServiceRef( Signal1<void,const eServiceReference&>, bool );
 	int movemode;
 	int editMode;
 	int plockmode;
+	bool isFileSelector;
 	enum { styleInvalid, styleCombiColumn, styleSingleColumn, styleMultiColumn };
 	enum { dirNo, dirUp, dirDown, dirFirst, dirLast };
 
@@ -108,7 +128,8 @@ public:
 	~eServiceSelector();
 
 	enum { listAll, listSatellites, listProvider, listBouquets };
-	Signal1<eServicePath,int> getRoot;
+	Signal2<eServicePath,int,int> getRoot;
+	Signal2<int,eServiceReference,int> getFirstBouquetServiceNum;
 
 	Signal1<void,const eServiceReference &> addServiceToPlaylist; // add service to the Playlist
 	Signal2<void,eServiceReference*,int> addServiceToUserBouquet;  // add current service to selected User Bouquet
@@ -119,7 +140,8 @@ public:
 																	showMenu, // shows the contextmenu
 																	toggleStyle, // switch service selector style
 																	renameService, renameBouquet,
-																	deletePressed, newMarkerPressed;
+																	deletePressed, newMarkerPressed,
+																	copyToBouquetList;
 
 	Signal3<void,
 		const eServiceReference &, 		// path
@@ -153,5 +175,16 @@ public:
 	int toggleMoveMode();  // enable / disable move entry Mode ( only in userBouquets )
 	int toggleEditMode();  // enable / disable edit UserBouquet Mode
 };
+#ifndef DISABLE_FILE
+class eFileSelector: public eServiceSelector
+{
+	eServicePath getDirRoot(int list, int _mode);
+	void init_eFileSelector(eString startPath);
+public:
+	eFileSelector(eString startPath);
+
+	virtual void setKeyDescriptions(bool editMode=false);
+};
+#endif
 
 #endif

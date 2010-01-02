@@ -17,18 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: time_settings.cpp,v 1.1.2.2 2003/08/29 21:25:21 ghostrider Exp $
+ * $Id: time_settings.cpp,v 1.1.2.2.2.1 2010/01/02 17:21:04 fergy Exp $
  */
 
 #include <time_settings.h>
 #include <setup_timezone.h>
-#include <enigma_main.h>
+#include <time_correction.h>
 #include <timer.h>
 #include <lib/dvb/edvb.h>
 #include <lib/dvb/dvbservice.h>
+#include <lib/gui/emessage.h>
 
 eTimeSettings::eTimeSettings()
 	:eSetupWindow(_("Time Settings"), 5, 350)
+{
+	init_eTimeSettings();
+}
+void eTimeSettings::init_eTimeSettings()
 {
 	move(ePoint(130, 135));
 	int entry=0;
@@ -61,28 +66,14 @@ void eTimeSettings::time_correction()
 		w.setLCD(LCDTitle, LCDElement);
 #endif
 		w.show();
-		if (!w.exec())
-		{
-			std::map<tsref, int> &map =
-				eTransponderList::getInstance()->TimeOffsetMap;
-			int tCorrection=0;
-			std::map<tsref, int>::iterator it = map.find(ref);
-			if ( it != map.end() )
-				tCorrection = it->second;
-			map.clear();
-			map[ref] = tCorrection;
-			eTimerManager::getInstance()->timeChanged();
-		}
+		w.exec();
 		w.hide();
 		show();
 	}
 	else
 	{
 		hide();
-		eMessageBox mb( _("To change time correction you must tune first to any transponder"), _("time correction change error"), eMessageBox::btOK|eMessageBox::iconInfo );
-		mb.show();
-		mb.exec();
-		mb.hide();
+		eMessageBox::ShowBox( _("To change time correction you must tune first to any transponder"), _("time correction change error"), eMessageBox::btOK|eMessageBox::iconInfo );
 		show();
 	}
 }

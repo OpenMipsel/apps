@@ -1,5 +1,6 @@
 #include <satconfig.h>
 
+#include <enigma_main.h>
 #include <lib/base/i18n.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/ebutton.h>
@@ -10,65 +11,55 @@
 #include <lib/dvb/dvbservice.h>
 #include <lib/dvb/frontend.h>
 #include <lib/dvb/dvbwidgets.h>
-#include <lib/dvb/edvb.h>
-//#include <lib/driver/rc.h>
+#include <lib/system/info.h>
 
 eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	:refresh(0)
 {
-	lSatPos = new eLabel(this);
-	lSatPos->setName("lSatPos");
+	init_eSatelliteConfigurationManager();
+}
 
-	lLNB = new eLabel(this);
-	lLNB->setName("lLnb");
+void eSatelliteConfigurationManager::init_eSatelliteConfigurationManager()
+{
+	lSatPos = CreateSkinnedLabel("lSatPos");
+
+	lLNB = CreateSkinnedLabel("lLnb");
 	lLNB->hide();
 
-	l22Khz = new eLabel(this);
-	l22Khz->setName("l22khz");
+	l22Khz = CreateSkinnedLabel("l22khz");
 	l22Khz->hide();
 
-	lVoltage = new eLabel(this);
-	lVoltage->setName("lVoltage");
+	lVoltage = CreateSkinnedLabel("lVoltage");
 	lVoltage->hide();
 	
-	scrollbar = new eProgress(this);
-	scrollbar->setName("scrollbar");
-	scrollbar->setStart(0);
-	scrollbar->setPerc(100);
+	scrollbar = CreateSkinnedProgress("scrollbar",0,100);
 
-	button_new=new eButton(this);
-	button_new->setName("new");
+	CONNECT(CreateSkinnedButton("close")->selected, eSatelliteConfigurationManager::closePressed);
+
+	button_new=CreateSkinnedButton("new");
 	button_new->hide();
 	CONNECT(button_new->selected, eSatelliteConfigurationManager::newPressed);
 
-	button_erase=new eButton(this);
-	button_erase->setName("erase");
+	button_erase=CreateSkinnedButton("erase",0,0);
 	button_erase->hide();
 	CONNECT(button_erase->selected, eSatelliteConfigurationManager::erasePressed);
 
-	button_close=new eButton(this);
-	button_close->setName("close");
-	CONNECT(button_close->selected, eSatelliteConfigurationManager::closePressed);
-  	
-	buttonWidget=new eWidget(this);
-	buttonWidget->setName("buttons");	
-	
-	combo_type=new eComboBox(this, 6);
-	combo_type->setName("type");
+	buttonWidget=CreateSkinnedButton("buttons");
+
+	combo_type=CreateSkinnedComboBox("type", 7);
 	CONNECT(combo_type->selchanged, eSatelliteConfigurationManager::typeChanged);
 	new eListBoxEntryText( *combo_type, _("one single satellite"), (void*)0, 0, _("one directly connected LNB"));
-	new eListBoxEntryText( *combo_type, _("2 satellites via Toneburst"), (void*)5, 0, _("2 LNBs via DiSEqC"));
+	new eListBoxEntryText( *combo_type, _("2 satellites via Toneburst"), (void*)5, 0, _("2 LNBs via Toneburst Signal"));
+	new eListBoxEntryText( *combo_type, _("2 satellites via 22Khz (only Highband)"), (void*)6, 0, _("2 LNBs via 22Khz Signal.. special for old analog switches"));
 	new eListBoxEntryText( *combo_type, _("2 satellites via DiSEqC A/B"), (void*)1, 0, _("2 LNBs via DiSEqC"));
 	new eListBoxEntryText( *combo_type, _("4 satellites via DiSEqC OPT A/B"), (void*)2, 0, _("4 LNBs via DiSEqC"));
 	new eListBoxEntryText( *combo_type, _("many satellites via DiSEqC Rotor"), (void*)3, 0, _("1 LNB with DiSEqC Rotor"));
 	new eListBoxEntryText( *combo_type, _("non-standard user defined configuration..."), (void*)4, 0, _("special"));
 
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eSatelliteConfigurationManager"))
-		eFatal("skin load of \"eSatelliteConfigurationManager\" failed");
+	BuildSkin("eSatelliteConfigurationManager");
 
 	eSize s = buttonWidget->getSize();
-	s.setHeight( s.height()*12 );
+	s.setHeight( s.height()*16 );
 
 	w_buttons = new eWidget(buttonWidget);
 	w_buttons->resize( s );
@@ -78,18 +69,17 @@ eSatelliteConfigurationManager::eSatelliteConfigurationManager()
 	createControlElements();
 
 	complexity=checkComplexity();
-	eConfig::getInstance()->getKey("/elitedvb/DVB/config/lnbs/type", complexity);
 	combo_type->setCurrent( (void*)complexity, true );
 
-	for ( int i = 0; i < 13; i++ )
-		pageEnds.push_back( i * 240 );
+	for ( int i = 0; i < 17; i++ )
+		pageEnds[i]=i*200;
 
-	curScrollPos = pageEnds.begin();
+	curScrollPos = 0;
 
 	repositionWidgets();
 
 	CONNECT( eWidget::focusChanged, eSatelliteConfigurationManager::focusChanged );
-	
+
 	setHelpID(66);
 }
 
@@ -97,11 +87,10 @@ void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
 {
 	if ( focus && focus->getName() == "satWidget" )
 	{
-		std::list<int>::iterator old = curScrollPos;
-		curScrollPos = pageEnds.end();
-		for (std::list<int>::iterator it( pageEnds.begin() ); it != pageEnds.end(); it++ )
+		int old = curScrollPos;
+		for (unsigned int it=0; it < (sizeof(pageEnds)/sizeof(int)); ++it )
 		{
-			if ( focus->getPosition().y() < *it )
+			if ( focus->getPosition().y() < pageEnds[it] )
 			{
 				curScrollPos=it;
 				--curScrollPos;
@@ -110,8 +99,8 @@ void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
 		}
 		if ( curScrollPos != old )
 		{
-			w_buttons->move( ePoint(0, -(*curScrollPos)) );
-			updateScrollbar(complexity > 2 && complexity != 5);
+			w_buttons->move( ePoint(0, -pageEnds[curScrollPos]) );
+			updateScrollbar(complexity > 2 && complexity < 5);
 		}
 	}
 }
@@ -119,24 +108,21 @@ void eSatelliteConfigurationManager::focusChanged( const eWidget* focus )
 void eSatelliteConfigurationManager::typeChanged(eListBoxEntryText* newtype)
 {
 	int newcomplexity=(int)newtype->getKey();
-  if ( newcomplexity == complexity )
+	if ( newcomplexity == complexity )
 		return;
 	// check if the new type is less complex than our current setup...
-	int newComp = newcomplexity == 5 ? 1 : newcomplexity;
+	int newComp = newcomplexity > 4 ? 1 : newcomplexity;
 	int oldComp = checkComplexity();
-	if ( oldComp == 5 )
+	if ( oldComp > 4 )
 		oldComp=1;
 	if ( oldComp > newComp )
 	{
-		eMessageBox mb(_("Configuration contains some elements\nwhich don't fit into new DiSEqC-Type. Drop these items?"), _("Change DiSEqC-Type..."), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btCancel);
 		hide();
-		mb.show();
-		int res=mb.exec();
-		mb.hide();
+		int res = eMessageBox::ShowBox(_("Configuration contains some elements\nwhich don't fit into new DiSEqC-Type. Drop these items?"), _("Change DiSEqC-Type..."), eMessageBox::iconWarning|eMessageBox::btYes|eMessageBox::btCancel);
 		show();
-		if (res == eMessageBox::btCancel)
+		if (res != eMessageBox::btYes)
 		{
-			combo_type->setCurrent((void*)complexity);
+			combo_type->setCurrent((void*)complexity, false);
 			return;
 		}
 	}
@@ -158,19 +144,26 @@ void eSatelliteConfigurationManager::setComplexity(int complexity)
 	switch (complexity)
 	{
 	case 0:
+	{
 		deleteSatellitesAbove(1);
 		while (eTransponderList::getInstance()->getLNBs().size() < 1)
 			createSatWidgets( createSatellite() );
 		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
 			setSimpleDiseqc(it->getSatelliteList().first(), i);
 		break;
+	}
 	case 5:
+	case 6:
 	case 1:
 		deleteSatellitesAbove(2);
 		while (eTransponderList::getInstance()->getLNBs().size() < 2)
 			createSatWidgets( createSatellite() );
 		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); ++it, ++i)
+		{
 			setSimpleDiseqc( it->getSatelliteList().first(), i);
+			if ( complexity == 6 )
+				entryMap[it->getSatelliteList().first()].hilo->setCurrent(2-i);
+		}
 		break;
 	case 2:
 		deleteSatellitesAbove(4);
@@ -205,7 +198,7 @@ void eSatelliteConfigurationManager::setComplexity(int complexity)
 
 int eSatelliteConfigurationManager::checkComplexity()
 {
-	int c=0, comp=0;
+	int c=0, comp=0, rcomp=0;
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
 	{
 		if (it->getSatelliteList().size() != 1)
@@ -221,7 +214,8 @@ int eSatelliteConfigurationManager::checkComplexity()
 		} else
 			++c;
 		int dc=checkDiseqcComplexity(it->getSatelliteList().first());
-		int tmp = dc == 5 ? 2 : dc;
+		rcomp=dc;
+		int tmp = dc > 4 ? 2 : dc;
 		eDebug("LNB %d has %d", c, dc);
 		if (tmp > comp)
 			comp=tmp;
@@ -234,12 +228,12 @@ int eSatelliteConfigurationManager::checkComplexity()
 		comp=1;
 
 	updateButtons(comp);
-	return comp;
+	return rcomp>4?rcomp:comp;
 }
 
 void eSatelliteConfigurationManager::updateButtons(int comp)
 {
-	if (comp < 3 || comp == 5)
+	if (comp < 3 || comp > 4)
 	{
 		lLNB->hide();
 		l22Khz->hide();
@@ -269,6 +263,22 @@ int eSatelliteConfigurationManager::checkDiseqcComplexity(eSatellite *s)
 	
 	if (entryMap.count(s))
 		se=&entryMap[s];
+
+	if (s->getLNB()->getDiSEqC().DiSEqCMode == eDiSEqC::NONE &&
+		s->getLNB()->getDiSEqC().MiniDiSEqCParam == eDiSEqC::NO &&
+		s->getSwitchParams().HiLoSignal == eSwitchParameter::ON )
+	{
+		se->description->setText("22Khz On");
+		return 6;
+	}
+
+	if (s->getLNB()->getDiSEqC().DiSEqCMode == eDiSEqC::NONE &&
+		s->getLNB()->getDiSEqC().MiniDiSEqCParam == eDiSEqC::NO &&
+		s->getSwitchParams().HiLoSignal == eSwitchParameter::OFF )
+	{
+		se->description->setText("22Khz Off");
+		return 6;
+	}
 
 	if (  s->getLNB()->getLOFHi() != 10600000 ||
 				s->getLNB()->getLOFLo() != 9750000 ||
@@ -376,10 +386,21 @@ start:
 
 void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr)
 {
-	s->getSwitchParams().HiLoSignal=eSwitchParameter::HILO;
+	eDebug("setSimpleDiSEqC %d", complexity );
 	s->getSwitchParams().VoltageMode=eSwitchParameter::HV;
 	eLNB *lnb=s->getLNB();
 	lnb->setDefaultOptions();
+	if ( complexity == 6 )
+	{
+		lnb->setLOFLo(10600000);
+		if ( diseqcnr )
+			s->getSwitchParams().HiLoSignal=eSwitchParameter::ON;
+		else
+			s->getSwitchParams().HiLoSignal=eSwitchParameter::OFF;
+	}
+	else
+		s->getSwitchParams().HiLoSignal=eSwitchParameter::HILO;
+
 	lnb->getDiSEqC().MiniDiSEqCParam=eDiSEqC::NO;
 	switch (complexity) // if we have diseqc at all
 	{
@@ -388,6 +409,7 @@ void eSatelliteConfigurationManager::setSimpleDiseqc(eSatellite *s, int diseqcnr
 				lnb->getDiSEqC().MiniDiSEqCParam=eDiSEqC::B;
 			else
 				lnb->getDiSEqC().MiniDiSEqCParam=eDiSEqC::A;
+		case 6:
 		case 0:
 			lnb->getDiSEqC().DiSEqCParam=0;
 			lnb->getDiSEqC().DiSEqCMode=eDiSEqC::NONE;
@@ -455,7 +477,7 @@ eSatellite *eSatelliteConfigurationManager::getSat4LnbButton( const eButton *b )
 	return it != entryMap.end()?it->first:0;
 }
 
-#define DESC_POS_X 350
+#define DESC_POS_X 330
 #define SAT_POS_X  0
 #define LNB_POS_X  260
 #define HILO_POS_X  330
@@ -495,53 +517,66 @@ void eSatelliteConfigurationManager::cleanupWidgets()
 void eSatelliteConfigurationManager::repositionWidgets()
 {
 	cleanupWidgets();
-	int count=0, y=POS_Y;
+	int lnbcount=0, y=POS_Y, satcount=0, cnt=0;
 
 	int tmp = complexity;
-	if (tmp == 5)
+	if (tmp > 4)
 		tmp=1;
 
 	eWidget *old = focus;
+
+	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
+		satcount += it->getSatelliteList().size();
+
+	std::pair<eSatellite*,int> sats[satcount];
 	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
 	{
 		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
 		{
-			SatelliteEntry& entry = entryMap[ *s ];
-			// search eComboBox for this eSatellite and move
-
-			entry.sat->hide();
-			entry.lnb->hide();
-			entry.voltage->hide();
-			entry.hilo->hide();
-			entry.fixed->hide();
-			entry.description->hide();
-
-			entry.sat->move( ePoint((tmp>2?SAT_POS_X:75), y) );
-			entry.fixed->move( ePoint(0, y) );
-			entry.description->move( ePoint(DESC_POS_X, y) );
-			entry.lnb->move( ePoint(LNB_POS_X, y) );
-			entry.lnb->setText( eString().sprintf("%d", count) );
-			entry.fixed->setShortcut(eString().sprintf("%d", (y - POS_Y) / 40 + 1 ) );
-			entry.fixed->setShortcutPixmap(eString().sprintf("%d", (y - POS_Y) / 40 + 1 ));
-
-			entry.hilo->move( ePoint(HILO_POS_X, y) );
-			entry.voltage->move( ePoint(VOLTAGE_POS_X, y) );
-
-			entry.sat->show();
-			if (tmp>2) // user defined..
-			{
-				entry.lnb->show();
-				entry.voltage->show();
-				entry.hilo->show();
-			}
-			else
-			{
-				entry.fixed->show();
-				entry.description->show();
-			}
-			y+=40;
+			sats[cnt].first=s;
+			sats[cnt++].second=lnbcount;
 		}
-		count++;
+		++lnbcount;
+	}
+
+	cnt=0;
+	while(cnt < satcount)
+	{
+		SatelliteEntry& entry = entryMap[ sats[cnt].first ];
+		// search eComboBox for this eSatellite and move
+
+		entry.sat->hide();
+		entry.lnb->hide();
+		entry.voltage->hide();
+		entry.hilo->hide();
+		entry.fixed->hide();
+		entry.description->hide();
+
+		entry.sat->move( ePoint((tmp>2?SAT_POS_X:55), y) );
+		entry.fixed->move( ePoint(0, y) );
+		entry.description->move( ePoint(DESC_POS_X, y) );
+		entry.lnb->move( ePoint(LNB_POS_X, y) );
+		entry.lnb->setText( eString().sprintf("%d", sats[cnt].second ) );
+		entry.fixed->setShortcut(eString().sprintf("%d", (y - POS_Y) / 40 + 1 ) );
+		entry.fixed->setShortcutPixmap(eString().sprintf("%d", (y - POS_Y) / 40 + 1 ));
+
+		entry.hilo->move( ePoint(HILO_POS_X, y) );
+		entry.voltage->move( ePoint(VOLTAGE_POS_X, y) );
+
+		entry.sat->show();
+		if (tmp>2) // user defined..
+		{
+			entry.lnb->show();
+			entry.voltage->show();
+			entry.hilo->show();
+		}
+		else
+		{
+			entry.fixed->show();
+			entry.description->show();
+		}
+		y+=40;
+		++cnt;
 	}
 	if ( old )
 		setFocus(old);
@@ -550,9 +585,14 @@ void eSatelliteConfigurationManager::repositionWidgets()
 
 void eSatelliteConfigurationManager::createControlElements()
 {
-	for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
-		for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
-			createSatWidgets( *s );
+	if ( !sats )
+	{
+		for ( std::list<eLNB>::iterator it( eTransponderList::getInstance()->getLNBs().begin() ); it != eTransponderList::getInstance()->getLNBs().end(); it++)
+			for ( ePtrList<eSatellite>::iterator s ( it->getSatelliteList().begin() ); s != it->getSatelliteList().end(); s++)
+				sats.push_back(*s);
+	}
+	for (ePtrList<eSatellite>::iterator it(sats.begin()); it != sats.end(); ++it )
+		createSatWidgets(*it);
 }
 
 void eSatelliteConfigurationManager::lnbSelected(eButton* who)
@@ -613,14 +653,14 @@ void eSatelliteConfigurationManager::delSatellite( eSatellite* s, bool redraw, b
 	}
 	eLNB* lnb = s->getLNB();
 	lnb->deleteSatellite( s );
-	eDebug("Satellite is now removed");
+//	eDebug("Satellite is now removed");
 	if ( !lnb->getSatelliteList().size() )   // the lnb that have no more satellites must be deleted
 	{
-		eDebug("delete no more used lnb");
+//		eDebug("delete no more used lnb");
 		eTransponderList::getInstance()->getLNBs().remove( *s->getLNB() );
 	}
-	else
-		eDebug("do not delete lnb");
+//	else
+//		eDebug("do not delete lnb");
 
 	deleteEntryList.push_back(&entryMap[ s ]);
 
@@ -663,6 +703,8 @@ void eSatelliteConfigurationManager::voltageChanged(eComboBox* who, eListBoxEntr
 
 void eSatelliteConfigurationManager::closePressed()
 {
+	eTransponderList::getInstance()->writeLNBData();
+	eConfig::getInstance()->flush();
 	close(1);
 }
 
@@ -678,13 +720,7 @@ eComboBox* eSatelliteConfigurationManager::createSatWidgets( eSatellite *s )
 
 	newSat->loadDeco();
 	newSat->resize(eSize(250, 30));
-	newSat->setHelpText( _("press ok to select another satellite, or delete this satellite"));
-
-/*	if (complexity == 3)
-		new eListBoxEntryText( *c, _("*delete*"), (void*) 0 );   // this is to delete an satellite*/
-/*	for (std::list<tpPacket>::const_iterator i(eTransponderList::getInstance()->getNetworks().begin()); i != eTransponderList::getInstance()->getNetworks().end(); ++i)
-		if ( i->possibleTransponders.size() )
-			new eListBoxEntryText( *newSat, i->name, (void*) i->orbital_position );*/
+	newSat->setHelpText( _("press ok to select another satellite"));
 
 	int err;
 	if ( (err = newSat->setCurrent( (void*) s->getOrbitalPosition() ) ) )
@@ -709,7 +745,7 @@ eComboBox* eSatelliteConfigurationManager::createSatWidgets( eSatellite *s )
 	sat.fixed->resize(eSize(130, 30));
 
 	sat.description=new eLabel(w_buttons);
-	sat.description->resize(eSize(230, 30));
+	sat.description->resize(eSize(245, 30));
 
 	eComboBox *c = new eComboBox(w_buttons, 3, l22Khz);
 	c->setName("satWidget");
@@ -793,7 +829,7 @@ eSatellite *eSatelliteConfigurationManager::createSatellite()
 			// if not in user-defined mode,
 
 	int tmp = complexity;
-	if (tmp == 5)
+	if (tmp > 4)
 		tmp=1;
 
 	if ( (tmp < 3) || !eTransponderList::getInstance()->getLNBs().size() )  // lnb list is empty ?
@@ -831,8 +867,7 @@ void eSatelliteConfigurationManager::updateScrollbar(int show)
 		total=1;
 	int start=-w_buttons->getPosition().y()*100/total;
 	int vis=buttonWidget->getSize().height()*100/total;
-	scrollbar->setStart(start);
-	scrollbar->setPerc(vis);
+	scrollbar->setParams(start,vis);
 	scrollbar->show();
 }
 
@@ -856,8 +891,7 @@ int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
 			focusNext(eWidget::focusDirS);
 		else
 			return eWindow::eventHandler(event);
-	break;
-
+		break;
 	default:
 		return eWindow::eventHandler(event);
 		break;
@@ -866,11 +900,13 @@ int eSatelliteConfigurationManager::eventHandler(const eWidgetEvent &event)
 }
 
 eLNBSetup::eLNBSetup( eSatellite* sat, eWidget* lcdTitle, eWidget* lcdElement )
-	:sat(sat)
+	:sat(sat), service(eServiceInterface::getInstance()->service)
 {
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eLNBSetup"))
-		eFatal("skin load of \"eLNBSetup\" failed");
+	init_eLNBSetup(lcdTitle, lcdElement );
+}
+void eLNBSetup::init_eLNBSetup(eWidget* lcdTitle, eWidget* lcdElement )
+{
+	BuildSkin("eLNBSetup");
 	LNBPage = new eLNBPage( this, sat );
 	DiSEqCPage = new eDiSEqCPage( this, sat );
 #ifndef DISABLE_LCD
@@ -910,6 +946,7 @@ void eLNBSetup::onSave()
 	p->setLOFHi( LNBPage->lofH->getNumber() * 1000 );
 	p->setLOFThreshold( LNBPage->threshold->getNumber() * 1000 );
 	p->setIncreasedVoltage( LNBPage->increased_voltage->isChecked() );
+	p->set12VOut( LNBPage->relais_12V_out->isChecked() );
 
 	p->getDiSEqC().MiniDiSEqCParam = (eDiSEqC::tMiniDiSEqCParam) (int) DiSEqCPage->MiniDiSEqCParam->getCurrent()->getKey();
 	p->getDiSEqC().DiSEqCMode = (eDiSEqC::tDiSEqCMode) (int) DiSEqCPage->DiSEqCMode->getCurrent()->getKey();
@@ -942,7 +979,14 @@ void eLNBSetup::onSave()
 	else
 		close(0); // we must not reposition...
 
-	eFrontend::getInstance()->InitDiSEqC();
+	if ( service )
+	{
+		eServiceInterface::getInstance()->stop();
+		eFrontend::getInstance()->savePower();
+		eZapMain::getInstance()->playService(service, eZapMain::psDontAdd|eZapMain::psSetMode );
+	}
+	else
+		eFrontend::getInstance()->InitDiSEqC();
 	eTransponderList::getInstance()->writeLNBData();
 	eConfig::getInstance()->flush();
 }
@@ -962,7 +1006,7 @@ int eLNBSetup::eventHandler(const eWidgetEvent &event)
 	return eWindow::eventHandler(event);
 }
 
-struct eLNBPage::selectlnb: public std::unary_function<const eListBoxEntryText&, void>
+struct eLNBPage::selectlnb
 {
 	const eLNB *lnb;
 	eComboBox *lb;
@@ -985,40 +1029,31 @@ struct eLNBPage::selectlnb: public std::unary_function<const eListBoxEntryText&,
 eLNBPage::eLNBPage( eWidget *parent, eSatellite* sat )
   :eWidget(parent), sat(sat)
 {
+	init_eLNBPage(parent);
+}
+void eLNBPage::init_eLNBPage( eWidget *parent)
+{
 #ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
 #endif  
-	lnb_list = new eComboBox(this,8);
-	lnb_list->setName("lnblist");
+	lnb_list = CreateSkinnedComboBox("lnblist",8);
 
-	eLabel *l = new eLabel(this);
-	l->setName("lLofL");
-	lofL = new eNumber(this, 5, 0, 9, 1, 0, 0, l);  // todo descr label im skin mit name versehen für lcd anzeige
-	lofL->setName("lofL");
+	lofL = CreateSkinnedNumberWithLabel("lofL", 0, 5, 0, 9, 1, 0, 0, "lLofL");  // todo descr label im skin mit name versehen für lcd anzeige
 
-	l = new eLabel(this);
-	l->setName("lLofH");
-	lofH = new eNumber(this, 5, 0, 9, 1, 0, 0, l);  // todo descr label im skin mit name versehen für lcd anzeige
-	lofH->setName("lofH");
+	lofH = CreateSkinnedNumberWithLabel("lofH", 0, 5, 0, 9, 1, 0, 0, "lLofH");  // todo descr label im skin mit name versehen für lcd anzeige
 
-	l = new eLabel(this);
-	l->setName("lThreshold");
-	threshold = new eNumber(this, 5, 0 ,9, 1, 0, 0, l);
-	threshold->setName("threshold");
+	threshold = CreateSkinnedNumberWithLabel("threshold",0, 5, 0 ,9, 1, 0, 0, "lThreshold");
 
-	increased_voltage = new eCheckbox( this );
-	increased_voltage->setName("increased_voltage");
-                                       
-	save = new eButton(this);
-	save->setName("save");
+	increased_voltage = CreateSkinnedCheckbox("increased_voltage");
 
-	next = new eButton(this);
-	next->setName("next");
+	relais_12V_out = CreateSkinnedCheckbox("relais_12V_out");
 
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eLNBPage"))
-		eFatal("skin load of \"eLNBPage\" failed");
+	save = CreateSkinnedButton("save");
+
+	next = CreateSkinnedButton("next");
+
+	BuildSkin("eLNBPage");
 
 	// add all LNBs
 
@@ -1027,7 +1062,7 @@ eLNBPage::eLNBPage( eWidget *parent, eSatellite* sat )
 		new eListBoxEntryText(*lnb_list, eString().sprintf("LNB %i", i++), (void*)&(*it) );
 
 	// fill with new lnbs
-	while (i < 16)
+	while (i < 32)
 		new eListBoxEntryText(*lnb_list, eString().sprintf("LNB %i", i++), (void*) 0 );
 
 	lnb_list->forEachEntry( selectlnb( sat->getLNB(), lnb_list ) );
@@ -1035,6 +1070,9 @@ eLNBPage::eLNBPage( eWidget *parent, eSatellite* sat )
 	CONNECT( lofL->selected, eLNBPage::numSelected);
 	CONNECT( lofH->selected, eLNBPage::numSelected);
 	CONNECT( threshold->selected, eLNBPage::numSelected);
+
+	if ( eSystemInfo::getInstance()->getHwType() != eSystemInfo::DM7020 )
+		relais_12V_out->hide();
  // on exec we begin in eventHandler execBegin
 }
 
@@ -1044,16 +1082,19 @@ void eLNBPage::lnbChanged( eListBoxEntryText *lnb )
 	int l2 = 10600000;
 	int l3 = 11700000;
 	int incVoltage = 0;
+	int relais12V = 0;
 	if ( lnb && lnb->getKey() )
 	{
 		l1 = ((eLNB*)lnb->getKey())->getLOFLo();
 		l2 = ((eLNB*)lnb->getKey())->getLOFHi();
 		l3 = ((eLNB*)lnb->getKey())->getLOFThreshold();
 		incVoltage = ((eLNB*)lnb->getKey())->getIncreasedVoltage();
+		relais12V = ((eLNB*)lnb->getKey())->get12VOut();
 	}
 	lofL->setNumber( l1 / 1000 );
 	lofH->setNumber( l2 / 1000 );
 	increased_voltage->setCheck( incVoltage );
+	relais_12V_out->setCheck( relais12V );
 	threshold->setNumber( l3 / 1000 );
 }
 
@@ -1065,22 +1106,22 @@ void eLNBPage::numSelected(int*)
 eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
 	:eWidget(parent), sat(sat)
 {
+	init_eDiSEqCPage(parent, sat);
+}
+
+void eDiSEqCPage::init_eDiSEqCPage( eWidget *parent, eSatellite *sat)
+{
+	int i;
 #ifndef DISABLE_LCD
 	LCDTitle=parent->LCDTitle;
 	LCDElement=parent->LCDElement;
 #endif
-	eLabel *l = new eLabel(this);
-	l->setName("lMiniDiSEqCPara");
-	MiniDiSEqCParam = new eComboBox( this, 4, l );
-	MiniDiSEqCParam->setName("MiniDiSEqCParam");
+	MiniDiSEqCParam = CreateSkinnedComboBoxWithLabel("MiniDiSEqCParam", 4, "lMiniDiSEqCPara");
 	new eListBoxEntryText( *MiniDiSEqCParam, _("None"), (void*)eDiSEqC::NO, 0, _("sends no tone burst") );
 	new eListBoxEntryText( *MiniDiSEqCParam, "A", (void*)eDiSEqC::A, 0, _("sends modulated tone burst") );
 	new eListBoxEntryText( *MiniDiSEqCParam, "B", (void*)eDiSEqC::B, 0, _("sends unmodulated tone burst") );
 
-	l = new eLabel(this);
-	l->setName("lDiSEqCMode");
-	DiSEqCMode = new eComboBox( this, 4, l );
-	DiSEqCMode->setName("DiSEqCMode");
+	DiSEqCMode = CreateSkinnedComboBoxWithLabel("DiSEqCMode", 4, "lDiSEqCMode" );
 	// *DiSEqCMode... here we use the operator eListBox* from eComboBox !
 	new eListBoxEntryText( *DiSEqCMode, "None", (void*)eDiSEqC::NONE, 0, _("Disable DiSEqC") );
 	new eListBoxEntryText( *DiSEqCMode, "Version 1.0", (void*)eDiSEqC::V1_0, 0, _("Use DiSEqC Version 1.0") );
@@ -1089,85 +1130,47 @@ eDiSEqCPage::eDiSEqCPage( eWidget *parent, eSatellite *sat)
 	// no SMATV at the moment... we can do this when anyone ask...
 	// 	new eListBoxEntryText( *DiSEqCMode, "SMATV", (void*)eDiSEqC::SMATV, 0, _("Use SMATV Remote Tuning") );
 
-	lDiSEqCParam = new eLabel(this);
-	lDiSEqCParam->setName("lDiSEqCParam");
-	DiSEqCParam = new eComboBox( this, 4, lDiSEqCParam );
-	DiSEqCParam->setName("DiSEqCParam");
+	lDiSEqCParam = CreateSkinnedLabel("lDiSEqCParam");
+	DiSEqCParam = CreateSkinnedComboBox("DiSEqCParam", 4, lDiSEqCParam );
 	new eListBoxEntryText( *DiSEqCParam, "A/A", (void*)eDiSEqC::AA, 0, _("sends DiSEqC cmd A/A") );
 	new eListBoxEntryText( *DiSEqCParam, "A/B", (void*)eDiSEqC::AB, 0, _("sends DiSEqC cmd A/B") );
 	new eListBoxEntryText( *DiSEqCParam, "B/A", (void*)eDiSEqC::BA, 0, _("sends DiSEqC cmd B/A") );
 	new eListBoxEntryText( *DiSEqCParam, "B/B", (void*)eDiSEqC::BB, 0, _("sends DiSEqC cmd B/B") );
 	new eListBoxEntryText( *DiSEqCParam, "None", (void*)eDiSEqC::SENDNO, 0, _("sends no committed DiSEqC cmd") );
-	new eListBoxEntryText( *DiSEqCParam, "1", (void*)0xF0, 0, _("sends switch cmd 1") );
-	new eListBoxEntryText( *DiSEqCParam, "2", (void*)0xF1, 0, _("sends switch cmd 2") );
-	new eListBoxEntryText( *DiSEqCParam, "3", (void*)0xF2, 0, _("sends switch cmd 3") );
-	new eListBoxEntryText( *DiSEqCParam, "4", (void*)0xF3, 0, _("sends switch cmd 4") );
-	new eListBoxEntryText( *DiSEqCParam, "5", (void*)0xF4, 0, _("sends switch cmd 5") );
-	new eListBoxEntryText( *DiSEqCParam, "6", (void*)0xF5, 0, _("sends switch cmd 6") );
-	new eListBoxEntryText( *DiSEqCParam, "7", (void*)0xF6, 0, _("sends switch cmd 7") );
-	new eListBoxEntryText( *DiSEqCParam, "8", (void*)0xF7, 0, _("sends switch cmd 8") );
-	new eListBoxEntryText( *DiSEqCParam, "9", (void*)0xF8, 0, _("sends switch cmd 9") );
-	new eListBoxEntryText( *DiSEqCParam, "10", (void*)0xF9, 0, _("sends switch cmd 10") );
-	new eListBoxEntryText( *DiSEqCParam, "11", (void*)0xFA, 0, _("sends switch cmd 11") );
-	new eListBoxEntryText( *DiSEqCParam, "12", (void*)0xFB, 0, _("sends switch cmd 12") );
-	new eListBoxEntryText( *DiSEqCParam, "13", (void*)0xFC, 0, _("sends switch cmd 13") );
-	new eListBoxEntryText( *DiSEqCParam, "14", (void*)0xFD, 0, _("sends switch cmd 14") );
-	new eListBoxEntryText( *DiSEqCParam, "15", (void*)0xFE, 0, _("sends switch cmd 15") );
-	new eListBoxEntryText( *DiSEqCParam, "16", (void*)0xFF, 0, _("sends switch cmd 16") );
+	i = 0;
+	while (i < 16)
+		new eListBoxEntryText( *DiSEqCParam, eString().sprintf(_("%d"),i+1), (void*)(0xF0+i), 0, eString().sprintf(_("sends switch cmd %d"),++i) );
 
-	lDiSEqCRepeats = new eLabel(this);
-	lDiSEqCRepeats->setName("lDiSEqCRepeats");
-	DiSEqCRepeats = new eComboBox( this, 4, lDiSEqCRepeats );
-	DiSEqCRepeats->setName("DiSEqCRepeats");
+	lDiSEqCRepeats = CreateSkinnedLabel("lDiSEqCRepeats");
+	DiSEqCRepeats = CreateSkinnedComboBox("DiSEqCRepeats", 4, lDiSEqCRepeats );
 	new eListBoxEntryText( *DiSEqCRepeats, _("None"), (void*)0, 0, _("sends no DiSEqC repeats") );
 	new eListBoxEntryText( *DiSEqCRepeats, _("One"), (void*)1, 0, _("sends one repeat") );
 	new eListBoxEntryText( *DiSEqCRepeats, _("Two"), (void*)2, 0, _("sends two repeats") );
 	new eListBoxEntryText( *DiSEqCRepeats, _("Three"), (void*)3, 0, _("sends three repeats") );
 
-	lucInput = new eLabel(this);
-	lucInput->setName("lucInput");
+	lucInput = CreateSkinnedLabel("lucInput");
 
-	ucInput = new eComboBox( this, 8, lucInput );
-	ucInput->setName("ucInput");
+	ucInput = CreateSkinnedComboBox("ucInput", 8, lucInput );
 	new eListBoxEntryText( *ucInput, _("None"), (void*)0, 0, _("sends no uncommitted switch command") );
-	new eListBoxEntryText( *ucInput, _("Input 1"), (void*)240, 0, _("select uncommitted switch Input 1") );
-	new eListBoxEntryText( *ucInput, _("Input 2"), (void*)241, 0, _("select uncommitted switch Input 2") );
-	new eListBoxEntryText( *ucInput, _("Input 3"), (void*)242, 0, _("select uncommitted switch Input 3") );
-	new eListBoxEntryText( *ucInput, _("Input 4"), (void*)243, 0, _("select uncommitted switch Input 4") );
-	new eListBoxEntryText( *ucInput, _("Input 5"), (void*)244, 0, _("select uncommitted switch Input 5") );
-	new eListBoxEntryText( *ucInput, _("Input 6"), (void*)245, 0, _("select uncommitted switch Input 6") );
-	new eListBoxEntryText( *ucInput, _("Input 7"), (void*)246, 0, _("select uncommitted switch Input 7") );
-	new eListBoxEntryText( *ucInput, _("Input 8"), (void*)247, 0, _("select uncommitted switch Input 8") );
-	new eListBoxEntryText( *ucInput, _("Input 9"), (void*)248, 0, _("select uncommitted switch Input 9") );
-	new eListBoxEntryText( *ucInput, _("Input 10"), (void*)249, 0, _("select uncommitted switch Input 10") );
-	new eListBoxEntryText( *ucInput, _("Input 11"), (void*)250, 0, _("select uncommitted switch Input 11") );
-	new eListBoxEntryText( *ucInput, _("Input 12"), (void*)251, 0, _("select uncommitted switch Input 12") );
-	new eListBoxEntryText( *ucInput, _("Input 13"), (void*)252, 0, _("select uncommitted switch Input 13") );
-	new eListBoxEntryText( *ucInput, _("Input 14"), (void*)253, 0, _("select uncommitted switch Input 14") );
-	new eListBoxEntryText( *ucInput, _("Input 15"), (void*)254, 0, _("select uncommitted switch Input 15") );
-	new eListBoxEntryText( *ucInput, _("Input 16"), (void*)255, 0, _("select uncommitted switch Input 16") );
-    
-	SeqRepeat = new eCheckbox(this);
-	SeqRepeat->setName("SeqRepeat");
+	i = 0;
+	while (i < 16)
+		new eListBoxEntryText( *ucInput, eString().sprintf(_("Input %d"),i+1), (void*)(240+i), 0, eString().sprintf(_("select uncommitted switch Input %d"),++i) );
 
-	SwapCmds = new eCheckbox(this);
-	SwapCmds->setName("SwapCmds");
+	SeqRepeat = CreateSkinnedCheckbox("SeqRepeat");
 
-	FastDiSEqC = new eCheckbox(this);
-	FastDiSEqC->setName("FastDiSEqC");
+	FastDiSEqC = CreateSkinnedCheckbox("FastDiSEqC");
+
+	SwapCmds = CreateSkinnedCheckbox("SwapCmds");
 
 /*	next = new eButton(this);
 	next->setName("next");*/
           
-	prev = new eButton(this);
-	prev->setName("prev");
+	prev = CreateSkinnedButton("prev");
   
-	save = new eButton(this);
-	save->setName("save");
+	save = CreateSkinnedButton("save");
 
-	eSkin *skin=eSkin::getActive();
-	if (skin->build(this, "eDiSEqCPage"))
-		eFatal("skin load of \"eDiSEqCPage\" failed");
+	BuildSkin("eDiSEqCPage");
+
 
 	CONNECT( DiSEqCMode->selchanged, eDiSEqCPage::DiSEqCModeChanged );
 	addActionMap(&i_focusActions->map);

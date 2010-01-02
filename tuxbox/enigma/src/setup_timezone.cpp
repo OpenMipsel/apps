@@ -1,5 +1,6 @@
 #include <setup_timezone.h>
 
+#include <config.h>
 #include <lib/gui/slider.h>
 #include <lib/gui/ebutton.h>
 #include <lib/gui/elabel.h>
@@ -11,59 +12,45 @@
 #include <lib/system/econfig.h>
 #include <enigma_main.h>
 
-eZapTimeZoneSetup::eZapTimeZoneSetup() : eWindow(0)
+#ifndef ZONEINFODIR
+#define ZONEINFODIR DATADIR "/zoneinfo"
+#endif
+
+
+eZapTimeZoneSetup::eZapTimeZoneSetup(bool showHint)
+	:eWindow(), showHint(showHint)
 {
-	setText(_("Time Zone Setup"));
-	cmove(ePoint(110, 146));
-	cresize(eSize(530, 250));
+	init_eZapTimeZoneSetup();
+}
+void eZapTimeZoneSetup::init_eZapTimeZoneSetup()
+{
 
-	int fd=eSkin::getActive()->queryValue("fontsize", 20);
-
-	ltimeZone=new eLabel(this);
-	ltimeZone->move(ePoint(20, 20));
-	ltimeZone->resize(eSize(220, fd+4));
-	ltimeZone->setText(_("Time Zone:"));
-		
-	timeZone=new eComboBox(this, 8, ltimeZone);
-	timeZone->move(ePoint(20, 60));
-	timeZone->resize(eSize(clientrect.width()-40, 35));
-	timeZone->setHelpText(_("select your time zone (ok)"));
-	timeZone->loadDeco();
+	timeZone=CreateSkinnedComboBox("timezone", 8);
 	
+	CONNECT(CreateSkinnedButton("save")->selected, eZapTimeZoneSetup::okPressed);
+	BuildSkin("TimezoneSetup");
+
 	errLoadTimeZone = loadTimeZones();
-	
-	int cuseDst;
-	if ( eConfig::getInstance()->getKey("/elitedvb/useDst", cuseDst) )
-		cuseDst=1;
-
-	useDst=new eCheckbox(this);
-	useDst->setName("useDst");
-	useDst->setText(_("use automatically daylight saving time"));
-	useDst->move(ePoint(20, 110));
-	useDst->resize(eSize(clientrect.width()-40, 35));
-	useDst->setHelpText(_("Automatically adjust clock for daylight saving changes"));
-	useDst->setCheck(cuseDst);
-
-	ok=new eButton(this);
-	ok->setText(_("save"));
-	ok->setShortcut("green");
-	ok->setShortcutPixmap("green");
-	ok->move(ePoint(20, clientrect.height()-80));
-	ok->resize(eSize(220, 40));
-	ok->setHelpText(_("save changes and return"));
-	ok->loadDeco();
-	CONNECT(ok->selected, eZapTimeZoneSetup::okPressed);
-
-	statusbar=new eStatusBar(this);
-	statusbar->move( ePoint(0, clientrect.height()-30 ) );
-	statusbar->resize( eSize( clientrect.width(), 30) );
-	statusbar->loadDeco();
 
 	setHelpID(90);
 }
 
+struct delString
+{
+	delString()
+	{
+	}
+
+	bool operator()(eListBoxEntryText &e)
+	{
+		delete (eString*)(e.getKey());
+		return false;
+	}
+};
+
 eZapTimeZoneSetup::~eZapTimeZoneSetup()
 {
+	timeZone->forEachEntry(delString());
 }
 
 void eZapTimeZoneSetup::okPressed()
@@ -76,25 +63,35 @@ void eZapTimeZoneSetup::okPressed()
 			eConfig::getInstance()->delKey("/elitedvb/timezone");
 			eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/timezone", ((eString*) timeZone->getCurrent()->getKey())->c_str()));
 		}
-		if ( eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()))
-		{
-			eConfig::getInstance()->delKey("/elitedvb/timezone");
-			eDebug("Write timezone with error %i", eConfig::getInstance()->setKey("/elitedvb/useDst", useDst->isChecked()));
-		}
 		eConfig::getInstance()->flush();
-		setTimeZone();                         
-		/* emit */ eDVB::getInstance()->timeUpdated();
+		setTimeZone();
+		if (showHint)
+		{
+			eMessageBox msg(_("You have to restart enigma to apply the new Timezone\nRestart now?"), _("Timezone changed"), eMessageBox::btYes|eMessageBox::btNo|eMessageBox::iconQuestion, eMessageBox::btYes );
+			msg.show();
+			if ( msg.exec() == eMessageBox::btYes )
+				eApp->quit(2);
+			msg.hide();
+		}
+		else
+			eApp->quit(2);
 	}
 	close(0);
 }
 
 void eZapTimeZoneSetup::setTimeZone()
 {
-	const char *ctimeZone;
-	ctimeZone = cmdTimeZones();
-	if (ctimeZone!="")
-		setenv("TZ", ctimeZone, 1);
-	eDebug("setenv TZ=%s", ctimeZone);
+	char *ctimeZone=cmdTimeZones();
+#ifdef USE_UCLIBC
+	   setenv("TZ",ctimeZone,1);
+#else
+	if ( system(
+		eString().sprintf(
+			"cp " ZONEINFODIR "/%s /var/etc/localtime",
+			ctimeZone).c_str() ) >> 8)
+		eDebug("couldn't set timezone:%s",ctimeZone);
+#endif
+	free(ctimeZone);
 }
 
 int eZapTimeZoneSetup::loadTimeZones()
@@ -159,7 +156,7 @@ int eZapTimeZoneSetup::loadTimeZones()
 	return 0;
 }
 
-const char *eZapTimeZoneSetup::cmdTimeZones()
+char *eZapTimeZoneSetup::cmdTimeZones()
 {
 	XMLTreeParser parser("ISO-8859-1");
 	int done=0;
@@ -195,31 +192,30 @@ const char *eZapTimeZoneSetup::cmdTimeZones()
 	if ( eConfig::getInstance()->getKey("/elitedvb/timezone", ctimeZone) )
 		ctimeZone=0;
 
-	int cuseDst;
-	if ( eConfig::getInstance()->getKey("/elitedvb/useDst", cuseDst) )
-		cuseDst=1;
-
 	for (XMLTreeNode *node = root->GetChild(); node; node = node->GetNext())
 		if (!strcmp(node->GetType(), "zone"))
 		{
 			const char *name=node->GetAttributeValue("name"),
-					*zone=node->GetAttributeValue("zone"),
-					*dst=node->GetAttributeValue("dst");
+#ifdef USE_UCLIBC
+					*zone=node->GetAttributeValue("tz");
+#else
+					*zone=node->GetAttributeValue("zone");
+#endif
+//					*dst=node->GetAttributeValue("dst");
 			if (!zone)
 			{
 				eFatal("error in a file timezone.xml, no name timezone");
+				free(ctimeZone);
 				return "";
 			}
 			if ( ctimeZone && !strcmp(ctimeZone, name) )
 			{
-				if (cuseDst)
-					return eString().sprintf("%s%s",zone,dst).c_str();
-				else
-					return eString().sprintf("%s",zone).c_str();
+				free(ctimeZone);
+				return strdup(zone);
 			}
 		} 
 		else
-			eFatal("error in a file timezone.xml, unknown timezone");
+			eFatal("error in file timezone.xml, unknown timezone");
 	free(ctimeZone);
 	
 	return "";

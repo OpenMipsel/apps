@@ -1,3 +1,4 @@
+#ifndef DISABLE_HDD
 #ifndef DISABLE_FILE
 /*
  * setup_harddisk.cpp
@@ -18,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id: setup_harddisk.cpp,v 1.2.2.25 2003/08/30 11:54:58 ghostrider Exp $
+ * $Id: setup_harddisk.cpp,v 1.2.2.25.2.1 2010/01/02 17:21:04 fergy Exp $
  */
 
 #include <setup_harddisk.h>
@@ -29,6 +30,8 @@
 #include <lib/gui/combobox.h>
 #include <lib/gui/emessage.h>
 #include <lib/gui/statusbar.h>
+#include <lib/dvb/epgcache.h>
+#include <lib/system/info.h>
 #include <sys/vfs.h> // for statfs
 #include <unistd.h>
 #include <signal.h>
@@ -103,30 +106,38 @@ int freeDiskspace(int dev, eString mp="")
 
 static int numPartitions(int dev)
 {
-	FILE *f=fopen("/proc/partitions", "rb");
-	if (!f)
-		return 0;
 	eString path;
 	int host=dev/4;
 	int bus=!!(dev&2);
 	int target=!!(dev&1);
-	path.sprintf("ide/host%d/bus%d/target%d/lun0/", host, bus, target);
+
+	path.sprintf("ls /dev/ide/host%d/bus%d/target%d/lun0/ > /tmp/tmp.out", host, bus, target);
+	system( path.c_str() );
+
+	FILE *f=fopen("/tmp/tmp.out", "rb");
+	if (!f)
+	{
+		eDebug("fopen failed");
+		return -1;
+	}
 
 	int numpart=-1;		// account for "disc"
-	
 	while (1)
 	{
 		char line[1024];
 		if (!fgets(line, 1024, f))
 			break;
-		if (line[1] != ' ')
-			continue;
-		if (!strncmp(line+22, path.c_str(), path.size()))
+		if ( !strncmp(line, "disc", 4) )
+			numpart++;
+		if ( !strncmp(line, "part", 4) )
 			numpart++;
 	}
 	fclose(f);
+	system("rm /tmp/tmp.out");
 	return numpart;
 }
+
+extern eString resolvSymlinks(const eString &path);
 
 eString getPartFS(int dev, eString mp="")
 {
@@ -138,6 +149,8 @@ eString getPartFS(int dev, eString mp="")
 	int bus=!!(dev&2);
 	int target=!!(dev&1);
 	path.sprintf("/dev/ide/host%d/bus%d/target%d/lun0/", host, bus, target);
+
+	eString tmp=resolvSymlinks(mp);
 
 	while (1)
 	{
@@ -151,21 +164,18 @@ eString getPartFS(int dev, eString mp="")
 			mountpoint=mountpoint.mid(mountpoint.find(' ')+1);
 			mountpoint=mountpoint.left(mountpoint.find(' '));
 //			eDebug("mountpoint: %s", mountpoint.c_str());
-			if ( mp && mountpoint != mp )
+			if ( tmp && mountpoint != tmp )
 				continue;
 
-			if (!strncmp(line, path.c_str(), path.size()))
-			{
-				eString fs=line;
-				fs=fs.mid(fs.find(' ')+1);
-				fs=fs.mid(fs.find(' ')+1);
-				fs=fs.left(fs.find(' '));
-				eString mpath=line;
-				mpath=mpath.left(mpath.find(' '));
-				mpath=mpath.mid(mpath.rfind('/')+1);
-				fclose(f);
-				return fs+','+mpath;
-			}
+			eString fs=line;
+			fs=fs.mid(fs.find(' ')+1);
+			fs=fs.mid(fs.find(' ')+1);
+			fs=fs.left(fs.find(' '));
+			eString mpath=line;
+			mpath=mpath.left(mpath.find(' '));
+			mpath=mpath.mid(mpath.rfind('/')+1);
+			fclose(f);
+			return fs+','+mpath;
 		}
 	}
 	fclose(f);
@@ -175,15 +185,17 @@ eString getPartFS(int dev, eString mp="")
 eHarddiskSetup::eHarddiskSetup()
 : eListBoxWindow<eListBoxEntryText>(_("Harddisk Setup"), 5, 420)
 {
+	init_eHarddiskSetup();
+}
+void eHarddiskSetup::init_eHarddiskSetup()
+{
 	nr=0;
 	
 	move(ePoint(150, 136));
 	
-	new eListBoxEntryText(&list, _("back"), (void*)-1);
-	new eListBoxEntrySeparator( (eListBox<eListBoxEntry>*)&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
-	for (int host=0; host<1; host++)
-		for (int bus=0; bus<1; bus++)
-			for (int target=0; target<1; target++)
+	for (int host=0; host<2; host++)
+		for (int bus=0; bus<2; bus++)
+			for (int target=0; target<2; target++)
 			{
 				int num=target+bus*2+host*4;
 				
@@ -253,6 +265,7 @@ void eHarddiskMenu::check()
 	check.exec();
 	check.hide();
 	show();
+	restartNet=true;
 }
 
 void eHarddiskMenu::extPressed()
@@ -263,11 +276,16 @@ void eHarddiskMenu::extPressed()
 		if (pm)
 			ext->setPixmap( pm );
 		fs->hide();
+		lbltimeout->hide();
+		lblacoustic->hide();
+		timeout->hide();
+		acoustic->hide();
+		store->hide();
 		sbar->hide();
-		resize( getSize()-eSize( 0, 45) );
-		sbar->move( sbar->getPosition()-ePoint(0,45) );
+		resize( getSize()-eSize( 0, 80) );
+		sbar->move( sbar->getPosition()-ePoint(0,80) );
 		sbar->show();
-		eZap::getInstance()->getDesktop(eZap::desktopFB)->invalidate( eRect( getAbsolutePosition()+ePoint( 0, height() ), eSize( width(), 45 ) ));
+		eZap::getInstance()->getDesktop(eZap::desktopFB)->invalidate( eRect( getAbsolutePosition()+ePoint( 0, height() ), eSize( width(), 80 ) ));
 		visible=0;
 	}
 	else
@@ -276,10 +294,16 @@ void eHarddiskMenu::extPressed()
 		if (pm)
 			ext->setPixmap( pm );
 		sbar->hide();
-		sbar->move( sbar->getPosition()+ePoint(0,45) );
-		resize( getSize()+eSize( 0, 45) );
+		sbar->move( sbar->getPosition()+ePoint(0,80) );
+		resize( getSize()+eSize( 0, 80) );
 		sbar->show();
 		fs->show();
+		lbltimeout->show();
+		lblacoustic->show();
+		timeout->show();
+		acoustic->show();
+		store->show();
+		
 		visible=1;
 	}
 }
@@ -290,26 +314,20 @@ void eHarddiskMenu::s_format()
 	do
 	{
 		{
-			eMessageBox msg(
+			int res = eMessageBox::ShowBox(
 				 _("Are you SURE that you want to format this disk?\n"),
 				 _("formatting harddisk..."),
 				 eMessageBox::btYes|eMessageBox::btCancel, eMessageBox::btCancel);
-			msg.show();
-			int res=msg.exec();
-			msg.hide();
 			if (res != eMessageBox::btYes)
 				break;
 		}
 		if (numpart)
 		{
-			eMessageBox msg(
+			int res = eMessageBox::ShowBox(
 				 _("There's data on this harddisk.\n"
 				 "You will lose that data. Proceed?"),
 				 _("formatting harddisk..."),
 				 eMessageBox::btYes|eMessageBox::btNo, eMessageBox::btNo);
-			msg.show();
-			int res=msg.exec();
-			msg.hide();
 			if (res != eMessageBox::btYes)
 				break;
 		}
@@ -318,12 +336,21 @@ void eHarddiskMenu::s_format()
 		int target=!!(dev&1);
 
 // kill samba server... (exporting /hdd)
+#ifdef HAVE_DREAMBOX_HARDWARE
 		system("killall -9 smbd");
+#else
+		system("killall -9 smbd nmbd");
+		system("/bin/umount /hdd");
+#endif
+		restartNet=true;
 
 		system(
 				eString().sprintf(
+#ifdef HAVE_DREAMBOX_HARDWARE
 				"/bin/umount /dev/ide/host%d/bus%d/target%d/lun0/part*", host, bus, target).c_str());
-
+#else
+				"/sbin/swapoff /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str());
+#endif
 		eMessageBox msg(
 			_("please wait while initializing harddisk.\nThis might take some minutes.\n"),
 			_("formatting harddisk..."), 0);
@@ -331,7 +358,7 @@ void eHarddiskMenu::s_format()
 
 		FILE *f=popen(
 				eString().sprintf(
-				"/sbin/sfdisk -f /dev/ide/host%d/bus%d/target%d/lun0/disc", host, bus, target).c_str(), "w");
+				"/sbin/sfdisk -f -uM /dev/ide/host%d/bus%d/target%d/lun0/disc", host, bus, target).c_str(), "w");
 		if (!f)
 		{
 			eMessageBox msg(
@@ -343,18 +370,35 @@ void eHarddiskMenu::s_format()
 			msg.hide();
 			break;
 		}
+#ifdef HAVE_DREAMBOX_HARDWARE
 		fprintf(f, "0,\n;\n;\n;\ny\n");
+#else
+		fprintf(f, "0,100,82\n,,,*\n;\n;\ny\n");
+#endif
 		fclose(f);
+/*Set up Swapspace*/
+#ifdef HAVE_DBOX_HARDWARE
+		system(eString().sprintf("/sbin/mkswap /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str());
+#endif
 
+#if ENABLE_REISERFS
 		if ( !fs->getCurrent()->getKey() )  // reiserfs
 		{
 			::sync();
 			if ( system( eString().sprintf(
+#ifdef HAVE_DREAMBOX_HARDWARE
 					"/sbin/mkreiserfs -f -f /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str())>>8)
+#else
+					"/sbin/mkreiserfs -f -f /dev/ide/host%d/bus%d/target%d/lun0/part2", host, bus, target).c_str())>>8)
+#endif
 				goto err;
 			::sync();
 			if ( system( eString().sprintf(
+#ifdef HAVE_DREAMBOX_HARDWARE
 					"/bin/mount -t reiserfs /dev/ide/host%d/bus%d/target%d/lun0/part1 /hdd", host, bus, target).c_str())>>8)
+#else
+					"/bin/mount -t reiserfs /dev/ide/host%d/bus%d/target%d/lun0/part2 /hdd", host, bus, target).c_str())>>8)
+#endif
 				goto err;
 			::sync();
 			if ( system("mkdir /hdd/movie")>>8 )
@@ -363,14 +407,23 @@ void eHarddiskMenu::s_format()
 			goto noerr;
 		}
 		else  // ext3
+#endif
 		{
 			::sync();
 			if ( system( eString().sprintf(
-					"/sbin/mkfs.ext3 -T largefile4 /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str())>>8)
+#ifdef HAVE_DREAMBOX_HARDWARE
+					"/sbin/mkfs.ext3 -T largefile -m0 /dev/ide/host%d/bus%d/target%d/lun0/part1", host, bus, target).c_str())>>8)
+#else
+					"/sbin/mkfs.ext3 -T largefile -m0 /dev/ide/host%d/bus%d/target%d/lun0/part2", host, bus, target).c_str())>>8)
+#endif
 				goto err;
 			::sync();
 			if ( system(eString().sprintf(
-				"/bin/mount -t ext3 /dev/ide/host%d/bus%d/target%d/lun0/part1 /hdd", host, bus, target).c_str())>>8)
+#ifdef HAVE_DREAMBOX_HARDWARE
+					"/bin/mount -t ext3 /dev/ide/host%d/bus%d/target%d/lun0/part1 /hdd", host, bus, target).c_str())>>8)
+#else
+					"/bin/mount -t ext3 /dev/ide/host%d/bus%d/target%d/lun0/part2 /hdd", host, bus, target).c_str())>>8)
+#endif
 				goto err;
 			::sync();
 			if ( system("mkdir /hdd/movie")>>8 )
@@ -380,30 +433,22 @@ void eHarddiskMenu::s_format()
 		}
 err:
 		{
-			eMessageBox msg(
+			eMessageBox::ShowBox(
 				_("creating filesystem failed."),
 				_("formatting harddisk..."),
 				 eMessageBox::btOK|eMessageBox::iconError);
-			msg.show();
-			msg.exec();
-			msg.hide();
 			break;
 		}
 noerr:
 		{
 			eZapMain::getInstance()->clearRecordings();
-			eMessageBox msg(
+			eMessageBox::ShowBox(
 				_("successfully formatted your disk!"),
 				_("formatting harddisk..."),
 				 eMessageBox::btOK|eMessageBox::iconInfo);
-			msg.show();
-			msg.exec();
-			msg.hide();
 		}
 		readStatus();
 	} while (0);
-	// restart samba...
-	system("/bin/smbd -D");
 	show();
 }
 
@@ -434,29 +479,56 @@ void eHarddiskMenu::readStatus()
 	else
 		status->setText(_("initialized, but unknown filesystem"));
 }
+// Function to store settings
+void eHarddiskMenu::storevalues()
+{
+	eConfig::getInstance()->setKey("/extras/hdparm-s", timeout->getNumber()*12);
+	eConfig::getInstance()->setKey("/extras/hdparm-m", acoustic->getNumber());
 
-eHarddiskMenu::eHarddiskMenu(int dev): dev(dev)
+	eMessageBox::ShowBox(_("The settings have been saved successfully"), _("Harddisk"),eMessageBox::btOK);
+}
+
+// Function to send HDD to standby immediately
+void eHarddiskMenu::hddstandby()
+{
+	system(eString().sprintf("/sbin/hdparm -y /dev/ide/host0/bus0/target0/lun0/disc").c_str());
+} 
+
+eHarddiskMenu::eHarddiskMenu(int dev): dev(dev), restartNet(false)
+{
+	init_eHarddiskMenu();
+}
+void eHarddiskMenu::init_eHarddiskMenu()
 {
 	visible=0;
-	status=new eLabel(this); status->setName("status");
-	model=new eLabel(this); model->setName("model");
-	capacity=new eLabel(this); capacity->setName("capacity");
-	bus=new eLabel(this); bus->setName("bus");
+	status=CreateSkinnedLabel("status");
+	model=CreateSkinnedLabel("model");
+	capacity=CreateSkinnedLabel("capacity");
+	bus=CreateSkinnedLabel("bus");
 	
-	format=new eButton(this); format->setName("format");
-	bcheck=new eButton(this); bcheck->setName("check");
-	ext=new eButton(this); ext->setName("ext");
+	CONNECT(CreateSkinnedButton("standby")->selected, eHarddiskMenu::hddstandby);
+	CONNECT(CreateSkinnedButton("format")->selected, eHarddiskMenu::s_format);
+	CONNECT(CreateSkinnedButton("check")->selected, eHarddiskMenu::check);
+	ext=CreateSkinnedButton("ext");
 
-	fs=new eComboBox(this,2); fs->setName("fs"); fs->hide();
+	fs=CreateSkinnedComboBox("fs",2); fs->hide();
 
-	sbar = new eStatusBar(this); sbar->setName("statusbar");
+	lbltimeout=CreateSkinnedLabel("lbltimeout"); lbltimeout->hide();
+	lblacoustic=CreateSkinnedLabel("lblacoustic"); lblacoustic->hide();
+	timeout=CreateSkinnedNumber("timeout",0,1,0, 20, 3, 0, 0); timeout->hide();
+	acoustic=CreateSkinnedNumber("acoustic",0,1,0,254, 3, 0, 0); acoustic->hide();
+	store=CreateSkinnedButton("store");store->hide();
 
-	new eListBoxEntryText( *fs, ("reiserfs"), (void*) 0 );
+
+
 	new eListBoxEntryText( *fs, ("ext3"), (void*) 1 );
+#ifdef ENABLE_REISERFS
+	new eListBoxEntryText( *fs, ("reiserfs"), (void*) 0 );
+#endif
 	fs->setCurrent((void*)1);
-  
-	if (eSkin::getActive()->build(this, "eHarddiskMenu"))
-		eFatal("skin load of \"eHarddiskMenu\" failed");
+	sbar = new eStatusBar(this);
+	sbar->setName("statusbar");
+	BuildSkin("eHarddiskMenu");
 
 	gPixmap *pm = eSkin::getActive()->queryImage("arrow_down");
 	if (pm)
@@ -468,21 +540,32 @@ eHarddiskMenu::eHarddiskMenu(int dev): dev(dev)
 
 	readStatus();
 
+	int hddstandby = 60;
+	if( (eConfig::getInstance()->getKey("/extras/hdparm-s", hddstandby)) )
+		timeout->setNumber(hddstandby/12);
+	else
+		timeout->setNumber(hddstandby/12);
+	int hddacoustic=128;
+	if( (eConfig::getInstance()->getKey("/extras/hdparm-m", hddacoustic)) )
+		acoustic->setNumber(hddacoustic);
+	else
+		acoustic->setNumber(hddacoustic);
+
 	CONNECT(ext->selected, eHarddiskMenu::extPressed);
-	CONNECT(format->selected, eHarddiskMenu::s_format);
-	CONNECT(bcheck->selected, eHarddiskMenu::check);
+	CONNECT(store->selected, eHarddiskMenu::storevalues);
 }
 
 ePartitionCheck::ePartitionCheck( int dev )
-:dev(dev), fsck(0)
+:eWindow(1), dev(dev), fsck(0)
 {
-	lState = new eLabel(this);
-	lState->setName("state");
-	bClose = new eButton(this);
-	bClose->setName("close");
+	init_ePartitionCheck();
+}
+void ePartitionCheck::init_ePartitionCheck()
+{
+	lState = CreateSkinnedLabel("state");
+	bClose = CreateSkinnedButton("close");
 	CONNECT( bClose->selected, ePartitionCheck::accept );
-	if (eSkin::getActive()->build(this, "ePartitionCheck"))
-		eFatal("skin load of \"ePartitionCheck\" failed");
+	BuildSkin("ePartitionCheck");
 	bClose->hide();
 }
 
@@ -492,6 +575,9 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 	{
 		case eWidgetEvent::execBegin:
 		{
+			system("killall nmbd smbd");
+			eEPGCache::getInstance()->messages.send(eEPGCache::Message(eEPGCache::Message::pause));
+			eEPGCache::getInstance()->messages.send(eEPGCache::Message(eEPGCache::Message::flush));
 			eString fs = getPartFS(dev,"/hdd"),
 							part = fs.mid( fs.find(",")+1 );
 
@@ -516,17 +602,15 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 			}
 			if ( fs == "ext3" )
 			{
-				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/fsck.ext3 -f /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
+				eWindow::globalCancel(eWindow::OFF);
+				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/fsck.ext3 -f -y /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
 
 				if ( !fsck->running() )
 				{
-					eMessageBox msg(
+					eMessageBox::ShowBox(
 						_("sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."),
 						_("check filesystem..."),
 						eMessageBox::btOK|eMessageBox::iconError);
-					msg.show();
-					msg.exec();
-					msg.hide();
 					close(-1);
 				}
 				else
@@ -536,19 +620,37 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 					CONNECT( fsck->appClosed, ePartitionCheck::fsckClosed );
 				}
 			}
-			else if ( fs == "reiserfs" )
+			else if ( fs == "ext2" )
 			{
-				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/reiserfsck --fix-fixable /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
+				eWindow::globalCancel(eWindow::OFF);
+				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/fsck.ext2 -f -y /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
 
 				if ( !fsck->running() )
 				{
-					eMessageBox msg(
+					eMessageBox::ShowBox(
+						_("sorry, couldn't find fsck.ext2 utility to check the ext2 filesystem."),
+						_("check filesystem..."),
+						eMessageBox::btOK|eMessageBox::iconError);
+					close(-1);
+				}
+				else
+				{
+					eDebug("fsck.ext2 opened");
+					CONNECT( fsck->dataAvail, ePartitionCheck::getData );
+					CONNECT( fsck->appClosed, ePartitionCheck::fsckClosed );
+				}
+			}
+			else if ( fs == "reiserfs" && eSystemInfo::getInstance()->getHwType() == eSystemInfo::DM7000 )
+			{
+				eWindow::globalCancel(eWindow::OFF);
+				fsck = new eConsoleAppContainer( eString().sprintf("/sbin/reiserfsck -y --fix-fixable /dev/ide/host%d/bus%d/target%d/lun0/%s", host, bus, target, part.c_str()) );
+
+				if ( !fsck->running() )
+				{
+					eMessageBox::ShowBox(
 						_("sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."),
 						_("check filesystem..."),
 						eMessageBox::btOK|eMessageBox::iconError);
-					msg.show();
-					msg.exec();
-					msg.hide();
 					close(-1);
 				}
 				else
@@ -556,26 +658,26 @@ int ePartitionCheck::eventHandler( const eWidgetEvent &e )
 					eDebug("reiserfsck opened");
 					CONNECT( fsck->dataAvail, ePartitionCheck::getData );
 					CONNECT( fsck->appClosed, ePartitionCheck::fsckClosed );
-					fsck->write("Yes\n");
+					fsck->write("Yes\n",4);
 				}
 			}
 			else
 			{
-				eMessageBox msg(
+				eMessageBox::ShowBox(
 					_("not supported filesystem for check."),
 					_("check filesystem..."),
 					eMessageBox::btOK|eMessageBox::iconError);
-				msg.show();
-				msg.exec();
-				msg.hide();
 				close(-1);
 			}
 		}
 		break;
 
 		case eWidgetEvent::execDone:
+			eWindow::globalCancel(eWindow::ON);
 			if (fsck)
 				delete fsck;
+			eEPGCache::getInstance()->messages.send(eEPGCache::Message(eEPGCache::Message::restart));
+			eDVB::getInstance()->restartSamba();
 		break;
 
 		default:
@@ -596,11 +698,13 @@ void ePartitionCheck::fsckClosed(int state)
 	int bus=!!(dev&2);
 	int target=!!(dev&1);
 
+#ifdef HAVE_DREAMBOX_HARDWARE
 	if ( system( eString().sprintf("/bin/mount /dev/ide/host%d/bus%d/target%d/lun0/part1 /hdd", host, bus, target).c_str() ) >> 8 )
 		eDebug("mount hdd after check failed");
-
-	system("/bin/smbd -D");
-	eDebug("smbd restarted");
+#else
+	if ( system( eString().sprintf("/bin/mount /dev/ide/host%d/bus%d/target%d/lun0/part2 /hdd", host, bus, target).c_str() ) >> 8 )
+		eDebug("mount hdd after check failed");
+#endif
 
 	if (fsck)
 	{
@@ -613,12 +717,26 @@ void ePartitionCheck::fsckClosed(int state)
 
 void ePartitionCheck::getData( eString str )
 {
-	lState->setText(str);
-	
+	str.removeChars('\x8');
 	if ( str.find("<y>") != eString::npos )
-		fsck->write("y");
+		fsck->write("y",1);
 	else if ( str.find("[N/Yes]") != eString::npos )
-		fsck->write("Yes");
+		fsck->write("Yes",3);
+	eString tmp = lState->getText();
+	tmp+=str;
+
+	eSize size=lState->getSize();
+	int height = size.height();
+	size.setHeight(height*2);
+	eLabel l(this);
+	l.hide();
+	l.resize(size);
+	l.setText(tmp);
+	if ( l.getExtend().height() > height )
+		tmp=str;
+
+	lState->setText(tmp);
 }
 
 #endif // DISABLE_FILE
+#endif // DISABLE_HDD

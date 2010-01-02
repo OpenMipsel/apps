@@ -1,4 +1,5 @@
-#include <locale.h>
+#include "wizard_language.h"
+#include <src/epgwindow.h>
 #include <lib/gui/eskin.h>
 #include <lib/gui/listbox.h>
 #include <lib/gdi/font.h>
@@ -7,7 +8,9 @@
 #include <lib/system/econfig.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
-#include "wizard_language.h"
+#include <locale.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 static const char * getCountry(const char *language);
 
@@ -26,9 +29,14 @@ public:
 		eString language=id;
 		if (id.find('_') != eString::npos)
 			id=id.left(id.find('_'));
-		pixmap=eSkin::getActive()->queryImage(eString("country_") + getCountry(id.c_str()));
+		eString str("country_");
+		str+=getCountry(id.c_str());
+		pixmap=eSkin::getActive()->queryImage(str);
 		if (!pixmap)
+		{
+			eDebug("dont find %s use country_missing", str.c_str() );
 			pixmap=eSkin::getActive()->queryImage(eString("country_missing"));
+		}
 		if (!font.pointSize)
 			font = eSkin::getActive()->queryFont("eListBox.EntryText.normal");
 		para=0;
@@ -81,8 +89,11 @@ static struct
 		{"ar", "ae"},
 		{"cs", "cz"},
 		{"el", "gr"},
+		{"et", "ee"},
 		{"sv", "se"},
-		{"uk", "ua"}};
+		{"sl", "si"},
+		{"sr", "yu"},
+		{"ur", "in"}};
 
 static const char * getCountry(const char *language)
 {
@@ -94,22 +105,24 @@ static const char * getCountry(const char *language)
 
 eWizardLanguage::eWizardLanguage()
 {
+	init_eWizardLanguage();
+}
+void eWizardLanguage::init_eWizardLanguage()
+{
+
 	list=new eListBox<eLanguageEntry>(this);
 	list->setName("list");
 	
-	head=new eLabel(this);
-	head->setName("head");
+	head=CreateSkinnedLabel("head");
 	
-	help=new eLabel(this);
-	help->setName("help");
+	help=CreateSkinnedLabel("help");
 	
 	CONNECT(list->selchanged, eWizardLanguage::selchanged);
 	CONNECT(list->selected, eWizardLanguage::selected);
 
-	if (eSkin::getActive()->build(this, "eWizardLanguage"))
-		eFatal("skin load of \"eWizardLanguage\" failed");
+	BuildSkin("eWizardLanguage");
 
-	FILE *f=fopen("/share/locale/locales", "rt");
+	FILE *f=fopen(LOCALEDIR "/locale.alias", "rt");
 	if (!f)
 	{
 		eDebug("eWizardLanguage: no languages defined!");
@@ -121,15 +134,22 @@ eWizardLanguage::eWizardLanguage()
 	char *current;
 	if ( eConfig::getInstance()->getKey("/elitedvb/language", current) )
 		current=0;
-	
+
+	if ( current )
+		oldLanguage=current;
+
 	char line[256];
 	while (fgets(line, 256, f))
 	{
 		line[strlen(line)-1]=0;
-		char *id=line, *d;
-		if ((d=strchr(line, ' ')))
+		char *d=line, *id;
+		if ((id=strchr(line, ' ')))
 		{
-			*d++=0;
+			*id++=0;
+			struct stat s;
+			if ( strlen(id) > 1 && stat(eString().sprintf("/usr/share/locale/%c%c/LC_MESSAGES/tuxbox-enigma.mo", id[0], id[1]).c_str(), &s)
+				&& stat(eString().sprintf("/share/locale/%c%c/LC_MESSAGES/tuxbox-enigma.mo", id[0], id[1]).c_str(), &s) )
+				continue;
 			eLanguageEntry *c=new eLanguageEntry(list, id, d);
 			
 			if ((current && !strcmp(id, current)) || !cur)
@@ -156,14 +176,31 @@ void eWizardLanguage::selchanged(eLanguageEntry *entry)
 	}
 }
 
+int eWizardLanguage::eventHandler( const eWidgetEvent &e )
+{
+	switch( e.type )
+	{
+		case eWidgetEvent::wantClose:
+			if (!e.parameter)
+				eConfig::getInstance()->setKey("/elitedvb/language", list->getCurrent()->getLanguageID().c_str());
+			else
+				setlocale(LC_ALL, oldLanguage?oldLanguage.c_str():"");
+			return eWindow::eventHandler(e);
+		default:
+			break;
+	}
+	return eWindow::eventHandler(e);
+}
+
 void eWizardLanguage::selected(eLanguageEntry *entry)
 {
 	if (entry)
 	{
-		setlocale(LC_ALL, entry->getLanguageID().c_str());
-		eConfig::getInstance()->setKey("/elitedvb/language", entry->getLanguageID().c_str());
+		accept();
+		LocalEventData::invalidate();
 	}
-	close(! entry);
+	else
+		reject();
 }
 
 int eWizardLanguage::run()
@@ -180,18 +217,17 @@ class eWizardLanguageInit
 public:
 	eWizardLanguageInit()
 	{
-		FILE *f=fopen("/share/locale/locales", "rt");
-
+		FILE *f=fopen(LOCALEDIR "/locale.alias", "rt");
 			// only run wizzard when language not yet setup'ed
 		char *temp;
-		if (! eConfig::getInstance()->getKey("/elitedvb/language", temp) )
+		if (!eConfig::getInstance()->getKey("/elitedvb/language", temp) )
 			free(temp);
 		else if ( f )
-		{
-			fclose(f);
 			eWizardLanguage::run();
-		}	else
-			eDebug("no locales found (/share/locale/locales).. do not start language wizard");
+		else
+			eDebug("no locales found (" LOCALEDIR "/locale.alias).. do not start language wizard");
+		if (f)
+			fclose(f);
 	}
 };
 

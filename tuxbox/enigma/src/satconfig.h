@@ -26,14 +26,15 @@ class eSatelliteConfigurationManager: public eWindow
 	eTimer* refresh;
 	eWidget *buttonWidget;
 	eWidget *w_buttons;
-	eButton *button_close, *button_new, *button_erase;
+	eButton *button_new, *button_erase;
 	eLabel *lSatPos, *lLNB, *l22Khz, *lVoltage;
 	eProgress *scrollbar;
 	eComboBox *combo_type;
 	eMultipage satPages;
 	std::list<SatelliteEntry*> deleteEntryList;
-	std::list<int> pageEnds;
-	std::list<int>::iterator curScrollPos;
+	int pageEnds[17];
+	int curScrollPos;
+	ePtrList<eSatellite> sats;
 
 	int complexity;
  	int eventHandler(const eWidgetEvent &event);
@@ -69,6 +70,7 @@ class eSatelliteConfigurationManager: public eWindow
 	
 		// according to "complexity" (works only for complexity <= 2, of course)
 	void setSimpleDiseqc(eSatellite *s, int diseqcnr);
+	void init_eSatelliteConfigurationManager();
 public:
 	void extSetComplexity(int complexity);
 	eSatelliteConfigurationManager();
@@ -88,6 +90,8 @@ class eLNBSetup : public eWindow // Selitor = "Sel"ector + Ed"itor" :-)
 	void onNext() { mp.next(); }
 	void onPrev() { mp.prev(); }  
 	int eventHandler(const eWidgetEvent &event);
+	eServiceReference service;
+	void init_eLNBSetup(eWidget* lcdTitle, eWidget* lcdElement );
 public:
 	eLNBSetup( eSatellite *sat, eWidget* lcdTitle=0, eWidget* lcdElement=0 );
 };
@@ -103,11 +107,12 @@ class eLNBPage : public eWidget
 	eNumber *lofH, *lofL, *threshold;
 	eButton *save; 	 // use this LNB for Satelite and close LNBSelitor
 	eButton *next; // shows the DiSEqC Configuration Dialog
-	eCheckbox *increased_voltage;
+	eCheckbox *increased_voltage, *relais_12V_out;
 	eStatusBar *statusbar;
     
 	void numSelected(int*);
 	void lnbChanged( eListBoxEntryText* );
+	void init_eLNBPage( eWidget *parent);
 public:
 	eLNBPage( eWidget *parent, eSatellite *sat );
 };
@@ -124,11 +129,11 @@ class eDiSEqCPage : public eWidget
 	eCheckbox *SeqRepeat, *SwapCmds,
 						*FastDiSEqC; // sends no DiSEqC when only hi/lo or H/V Changed
 	eLabel *lDiSEqCRepeats, *lDiSEqCParam, *lucInput;
-	eStatusBar *statusbar;
          
 	void lnbChanged( eListBoxEntryText* );
 	void DiSEqCModeChanged( eListBoxEntryText* );
 	void numSelected(int*);
+	void init_eDiSEqCPage( eWidget *parent, eSatellite *sat );
 public:
 	eDiSEqCPage( eWidget *parent, eSatellite *sat );
 };
