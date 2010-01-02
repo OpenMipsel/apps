@@ -9,6 +9,12 @@
 
 #include <lib/system/econfig.h>
 #include <lib/gdi/fb.h>
+#include <lib/gdi/grc.h>
+
+#include <config.h>
+#if HAVE_DVB_API_VERSION >= 3
+#include <dbox/fb.h>
+#endif
 
 fbClass *fbClass::instance;
 
@@ -18,6 +24,10 @@ fbClass *fbClass::getInstance()
 }
 
 fbClass::fbClass(const char *fb)
+{
+	init_fbClass(fb);
+}
+void fbClass::init_fbClass(const char *fb)
 {
 	instance=this;
 	locked=0;
@@ -88,6 +98,8 @@ int fbClass::SetMode(unsigned int nxRes, unsigned int nyRes, unsigned int nbpp)
 {
 	screeninfo.xres_virtual=screeninfo.xres=nxRes;
 	screeninfo.yres_virtual=screeninfo.yres=nyRes;
+	screeninfo.height=0;
+	screeninfo.width=0;
 	screeninfo.xoffset=screeninfo.yoffset=0;
 	screeninfo.bits_per_pixel=nbpp;
 	if (ioctl(fd, FBIOPUT_VSCREENINFO, &screeninfo)<0)
@@ -131,7 +143,7 @@ int fbClass::PutCMAP()
 
 void fbClass::Box(int x, int y, int width, int height, int color, int backcolor)
 {
-	if (width<=2)
+	if (width<=2 || locked)
 		return;
 	int offset=y*stride+x/2;
 	int first=0xF0|((color&0xF0)>>4);
@@ -149,6 +161,8 @@ void fbClass::Box(int x, int y, int width, int height, int color, int backcolor)
 
 void fbClass::NBox(int x, int y, int width, int height, int color)
 {
+	if (locked)
+		return;
 	int offset=y*stride+x/2;
 	int halfwidth=width/2;
 	for (int ay=y; ay<(y+height); ay++)
@@ -160,6 +174,8 @@ void fbClass::NBox(int x, int y, int width, int height, int color)
 
 void fbClass::VLine(int x, int y, int sy, int color)
 {
+	if (locked)
+		return;
 	int offset=y*stride+x/2;
 	while (sy--)
 	{
@@ -172,6 +188,8 @@ int fbClass::lock()
 {
 	if (locked)
 		return -1;
+	while (gRC::getInstance().mustDraw())
+		usleep(1000);
 	locked=1;
 	return fd;
 }
@@ -184,3 +202,29 @@ void fbClass::unlock()
 	SetMode(xRes, yRes, bpp);
 	PutCMAP();
 }
+
+void fbClass::paletteSet(struct fb_cmap *map)
+{
+	if (locked)
+		return;
+
+	if (map == NULL)
+		map = &cmap;
+
+	ioctl(fd, FBIOPUTCMAP, map);
+}
+
+#if HAVE_DVB_API_VERSION >= 3
+void fbClass::setTransparency(int tr)
+{
+	if (tr > 8)
+		tr = 8;
+
+	int val = (tr << 8) | tr;
+	if (ioctl(fd, AVIA_GT_GV_SET_BLEV, val))
+		perror("AVIA_GT_GV_SET_BLEV");
+}
+#endif
+
+
+

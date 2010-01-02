@@ -6,6 +6,7 @@
 #include <lib/gdi/grc.h>
 #include <lib/gdi/font.h>
 #include <lib/gui/guiactions.h>
+#include <math.h>
 
 void eNumber::unpack(__u32 l, int *t)
 {
@@ -32,9 +33,9 @@ eRect eNumber::getNumberRect(int n)
 
 void eNumber::redrawNumber(gPainter *p, int n, const eRect &area)
 {
-	eRect pos =	getNumberRect(n);
+	eRect pos(getNumberRect(n));
 
-	if (!area.contains(pos) )
+	if (!area.intersects(pos))
 		return;
 
 	p->setForegroundColor((have_focus && n==active)?cursorB:normalB);
@@ -206,12 +207,16 @@ int eNumber::eventHandler(const eWidgetEvent &event)
 eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, int *init, int isactive, eWidget* descr, int grabfocus, const char *deco)
  :eDecoWidget(parent, grabfocus, deco ),
 	active(0), 
-	cursorB(eSkin::getActive()->queryScheme("global.selected.background")),	
-	cursorF(eSkin::getActive()->queryScheme("global.selected.foreground")),	
-	normalB(eSkin::getActive()->queryScheme("global.normal.background")),	
-	normalF(eSkin::getActive()->queryScheme("global.normal.foreground")),	
+	cursorB(eSkin::getActive()->queryScheme("number.selected.background")),
+	cursorF(eSkin::getActive()->queryScheme("number.selected.foreground")),
+	normalB(eSkin::getActive()->queryScheme("number.normal.background")),
+	normalF(eSkin::getActive()->queryScheme("number.normal.foreground")),
 	have_focus(0), digit(isactive), isactive(isactive), flags(0), descr(descr), tmpDescr(0),
-	neg(false)
+	neg(false), saved_keyboard_mode(0)
+{
+	init_eNumber(_len, _min, _max, _maxdigits, init);
+}
+void eNumber::init_eNumber(int _len, int _min, int _max, int _maxdigits, int *init)
 {
 	setNumberOfFields(_len);
 	setLimits(_min, _max);
@@ -220,6 +225,16 @@ eNumber::eNumber(eWidget *parent, int _len, int _min, int _max, int _maxdigits, 
 	for (int i=0; init && i<len; i++)
 		number[i]=init[i];
 	addActionMap(&i_cursorActions->map);
+	if ( !cursorF )
+		cursorF=eSkin::getActive()->queryScheme("global.selected.foreground");
+	if ( !cursorB )
+		cursorB=eSkin::getActive()->queryScheme("global.selected.background");
+	if ( !normalF )
+		normalF=eSkin::getActive()->queryScheme("global.normal.foreground");
+	if ( !normalB )
+		normalB=eSkin::getActive()->queryScheme("global.normal.background");
+	setBackgroundColor(normalB);
+	setForegroundColor(normalF);
 }                 
              
 eNumber::~eNumber()
@@ -234,10 +249,10 @@ int eNumber::keyDown(int key)
 #endif
 	switch (key)
 	{
-	case eRCInput::RC_0 ... eRCInput::RC_9:
+	case KEY_1 ... KEY_0:
 	{
 		int nn=(digit!=0)?number[active]*10:0;
-		nn+=key-eRCInput::RC_0;
+		nn+=(key == KEY_0) ? 0 : (key - KEY_1 + 1);
 		if (flags & flagTime)
 		{
 			if ( active )
@@ -257,7 +272,7 @@ int eNumber::keyDown(int key)
 			number[active]=nn;
 			invalidate(getNumberRect(active));
 			digit++;
-			if ((digit>=maxdigits) || (nn==0))
+			if ((digit>=maxdigits) || (nn==0) || ((digit+1==maxdigits) && (nn*10>max)))
 			{        
 				active++;
 				invalidate(getNumberRect(active-1));
@@ -276,7 +291,7 @@ int eNumber::keyDown(int key)
 
 	break;
 	}
-	case eRCInput::RC_PLUS:
+	case KEY_KPPLUS:
 		if (flags & flagPosNeg && neg )
 		{
 			neg=false;
@@ -284,7 +299,7 @@ int eNumber::keyDown(int key)
 		}
 	break;
 
-	case eRCInput::RC_MINUS:
+	case KEY_KPMINUS:
 		if (flags & flagPosNeg && !neg )
 		{
 			neg=true;
@@ -301,11 +316,13 @@ void eNumber::gotFocus()
 	have_focus++;
 	digit=isactive;
 
-  if (deco && deco_selected)
+	 if (deco && deco_selected)
 		invalidate();
 	else
 		invalidate(getNumberRect(active));
 
+	saved_keyboard_mode = eRCInput::getInstance()->getKeyboardMode();
+	eRCInput::getInstance()->setKeyboardMode(eRCInput::kmNone);
 #ifndef DISABLE_LCD
 	if (parent && parent->LCDElement)  // detect if LCD Avail
 	{
@@ -363,6 +380,28 @@ void eNumber::lostFocus()
 	else
 		invalidate(getNumberRect(active));
 	isactive=0;
+	eRCInput::getInstance()->setKeyboardMode(saved_keyboard_mode);
+}
+
+int eNumber::setProperty(const eString &prop, const eString &value)
+{
+	if (prop=="foregroundColor")
+	{
+		normalF=eSkin::getActive()->queryColor(value);
+		setForegroundColor(normalF);
+	}
+	else if (prop=="backgroundColor")
+	{
+		normalB=eSkin::getActive()->queryColor(value);
+		setForegroundColor(normalB);
+	}
+	if (prop=="activeForegroundColor")
+		cursorF=eSkin::getActive()->queryColor(value);
+	else if (prop=="activeBackgroundColor")
+		cursorB=eSkin::getActive()->queryColor(value);
+	else
+		return eDecoWidget::setProperty(prop, value);
+	return 0;
 }
 
 void eNumber::setNumber(int f, int n)

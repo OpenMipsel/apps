@@ -1,4 +1,6 @@
 #include <lib/gui/listbox.h>
+#include <lib/gui/eprogress.h>
+#include <lib/gui/numberactions.h>
 #include <lib/system/econfig.h>
 #include <lib/gdi/font.h>
 
@@ -7,50 +9,121 @@ gFont eListBoxEntryTextStream::font;
 
 eListBoxBase::eListBoxBase(eWidget* parent, const eWidget* descr, int takefocus, int item_height, const char *deco )
 :   eDecoWidget(parent, takefocus, deco),
-		recalced(0), descr(descr),
+		removed_height_pixel(0), descr(descr),
 #ifndef DISABLE_LCD
 		tmpDescr(0),
 #endif
-		colorActiveB(eSkin::getActive()->queryScheme("global.selected.background")),
-		colorActiveF(eSkin::getActive()->queryScheme("global.selected.foreground")),
+		colorActiveB(eSkin::getActive()->queryScheme("listbox.selected.background")),
+		colorActiveF(eSkin::getActive()->queryScheme("listbox.selected.foreground")),
 		movemode(0), MaxEntries(0), flags(0), item_height(item_height),
-		columns(1), in_atomic(0), top(childs.end()), bottom(childs.end()), current(childs.end())
+		columns(1), in_atomic(0), entries(0), currentPos(-1), top(childs.end()), bottom(childs.end()), current(childs.end())
 {
+	init_eListBoxBase();
+}
+void eListBoxBase::init_eListBoxBase()
+{
+	scrollbar = new eProgress(this);
+	scrollbar->setDirection(1);
 	childs.setAutoDelete(false);	// machen wir selber
 	addActionMap(&i_cursorActions->map);
 	addActionMap(&i_listActions->map);
+	if ( !colorActiveB )
+		colorActiveB=eSkin::getActive()->queryScheme("global.selected.background");
+	if ( !colorActiveF )
+		colorActiveF=eSkin::getActive()->queryScheme("global.selected.foreground");
+	{
+		gColor col = eSkin::getActive()->queryScheme("listbox.normal.background");
+		if (col)
+			backgroundColor=col;
+	}
+	{
+		gColor col = eSkin::getActive()->queryScheme("listbox.normal.foreground");
+		if (col)
+			foregroundColor=col;
+	}
 }
 
 eListBoxBase::~eListBoxBase()
 {
-	while (childs.begin() != childs.end())
-		delete childs.front();
+	ePtrList<eListBoxEntry>::iterator it(childs.begin());
+	while (it != childs.end())
+	{
+		it->clearLB();
+		delete *it;
+		childs.erase(it++);
+	}
 }
 
 void eListBoxBase::setFlags(int _flags)	
 {
-	flags |= _flags;	
+	flags |= _flags;
+	if (_flags == flagHasShortcuts)
+		addActionMap(&i_shortcutActions->map);
 }
 
 void eListBoxBase::removeFlags(int _flags)	
 {
 	flags &= ~_flags;	
+	if (_flags == flagHasShortcuts)
+		removeActionMap(&i_shortcutActions->map);
 }
 
 void eListBoxBase::recalcMaxEntries()
 {
 		// MaxEntries is PER COLUMN
+	int decoheight=0;
 	if (deco_selected && have_focus)
+	{
 		MaxEntries = crect_selected.height();
+		decoheight = height() - crect_selected.height();
+	}
 	else if (deco)
+	{
 		MaxEntries = crect.height();
+		decoheight = height() - crect.height();
+	}
 	else
 		MaxEntries = height();
+	int tmp = MaxEntries;
 	MaxEntries /= item_height;
+/*	eDebug("height = %d, MaxEntries = %d, item height = %d",
+		tmp, MaxEntries, item_height);*/
+	// das ist echt mal komischer code hier.. aber funktioniert :)
+	// damit werden listboxen automatisch auf die höhe resized,
+	// die benötigt wird damit alle entrys genau sichtbar sind..
+	// und kein Rand bleibt..
+	if ( tmp - ( MaxEntries*item_height ) > 0 )
+	{
+		if ( !removed_height_pixel )
+		{
+			removed_height_pixel = height() - ((MaxEntries*item_height) + decoheight);
+			resize( eSize( size.width(), height()-removed_height_pixel ) );
+		}
+		else
+		{
+			int newMax = (tmp + removed_height_pixel) / item_height;
+			if ( newMax > MaxEntries )
+			{
+				removed_height_pixel -= (newMax*item_height) - tmp;
+				resize( eSize( size.width(), newMax*item_height+decoheight ) );
+			}
+			else
+			{
+				int tmp = height() - ((MaxEntries*item_height) + decoheight);
+				resize( eSize( size.width(), height() - tmp ) );
+				removed_height_pixel += tmp;
+			}
+		}
+	}
+/*	else
+		eDebug("is ok .. do nothing");*/
 }
 
 eRect eListBoxBase::getEntryRect(int pos)
 {
+	bool sbar =
+		( entries > (unsigned int)(MaxEntries*columns) && MaxEntries*columns > 1 );
+
 	int lme=MaxEntries;
 			// in case we show partial last lines (which only works in single-column),
 			// we increase MaxEntries by one since we don't want the last line
@@ -58,13 +131,13 @@ eRect eListBoxBase::getEntryRect(int pos)
 	if ( (columns == 1) && (flags & flagShowPartial))
 		++lme;
 	if ( deco_selected && have_focus )
-		return eRect( ePoint( deco_selected.borderLeft + ( ( pos / lme) * ( crect_selected.width() / columns ) ) , deco_selected.borderTop + ( pos % lme) * item_height ), eSize( crect_selected.width() / columns , item_height ) );
+		return eRect( ePoint( deco_selected.borderLeft + ( ( pos / lme) * ( crect_selected.width() / columns ) ) , deco_selected.borderTop + ( pos % lme) * item_height ), eSize( (crect_selected.width() / columns) - (sbar?scrollbar->width()+5:columns>1?5:0), item_height ) );
 	else if (deco)
-		return eRect( ePoint( deco.borderLeft + ( ( pos / lme ) * ( crect.width() / columns ) ) , deco.borderTop + ( pos % lme) * item_height ), eSize( crect.width() / columns , item_height ) );
+		return eRect( ePoint( deco.borderLeft + ( ( pos / lme ) * ( crect.width() / columns ) ) , deco.borderTop + ( pos % lme) * item_height ), eSize( (crect.width() / columns) - (sbar?scrollbar->width()+5:columns>1?5:0), item_height ) );
 	else if ( deco_selected )
-		return eRect( ePoint( deco_selected.borderLeft + ( ( pos / lme) * ( crect_selected.width() / columns ) ) , deco_selected.borderTop + ( pos % lme) * item_height ), eSize( crect_selected.width() / columns , item_height ) );
+		return eRect( ePoint( deco_selected.borderLeft + ( ( pos / lme) * ( crect_selected.width() / columns ) ) , deco_selected.borderTop + ( pos % lme) * item_height ), eSize( (crect_selected.width() / columns) - (sbar?scrollbar->width()+5:columns>1?5:0), item_height ) );
 	else
-		return eRect( ePoint( ( ( pos / lme ) * ( size.width() / columns ) ) , ( pos % lme) * item_height ), eSize( size.width() / columns , item_height ) );
+		return eRect( ePoint( ( ( pos / lme ) * ( size.width() / columns ) ) , ( pos % lme) * item_height ), eSize( (size.width() / columns) - (sbar?scrollbar->width()+5:columns>1?5:0), item_height ) );
 }
 
 void eListBoxBase::setColumns(int col)
@@ -78,14 +151,14 @@ int eListBoxBase::setProperty(const eString &prop, const eString &value)
 	if (prop == "noPageMovement")
 	{
 		if (value == "off")
-			flags |= ~flagNoPageMovement;
+			flags &= ~flagNoPageMovement;
 		else
 			flags |= flagNoPageMovement;
 	}
 	else if (prop == "noUpDownMovement")
 	{
 		if (value == "off")
-			flags |= ~flagNoUpDownMovement;
+			flags &= ~flagNoUpDownMovement;
 		else
 			flags |= flagNoUpDownMovement;
 	}
@@ -101,6 +174,26 @@ int eListBoxBase::setProperty(const eString &prop, const eString &value)
 		return eDecoWidget::setProperty(prop, value);
 
 	return 0;
+}
+
+void eListBoxBase::recalcScrollBar()
+{
+	int scrollbarwidth=0;
+	eRect rc;
+	if ( have_focus && deco_selected )
+		rc = crect_selected;
+	else if ( deco )
+		rc = crect;
+	else
+		rc = clientrect;
+	scrollbarwidth=rc.width()/16;
+	if ( scrollbarwidth < 18 )
+		scrollbarwidth=18;
+	if ( scrollbarwidth > 22 )
+		scrollbarwidth=22;
+	scrollbar->move( ePoint(rc.right() - scrollbarwidth, rc.top()) );
+	scrollbar->resize( eSize( scrollbarwidth, (MaxEntries*item_height) ) );
+	scrollbar->hide();
 }
 
 void eListBoxBase::recalcClientRect()
@@ -119,6 +212,7 @@ void eListBoxBase::recalcClientRect()
 		crect_selected.setRight( width() - deco_selected.borderRight );
 		crect_selected.setBottom( height() - deco_selected.borderBottom );
 	}
+	eWidget::recalcClientRect();
 }
 
 int eListBoxBase::eventHandler(const eWidgetEvent &event)
@@ -126,18 +220,24 @@ int eListBoxBase::eventHandler(const eWidgetEvent &event)
 	switch (event.type)
 	{
 		case eWidgetEvent::changedSize:
-			recalcClientRect();
+			eWidget::eventHandler(event);
 			recalcMaxEntries();
+			recalcScrollBar();
 			init();
+			return 1;
 		break;
 		case eWidgetEvent::evtAction:
-			if ((event.action == &i_listActions->pageup) && !(flags & flagNoPageMovement))
+			if ((flags & flagHasShortcuts) && eventHandlerShortcuts(event))
+				return 1;
+			else if ((event.action == &i_listActions->pageup) && !(flags & flagNoPageMovement))
 				moveSelection(dirPageUp);
 			else if ((event.action == &i_listActions->pagedown) && !(flags & flagNoPageMovement))
 				moveSelection(dirPageDown);
-			else if ((event.action == &i_cursorActions->up) && !(flags & flagNoUpDownMovement))
+			else if ( entries && current->eventHandler(event) )
+				return 1;
+			else if ((event.action == &i_cursorActions->up) && !(flags & flagNoUpDownMovement) && !(flags&flagLostFocusOnFirst && current == childs.begin()) )
 				moveSelection(dirUp);
-			else if ((event.action == &i_cursorActions->down) && !(flags & flagNoUpDownMovement))
+			else if ((event.action == &i_cursorActions->down) && !(flags & flagNoUpDownMovement) && !(flags&flagLostFocusOnLast && current == --childs.end()) )
 				moveSelection(dirDown);
 			else if (event.action == &i_cursorActions->ok)
 			{
@@ -172,6 +272,7 @@ int eListBoxBase::newFocus()
 	if (deco && deco_selected)
 	{
 		recalcMaxEntries();
+		recalcScrollBar();
 
 		if (isVisible())
 			invalidate();
@@ -186,17 +287,20 @@ int eListBoxBase::setCurrent(const eListBoxEntry *c, bool sendSelected )
 /*	if (childs.empty() || ((current != childs.end()) && (*current == c)))  // no entries or current is equal the entry to search
 		return E_ALLREADY_SELECTED;	// do nothing*/
 
-	if ( childs.empty() )
+	if ( !entries )
 		return E_COULDNT_FIND;
 
 	ePtrList<eListBoxEntry>::iterator item(childs.begin()), it(childs.begin());
 
-	for ( ; item != childs.end(); ++item)
+	int cnt=0;
+	for ( ; item != childs.end(); ++item, ++cnt)
 		if ( *item == c )
 			break;
 
 	if ( item == childs.end() ) // entry not in listbox... do nothing
 		return E_COULDNT_FIND;
+
+	currentPos=cnt;
 
 	int newCurPos=-1;
 	int oldCurPos=-1;
@@ -228,30 +332,30 @@ int eListBoxBase::setCurrent(const eListBoxEntry *c, bool sendSelected )
 				}
 				if (atomic_redraw == arCurrentOld)
 					atomic_new = newCurPos;
-			} else
+			}else
 			{
 				invalidateEntry(newCurPos);
 				if (oldCurPos != -1)
 					invalidateEntry(oldCurPos);
 			}
 		}
-	}	else // the we start to search from begin
+	} else // then we start to search from begin
 	{
 		bottom = childs.begin();
 
-		while (newCurPos == -1 && MaxEntries )  // MaxEntries is already checked above...
+		while (newCurPos == -1 && MaxEntries)  // MaxEntries is already checked above...
 		{
 			if ( bottom != childs.end() )
 				top = bottom;		// nächster Durchlauf
 
-			for (	i = 0; (i < (MaxEntries*columns) ) && (bottom != childs.end()); ++bottom, ++i)
+			for (i = 0; (i < (MaxEntries*columns) ) && (bottom != childs.end()); ++bottom, ++i)
 			{
 				if (bottom == item)
 				{
 					current = bottom;  // we have found
 					++newCurPos;
 				}
-      }
+			}
 		}
 		if (isVisible())
 		{
@@ -260,15 +364,14 @@ int eListBoxBase::setCurrent(const eListBoxEntry *c, bool sendSelected )
 			else
 				atomic_redraw=arAll;
 		}
-  }
+	}
 
 	if (!in_atomic)
 	{
 		/*emit*/ SendSelChanged(*current);
 		if ( sendSelected )
 			/*emit*/ SendSelected(*current);
-	}
-	else
+	}else
 	{
 		atomic_selchanged=1;
 		if ( sendSelected )
@@ -288,21 +391,26 @@ void eListBoxBase::append(eListBoxEntry* entry, bool holdCurrent, bool front)
 		childs.push_front(entry);
 	else
 		childs.push_back(entry);
+	++entries;
 	init();
 
 	if (cur)
 		setCurrent(cur);
 }
 
-void eListBoxBase::remove(eListBoxEntry* entry, bool holdCurrent)
+void eListBoxBase::take(eListBoxEntry* entry, bool holdCurrent)
 {
-	eListBoxEntry* cur = 0;
+	eListBoxEntry *cur = 0;
 
 	if (holdCurrent && current != entry)
 		cur = current;
 
 	childs.take(entry);
-	init();
+	if ( entries != childs.size() )
+	{
+		--entries;
+		init();
+	}
 
 	if (cur)
 		setCurrent(cur);
@@ -310,8 +418,14 @@ void eListBoxBase::remove(eListBoxEntry* entry, bool holdCurrent)
 
 void eListBoxBase::clearList()
 {
-	while (!childs.empty())
-		delete childs.first();
+	ePtrList<eListBoxEntry>::iterator it(childs.begin());
+	while (entries)
+	{
+		it->clearLB();
+		delete *it;
+		childs.erase(it++);
+		--entries;
+	}
 	current = top = bottom = childs.end();
 	if (!in_atomic)
 	{
@@ -325,6 +439,7 @@ void eListBoxBase::clearList()
 		atomic_new=0;
 		atomic_old=0;
 	}
+	currentPos=-1;
 }
 
 eListBoxEntry *eListBoxBase::goNext()
@@ -341,6 +456,11 @@ eListBoxEntry* eListBoxBase::goPrev()
 
 void eListBoxBase::redrawWidget(gPainter *target, const eRect &where)
 {
+	// redraw scrollbar only...
+	if ( where.size() == scrollbar->getSize() &&
+		where.topLeft() == scrollbar->getPosition() )
+		return;
+
 	eRect rc;
 
 	if (deco_selected && have_focus)
@@ -356,13 +476,34 @@ void eListBoxBase::redrawWidget(gPainter *target, const eRect &where)
 	else
 		rc = where;
 
+	if ( currentPos == -1 )
+	{
+		currentPos = 0;
+		ePtrList<eListBoxEntry>::iterator it = childs.begin();
+		for (; it != childs.end() ;++it, ++currentPos )
+			if ( it == current )
+				break;
+	}
+
+	if ( entries > (unsigned int)(MaxEntries*columns) && MaxEntries*columns > 1 )
+	{
+		int pages = entries / (MaxEntries*columns);
+		if ( (unsigned int)(pages*MaxEntries*columns) < entries )
+			pages++;
+		int start=(currentPos/(MaxEntries*columns)*MaxEntries*columns*100)/(pages*MaxEntries*columns);
+		int vis=MaxEntries*columns*100/(pages*MaxEntries*columns);
+		if (vis < 3)
+			vis=3;
+		scrollbar->setParams(start,vis);
+		scrollbar->show();
+	}
+	else
+		scrollbar->hide();
+
 	int i=0;
 	for (ePtrList<eListBoxEntry>::iterator entry(top); ((flags & flagShowPartial) || (entry != bottom)) && (entry != childs.end()); ++entry)
 	{
 		eRect rect = getEntryRect(i);
-
-		eString s;
-
 		if ( rc.intersects(rect) )
 		{
 			target->clip(rect & rc);
@@ -413,8 +554,7 @@ void eListBoxBase::gotFocus()
 		}
 #endif
 	++have_focus;
-
-	if (!childs.empty())
+	if (entries)
 	{
 		if ( newFocus() )   // recalced ?
 		{
@@ -446,8 +586,7 @@ void eListBoxBase::lostFocus()
 	}
 #endif
 	--have_focus;
-
-	if (!childs.empty())
+	if (entries)
 		if ( newFocus() ) //recalced ?
 		{
 			ePtrList<eListBoxEntry>::iterator it = current;
@@ -467,12 +606,29 @@ void eListBoxBase::lostFocus()
 #endif
 }
 
+void eListBoxBase::invalidateCurrent()
+{
+	int n=0;
+	for (ePtrList<eListBoxEntry>::iterator i(top); i != bottom; ++i, ++n)
+		if ( i == current )
+			invalidate(getEntryRect(n));
+}
+
 void eListBoxBase::init()
 {
+	currentPos=entries?0:-1;
 	current = top = bottom = childs.begin();
 	for (int i = 0; i < (MaxEntries*columns); ++i, ++bottom)
 		if (bottom == childs.end() )
 			break;
+
+	/* when the first item isn't a selectable item, keep scrolling down till we find one */
+	while ( !current->isSelectable() && current != --childs.end())
+	{
+		++current;
+		++currentPos;
+	}
+
 	if (!in_atomic)
 	{
 		invalidateContent();
@@ -487,7 +643,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 {
 	int direction=0, forceredraw=0;
 
-	if (childs.empty())
+	if (!entries)
 		return 0;
 
 	ePtrList<eListBoxEntry>::iterator oldptr=current, oldtop=top;
@@ -498,25 +654,36 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 			direction=+1;
 			for (int i = 0; i < MaxEntries; ++i)
 			{
+				++currentPos;
 				if (++current == bottom) // unten (rechts) angekommen? page down
 				{
 					if (bottom == childs.end()) // einzige ausnahme: unten (rechts) angekommen
 					{
+						--currentPos;
 						--current;
 						break;
 					}
 					for (int i = 0; i < MaxEntries * columns; ++i)
 					{
 						if (bottom != childs.end())
-						{
 							++bottom;
+						if (top != childs.end())
 							++top;
-						}
 					}
 				}
 			}
-			if( !current->isSelectable() )
-				current++;
+			/* when we didn't find a selectable item, keep scrolling down till we find one */
+			while ( !current->isSelectable() && current != --childs.end())
+			{
+				++current;
+				++currentPos;
+			}
+			/* when we couldn't find a selectable item below, find the nearest one above */
+			while ( !current->isSelectable() && current != childs.begin())
+			{
+				--current;
+				--currentPos;
+			}
 		break;
 
 		case dirPageUp:
@@ -525,7 +692,7 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 			{
 				if (current == childs.begin())
 					break;
-
+				--currentPos;
 				if (current-- == top/* && current != childs.begin()*/ )	// oben (links) angekommen? page up
 				{
 					for (int i = 0; i < MaxEntries * columns; ++i)
@@ -541,85 +708,121 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 							++bottom;
 				}
 			}
-			if( !current->isSelectable() )
-				current--;
+			/* when we didn't find a selectable item, keep scrolling up till we find one */
+			while ( !current->isSelectable() && current != childs.begin())
+			{
+				--current;
+				--currentPos;
+			}
+			/* when we couldn't find a selectable item above, find the nearest one below */
+			while ( !current->isSelectable() && current != --childs.end())
+			{
+				++current;
+				++currentPos;
+			}
 			break;
 
 		case dirUp:
-			if ( current == childs.begin() )				// wrap around?
+		{
+			bool first=true;
+			while (first || !current->isSelectable() )
 			{
-				direction=+1;
-				current = childs.end();					// select last
-				--current;
-				top = bottom = childs.end();
-				for (int i = 0; i < MaxEntries*columns; ++i, --top)
-					if (top == childs.begin())
-						break;
-			} else
-			{
-				direction=-1;
-				if (current-- == top) // new top must set
+				first=false;
+				if ( current == childs.begin() )				// wrap around?
 				{
-					for (int i = 0; i < MaxEntries*columns; ++i, --top)
+					direction=+1;
+					top = bottom = current = childs.end();
+					--current;
+					currentPos=entries-1;
+					int cnt = entries%(MaxEntries*columns);
+					for (int i = 0; i < (cnt?cnt:MaxEntries*columns); ++i, --top)
 						if (top == childs.begin())
 							break;
-					bottom=top;
-					for (int i = 0; i < MaxEntries*columns; ++i, ++bottom)
-						if (bottom == childs.end())
-							break;
 				}
-			}
-			if( !current->isSelectable() )
-				current--;
-		break;
-
-		case dirDown:
-			if ( current == --ePtrList<eListBoxEntry>::iterator(childs.end()) )				// wrap around?
-			{
-				direction=-1;
-				top = current = bottom = childs.begin(); 	// goto first
-				for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
-					if ( bottom == childs.end() )
-						break;
-			}
-			else
-			{
-				direction=+1;
-				if (++current == bottom)   // ++current ??
+				else
 				{
-					for (int i = 0; i<MaxEntries * columns; ++i)
+					direction=-1;
+					--currentPos;
+					if (current-- == top) // new top must set
 					{
-						if (bottom != childs.end() )
-							++bottom;
-						if (top != childs.end() )
-							++top;
+						for (int i = 0; i < MaxEntries*columns; ++i, --top)
+							if (top == childs.begin())
+								break;
+						bottom=top;
+						for (int i = 0; i < MaxEntries*columns; ++i, ++bottom)
+							if (bottom == childs.end())
+								break;
 					}
 				}
 			}
-			if( !current->isSelectable() )
-				current++;
+		}
+		break;
+
+		case dirDown:
+		{
+			bool first=true;
+			while (first || !current->isSelectable() )
+			{
+				first=false;
+				if ( current == --ePtrList<eListBoxEntry>::iterator(childs.end()) )				// wrap around?
+				{
+					direction=-1;
+					currentPos=0;
+					top = current = bottom = childs.begin(); 	// goto first
+					for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
+						if ( bottom == childs.end() )
+							break;
+				}
+				else
+				{
+					direction=+1;
+					++currentPos;
+					if (++current == bottom)   // ++current ??
+					{
+						for (int i = 0; i<MaxEntries * columns; ++i)
+						{
+							if (bottom != childs.end() )
+								++bottom;
+							if (top != childs.end() )
+								++top;
+						}
+					}
+				}
+			}
 			break;
+		}
 		case dirFirst:
 			direction=-1;
+			currentPos=0;
 			top = current = bottom = childs.begin(); 	// goto first;
 			for (int i = 0; i < MaxEntries * columns; ++i, ++bottom)
 				if ( bottom == childs.end() )
 					break;
-			if( !current->isSelectable() )
-				current++;
+			/* when the first item isn't a selectable item, keep scrolling down till we find one */
+			while ( !current->isSelectable() && current != --childs.end())
+			{
+				++current;
+				++currentPos;
+			}
 			break;
 		case dirLast:
+		{
 			direction=1;
-			top=bottom=current=childs.end();
-			if (current == childs.begin())
-				break;	// empty.
-			for (int i = 0; i < MaxEntries * columns; ++i)
-				if (top != childs.begin())
-					--top;
+			top = bottom = current = childs.end();
 			--current;
-			if( !current->isSelectable() )
-				current--;
+			currentPos=entries-1;
+			int cnt = entries%(MaxEntries*columns);
+			for (int i = 0; i < (cnt?cnt:MaxEntries*columns); ++i, --top)
+				if (top == childs.begin())
+					break;
+			/* when the last item isn't a selectable item, keep scrolling up till we find one */
+			while ( !current->isSelectable() && current != childs.begin())
+			{
+				--current;
+				--currentPos;
+			}
 			break;
+		}
 		default:
 			return 0;
 	}
@@ -662,6 +865,9 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 		}
 	}
 
+	if (flags & flagShowEntryHelp)
+		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
+
 	if (!in_atomic)
 	{
 		/*emit*/ SendSelChanged(*current);
@@ -674,9 +880,6 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 		if ( sendSelected )
 			atomic_selected=1;
 	}
-
-	if (flags & flagShowEntryHelp)
-		setHelpText( current != childs.end() ? current->getHelpText():eString(_("no description available")));
 
 	if (isVisible())
 	{
@@ -720,10 +923,12 @@ int eListBoxBase::moveSelection(int dir, bool sendSelected)
 
 void eListBoxBase::setActiveColor(gColor back, gColor front)
 {
-	colorActiveB=back;
-	colorActiveF=front;
+	if (back)
+    		colorActiveB=back;
+	if (front)
+		colorActiveF=front;
 
-	if (current != childs.end())
+	if ((back || front) && current != childs.end())
 	{
 		int i = 0;
 		for (ePtrList<eListBoxEntry>::iterator it(top); it != bottom; ++i, ++it)
@@ -762,13 +967,13 @@ void eListBoxBase::endAtomic()
 				invalidateEntry(atomic_old);
 		}
 		if (atomic_selchanged)
-			if (childs.empty())
+			if (!entries)
 				/*emit*/ SendSelChanged(0);
 			else
 				/*emit*/ SendSelChanged(*current);
 
 		if (atomic_selected)
-			if (childs.empty())
+			if (!entries)
 				/*emit*/ SendSelected(0);
 			else
 				/*emit*/ SendSelected(*current);
@@ -784,6 +989,223 @@ void eListBoxBase::sort()
 
 	if (cur)
 		setCurrent(cur);
+}
+
+int eListBoxBase::getShortcut(eListBoxEntry* e)
+{
+	int i = 0;
+	for (ePtrList<eListBoxEntry>::iterator it(childs.begin());
+		it != childs.end(); ++it )
+	{
+		if ( it->isSelectable()&2)
+		{
+			i++;
+			if ( it == e )
+				return i;
+		}
+	}
+	return -1;	
+}
+
+int eListBoxBase::eventHandlerShortcuts(const eWidgetEvent &event)
+{
+	int num=-1;
+	int ColorShortcutsFirst = (getFlags() & flagColorShortcutsFirst ? 1 : 0);
+
+	switch (event.type)
+	{
+	case eWidgetEvent::evtAction:
+		if (event.action == &i_shortcutActions->number0)
+			num=9 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number1)
+			num=0 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number2)
+			num=1 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number3)
+			num=2 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number4)
+			num=3 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number5)
+			num=4 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number6)
+			num=5 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number7)
+			num=6 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number8)
+			num=7 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->number9)
+			num=8 + ColorShortcutsFirst*4;
+		else if (event.action == &i_shortcutActions->red)
+			num=10 - ColorShortcutsFirst*10;
+		else if (event.action == &i_shortcutActions->green)
+			num=11 - ColorShortcutsFirst*10;
+		else if (event.action == &i_shortcutActions->yellow)
+			num=12 - ColorShortcutsFirst*10;
+		else if (event.action == &i_shortcutActions->blue)
+			num=13 - ColorShortcutsFirst*10;
+		else
+			break;
+		if (num != -1)
+		{
+			for (ePtrList<eListBoxEntry>::iterator i(childs.begin()); i!=childs.end(); ++i)
+				if (i->isSelectable()&2 && !num--)
+				{
+					SendSelected(i);
+					return 1;
+				}
+		}
+	default:
+		break;
+	}
+	return 0;
+}
+
+eListBoxBaseExt::eListBoxBaseExt(eWidget* parent, const eWidget* descr, int takefocus, int item_height, const char *deco)
+	:eListBoxBase(parent, descr, takefocus, item_height, deco), browseTimer(eApp)
+{
+	CONNECT(browseTimer.timeout, eListBoxBaseExt::browseTimeout);
+	addActionMap(&i_numberActions->map);
+}
+
+void eListBoxBaseExt::gotFocus()
+{
+	eListBoxBase::gotFocus();
+	eRCInput::getInstance()->setKeyboardMode(eRCInput::kmAscii);
+}
+
+int eListBoxBaseExt::eventHandler(const eWidgetEvent &event)
+{
+	switch (event.type)
+	{
+		case eWidgetEvent::evtAction:
+			if (event.action == &i_cursorActions->ok)
+			{
+				browseText="";
+				browseHistory.clear();
+				return eListBoxBase::eventHandler(event);
+			}
+			else if (event.action == &i_numberActions->keyBackspace)
+			{
+				if ( browseText )
+					browseText.erase(browseText.length()-1,1);
+				if ( browseHistory.size() )
+				{
+					setCurrent(browseHistory.front(),false);
+					browseHistory.pop_front();
+				}
+				browseTimer.start(2*1000,true);
+			}
+			else if (event.action == &i_cursorActions->down && browseTimer.isActive())
+			{
+				const char *browseBuf = browseText.c_str();
+				int len = browseText.length();
+				ePtrList<eListBoxEntry>::iterator it(current);
+				++it;
+				for (;it != childs.end(); ++it )
+				{
+					if ( !strncasecmp(it->getText().c_str(), browseBuf, len) )
+					{
+						if ( it != current )
+						{
+							setCurrent(*it,false);
+							browseTimer.start(2*1000,true);
+						}
+						return 1;
+					}
+				}
+				it=childs.begin();
+				for (;it != childs.end(); ++it)
+				{
+					if ( !strncasecmp(it->getText().c_str(), browseBuf, len) )
+					{
+						if ( it != current )
+						{
+							setCurrent(*it,false);
+							browseTimer.start(2*1000,true);
+						}
+						return 1;
+					}
+				}
+			}
+			else if (event.action == &i_cursorActions->up && browseTimer.isActive() )
+			{
+				const char *browseBuf = browseText.c_str();
+				int len = browseText.length();
+				ePtrList<eListBoxEntry>::reverse_iterator it((ePtrList<eListBoxEntry>::reverse_iterator&)current);
+				for (;it != childs.rend(); ++it )
+				{
+					if ( !strncasecmp(it->getText().c_str(), browseBuf, len) )
+					{
+						if ( it != current )
+						{
+							setCurrent(*it,false);
+							browseTimer.start(2*1000,true);
+						}
+						return 1;
+					}
+				}
+				it=childs.rbegin();
+				for (;it != childs.rend(); ++it )
+				{
+					if ( !strncasecmp(it->getText().c_str(), browseBuf, len) )
+					{
+						if ( it != current )
+						{
+							setCurrent(*it,false);
+							browseTimer.start(2*1000,true);
+						}
+						return 1;
+					}
+				}
+			}
+			else
+				break;
+		return 1;
+		default:
+		break;
+	}
+	return eListBoxBase::eventHandler(event);
+}
+
+int eListBoxBaseExt::keyDown(int key)
+{
+	if (key >= KEY_ASCII)
+	{
+		browseTimer.start(2*1000,true);
+		// TODO convert browseText to utf8 !!
+		browseText+=(char)key;
+		const char *browseBuf = browseText.c_str();
+		int len = browseText.length();
+		for (ePtrList<eListBoxEntry>::iterator it(childs.begin());
+			it != childs.end(); ++it )
+		{
+			if ( !strncasecmp(it->getText().c_str(), browseBuf, len) )
+			{
+				if ( it != current )
+				{
+					browseHistory.push_front(current);
+					setCurrent(*it,false);
+				}
+				return 1;
+			}
+		}
+		browseText.erase(len-1,1);
+	}
+	return 0;
+}
+
+void eListBoxBaseExt::clearList()
+{
+	eListBoxBase::clearList();
+	browseHistory.clear();
+}
+
+void eListBoxBaseExt::lostFocus()
+{
+	eListBoxBase::lostFocus();
+	eRCInput::getInstance()->setKeyboardMode(eRCInput::kmNone);
+	browseText="";
+	browseHistory.clear();
 }
 
 void eListBoxEntry::drawEntryBorder(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF )
@@ -866,16 +1288,83 @@ const eString& eListBoxEntryText::redraw(gPainter *rc, const eRect& rect, gColor
 
 	drawEntryRect( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state );
 
+	int lft = rect.left();
+	if (listbox->getFlags() & eListBoxBase::flagHasShortcuts)
+	{
+		int hideshortcuts=0;
+		eConfig::getInstance()->getKey("/ezap/osd/hideshortcuts", hideshortcuts);
+		if (!hideshortcuts)
+		{
+			int shortcut = listbox->getShortcut(this);
+			if (listbox->getFlags() & eListBoxBase::flagColorShortcutsFirst)
+			{
+				if (shortcut < 5) 
+					shortcut += 10;
+				else if (shortcut < 15)
+					shortcut -= 4;
+			}
+		
+			eString strShortcut;
+			switch (shortcut)
+			{
+				case 10: shortcut = 0;
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+				case 9:
+					strShortcut = eString().sprintf("shortcut.%d",shortcut);
+					break;
+				case 11:
+					strShortcut = eString().sprintf("shortcut.red");
+					break;
+				case 12:
+					strShortcut = eString().sprintf("shortcut.green");
+					break;
+				case 13:
+					strShortcut = eString().sprintf("shortcut.yellow");
+					break;
+				case 14:
+					strShortcut = eString().sprintf("shortcut.blue");
+					break;
+				default:
+					shortcut=-1;
+			}
+			if (shortcut >= 0)
+			{
+					
+				gPixmap* pm = eSkin::getActive()->queryImage(strShortcut);
+				eRect left = rect;
+				lft = pm->x + 10;
+				left.setRight( lft );
+				left.setLeft(rect.left()+5);
+				rc->clip(left);
+	
+				eSize psize = pm->getSize(),
+				esize = rect.size();
+	
+				int yOffs = rect.top()+((esize.height() - psize.height()) / 2);
+	
+				rc->blit(*pm, ePoint(left.left(), yOffs), left, gPixmap::blitAlphaTest );
+	
+				rc->clippop();
+			}
+		}
+	}
 	if (!para)
 	{
-		para = new eTextPara( eRect( 0, 0, rect.width(), rect.height() ) );
+		para = new eTextPara( eRect( 0, 0, rect.width()-lft, rect.height() ) );
 		para->setFont( font );
 		para->renderString(text);
 		para->realign(align);
 //		yOffs = ((rect.height() - para->getBoundBox().height()) / 2 + 0) - para->getBoundBox().top() ;
 		yOffs=0;
 	}
-	rc->renderPara(*para, ePoint( rect.left(), rect.top()+yOffs ) );
+	rc->renderPara(*para, ePoint( lft, rect.top()+yOffs ) );
 
 	if (b)
 		drawEntryBorder( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF );
@@ -905,6 +1394,29 @@ void eListBoxEntryText::SetText(const eString& txt)
 	text=txt;
 }
 
+const eString& eListBoxSeparator::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
+{
+	int x = 0;
+	if ( pm )
+	{
+		rc->clip(rect);
+		eSize psize = pm->getSize(),
+					esize = rect.size();
+		int yOffs = rect.top()+((esize.height() - psize.height()) / 2);
+		do
+		{
+			rc->blit(*pm, ePoint(x, yOffs), eRect(x, yOffs, psize.width(), psize.height()), alphatest?gPixmap::blitAlphaTest:0 );
+			x+=distance;
+			x+=psize.width();
+		}
+		while (x<esize.width());
+		rc->clippop();
+	}
+	static eString ret="separator";
+	return ret;
+}
+
+// deprecated...
 const eString& eListBoxEntrySeparator::redraw(gPainter *rc, const eRect& rect, gColor coActiveB, gColor coActiveF, gColor coNormalB, gColor coNormalF, int state )
 {
 	int x = 0;
@@ -927,30 +1439,27 @@ const eString& eListBoxEntrySeparator::redraw(gPainter *rc, const eRect& rect, g
 	return ret;
 }
 
-eListBoxEntryCheck::eListBoxEntryCheck( eListBox<eListBoxEntry> *lb, const char* text, const char* regkey, const eString& hlptxt )
-	:eListBoxEntryText((eListBox<eListBoxEntryText>*)lb, text, (void*)-1, 0, hlptxt, 0 )
+eListBoxEntryCheck::eListBoxEntryCheck( eListBox<eListBoxEntryMenu> *lb, const char* text, const char* regkey, const eString& hlptxt )
+	:eListBoxEntryMenu(lb, text, hlptxt, 0 )
 	,pm(eSkin::getActive()->queryImage("eListBoxEntryCheck"))
-	,regKey(regkey), checked(false)
+	,regKey(regkey), checked(0)
 {
 	selectable=1;
 	if ( regKey )
 	{
-		checked=false;
 		if ( eConfig::getInstance()->getKey( regKey.c_str(), checked ) )
 			eConfig::getInstance()->setKey( regKey.c_str(), checked );
 	}
-	if (listbox)
-		CONNECT(listbox->selected, eListBoxEntryCheck::LBSelected);
 }
 
 void eListBoxEntryCheck::LBSelected(eListBoxEntry* t)
 {
 	if (t == this)
 	{
-		checked=checked?false:true;
+		checked^=1;
 		eConfig::getInstance()->setKey( regKey.c_str(), checked );
 		listbox->invalidateCurrent();
-		/* emit */ selected(checked);
+		/* emit */ selected((bool)checked);
 	}
 }
 
@@ -961,7 +1470,7 @@ const eString& eListBoxEntryCheck::redraw(gPainter *rc, const eRect& rect, gColo
 	if ( (b = (state == 2)) )
 		state = 0;
 
-	eListBoxEntryText::redraw( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state );	
+	eListBoxEntryText::redraw( rc, rect, coActiveB, coActiveF, coNormalB, coNormalF, state );
 
 	if ( pm && checked )
 	{
@@ -980,4 +1489,92 @@ const eString& eListBoxEntryCheck::redraw(gPainter *rc, const eRect& rect, gColo
 	}
 
 	return text;
+}
+
+eListBoxEntryMulti::eListBoxEntryMulti( eListBox<eListBoxEntryMenu> *lb, const char *hlptext )
+	:eListBoxEntryMenu( lb, NULL, hlptext, (int)eTextPara::dirCenter ),
+	cur(entrys.end())
+{
+	selectable=1;
+}
+
+void eListBoxEntryMulti::add( const char *text, int key )
+{
+	entrys.push_back( std::pair< int, eString>(key,text) );
+}
+
+void eListBoxEntryMulti::add( const eString &text, int key )
+{
+	entrys.push_back( std::pair< int, eString>(key,text) );
+}
+
+void eListBoxEntryMulti::setCurrent(int key)
+{
+	for ( std::list< std::pair< int, eString > >::iterator it(entrys.begin())
+		;it != entrys.end(); ++it )
+	{
+		if ( it->first == key )
+		{
+			cur=it;
+			text = cur->second;
+			this->key = (void*) cur->first;
+			if ( para )
+			{
+				para->destroy();
+				para=0;
+			}
+			listbox->invalidateCurrent();
+			listbox->selchanged(this);
+			break;
+		}
+	}
+}
+
+int eListBoxEntryMulti::eventHandler( const eWidgetEvent &e )
+{
+	switch(e.type)
+	{
+		case eWidgetEvent::evtAction:
+			if ( e.action == &i_listActions->pageup )
+			{
+				std::list< std::pair< int, eString > >::iterator it(cur);
+				--it;
+				if ( it != entrys.end() )
+				{
+					--cur;
+					text = cur->second;
+					key = (void*) cur->first;
+					if ( para )
+					{
+						para->destroy();
+						para=0;
+						listbox->invalidateCurrent();
+						listbox->selchanged(this);
+					}
+				}
+				return 1;
+			}
+			else if ( e.action == &i_listActions->pagedown )
+			{
+				std::list< std::pair< int, eString > >::iterator it(cur);
+				++it;
+				if ( it != entrys.end() )
+				{
+					++cur;
+					text = cur->second;
+					key = (void*) cur->first;
+					if ( para )
+					{
+						para->destroy();
+						para=0;
+						listbox->invalidateCurrent();
+						listbox->selchanged(this);
+					}
+				}
+				return 1;
+			}
+		default:
+			break;
+	}
+	return 0;
 }

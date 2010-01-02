@@ -1,11 +1,14 @@
 #ifndef DISABLE_LCD
 
 #include <lib/gdi/glcddc.h>
-#include <lib/gdi/lcd.h>
 
 gLCDDC *gLCDDC::instance;
 
 gLCDDC::gLCDDC(eLCD *lcd): lcd(lcd)
+{
+	init_gLCDDC();
+}
+void gLCDDC::init_gLCDDC()
 {
 	instance=this;
 	
@@ -18,7 +21,7 @@ gLCDDC::gLCDDC(eLCD *lcd): lcd(lcd)
 	pixmap->bypp=1;
 	pixmap->stride=lcd->stride();
 	pixmap->data=lcd->buffer();
-	
+
 	pixmap->clut.colors=256;
 	pixmap->clut.data=0;
 }

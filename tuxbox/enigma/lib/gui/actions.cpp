@@ -100,9 +100,9 @@ void eActionMap::loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *
 				eFatal("please specify a number as code= or a defined key with key=.");
 				continue;
 			}
-			
-			eKeymap::iterator i=keymap.find(std::string(key));
-			
+
+			eKeymap::iterator i=keymap.find(eString(key));
+
 			if (i == keymap.end())
 			{
 				eFatal("undefined key %s specified!", key);
@@ -125,73 +125,15 @@ void eActionMap::loadXML(eRCDevice *device, eKeymap &keymap, const XMLTreeNode *
 	}
 }
 
-void eActionMap::reloadConfig()
-{
-#if 0
-	NConfig &nc=eDVB::getInstance()->config;
-	std::string path="/ezap/rc/keymaps/";
-	path+=identifier;
-	path+="/";
-	
-	for (actionList::iterator i(actions.begin()); i!=actions.end(); ++i)
-	{
-		std::string key=path+i->getIdentifier();
-		qDebug("loading %s", key.c_str());
-		char *value;
-		int len;
-		int err;
-		if (!(err=nc.getKey(value, len)))
-		{
-			qDebug("have data!");
-		} else
-			qDebug("error %d", err);
-	}
-#endif
-}
-
-void eActionMap::saveConfig()
-{
-#if 0
-	NConfig &nc=eDVB::getInstance()->config;
-	std::string path="/ezap/rc/keymaps/";
-	path+=identifier;
-	path+="/";
-	
-	for (actionList::iterator i(actions.begin()); i!=actions.end(); ++i)
-	{
-		std::string key=path+i->second.getIdentifier();
-		qDebug("saving %s", key.c_str());
-		std::string value;
-		
-		eAction::keyList &kl=i->second.getKeyList();
-		
-		for (eAction::keylist::iterator kli(kl.begin()); kli!=kl.end(); ++kli)
-		{
-			eRCKey &key=kli->second;
-			qDebug("%s, %x, %x", key.producer->getIdentifier(), key.code, key.flags);
-			value+=key.producer->getIdentifier();
-			value+=0;
-
-			value+=(key.code>>24)&0xFF;
-			value+=(key.code>>16)&0xFF;
-			value+=(key.code>>8)&0xFF;
-			value+=key.code&0xFF;
-
-			value+=(key.flags>>24)&0xFF;
-			value+=(key.flags>>16)&0xFF;
-			value+=(key.flags>>8)&0xFF;
-			value+=key.flags&0xFF;
-		}
-		nc.setKey(key.c_str(), value.data(), value.size());
-	}
-#endif
-}
-
 // ---------------------------------------------------------------------------
 
 eActionMapList *eActionMapList::instance;
 
 eActionMapList::eActionMapList()
+{
+	eActionMapList::init_eActionMapList();
+}
+void eActionMapList::init_eActionMapList()
 {
 	if (!instance)
 		instance=this;
@@ -203,12 +145,14 @@ eActionMapList::eActionMapList()
 	else
 	{
 		currentStyles.insert(tmp);
-		delete [] tmp;
+		free(tmp);
 	}
+	xmlfiles.setAutoDelete(true);
 }
 
 eActionMapList::~eActionMapList()
 {
+	xmlfiles.clear();
 	if (instance==this)
 		instance=0;
 }
@@ -255,16 +199,28 @@ int eActionMapList::loadXML(const char *filename)
 
 	XMLTreeNode *root=parser->RootNode();
 	if (!root)
+	{
+		delete parser;
 		return -1;
+	}
 	if (strcmp(root->GetType(), "rcdefaults"))
 	{
 		eFatal("not a rcdefaults file.");
+		delete parser;
 		return -1;
 	}
-	
-	XMLTreeNode *node=parser->RootNode();
-	
-	for (node=node->GetChild(); node; node=node->GetNext())
+
+	xmlfiles.push_back(parser);
+
+	return 0;
+}
+
+XMLTreeNode *eActionMapList::searchDevice(const eString &id)
+{
+	for (ePtrList<XMLTreeParser>::iterator parser(xmlfiles.begin()); parser != xmlfiles.end(); ++parser)
+	{
+		XMLTreeNode *node=parser->RootNode();
+		for (node=node->GetChild(); node; node=node->GetNext())
 		if (!strcmp(node->GetType(), "device"))
 		{
 			eKeymap keymap;
@@ -274,74 +230,96 @@ int eActionMapList::loadXML(const char *filename)
 				eFatal("please specify a remote control identifier!");
 				continue;
 			}
-			
-			eRCDevice *device=0;
-			if (identifier)
-				device=eRCInput::getInstance()->getDevice(identifier);
-			if (!device)
+			if (id == identifier)
+				return node;
+		}
+	}
+	return 0;
+}
+
+int eActionMapList::loadDevice(eRCDevice *device)
+{
+		/* Don't load any mappings for (ascii) console */
+	if (device->getIdentifier() == "Console")
+		return 0;
+		
+	XMLTreeNode *node=searchDevice(device->getIdentifier());
+
+	if (!node)
+		node=searchDevice("generic");
+
+	if (!node)
+	{
+		eWarning("couldn't load key bindings for device %s", device->getDescription());
+		return -1;
+	}
+
+	eKeymap keymap;
+
+	for (XMLTreeNode *xam=node->GetChild(); xam; xam=xam->GetNext())
+		if (!strcmp(xam->GetType(), "actionmap"))
+		{
+			eActionMap *am=0;
+			const char *name=xam->GetAttributeValue("name");
+			if (name)
+				am=findActionMap(name);
+			if (!am)
 			{
-				eFatal("please specify a remote control identifier, '%s' is invalid!\nMaybe old file '%s'?\n", identifier, filename);
+				eWarning("please specify a valid actionmap name (with name=)");
+				eWarning("valid actionmaps are:");
+				for (actionMapList::iterator i(actionmaps.begin()); i != actionmaps.end(); ++i)
+					eWarning("  %s", i->first);
+				eWarning("end.");
+				eFatal("invalid actionmap: \"%s\"", name?name:"");
 				continue;
 			}
-			
-			for (XMLTreeNode *xam=node->GetChild(); xam; xam=xam->GetNext())
-				if (!strcmp(xam->GetType(), "actionmap"))
+			const char *style=xam->GetAttributeValue("style");
+			if (style)
+			{
+				const char *descr=xam->GetAttributeValue("descr");
+				if (descr)
 				{
-					eActionMap *am=0;
-					const char *name=xam->GetAttributeValue("name");
+					std::map<eString,eString>::iterator it = existingStyles.find(style);
+					if ( it == existingStyles.end() ) // not in map..
+						existingStyles[style]=descr;
+				}
+				am->loadXML(device, keymap, xam, style );
+			}
+			else
+				am->loadXML( device, keymap, xam );
+		}
+		else if (!strcmp(xam->GetType(), "keys"))
+		{
+			for (XMLTreeNode *k=xam->GetChild(); k; k=k->GetNext())
+			{
+				if (!strcmp(k->GetType(), "key"))
+				{
+					const char *name=k->GetAttributeValue("name");
 					if (name)
-						am=findActionMap(name);
-					if (!am)
 					{
-						eWarning("please specify a valid actionmap name (with name=)");
-						eWarning("valid actionmaps are:");
-						for (actionMapList::iterator i(actionmaps.begin()); i != actionmaps.end(); ++i)
-							eWarning("  %s", i->first);
-						eFatal("end.");
-						continue;
-					}
-					const char *style=xam->GetAttributeValue("style");
-					if (style)
-					{
-						const char *descr=xam->GetAttributeValue("descr");
-						if (descr)
+						const char *acode=k->GetAttributeValue("code");
+						int code=-1;
+						if (acode)
+							sscanf(acode, "%x", &code);
+						else
 						{
-							std::map<eString,eString>::iterator it = existingStyles.find(style);
-							if ( it == existingStyles.end() ) // not in map..
-								existingStyles[style]=descr;
+							acode=k->GetAttributeValue("icode");
+							sscanf(acode, "%d", &code);
 						}
-						am->loadXML(device, keymap, xam, style );
+						if ( code != -1 )
+						{
+							const char *apng=k->GetAttributeValue("picture");
+							keymap.insert(std::pair<eString, std::pair<int, eString> >(name, std::pair<int, eString> (code, apng ? apng : "")));
+						}
+						else
+							eFatal("no code specified for key %s!", name);
 					}
 					else
-						am->loadXML( device, keymap, xam );
-				} else if (!strcmp(xam->GetType(), "keys"))
-				{
-					for (XMLTreeNode *k=xam->GetChild(); k; k=k->GetNext())
-					{
-						if (!strcmp(k->GetType(), "key"))
-						{
-							const char *name=k->GetAttributeValue("name");
-							if (name)
-							{
-								const char *acode=k->GetAttributeValue("code");
-								if (acode)
-								{
-									int code=0;
-									const char *apng=k->GetAttributeValue("picture");
-									sscanf(acode, "%x", &code);
-									
-									keymap.insert(std::pair<std::string, std::pair<int, std::string> >(name, std::pair<int, std::string> (code, apng ? apng : "")));
-								} else
-									eFatal("no code specified for key %s!", name);
-							} else
-								eFatal("no name specified in keys!");
-						}
-					}
+						eFatal("no name specified in keys!");
 				}
+			}
 		}
 
-	delete parser;
-	
 	return 0;
 }
 

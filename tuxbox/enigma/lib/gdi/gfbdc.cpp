@@ -9,6 +9,10 @@ gFBDC *gFBDC::instance;
 
 gFBDC::gFBDC()
 {
+	init_gFBDC();
+}
+void gFBDC::init_gFBDC()
+{
 	instance=this;
 	fb=new fbClass;
 
@@ -16,6 +20,7 @@ gFBDC::gFBDC()
 		eFatal("no framebuffer available");
 
 	fb->SetMode(720, 576, 8);
+
 	for (int y=0; y<576; y++)																		 // make whole screen transparent
 		memset(fb->lfb+y*fb->Stride(), 0x00, fb->Stride());
 
@@ -73,10 +78,7 @@ void gFBDC::calcRamp()
 			d=255;
 		ramp[i]=d;
 
-/*		if ( eDVB::getInstance()->getmID == 1 )
-			rampalpha[i]=i*alpha/65535;
-		else*/
-			rampalpha[i]=i*alpha/256;
+		rampalpha[i]=i*alpha/256;
 	}
 
 	rampalpha[255]=255; // transparent BLEIBT bitte so.
@@ -164,4 +166,4 @@ void gFBDC::reloadSettings()
 	setPalette();
 }
 
-eAutoInitP0<gFBDC> init_gFBDC(eAutoInitNumbers::graphic+1, "GFBDC");
+eAutoInitP0<gFBDC> init_gFBDC(eAutoInitNumbers::graphic-1, "GFBDC");

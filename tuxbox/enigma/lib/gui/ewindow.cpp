@@ -13,6 +13,10 @@ int eWindow::globCancel = eWindow::ON;
 eWindow::eWindow(int takefocus)
 	:eWidget(0, takefocus)
 {
+	init_eWindow();
+}
+void eWindow::init_eWindow()
+{
 	deco.load("eWindow");
 
 	titleBarColor=eSkin::getActive()->queryScheme("eWindow.titleBar");
@@ -30,8 +34,6 @@ eWindow::eWindow(int takefocus)
 	titleFontSize=eSkin::getActive()->queryValue("eWindow.titleFontSize", 20);
 
 	font = eSkin::getActive()->queryFont("eWindow.Childs");
-
-	addActionMap(&i_cursorActions->map);
 }
 
 eWindow::~eWindow()
@@ -50,18 +52,22 @@ eRect eWindow::getTitleBarRect()
 
 void eWindow::redrawWidget(gPainter *target, const eRect &where)
 {
+	bool drawBorder=true;
 	if ( deco )  // then draw Deco
+	{
 		deco.drawDecoration(target, ePoint(width(), height()));
-	else
+		drawBorder=false;
+	}
+	drawTitlebar(target);
+	if ( drawBorder )
 	{
 		gColor border = eSkin::getActive()->queryColor("eWindow.border");
 		target->setForegroundColor(border);
-		target->line( ePoint(0,0), ePoint(0, height()) );
-		target->line( ePoint(0,0), ePoint(width(), 0) );
+		target->line( ePoint(0,0), ePoint(0, height()-1) );
+		target->line( ePoint(0,0), ePoint(width()-1, 0) );
 		target->line( ePoint(width()-1,0), ePoint(width()-1, height()-1) );
 		target->line( ePoint(0,height()-1), ePoint(width()-1, height()-1) );
 	}
-	drawTitlebar(target);
 }
 
 void eWindow::eraseBackground(gPainter *target, const eRect &clip)
@@ -74,7 +80,7 @@ void eWindow::eraseBackground(gPainter *target, const eRect &clip)
 void eWindow::drawTitlebar(gPainter *target)
 {
 	eRect rc = getTitleBarRect();
-  target->clip( rc );
+	target->clip( rc );
 	if ( titleHeight )
 	{
 		target->setForegroundColor(titleBarColor);
@@ -88,7 +94,7 @@ void eWindow::drawTitlebar(gPainter *target)
 	target->setForegroundColor(fontColor);
 	target->renderPara( *p );
 	p->destroy();
-  target->clippop();
+	target->clippop();
 }
 
 void eWindow::recalcClientRect()
@@ -103,19 +109,13 @@ int eWindow::eventHandler(const eWidgetEvent &event)
 		case eWidgetEvent::willShow:
 			if (focus)
 				focusChanged( focus );
-		break;
+			break;
 		case eWidgetEvent::changedText:
-		{
 			redraw(getTitleBarRect());
 			return 1;
-		}
-    
 		case eWidgetEvent::evtAction:
 			if (globCancel && (event.action == &i_cursorActions->cancel) && in_loop)	// hack
-			{
 				close(-1);
-				return eWidget::eventHandler(event);
-			}
 			else
 				break;
 			return 1;

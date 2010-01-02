@@ -2,7 +2,7 @@
 #include <asm/ioctls.h>
 #include <unistd.h>
 #include <errno.h>
-
+#include <linux/serial.h>
 #include <lib/socket/socket.h>
 
 void eSocket::close()
@@ -12,9 +12,12 @@ void eSocket::close()
 		int wasconnected=(mystate==Connection) || (mystate==Closing);
 		delete rsn;
 		rsn=0;
-		::close(socketdesc);
-		socketdesc=-1;
-		mystate=Idle;
+		if (socketdesc >= 0)
+		{
+			::close(socketdesc);
+			socketdesc=-1;
+		}
+		mystate=Invalid;
 		if (wasconnected)
 			connectionClosed_();
 	} else
@@ -83,12 +86,13 @@ int eSocket::state()
 int eSocket::setSocket(int s, int iss, eMainloop *ml)
 {
 	socketdesc=s;
+	if (socketdesc < 0) return -1;
 	issocket=iss;
 	fcntl(socketdesc, F_SETFL, O_NONBLOCK);
-	last_break = 0xFFFFFFFF;
+	last_break = -1;
 
 	if (rsn)
-		delete rsn;
+		delete rsn;  
 	rsn=new eSocketNotifier(ml, getDescriptor(), 
 		eSocketNotifier::Read|eSocketNotifier::Hungup);
 	CONNECT(rsn->activated, eSocket::notifier);
@@ -113,18 +117,14 @@ void eSocket::notifier(int what)
 					close();
 					return;
 				}
-			} else		// when operating on terminals, check for break
+			} 
+			else		// when operating on terminals, check for break
 			{
-					// where is this struct defined?
-				struct async_icount {
-					unsigned long cts, dsr, rng, dcd, tx, rx;
-					unsigned long frame, parity, overrun, brk;
-					unsigned long buf_overrun;
-				} icount;
-
+				serial_icounter_struct icount;
+				memset(&icount, 0, sizeof(icount));
 				if (!ioctl(getDescriptor(), TIOCGICOUNT, &icount))
 				{
-					if (last_break == 0xFFFFFFFF)
+					if (last_break == -1)
 						last_break = icount.brk;
 					else if (last_break != icount.brk)
 					{
@@ -138,6 +138,8 @@ void eSocket::notifier(int what)
 						return;
 					}
 				}
+				else
+					eDebug("TIOCGICOUNT failed(%m)");
 			}
 			int r;
 			if ((r=readbuffer.fromfile(getDescriptor(), bytesavail)) != bytesavail)
@@ -183,7 +185,7 @@ void eSocket::notifier(int what)
 		}
 	} else if (what & eSocketNotifier::Hungup)
 	{
-		if (mystate == Connection)
+		if (mystate == Connection || (mystate == Closing && issocket) )
 		{
 			writebuffer.clear();
 			close();
@@ -200,19 +202,21 @@ void eSocket::notifier(int what)
 
 int eSocket::writeBlock(const char *data, unsigned int len)
 {
+	int err=0;
 	int w=len;
 	if (issocket && writebuffer.empty())
 	{
 		int tw=::send(getDescriptor(), data, len, MSG_NOSIGNAL);
 		if ((tw < 0) && (errno != EWOULDBLOCK))
-			eDebug("write: %m");
-		
+	// don't use eDebug here because of a adaptive mutex in the eDebug call..
+	// and eDebug self can cause a call of writeBlock !!
+			printf("write: %m\n");
 		if (tw < 0)
 			tw = 0;
 		data+=tw;
 		len-=tw;
 	}
-	if (len)
+	if (len && !err)
 		writebuffer.write(data, len);
 
 	if (!writebuffer.empty())
@@ -227,10 +231,19 @@ int eSocket::getDescriptor()
 
 int eSocket::connectToHost(eString hostname, int port)
 {
+	sockaddr_in  serv_addr;
 	struct hostent *server;
 	int res;
 
-	if(!socketdesc){
+	if (mystate == Invalid)
+	{
+		/* the socket has been closed, create a new socket descriptor */
+		int s=socket(AF_INET, SOCK_STREAM, 0);
+		mystate=Idle;
+		setSocket(s, 1, mainloop);
+	}
+	
+	if(socketdesc < 0){
 		error_(errno);
 		return(-1);
 	}
@@ -241,21 +254,19 @@ int eSocket::connectToHost(eString hostname, int port)
 		error_(errno);
 		return(-2);
 	}
-	bzero(	(char*)&serv_addr, sizeof(serv_addr));
+	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family=AF_INET;
-	bcopy(	(char*)server->h_addr,
-		(char*)&serv_addr.sin_addr.s_addr,
-		server->h_length);
+	memmove(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
 	serv_addr.sin_port=htons(port);
 	res=::connect(socketdesc, (const sockaddr*)&serv_addr, sizeof(serv_addr));
-	if ((res < 0) && (errno != EINPROGRESS))
+	if ((res < 0) && (errno != EINPROGRESS) && (errno != EINTR))
 	{
 		eDebug("can't connect to host: %s", hostname.c_str());
 		close();
 		error_(errno);
 		return(-3);
 	}
-	if (res < 0)	// EINPROGRESS
+	if (res < 0)	// EINPROGRESS or EINTR
 	{
 		rsn->setRequested(rsn->getRequested()|eSocketNotifier::Write);
 		mystate=Connecting;
@@ -267,9 +278,9 @@ int eSocket::connectToHost(eString hostname, int port)
 	return(0);
 }
 
-eSocket::eSocket(eMainloop *ml): readbuffer(32768), writebuffer(32768), rsn(0)
+eSocket::eSocket(eMainloop *ml, int domain): readbuffer(32768), writebuffer(32768), rsn(0), mainloop(ml)
 {
-	int s=socket(AF_INET, SOCK_STREAM, 0);
+	int s=socket(domain, SOCK_STREAM, 0);
 #if 0
 	eDebug("[SOCKET]: initalized socket %d", socketdesc);
 #endif
@@ -277,7 +288,7 @@ eSocket::eSocket(eMainloop *ml): readbuffer(32768), writebuffer(32768), rsn(0)
 	setSocket(s, 1, ml);
 }
 
-eSocket::eSocket(int socket, int issocket, eMainloop *ml): readbuffer(32768), writebuffer(32768), rsn(0)
+eSocket::eSocket(int socket, int issocket, eMainloop *ml): readbuffer(32768), writebuffer(32768), rsn(0), mainloop(ml)
 {
 	setSocket(socket, issocket, ml);
 	mystate=Connection;
@@ -291,4 +302,55 @@ eSocket::~eSocket()
 	{
 		::close(socketdesc);
 	}
+}
+
+eUnixDomainSocket::eUnixDomainSocket(eMainloop *ml) : eSocket(ml, AF_LOCAL)
+{
+}
+
+eUnixDomainSocket::eUnixDomainSocket(int socket, int issocket, eMainloop *ml) : eSocket(socket, issocket, ml)
+{
+}
+
+eUnixDomainSocket::~eUnixDomainSocket()
+{
+}
+
+int eUnixDomainSocket::connectToPath(eString path)
+{
+	sockaddr_un serv_addr_un;
+	int res;
+
+	if (mystate == Invalid)
+	{
+		/* the socket has been closed, create a new socket descriptor */
+		int s=socket(AF_LOCAL, SOCK_STREAM, 0);
+		mystate=Idle;
+		setSocket(s, 1, mainloop);
+	}
+	
+	if(socketdesc < 0){
+		error_(errno);
+		return(-1);
+	}
+	memset(&serv_addr_un, 0, sizeof(serv_addr_un));
+	serv_addr_un.sun_family = AF_LOCAL;
+	strcpy(serv_addr_un.sun_path, path.c_str());
+	res=::connect(socketdesc, (const sockaddr*)&serv_addr_un, sizeof(serv_addr_un));
+	if ((res < 0) && (errno != EINPROGRESS) && (errno != EINTR))
+	{
+		close();
+		error_(errno);
+		return(-3);
+	}
+	if (res < 0)	// EINPROGRESS or EINTR
+	{
+		rsn->setRequested(rsn->getRequested()|eSocketNotifier::Write);
+		mystate=Connecting;
+	} else
+	{
+		mystate=Connection;
+		connected_();
+	}
+	return(0);
 }

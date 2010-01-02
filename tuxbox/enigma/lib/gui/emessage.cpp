@@ -6,9 +6,33 @@
 #include <lib/gdi/font.h>
 #include <lib/base/i18n.h>
 
-eMessageBox::eMessageBox(eString message, eString caption, int flags, int def)
-	:eWindow(0), icon(0), def(0)
+eMessageBox::eMessageBox(eString message, eString caption, int flags, int def, int timeout )
+	:eWindow(0), timer(0), sectimer(0), icon(0), def(0), timeout(timeout)
 {
+	init_eMessageBox(message,caption,flags,def,timeout);
+}
+void eMessageBox::init_eMessageBox(eString message, eString caption, int flags, int def, int timeout )
+{
+	if ( timeout )
+	{
+		timer = new eTimer(eApp);
+		switch(def)
+		{
+			case btYes:
+				CONNECT( timer->timeout, eMessageBox::pressedYes );
+				break;
+			case btNo:
+				CONNECT( timer->timeout, eMessageBox::pressedNo );
+				break;
+			case btOK:
+				CONNECT( timer->timeout, eMessageBox::pressedOK );
+				break;
+			default:
+			case btCancel:
+				CONNECT( timer->timeout, eMessageBox::pressedCancel );
+				break;
+		}
+	}
 	setText(caption);
 	int fontsize=eSkin::getActive()->queryValue("fontsize", 20);
 	int posx = eSkin::getActive()->queryValue("eMessageBox.pos.x", 100);
@@ -116,11 +140,22 @@ eMessageBox::eMessageBox(eString message, eString caption, int flags, int def)
 					this->def = b;
 
 				xpos += bSize.width()+20;
-				if ( xpos+20 > ext.width() )
-					cresize( eSize( xpos+20, ext.height() + bSize.height() + 20 ) );
-				else
-					cresize( eSize( ext.width(), ext.height() + bSize.height() + 20 ) );
 			}
+		
+		if ( timeout )
+		{
+			lTimeout = new eLabel(this);
+			lTimeout->setText( eString().sprintf("%d", timeout) );
+			lTimeout->resize( eSize(50, fontsize+4+10) );       
+			lTimeout->move( ePoint( xpos+10, ext.height() ) );
+			lTimeout->setFlags(eLabel::flagVCenter);
+			xpos += lTimeout->getSize().width()+10;
+		}
+
+		if ( xpos+20 > ext.width() )
+			cresize( eSize( xpos+20, ext.height() + fontsize + 4 + 10 + 20 ) );
+		else
+			cresize( eSize( ext.width(), ext.height() + fontsize + 4 + 10 + 20 ) );
 	}
 	else
 		cresize( ext );
@@ -131,11 +166,25 @@ int eMessageBox::eventHandler( const eWidgetEvent &e )
 {
 	switch (e.type)
 	{
+		case eWidgetEvent::evtAction:
+			if ( timer && timer->isActive() )
+			{
+				timer->stop();
+				delete sectimer;
+				sectimer=0;
+				updateTimeoutLabel();
+			}
+			break;
 		case eWidgetEvent::execBegin:
 			if ( def )
-			{
 				setFocus(def);
-				return 1;
+			if ( timeout )
+			{
+				timer->start(timeout*1000, true);
+				delete sectimer;
+				sectimer = new eTimer(eApp);
+				CONNECT( sectimer->timeout, eMessageBox::updateTimeoutLabel );
+				sectimer->start(1000);
 			}
 		default:
 			break;
@@ -170,7 +219,24 @@ void eMessageBox::pressedYes()
 void eMessageBox::pressedNo()
 {
 	if ( in_loop )
-	  close(btNo);
+		close(btNo);
 	else
 		hide();
+}
+
+void eMessageBox::updateTimeoutLabel()
+{
+	if ( timeout )
+	{
+		--timeout;
+		lTimeout->setText(eString().sprintf("%d", timeout));
+	}
+	else
+		lTimeout->hide();
+}
+
+eMessageBox::~eMessageBox()
+{
+	delete timer;
+	delete sectimer;
 }

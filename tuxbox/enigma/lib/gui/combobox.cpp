@@ -7,6 +7,10 @@ listbox(0, 0, takefocus),
 button( this, 0, 0, eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth",0)?"eButton":""),
 pm(0), entries(OpenEntries), current(0)
 {
+	init_eComboBox();
+}
+void eComboBox::init_eComboBox()
+{
 	align=eTextPara::dirLeft;
 	if ( eSkin::getActive()->queryValue("eComboBox.smallButton.decoWidth",0) )
 		button.loadDeco();
@@ -17,9 +21,21 @@ pm(0), entries(OpenEntries), current(0)
 	listbox.hide();
 	listbox.setDeco("eComboBox.listbox");
 	listbox.loadDeco();
+
+	gColor background = eSkin::getActive()->queryScheme("eComboBox.listbox.normal.background");
+	gColor foreground = eSkin::getActive()->queryScheme("eComboBox.listbox.normal.foreground");
+	if (background) 
+		listbox.setBackgroundColor(background);
+	if (foreground) 
+		listbox.setForegroundColor(foreground);
+	background = eSkin::getActive()->queryScheme("eComboBox.listbox.selected.background");
+	foreground = eSkin::getActive()->queryScheme("eComboBox.listbox.selected.foreground");
+	listbox.setActiveColor(background, foreground);
+
 	CONNECT( selected, eComboBox::onOkPressed );
 	CONNECT( listbox.selected, eComboBox::onEntrySelected );
 	CONNECT( listbox.selchanged, eComboBox::onSelChanged );
+	CONNECT( getTLW()->focusChanged, eComboBox::lbLostFocus );
 	listbox.zOrderRaise();
 	addActionMap(&i_cursorActions->map);
 }
@@ -27,12 +43,7 @@ pm(0), entries(OpenEntries), current(0)
 eComboBox::~eComboBox()
 {
 	if ( listbox.isVisible() )
-	{
-		eDebug("KILL COMBOBOX WITH OPEN LISTBOX");
-		listbox.hide();
 		setFocus(this);
-		eWindow::globalCancel( eWindow::ON );
-	}
 }
 
 void eComboBox::onOkPressed()
@@ -62,7 +73,10 @@ int eComboBox::setProperty( const eString& prop, const eString& val )
 	else if (prop == "openEntries" )
 		entries = atoi( val.c_str() );
 	else if (prop == "showEntryHelp" )
+	{
 		flags |= flagShowEntryHelp;
+		listbox.setFlags(eListBoxBase::flagShowEntryHelp);
+	}
 	else if (prop == "openWidth" )
 	{
 		int width=listbox.getSize().width();
@@ -79,6 +93,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 	switch (event.type)
 	{
 		case eWidgetEvent::evtShortcut:
+			parent->setFocus(this);
 			onOkPressed();
 			break;
 		case eWidgetEvent::changedPosition:
@@ -95,7 +110,7 @@ int eComboBox::eventHandler( const eWidgetEvent& event )
 			else
 			{
 				button.resize( eSize(smButtonDeco, height()) );
-				button.move( ePoint( position.x()+size.width()-smButtonDeco, 0 ) );
+				button.move( ePoint( clientrect.right()-smButtonDeco, clientrect.top() ) );
 			}
 			if (pm)
 				button.pixmap_position = ePoint( (button.getSize().width() - pm->x) / 2, (button.getSize().height() - pm->y) / 2 );
@@ -122,11 +137,10 @@ int eComboBox::moveSelection ( int dir, bool sendSelChanged )
 
 void eComboBox::onEntrySelected( eListBoxEntryText* e)
 {
-	listbox.hide();
-	if (flags & flagShowEntryHelp)
+	if ( parent->getFocus() == &listbox && (flags & flagShowEntryHelp) )
 		setHelpText( oldHelpText );
 
-	if (e && button.getText() != e->getText() )
+	if (e)
 	{
 		setText(e->getText());
 		setFocus( this );
@@ -140,17 +154,15 @@ void eComboBox::onEntrySelected( eListBoxEntryText* e)
 	}
 	else
 		setFocus( this );
-
-	eWindow::globalCancel( eWindow::ON );
 }
 
 void eComboBox::onSelChanged(eListBoxEntryText* le)
 {
-	if (flags & flagShowEntryHelp )
-		setHelpText( le->getHelpText() );
 #ifndef DISABLE_LCD
 	if ( parent->getFocus() == &listbox )
 	{
+		if (flags & flagShowEntryHelp)
+			setHelpText( listbox.getHelpText() );
 		if ( LCDTmp )
 			LCDTmp->setText( le->getText() );
 		else if ( parent->LCDElement )
@@ -159,36 +171,34 @@ void eComboBox::onSelChanged(eListBoxEntryText* le)
 #endif
 }
 
-void eComboBox::removeEntry( eListBoxEntryText* le )
+void eComboBox::takeEntry( eListBoxEntryText* le )
 {
 	if (le)
-	{
-		listbox.remove(le);
-		if ( flags & flagSorted )
-			listbox.sort();
-	}
+		listbox.take(le);
 }
 
-void eComboBox::removeEntry( int num )
+eListBoxEntryText *eComboBox::takeEntry( int num )
 {
-	if ( listbox.getCount() >= num)
+	if ( listbox.getCount() <= num)
 	{
-		setCurrent(	num );
-	  listbox.remove( listbox.getCurrent() );
-		if ( flags & flagSorted )
-			listbox.sort();
+		setCurrent( num );
+		eListBoxEntryText *cur = listbox.getCurrent();
+		listbox.take(cur);
+		return cur;
 	}
+	return 0;
 }
 
-void eComboBox::removeEntry( void* key )
+eListBoxEntryText *eComboBox::takeEntry( void *key )
 {
 	setCurrent(key);
 	if (listbox.getCurrent() && key == listbox.getCurrent()->getKey() )
 	{
-		listbox.remove( listbox.getCurrent() );
-		if ( flags & flagSorted )
-			listbox.sort();
+		eListBoxEntryText *cur = listbox.getCurrent();
+		listbox.take( cur );
+		return cur;
 	}
+	return 0;
 }
 
 int eComboBox::setCurrent( const eListBoxEntryText* le, bool sendSelChanged )
@@ -206,7 +216,7 @@ int eComboBox::setCurrent( const eListBoxEntryText* le, bool sendSelChanged )
 	return OK;
 }
 
-struct selectEntryByNum: public std::unary_function<const eListBoxEntryText&, void>
+struct selectEntryByNum
 {
 	int num;
 	eListBox<eListBoxEntryText>* lb;
@@ -242,7 +252,7 @@ int eComboBox::setCurrent( int num, bool sendSelChanged )
 	return OK;
 }
 
-struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, void>
+struct selectEntryByKey
 {
 	void* key;
 	eListBox<eListBoxEntryText>* lb;
@@ -263,21 +273,24 @@ struct selectEntryByKey: public std::unary_function<const eListBoxEntryText&, vo
 	}
 };
 
+void eComboBox::lbLostFocus( const eWidget *w )
+{
+	if ( w != &listbox && listbox.isVisible() )
+	{
+		listbox.hide();
+		eWindow::globalCancel( eWindow::ON );
+	}
+}
+
 int eComboBox::setCurrent( void* key, bool sendSelChanged )
 {
 	if (!listbox.getCount())
 		return E_COULDNT_FIND;
 
-	eListBoxEntryText* cur = listbox.getCurrent();
-
-	if ( cur && cur->getKey() == key )
-		goto ok;
-
 	int err;
 	if ( (err=listbox.forEachEntry( selectEntryByKey(key, &listbox, sendSelChanged ) ) ) )
 		return E_COULDNT_FIND;
 
-ok:
 	setText( listbox.getCurrent()->getText() );
 	current = listbox.getCurrent();
 

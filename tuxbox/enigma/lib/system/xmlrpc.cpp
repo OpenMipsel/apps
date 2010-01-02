@@ -10,6 +10,10 @@ static std::map<eString, int (*)(std::vector<eXMLRPCVariant>&, ePtrList<eXMLRPCV
 eXMLRPCVariant::eXMLRPCVariant(const eXMLRPCVariant &c)
 	:type(c.type)
 {
+	init_eXMLRPCVariant(c);
+}
+void eXMLRPCVariant::init_eXMLRPCVariant(const eXMLRPCVariant &c)
+{
 	switch ( type )
 	{
 		case STRUCT:
@@ -359,11 +363,6 @@ void eXMLRPCResponse::haveData(void *data, int len)
 		result.sprintf("XMLRPC error %d\n", err);
 		connection->localstate=eHTTPConnection::stateResponse;
 	}
-}
-
-void xmlrpc_initialize(eHTTPD *httpd)
-{
-	httpd->addResolver(new eHTTPXMLRPCResolver);
 }
 
 void xmlrpc_addMethod(eString methodName, int (*proc)(std::vector<eXMLRPCVariant>&, ePtrList<eXMLRPCVariant>&))

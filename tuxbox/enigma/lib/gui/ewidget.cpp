@@ -1,6 +1,5 @@
 #include <errno.h>
 
-#include <enigma.h>
 #include <lib/base/eptrlist.h>
 #include <lib/base/eerror.h>
 #include <lib/gdi/gfbdc.h>
@@ -12,8 +11,21 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
+#include <lib/gui/echeckbox.h>
+#include <lib/gui/ebutton.h>
+#include <lib/gui/textinput.h>
+#include <lib/gui/statusbar.h>
+#include <lib/gui/enumber.h>
+#include <lib/gui/elabel.h>
+#include <lib/gui/combobox.h>
+#include <lib/gui/eprogress.h>
+#include <lib/gui/slider.h>
+
+extern eWidget *currentFocus;
+
 eWidget *eWidget::root;
 Signal2< void, ePtrList<eAction>*, int >eWidget::showHelp;
+Signal1< void, const eWidget*>eWidget::globalFocusChanged;
 eWidget::actionMapList eWidget::globalActions;
 
 eWidget::eWidget(eWidget *_parent, int takefocus)
@@ -21,7 +33,7 @@ eWidget::eWidget(eWidget *_parent, int takefocus)
 	shortcut(0), shortcutFocusWidget(0),
 	focus(0), TLW(0), takefocus(takefocus),
 	state( parent && !(parent->state&stateVisible) ? stateShow : 0 ),
-	target(0), in_loop(0), have_focus(0), just_showing(0),
+	target(0), result(0), in_loop(0), have_focus(0), just_showing(0),
 	font( parent ? parent->font : eSkin::getActive()->queryFont("global.normal") ),
 	backgroundColor(_parent?gColor(-1):gColor(eSkin::getActive()->queryScheme("global.normal.background"))),
 	foregroundColor(_parent?parent->foregroundColor:gColor(eSkin::getActive()->queryScheme("global.normal.foreground"))),
@@ -32,6 +44,10 @@ eWidget::eWidget(eWidget *_parent, int takefocus)
 	,LCDTmp(0)
 #endif
 {
+	init_eWidget();
+}
+void eWidget::init_eWidget()
+{
 	if (takefocus)
 		getTLW()->focusList()->push_back(this);
 
@@ -40,9 +56,10 @@ eWidget::eWidget(eWidget *_parent, int takefocus)
 
 	addActionMap(&i_cursorActions->map);
 }
-
 eWidget::~eWidget()
 {
+	if (pixmap)
+		pixmap->compressdata();
 	hide();
 	if (takefocus)
 	{
@@ -61,6 +78,38 @@ eWidget::~eWidget()
 		delete childlist.front();
 }
 
+void eWidget::setActive( bool active, eWidget *insert, bool after )
+{
+	eWidget *tlw = getTLW();
+	if (active && !takefocus)
+	{
+		ePtrList<eWidget> &list = *getTLW()->focusList();
+		if ( insert )
+		{
+			ePtrList<eWidget>::iterator it =
+				std::find( list.begin(), list.end(), insert );
+			if ( it != list.end() )
+				list.insert( after ? ++it : it, this );
+			else
+				list.push_back(this);
+		}
+		else
+			list.push_back(this);
+		if ( tlw->isVisible() )
+			tlw->takeFocus();
+		takefocus=1;
+	}
+	else if (!active && takefocus)
+	{
+		if ( have_focus )
+			lostFocus();
+		if ( tlw->isVisible() )
+			tlw->releaseFocus();
+		tlw->focusList()->remove(this);
+		takefocus=0;
+	}
+}
+
 void eWidget::takeFocus()
 {
 		// desktop shouldnt receive global focus
@@ -70,8 +119,9 @@ void eWidget::takeFocus()
 	
 	if (!have_focus)
 	{
-		oldTLfocus=eZap::getInstance()->focus;
-		eZap::getInstance()->focus=this;
+		oldTLfocus=currentFocus;
+		currentFocus=this;
+		/*emit*/ globalFocusChanged(currentFocus);
 /*		if (oldTLfocus)
 		{
 			eDebug("focus problem");
@@ -96,8 +146,11 @@ void eWidget::releaseFocus()
 		if (!have_focus)
 		{
 			removeActionMap(&i_focusActions->map);
-			if (eZap::getInstance()->focus==this)	// if we don't have lost the focus, ...
-				eZap::getInstance()->focus=oldTLfocus;	// give it back
+			if (currentFocus==this)	// if we don't have lost the focus, ...
+			{
+				currentFocus=oldTLfocus;	// give it back
+				/*emit*/ globalFocusChanged(currentFocus);
+			}
 			else
 				eFatal("someone has stolen the focus");
 		}
@@ -141,9 +194,11 @@ void eWidget::setPalette()
 
 void eWidget::resize(const eSize& nsize)
 {
+	bool b = size != nsize;
 	size=nsize;
 	recalcClientRect();
-	event(eWidgetEvent(eWidgetEvent::changedSize));
+	if ( b )
+		event(eWidgetEvent(eWidgetEvent::changedSize));
 	recalcClip();
 }
 
@@ -156,10 +211,12 @@ void eWidget::recalcAbsolutePosition()
 
 void eWidget::move(const ePoint& nposition)
 {
+	bool b = position != nposition;
 	position=nposition;
-	recalcClip();
 	recalcAbsolutePosition();
-	event(eWidgetEvent(eWidgetEvent::changedPosition));
+	recalcClip();
+	if ( b )
+		event(eWidgetEvent(eWidgetEvent::changedPosition));
 }
 
 void eWidget::cresize(const eSize& nsize)
@@ -174,10 +231,26 @@ void eWidget::cmove(const ePoint& nposition)
 	move(ePoint(nposition.x()-clientrect.x(), nposition.y()-clientrect.y()));
 }
 
+void eWidget::valign()
+{ 
+	unsigned int v_tvsystem;
+	eConfig::getInstance()->getKey("/elitedvb/video/tvsystem", v_tvsystem );
+	
+	if ( v_tvsystem==2)
+	{
+		move(ePoint((720-size.width())/2, (480-size.height())/2 )); // NTSC: 720x480
+  	}
+	else 
+	{
+		move(ePoint((720-size.width())/2, (576-size.height())/2)); // PAL: 720x576
+  	}
+}
+
 void eWidget::redraw(eRect area)		// area bezieht sich nicht auf die clientarea
 {
 	if (getTLW()->just_showing)
 		return;
+
 	if (state & stateVisible )
 	{
 		if (area.isNull())
@@ -267,8 +340,7 @@ int eWidget::exec()
 
 	in_loop=-1;	// hey, exec hat angefangen aber noch nicht in der mainloop
 
-	event(eWidgetEvent(eWidgetEvent::execBegin));	// hat jemand was dagegen einzuwenden?
-
+	event(eWidgetEvent(eWidgetEvent::execBegin)); // hat jemand was dagegen einzuwenden?
 	if (in_loop)	// hatte wohl jemand.
 	{
 		in_loop=1;		// wir betreten die mainloop
@@ -276,7 +348,6 @@ int eWidget::exec()
 		in_loop=0; // nu sind wir jedenfalls draussen.
 	}
 	event(eWidgetEvent(eWidgetEvent::execDone));
-	
 	return result;
 }
 
@@ -294,11 +365,7 @@ void eWidget::clear()
 
 void eWidget::close(int res)
 {
-	if (in_loop==0)
-		eFatal("attempt to close non-execing widget");
-	if (in_loop==1)	// nur wenn das ne echte loop ist
-		eApp->exit_loop();
-	result=res;
+	event(eWidgetEvent(eWidgetEvent::wantClose,res));
 }
 
 void eWidget::show()
@@ -309,7 +376,7 @@ void eWidget::show()
 	ASSERT(!(state&stateVisible));
 
 	state|=stateShow;
-	
+
 	if (!parent || (parent->state&stateVisible))
 	{
 		++getTLW()->just_showing;
@@ -406,7 +473,7 @@ void eWidget::addActionToHelpList(eAction *action)
 
 void eWidget::clearHelpList()
 {
- actionHelpList.clear();
+	actionHelpList.clear();
 }
 
 void eWidget::setHelpID(int fHelpID)
@@ -420,7 +487,7 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 	{
 	case eWidgetEvent::childChangedHelpText:
 		/* emit */ focusChanged(focus);  // faked focusChanged Signal to the Statusbar
-	break;
+		break;
 	case eWidgetEvent::evtAction:
 		if (evt.action == shortcut && isVisible())
 			(shortcutFocusWidget?shortcutFocusWidget:this)->
@@ -494,7 +561,6 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 	case eWidgetEvent::lostFocus:
 		lostFocus();
 		break;
-
 	case eWidgetEvent::changedSize:
 	case eWidgetEvent::changedFont:
 	case eWidgetEvent::changedPosition:
@@ -503,6 +569,16 @@ int eWidget::eventHandler(const eWidgetEvent &evt)
 		break;
 	case eWidgetEvent::evtShortcut:
 			setFocus(this);
+		break;
+	case eWidgetEvent::wantClose:
+/*		if (in_loop==0)
+			eFatal("attempt to close non-execing widget");*/
+		if (in_loop==1)	// nur wenn das ne echte loop ist
+		{
+			in_loop=-1;
+			eApp->exit_loop();
+		}
+		result=evt.parameter;
 		break;
 	default:
 		break;
@@ -530,22 +606,24 @@ void eWidget::lostFocus()
 
 void eWidget::recalcClientRect()
 {
-	clientrect=eRect(0, 0, size.width(), size.height());
+	clientrect.setWidth(size.width());
+	clientrect.setHeight(size.height());
 }
 
 void eWidget::recalcClip()
 {
 	eWidget *t=this;
-	eRect rect=eRect(0, 0, size.width(), size.height());
+	clientclip=eRect(0, 0, size.width(), size.height());
 	while (t)
 	{
-		rect&=t->clientrect;
-		rect.moveBy(t->position.x(), t->position.y());
+		clientclip&=t->clientrect;
+		clientclip.moveBy(t->position.x(), t->position.y());
 		t=t->parent;
 		if (t)
-			rect.moveBy(t->clientrect.x(), t->clientrect.y());
+			clientclip.moveBy(t->clientrect.x(), t->clientrect.y());
 	}
-	clientclip=rect;
+	for (ePtrList<eWidget>::iterator it( childlist ); it != childlist.end(); ++it )
+		it->recalcClip();
 }
 
 void eWidget::checkFocus()
@@ -759,11 +837,7 @@ void eWidget::setFocus(eWidget *newfocus)
 		return getTLW()->setFocus(newfocus);
 
 	if (focus == newfocus)
-	{
-//		eDebug("focus == newfocus");
-//		/* emit */ focusChanged(focus);
 		return;
-	}
 
 	if (focus)
 		focus->event(eWidgetEvent(eWidgetEvent::lostFocus));
@@ -1017,7 +1091,12 @@ int eWidget::setProperty(const eString &prop, const eString &value)
 	else if (prop=="name")
 		name=value;
 	else if (prop=="pixmap")
+	{
 		setPixmap(eSkin::getActive()->queryImage(value));
+		if (pixmap)
+			pixmap->uncompressdata();
+
+	}
 	else if (prop=="foregroundColor")
 		setForegroundColor(eSkin::getActive()->queryColor(value));
 	else if (prop=="backgroundColor")
@@ -1105,6 +1184,86 @@ void eWidget::setShortcutFocus(eWidget *focus)
 	if (!focus)
 		eFatal("setShortcutFocus with unknown widget!");
 }
+
+eProgress* eWidget::CreateSkinnedProgress(const char* name, int start, int perc, int takefocus )
+{
+	eProgress* prg = new eProgress(this, takefocus);
+	prg->setName(name);
+	prg->setParams( start, perc );
+	return prg;
+}
+eSlider* eWidget::CreateSkinnedSlider(const char* name, const char *descr, int min, int max )
+{
+	eSlider* s = new eSlider(this,(descr ? CreateSkinnedLabel(descr) : 0), min, max);
+	s->setName(name);
+	return s;
+
+}
+eLabel* eWidget::CreateSkinnedLabel(const char* name,const char* text, int flags)
+{
+	eLabel* l = new eLabel(this,flags);
+	l->setName(name);
+	if (text)
+		l->setText(text);
+	return l;
+}
+eComboBox* eWidget::CreateSkinnedComboBoxWithLabel(const char* name, int OpenEntries, const char* lbldescr, int takefocus)
+{
+	return  CreateSkinnedComboBox(name, OpenEntries, (lbldescr ? CreateSkinnedLabel(lbldescr) : 0), takefocus);
+}
+eComboBox* eWidget::CreateSkinnedComboBox(const char* name, int OpenEntries, eLabel* descr, int takefocus)
+{
+	eComboBox* cbo = new eComboBox(this, OpenEntries, descr, takefocus );
+	cbo->setName(name);
+	return cbo;
+}
+
+eCheckbox* eWidget::CreateSkinnedCheckbox(const char* name,int defaultvalue, const char* configkey,int takefocus)
+{
+	if (configkey)
+		eConfig::getInstance()->getKey(configkey, defaultvalue );
+	eCheckbox* chk =new eCheckbox(this,defaultvalue,takefocus);
+	chk->setName(name);
+	return chk;
+}
+eNumber* eWidget::CreateSkinnedNumberWithLabel(const char* name, int defaultvalue, int len, int min, int max, int maxdigits, int *init, int isactive, const char* lbldescr, int grabfocus)
+{
+	return CreateSkinnedNumber(name, defaultvalue, len, min, max, maxdigits, init, isactive, (lbldescr ? CreateSkinnedLabel(lbldescr) : 0), grabfocus);
+}
+eNumber* eWidget::CreateSkinnedNumber(const char* name, int defaultvalue, int len, int min, int max, int maxdigits, int *init, int isactive, eLabel* descr, int grabfocus)
+{
+	eNumber* n = new eNumber(this, len, min, max, maxdigits, init, isactive, descr, grabfocus);
+	n->setName(name);
+	if (!init)
+		n->setNumber(defaultvalue);
+	return n;
+}
+eTextInputField* eWidget::CreateSkinnedTextInputField(const char* name, const char* defaultvalue, const char* configkey, const char* lblname,eTextInputFieldHelpWidget *hlp)
+{
+	eTextInputField* tb=new eTextInputField(this,lblname ? CreateSkinnedLabel(lblname) : 0,hlp);
+	tb->setName(name);
+	if (defaultvalue)
+	{
+		eString val = eString(defaultvalue);
+		char* p = 0;
+		if (configkey)
+			eConfig::getInstance()->getKey(configkey, p);
+		if (p) val = eString(p);
+		tb->setText(val);
+	}
+	return tb;
+}
+eButton* eWidget::CreateSkinnedButton(const char* name, eLabel* descr, int takefocus)
+{
+	eButton* btn =new eButton(this, descr, takefocus);
+	btn->setName(name);
+	return btn;
+}
+void eWidget::BuildSkin(const char* name)
+{
+	if (eSkin::getActive()->build(this, name))
+		eFatal("skin load of \"%s\" failed",name);
+};
 
 static eWidget *create_eWidget(eWidget *parent)
 {

@@ -1,15 +1,14 @@
 #include <lib/gdi/gpixmap.h>
+#include <zlib.h>
 
 gLookup::gLookup()
+	:size(0), lookup(0)
 {
-	size=0;
-	lookup=0;
 }
 
 gLookup::gLookup(int size, const gPalette &pal, const gRGB &start, const gRGB &end)
+	:size(0), lookup(0)
 {
-	size=0;
-	lookup=0;
 	build(size, pal, start, end);
 }
 
@@ -17,7 +16,7 @@ void gLookup::build(int _size, const gPalette &pal, const gRGB &start, const gRG
 {
 	if (lookup)
 	{
-		delete lookup;
+		delete [] lookup;
 		lookup=0;
 		size=0;
 	}
@@ -88,21 +87,21 @@ void gPixmap::fill(const eRect &area, const gColor &color)
 
 void gPixmap::blit(const gPixmap &src, ePoint pos, const eRect &clip, int flag)
 {
-	
 	eRect area=eRect(pos, src.getSize());
-	if (!clip.isNull())
-		area&=clip;
+	area&=clip;
 	area&=eRect(ePoint(0, 0), getSize());
 	if ((area.width()<0) || (area.height()<0))
 		return;
-	
+
 	eRect srcarea=area;
 	srcarea.moveBy(-pos.x(), -pos.y());
+	
+	__u8 *srcdata=src.uncompressdatanoreplace();
+	__u8 *srcptr=srcdata;
+	__u8 *dstptr=(__u8*)data;
 
 	if ((bpp == 8) && (src.bpp==8))
 	{
-		__u8 *srcptr=(__u8*)src.data;
-		__u8 *dstptr=(__u8*)data;
 	
 		srcptr+=srcarea.left()*bypp+srcarea.top()*src.stride;
 		dstptr+=area.left()*bypp+area.top()*stride;
@@ -131,8 +130,6 @@ void gPixmap::blit(const gPixmap &src, ePoint pos, const eRect &clip, int flag)
 		}
 	} else if ((bpp == 32) && (src.bpp==8))
 	{
-		__u8 *srcptr=(__u8*)src.data;
-		__u8 *dstptr=(__u8*)data; // !!
 		__u32 pal[256];
 		
 		for (int i=0; i<256; ++i)
@@ -177,6 +174,8 @@ void gPixmap::blit(const gPixmap &src, ePoint pos, const eRect &clip, int flag)
 		}
 	} else
 		eFatal("cannot blit %dbpp from %dbpp", bpp, src.bpp);
+	if (src.compressedsize)
+		delete[] srcdata;
 }
 
 void gPixmap::mergePalette(const gPixmap &target)
@@ -188,11 +187,11 @@ void gPixmap::mergePalette(const gPixmap &target)
 	for (int i=0; i<clut.colors; i++)
 		lookup[i].color=target.clut.findColor(clut.data[i]);
 	
-	delete clut.data;
+	delete [] clut.data;
 	clut.colors=target.clut.colors;
 	clut.data=new gRGB[clut.colors];
 	memcpy(clut.data, target.clut.data, sizeof(gRGB)*clut.colors);
-
+	uncompressdata();
 	__u8 *dstptr=(__u8*)data;
 
 	for (int ay=0; ay<y; ay++)
@@ -202,7 +201,53 @@ void gPixmap::mergePalette(const gPixmap &target)
 		dstptr+=stride;
 	}
 	
-	delete lookup;	
+	delete [] lookup;
+	compressdata();
+}
+void gPixmap::compressdata()
+{
+	if (cancompress && !compressedsize)
+	{
+		uLongf comprlen = x*y*bypp;
+		if (comprlen > 1000) // only compress "big" images
+		{
+			lock();
+			__u8 compressed[comprlen];
+			if (compress2(compressed,&comprlen,(__u8*)data,comprlen,Z_BEST_SPEED) == Z_OK)
+			{
+				delete[] (char*)data;
+				data = new __u8[comprlen];
+				memcpy(data,compressed,comprlen);
+				compressedsize=comprlen;
+			}
+			unlock();
+		}
+	}
+}
+void gPixmap::uncompressdata()
+{
+	if (compressedsize)
+	{
+		lock();
+		uLongf uncomprlen = x*y*bypp;
+		__u8* uncompressed = new __u8[uncomprlen];
+		uncompress(uncompressed,&uncomprlen,(__u8*)data,compressedsize);
+		delete[] (char*)data;
+		data = uncompressed;
+		compressedsize = 0;
+		unlock();
+	}
+}
+__u8* gPixmap::uncompressdatanoreplace() const
+{
+	if (compressedsize)
+	{
+		uLongf uncomprlen = x*y*bypp;
+		__u8* uncompressed = new __u8[uncomprlen];
+		uncompress(uncompressed,&uncomprlen,(__u8*)data,compressedsize);
+		return uncompressed;
+	}
+	return (__u8*)data;
 }
 
 void gPixmap::line(ePoint start, ePoint dst, gColor color)
@@ -263,13 +308,14 @@ void gPixmap::finalLock()
 }
 
 gPixmap::gPixmap()
+	:final(0),cancompress(false),compressedsize(0)
 {
-	final=0;
 }
 
 gPixmap::~gPixmap()
 {
 	finalLock();
+	delete[] clut.data;
 }
 
 gImage::gImage(eSize size, int _bpp)
@@ -294,21 +340,14 @@ gImage::gImage(eSize size, int _bpp)
 		bypp=(bpp+7)/8;
 	}
 	stride=x*bypp;
-	if (bpp==8)
-	{
-		clut.colors=256;
-		clut.data=new gRGB[clut.colors];
-	} else
-	{
-		clut.colors=0;
-		clut.data=0;
-	}
+	clut.colors=0;
+	clut.data=0;
 	data=new char[x*y*bypp];
+	cancompress = true;
 }
 
 gImage::~gImage()
 {
 	finalLock();
-	delete[] clut.data;
 	delete[] (char*)data;
 }

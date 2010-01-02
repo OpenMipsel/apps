@@ -1,64 +1,69 @@
-// for debugging use:
-// #define SYNC_PAINT
 #include <unistd.h>
-#ifndef SYNC_PAINT
 #include <pthread.h>
-#endif
-
 #include <lib/gdi/grc.h>
 #include <lib/gdi/font.h>
+#include <lib/gdi/lcd.h>
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 
-#define MAXSIZE 1024
-
-#ifndef SYNC_PAINT
 void *gRC::thread_wrapper(void *ptr)
 {
-	nice(3);
+//	nice(1); //3
 	return ((gRC*)ptr)->thread();
 }
-#endif
 
 gRC *gRC::instance=0;
 
-gRC::gRC(): queuelock(MAXSIZE), queue(2048)
+gRC::gRC()
 {
 	ASSERT(!instance);
 	instance=this;
-	queuelock.lock(MAXSIZE);
-#ifndef SYNC_PAINT
+	pthread_mutex_init(&mutex, 0);
+	pthread_cond_init(&cond, 0);
+	rp=wp=0;
 	eDebug(pthread_create(&the_thread, 0, thread_wrapper, this)?"RC thread couldn't be created":"RC thread createted successfully");
-#endif
 }
 
 gRC::~gRC()
 {
+	fbClass::getInstance()->lock();
+#ifndef DISABLE_LCD
+	eDBoxLCD::getInstance()->lock();
+#endif
+	instance=0;
 	gOpcode o;
 	o.dc=0;
 	o.opcode=gOpcode::shutdown;
 	submit(o);
-	instance=0;
+	eDebug("waiting for gRC thread shutdown");
+	pthread_join(the_thread, 0);
+	eDebug("gRC thread has finished");
+	pthread_mutex_destroy(&mutex);
+	pthread_cond_destroy(&cond);
 }
 
 void *gRC::thread()
 {
-#ifndef SYNC_PAINT
 	while (1)
-#else
-	while (queue.size())
-#endif
 	{
-		queuelock.lock(1);
-		gOpcode& o(queue.current());
-		if (o.opcode==gOpcode::shutdown)
-			break;
-		o.dc->exec(&o);
-		queue.dequeue();
+		pthread_mutex_lock(&mutex);
+		if ( rp != wp )
+		{
+			gOpcode o(queue[rp++]);
+			if ( rp == MAXSIZE )
+				rp=0;
+			pthread_mutex_unlock(&mutex);
+			if (o.opcode==gOpcode::shutdown)
+				break;
+			o.dc->exec(&o);
+		}
+		else
+		{
+			pthread_cond_wait(&cond, &mutex);
+			pthread_mutex_unlock(&mutex);
+		}
 	}
-#ifndef SYNC_PAINT
 	pthread_exit(0);
-#endif
 	return 0;
 }
 
@@ -86,6 +91,8 @@ gPainter::~gPainter()
 
 void gPainter::begin(const eRect &rect)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	dc.lock();
 	o.dc=&dc;
@@ -115,6 +122,8 @@ void gPainter::setFont(const gFont &mfont)
 
 void gPainter::renderText(const eRect &pos, const std::string &string, int flags)
 {
+	if ( dc.islocked() )
+		return;
 	eRect area=pos;
 	area.moveBy(logicalZero.x(), logicalZero.y());
 
@@ -128,6 +137,8 @@ void gPainter::renderText(const eRect &pos, const std::string &string, int flags
 
 void gPainter::renderPara(eTextPara &para, ePoint offset)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::renderPara;
@@ -137,6 +148,8 @@ void gPainter::renderPara(eTextPara &para, ePoint offset)
 
 void gPainter::fill(const eRect &area)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::fill;
@@ -150,6 +163,8 @@ void gPainter::fill(const eRect &area)
 
 void gPainter::clear()
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::fill;
@@ -159,6 +174,8 @@ void gPainter::clear()
 
 void gPainter::setPalette(gRGB *colors, int start, int len)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::setPalette;
@@ -174,6 +191,8 @@ void gPainter::setPalette(gRGB *colors, int start, int len)
 
 void gPainter::mergePalette(gPixmap &target)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::mergePalette;
@@ -183,6 +202,8 @@ void gPainter::mergePalette(gPixmap &target)
 
 void gPainter::line(ePoint start, ePoint end)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::line;
@@ -208,6 +229,8 @@ void gPainter::resetLogicalZero()
 
 void gPainter::clip(eRect clip)
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::clip;
@@ -220,6 +243,8 @@ void gPainter::clip(eRect clip)
 
 void gPainter::clippop()
 {
+	if ( dc.islocked() )
+		return;
 	ASSERT (cliparea.size()>1);
 	gOpcode o;
 	o.dc=&dc;
@@ -231,6 +256,8 @@ void gPainter::clippop()
 
 void gPainter::flush()
 {
+	if ( dc.islocked() )
+		return;
 	gOpcode o;
 	o.dc=&dc;
 	o.opcode=gOpcode::flush;
@@ -277,6 +304,8 @@ void gPixmapDC::exec(gOpcode *o)
 		para->renderString(o->parm.renderText->text, o->flags);
 		para->blit(*this, ePoint(0, 0), o->parm.renderText->backgroundColor, o->parm.renderText->foregroundColor);
 		para->destroy();
+		if (o->parm.renderText->text)
+			free(o->parm.renderText->text);
 		delete o->parm.renderText;
 		break;
 	}

@@ -8,10 +8,16 @@
 eCheckbox::eCheckbox(eWidget *parent, int checked, int takefocus, bool swapTxtPixmap, const char *deco)
 	:eButton(parent, 0, takefocus, deco), swapTxtPixmap(swapTxtPixmap)
 {
+	init_eCheckbox(checked);
+}
+void eCheckbox::init_eCheckbox(int checked)
+{
 	align=eTextPara::dirLeft;
 	ischecked = -1;
 	setCheck(checked);
 	CONNECT(selected, eCheckbox::sel);
+	normalB=eSkin::getActive()->queryScheme("global.normal.background");
+	setBackgroundColor(normalB);
 }
 
 eCheckbox::~eCheckbox()
@@ -82,6 +88,8 @@ int eCheckbox::setProperty(const eString &prop, const eString &value)
 		swapTxtPixmap = (value != "off");
 		event( eWidgetEvent::changedSize );
 	}
+	else if (prop=="backgroundColor")
+		;
 	else
 		return eButton::setProperty(prop, value);
 	return 0;
