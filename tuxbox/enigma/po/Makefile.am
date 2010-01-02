@@ -21,7 +21,7 @@ SUFFIXES = .po .gmo .mo .sed .sin .nop .po-update
 	@lang=`echo $* | sed -e 's,.*/,,'`; \
 	test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
 	echo "$${cdcmd}rm -f $${lang}.gmo && @GMSGFMT@ -c --statistics -o $${lang}.gmo $${lang}.po"; \
-	cd $(srcdir) && rm -f $${lang}.gmo && @GMSGFMT@ -c --statistics -o t-$${lang}.gmo $${lang}.po && mv t-$${lang}.gmo $${lang}.gmo
+	cd $(srcdir) && rm -f $${lang}.gmo && @GMSGFMT@ -c --statistics -o t-$${lang}.gmo $${lang}.po && (mv t-$${lang}.gmo $${lang}.gmo  || /bin/true)
 
 .nop.po-update:
 	@lang=`echo $@ | sed -e 's/\.po-update$$//'`; \
@@ -94,7 +94,8 @@ install-data-local: install-data-@USE_NLS@
 
 install-data-no: all
 install-data-yes: all
-	$(mkinstalldirs) $(DESTDIR)$(datadir)
+	$(mkinstalldirs) $(DESTDIR)$(localedir)
+	cp -pv $(srcdir)/locale.alias $(DESTDIR)$(localedir)
 	@catalogs='@CATALOGS@'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \

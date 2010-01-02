@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: tuxbox-enigma 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-12-16 21:07+0100\n"
-"PO-Revision-Date: Thu Aug 11 13:47:26 CEST 2005\n"
+"PO-Revision-Date: Thu Aug 11 13:47:28 CEST 2005\n"
 "Last-Translator: unknown\n"
-"Language-Team: Srpski / arrow@verat.net\n"
+"Language-Team: Romanian / lucgas@lucian.homelinux.com\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -26,11 +26,11 @@ msgstr ""
 
 #: default.esml:382
 msgid "here you can change your sat/lnb mapping"
-msgstr ""
+msgstr "aici poti schimba sat/lnb mapping"
 
 #: default.esml:417 src/enigma_scan.cpp:49
 msgid "Satfind"
-msgstr "Proveravanje signala"
+msgstr "Satfind"
 
 #: chk_blue2.esml:315
 msgid "Pause "
@@ -38,61 +38,59 @@ msgstr "Pauza"
 
 #: default.esml:444
 msgid "motor power input difference between running and not running"
-msgstr "azlika u jacini data iz rotora izmedju funkcionisanja i njegovog stopa"
+msgstr "diferenta curent intrare motor intre functional si nicht functional"
 
 #: default.esml:408
-#, fuzzy
 msgid "send the complete DiSEqC sequence twice"
-msgstr "Dupiranje momenta DISEqCa completnog"
+msgstr "transmite completa secventa DiSEqC dublu"
 
 #: default.esml:432 default.esml:480 default.esml:584 src/rotorconfig.cpp:597
 msgid "Satellite:"
-msgstr "Satelit"
+msgstr "Satelit:"
 
 #: default.esml:409
 msgid "send no DiSEqC when only Hi/Lo or H/V changes"
-msgstr ""
+msgstr "transmite no DiSEqC daca doresti numai Hi/Lo sau H/V"
 
 #: default.esml:651
 msgid "SNR"
 msgstr "SNR"
 
 #: default.esml:407
-#, fuzzy
 msgid "Uncommitted Switch:"
-msgstr "Izaberi switch ne ubacen sa 4 opcije"
+msgstr "Uncommitted Switch:"
 
 #: default.esml:590 default.esml:608 default.esml:627
 msgid "enable/disable inversion here (ok)"
-msgstr "Aktivirati/ne aktivirati inverziju ? (OK)"
+msgstr "armeaza/dezarmeaza inversiune (ok)"
 
 #: default.esml:411
 msgid "prev. page"
-msgstr "Prethodna Stranica"
+msgstr "pagina anterioara"
 
 #: default.esml:384
 msgid "LOF/L:"
-msgstr "LOF/L :"
+msgstr "LOF/L:"
 
 #: default.esml:753 src/timer.cpp:2692
 msgid "Wednesday"
-msgstr "Sreda"
+msgstr "Miercuri"
 
 #: default.esml:846
 msgid "Partition Check"
-msgstr "Pregledanje vase particije"
+msgstr "Partition Control"
 
 #: default.esml:794 default.esml:818
 msgid "enter recording end time (0..9, left, right, ok)"
-msgstr "Ubacite cas za kraj snimanja (0...9, levo, desno, ok)"
+msgstr "introduceti sfirsit inregistrare (0..9, stinga, dreapta, ok)"
 
 #: default.esml:758 default.esml:762
 msgid "select year (ok)"
-msgstr "Izaberi godinu (ok)"
+msgstr "selecteaza An (ok)"
 
 #: default.esml:389
 msgid "increased voltage"
-msgstr "Povecaj voltazu"
+msgstr "mareste voltaj"
 
 #: default.esml:420 default.esml:654
 #, fuzzy
@@ -102,7 +100,7 @@ msgstr "OK"
 #: default.esml:639
 #, fuzzy
 msgid "choose the code rate HP (left, right)"
-msgstr "Izabrati FEC (levo/desno)"
+msgstr "alege FEC (stinga, dreapta)"
 
 #: default.esml:390
 msgid "turn 12V output on (for 12V relais) (ok)"
@@ -110,38 +108,35 @@ msgstr ""
 
 #: default.esml:512
 msgid "enable/disable use BAT for scan (if exists)"
-msgstr "Aktiviranje/desaktiviranje upotrebu BATa (ako postoji)"
+msgstr "armeaza/dezarmeaza, foloseste BAT pt scan"
 
 #: default.esml:574
 msgid "Skin Selector"
-msgstr "Otvoriti podesavanje teme"
+msgstr "Skin Selector"
 
 #: default.esml:554
 msgid "transponder scanned:"
-msgstr "Skenirani transponder:"
+msgstr "transponderi gasiti:"
 
 #: default.esml:746
-#, fuzzy
 msgid "press ok to change event name manually"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pt a schimba manual nume event"
 
 #: default.esml:817
 msgid "recording end time:"
-msgstr "Cas kraja snimanja :"
+msgstr "sfirsit inregistrare"
 
 #: default.esml:443
 msgid "Use motor input power for running detection.. else use timeout"
-msgstr ""
-"Upotrebiti jacinu ulaza u rotor za obicnu detekciju..zaustavljanje ostalih "
-"upotrbljavanja"
+msgstr "Uz motor curent propriu pentru detectie...sau timeout"
 
 #: default.esml:526
 msgid "no circ polariz."
-msgstr ""
+msgstr "nu circ polariz."
 
 #: default.esml:464 default.esml:485
 msgid "Direction:"
-msgstr "Direkcija :"
+msgstr "Directie:"
 
 #: default.esml:589 default.esml:607
 msgid "MHz"
@@ -149,7 +144,7 @@ msgstr "MHz"
 
 #: default.esml:553
 msgid "services scanned     :"
-msgstr "Skenirani servisi:"
+msgstr "servicii total :"
 
 #: default.esml:577 src/parentallock.cpp:101 src/setup_lcd.cpp:118
 #: src/setup_keyboard.cpp:55 src/setup_osd.cpp:269 src/setup_rc.cpp:127
@@ -157,24 +152,24 @@ msgstr "Skenirani servisi:"
 #: src/setupvideo.cpp:180 src/setupvideo.cpp:418 src/tpeditwindow.cpp:112
 #: src/tpeditwindow.cpp:154
 msgid "save changes and return"
-msgstr "Zadrzati izmene i zatvoriti prozor"
+msgstr "salveaza schimbari si inapoi"
 
 #: default.esml:536
 #, fuzzy
 msgid "aborts the transponder scan"
-msgstr "Startuj pretrazivanje transpondera"
+msgstr "porneste scan transponder"
 
 #: default.esml:468 default.esml:737 default.esml:897 default.esml:934
 msgid "remove"
-msgstr "Izbrisati"
+msgstr "sterge"
 
 #: default.esml:442 default.esml:477
 msgid "Motor Config"
-msgstr "Setting za rotor"
+msgstr "Configuratie motor"
 
 #: default.esml:468
 msgid "remove selected entry"
-msgstr "Izbrisati ulaz izabran"
+msgstr "sterge campurile selectate"
 
 #: default.esml:892
 msgid "abc &lt;-&gt; ABC"
@@ -186,41 +181,39 @@ msgstr ""
 
 #: default.esml:400
 msgid "select DiSEqC mode (ok)"
-msgstr "Izaberite DISEqC tip (ok)"
+msgstr "selecteaza modul DiSEqC (ok)"
 
 #: default.esml:410
 msgid "Swap Commands"
-msgstr "Swap Commands"
+msgstr "Comenzi Swap"
 
 #: default.esml:388
 msgid "enter LNB threshold frequency (0..9, ok)"
-msgstr "Ubaciti frekvenciju razmaka od LNBa(0...9,ok)"
+msgstr "introdu frecventa LNB threshold  (0..9, ok)"
 
 #: default.esml:493
 msgid "close motor setup"
-msgstr "Zatvoriti meni za podesavanje rotora"
+msgstr "inchide motor setup"
 
 #: default.esml:459
-#, fuzzy
 msgid "insert rotor memory cell for this orbital position"
-msgstr "Ubacite orbitalnu poziciju za zadrzavanje u rotor"
+msgstr "introduceti locul in memorie pentru aceasta pozitie orbitala"
 
 #: default.esml:525 default.esml:544
-#, fuzzy
 msgid "add only unscrambled services"
-msgstr "Izbrisati servis"
+msgstr "adauga numai programe libere"
 
 #: default.esml:536 default.esml:861
 msgid "abort"
-msgstr "Zatvoriti"
+msgstr "renunta"
 
 #: default.esml:840
 msgid "select filsystem to format"
-msgstr "Izaberite sistem fajlova za formatiranje"
+msgstr "selecteaza filesystem pentru HDD"
 
 #: default.esml:849
 msgid "close window"
-msgstr "Zatvoriti prozor"
+msgstr "inchide fereastra"
 
 #: default.esml:428 default.esml:653
 msgid "BER"
@@ -228,32 +221,32 @@ msgstr "BER"
 
 #: default.esml:487
 msgid "Recalc Params:"
-msgstr "Prebrojavanje sustava :"
+msgstr "Recalcularea parametrilor:"
 
 #: default.esml:588 default.esml:606 default.esml:625
 msgid "enter transponder frequeny (0..9, left, right)"
-msgstr "Ubaciti frekvenciju transpondera (0..9, Levo, desno)"
+msgstr "introduceti frecventa transponderului (0..9, stanga, dreapta)"
 
 #: default.esml:467 default.esml:738 default.esml:932
 msgid "add"
-msgstr "Dodati"
+msgstr "adauga"
 
 #: default.esml:515
 msgid "start the transponder scan"
-msgstr "Startovati skeniranje transpondera"
+msgstr "incepe scanarea transponderului"
 
 #: default.esml:515 default.esml:527 default.esml:546 default.esml:569
 msgid "start scan"
-msgstr "Poceti pretrazivanje"
+msgstr "incepe scanarea"
 
 #: default.esml:838
 msgid "check"
-msgstr "Proveravanje"
+msgstr "marcheaza"
 
 #: default.esml:667 default.esml:674 default.esml:681 default.esml:689
 #: default.esml:700 default.esml:711
 msgid "Services"
-msgstr "Servisis"
+msgstr "Servicii"
 
 #: default.esml:878
 msgid "&#54;"
@@ -268,14 +261,13 @@ msgid "Coderate LP:"
 msgstr ""
 
 #: stone.esml:463 silver.esml:470
-#, fuzzy
 msgid "subservices"
-msgstr "Servisis"
+msgstr "subservicii"
 
 #: default.esml:633
 #, fuzzy
 msgid "choose the bandwidth (left, right)"
-msgstr "Izabrati FEC (levo/desno)"
+msgstr "alege FEC (stinga, dreapta)"
 
 #: default.esml:890
 msgid "&gt;"
@@ -283,48 +275,47 @@ msgstr ""
 
 #: default.esml:759 default.esml:763
 msgid "select month (ok)"
-msgstr "Izabrati mesec (ok)"
+msgstr "selecteaza luna (ok)"
 
 #: default.esml:453
 msgid "enter your latitude (0..9, +, -, ok)"
-msgstr "Ubaciti latitude (0..9, +, OK)"
+msgstr "introduceti latitudinea (0..9, +, -, ok)"
 
 #: default.esml:401
 msgid "DiSEqC Mode:"
-msgstr "Mode DISEqC"
+msgstr "Modul DiSEqC:"
 
 #: default.esml:374
 msgid "LNB Configuration"
-msgstr "Podesavanje LNBa"
+msgstr "Configurarea LNB-ului"
 
 #: default.esml:533 default.esml:552 src/scan.cpp:663
 msgid "scanning..."
-msgstr "Pretrazivanje"
+msgstr "scanare..."
 
 #: default.esml:490
 msgid "calc param 3 (see your motor manual or let it 00)"
-msgstr "calc param 3 (Pogledajte uput vaseg rotora ili ga ostavite na 00)"
+msgstr "calc param 3 (consulta manualul motorului sau lasa la 00)"
 
 #: default.esml:652
 msgid "AGC"
 msgstr "AGC"
 
 #: default.esml:406
-#, fuzzy
 msgid "select uncommitted input"
-msgstr "Izabrati switch ne ubacen sa 1 opcijom"
+msgstr "alegeti intrarea libera"
 
 #: default.esml:443
 msgid "Use Motor Input Power"
-msgstr "Upotrebiti jacinu za ulaz rotora"
+msgstr "Foloseste curent motor"
 
 #: default.esml:447
 msgid "when the motor support this, then use"
-msgstr "Ako je drzac rotora kao ovaj, upotrebi ga..."
+msgstr "daca motorul suporta aceasta, atunci foloseste"
 
 #: default.esml:747
 msgid "Starttime"
-msgstr ""
+msgstr "Timpul de pornire"
 
 #: default.esml:626
 #, fuzzy
@@ -333,15 +324,15 @@ msgstr "MHz"
 
 #: default.esml:352
 msgid "HTTP Download"
-msgstr "Download preko HTTP"
+msgstr "HTTP download"
 
 #: default.esml:411
 msgid "goto prev page (LNB)"
-msgstr "Vrati se na prethodnu stranu(LNB)"
+msgstr "dute la pagina anterioara (LNB)"
 
 #: default.esml:447
 msgid "Use gotoXX Function"
-msgstr "Upotrebiti funkcije GotoXX"
+msgstr "foloseste functia gotoXX"
 
 #: default.esml:894
 msgid "vol+"
@@ -353,33 +344,32 @@ msgstr ""
 
 #: default.esml:749
 msgid "for a multiple event enable this"
-msgstr ""
+msgstr "pentru un eveniment multiplu activeaza aceasta"
 
 #: default.esml:736
-#, fuzzy
 msgid "press ok to select another event"
-msgstr "Stisnite OK da izaberete drugi mod 22kHz"
+msgstr "apasa ok pentru a selecta inca un eveniment"
 
 #: default.esml:796 default.esml:808 default.esml:820
 #, fuzzy
 msgid "shutdown  "
-msgstr "Staviti u dremanje"
+msgstr "opreste  imediat"
 
 #: default.esml:435 default.esml:483
 msgid "Transponder:"
-msgstr "Transponder"
+msgstr "transponderul:"
 
 #: default.esml:362
 msgid "22Khz"
-msgstr "22Khz"
+msgstr "22khz"
 
 #: default.esml:819
 msgid "o'clock"
-msgstr "Cas"
+msgstr "ora"
 
 #: default.esml:386
 msgid "LOF/H:"
-msgstr "LOF/H:"
+msgstr "LOF/H"
 
 #: default.esml:870
 msgid "&#50;"
@@ -387,15 +377,15 @@ msgstr ""
 
 #: default.esml:775 src/enigma_info.cpp:43
 msgid "About..."
-msgstr "Sve o SandBox timu"
+msgstr "despre..."
 
 #: default.esml:738
 msgid "add new Timer (ok)"
-msgstr "Dodati novi sat(ok)"
+msgstr "adauga nou Timer (ok)"
 
 #: default.esml:767
 msgid "to change service press ok"
-msgstr "Da bi ste zamenili servis stisnite OK"
+msgstr "schimbare serviciu apasa ok"
 
 #: default.esml:880
 msgid "&#55;"
@@ -403,120 +393,114 @@ msgstr ""
 
 #: default.esml:769
 msgid "scan EPG"
-msgstr ""
+msgstr "scan EPG"
 
 #: stone.esml:464 silver.esml:471
-#, fuzzy
 msgid "audio track"
-msgstr "Povratak"
+msgstr "audio track"
 
 #: default.esml:757
-#, fuzzy
 msgid "Su"
-msgstr "Ned."
+msgstr "Su"
 
 #: default.esml:367
 msgid "new"
-msgstr "Novo"
+msgstr "nou"
 
 #: default.esml:805
-#, fuzzy
 msgid "duration:"
-msgstr "Modulacija :"
+msgstr "durata:"
 
 #: default.esml:409
-#, fuzzy
 msgid "Fast DiSEqC"
-msgstr "DISEqC desaktiviran"
+msgstr "DiSEqC rapid"
 
 #: default.esml:753 src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Wed"
-msgstr "Sre."
+msgstr "Wed"
 
 #: default.esml:449
 msgid "Longitude:"
-msgstr "Longitude:"
+msgstr "Longitudine:"
 
 #: default.esml:451 default.esml:454 default.esml:465
 msgid "choose direction"
-msgstr "Izabrati stranu"
+msgstr "alege directia"
 
 #: default.esml:831
 msgid "capacity:"
-msgstr "Kapacitet:"
+msgstr "capacitate:"
 
 #: default.esml:637
 #, fuzzy
 msgid "choose the code rate LP (left, right)"
-msgstr "Izabrati FEC (levo/desno)"
+msgstr "alege FEC (stinga, dreapta)"
 
 #: default.esml:488
 msgid "calc param 1 (see your motor manual or let it 00)"
-msgstr "calc param 1 (Pogledajte u knjigu vaseg rotora ili ga ostavite na 00)"
+msgstr "calc param 1 (see your motor manual or let it 00)"
 
 #: default.esml:493
 msgid "prev page"
-msgstr "Prethodna strana"
+msgstr "pagina anterioara"
 
 #: default.esml:754 src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Thu"
-msgstr "Cet."
+msgstr "Thu"
 
 #: default.esml:634
 #, fuzzy
 msgid "Transm. Mode:"
-msgstr "Transponder"
+msgstr "transponderul:"
 
 #: default.esml:390
 msgid "12V output on"
 msgstr ""
 
 #: default.esml:808
-#, fuzzy
 msgid "shutdown the box to deepstandby (ok)"
-msgstr " Ugasiti DreamBox posle snimanja (ok)"
+msgstr "deepstandby (ok)"
 
 #: default.esml:765
 msgid "edit the end time (0..9, left, right)"
-msgstr "Editiranje casa za kraj(0..9, levo, Desno)"
+msgstr "editeaza timpul sfirsit (0..9, stinga, dreapta)"
 
 #: default.esml:752 src/timer.cpp:2692
 msgid "Tuesday"
-msgstr "Utorak"
+msgstr "Marti"
 
 #: default.esml:793
 msgid "recording duration:"
-msgstr "Trajanje snimanja :"
+msgstr "durata inregistrare"
 
 #: default.esml:739
 #, fuzzy
 msgid "delete expired timer (ok)"
-msgstr "Izbrisati timer ubacen (ok)"
+msgstr "sterge temporizatorul selectat (curent) (ok)"
 
 #: default.esml:436 default.esml:484
 msgid "choose the Transponder you wish to find"
-msgstr "Izabrati transponder koji zelite naci"
+msgstr "alege Transponder ce trebuie gasit"
 
 #: default.esml:932
 msgid "add new Transponder to selected sat (ok)"
-msgstr ""
+msgstr "adauga nou Transponder la satelitul selectat"
 
 #: default.esml:754 src/timer.cpp:2693
 msgid "Thursday"
-msgstr "Cetvrtak"
+msgstr "Joi"
 
 #: default.esml:810
-#, fuzzy
 msgid "set sleeptimer and close window (ok)"
-msgstr "Podesiti cas kraja snimanja i zatvoriti prozor (OK)"
+msgstr "seteaza sleeptimer si inchide fereastra (ok)"
 
 #: default.esml:367
 msgid "add a new Satellite"
-msgstr "Dodati novi satelit"
+msgstr "adaugati un nou satelit"
 
 #: default.esml:495
 msgid "open transponder scan"
-msgstr "Otvoriti skeniranje transpondera"
+msgstr "deschideti scan transponder"
 
 #: default.esml:795 default.esml:807
 msgid "min"
@@ -528,46 +512,46 @@ msgstr "mA"
 
 #: default.esml:471
 msgid "goto advanced motor setup"
-msgstr "Otvoriti dodatno podesavanje rotora"
+msgstr "goto instalatie motor avansata"
 
 #: default.esml:750 src/timer.cpp:2692
 msgid "Monday"
-msgstr "Ponedeljak"
+msgstr "Luni"
 
 #: default.esml:837
 msgid "format"
-msgstr "Formatiranje"
+msgstr "format"
 
 #: default.esml:527 default.esml:546
 msgid "starts the transponder scan"
-msgstr "Startuj pretrazivanje transpondera"
+msgstr "porneste scan transponder"
 
 #: default.esml:931
 #, fuzzy
 msgid "sat"
-msgstr "Fixirati"
+msgstr "seteaza"
 
 #: default.esml:363
 msgid "Voltage"
-msgstr "Voltaza"
+msgstr "Voltaj"
 
 #: default.esml:635
 #, fuzzy
 msgid "choose the transmission mode (left, right)"
-msgstr "Izabrati FEC (levo/desno)"
+msgstr "alege FEC (stinga, dreapta)"
 
 #: default.esml:660
 msgid "Help"
-msgstr "U pomoc"
+msgstr "Ajutor"
 
 #: default.esml:895
 #, fuzzy
 msgid "insert"
-msgstr "Fixirati"
+msgstr "Fine Arts"
 
 #: default.esml:769
 msgid "search event name for this beg-/end time in epg"
-msgstr ""
+msgstr "cauta event nume pentru acest inceput/sfirsit in epg"
 
 #: default.esml:366 default.esml:391 default.esml:412 default.esml:470
 #: default.esml:577 src/parentallock.cpp:96 src/scan.cpp:1726
@@ -577,45 +561,44 @@ msgstr ""
 #: src/setupvideo.cpp:175 src/setupvideo.cpp:413 src/tpeditwindow.cpp:106
 #: src/tpeditwindow.cpp:151
 msgid "save"
-msgstr "Zadrzati"
+msgstr "salveaza"
 
 #: default.esml:752 src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Tue"
-msgstr "Uto."
+msgstr "Tue"
 
 #: chk_blue2.esml:314
 #, fuzzy
 msgid "Play "
-msgstr "Citanje"
+msgstr "Play"
 
 #: default.esml:433 default.esml:481
 msgid "choose the Satellite you wish to find"
-msgstr "Izaberite satelit koji hocete naci"
+msgstr "alege satelitul ce trebuie gasit"
 
 #: default.esml:456
 msgid "choose entry to edit or remove"
-msgstr "Stisnite OK za editiranje ili brisanje"
+msgstr "alege ce vrei sa editezi sau stergi"
 
 #: default.esml:778
 msgid "processor: "
-msgstr "Procesor :"
+msgstr "processor:"
 
 #: default.esml:748
 msgid "Endtime"
-msgstr ""
+msgstr "Endtime"
 
 #: default.esml:874
 msgid "&#52;"
 msgstr ""
 
 #: default.esml:467
-#, fuzzy
 msgid "add to table/existing will be overwritten"
-msgstr "Dodati u tabelu / zameniti "
+msgstr "adauga la table/existente vor fi sterse"
 
 #: default.esml:779
 msgid "frontend: "
-msgstr "Pocetak kraja"
+msgstr "frontend:"
 
 #: default.esml:884
 msgid "&#57;"
@@ -623,26 +606,25 @@ msgstr ""
 
 #: default.esml:345 default.esml:423
 msgid "AGC:"
-msgstr "AGC :"
+msgstr "AGC:"
 
 #: default.esml:516
 #, fuzzy
 msgid "enter manual pids"
-msgstr "Trazenje vise transpondera"
+msgstr "deschide manual update"
 
 #: default.esml:399
-#, fuzzy
 msgid "Toneburst:"
-msgstr "Mracnost:"
+msgstr "Toneburst:"
 
 #: default.esml:797 default.esml:809 default.esml:821
 #, fuzzy
 msgid "standby  "
-msgstr "Pauza"
+msgstr "Standby:"
 
 #: default.esml:594 default.esml:612
 msgid "FEC:"
-msgstr "FEC :"
+msgstr "FEC:"
 
 #: default.esml:425 default.esml:655
 msgid "SYNC"
@@ -650,46 +632,46 @@ msgstr "SYNC"
 
 #: default.esml:452
 msgid "Latitude:"
-msgstr "Latitude :"
+msgstr "Latitudine:"
 
 #: default.esml:575
 msgid "Skins:"
-msgstr "Tema :"
+msgstr "Skins:"
 
 #: default.esml:785
 #, fuzzy
 msgid "ok"
-msgstr "Cas"
+msgstr "blocheaza"
 
 #: default.esml:593
 msgid "choose polarity (left, right)"
-msgstr "Izaberi polarizaciju"
+msgstr "alege polaritate (stinga, dreapta)"
 
 #: default.esml:590 default.esml:608 default.esml:627
 msgid "Inv:"
-msgstr "Inv :"
+msgstr "Inv:"
 
 #: default.esml:761
 msgid "edit the start time (0..9, left, right)"
-msgstr "Editiranje cas za kraj(0..9, levo, Desno)"
+msgstr "editeaza moment start (0..9, left, right)"
 
 #: default.esml:383
 msgid "enter LNB lowband offset frequency (0..9, ok)"
-msgstr "Ubaci najnizu frekvenciju LNBa (0..9, OK)"
+msgstr "introdu LNB lowband offset frequency (0..9, ok)"
 
 #: chk_blue2.esml:318
 #, fuzzy
 msgid "Record "
-msgstr "Snimanje"
+msgstr "Record VCR"
 
 #: default.esml:611 default.esml:629
 #, fuzzy
 msgid "choose modulation (left, right)"
-msgstr "Izaberi polarizaciju"
+msgstr "alege polaritate (stinga, dreapta)"
 
 #: default.esml:755 src/timer.cpp:2693
 msgid "Friday"
-msgstr "Petak"
+msgstr "Vineri"
 
 #: default.esml:868
 msgid "&#49;"
@@ -698,31 +680,31 @@ msgstr ""
 #: default.esml:751
 #, fuzzy
 msgid "select what todo after event"
-msgstr "Stisnite OK da izaberete drugi mod 22kHz"
+msgstr "apasa ok pentru a selecta inca un eveniment"
 
 #: default.esml:461 src/tpeditwindow.cpp:71
 msgid "Orbital Position:"
-msgstr "Orbitalna pozicija :"
+msgstr "Pozitie orbitala"
 
 #: default.esml:405
 msgid "DiSEqC Repeats:"
-msgstr "Repetiranje DISEqCa :"
+msgstr "DiSEqC Repeats:"
 
 #: default.esml:385
 msgid "enter LNB highband offset frequency (0..9, ok)"
-msgstr "Ubaciti visu frekvenciju LNBa (0..9, ok)"
+msgstr "introdu LNB highband offset frequency (0..9, ok)"
 
 #: default.esml:796 default.esml:820
 msgid "shutdown the box after recording (ok)"
-msgstr " Ugasiti DreamBox posle snimanja (ok)"
+msgstr "opreste box dupa inregistrare"
 
 #: default.esml:920
 msgid "Please choose your DiSEqC-Configuration:"
-msgstr ">Izaberite podesavanje DiseqC"
+msgstr "Va rugam alegeti configuratia DiSEqC"
 
 #: default.esml:792 default.esml:816
 msgid "Stop Record"
-msgstr "Zaustavi snimanje"
+msgstr "Stop Inregistrare"
 
 #: default.esml:739
 msgid "cleanup"
@@ -730,7 +712,7 @@ msgstr ""
 
 #: default.esml:478
 msgid "Mode:"
-msgstr "Mode :"
+msgstr "Mod:"
 
 #: default.esml:599 default.esml:617
 msgid "KSymb/s"
@@ -738,89 +720,84 @@ msgstr "KSymb/s"
 
 #: default.esml:557
 msgid "Progress:"
-msgstr "Napredak :"
+msgstr "Progres:"
 
 #: default.esml:342 default.esml:418
 msgid "SNR:"
-msgstr "SNR :"
+msgstr "SNR:"
 
 #: default.esml:358 src/enigma_scan.cpp:48
 msgid "Satellite Configuration"
-msgstr "Podesavanje satelita"
+msgstr "Configuratie Sateliti"
 
 #: default.esml:768
-#, fuzzy
 msgid "save data and close window"
-msgstr "Zadrzati izmene i zatvoriti prozor"
+msgstr "salveaza date si inchide fereastra"
 
 #: default.esml:387
 msgid "Threshold:"
-msgstr "Prag :"
+msgstr "Threshold:"
 
 #: default.esml:412
-#, fuzzy
 msgid "save changes"
-msgstr "Zadrzati izmene i zatvoriti prozor"
+msgstr "salveaza schimbarile"
 
 #: stone.esml:465 silver.esml:472
 #, fuzzy
 msgid "plugins"
-msgstr "Pluginsi"
+msgstr "Plugins"
 
 #: default.esml:933
-#, fuzzy
 msgid "edit selected transponder (ok)"
-msgstr "Trazenje vise transpondera"
+msgstr "editeaza transponderul selectat (ok)"
 
 #: default.esml:494
 msgid "save in motor"
-msgstr "Zadrzati u rotor :"
+msgstr "salveaza in motor"
 
 #: default.esml:592
 msgid "Polarity:"
-msgstr "Polarizacija :"
+msgstr "Polaritatea:"
 
 #: default.esml:838
 msgid "do a filesystem check"
-msgstr "Napraviti kontrolu systema fajlova"
+msgstr "verifica fisierele sistemului"
 
 #: default.esml:837
 msgid "initialize the disk for use with the dreambox"
-msgstr "Inisializacija Hard diska za upotrebu u DreamBox"
+msgstr "initializeaza discul pentru a-l folosi cu dreamboxul"
 
 #: default.esml:361
 msgid "LNB"
 msgstr "LNB"
 
 #: default.esml:750
-#, fuzzy
 msgid "Mo"
-msgstr "Pon."
+msgstr "Mo"
 
 #: default.esml:402
 msgid "select DiSEqC parameter (ok)"
-msgstr "Izabrati podesavanja DISEqCa (ok)"
+msgstr "selecteaza parametrul DiSEqC (ok)"
 
 #: default.esml:849
 msgid "close"
-msgstr "Zatvoriti"
+msgstr "inchide"
 
 #: default.esml:587 default.esml:605 default.esml:624
 msgid "Frequency:"
-msgstr "Frekvencija"
+msgstr "Frecventa:"
 
 #: default.esml:934
-#, fuzzy
 msgid "remove selected satellite"
-msgstr "Izbrisati satelit ubacen"
+msgstr "sterge satelitul selectat"
 
 #: default.esml:598 default.esml:616
 msgid "enter symbol rate (0..9, left, right)"
-msgstr "Ubaciti symbol rate(0..9, levo, desno)"
+msgstr "introduceti rata simbolurilor (0..9, stanga, dreapta)"
 
 #: default.esml:904
 msgid "press ok to enter the name"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru a introduce numele"
 
 #: default.esml:638
 msgid "Coderate HP:"
@@ -828,19 +805,19 @@ msgstr ""
 
 #: default.esml:737
 msgid "delete the current selected timer (ok)"
-msgstr "Izbrisati timer ubacen (ok)"
+msgstr "sterge temporizatorul selectat (curent) (ok)"
 
 #: default.esml:398
 msgid "select MiniDiSEqC parameter (ok)"
-msgstr "Izabrati podesavanje miniDISEqCa (ok)"
+msgstr "selecteaza parametrul MiniDiSEqC (ok)"
 
 #: default.esml:782
 msgid "Software Version:"
-msgstr "Verzija softwarea :"
+msgstr "Versiunea de soft:"
 
 #: default.esml:450
 msgid "enter your longitude (0..9, +, -, ok)"
-msgstr "Ubaciti longitude (0..9, +, OK)"
+msgstr "introduceti longitudinea (0..9, +, -, ok)"
 
 #: default.esml:893
 msgid "abc2 &lt;-&gt; 2abc"
@@ -848,108 +825,109 @@ msgstr ""
 
 #: default.esml:368
 msgid "remove the selected Satellite"
-msgstr "Izbrisati satelit ubacen"
+msgstr "sterge satelitul selectat"
 
 #: default.esml:809
-#, fuzzy
 msgid "goto standby (ok)"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "Intra in stndby (ok)"
 
 #: default.esml:585
 msgid "choose wished satellite (ok)"
-msgstr "Izabrati satelit pozeljan (ok)"
+msgstr "alege satelitul dorit (ok)"
 
 #: default.esml:839
 msgid "show extended configuration"
-msgstr "Prikazati dodatno podesavanje"
+msgstr "arata configuratia extinsa"
 
 #: default.esml:479
 msgid "choose what you want to do"
-msgstr "Izabrati sta hocete uciniti (ok)"
+msgstr "alege ce doresti sa faci"
 
 #: default.esml:757 src/timer.cpp:2692
 msgid "Sunday"
-msgstr "Nedelja"
+msgstr "Duminica"
 
 #: default.esml:458
 msgid "Number in motor:"
-msgstr "Broj u rotoru :"
+msgstr "Numar in motor"
 
 #: default.esml:829
 msgid "model:"
-msgstr "Model :"
+msgstr "modelul:"
 
 #: default.esml:368
 msgid "erase"
-msgstr "Izbrisati"
+msgstr "sterge"
 
 #: default.esml:360
 msgid "Sat/Position"
-msgstr "Sat/Pozicija"
+msgstr "Sat/Pozitie"
 
 #: default.esml:381
 msgid "Sat/LNB mapping:"
-msgstr ""
+msgstr "mapare Sat/LNB :"
 
 #: default.esml:391
 msgid "save changes and use current selected LNB for the chosen satellite"
-msgstr "Zadrzati izmene za upotrebu LNBa ubacenog za satelit izabran"
+msgstr ""
+"salveaza schimbarile si foloseste LNB-ul selectat (curent) pentru satelitul "
+"ales"
 
 #: default.esml:470
 msgid ""
 "save changes and use the selected LNB (in first page) for the choosen "
 "satellite"
-msgstr "Zadrzati izmene za upotrebu LNBa ubacenog za satelite izabrane"
+msgstr ""
+"salveaza schimbarile si foloseste LNB-ul selectat (in prima pagina) pentru "
+"satelitul ales"
 
 #: default.esml:403
 msgid "DiSEqC Parameter:"
-msgstr "Podesavanje DISEqCa :"
+msgstr "Parametrul DiSEqC:"
 
 #: default.esml:389
 msgid "0,5V higher LNB Voltage (for long cables) (ok)"
-msgstr "Povecati voltazu LNBa za 0.5V /n (samo za duge kablove) (ok)"
+msgstr "0,5V tensiune mai mare a LNB-ului (pentru cabluri lungi) (ok)"
 
 #: default.esml:610
 #, fuzzy
 msgid "Modulation:"
-msgstr "Modulacija :"
+msgstr "durata:"
 
 #: default.esml:511
 msgid "enable/disable check ONIT on any transponder"
-msgstr "Aktiviranje/desaktiviranje proveravanja ONIT za sve transpondere"
+msgstr "activeaza/dezactiveaza marcajul ONIT pe orice transponder"
 
 #: default.esml:780
 msgid "harddisk: "
-msgstr "Hard disk :"
+msgstr "hard-disc:"
 
 #: default.esml:784
 #, fuzzy
 msgid "FP Version:"
-msgstr "Razmena :"
+msgstr "Inversiune:"
 
 #: default.esml:835
 msgid "status:"
-msgstr "Status :"
+msgstr "informatii:"
 
 #: default.esml:512
 #, fuzzy
 msgid "use BAT"
-msgstr "Upotrebiti BAT"
+msgstr "Use BAT"
 
 #: default.esml:804
 #, fuzzy
 msgid "Set Sleeptimer"
-msgstr "Ubaciti cas za kraj"
+msgstr "editeaza sleep timer"
 
 #: default.esml:568
-#, fuzzy
 msgid "press ok to change"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru a schimba"
 
 #: default.esml:928
-#, fuzzy
 msgid "Transponders"
-msgstr "Transponder"
+msgstr "Transponderi"
 
 #: chk_blue2.esml:313
 #, fuzzy
@@ -958,73 +936,71 @@ msgstr "FF"
 
 #: default.esml:798 default.esml:822
 msgid "set recording end time and close window (ok)"
-msgstr "Podesiti cas kraja snimanja i zatvoriti prozor (OK)"
+msgstr "seteaza sfarsitul inregistrarii si inchide fereastra (ok)"
 
 #: default.esml:366
 msgid "close Satellite Configuration"
-msgstr "Zatvoriti podesavanje satelita"
+msgstr "inchide configurarea satelitilor"
 
 #: default.esml:729 default.esml:735 stone.esml:462 silver.esml:469
 msgid "EPG"
 msgstr "EPG"
 
 #: default.esml:933
-#, fuzzy
 msgid "edit"
-msgstr "uradi to"
+msgstr "editeaza"
 
 #: default.esml:756
-#, fuzzy
 msgid "Sa"
-msgstr "Sub."
+msgstr "Sa"
 
 #: default.esml:833
 msgid "connected:"
-msgstr "Konektiran :"
+msgstr "conectat:"
 
 #: default.esml:392 default.esml:471
 msgid "next page"
-msgstr "Sledeca strana"
+msgstr "pagina urmatoare"
 
 #: default.esml:597 default.esml:615
 msgid "Symbol Rate:"
-msgstr "Symbol rate:"
+msgstr "rata simbolurilor"
 
 #: default.esml:798 default.esml:810 default.esml:822
 msgid "set"
-msgstr "Fixirati"
+msgstr "seteaza"
 
 #: default.esml:486
 msgid "press left or right to move motor"
-msgstr "Pritisnuti levo ili desno za pomeranje rotora"
+msgstr "apasa stanga sau dreapta pentru a misca motorul"
 
 #: default.esml:489
 msgid "calc param 2 (see your motor manual or let it 00)"
-msgstr "calc param 2 (Pogledajte u knjigu vaseg rotora ili ga ostavite na 00)"
+msgstr "calc param 2 (consulta manualul motorului sau lasa la 00)"
 
 #: default.esml:766
 msgid "select the timer type (ok)"
-msgstr "Ubaciti tip Sata (ok)"
+msgstr "selecteaza tipul de temporizator (ok)"
 
 #: default.esml:522 default.esml:542
 msgid "choose satellite/cable provider (ok)"
-msgstr "Izabrati provider satellita / Kablovske (OK) "
+msgstr "alege satelitul / distribuitorul de cablu (ok)"
 
 #: default.esml:511
 msgid "use ONIT"
-msgstr "Upotrebiti ONIT"
+msgstr "foloseste ONIT"
 
 #: default.esml:495
 msgid "search"
-msgstr "Pretrazivanje"
+msgstr "cauta"
 
 #: default.esml:491
 msgid "Counter(Movement)"
-msgstr "Brojac(Pomeranje)"
+msgstr "Counter(Movement)"
 
 #: default.esml:514
 msgid "enable/disable initiate network search"
-msgstr "Aktiviranje/desaktiviranje pretragu networka"
+msgstr "armeaza/dezarmeaza \"initiaza cautare network\""
 
 #: default.esml:630
 msgid "Guard:"
@@ -1035,9 +1011,8 @@ msgid "Stop "
 msgstr "Stop"
 
 #: default.esml:359
-#, fuzzy
 msgid "select your configuration here"
-msgstr "Ubaciti tip Sata (ok)"
+msgstr "alege configuratia personala aici"
 
 #: default.esml:882
 msgid "&#56;"
@@ -1045,20 +1020,19 @@ msgstr ""
 
 #: default.esml:404
 msgid "select DiSEqC repeats (ok)"
-msgstr "Izabrati repetitor DISEqCa (ok)"
+msgstr "alege repetare DiSEqC (ok)"
 
 #: default.esml:595 default.esml:613 default.esml:631
 msgid "choose the FEC (left, right)"
-msgstr "Izabrati FEC (levo/desno)"
+msgstr "alege FEC (stinga, dreapta)"
 
 #: default.esml:911 src/system_settings.cpp:60
-#, fuzzy
 msgid "OSD Language"
-msgstr "Jezici :"
+msgstr "Limba OSD"
 
 #: default.esml:855
 msgid "Software upgrade..."
-msgstr "Upgradovanje softwarea"
+msgstr "Software upgrade..."
 
 #: default.esml:919
 msgid "DiSEqC..."
@@ -1066,98 +1040,93 @@ msgstr "DiSEqC..."
 
 #: default.esml:576
 msgid "select skin and press ok or choose save"
-msgstr "Izabrati temu i stisnuti OK za zadrzavanje"
+msgstr "alege skin si apasa ok sau save"
 
 #: default.esml:760 default.esml:764
 msgid "select day (ok)"
-msgstr "Izabrati dan (ok)"
+msgstr "selecteaza ziua (ok)"
 
 #: default.esml:526
 msgid "change circular to linear polarization"
-msgstr ""
+msgstr "schimbe polarizarea din linear in circular"
 
 #: default.esml:392
 msgid "goto next page (DiSEqC)"
-msgstr "Sledeca strana DISEqC"
+msgstr "goto pagina urmatoare (DiSEqC)"
 
 #: default.esml:931
 msgid "select sat(up/down), ok(edit), green(add new), red(delete)"
-msgstr ""
+msgstr "selecteaza sat(sus/jos), ok(editeaza), verde(adauga nou), rosu(sterge)"
 
 #: default.esml:745
-#, fuzzy
 msgid "Timer Edit"
-msgstr "Lista satova"
+msgstr "Editeaza Timer"
 
 #: default.esml:768
 msgid "apply"
-msgstr ""
+msgstr "salveaza"
 
 #: default.esml:888
 msgid "&#48;"
 msgstr ""
 
 #: default.esml:755
-#, fuzzy
 msgid "Fr"
-msgstr "Pet."
+msgstr "Vineri"
 
 #: default.esml:516
 #, fuzzy
 msgid "enter pids"
-msgstr "Sport"
+msgstr "Winter Sports"
 
 #: default.esml:749
-#, fuzzy
 msgid "Repeated timer"
-msgstr "Bliznost repetirabja"
+msgstr "timer repetat"
 
 #: default.esml:482
 msgid "enter stored satellite pos"
-msgstr "Ubaciti poziciju stokiranog satelita"
+msgstr "introduceti pozitii satelit salvate"
 
 #: default.esml:408
 msgid "Sequence repeat"
-msgstr "Repetiranje "
+msgstr "Secventa repetare"
 
 #: default.esml:847
 msgid "status output:"
-msgstr "Status izlaza :"
+msgstr "rezultat:"
 
 #: default.esml:828
 msgid "Harddisk"
-msgstr "Hard disk"
+msgstr "Harddisk"
 
 #: default.esml:492
 msgid "bla"
-msgstr ""
+msgstr "bla"
 
 #: default.esml:797 default.esml:821
 msgid "goto standby after recording (ok)"
-msgstr "Staviti u dremanje posle snimanja (OK)"
+msgstr "goto standby dupa inregistrare"
 
 #: default.esml:513 default.esml:525 default.esml:544
 msgid "only Free"
-msgstr ""
+msgstr "doar libere"
 
 #: default.esml:628
 #, fuzzy
 msgid "Constellation:"
-msgstr "Mracnost:"
+msgstr "Contrast:"
 
 #: default.esml:756 src/timer.cpp:2693
 msgid "Saturday"
-msgstr "Subota"
+msgstr "Sambata"
 
 #: default.esml:806
-#, fuzzy
 msgid "(0..9, left, right, ok)"
-msgstr "Ubaciti frekvenciju  (0..9, Levo, desno)"
+msgstr "(0..9,stinga, dreapta, ok)"
 
 #: default.esml:410
-#, fuzzy
 msgid "swaps committed and uncommitted DiSEqC Commands"
-msgstr "Poslati DISEqC B/B"
+msgstr "manevreaza commited si uncommited comenzi DiSEqC"
 
 #: default.esml:896
 msgid "vol-"
@@ -1166,27 +1135,25 @@ msgstr ""
 #: default.esml:514
 #, fuzzy
 msgid "network search"
-msgstr "Trazi network"
+msgstr "Network search"
 
 #: default.esml:513
-#, fuzzy
 msgid "add only not scrambled services"
-msgstr "Izbrisati servis"
+msgstr "adauga doar servicii libere"
 
 #: lib/dvb/dvbci.cpp:61 lib/dvb/dvbci.cpp:110 lib/dvb/dvbci.cpp:128
 #: lib/dvb/dvbci.cpp:1280
-#, fuzzy
 msgid "no module"
-msgstr "Pricekaj odgovor modula"
+msgstr "nu modul"
 
 #: lib/dvb/dvbwidgets.cpp:66
 msgid "horizontal"
-msgstr "Horizontala"
+msgstr "orizontal"
 
 #: lib/dvb/dvbwidgets.cpp:67
 #, fuzzy
 msgid "vertical"
-msgstr "Vertikala"
+msgstr "Vertical"
 
 #: lib/dvb/dvbwidgets.cpp:71 lib/dvb/dvbwidgets.cpp:80
 #, fuzzy
@@ -1221,62 +1188,51 @@ msgstr ""
 #: src/enigma_main.cpp:4381 src/enigma_main.cpp:4393 src/parentallock.cpp:123
 #: src/parentallock.cpp:155 src/timer.cpp:2403
 msgid "parental"
-msgstr ""
+msgstr "parental"
 
 #: lib/dvb/servicedvb.cpp:742
-#, fuzzy
 msgid "Providers (TV)"
-msgstr "Videti provajdere"
+msgstr "Furnizori (TV)"
 
 #: lib/dvb/servicedvb.cpp:746
-#, fuzzy
 msgid "Providers (Radio)"
-msgstr "Favoriti (Radio)"
+msgstr "Furnizori (Radio)"
 
 #: lib/dvb/servicedvb.cpp:750
-#, fuzzy
 msgid "Providers (Data)"
-msgstr "Videti provajdere"
+msgstr "Furnizori (Data)"
 
 #: lib/dvb/servicedvb.cpp:755
-#, fuzzy
 msgid "All services (TV)"
-msgstr "Servisis"
+msgstr "Toate serviciile (TV)"
 
 #: lib/dvb/servicedvb.cpp:759
-#, fuzzy
 msgid "All services (Radio)"
-msgstr "Servisis"
+msgstr "Toate serviciile (Radio)"
 
 #: lib/dvb/servicedvb.cpp:763
-#, fuzzy
 msgid "All services (Data)"
-msgstr "Servisis"
+msgstr "Toate serviciile (Data)"
 
 #: lib/dvb/servicedvb.cpp:770
-#, fuzzy
 msgid "Satellites (TV)"
-msgstr "Satelit"
+msgstr "Sateliti (TV)"
 
 #: lib/dvb/servicedvb.cpp:774
-#, fuzzy
 msgid "Satellites (Radio)"
-msgstr "Satelit"
+msgstr "Sateliti (Radio)"
 
 #: lib/dvb/servicedvb.cpp:778
-#, fuzzy
 msgid "Satellites (Data)"
-msgstr "Satelit"
+msgstr "sateliti (date)"
 
 #: lib/dvb/servicedvb.cpp:1161
-#, fuzzy
 msgid " - provider"
-msgstr "Videti provajdere"
+msgstr "- furnizori "
 
 #: lib/dvb/servicedvb.cpp:1169
-#, fuzzy
 msgid " - services"
-msgstr "Servisis"
+msgstr "- servicii"
 
 #: lib/dvb/servicedvb.cpp:1177
 msgid " - new found"
@@ -1285,11 +1241,11 @@ msgstr ""
 #: lib/dvb/servicedvb.cpp:1181
 #, fuzzy
 msgid "current transponder"
-msgstr "Otvoriti skeniranje transpondera"
+msgstr "deschideti scan transponder"
 
 #: lib/dvb/servicemp3.cpp:186
 msgid "Connecting..."
-msgstr "Konekvcija..."
+msgstr "Conecteaza..."
 
 #: lib/dvb/servicemp3.cpp:397
 msgid "buffering..."
@@ -1297,31 +1253,31 @@ msgstr ""
 
 #: lib/dvb/servicemp3.cpp:553
 msgid "playing..."
-msgstr "Citanje radi..."
+msgstr "playing..."
 
 #: lib/dvb/serviceplaylist.cpp:124
 #, c-format
 msgid " (%d entries)"
-msgstr "(%d ulaz)"
+msgstr "(%d intrari)"
 
 #: lib/dvb/servicestructure.cpp:10
 msgid "root node"
-msgstr "Tacka za root"
+msgstr "root node"
 
 #: lib/dvb/servicestructure.cpp:11 src/enigma_mainmenu.cpp:54
 #: src/enigma_mainmenu.cpp:185
 msgid "TV mode"
-msgstr "Mode TV"
+msgstr "TV mode"
 
 #: lib/dvb/servicestructure.cpp:12
 #, fuzzy
 msgid "Radio Mode"
-msgstr "Mod Radio"
+msgstr "Radio mod"
 
 #: lib/dvb/servicestructure.cpp:14
 #, fuzzy
 msgid "File Mode"
-msgstr "Mod fajl"
+msgstr "File mod"
 
 #: lib/dvb/servicestructure.cpp:16
 msgid "TV/Radio"
@@ -1329,9 +1285,8 @@ msgstr "TV/Radio"
 
 #: lib/dvb/servicestructure.cpp:17 src/enigma_main.cpp:7672
 #: src/sselect.cpp:388 src/sselect.cpp:395
-#, fuzzy
 msgid "Bouquets"
-msgstr "Licni buketi"
+msgstr "Buchete"
 
 #: lib/gui/emessage.cpp:120
 msgid "OK"
@@ -1339,7 +1294,7 @@ msgstr "OK"
 
 #: lib/gui/emessage.cpp:121
 msgid "Cancel"
-msgstr "Ponisti"
+msgstr "Renunta"
 
 #: lib/gui/emessage.cpp:122
 msgid "Yes"
@@ -1347,34 +1302,33 @@ msgstr "Da"
 
 #: lib/gui/emessage.cpp:123
 msgid "No"
-msgstr "Ne"
+msgstr "Nu"
 
 #: lib/gui/listbox.cpp:861
 #, fuzzy
 msgid "no description available"
-msgstr "Nema deskripcije"
+msgstr "descriere nu este disponibila"
 
 #: lib/gui/textinput.cpp:19
-#, fuzzy
 msgid "enable/disable capslock"
-msgstr "Aktiviranje/desaktiviranje razmenu ? (ok)"
+msgstr "activati/dezactivati capslock"
 
 #: lib/gui/textinput.cpp:20
 msgid "put numbers before/after characters"
-msgstr ""
+msgstr "introduceti numere inainte/dupa caractere"
 
 #: lib/gui/textinput.cpp:21
-#, fuzzy
 msgid "insert blank at cursor position"
-msgstr "Snimiti aktualnu poziciju u rotor"
+msgstr "introduceti un cimp liber la pozitia de cursor"
 
 #: lib/gui/textinput.cpp:22
 msgid "remove the character at the cursor position"
-msgstr ""
+msgstr "stergeti caracterul la pozitia de cursor"
 
 #: lib/gui/textinput.cpp:23
+#, fuzzy
 msgid "remove the character before the cursor position"
-msgstr ""
+msgstr "stergeti caracterul la pozitia de cursor"
 
 #: lib/gui/textinput.cpp:24
 msgid "shows the textinputfield help"
@@ -1383,360 +1337,346 @@ msgstr ""
 #: lib/gui/textinput.cpp:35
 #, fuzzy
 msgid "press ok to save (help is available)"
-msgstr "Stisnite OK da izaberete drugi mod 22kHz"
+msgstr "apasa ok pt selectarea altui satelit"
 
 #: lib/gui/textinput.cpp:56
 #, fuzzy
 msgid "press ok to save"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru a schimba"
 
 #: src/channelinfo.cpp:73
 msgid "Movie"
-msgstr "Filmovi"
+msgstr "Filme Artistice"
 
 #: src/channelinfo.cpp:73
 msgid "Adventure"
-msgstr "Avantura"
+msgstr "Adventure"
 
 #: src/channelinfo.cpp:73
 msgid "SciFi"
-msgstr "Naucna fantastika"
+msgstr "SciFi"
 
 #: src/channelinfo.cpp:73
 msgid "Comedy"
-msgstr "Komedija"
+msgstr "Comedy"
 
 #: src/channelinfo.cpp:74
 msgid "Soap"
-msgstr "Serije B"
+msgstr "Soap"
 
 #: src/channelinfo.cpp:74
 msgid "Romance"
-msgstr "Romantika"
+msgstr "Romance"
 
 #: src/channelinfo.cpp:74
 msgid "Serious"
-msgstr "Ozbiljno"
+msgstr "Serious"
 
 #: src/channelinfo.cpp:74
 msgid "Adult"
-msgstr "Za odrasle"
+msgstr "Adult"
 
 #: src/channelinfo.cpp:77
 msgid "News"
-msgstr "Informacije"
+msgstr "News"
 
 #: src/channelinfo.cpp:77
 msgid "Weather"
-msgstr "Vreme"
+msgstr "Vremea"
 
 #: src/channelinfo.cpp:77
 msgid "Magazine"
-msgstr "Casopisi"
+msgstr "Magazine"
 
 #: src/channelinfo.cpp:77
 msgid "Documentary"
-msgstr "Dokumentarni program"
+msgstr "Documentare"
 
 #: src/channelinfo.cpp:77
 msgid "Discussion"
-msgstr "Diskusije"
+msgstr "Discussion"
 
 #: src/channelinfo.cpp:81
 msgid "Show"
-msgstr "Emisije"
+msgstr "Show"
 
 #: src/channelinfo.cpp:81
 msgid "Game Show"
-msgstr "Emisije za igru"
+msgstr "Game Show"
 
 #: src/channelinfo.cpp:81
 msgid "Variety"
-msgstr "Muzika"
+msgstr "Variety"
 
 #: src/channelinfo.cpp:81
 msgid "Talk"
-msgstr "Débate"
+msgstr "Talk"
 
 #: src/channelinfo.cpp:85
 msgid "Sports"
-msgstr "Sport"
+msgstr "Sports"
 
 #: src/channelinfo.cpp:85
-#, fuzzy
 msgid "Special Event"
-msgstr "Spécial"
+msgstr "Special Event"
 
 #: src/channelinfo.cpp:85
-#, fuzzy
 msgid "Sports Mag."
-msgstr "Sport"
+msgstr "Sports Mag."
 
 #: src/channelinfo.cpp:85
 msgid "Football"
-msgstr ""
+msgstr "Football"
 
 #: src/channelinfo.cpp:85
 msgid "Tennis"
-msgstr ""
+msgstr "Tennis"
 
 #: src/channelinfo.cpp:85
-#, fuzzy
 msgid "Team Sports"
-msgstr "Sport"
+msgstr "Team Sports"
 
 #: src/channelinfo.cpp:86
 msgid "Athletics"
-msgstr "Atletika"
+msgstr "Athletics"
 
 #: src/channelinfo.cpp:86
-#, fuzzy
 msgid "Motor Sports"
-msgstr "Spremanje Motora"
+msgstr "Motor Sports"
 
 #: src/channelinfo.cpp:86
-#, fuzzy
 msgid "Water Sports"
-msgstr "Borbeni Sportovi"
+msgstr "Water Sports"
 
 #: src/channelinfo.cpp:86
-#, fuzzy
 msgid "Winter Sports"
-msgstr "Sport"
+msgstr "Winter Sports"
 
 #: src/channelinfo.cpp:86
 msgid "Equestrian"
-msgstr ""
+msgstr "Equestrian"
 
 #: src/channelinfo.cpp:87
 msgid "Martial Sports"
-msgstr "Borbeni Sportovi"
+msgstr "Martial Sports"
 
 #: src/channelinfo.cpp:90
 msgid "Children"
-msgstr "Za decu"
+msgstr "Children"
 
 #: src/channelinfo.cpp:90
 msgid "Pre-School"
-msgstr ""
+msgstr "Pre-School"
 
 #: src/channelinfo.cpp:90
 msgid "Age 6-14"
-msgstr ""
+msgstr "Virsta 6-14"
 
 #: src/channelinfo.cpp:90
 msgid "Age 10-16"
-msgstr ""
+msgstr "Virsta 10-16"
 
 #: src/channelinfo.cpp:90
-#, fuzzy
 msgid "School"
-msgstr "Emisije"
+msgstr "School"
 
 #: src/channelinfo.cpp:91
 msgid "Cartoons"
-msgstr "Crtani filmovi"
+msgstr "Cartoons"
 
 #: src/channelinfo.cpp:95
 msgid "Music"
-msgstr ""
+msgstr "Music"
 
 #: src/channelinfo.cpp:95
 msgid "Rock/Pop"
-msgstr ""
+msgstr "Rock/Pop"
 
 #: src/channelinfo.cpp:95
 msgid "Classical"
-msgstr ""
+msgstr "Classical"
 
 #: src/channelinfo.cpp:95
-#, fuzzy
 msgid "Folk"
-msgstr "ok"
+msgstr "Folk"
 
 #: src/channelinfo.cpp:95
 msgid "Jazz"
-msgstr ""
+msgstr "Jazz"
 
 #: src/channelinfo.cpp:95
 msgid "Musical"
-msgstr ""
+msgstr "Musical"
 
 #: src/channelinfo.cpp:95
 msgid "Ballet"
-msgstr ""
+msgstr "Ballet"
 
 #: src/channelinfo.cpp:99
 msgid "Culture"
-msgstr "Kultura"
+msgstr "Culture"
 
 #: src/channelinfo.cpp:99
 msgid "Perf. Arts"
-msgstr ""
+msgstr "Perf. Arts"
 
 #: src/channelinfo.cpp:99
 msgid "Fine Arts"
-msgstr ""
+msgstr "Fine Arts"
 
 #: src/channelinfo.cpp:99
 msgid "Religion"
-msgstr ""
+msgstr "Religion"
 
 #: src/channelinfo.cpp:99
 msgid "Pop. Arts"
-msgstr ""
+msgstr "Pop. Arts"
 
 #: src/channelinfo.cpp:99
 msgid "Literature"
-msgstr ""
+msgstr "Literature"
 
 #: src/channelinfo.cpp:100
 msgid "Film"
-msgstr "Filmovi"
+msgstr "Film"
 
 #: src/channelinfo.cpp:100
 msgid "Experimental"
-msgstr ""
+msgstr "Experimental"
 
 #: src/channelinfo.cpp:100
-#, fuzzy
 msgid "Press"
-msgstr "Napredak :"
+msgstr "Press"
 
 #: src/channelinfo.cpp:100
 msgid "New Media"
-msgstr ""
+msgstr "New Media"
 
 #: src/channelinfo.cpp:100
 msgid "Art Mag."
-msgstr ""
+msgstr "Art Mag."
 
 #: src/channelinfo.cpp:100
 msgid "Fashion"
-msgstr ""
+msgstr "Fashion"
 
 #: src/channelinfo.cpp:103
 msgid "Social"
-msgstr "Sociala"
+msgstr "Social"
 
 #: src/channelinfo.cpp:103
 msgid "Soc. Mag."
-msgstr ""
+msgstr "Soc. Mag."
 
 #: src/channelinfo.cpp:103
 msgid "Economics"
-msgstr ""
+msgstr "Economics"
 
 #: src/channelinfo.cpp:103
 msgid "Remark. People"
-msgstr ""
+msgstr "Remark, People"
 
 #: src/channelinfo.cpp:107
 msgid "Education"
-msgstr "Nauka"
+msgstr "Education"
 
 #: src/channelinfo.cpp:107
-#, fuzzy
 msgid "Nature"
-msgstr "Kultura"
+msgstr "Nature"
 
 #: src/channelinfo.cpp:107
 msgid "Technology"
-msgstr ""
+msgstr "Technology"
 
 #: src/channelinfo.cpp:107
 msgid "Medicine"
-msgstr ""
+msgstr "Medicine"
 
 #: src/channelinfo.cpp:107
-#, fuzzy
 msgid "Expeditions"
-msgstr "Pozicija"
+msgstr "Expeditions"
 
 #: src/channelinfo.cpp:107
 msgid "Spiritual"
-msgstr ""
+msgstr "Spiritual"
 
 #: src/channelinfo.cpp:108
 msgid "Further Ed."
-msgstr "Davantage Ed."
+msgstr "Further Ed."
 
 #: src/channelinfo.cpp:108
-#, fuzzy
 msgid "Languages"
-msgstr "Jezici :"
+msgstr "Limbi"
 
 #: src/channelinfo.cpp:111
 msgid "Hobbies"
-msgstr "Hobiji"
+msgstr "Hobbies"
 
 #: src/channelinfo.cpp:111
-#, fuzzy
 msgid "Travel"
-msgstr "Débate"
+msgstr "Travel"
 
 #: src/channelinfo.cpp:111
 msgid "Handicraft"
-msgstr ""
+msgstr "Handicraft"
 
 #: src/channelinfo.cpp:111
-#, fuzzy
 msgid "Motoring"
-msgstr "Setting za rotor"
+msgstr "Motoring"
 
 #: src/channelinfo.cpp:111
-#, fuzzy
 msgid "Fitness"
-msgstr "Sjaj:"
+msgstr "Fitness"
 
 #: src/channelinfo.cpp:111
 msgid "Cooking"
-msgstr ""
+msgstr "Cooking"
 
 #: src/channelinfo.cpp:112
 msgid "Shopping"
-msgstr "Kupovina"
+msgstr "Shoping"
 
 #: src/channelinfo.cpp:112
-#, fuzzy
 msgid "Gardening"
-msgstr "Paznja"
+msgstr "Gardening"
 
 #: src/channelinfo.cpp:115
 msgid "Orig. Lang."
-msgstr "Originalna verzija"
+msgstr "Limbi orig."
 
 #: src/channelinfo.cpp:115
 msgid "B&W"
-msgstr ""
+msgstr "B&W"
 
 #: src/channelinfo.cpp:115
 msgid "Unpublished"
-msgstr ""
+msgstr "Unpublished"
 
 #: src/channelinfo.cpp:115
 msgid "Live"
-msgstr ""
+msgstr "Live"
 
 #: src/channelinfo.cpp:244
 msgid "no data for this service avail"
-msgstr "Ne moguce naci taj servis"
+msgstr "date indisponibile pentru acest serviciu"
 
 #: src/channelinfo.cpp:276
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Filesize: %d MB"
-msgstr "Velicina fajla :"
+msgstr ""
+"\n"
+"Filesize: %d MB"
 
 #: src/channelinfo.cpp:277
 msgid "Filename: "
-msgstr "Ime fajla :"
+msgstr "Filename:"
 
 #: src/engrab.cpp:37 src/enigma_event.cpp:298 src/enigma_event.cpp:307
 #: src/timer.cpp:2340
 msgid "no description is available"
-msgstr "Nema podataka"
+msgstr "descriere nu este disponibila"
 
 #: src/enigma.cpp:275
 msgid ""
@@ -1745,84 +1685,74 @@ msgid ""
 "Please do a transponder scan first.\n"
 "(mainmenu > setup > channels > transponder scan)"
 msgstr ""
-"Sandbox tim vam zeli dobrodoslicu na Enigmu. \n"
+"Bine ati venit la enigma.\n"
 "\n"
-" Startovati pretrazivanje kanala. \n"
-"(Glavni meni > Podesavanje > Kanali > Pretrazivanje kanala) "
+"Va rugam mai intai faceti un satscan."
 
 #: src/enigma.cpp:277
 msgid "First start of enigma"
-msgstr "Prvi start Enigme"
+msgstr "Primul start enigma"
 
 #: src/enigma_bouquet.cpp:18
-#, fuzzy
 msgid "Bouquet Type"
-msgstr "Licni buket (TV)"
+msgstr "Buchet tip"
 
 #: src/enigma_bouquet.cpp:21
 msgid "TV"
-msgstr ""
+msgstr "TV"
 
 #: src/enigma_bouquet.cpp:22
-#, fuzzy
 msgid "Radio"
-msgstr "TV/Radio"
+msgstr "Radio"
 
 #: src/enigma_bouquet.cpp:24
-#, fuzzy
 msgid "File"
-msgstr "Filmovi"
+msgstr "File"
 
 #: src/enigma_bouquet.cpp:38 src/enigma_setup.cpp:40
-#, fuzzy
 msgid "Service Organising"
-msgstr "Servisis"
+msgstr "Organizare Servicii"
 
 #: src/enigma_bouquet.cpp:42
 #, fuzzy
 msgid "Create new bouquet"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "creeaza un nou buchet"
 
 #: src/enigma_bouquet.cpp:42
-#, fuzzy
 msgid "create new empty bouquet"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "creeaza un nou buchet"
 
 #: src/enigma_bouquet.cpp:43
-#, fuzzy
 msgid "Add services to bouquet"
-msgstr "Dodati specifican favorit "
+msgstr "Adauga servicii la un buchet"
 
 #: src/enigma_bouquet.cpp:43
-#, fuzzy
 msgid "add multiple services to a specific bouquet"
-msgstr "Dodati specifican favorit "
+msgstr "adauga servicii multiple la un buchet specific"
 
 #: src/enigma_bouquet.cpp:44
-#, fuzzy
 msgid "Edit bouquets"
-msgstr "Licni buket (TV)"
+msgstr "Editeaza buchete"
 
 #: src/enigma_bouquet.cpp:44
 msgid "sort,rename,delete services/bouquets "
-msgstr ""
+msgstr "sortati,redenumiti, stergeti servicii/buchete"
 
 #: src/enigma_bouquet.cpp:48
-#, fuzzy
 msgid "Lock/Unlock Services"
-msgstr "Servisis"
+msgstr "Lock/Unlock Servicii"
 
 #: src/enigma_bouquet.cpp:48
 msgid "lock,unlock services (parental locking)"
-msgstr ""
+msgstr "lock,unlock servicii (blocaj vizionare)"
 
 #: src/enigma_ci.cpp:34
 msgid "Common Interface Modules"
-msgstr "Common interface Modules"
+msgstr "Common Interface Modules"
 
 #: src/enigma_ci.cpp:42
 msgid "Common Interface Module"
-msgstr "Common Interface Modul"
+msgstr "Common Interface Module"
 
 #: src/enigma_ci.cpp:48 src/enigma_ci.cpp:77
 msgid "Reset"
@@ -1830,28 +1760,28 @@ msgstr "Reset"
 
 #: src/enigma_ci.cpp:51 src/enigma_ci.cpp:80
 msgid "reset the Common Interface module"
-msgstr "Resetiranje common interface modula"
+msgstr "resetati Common Interface module"
 
 #: src/enigma_ci.cpp:57 src/enigma_ci.cpp:86
 msgid "Init"
-msgstr "Inisializacija"
+msgstr "Init"
 
 #: src/enigma_ci.cpp:60 src/enigma_ci.cpp:89
 msgid "send the ca-pmt to CI"
-msgstr "Poslati komandu ca-pmt u CI"
+msgstr "expediati ca-pmt spre CI"
 
 #: src/enigma_ci.cpp:66 src/enigma_ci.cpp:95
 msgid "waiting for module"
-msgstr "Pricekaj odgovor modula"
+msgstr "asteapta pentru module"
 
 #: src/enigma_ci.cpp:69 src/enigma_ci.cpp:98
 msgid "enter Common Interface menu (mmi)"
-msgstr "Udi u meni Common interface Modula"
+msgstr "intrare Common Interface menu (mmi)"
 
 #: src/enigma_ci.cpp:112
 #, fuzzy
 msgid "can handle two services"
-msgstr "Izbrisati servis"
+msgstr "stergeti serviciul"
 
 #: src/enigma_ci.cpp:113
 msgid "can your CI descramble two services at the same time?"
@@ -1859,21 +1789,20 @@ msgstr ""
 
 #: src/enigma_ci.cpp:171 src/enigma_ci.cpp:177
 msgid "resetting....please wait"
-msgstr "Sacekajte sa Sandbox timom "
+msgstr "resetting....asteptati va rog"
 
 #: src/enigma_ci.cpp:223
 msgid "Common Interface Module - mmi"
-msgstr "Common interface Modul-pcmcia"
+msgstr "Common Interface Module - mmi"
 
 #: src/enigma_ci.cpp:224
-#, fuzzy
 msgid "waiting for CI answer..."
-msgstr "Pricekaj odgovor modula"
+msgstr "asteapta pentru CI raspuns..."
 
 #: src/enigma_dyn.cpp:2119
 #, fuzzy
 msgid "External Message"
-msgstr "Poruka"
+msgstr "Mesaj"
 
 #: src/enigma_epg.cpp:82
 msgid "press 1 ... 6 to select count of visible hours"
@@ -1881,11 +1810,11 @@ msgstr ""
 
 #: src/enigma_event.cpp:21
 msgid "enigma event view"
-msgstr "enigma /n Knjiga dogadjaja"
+msgstr "enigma event view"
 
 #: src/enigma_event.cpp:22
 msgid "closes the Event View"
-msgstr "Zatvoriti knjigu dogadjaja"
+msgstr "inchide Event View"
 
 #: src/enigma_event.cpp:222
 #, c-format
@@ -1894,286 +1823,275 @@ msgstr ""
 
 #: src/enigma_event.cpp:288 src/streaminfo.cpp:585 src/streaminfo.cpp:643
 msgid "no information is available"
-msgstr "Nema informacija"
+msgstr "Informatie nu este disponibila"
 
 #: src/enigma_info.cpp:39
 msgid "Infos"
-msgstr "Informacije"
+msgstr "Infos"
 
 #: src/enigma_info.cpp:42 src/streaminfo.cpp:554
 msgid "Streaminfo"
-msgstr "Informacije o kodiranju"
+msgstr "Streaminfo"
 
 #: src/enigma_info.cpp:42
 msgid "open the Streaminfo"
-msgstr "Otvori informacije o kodiranju"
+msgstr "deschide Streaminfo"
 
 #: src/enigma_info.cpp:43
 msgid "open the about dialog"
-msgstr "Otvori meni info"
+msgstr "deschide \"despre\" dialog"
 
 #: src/enigma_info.cpp:150
 msgid "Frontend: Satellite"
-msgstr "Tuner: Satelit"
+msgstr "Fronted: Satelit"
 
 #: src/enigma_info.cpp:153
 msgid "Frontend: Cable"
-msgstr "Tuner: Kablovska"
+msgstr "Fronted: Cablu"
 
 #: src/enigma_info.cpp:156
 msgid "Frontend: Terrestrial"
-msgstr "Tuner: Zemaljska"
+msgstr "Fronted: Terestru"
 
 #: src/enigma_info.cpp:159
 #, fuzzy
 msgid "Frontend: Unknown"
-msgstr "Pocetak kraja"
+msgstr "frontend:"
 
 #: src/enigma_info.cpp:207 src/streaminfo.cpp:344 src/streaminfo.cpp:355
 #: src/streaminfo.cpp:367 src/streaminfo.cpp:379 src/streaminfo.cpp:391
 #: src/streaminfo.cpp:482 src/streaminfo.cpp:521
 #, fuzzy
 msgid "none"
-msgstr "Bez"
+msgstr "None"
 
 #: src/enigma_info.cpp:213 src/timer.cpp:2757 src/upgrade.cpp:274
 msgid "unknown"
-msgstr "Nepoznato"
+msgstr "necunoscut"
 
 #: src/enigma_info.cpp:218
 msgid "release"
-msgstr "Verzija"
+msgstr "release"
 
 #: src/enigma_info.cpp:219
 msgid "beta"
-msgstr "BETA"
+msgstr "beta"
 
 #: src/enigma_info.cpp:220
 msgid "internal"
-msgstr "Unutrasnje"
+msgstr "internal"
 
 #: src/enigma_main.cpp:85
 msgid "enigma Zapp"
-msgstr "Zapping Enigma"
+msgstr "enigma Zapp"
 
 #: src/enigma_main.cpp:86
 msgid "show main menu"
-msgstr "Videti glavni meni"
+msgstr "arata main menu"
 
 #: src/enigma_main.cpp:87
 msgid "go to standby (press)"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "go to standby (apasa)"
 
 #: src/enigma_main.cpp:88
-#, fuzzy
 msgid "go to standby without menu (press)"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "go to standby fara menu (apasa)"
 
 #: src/enigma_main.cpp:89
 msgid "go to standby (repeat)"
-msgstr "Ici u mode pauza (repetuj)"
+msgstr "go to standby (repeat)"
 
 #: src/enigma_main.cpp:90
 msgid "go to standby (release)"
-msgstr "Ici u mode pauza (otpustiti)"
+msgstr "go to standby (release)"
 
 #: src/enigma_main.cpp:92
 msgid "show infobar"
-msgstr "Prikazi info bar"
+msgstr "arata infobar"
 
 #: src/enigma_main.cpp:93
 msgid "hide infobar"
-msgstr "Sakrij info bar"
+msgstr "ascunde infobar"
 
 #: src/enigma_main.cpp:94
 msgid "show infobar or EPG"
-msgstr "Prikazi info bar ili EPG"
+msgstr "arata infobar sau EPG"
 
 #: src/enigma_main.cpp:95
 msgid "show service selector"
-msgstr "Prikazi selector servisa"
+msgstr "arata serviciu selector"
 
 #: src/enigma_main.cpp:96
 msgid "show subservices/NVOD"
-msgstr "Videti podservis/NVODa"
+msgstr "arata subServices/NVOD"
 
 #: src/enigma_main.cpp:97
 msgid "show audio selector"
-msgstr "Prikazi audio selector"
+msgstr "arata selector audio"
 
 #: src/enigma_main.cpp:98
 msgid "show Videotext"
-msgstr "Prikazi videotext"
+msgstr "arata Videotext"
 
 #: src/enigma_main.cpp:99
-#, fuzzy
 msgid "show extension Plugins"
-msgstr "Prikazi dodatne informacije"
+msgstr "arata extensie Plugins"
 
 #: src/enigma_main.cpp:100
 msgid "show epg schedule list"
-msgstr "Videti stanje EPGa"
+msgstr "arata lista de program epg"
 
 #: src/enigma_main.cpp:101
 msgid "show extended info"
-msgstr "Prikazi dodatne informacije"
+msgstr "arata complete info"
 
 #: src/enigma_main.cpp:102
-#, fuzzy
 msgid "zap to next subService"
-msgstr "Ici u prethodni servis"
+msgstr "zap spre urmatorul subService"
 
 #: src/enigma_main.cpp:103
-#, fuzzy
 msgid "zap to prev subService"
-msgstr "Ici na prvi servis"
+msgstr "zap spre subService"
 
 #: src/enigma_main.cpp:104
 msgid "quickzap next"
-msgstr "Brzi sledeci zapp"
+msgstr "quickzap urmator"
 
 #: src/enigma_main.cpp:105
 msgid "quickzap prev"
-msgstr "Brzi prethodni zapp"
+msgstr "quickzap prev"
 
 #: src/enigma_main.cpp:107
-#, fuzzy
 msgid "playlist/history next"
-msgstr "Sledeci histogram"
+msgstr "playlist/istorie urmator"
 
 #: src/enigma_main.cpp:108
-#, fuzzy
 msgid "playlist/history prev"
-msgstr "Prethodni istogram"
+msgstr "playlist/istorie prev "
 
 #: src/enigma_main.cpp:110
 msgid "service list and down"
-msgstr "Donja lista servisa"
+msgstr "lista de servicii si jos"
 
 #: src/enigma_main.cpp:111
 msgid "service list and up"
-msgstr "Gornja lista servisa"
+msgstr "lista de servicii si sus"
 
 #: src/enigma_main.cpp:113 src/enigma_main.cpp:170
 msgid "volume up"
-msgstr "Zvuk +"
+msgstr "volum mare"
 
 #: src/enigma_main.cpp:114 src/enigma_main.cpp:171
 msgid "volume down"
-msgstr "Zvuk -"
+msgstr "volume mic"
 
 #: src/enigma_main.cpp:115 src/enigma_main.cpp:172
 msgid "toggle mute flag"
-msgstr "Tisina"
+msgstr "toggle mute flag"
 
 #: src/enigma_main.cpp:117 src/enigma_main.cpp:130
 msgid "stop playback"
-msgstr "Stop citanja"
+msgstr "stop playback"
 
 #: src/enigma_main.cpp:118 src/enigma_main.cpp:131
 msgid "pause playback"
-msgstr "Pauza"
+msgstr "pauza playback"
 
 #: src/enigma_main.cpp:119 src/enigma_main.cpp:132
 msgid "resume playback"
-msgstr "Preuseti citanje"
+msgstr "resuma playback"
 
 #: src/enigma_main.cpp:120 src/enigma_main.cpp:133 src/enigma_main.cpp:3126
 msgid "record"
-msgstr "Snimanje"
+msgstr "record"
 
 #: src/enigma_main.cpp:122 src/enigma_main.cpp:135
 msgid "start skipping forward"
-msgstr "Unapred brzo."
+msgstr "start skipping forward"
 
 #: src/enigma_main.cpp:123 src/enigma_main.cpp:136
 msgid "repeat skipping forward"
-msgstr "Répetiraj brzo unapred"
+msgstr "repeta skipping forward"
 
 #: src/enigma_main.cpp:124 src/enigma_main.cpp:137
 msgid "stop skipping forward"
-msgstr "Zaustavi brzo unapred"
+msgstr "stop skipping forward"
 
 #: src/enigma_main.cpp:126 src/enigma_main.cpp:139
 msgid "start skipping reverse"
-msgstr "Brzo unazad"
+msgstr "start skipping reverse"
 
 #: src/enigma_main.cpp:127 src/enigma_main.cpp:140
 msgid "repeat skipping reverse"
-msgstr "repetiraj brzo unazad"
+msgstr "repeta skipping reverse"
 
 #: src/enigma_main.cpp:128 src/enigma_main.cpp:141
 msgid "stop skipping reverse"
-msgstr "Zaustavi brzo unazad"
+msgstr "stop skipping reverse"
 
 #: src/enigma_main.cpp:143
-#, fuzzy
 msgid "open the serviceselector and show bouquets"
-msgstr "Dodati specifican favorit "
+msgstr "deschideti serviceselector si arata buchete"
 
 #: src/enigma_main.cpp:144
-#, fuzzy
 msgid "open the serviceselector and show provider"
-msgstr "Dodati specifican favorit "
+msgstr "deschideti serviceselector si arata furnizor programe"
 
 #: src/enigma_main.cpp:145
 msgid "open the serviceselector and show recorded movies"
-msgstr ""
+msgstr "deschideti serviceselector si arata filmele inregistrate"
 
 #: src/enigma_main.cpp:146
 msgid "open the serviceselector and shows the playlist"
-msgstr ""
+msgstr "deschideti serviceselector si arata playlist"
 
 #: src/enigma_main.cpp:148 src/sselect.cpp:132
 msgid "switch to TV mode"
-msgstr "Preci u TV mod"
+msgstr "comutati spre modul TV"
 
 #: src/enigma_main.cpp:149 src/sselect.cpp:133
 msgid "switch to Radio mode"
-msgstr "Preci u Radio mod"
+msgstr "comutati spre modul Radio"
 
 #: src/enigma_main.cpp:150 src/sselect.cpp:134
 msgid "switch to File mode"
-msgstr "Preci u fajl mod"
+msgstr "comutati spre modul File"
 
 #: src/enigma_main.cpp:152
 msgid "toggle DVR panel"
-msgstr "Preci na tablu DVRa"
+msgstr "toggle panou DVR"
 
 #: src/enigma_main.cpp:153
 msgid "toggle index mark"
-msgstr "Marka index prebacivanja"
+msgstr "toggle marcator index"
 
 #: src/enigma_main.cpp:155
-#, fuzzy
 msgid "seek to next index mark"
-msgstr "Marka index prebacivanja"
+msgstr "cautati semnul de index urmator"
 
 #: src/enigma_main.cpp:156
-#, fuzzy
 msgid "seek to previous index mark"
-msgstr "Marka index prebacivanja"
+msgstr "cauta semnul de index anterior"
 
 #: src/enigma_main.cpp:336
 msgid " to "
-msgstr "Na"
+msgstr "spre"
 
 #: src/enigma_main.cpp:346
 msgid " Euro lost)"
-msgstr "Izgubi Euro)"
+msgstr "Euro lost)"
 
 #: src/enigma_main.cpp:387
 msgid "not valid!"
-msgstr "Nije Valid !"
+msgstr "nu este valabil"
 
 #: src/enigma_main.cpp:405
 msgid "NVOD"
 msgstr "NVOD"
 
 #: src/enigma_main.cpp:516
-#, fuzzy
 msgid "Video"
-msgstr "SVideo"
+msgstr "Video"
 
 #: src/enigma_main.cpp:644 src/enigma_main.cpp:828
 msgid "Audio"
@@ -2186,21 +2104,19 @@ msgstr ""
 #: src/enigma_main.cpp:661 src/enigma_main.cpp:845
 #, fuzzy
 msgid "<  Stereo  >"
-msgstr "< Stani >"
+msgstr "< Stop >"
 
 #: src/enigma_main.cpp:662 src/enigma_main.cpp:846
 msgid "<  Right Mono  "
 msgstr ""
 
 #: src/enigma_main.cpp:692
-#, fuzzy
 msgid "Audiotrack(AC3)"
-msgstr "Povratak"
+msgstr "Audiotrack(AC3)"
 
 #: src/enigma_main.cpp:692
-#, fuzzy
 msgid "Audiotrack"
-msgstr "Povratak"
+msgstr "Audiotrack"
 
 #: src/enigma_main.cpp:884
 msgid "no subtitles"
@@ -2208,57 +2124,52 @@ msgstr ""
 
 #: src/enigma_main.cpp:925
 msgid "multiple Services"
-msgstr "Mutli servis"
+msgstr "Servicii multiple"
 
 #: src/enigma_main.cpp:936 src/enigma_main.cpp:987 src/enigma_main.cpp:1001
 msgid "enable quickzap"
-msgstr ""
+msgstr "activeaza quickzap"
 
 #: src/enigma_main.cpp:944
-#, fuzzy
 msgid "add to bouquet"
-msgstr "Dodavanje licni buketa"
+msgstr "adauga la buchet"
 
 #: src/enigma_main.cpp:983
-#, fuzzy
 msgid "disable quickzap"
-msgstr "Desaktiviraj mogucnosti"
+msgstr "dezactivati quickzap"
 
 #: src/enigma_main.cpp:1081
 msgid "Channel"
-msgstr "Kanali"
+msgstr "Canal"
 
 #: src/enigma_main.cpp:1086
 msgid "Channel:"
-msgstr "Kanali:"
+msgstr "Canal:"
 
 #: src/enigma_main.cpp:1161
-#, fuzzy, c-format
+#, c-format
 msgid "Please wait while the motor is turning to %d.%d°%c ...."
-msgstr "Sacekajte dok je rotor u pomeranju na %d. %d%c ..."
+msgstr "Asteptati va rog pina motorul se intoarce la %d.%d°%c ...."
 
 #: src/enigma_main.cpp:1161
 msgid "Message"
-msgstr "Poruka"
+msgstr "Mesaj"
 
 #: src/enigma_main.cpp:1255
 msgid "recorded movies"
-msgstr "Snimljeni programi"
+msgstr "filme inregistrate"
 
 #: src/enigma_main.cpp:1376
-#, fuzzy
 msgid "Bouquets (TV)"
-msgstr "Licni buket (TV)"
+msgstr "Buchete (TV)"
 
 #: src/enigma_main.cpp:1387
-#, fuzzy
 msgid "Bouquets (File)"
-msgstr "Licni buket (TV)"
+msgstr "Buchete (File)"
 
 #: src/enigma_main.cpp:1399
-#, fuzzy
 msgid "Bouquets (Radio)"
-msgstr "Licni buket (Radio)"
+msgstr "Buchete (Radio)"
 
 #: src/enigma_main.cpp:1448
 msgid "Favourites (TV)"
@@ -2269,73 +2180,67 @@ msgid "Favourites (Radio)"
 msgstr "Favoriti (Radio)"
 
 #: src/enigma_main.cpp:1460
-#, fuzzy
 msgid "Favourites (File)"
-msgstr "Favoriti (TV)"
+msgstr "Favoriti (File)"
 
 #: src/enigma_main.cpp:1895
-#, fuzzy
 msgid "please wait while initializing Common Interface ..."
-msgstr ""
-"Sacekati, inisializacija hard diska. \n"
-" To moze trajati nekoliko minuta. \n"
+msgstr "Asteptati CAM va fi repornit"
 
 #: src/enigma_main.cpp:2202
 msgid "no EPG available"
-msgstr "Nije dostupan EPG"
+msgstr "EPG nu este transmis"
 
 #: src/enigma_main.cpp:2871
-#, fuzzy
 msgid "ShutdownTimer"
-msgstr "Ugasiti"
+msgstr "ShutdownTimer"
 
 #: src/enigma_main.cpp:2871
-#, fuzzy
 msgid "SleepTimer"
-msgstr "Sat"
+msgstr "SleepTimer"
 
 #: src/enigma_main.cpp:3126
 msgid "Sorry, you cannot record this service."
-msgstr "Izvinite,taj servis se ne moze snimiti"
+msgstr "Scuze, acest serviciu nu poate fi inregistrat"
 
 #: src/enigma_main.cpp:3333
 msgid "Show recorded movies?"
-msgstr "Videti snimljene kanale"
+msgstr "Arata filmele inregistrate?"
 
 #: src/enigma_main.cpp:3333
 msgid "recording finished"
-msgstr "Kraj snimanja"
+msgstr "Inregistrare completa"
 
 #: src/enigma_main.cpp:3687
 #, fuzzy
 msgid "Shutdown your Receiver now?"
-msgstr "Staviti u dremanje"
+msgstr "opreste deine dreambox"
 
 #: src/enigma_main.cpp:3687 src/enigma_main.cpp:3707
 #, fuzzy
 msgid "Timer Message"
-msgstr "Poruka"
+msgstr "Mesaj"
 
 #: src/enigma_main.cpp:3707
 #, fuzzy
 msgid "Go to Standby now?"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "Intra in stndby (ok)"
 
 #: src/enigma_main.cpp:3764 src/enigma_main.cpp:3826
 msgid "Enter new name:"
-msgstr "Ubaci novo ime"
+msgstr "Introduceti un nou nume:"
 
 #: src/enigma_main.cpp:3765 src/enigma_main.cpp:3827
 msgid "Rename entry"
-msgstr "Novo ime ubaci"
+msgstr "Redenumiti intrarea"
 
 #: src/enigma_main.cpp:3889
 msgid "Sorry, you cannot delete this service."
-msgstr "Izvinite, ne moze te izbrisati taj servis"
+msgstr "Scuze, acest serviciu nu poate fi sters."
 
 #: src/enigma_main.cpp:3889
 msgid "delete service"
-msgstr "Izbrisati servis"
+msgstr "stergeti serviciul"
 
 #: src/enigma_main.cpp:3916 src/enigma_main.cpp:4040
 #, c-format
@@ -2343,114 +2248,106 @@ msgid ""
 "You are trying to delete '%s'.\n"
 "Really do this?"
 msgstr ""
+"Incercati sa stergeti '%s' .\n"
+"Sunteti sigur?"
 
 #: src/enigma_main.cpp:3917
 msgid "Delete recorded stream"
-msgstr "Izbrisati snimljeni kanal"
+msgstr "Stergeti stream inregistrat"
 
 #: src/enigma_main.cpp:3948
-#, fuzzy
 msgid ""
 "This is a complete Bouquet!\n"
 "Really delete?"
 msgstr ""
-"To je snimak kanala! \n"
-" Izbrisati ga definitivno?"
+"Acesta este un buchet complet!\n"
+"Sigur stergere?"
 
 #: src/enigma_main.cpp:3949
-#, fuzzy
 msgid "Delete bouquet"
-msgstr "Novi naziv za licni buket"
+msgstr "Stergeti buchet"
 
 #: src/enigma_main.cpp:4041
 #, fuzzy
 msgid "Delete File"
-msgstr "Izbrisi me"
+msgstr "sterge file"
 
 #: src/enigma_main.cpp:4113
-#, fuzzy
 msgid "Enter new Filename:"
-msgstr "Ubaci novo ime"
+msgstr "Introduceti nou Filename"
 
 #: src/enigma_main.cpp:4114
 #, fuzzy
 msgid "Rename File"
-msgstr "Zameniime"
+msgstr "renumeste files"
 
 #: src/enigma_main.cpp:4146
-#, fuzzy
 msgid "Enter new name for the bouquet:"
-msgstr "Ubaciti novo ime licnog buketa"
+msgstr "Introduce nume nou pentru buchet"
 
 #: src/enigma_main.cpp:4147
-#, fuzzy
 msgid "Rename bouquet"
-msgstr "Novi naziv za licni buket"
+msgstr "nou nume pentru buchet"
 
 #: src/enigma_main.cpp:4172
 msgid "Enter name for the new bouquet:"
-msgstr "Ubaciti ime buketa"
+msgstr "Introduce name pentru nou buchet"
 
 #: src/enigma_main.cpp:4173
-#, fuzzy
 msgid "Add new bouquet"
-msgstr "Dodavanje novog buketa"
+msgstr "adauga buchet nou"
 
 #: src/enigma_main.cpp:4228
-#, fuzzy
 msgid "unnamed"
-msgstr "Buket bez imena"
+msgstr "fara nume"
 
 #: src/enigma_main.cpp:4229
-#, fuzzy
 msgid "Enter marker name:"
-msgstr "Ubaci novo ime"
+msgstr "introduce marcator nume"
 
 #: src/enigma_main.cpp:4230
 msgid "create marker"
-msgstr ""
+msgstr "creeaza marcator"
 
 #: src/enigma_main.cpp:4271
 msgid "unnamed bouquet"
-msgstr "Buket bez imena"
+msgstr "buchet fara nume"
 
 #: src/enigma_main.cpp:4635 src/enigma_main.cpp:4636
 msgid "This directory doesn't contain anything playable!"
-msgstr "Taj dosije nema vizualni fajl!"
+msgstr "Acest fisier nu contine nimic playable!"
 
 #: src/enigma_main.cpp:4636
 msgid "Play"
-msgstr "Citanje"
+msgstr "Play"
 
 #: src/enigma_main.cpp:5130
-#, fuzzy
 msgid ""
 "A timer based recording is currently in progress!\n"
 "This stops the timer, and recording!"
 msgstr ""
-"Snimanje je u radu ! \n"
-" To ce zaustaviti brojac za digitalno snimanje ! "
+"O inregistrare bazata pe timer este in progres!\n"
+"Va opri timerul, si inregistrarea"
 
 #: src/enigma_main.cpp:5140
-#, fuzzy
 msgid ""
 "A recording is currently in progress!\n"
 "This stops the recording!"
 msgstr ""
-"Snimanje je u radu! \n"
-" To ce zaustaviti digitalno snimanje ! "
+"O inregistrare este in progres!\n"
+"Va opri inregistrarea!"
 
 #: src/enigma_main.cpp:5152
 msgid ""
 "A timer event is currently in progress!\n"
 "This stops the timer event!"
 msgstr ""
-"Jedan dogadjaj je u radu \n"
-" To zaustavlja Sat ! "
+"Un timer este curent in progres!\n"
+"Va opri timerul!"
 
 #: src/enigma_main.cpp:5160
 msgid "Really do this?"
-msgstr "Hocete li zaista to uciniti?"
+msgstr "Intr-adevar faceti aceasta?"
 
 #: src/enigma_main.cpp:5259
 msgid "please wait until the timer has started the recording (max 10 seconds)"
@@ -2459,7 +2356,7 @@ msgstr ""
 #: src/enigma_main.cpp:5260
 #, fuzzy
 msgid "information"
-msgstr "Informacije"
+msgstr "Informatie"
 
 #: src/enigma_main.cpp:5936
 msgid "Record failed due to inaccessable storage."
@@ -2479,62 +2376,61 @@ msgstr ""
 #: src/enigma_main.cpp:5942
 #, fuzzy
 msgid "record failed"
-msgstr "Kraj snimanja"
+msgstr "Inregistrare completa"
 
 #: src/enigma_main.cpp:6181 src/enigma_main.cpp:6182
 msgid "One moment please..."
-msgstr "Sacekajte..."
+msgstr "Un moment va rog..."
 
 #: src/enigma_main.cpp:6182 src/enigma_main.cpp:6186 src/enigma_main.cpp:6194
 #: src/enigma_main.cpp:6201 src/enigma_main.cpp:6207 src/enigma_main.cpp:6212
 #: src/enigma_main.cpp:6217 src/timer.cpp:2284
 msgid "switch"
-msgstr "Poruka"
+msgstr "comutare"
 
 #: src/enigma_main.cpp:6185 src/enigma_main.cpp:6186
 msgid "Service could not be found !"
-msgstr "Nema servisa! "
+msgstr "Serviciul nu poate fi gasit"
 
 #: src/enigma_main.cpp:6193 src/enigma_main.cpp:6194
 msgid "This service could not be descrambled"
-msgstr "Taj servis se ne moze dekodirati"
+msgstr "Acest serviciu nu poate fi decodat"
 
 #: src/enigma_main.cpp:6200 src/enigma_main.cpp:6201
 msgid "This service doesn't currently send a signal"
-msgstr "Nema signala"
+msgstr "Acest serviciu nu transmite in mod curent nici un semnal"
 
 #: src/enigma_main.cpp:6205 src/enigma_main.cpp:6207
 msgid "This content could not be displayed"
-msgstr "Taj sadrzaj se ne moze prikazati"
+msgstr "Acest element nu poate fi afisat"
 
 #: src/enigma_main.cpp:6210 src/enigma_main.cpp:6212
 msgid "NVOD Service - please select a starttime"
-msgstr "Servis NVOD - Izaberi cas pocetka"
+msgstr "NVOD Service - selectati va rog starttime"
 
 #: src/enigma_main.cpp:6215 src/enigma_main.cpp:6217
 msgid "Unknown error!!"
-msgstr "Nepoznata greska!"
+msgstr "greseala necunoscuta"
 
 #: src/enigma_main.cpp:6743 src/sselect.cpp:394
 msgid "Playlist"
-msgstr "Playlista"
+msgstr "Playlist"
 
 #: src/enigma_main.cpp:6745
 msgid "History"
-msgstr "Istorija"
+msgstr "Istorie"
 
 #: src/enigma_main.cpp:7197
 msgid "Service Menu"
-msgstr "meni servisi"
+msgstr "Menu Servicii"
 
 #: src/enigma_main.cpp:7214 src/sselect.cpp:130
 msgid "add service to playlist"
-msgstr "Dodavanje servisa u playlistu"
+msgstr "adauga serviciul la playlist"
 
 #: src/enigma_main.cpp:7214
-#, fuzzy
 msgid "add selected service to the playlist"
-msgstr "Dodavanje servisa u playlistu"
+msgstr "adauga serviciul selectat la playlist"
 
 #: src/enigma_main.cpp:7225
 msgid "remove 'new found flag'"
@@ -2543,70 +2439,61 @@ msgstr ""
 #: src/enigma_main.cpp:7225
 #, fuzzy
 msgid "select to remove the 'new found flag'"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "selecteaza sa creezi un nou buchet"
 
 #: src/enigma_main.cpp:7228
-#, fuzzy
 msgid "create new bouquet"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "creeaza un nou buchet"
 
 #: src/enigma_main.cpp:7228
-#, fuzzy
 msgid "select to create a new bouquet"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "selecteaza sa creezi un nou buchet"
 
 #: src/enigma_main.cpp:7240
-#, fuzzy
 msgid "duplicate bouquet"
-msgstr "Buket bez imena"
+msgstr "duplicati bouquet"
 
 #: src/enigma_main.cpp:7240
 msgid "duplicate the complete bouquet with all content"
-msgstr ""
+msgstr "copiati buchetul complet cu tot continutul"
 
 #: src/enigma_main.cpp:7246 src/enigma_main.cpp:7306 src/enigma_main.cpp:7311
 #: src/enigma_main.cpp:7329
-#, fuzzy
 msgid "add to specific bouquet"
-msgstr "Dodavanje licni buketa"
+msgstr "adaugati la buchetul specific"
 
 #: src/enigma_main.cpp:7246
-#, fuzzy
 msgid "add the selected service to another bouquet"
-msgstr "Dodati specifican favorit "
+msgstr "adauga serviciul selectat la un alt buchet"
 
 #: src/enigma_main.cpp:7248
 msgid "add marker"
-msgstr ""
+msgstr "adauga marcator"
 
 #: src/enigma_main.cpp:7248
-#, fuzzy
 msgid "create a new marker in the current bouquet"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "creati un marcator nou in buchetul curent"
 
 #: src/enigma_main.cpp:7257 src/enigma_main.cpp:7271 src/enigma_main.cpp:7313
 #: src/sselect.cpp:373
 msgid "rename"
-msgstr "Zameniime"
+msgstr "redenumiti"
 
 #: src/enigma_main.cpp:7257
-#, fuzzy
 msgid "rename the current selected bouquet"
-msgstr "Izbrisati timer ubacen (ok)"
+msgstr "redenumiti buchetul curent selectat"
 
 #: src/enigma_main.cpp:7271 src/enigma_main.cpp:7313
-#, fuzzy
 msgid "rename the current selected service/movie"
-msgstr "Izbrisati timer ubacen (ok)"
+msgstr "redenumiti filmul/serviciul curent selectat"
 
 #: src/enigma_main.cpp:7275 src/enigma_main.cpp:7314 src/sselect.cpp:371
 msgid "delete"
-msgstr "Izbrisati"
+msgstr "stergere"
 
 #: src/enigma_main.cpp:7275 src/enigma_main.cpp:7314
-#, fuzzy
 msgid "delete the current selected service/movie"
-msgstr "Izbrisati timer ubacen (ok)"
+msgstr "stergeti filmul/serviciul curent selectat"
 
 #: src/enigma_main.cpp:7281
 msgid "set as startup service"
@@ -2615,290 +2502,269 @@ msgstr ""
 #: src/enigma_main.cpp:7281
 #, fuzzy
 msgid "currently selected service will be selected on startup"
-msgstr "Dodati specifican favorit "
+msgstr "adauga serviciul selectat in un bouquet selectabil"
 
 #: src/enigma_main.cpp:7282 src/enigma_main.cpp:7317
 #, fuzzy
 msgid "reset startup service"
-msgstr "Izbrisati servis"
+msgstr "stergeti serviciul"
 
 #: src/enigma_main.cpp:7282
 #, fuzzy
 msgid "last selected service will be selected on startup"
-msgstr "Dodati specifican favorit "
+msgstr "adauga serviciul selectat in un bouquet selectabil"
 
 #: src/enigma_main.cpp:7289
 msgid "disable move mode"
-msgstr "Desaktiviraj pokretajuci mod"
+msgstr "dezactivati modul deplasare"
 
 #: src/enigma_main.cpp:7289
-#, fuzzy
 msgid "switch move mode off"
-msgstr "Preci u fajl mod"
+msgstr "schimba modul deplasare pe inchis"
 
 #: src/enigma_main.cpp:7291
 msgid "enable move mode"
-msgstr "Aktiviraj pokretajuci mod"
+msgstr "activati modul de miscare"
 
 #: src/enigma_main.cpp:7291
 msgid "activate mode to simply change the entry order"
-msgstr ""
+msgstr "activati modul simplu pentru a schimba ordinea de intrare"
 
 #: src/enigma_main.cpp:7300
-#, fuzzy
 msgid "copy to bouquet list"
-msgstr "Kopiraj u licni buket"
+msgstr "copiaza in bouquet liste"
 
 #: src/enigma_main.cpp:7300
-#, fuzzy
 msgid "copy the selected provider to the bouquet list"
-msgstr "Dodati specifican favorit "
+msgstr "copiaza provider selectat in bouquet liste"
 
 #: src/enigma_main.cpp:7306 src/enigma_main.cpp:7311
-#, fuzzy
 msgid "add the selected service to a selectable bouquet"
-msgstr "Dodati specifican favorit "
+msgstr "adauga serviciul selectat in un bouquet selectabil"
 
 #: src/enigma_main.cpp:7316
 #, fuzzy
 msgid "set as startup"
-msgstr "Snimiti soft mogucnosti istok"
+msgstr "seteaza limita est soft"
 
 #: src/enigma_main.cpp:7316
 #, fuzzy
 msgid "set the current selected service/movie as startup service"
-msgstr "Izbrisati timer ubacen (ok)"
+msgstr "stergeti filmul/serviciul curent selectat"
 
 #: src/enigma_main.cpp:7317
 #, fuzzy
 msgid "reset startup"
-msgstr "Fixirati"
+msgstr "restarte"
 
 #: src/enigma_main.cpp:7329
 #, fuzzy
 msgid "add the selected file to a selectable bouquet"
-msgstr "Dodati specifican favorit "
+msgstr "adauga serviciul selectat in un bouquet selectabil"
 
 #: src/enigma_main.cpp:7331
-#, fuzzy
 msgid "delete file"
-msgstr "Izbrisi me"
+msgstr "sterge file"
 
 #: src/enigma_main.cpp:7331
 msgid "delete the selected file (and all corresponding ts files"
-msgstr ""
+msgstr "sterge file selectate(si toate ts file corespunzatoare)"
 
 #: src/enigma_main.cpp:7332
-#, fuzzy
 msgid "rename file"
-msgstr "Zameniime"
+msgstr "renumeste files"
 
 #: src/enigma_main.cpp:7332
 msgid "rename the selected file (and all corresponding ts files"
-msgstr ""
+msgstr "renumeste file selectate(si toate ts file corespunzatoare)"
 
 #: src/enigma_main.cpp:7346
 msgid "disable edit mode"
-msgstr "Desaktiviraj mod za editiranje"
+msgstr "deactiveaza mod editare"
 
 #: src/enigma_main.cpp:7346
-#, fuzzy
 msgid "disable the edit mode"
-msgstr "Desaktiviraj mod za editiranje"
+msgstr "deactiveaza mod editare"
 
 #: src/enigma_main.cpp:7348
 msgid "enable edit mode"
-msgstr "Aktivirati mod za editiranje"
+msgstr "activeaza mod editare"
 
 #: src/enigma_main.cpp:7348
-#, fuzzy
 msgid "activate mode to simply add many services to a selectable bouquet"
-msgstr "Dodati specifican favorit "
+msgstr ""
+"activeaza modul simplu de introducere a mai multor servicii la un bouquet "
+"selectat"
 
 #: src/enigma_main.cpp:7358
-#, fuzzy
 msgid "unlock"
-msgstr "Cas"
+msgstr "deblocaj"
 
 #: src/enigma_main.cpp:7358
 msgid "do parental-unlock the selected service or file"
-msgstr ""
+msgstr "deblocaj vizionare al servicilor sau files selectate"
 
 #: src/enigma_main.cpp:7360
-#, fuzzy
 msgid "lock"
-msgstr "Cas"
+msgstr "blocheaza"
 
 #: src/enigma_main.cpp:7360
 msgid "do parentallock the selected service or file"
-msgstr ""
+msgstr "blocheaza vizionarea acestor servicii sau file"
 
 #: src/enigma_main.cpp:7364
-#, fuzzy
 msgid "disable parental lock"
-msgstr "Desaktiviraj mod za editiranje"
+msgstr "deblocaj vizionare"
 
 #: src/enigma_main.cpp:7364
-#, fuzzy
 msgid "temporary disable the parental locking"
-msgstr "Desaktiviraj mod za editiranje"
+msgstr "deactiveaza temporar blocaj vizionare"
 
 #: src/enigma_main.cpp:7366
-#, fuzzy
 msgid "enable parental lock"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "activeaza blocaj vizionare"
 
 #: src/enigma_main.cpp:7366
-#, fuzzy
 msgid "re-enable the parental locking"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "armeaza blocaj vizionare"
 
 #: src/enigma_main.cpp:7384
 msgid "Shutdown/Standby Menu"
-msgstr ""
+msgstr "Shutdown/Standby Menu"
 
 #: src/enigma_main.cpp:7395 src/enigma_main.cpp:7398
-#, fuzzy
 msgid "reboot now"
-msgstr "Tacka za root"
+msgstr "reboot acum"
 
 #: src/enigma_main.cpp:7395 src/enigma_main.cpp:7403
 msgid "restart your dreambox"
-msgstr ""
+msgstr "porneste dreambox"
 
 #: src/enigma_main.cpp:7398
+#, fuzzy
 msgid "restart your receiver"
-msgstr ""
+msgstr "porneste dreambox"
 
 #: src/enigma_main.cpp:7402 src/enigma_main.cpp:7406
-#, fuzzy
 msgid "shutdown now"
-msgstr "Staviti u dremanje"
+msgstr "opreste  imediat"
 
 #: src/enigma_main.cpp:7402
-#, fuzzy
 msgid "shutdown your dreambox"
-msgstr "Staviti u dremanje"
+msgstr "opreste deine dreambox"
 
 #: src/enigma_main.cpp:7403 src/enigma_main.cpp:7407
-#, fuzzy
 msgid "restart"
-msgstr "Fixirati"
+msgstr "restarte"
 
 #: src/enigma_main.cpp:7406
-#, fuzzy
 msgid "shutdown your dbox-2"
-msgstr "Staviti u dremanje"
+msgstr "opreste dbox-2"
 
 #: src/enigma_main.cpp:7407
 msgid "restart your dbox-2"
-msgstr ""
+msgstr "restarte dbox-2"
 
 #: src/enigma_main.cpp:7411
-#, fuzzy
 msgid "goto standby"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "goto standby"
 
 #: src/enigma_main.cpp:7411
-#, fuzzy
 msgid "goto standby mode"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "goto standby mode"
 
 #: src/enigma_main.cpp:7412
 msgid "set sleeptimer"
-msgstr ""
+msgstr "editeaza sleep timer"
 
 #: src/enigma_main.cpp:7412
-#, fuzzy
 msgid "set a sleep timer"
-msgstr "Ubaciti cas za kraj"
+msgstr "editeaza un sleep timer"
 
 #: src/enigma_main.cpp:7532
 msgid "Record Menu"
-msgstr "Meni za snimanje"
+msgstr "Menu Inregistrare"
 
 #: src/enigma_main.cpp:7538
 msgid "stop record now"
-msgstr "Zaustaviti snimanje"
+msgstr "opreste inregistrarea imediat"
 
 #: src/enigma_main.cpp:7538
 msgid "immediate stop the recording"
-msgstr ""
+msgstr "opreste inregistrarea imediat"
 
 #: src/enigma_main.cpp:7540
 msgid "set record duration"
-msgstr "Podesavanje trajanje snimanja"
+msgstr "editeaza inregistrare zeit"
 
 #: src/enigma_main.cpp:7540
-#, fuzzy
 msgid "set the recording time (in minutes)"
-msgstr "Podesiti cas kraja snimanja i zatvoriti prozor (OK)"
+msgstr "editeaza record zeit (in minute)"
 
 #: src/enigma_main.cpp:7541
 msgid "set record stop time"
-msgstr "Nastelovati cas kraja snimanja"
+msgstr "editeaza record stop zeit"
 
 #: src/enigma_main.cpp:7541
-#, fuzzy
 msgid "set the recording end time"
-msgstr "Cas kraja snimanja :"
+msgstr "alege sfirsit inregistrare"
 
 #: src/enigma_main.cpp:7636
 msgid "press ok to start edit mode"
-msgstr "Stisnuti OK da startujete mod editiranja"
+msgstr "apasa ok pentru modul editare"
 
 #: src/enigma_mainmenu.cpp:26
 msgid "enigma mainmenu"
-msgstr "Enigma glavni meni"
+msgstr "enigma acces menu"
 
 #: src/enigma_mainmenu.cpp:27
 msgid "close the mainmenu"
-msgstr "Zatvoriti glavni meni"
+msgstr "inchide acces menu"
 
 #: src/enigma_mainmenu.cpp:28
 #, fuzzy
 msgid "select previous entry"
-msgstr "Marka index prebacivanja"
+msgstr "cauta semnul de index anterior"
 
 #: src/enigma_mainmenu.cpp:29
 #, fuzzy
 msgid "select next entry"
-msgstr "Izbrisati ulaz izabran"
+msgstr "sterge selected entry"
 
 #: src/enigma_mainmenu.cpp:57 src/enigma_mainmenu.cpp:186
 msgid "Radio mode"
-msgstr "Mod Radio"
+msgstr "Radio mod"
 
 #: src/enigma_mainmenu.cpp:61 src/enigma_mainmenu.cpp:188
 msgid "File mode"
-msgstr "Mod fajl"
+msgstr "File mod"
 
 #: src/enigma_mainmenu.cpp:64 src/enigma_mainmenu.cpp:83
 #: src/enigma_mainmenu.cpp:195 src/enigma_mainmenu.cpp:205
 #: src/rotorconfig.cpp:917 src/timer.cpp:2736
 msgid "Information"
-msgstr "Informacije"
+msgstr "Informatie"
 
 #: src/enigma_mainmenu.cpp:67 src/enigma_mainmenu.cpp:197 src/timer.cpp:2188
 msgid "Shutdown"
-msgstr "Ugasiti"
+msgstr "Inchide Aparat"
 
 #: src/enigma_mainmenu.cpp:70 src/enigma_mainmenu.cpp:86
 #: src/enigma_mainmenu.cpp:193 src/enigma_mainmenu.cpp:203
 #: src/enigma_setup.cpp:36
 #, fuzzy
 msgid "Setup"
-msgstr "Stelovanje"
+msgstr "Configuratie"
 
 #: src/enigma_mainmenu.cpp:73 src/enigma_mainmenu.cpp:194
 #: src/enigma_plugins.cpp:126
 msgid "Games"
-msgstr "Igrice"
+msgstr "Jocuri"
 
 #: src/enigma_mainmenu.cpp:76 src/enigma_mainmenu.cpp:89
 #: src/enigma_mainmenu.cpp:192 src/enigma_mainmenu.cpp:202
 msgid "Timer"
-msgstr "Sat"
+msgstr "Timer"
 
 #: src/enigma_mainmenu.cpp:79 src/enigma_mainmenu.cpp:92
 #: src/enigma_mainmenu.cpp:190 src/enigma_mainmenu.cpp:200
@@ -2908,31 +2774,30 @@ msgstr "VCR"
 #: src/enigma_mainmenu.cpp:98 src/enigma_mainmenu.cpp:106
 #: src/enigma_mainmenu.cpp:339
 msgid "Mainmenu"
-msgstr "Glavni meni"
+msgstr "Acces Menu"
 
 #: src/enigma_mainmenu.cpp:275 src/parentallock.cpp:143
 #: src/parentallock.cpp:155
-#, fuzzy
 msgid "setup"
-msgstr "Stelovanje"
+msgstr "Configuratie"
 
 #: src/enigma_plugins.cpp:126
 msgid "Plugins"
-msgstr "Pluginsi"
+msgstr "Plugins"
 
 #: src/enigma_plugins.cpp:132
 msgid "select plugin and press ok"
-msgstr "Izaberite plugin i kliknite na OK"
+msgstr "Alege plugin und apasa ok"
 
 #: src/enigma_plugins.cpp:156
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't read plugin directory %s"
-msgstr "Nemoguce citati repertoar plugina"
+msgstr "Nu pot gasi plugin dir %s"
 
 #: src/enigma_plugins.cpp:160 src/enigma_plugins.cpp:269 src/scan.cpp:1873
 #: src/scan.cpp:1928 src/scan.cpp:2035
 msgid "Error"
-msgstr "Greska"
+msgstr "Eroare"
 
 #: src/enigma_plugins.cpp:239
 msgid "E: currently another plugin is running..."
@@ -2941,11 +2806,12 @@ msgstr ""
 #: src/enigma_plugins.cpp:246
 #, c-format
 msgid "plugin '%s' not found"
-msgstr ""
+msgstr "plugin '%s' nu a fost gasit"
 
 #: src/enigma_plugins.cpp:249
+#, fuzzy
 msgid "E: no name given"
-msgstr ""
+msgstr "nu are nume"
 
 #: src/enigma_plugins.cpp:269
 #, c-format
@@ -2960,7 +2826,7 @@ msgstr ""
 #: src/enigma_plugins.cpp:562
 #, fuzzy, c-format
 msgid "Executing %s. Please wait..."
-msgstr "Sacekajte sa Sandbox timom "
+msgstr "resetting....asteptati va rog"
 
 #: src/enigma_plugins.cpp:565
 #, c-format
@@ -2968,297 +2834,269 @@ msgid "Could not execute %s"
 msgstr ""
 
 #: src/enigma_scan.cpp:40 src/enigma_setup.cpp:42
-#, fuzzy
 msgid "Service Searching"
-msgstr "meni servisi"
+msgstr "Servicii cautare"
 
 #: src/enigma_scan.cpp:48
-#, fuzzy
 msgid "open satellite config"
-msgstr "Izaci iz podesavanja satelita"
+msgstr "deschide configuratie satelit"
 
 #: src/enigma_scan.cpp:49
-#, fuzzy
 msgid "open the satfinder"
-msgstr "Prikazi satfinder"
+msgstr "deschide control semnal(satfinder)"
 
 #: src/enigma_scan.cpp:50
 msgid "Motor Setup"
-msgstr "Spremanje Motora"
+msgstr "configuratie Motor"
 
 #: src/enigma_scan.cpp:50
-#, fuzzy
 msgid "open Motor Setup"
-msgstr "Spremanje Motora"
+msgstr "dechide configuratie Motor"
 
 #: src/enigma_scan.cpp:51 src/tpeditwindow.cpp:139
-#, fuzzy
 msgid "Transponder Edit"
-msgstr "Transponder"
+msgstr "Editare Transponderi"
 
 #: src/enigma_scan.cpp:51
-#, fuzzy
 msgid "for automatic scan"
-msgstr "Trazenje transpondera"
+msgstr "pentru cautare automata"
 
 #: src/enigma_scan.cpp:55 src/satfind.cpp:67
 #, fuzzy
 msgid "Signalfind"
-msgstr "Proveravanje signala"
+msgstr "Satfind"
 
 #: src/enigma_scan.cpp:55
 #, fuzzy
 msgid "open the signalfinder"
-msgstr "Prikazi satfinder"
+msgstr "deschide control semnal(satfinder)"
 
 #: src/enigma_scan.cpp:56 src/scan.cpp:39
 #, fuzzy
 msgid "Disable 5V"
-msgstr "DISEqC desaktiviran"
+msgstr "Dezarmeaza DiSEqC"
 
 #: src/enigma_scan.cpp:56 src/scan.cpp:39
 msgid "disable 5V for passive terrerstrial antennas"
 msgstr ""
 
 #: src/enigma_scan.cpp:61 src/scan.cpp:43
-#, fuzzy
 msgid "Automatic Transponder Scan"
-msgstr "Trazenje transpondera"
+msgstr "cautare transponderi automata"
 
 #: src/enigma_scan.cpp:61 src/scan.cpp:43
 msgid "open automatic transponder scan"
-msgstr "Trazenje transpondera"
+msgstr "deschide cautare transponderi automata"
 
 #: src/enigma_scan.cpp:63 src/scan.cpp:45
-#, fuzzy
 msgid "Automatic Multisat Scan"
-msgstr "Trazenje transpondera"
+msgstr "cautare transponderi automata multisat"
 
 #: src/enigma_scan.cpp:63 src/scan.cpp:45
-#, fuzzy
 msgid "open automatic multisat transponder scan"
-msgstr "Trazenje transpondera"
+msgstr "deschide cautare transponderi automata multisat"
 
 #: src/enigma_scan.cpp:65
-#, fuzzy
 msgid "Manual Transponder Scan"
-msgstr "Skeniranje transpondera"
+msgstr "cautare transponderi manuala"
 
 #: src/enigma_scan.cpp:65 src/scan.cpp:46
 msgid "open manual transponder scan"
-msgstr "Trazenje vise transpondera"
+msgstr "deschide cautare transponderi manuala"
 
 #: src/enigma_scan.cpp:142
-#, fuzzy
 msgid ""
 "DiSEqC 1.2 is enabled on more than one LNB, please select the LNB the motor "
 "is connected to"
 msgstr ""
-"Vise od jednog LNBa je podesen na diseqc 1.2, recite na koji izlaz je "
-"prikljucen rotor"
+"DiSEqC 1.2 este armat pentru mai multi LNB,te rog alege LNB -ul la care este "
+"conectat motorul"
 
 #: src/enigma_scan.cpp:142 src/setupnetwork.cpp:938
 msgid "Info"
-msgstr "Info"
+msgstr "Informatie"
 
 #: src/enigma_scan.cpp:156
 msgid ""
 "Found no LNB with DiSEqC 1.2 enabled,\n"
 "please goto Satellite Config first, and enable DiSEqC 1.2"
 msgstr ""
-"LNB nije nadjen sa diseqc 1.2,\n"
-" Molimo vas podesite satelit pa onda aktivirajte diseqc 1.2"
+"Nu a fost gasit un LNB armat cu DiSEqC 1.2,\armeaza DiSEqC 1.2 in "
+"Configuratie Sateliti"
 
 #: src/enigma_scan.cpp:156 src/rotorconfig.cpp:692 src/rotorconfig.cpp:893
 msgid "Warning"
-msgstr "Paznja"
+msgstr "Avertizare"
 
 #: src/enigma_scan.cpp:198
 msgid "Select LNB"
-msgstr "Izaberi LNB"
+msgstr "Selecteaza LNB"
 
 #: src/enigma_scan.cpp:205
 #, c-format
 msgid "use LNB %d for Motor"
-msgstr "Upotrebi LNB %d za rotor"
+msgstr "foloseste LNB %d pentru Motor"
 
 #: src/enigma_setup.cpp:40
-#, fuzzy
 msgid "open service organising"
-msgstr "Otvoriti podesavanje Ngraba"
+msgstr "deschide organizare servicii"
 
 #: src/enigma_setup.cpp:42
-#, fuzzy
 msgid "open service searching"
-msgstr "Prikazi selector servisa"
+msgstr "deschide cautare servicii"
 
 #: src/enigma_setup.cpp:44 src/system_settings.cpp:37
 msgid "System Settings"
-msgstr ""
+msgstr "Configurează Sistem"
 
 #: src/enigma_setup.cpp:44
-#, fuzzy
 msgid "open system settings"
-msgstr "Super podesavanje"
+msgstr "deschide configuratie sistem"
 
 #: src/enigma_setup.cpp:47
-#, fuzzy
 msgid "Common Interface"
-msgstr "Common interface..."
+msgstr "Interfata cam"
 
 #: src/enigma_setup.cpp:47
-#, fuzzy
 msgid "open common interface menu"
-msgstr "Izadi iz Common interface Meni"
+msgstr "deschide cam menu"
 
 #: src/enigma_setup.cpp:49
 #, fuzzy
 msgid "Parental Lock"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "zavor parintesc"
 
 #: src/enigma_setup.cpp:49
-#, fuzzy
 msgid "open parental setup"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "deschide blocaj vizionare"
 
 #: src/enigma_setup.cpp:51 src/setup_extra.cpp:40
-#, fuzzy
 msgid "Expert Setup"
-msgstr "Spremanje Motora"
+msgstr "Instalare Experti"
 
 #: src/enigma_setup.cpp:51
-#, fuzzy
 msgid "open expert setup"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "deschide expert setup"
 
 #: src/epgactions.h:14
 #, fuzzy
 msgid "EPG selector"
-msgstr "Otvoriti podesavanje teme"
+msgstr "EPG Style Selector"
 
 #: src/epgactions.h:15
 #, fuzzy
 msgid "add this event as DVR Event to timer list"
-msgstr "Dodati dogadjaj u sat"
+msgstr "Add event to timerlist"
 
 #: src/epgactions.h:16
 #, fuzzy
 msgid "add this event as NGRAB Event to timer list"
-msgstr "Dodati dogadjaj u sat"
+msgstr "Add event to timerlist"
 
 #: src/epgactions.h:17
 #, fuzzy
 msgid "add this event as simple Switch Event to timer list"
-msgstr "Taj dogadjaj je vec dodat u sat"
+msgstr "This event is already in the timerlist."
 
 #: src/epgactions.h:18
 #, fuzzy
 msgid "remove this event from timer list"
-msgstr "Izbrisati to iz sata"
+msgstr "sterge event din timer list"
 
 #: src/epgactions.h:19
 #, fuzzy
 msgid "show extended event information"
-msgstr "Prikazati dodatno podesavanje"
+msgstr "arata configuratia extinsa"
 
 #: src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Sun"
-msgstr "Ned."
+msgstr "Sun"
 
 #: src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Mon"
-msgstr "Pon."
+msgstr "Mon"
 
 #: src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Fri"
-msgstr "Pet."
+msgstr "Fri"
 
 #: src/epgwindow.cpp:113 src/timer.cpp:224
 msgid "Sat"
-msgstr "Sub."
+msgstr "Sat"
 
 #: src/epgwindow.cpp:175
-#, fuzzy
 msgid "EPG - "
-msgstr "EPG"
+msgstr "EPG - "
 
 #: src/helpwindow.cpp:20
-#, fuzzy
 msgid "Help window"
-msgstr "Zatvoriti prozor"
+msgstr "fereastra ajutor"
 
 #: src/helpwindow.cpp:21
-#, fuzzy
 msgid "close the help window"
-msgstr "Zatvoriti prozor"
+msgstr "inchide fereastra ajutor"
 
 #: src/helpwindow.cpp:22
 msgid "scroll up"
-msgstr ""
+msgstr "scroll up"
 
 #: src/helpwindow.cpp:23
-#, fuzzy
 msgid "scroll down"
-msgstr "Zvuk -"
+msgstr "scroll down"
 
 #: src/parentallock.cpp:25
 msgid "please enter pin:"
-msgstr ""
+msgstr "introduceti pin"
 
 #: src/parentallock.cpp:45
-#, fuzzy
 msgid "Parental setup"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "setup parinti"
 
 #: src/parentallock.cpp:52
 msgid "Parental lock"
-msgstr ""
+msgstr "zavor parintesc"
 
 #: src/parentallock.cpp:55
-#, fuzzy
 msgid "enable/disable parental lock"
-msgstr "Aktiviranje/desaktiviranje razmenu ? (ok)"
+msgstr "armeaza/dezarmeaza zavor parintesc"
 
 #: src/parentallock.cpp:59 src/parentallock.cpp:76
 msgid "change PIN"
-msgstr ""
+msgstr "schimba PIN"
 
 #: src/parentallock.cpp:62
 msgid "change Parental PIN (ok)"
-msgstr ""
+msgstr "schimba PIN parinti"
 
 #: src/parentallock.cpp:69
-#, fuzzy
 msgid "Setup lock"
-msgstr "Stelovanje"
+msgstr "Setup zavor"
 
 #: src/parentallock.cpp:72
-#, fuzzy
 msgid "enable/disable setup lock"
-msgstr "Aktiviranje/desaktiviranje razmenu ? (ok)"
+msgstr "armeaza/dezarmeaza setup zavor"
 
 #: src/parentallock.cpp:79
 msgid "change Setup PIN (ok)"
-msgstr ""
+msgstr "schimba Setup PIN (ok)"
 
 #: src/parentallock.cpp:86
-#, fuzzy
 msgid "Hide locked services"
-msgstr "Izbrisati servis"
+msgstr "ascunde servicii blocate"
 
 #: src/parentallock.cpp:89
 msgid "don't show locked services in any list"
-msgstr ""
+msgstr "nu arata servicii blocate in lista"
 
 #: src/parentallock.cpp:171
 #, c-format
 msgid "New %s PIN"
-msgstr ""
+msgstr "Noul %s PIN"
 
 #: src/parentallock.cpp:178
 #, c-format
 msgid "Reenter %s PIN"
-msgstr ""
+msgstr "Reintroducere %s PIN"
 
 #: src/parentallock.cpp:186
 msgid ""
@@ -3266,673 +3104,654 @@ msgid ""
 "\n"
 "Do you want to retry?"
 msgstr ""
+"PIN nu este egal!\n"
+"\n"
+"Vrei o noua incercare ?"
 
 #: src/parentallock.cpp:187 src/parentallock.cpp:268
 msgid "PIN validation failed"
-msgstr ""
+msgstr "PIN nicht valabil"
 
 #: src/parentallock.cpp:204
 msgid "PIN change completed"
-msgstr ""
+msgstr "schimbare PIN completa"
 
 #: src/parentallock.cpp:205
-#, fuzzy
 msgid "PIN changed"
-msgstr "Promenjena tema"
+msgstr "PIN schimbat"
 
 #: src/parentallock.cpp:256
 #, c-format
 msgid "current %s PIN"
-msgstr ""
+msgstr "curent  %s PIN"
 
 #: src/parentallock.cpp:267
 msgid ""
 "The entered PIN is incorrect.\n"
 "Do you want to retry?"
 msgstr ""
+"PIN-ul este incorect.\n"
+"Incercam din nou?"
 
 #: src/rotorconfig.cpp:54 src/rotorconfig.cpp:98 src/tpeditwindow.cpp:83
 msgid "East"
-msgstr "Istok"
+msgstr "Est"
 
 #: src/rotorconfig.cpp:55 src/rotorconfig.cpp:99 src/tpeditwindow.cpp:84
 msgid "West"
-msgstr "Zapad"
+msgstr "Vest"
 
 #: src/rotorconfig.cpp:69
 msgid "North"
-msgstr "Sever"
+msgstr "Nord"
 
 #: src/rotorconfig.cpp:70
 msgid "South"
-msgstr "Jug"
+msgstr "Sud"
 
 #: src/rotorconfig.cpp:119 src/tpeditwindow.cpp:73
 msgid "enter orbital position without dot (19.2° = 192)"
-msgstr "Ubaciti orbitalnu poziciju bez zareza(19,2° => 192)"
+msgstr "introdu pozitie orbitala fara punct (19.2° = 192)"
 
 #: src/rotorconfig.cpp:287 src/rotorconfig.cpp:344
 msgid "delete me"
-msgstr "Izbrisi me"
+msgstr "sterge-ma"
 
 #: src/rotorconfig.cpp:381 src/rotorconfig.cpp:384
 msgid "drive Motor East"
-msgstr "Vozi motor prema istoku"
+msgstr "misca Motor Est"
 
 #: src/rotorconfig.cpp:382
 msgid "drive Motor East.. one step"
-msgstr "Vozi motor prema istoku korak po korak"
+msgstr "misca Motor Est.. un pas"
 
 #: src/rotorconfig.cpp:383
 msgid "stop Motor drive East"
-msgstr "Zaustavi pokret motor u istok"
+msgstr "Stop miscare Motor Est"
 
 #: src/rotorconfig.cpp:385
 msgid "drive Motor West.. one step"
-msgstr "Vozi motor prema zapadu korak po korak"
+msgstr "misca Motor Vest.. un pas"
 
 #: src/rotorconfig.cpp:386
 msgid "stop Motor drive West"
-msgstr "Zaustavi pokret motor u zapad"
+msgstr "stop miscare Motor Vest"
 
 #: src/rotorconfig.cpp:462
 msgid "position"
-msgstr "Pozicija"
+msgstr "pozitie"
 
 #: src/rotorconfig.cpp:462
 msgid "store new sat positions"
-msgstr "Snimiti novu poziciju satelita"
+msgstr "salveaza noua sat pozitie"
 
 #: src/rotorconfig.cpp:463
 msgid "drive to stored pos"
-msgstr "Ici u snimljenu poziciju"
+msgstr "mergi pozitie salvata"
 
 #: src/rotorconfig.cpp:463
 msgid "drive to stored position"
-msgstr "Ici u snimljenu poziciju"
+msgstr "mergi pozitie salvata"
 
 #: src/rotorconfig.cpp:464
 msgid "drive to satellite"
-msgstr "Ici na satelit"
+msgstr "mergi spre satelit"
 
 #: src/rotorconfig.cpp:464
 msgid "drive to stored satellite"
-msgstr "Ici na satelitsku poziciju snimljenu"
+msgstr "mergi spre sat salvat"
 
 #: src/rotorconfig.cpp:465
-#, fuzzy
 msgid "drive to 0°"
-msgstr "Ici na poziciju. 0 "
+msgstr "pozitie 0°"
 
 #: src/rotorconfig.cpp:465
 msgid "drives to 0"
-msgstr "Ici na poziciju. 0 "
+msgstr "pozitie 0"
 
 #: src/rotorconfig.cpp:466
 msgid "recalculate"
-msgstr "Prebrojavanje"
+msgstr "recalculeaza"
 
 #: src/rotorconfig.cpp:466
 msgid "recalculate stored positions rel. to current pos"
-msgstr "Prebrojavanje pozicija snimljenih prema aktuelonj poziciji"
+msgstr "recalculeza pozitie salvata in comp cu cea curenta"
 
 #: src/rotorconfig.cpp:467
 msgid "set east limit"
-msgstr "Podesiti soft mogucnosti istok"
+msgstr "seteaza limita est"
 
 #: src/rotorconfig.cpp:467
 msgid "set east soft limit"
-msgstr "Snimiti soft mogucnosti istok"
+msgstr "seteaza limita est soft"
 
 #: src/rotorconfig.cpp:468
 msgid "set west limit"
-msgstr "Podesiti soft mogucnosti zapad"
+msgstr "seteaza limita vest"
 
 #: src/rotorconfig.cpp:468
 msgid "set west soft limit"
-msgstr "Snimiti soft mogucnosti zapad"
+msgstr "seteaza limita vest soft"
 
 #: src/rotorconfig.cpp:469
 msgid "disable limits"
-msgstr "Desaktiviraj mogucnosti"
+msgstr "dezarmeza limita"
 
 #: src/rotorconfig.cpp:469 src/rotorconfig.cpp:531
 msgid "disable soft limits"
-msgstr "Desaktiviraj soft mogucnosti"
+msgstr "dezarmeaza limita soft"
 
 #: src/rotorconfig.cpp:470
 msgid "enable limits"
-msgstr "Aktiviraj mogucnosti"
+msgstr "armeaza limita"
 
 #: src/rotorconfig.cpp:470 src/rotorconfig.cpp:535
 msgid "enable soft limits"
-msgstr "Aktiviraj mogucnosti programa"
+msgstr "armeza limita soft"
 
 #: src/rotorconfig.cpp:507
 msgid "store current pos in motor"
-msgstr "Snimiti aktualnu poziciju u rotor"
+msgstr "salveaza curenta pozitie in motor"
 
 #: src/rotorconfig.cpp:508 src/rotorconfig.cpp:524 src/rotorconfig.cpp:528
 #: src/rotorconfig.cpp:853
 msgid "store"
-msgstr "Zapamtiti"
+msgstr "salveaza"
 
 #: src/rotorconfig.cpp:511
 msgid "drive motor to stored pos"
-msgstr "Ubaciti stokiranu satelitsku poziciju"
+msgstr "misca motor la pozi. salvata"
 
 #: src/rotorconfig.cpp:512 src/rotorconfig.cpp:516 src/rotorconfig.cpp:540
 msgid "go"
-msgstr "Idi"
+msgstr "go"
 
 #: src/rotorconfig.cpp:515
 msgid "drive motor to reference position"
-msgstr "Vozi motor u glavnu tacku"
+msgstr "misca motor spre pozi. referenta"
 
 #: src/rotorconfig.cpp:519
 msgid "recalculate all stored positions"
-msgstr "Prebrojavanje svih snimljenih pozicija"
+msgstr "recalculeza pozitii(toate)"
 
 #: src/rotorconfig.cpp:520
 msgid "recalc"
-msgstr "Prebrojavanje"
+msgstr "recalc"
 
 #: src/rotorconfig.cpp:523
 msgid "store current pos as east soft limit"
-msgstr "Snimiti pozicije istok /zapad kao limit programa"
+msgstr "salveza pozi. curenta ca limita est"
 
 #: src/rotorconfig.cpp:527
 msgid "store current pos as west soft limit"
-msgstr "Snimiti aktualne pozicije istok/zapad kao limit programa"
+msgstr "salveaza pozi. curenta ca limita vest"
 
 #: src/rotorconfig.cpp:532 src/rotorconfig.cpp:536
 msgid "do it"
-msgstr "uradi to"
+msgstr "do it"
 
 #: src/rotorconfig.cpp:539
 msgid "drive motor to satellite"
-msgstr "Vozi rotor do tog satelita"
+msgstr "misca motor directie sat"
 
 #: src/rotorconfig.cpp:691
 msgid ""
 "Wrong use of this function can corrupt all stored sat positions.\n"
 "Are you sure you want to use this function?"
 msgstr ""
-"Losa upotreba te funkcije moze ponistiti te pozicije\n"
-" Dali ste sigurni da hocete upotrebiti tu funkciju?"
+"folosirea gresita acestei functiuni poate duce la la stergerea pozitiilor\n"
+"Esti sigur?"
 
 #: src/rotorconfig.cpp:757
 msgid "one step East..."
-msgstr "Jedan korak prema istoku"
+msgstr "un pas Est..."
 
 #: src/rotorconfig.cpp:766
 msgid "one step west..."
-msgstr "Jedan korak prema zapadu"
+msgstr "un pas vest"
 
 #: src/rotorconfig.cpp:780
 msgid "turning to east..."
-msgstr "Ici prema istoku"
+msgstr "intoarce spre est..."
 
 #: src/rotorconfig.cpp:791
 msgid "turning to west..."
-msgstr "Ici prema zapadu"
+msgstr "intoarce spre vest..."
 
 #: src/rotorconfig.cpp:804
 msgid "<    Stop    >"
-msgstr "< Stani >"
+msgstr "< Stop >"
 
 #: src/rotorconfig.cpp:841
 msgid "Storage Location:"
-msgstr "Zampamti lokaciju :"
+msgstr "Storage Location:"
 
 #: src/rotorconfig.cpp:843
 msgid "change storage Location or store"
-msgstr "Promeni gde memorises"
+msgstr "schimba storage Location sau store"
 
 #: src/rotorconfig.cpp:893
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d.%d°%c is currently stored at location %d!\n"
 "When you store this now at Location %d, we must remove the old Location.\n"
 "Are you sure you want to do this?"
 msgstr ""
-"%d. on % d%c je aktualno stokiran u %d! \n"
-" Ako stokirate sada tu %d, trebamo skinuti Stari \n"
-"Dali ste sigurni da hocete to uciniti?"
+"%d.%d°%c is currently stored at location %d!\n"
+"When you store this now at Location %d, we must remove the old Location.\n"
+"Are you sure you want to do this?"
 
 #: src/rotorconfig.cpp:915
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Store %d.%d°%c at location %d.\n"
 "If you want another location, then say no and change the location manually.\n"
 "Are you sure you want to store at this location?"
 msgstr ""
-"Snimiti  %d.% d%c U taj %d.\n"
-"Ako zelite drugi, Stisnite \"ne\" i promenite To rucno \n"
-" Dali ste sigurni da hocete to uciniti ?"
+"Store %d.%d°%c at location %d.\n"
+"If you want another location, then say no and change the location manually.\n"
+"Are you sure you want to store at this location?"
 
 #: src/satconfig.cpp:64
 msgid "one single satellite"
-msgstr "Samo jedan satelit"
+msgstr "un singur satelit"
 
 #: src/satconfig.cpp:64
 msgid "one directly connected LNB"
-msgstr "Jedan LNB direktno konektiran"
+msgstr "un simplu LNB "
 
 #: src/satconfig.cpp:65
-#, fuzzy
 msgid "2 satellites via Toneburst"
-msgstr "2 satelita preko DiSEqC A/B"
+msgstr "2 sateliti via Toneburst"
 
 #: src/satconfig.cpp:65
-#, fuzzy
 msgid "2 LNBs via Toneburst Signal"
-msgstr "2 satelita preko DiSEqC A/B"
+msgstr "2 LNBs via Toneburst Signal"
 
 #: src/satconfig.cpp:66
-#, fuzzy
 msgid "2 satellites via 22Khz (only Highband)"
-msgstr "2 satelita preko DiSEqC A/B"
+msgstr "2 sateliti via 22Khz (only Highband)"
 
 #: src/satconfig.cpp:66
 msgid "2 LNBs via 22Khz Signal.. special for old analog switches"
-msgstr ""
+msgstr "2 LNBs via 22Khz Signal.. special pentru analog switches"
 
 #: src/satconfig.cpp:67
 msgid "2 satellites via DiSEqC A/B"
-msgstr "2 satelita preko DiSEqC A/B"
+msgstr "2 sateliti via DiSEqC A/B"
 
 #: src/satconfig.cpp:67
 msgid "2 LNBs via DiSEqC"
-msgstr "2 LNBs za svaki Diseqc"
+msgstr "2 LNBs via DiSEqC"
 
 #: src/satconfig.cpp:68
 msgid "4 satellites via DiSEqC OPT A/B"
-msgstr "4 satelita preko DiSEqC OPT A/B"
+msgstr "4 sateliti via DiSEqC OPT A/B"
 
 #: src/satconfig.cpp:68
 msgid "4 LNBs via DiSEqC"
-msgstr "4 LNBs za svaki DiseqC"
+msgstr "4 LNBs via DiSEqC"
 
 #: src/satconfig.cpp:69
 msgid "many satellites via DiSEqC Rotor"
-msgstr "Vise satelita preko rotor diseqc"
+msgstr "multi sateliti via DiSEqC Rotor"
 
 #: src/satconfig.cpp:69
 msgid "1 LNB with DiSEqC Rotor"
-msgstr "1 LNBs sa Rotor Diseqcom"
+msgstr "1 LNB cu DiSEqC Rotor"
 
 #: src/satconfig.cpp:70
 msgid "non-standard user defined configuration..."
-msgstr "Podesavanje ubaceno sa korisnikom ne standarnim"
+msgstr "configuratie non-standard user"
 
 #: src/satconfig.cpp:70
 msgid "special"
-msgstr "Spécial"
+msgstr "special"
 
 #: src/satconfig.cpp:135
 msgid ""
 "Configuration contains some elements\n"
 "which don't fit into new DiSEqC-Type. Drop these items?"
 msgstr ""
-"Aktuelno podesavanje ima elemente\n"
-"koji se ne adaptiraju sa novim podesavanjem diseqca. izbrisite te elemente?"
+"Configuratia contine elemente\n"
+"straine acestui nou DiSEqC-Type.Le stergem?"
 
 #: src/satconfig.cpp:135
 msgid "Change DiSEqC-Type..."
-msgstr "Promeniti tip DiSEqCa..."
+msgstr "Schimba DiSEqC-Type..."
 
 #: src/satconfig.cpp:333
 msgid "direct connection"
-msgstr "Direktna konekcija"
+msgstr "direct connection"
 
 #: src/satconfig.cpp:741
-#, fuzzy
 msgid "press ok to select another satellite"
-msgstr "Stisnite OK da izaberete drugi mod 22kHz"
+msgstr "apasa ok pt selectarea altui satelit"
 
 #: src/satconfig.cpp:756
 msgid "press ok to goto LNB config"
-msgstr "Stisnite OK da podesite LNB"
+msgstr "apasa ok pentru LNB config"
 
 #: src/satconfig.cpp:774
 msgid "press ok to select another 22kHz mode"
-msgstr "Stisnite OK da izaberete drugi mod 22kHz"
+msgstr "apasa ok pt select. altui 22kHz mode"
 
 #: src/satconfig.cpp:775
 msgid "22kHz signal is automatically switched"
-msgstr "Signal 22kHz, Komutira automatski"
+msgstr "22kHz signal este schimbat automat"
 
 #: src/satconfig.cpp:776
 msgid "22kHz is always enabled (high band)"
-msgstr "22kHz Jos uvek aktiviran (visoki band)"
+msgstr "22kHz este mereu armat (high band)"
 
 #: src/satconfig.cpp:777
 msgid "22kHz is always disabled (low band)"
-msgstr "22kHz jos uvek desaktiviran (Niski band)"
+msgstr "22kHz este mereu dezarmat (low band)"
 
 #: src/satconfig.cpp:787
 msgid "press ok to select another LNB Voltage mode"
-msgstr "Stisnite OK da izaberete drugu tenziju LNBa"
+msgstr "apasa ok pentru a selecta alt mod LNB Voltaj"
 
 #: src/satconfig.cpp:788
 msgid "Voltage is automatically changed"
-msgstr "Voltaza zamenjena automatski"
+msgstr "Voltaj este schimbat automat"
 
 #: src/satconfig.cpp:789
 msgid "Voltage is always 14V (vertical)"
-msgstr "Voltaza je jos uvek na 14V (vertikala)"
+msgstr "Voltaj este mereu 14V (vertical)"
 
 #: src/satconfig.cpp:790
 msgid "Voltage is always 18V (horizontal)"
-msgstr "Voltaza je jos uvek na 18V (Horizontalno)"
+msgstr "Voltaj este mereu 18V (orizontal)"
 
 #: src/satconfig.cpp:791
 msgid "Voltage is always off"
-msgstr "Alimentacija LNBa je jos uvek OFF"
+msgstr "Voltaj este mereu off"
 
 #: src/satconfig.cpp:1150 src/satconfig.cpp:1196 src/satconfig.cpp:1206
 msgid "None"
-msgstr "Bez"
+msgstr "None"
 
 #: src/satconfig.cpp:1150
 msgid "sends no tone burst"
-msgstr "Ne poslati tone burst"
+msgstr "transmite no tone burst"
 
 #: src/satconfig.cpp:1151
 msgid "sends modulated tone burst"
-msgstr "Poslati modulisani Tone burst"
+msgstr "transmite modulated tone burst"
 
 #: src/satconfig.cpp:1152
 msgid "sends unmodulated tone burst"
-msgstr "Poslati ne modulisani Tone burst"
+msgstr "transmite unmodulated tone burst"
 
 #: src/satconfig.cpp:1159
 msgid "Disable DiSEqC"
-msgstr "DISEqC desaktiviran"
+msgstr "Dezarmeaza DiSEqC"
 
 #: src/satconfig.cpp:1160
 msgid "Use DiSEqC Version 1.0"
-msgstr "Upotrebiti DISEqC Verziju 1.0"
+msgstr "Uz DiSEqC Version 1.0"
 
 #: src/satconfig.cpp:1161
 msgid "Use DiSEqC Version 1.1"
-msgstr "Upotrebiti DISEqC Verziju 1.1"
+msgstr "Uz DiSEqC Version 1.1"
 
 #: src/satconfig.cpp:1162
 msgid "Use DiSEqC Version 1.2"
-msgstr "Upotrebiti DISEqC Verziju 1.2"
+msgstr "Uz DiSEqC Version 1.2"
 
 #: src/satconfig.cpp:1170
 msgid "sends DiSEqC cmd A/A"
-msgstr "Poslati DISEqC A/A"
+msgstr "transmite DiSEqC cmd A/A"
 
 #: src/satconfig.cpp:1171
 msgid "sends DiSEqC cmd A/B"
-msgstr "Poslati DISEqC A/B"
+msgstr "transmite DiSEqC cmd A/B"
 
 #: src/satconfig.cpp:1172
 msgid "sends DiSEqC cmd B/A"
-msgstr "Poslati DISEqC B/A"
+msgstr "transmite DiSEqC cmd B/A"
 
 #: src/satconfig.cpp:1173
 msgid "sends DiSEqC cmd B/B"
-msgstr "Poslati DISEqC B/B"
+msgstr "transmite DiSEqC cmd B/B"
 
 #: src/satconfig.cpp:1174
-#, fuzzy
 msgid "sends no committed DiSEqC cmd"
-msgstr "Poslati DISEqC B/B"
+msgstr "transmite no committed DiSEqC cmd"
 
 #: src/satconfig.cpp:1175
 msgid "sends switch cmd 1"
-msgstr "Komutacija 1"
+msgstr "transmite switch cmd 1"
 
 #: src/satconfig.cpp:1176
 msgid "sends switch cmd 2"
-msgstr "Komutacija 2"
+msgstr "transmite switch cmd 2"
 
 #: src/satconfig.cpp:1177
 msgid "sends switch cmd 3"
-msgstr "Komutacija 3"
+msgstr "transmite switch cmd 3"
 
 #: src/satconfig.cpp:1178
 msgid "sends switch cmd 4"
-msgstr "Komutacija 4"
+msgstr "transmite switch cmd 4"
 
 #: src/satconfig.cpp:1179
 msgid "sends switch cmd 5"
-msgstr "Komutacija 5"
+msgstr "transmite switch cmd 5"
 
 #: src/satconfig.cpp:1180
 msgid "sends switch cmd 6"
-msgstr "Komutacija 6"
+msgstr "transmite switch cmd 6"
 
 #: src/satconfig.cpp:1181
 msgid "sends switch cmd 7"
-msgstr "Komutacija 7"
+msgstr "transmite switch cmd 7"
 
 #: src/satconfig.cpp:1182
 msgid "sends switch cmd 8"
-msgstr "Komutacija 8"
+msgstr "transmite switch cmd 8"
 
 #: src/satconfig.cpp:1183
 msgid "sends switch cmd 9"
-msgstr "Komutacija 9"
+msgstr "transmite switch cmd 9"
 
 #: src/satconfig.cpp:1184
 msgid "sends switch cmd 10"
-msgstr "Komutacija 1"
+msgstr "transmite switch cmd 10"
 
 #: src/satconfig.cpp:1185
 msgid "sends switch cmd 11"
-msgstr "Komutacija 11"
+msgstr "transmite switch cmd 11"
 
 #: src/satconfig.cpp:1186
 msgid "sends switch cmd 12"
-msgstr "Komutacija 12"
+msgstr "transmite switch cmd 12"
 
 #: src/satconfig.cpp:1187
 msgid "sends switch cmd 13"
-msgstr "Komutacija 13"
+msgstr "transmite switch cmd 13"
 
 #: src/satconfig.cpp:1188
 msgid "sends switch cmd 14"
-msgstr "Komutacija 14"
+msgstr "transmite switch cmd 14"
 
 #: src/satconfig.cpp:1189
 msgid "sends switch cmd 15"
-msgstr "Komutacija 15"
+msgstr "transmite switch cmd 15"
 
 #: src/satconfig.cpp:1190
 msgid "sends switch cmd 16"
-msgstr "Komutacija 16"
+msgstr "transmite switch cmd 16"
 
 #: src/satconfig.cpp:1196
 msgid "sends no DiSEqC repeats"
-msgstr "Poslati DISEqC ne repetiran"
+msgstr "transmite no DiSEqC repeats"
 
 #: src/satconfig.cpp:1197
 msgid "One"
-msgstr "Jedan"
+msgstr "One"
 
 #: src/satconfig.cpp:1197
 msgid "sends one repeat"
-msgstr "POslati repetiranje"
+msgstr "transmite one repeat"
 
 #: src/satconfig.cpp:1198
 msgid "Two"
-msgstr "Dva"
+msgstr "Two"
 
 #: src/satconfig.cpp:1198
 msgid "sends two repeats"
-msgstr "Poslati dva repetiranja"
+msgstr "transmite two repeats"
 
 #: src/satconfig.cpp:1199
 msgid "Three"
-msgstr "Tri"
+msgstr "Three"
 
 #: src/satconfig.cpp:1199
 msgid "sends three repeats"
-msgstr "Poslati tri repetiranja"
+msgstr "transmite trei repeats"
 
 #: src/satconfig.cpp:1206
-#, fuzzy
 msgid "sends no uncommitted switch command"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "transmite comenzi uncommitted switch"
 
 #: src/satconfig.cpp:1207
 msgid "Input 1"
-msgstr "Izlaz 1"
+msgstr "Input 1"
 
 #: src/satconfig.cpp:1207
-#, fuzzy
 msgid "select uncommitted switch Input 1"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 1"
 
 #: src/satconfig.cpp:1208
 msgid "Input 2"
-msgstr "Izlaz 2"
+msgstr "Input 2"
 
 #: src/satconfig.cpp:1208
-#, fuzzy
 msgid "select uncommitted switch Input 2"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 2"
 
 #: src/satconfig.cpp:1209
 msgid "Input 3"
-msgstr "Izlaz 3"
+msgstr "Input 3"
 
 #: src/satconfig.cpp:1209
-#, fuzzy
 msgid "select uncommitted switch Input 3"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 3"
 
 #: src/satconfig.cpp:1210
 msgid "Input 4"
-msgstr "Izlaz 4"
+msgstr "Input 4"
 
 #: src/satconfig.cpp:1210
-#, fuzzy
 msgid "select uncommitted switch Input 4"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 4"
 
 #: src/satconfig.cpp:1211
 msgid "Input 5"
-msgstr "Izlaz 5"
+msgstr "Input 5"
 
 #: src/satconfig.cpp:1211
-#, fuzzy
 msgid "select uncommitted switch Input 5"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 5"
 
 #: src/satconfig.cpp:1212
 msgid "Input 6"
-msgstr "Izlaz 6"
+msgstr "Input 6"
 
 #: src/satconfig.cpp:1212
-#, fuzzy
 msgid "select uncommitted switch Input 6"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 6"
 
 #: src/satconfig.cpp:1213
 msgid "Input 7"
-msgstr "Izlaz 7"
+msgstr "Input 7"
 
 #: src/satconfig.cpp:1213
-#, fuzzy
 msgid "select uncommitted switch Input 7"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 7"
 
 #: src/satconfig.cpp:1214
 msgid "Input 8"
-msgstr "Izlaz 8"
+msgstr "Input 8"
 
 #: src/satconfig.cpp:1214
-#, fuzzy
 msgid "select uncommitted switch Input 8"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 8"
 
 #: src/satconfig.cpp:1215
 msgid "Input 9"
-msgstr "Izlaz 9"
+msgstr "Input 9"
 
 #: src/satconfig.cpp:1215
-#, fuzzy
 msgid "select uncommitted switch Input 9"
-msgstr "Izabrati switch ne ubacen na 1 opciju"
+msgstr "selecteaza uncommitted switch Input 9"
 
 #: src/satconfig.cpp:1216
 msgid "Input 10"
-msgstr "Izlaz 10"
+msgstr "Input 10"
 
 #: src/satconfig.cpp:1216
-#, fuzzy
 msgid "select uncommitted switch Input 10"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 10"
 
 #: src/satconfig.cpp:1217
 msgid "Input 11"
-msgstr "Izlaz 11"
+msgstr "Input 11"
 
 #: src/satconfig.cpp:1217
-#, fuzzy
 msgid "select uncommitted switch Input 11"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 11"
 
 #: src/satconfig.cpp:1218
 msgid "Input 12"
-msgstr "Izlaz 12"
+msgstr "Input 12"
 
 #: src/satconfig.cpp:1218
-#, fuzzy
 msgid "select uncommitted switch Input 12"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 12"
 
 #: src/satconfig.cpp:1219
 msgid "Input 13"
-msgstr "Izlaz 13"
+msgstr "Input 13"
 
 #: src/satconfig.cpp:1219
-#, fuzzy
 msgid "select uncommitted switch Input 13"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 13"
 
 #: src/satconfig.cpp:1220
 msgid "Input 14"
-msgstr "Izlaz 14"
+msgstr "Input 14"
 
 #: src/satconfig.cpp:1220
-#, fuzzy
 msgid "select uncommitted switch Input 14"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 14"
 
 #: src/satconfig.cpp:1221
 msgid "Input 15"
-msgstr "Izlaz 15"
+msgstr "Input 15"
 
 #: src/satconfig.cpp:1221
-#, fuzzy
 msgid "select uncommitted switch Input 15"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 15"
 
 #: src/satconfig.cpp:1222
 msgid "Input 16"
-msgstr "Izlaz 16"
+msgstr "Input 16"
 
 #: src/satconfig.cpp:1222
-#, fuzzy
 msgid "select uncommitted switch Input 16"
-msgstr "Izabrati switch ne ubacen na 4 opcije"
+msgstr "selecteaza uncommitted switch Input 16"
 
 #: src/satfind.cpp:68
 #, fuzzy
 msgid "Region:"
-msgstr "Longitude:"
+msgstr "Religion"
 
 #: src/scan.cpp:46
 msgid "manual scan.."
-msgstr "Rucno trazenje"
+msgstr "manual scan.."
 
 #: src/scan.cpp:219
 msgid "Waiting for tuner lock on:"
@@ -3943,16 +3762,16 @@ msgid ""
 "To begin searching for a valid satellite press OK, or choose your desired "
 "satellite manually and press OK"
 msgstr ""
-"Za trazenje dobrog satelita stisnite OK, ili birajte vas satelit rucno i "
-"stisnite OK."
+"Pt a cauta un satelit valabil apasati OK,sau alege satelitul dorit si "
+"apasati OK"
 
 #: src/scan.cpp:357
 msgid ""
 "To begin searching for a valid cable provider press OK, or choose your "
 "desired cable provider manually and press OK"
 msgstr ""
-"Za trazenje dobrog provajdera za kablovsku stisnite OK, ili izaberite "
-"provajder rucno i stisnite OK."
+"Pt a cauta un cablu prov valabil apasati OK,sau alegeti prov dorit manual si "
+"apasati OK"
 
 #: src/scan.cpp:360
 #, fuzzy
@@ -3960,13 +3779,13 @@ msgid ""
 "To begin searching for a valid transponder press OK, or choose your desired "
 "location manually and press OK"
 msgstr ""
-"Za trazenje dobrog satelita stisnite OK, ili birajte vas satelit rucno i "
-"stisnite OK."
+"Pt a cauta un satelit valabil apasati OK,sau alege satelitul dorit si "
+"apasati OK"
 
 #: src/scan.cpp:452
 msgid ""
 "A valid transponder has been found. Verify that the right network is selected"
-msgstr "Dobar transponder je pronadjen, proverite da li je dober network!"
+msgstr "Un transponder valabil a fost gasit.Verificati daca este cel dorit"
 
 #: src/scan.cpp:534
 msgid ""
@@ -3974,60 +3793,59 @@ msgid ""
 "antenna-/cable-setup or try manual search if its some obscure satellite/"
 "network."
 msgstr ""
-"Svi poznati transponderi su skenirani, nemoguce je nacifrekvenciju, /n "
-"proverite vasu instalaciju ili probajte rucno trazenje"
+"Toti transponderii cunoscuti au fost incercati,fara rezultat!Verificati "
+"antena/cablu!"
 
 #: src/scan.cpp:542
 msgid ""
 "All known transponders have been tried, but no lock was possible. Verify "
 "antenna-/cable-setup or try another satellite/network."
 msgstr ""
-"Svi poznati transponderi su skenirani, nemoguce je nacifrekvenciju, /n "
-"proverite vasu kablovsku instalaciju ili probajte rucno trazenje"
+"Toti transponderii cunoscuti au fost incercati,fara rezultat!Verificati "
+"antena/cablu!"
 
 #: src/scan.cpp:551
 msgid "Search in progress "
-msgstr "Trazite sa SandBox timom"
+msgstr "Cautare in progres"
 
 #: src/scan.cpp:717
 #, c-format
 msgid "%02i minutes and %02i seconds left"
-msgstr "%02i Minuta i %02i sekundi je ostalo"
+msgstr "%02i minute si %02i secunde"
 
 #: src/scan.cpp:719
 #, c-format
 msgid "%02i seconds left"
-msgstr "%02d Sekundi je ostalo"
+msgstr "%02i secunde"
 
 #: src/scan.cpp:792
-#, fuzzy
 msgid "Vertical"
-msgstr "Vertikala"
+msgstr "Vertical"
 
 #: src/scan.cpp:858
 msgid "[only free]"
-msgstr ""
+msgstr "[nicht codate]"
 
 #: src/scan.cpp:859
 msgid "[all]"
-msgstr ""
+msgstr "[toate]"
 
 #: src/scan.cpp:859
 msgid "[nothing]"
-msgstr ""
+msgstr "[nimic]"
 
 #: src/scan.cpp:953
 msgid "Transponder Scan"
-msgstr "Skeniranje transpondera"
+msgstr "Transponder Scan"
 
 #: src/scan.cpp:1246
 #, fuzzy
 msgid "Waiting for tuner lock... please wait"
-msgstr "Dodjite na www.dm7000.be dok se skenira"
+msgstr "Scan in progres... asteptati va rog"
 
 #: src/scan.cpp:1299 src/scan.cpp:1367
 msgid "Scan is in progress... please wait"
-msgstr "Dodjite na www.dm7000.be dok se skenira"
+msgstr "Scan in progres... asteptati va rog"
 
 #: src/scan.cpp:1330 src/scan.cpp:1383
 #, fuzzy, c-format
@@ -4039,17 +3857,20 @@ msgid ""
 "   %i new Data Services.\n"
 "%i Transponders with %i Services scanned."
 msgstr ""
-"Trazenje je zavrseno, Resultat %i novih transpondera, %i novih kanala, %i "
-"novih radio stanica, %i novih data servisa. %i Transpondera i%i servisa "
-"skeniranih"
+"Transponder scan terminat si gasit \n"
+" %i noi Transponderi,\n"
+" %i noi TV Servicii,\n"
+" %i noi Radio Servicii si\n"
+" %i noi Data Servicii.\n"
+"%i Transponderi  %i Servicii gasite."
 
 #: src/scan.cpp:1395
 msgid "Done."
-msgstr "Gotovo"
+msgstr "Done."
 
 #: src/scan.cpp:1403
 msgid "Scan is in finished, press ok to close window"
-msgstr "Trazenje gotovo, stisnite OK da izadjete"
+msgstr "Scan terminat, apasati ok pt a inchide menu"
 
 #: src/scan.cpp:1411
 #, c-format
@@ -4058,21 +3879,23 @@ msgid ""
 "to scan another\n"
 "%s?"
 msgstr ""
+"Doriti\n"
+"Un nou scan\n"
+"%s?"
 
 #: src/scan.cpp:1411
-#, fuzzy, c-format
+#, c-format
 msgid "Transponder"
 msgstr "Transponder"
 
 #: src/scan.cpp:1411
-#, fuzzy, c-format
+#, c-format
 msgid "Satellite"
 msgstr "Satelit"
 
 #: src/scan.cpp:1412
-#, fuzzy
 msgid "Scan finished"
-msgstr "Kraj snimanja"
+msgstr "Scan finished"
 
 #: src/scan.cpp:1518
 msgid "Manual PIDs"
@@ -4081,12 +3904,12 @@ msgstr ""
 #: src/scan.cpp:1540
 #, fuzzy
 msgid "to enter service name press OK"
-msgstr "Da bi ste zamenili servis stisnite OK"
+msgstr "schimbare serviciu apasa ok"
 
 #: src/scan.cpp:1541
 #, fuzzy
 msgid "enter service name"
-msgstr "Izbrisati servis"
+msgstr "stergeti serviciul"
 
 #: src/scan.cpp:1556
 msgid "to enter provider name press OK"
@@ -4095,12 +3918,12 @@ msgstr ""
 #: src/scan.cpp:1557
 #, fuzzy
 msgid "enter provider name"
-msgstr "Ubaci novo ime"
+msgstr "introduce marcator nume"
 
 #: src/scan.cpp:1572
 #, fuzzy
 msgid "to enter video pid press OK"
-msgstr "Da bi ste zamenili servis stisnite OK"
+msgstr "schimbare serviciu apasa ok"
 
 #: src/scan.cpp:1573
 msgid "enter video pid"
@@ -4141,12 +3964,12 @@ msgstr ""
 #: src/scan.cpp:1639
 #, fuzzy
 msgid "to enter service id press OK"
-msgstr "Da bi ste zamenili servis stisnite OK"
+msgstr "schimbare serviciu apasa ok"
 
 #: src/scan.cpp:1640
 #, fuzzy
 msgid "enter service id"
-msgstr "Izbrisati servis"
+msgstr "stergeti serviciul"
 
 #: src/scan.cpp:1655
 msgid "to enter tsid (transport stream id) press OK"
@@ -4194,7 +4017,7 @@ msgstr ""
 #: src/scan.cpp:1706
 #, fuzzy
 msgid "read NIT"
-msgstr "Upotrebiti ONIT"
+msgstr "foloseste ONIT"
 
 #: src/scan.cpp:1707
 msgid "read tsid and onid from the nit (this can take up to 10 seconds)"
@@ -4244,7 +4067,7 @@ msgstr ""
 #: src/scan.cpp:2092
 #, fuzzy
 msgid "Service already exist"
-msgstr "Servisis"
+msgstr "Organizare Servicii"
 
 #: src/scan.cpp:2180
 msgid "show/enter values as hexadecimal"
@@ -4257,40 +4080,35 @@ msgstr ""
 #: src/setup_extra.cpp:61
 #, fuzzy
 msgid "Communication Setup"
-msgstr "Otvoriti video podesavanje"
+msgstr "Comunicatie Setup"
 
 #: src/setup_extra.cpp:61
-#, fuzzy
 msgid "open communication setup"
-msgstr "Otvoriti video podesavanje"
+msgstr "deschide comunicatie setup"
 
 #: src/setup_extra.cpp:62
 msgid "Ngrab Streaming Setup"
-msgstr ""
+msgstr "Ngrab Streaming Setup"
 
 #: src/setup_extra.cpp:62
-#, fuzzy
 msgid "open ngrab server setup"
-msgstr "Otvoriti video podesavanje"
+msgstr "deschide ngrab server setup"
 
 #: src/setup_extra.cpp:64 src/software_update.cpp:29
-#, fuzzy
 msgid "Software Update"
-msgstr "Upgradovanje softwarea"
+msgstr "Software Update"
 
 #: src/setup_extra.cpp:64
-#, fuzzy
 msgid "open software update"
-msgstr "Upgradovanje softwarea"
+msgstr "deschide software update"
 
 #: src/setup_extra.cpp:70
-#, fuzzy
 msgid "Remote Control"
-msgstr "Daljinski upravljac..."
+msgstr "Telecomanda"
 
 #: src/setup_extra.cpp:70
 msgid "open remote control setup"
-msgstr "Otvoriti podesavanje upravljaca"
+msgstr "deschide telecomanda setup"
 
 #: src/setup_extra.cpp:72 src/setup_extra.cpp:352
 msgid "Factory reset"
@@ -4303,12 +4121,12 @@ msgstr ""
 #: src/setup_extra.cpp:78
 #, fuzzy
 msgid "record split size (left, right)"
-msgstr "Izaberi polarizaciju"
+msgstr "alege polaritate (stinga, dreapta)"
 
 #: src/setup_extra.cpp:95
 #, fuzzy
 msgid "infobar timeout (left, right)"
-msgstr "Izaberi polarizaciju"
+msgstr "alege polaritate (stinga, dreapta)"
 
 #: src/setup_extra.cpp:96 src/setup_extra.cpp:97 src/setup_extra.cpp:98
 #: src/setup_extra.cpp:99 src/setup_extra.cpp:100 src/setup_extra.cpp:101
@@ -4319,23 +4137,22 @@ msgid "Infobar timeout %d sec"
 msgstr ""
 
 #: src/setup_extra.cpp:112
-#, fuzzy
 msgid "Serviceselector help buttons"
-msgstr "Selector servisa"
+msgstr "Serviceselector butoane ajutor"
 
 #: src/setup_extra.cpp:112
-#, fuzzy
 msgid "show colored help buttons in service selector"
-msgstr "Prikazi selector servisa"
+msgstr "arata butoane de ajutor in service selector"
 
 #: src/setup_extra.cpp:114
 #, fuzzy
 msgid "Show Sat position"
-msgstr "Snimiti novu poziciju satelita"
+msgstr "salveaza noua sat pozitie"
 
 #: src/setup_extra.cpp:114
+#, fuzzy
 msgid "show sat position in the infobar"
-msgstr ""
+msgstr "show event remaining time in the infobar"
 
 #: src/setup_extra.cpp:116
 msgid "Enable fast zapping"
@@ -4346,41 +4163,36 @@ msgid "enables faster zapping.. but with visible sync"
 msgstr ""
 
 #: src/setup_extra.cpp:117
-#, fuzzy
 msgid "Skip confirmations"
-msgstr "Podesavanje satelita"
+msgstr "fara confirmare"
 
 #: src/setup_extra.cpp:117
-#, fuzzy
 msgid "enable/disable confirmations"
-msgstr "Aktiviranje/desaktiviranje razmenu ? (ok)"
+msgstr "armeaza/dezarmeaza confirmare"
 
 #: src/setup_extra.cpp:118
 msgid "Hide error windows"
-msgstr ""
+msgstr "ascunde erori"
 
 #: src/setup_extra.cpp:118
 msgid "don't show zap error messages"
-msgstr ""
+msgstr "nu arata zap error messages"
 
 #: src/setup_extra.cpp:119
-#, fuzzy
 msgid "Auto show Infobar"
-msgstr "Prikazi info bar"
+msgstr "Auto show Infobar"
 
 #: src/setup_extra.cpp:119
-#, fuzzy
 msgid "always show infobar when new event info is avail"
-msgstr "Videti OSD ako ima novih informacija"
+msgstr "always show infobar when new event info is avail"
 
 #: src/setup_extra.cpp:120
-#, fuzzy
 msgid "Show remaining Time"
-msgstr "Videti glavni meni"
+msgstr "arata timpul ramas"
 
 #: src/setup_extra.cpp:120
 msgid "show event remaining time in the infobar"
-msgstr ""
+msgstr "show event remaining time in the infobar"
 
 #: src/setup_extra.cpp:121
 msgid "Use http authentification"
@@ -4401,7 +4213,7 @@ msgstr ""
 #: src/setup_extra.cpp:123
 #, fuzzy
 msgid "Auto bouquet change"
-msgstr "Dodavanje licni buketa"
+msgstr "adauga la buchet"
 
 #: src/setup_extra.cpp:123
 msgid "change into next bouquet when end of current bouquet is reached"
@@ -4410,7 +4222,7 @@ msgstr ""
 #: src/setup_extra.cpp:124
 #, fuzzy
 msgid "Auto reconnect cahandler"
-msgstr "Dodavanje licni buketa"
+msgstr "adauga la buchet"
 
 #: src/setup_extra.cpp:124
 msgid "try to reconnect when an external cahandler connection was lost"
@@ -4443,7 +4255,7 @@ msgstr ""
 #: src/setup_extra.cpp:135
 #, fuzzy
 msgid "Disable Standby"
-msgstr "DISEqC desaktiviran"
+msgstr "Dezarmeaza DiSEqC"
 
 #: src/setup_extra.cpp:135
 msgid "Box goes directly into Deep-Standby"
@@ -4452,7 +4264,7 @@ msgstr ""
 #: src/setup_extra.cpp:140
 #, fuzzy
 msgid "Enable MHW EPG"
-msgstr "Unutrasnje"
+msgstr "internal"
 
 #: src/setup_extra.cpp:140
 msgid ""
@@ -4468,8 +4280,9 @@ msgid "don't create 'Corefiles' after an Enigma crash"
 msgstr ""
 
 #: src/setup_extra.cpp:156
+#, fuzzy
 msgid "Disable HDD mount"
-msgstr ""
+msgstr "Dezarmeaza  WSS on 4:3\t"
 
 #: src/setup_extra.cpp:156
 msgid "don't mount the HDD via 'rcS'"
@@ -4492,8 +4305,9 @@ msgid "Show Boot-Infos (IP, etc.)"
 msgstr ""
 
 #: src/setup_extra.cpp:179
+#, fuzzy
 msgid "Disable HW_Sections"
-msgstr ""
+msgstr "Dezarmeaza  WSS on 4:3\t"
 
 #: src/setup_extra.cpp:179
 msgid "don't use hardware section filtering"
@@ -4502,7 +4316,7 @@ msgstr ""
 #: src/setup_extra.cpp:185
 #, fuzzy
 msgid "Disable Watchdog"
-msgstr "DISEqC desaktiviran"
+msgstr "Dezarmeaza DiSEqC"
 
 #: src/setup_extra.cpp:185
 msgid "don't use the Watchdog"
@@ -4519,7 +4333,7 @@ msgstr ""
 #: src/setup_extra.cpp:200
 #, fuzzy
 msgid "Enable SPTS-Mode"
-msgstr "Zvuk aktivan"
+msgstr "armeaza Sound"
 
 #: src/setup_extra.cpp:200
 msgid "use SPTS-Mode (enables TS-recording)"
@@ -4528,7 +4342,7 @@ msgstr ""
 #: src/setup_extra.cpp:206
 #, fuzzy
 msgid "Disable O_SYNC"
-msgstr "DISEqC desaktiviran"
+msgstr "Dezarmeaza DiSEqC"
 
 #: src/setup_extra.cpp:206
 msgid "The file/recording is not opened for synchronous I/O"
@@ -4557,160 +4371,159 @@ msgid "Factory reset..."
 msgstr ""
 
 #: src/setup_harddisk.cpp:186
-#, fuzzy
 msgid "Harddisk Setup"
-msgstr "Podesavanje hard diska"
+msgstr "Harddisk Setup"
 
 #: src/setup_harddisk.cpp:303
 msgid "Are you SURE that you want to format this disk?\n"
-msgstr "Zelite li zaista formatirati taj Hard disk?\n"
+msgstr "Are you SURE that you want to format this disk?\n"
 
 #: src/setup_harddisk.cpp:304 src/setup_harddisk.cpp:317
 #: src/setup_harddisk.cpp:347 src/setup_harddisk.cpp:357
 #: src/setup_harddisk.cpp:429 src/setup_harddisk.cpp:441
 msgid "formatting harddisk..."
-msgstr "Formatiranje u toku... "
+msgstr "formatting harddisk..."
 
 #: src/setup_harddisk.cpp:315
 msgid ""
 "There's data on this harddisk.\n"
 "You will lose that data. Proceed?"
 msgstr ""
-"Imate nesto u hard disku\n"
-" Izgubicete to. Nastaviti?"
+"There's data on this harddisk.\n"
+"You will lose that data. Proceed?"
 
 #: src/setup_harddisk.cpp:346
 msgid ""
 "please wait while initializing harddisk.\n"
 "This might take some minutes.\n"
 msgstr ""
-"Sacekati, inisializacija hard diska. \n"
-" To moze trajati nekoliko minuta. \n"
+"please wait while initializing harddisk.\n"
+"This might take some minutes.\n"
 
 #: src/setup_harddisk.cpp:356
 msgid "sorry, couldn't find sfdisk utility to partition harddisk."
-msgstr "Nazalost, nisam nasao SFDISK na particiju Hard diska"
+msgstr "sorry, couldn't find sfdisk utility to partition harddisk."
 
 #: src/setup_harddisk.cpp:428
 msgid "creating filesystem failed."
-msgstr "Greska u kreiranju sistem faljova !"
+msgstr "creating filesystem failed."
 
 #: src/setup_harddisk.cpp:440
 msgid "successfully formatted your disk!"
-msgstr "Formatiranje uspelo! "
+msgstr "successfully formatted your disk!"
 
 #: src/setup_harddisk.cpp:471
 msgid "(error reading information)"
-msgstr "(Greska u citanju informacija) "
+msgstr "(error reading information)"
 
 #: src/setup_harddisk.cpp:473
 msgid "uninitialized - format it to use!"
-msgstr "Inisializirano, Treba biti formatiran pre upotrebe !"
+msgstr "uninitialized - format it to use!"
 
 #: src/setup_harddisk.cpp:475
 #, c-format
 msgid "in use, %d.%03d GB (~%d minutes) free"
-msgstr "Upotrebljeno, %d. %03d Go (~%d minuta) Slobodno"
+msgstr "in use, %d.%03d GB (~%d minutes) free"
 
 #: src/setup_harddisk.cpp:477
 msgid "initialized, but unknown filesystem"
-msgstr "Inisializirano, ali sistem fajl nepoznat"
+msgstr "initialized, but unknown filesystem"
 
 #: src/setup_harddisk.cpp:559
 msgid "could not unmount the filesystem... "
-msgstr "Ne moze instalirati sistem fajl..."
+msgstr "could not unmount the filesystem..."
 
 #: src/setup_harddisk.cpp:560 src/setup_harddisk.cpp:573
 #: src/setup_harddisk.cpp:596 src/setup_harddisk.cpp:619
 #: src/setup_harddisk.cpp:638
 msgid "check filesystem..."
-msgstr "Proveravanje sistem fajla!"
+msgstr "check filesystem..."
 
 #: src/setup_harddisk.cpp:572
 msgid "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
-msgstr "Izvinite, nisam nasao fsck.ext3 za proveravanje sistemfajla ext3"
+msgstr "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 
 #: src/setup_harddisk.cpp:595
 #, fuzzy
 msgid "sorry, couldn't find fsck.ext2 utility to check the ext2 filesystem."
-msgstr "Izvinite, nisam nasao fsck.ext3 za proveravanje sistemfajla ext3"
+msgstr "sorry, couldn't find fsck.ext3 utility to check the ext3 filesystem."
 
 #: src/setup_harddisk.cpp:618
 msgid ""
 "sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
-msgstr "Izvinite, nisam nasao fsck.ext3 za proveravanje sistemfajla ext3"
+msgstr ""
+"sorry, couldn't find reiserfsck utility to check the reiserfs filesystem."
 
 #: src/setup_harddisk.cpp:637
 msgid "not supported filesystem for check."
-msgstr "Sistem fajl ne podnesen."
+msgstr "not supported filesystem for check."
 
 #: src/setup_lcd.cpp:55
 msgid "LC-Display Setup"
-msgstr "Podesavanje LCDa"
+msgstr "LC-Display Setup"
 
 #: src/setup_lcd.cpp:69 src/setup_osd.cpp:210
 msgid "Brightness:"
-msgstr "Sjaj:"
+msgstr "Brightness:"
 
 #: src/setup_lcd.cpp:74 src/setup_osd.cpp:223
 msgid "Contrast:"
-msgstr "Mracnost:"
+msgstr "Contrast:"
 
 #: src/setup_lcd.cpp:79
 msgid "Standby:"
-msgstr "Pauza"
+msgstr "Standby:"
 
 #: src/setup_lcd.cpp:87
 msgid "set LCD brightness ( left / right )"
-msgstr "Stelovati sjaj LCDa (Levo/Desno)"
+msgstr "set LCD brightness ( stinga / dreapta )"
 
 #: src/setup_lcd.cpp:94
 msgid "set LCD contrast ( left / right )"
-msgstr "Stelovati mracnost LCDa (Levo/Desno)"
+msgstr "set LCD contrast ( stinga / dreapta )"
 
 #: src/setup_lcd.cpp:101
 msgid "set LCD brightness for Standby Mode ( left / right )"
-msgstr "Stelovati sjaj LCDa za mod dremanje (Levo/Desno)"
+msgstr "set LCD brightness pentru Standby Mode ( stinga / dreapta )"
 
 #: src/setup_lcd.cpp:107
 msgid "Inverted: "
-msgstr "Okreni:"
+msgstr "Inverted:"
 
 #: src/setup_lcd.cpp:109
 msgid "enable/disable inverted LCD (ok)"
-msgstr "Aktiviranje/desaktiviranje obrtaja boja LCDa? (ok)"
+msgstr "armeaza/dezarmeaza inverted LCD (ok)"
 
 #: src/setup_keyboard.cpp:32 src/system_settings.cpp:56
 #, fuzzy
 msgid "Keyboard Setup"
-msgstr "Podesavanje hard diska"
+msgstr "Harddisc Setup"
 
 #: src/setup_keyboard.cpp:39
 #, fuzzy
 msgid "Keyboard Mapping:"
-msgstr "Podesavanje hard diska"
+msgstr "Harddisc Setup"
 
 #: src/setup_keyboard.cpp:46
 #, fuzzy
 msgid "select your keyboard mapping (ok)"
-msgstr "Ubaciti tip Sata (ok)"
+msgstr "alege time zone (ok)"
 
 #: src/setup_osd.cpp:41
 msgid "PluginOffsetActions"
-msgstr ""
+msgstr "PluginOffsetActions"
 
 #: src/setup_osd.cpp:42
 msgid "enable set the leftTop Point of the rectangle"
-msgstr ""
+msgstr "enable set the leftTop Point of the rectangle"
 
 #: src/setup_osd.cpp:43
 msgid "enable set the rightBottom Point of the rectangle"
-msgstr ""
+msgstr "enable set the rightBottom Point of the rectangle"
 
 #: src/setup_osd.cpp:44
-#, fuzzy
 msgid "saves the current positions"
-msgstr "Snimiti aktualnu poziciju u rotor"
+msgstr "salveaza pozitia curenta"
 
 #: src/setup_osd.cpp:167
 msgid ""
@@ -4721,25 +4534,24 @@ msgid ""
 msgstr ""
 
 #: src/setup_osd.cpp:188 src/system_settings.cpp:59
-#, fuzzy
 msgid "OSD Settings"
-msgstr "Stelovanje"
+msgstr "OSD Settings"
 
 #: src/setup_osd.cpp:196
 msgid "Alpha:"
-msgstr "Alpha :"
+msgstr "Alpha:"
 
 #: src/setup_osd.cpp:204
 msgid "change the transparency correction"
-msgstr "Stelovati providnost"
+msgstr "schimba transparency correction\t"
 
 #: src/setup_osd.cpp:217
 msgid "change the brightness correction"
-msgstr "Stelovanje sjaja"
+msgstr "schimba brightness correction"
 
 #: src/setup_osd.cpp:230
 msgid "change the contrast"
-msgstr "Promeniti mracnost"
+msgstr "schimba contrast"
 
 #: src/setup_osd.cpp:235
 msgid "Show Mainmenu like Listbox"
@@ -4750,101 +4562,102 @@ msgid "show the Mainmenu in normal listbox style"
 msgstr ""
 
 #: src/setup_osd.cpp:244
-#, fuzzy
 msgid "Change skin"
-msgstr "Kanali"
+msgstr "Schimba Skin"
 
 #: src/setup_osd.cpp:250
-#, fuzzy
 msgid "press ok to open skin selector"
-msgstr "Otvoriti podesavanje tema"
+msgstr "apasa ok pt a deschide skin selector"
 
 #: src/setup_osd.cpp:254
-#, fuzzy
 msgid "TuxText position"
-msgstr "Pozicija"
+msgstr "TuxText positie"
 
 #: src/setup_osd.cpp:255
 msgid "here you can center the Tuxtxt (builtin videotext)"
-msgstr ""
+msgstr "here you can center the Tuxtxt (builtin videotext)"
 
 #: src/setup_osd.cpp:337
-#, fuzzy
 msgid ""
 "You have to restart enigma to apply the new skin\n"
 "Restart now?"
-msgstr "Morate ugasiti i upaliti za promenu teme"
+msgstr ""
+"Enigma restart pt a schimba skin\n"
+"Acum restart ?"
 
 #: src/setup_osd.cpp:337
 msgid "Skin changed"
-msgstr "Promenjena tema"
+msgstr "Skin schimbat"
 
 #: src/setup_rc.cpp:45
 msgid "Remotecontrol Setup"
-msgstr "Podesavanje daljinskog upravljaca"
+msgstr "Telecomanda Setup"
 
 #: src/setup_rc.cpp:56
 msgid "Repeat Rate:"
-msgstr "Bliznost repetirabja"
+msgstr "Repeat Rate:"
 
 #: src/setup_rc.cpp:61
 msgid "Repeat Delay:"
-msgstr "Rok repetiranja"
+msgstr "Repeat Delay:"
 
 #: src/setup_rc.cpp:69
 msgid ""
 "change remote control repeat rate\n"
 "left => less, right => more (... repeats)"
 msgstr ""
+"schimba telecomanda repeat rate\n"
+"left => less, right => more (... repeats)"
 
 #: src/setup_rc.cpp:76
 msgid ""
 "change remote control repeat delay\n"
 "left => shorter, right => longer (...delay)"
 msgstr ""
+"schimba telecomanda repeat delay\n"
+"left => shorter, right => longer (...delay)"
 
 #: src/setup_rc.cpp:86
 msgid "select your favourite RC style (ok)"
-msgstr "Ubaciti tip sata (OK)"
+msgstr "alege stil telecomanda (ok)"
 
 #: src/setup_rc.cpp:108
 msgid "Next Char Timeout:"
-msgstr ""
+msgstr "Next Char Timeout:"
 
 #: src/setup_rc.cpp:117
 msgid "cursor to next char timeout(msek) in textinputfields"
-msgstr ""
+msgstr "cursor to next char timeout(msek) in textinputfields"
 
 #: src/setup_rfmod.cpp:27
-#, fuzzy
 msgid "UHF-Modulator Setup"
-msgstr "Podesavanje modulatora RF"
+msgstr "UHF-Modulator Setup"
 
 #: src/setup_rfmod.cpp:34
 #, fuzzy
 msgid "UHF Modulator on"
-msgstr "Podesavanje modulatora RF"
+msgstr "UHF Modulator"
 
 #: src/setup_rfmod.cpp:37
 #, fuzzy
 msgid "enable UHF Modulator"
-msgstr "Podesavanje modulatora RF"
+msgstr "UHF Modulator"
 
 #: src/setup_rfmod.cpp:43 src/setup_rfmod.cpp:165
 msgid "Test Pattern"
-msgstr "Model probe"
+msgstr "Test Pattern"
 
 #: src/setup_rfmod.cpp:46
 msgid "enable test pattern"
-msgstr "Dozvoliti model probe"
+msgstr "armeaza test pattern"
 
 #: src/setup_rfmod.cpp:53
 msgid "Sound enable"
-msgstr "Zvuk aktivan"
+msgstr "armeaza Sound"
 
 #: src/setup_rfmod.cpp:56
 msgid "enable Sound"
-msgstr "Zvuk aktivan"
+msgstr "armeaza Sound"
 
 #: src/setup_rfmod.cpp:63
 msgid "Sound Subcarrier:"
@@ -4868,102 +4681,99 @@ msgstr "6.5 MHz"
 
 #: src/setup_rfmod.cpp:88
 msgid "change sound subcarrier frequency"
-msgstr "Promeniti frekvenciju pod transpondera za zvuk "
+msgstr "schimba sound subcarrier frequency"
 
 #: src/setup_rfmod.cpp:92
 #, fuzzy
 msgid "Channel Nr.:"
-msgstr "Kanali:"
+msgstr "Canal:"
 
 #: src/setup_rfmod.cpp:113
 msgid "change channel"
-msgstr "Promeniti Kanal"
+msgstr "schimba canal"
 
 #: src/setup_rfmod.cpp:117
 #, fuzzy
 msgid "Fine Tune:"
-msgstr "Ime fajla :"
+msgstr "Time Zone:"
 
 #: src/setup_rfmod.cpp:140
 msgid "250Khz steps"
-msgstr "Nema 250 Khz"
+msgstr "250Khz steps"
 
 #: src/setup_rfmod.cpp:149
 msgid "save settings and leave rf setup"
-msgstr "Snimiti promene i izaci iz podesavanja RFa"
+msgstr "salvaza schimbari si paraseste rf setup"
 
 #: src/setup_rfmod.cpp:165
 msgid "if you can read this your rfmod will not work."
-msgstr "Ako mozete citati ovo vas rfmod ne funkcionise."
+msgstr "daca aici nu este vizibil rfmod nu functioneaza"
 
 #: src/setup_timezone.cpp:22
-#, fuzzy
 msgid "Time Zone Setup"
-msgstr "Video stelovanje"
+msgstr "Time Zone Setup\t"
 
 #: src/setup_timezone.cpp:31
 msgid "Time Zone:"
-msgstr ""
+msgstr "Time Zone:"
 
 #: src/setup_timezone.cpp:36
-#, fuzzy
 msgid "select your time zone (ok)"
-msgstr "Ubaciti tip Sata (ok)"
+msgstr "alege time zone (ok)"
 
 #: src/setup_timezone.cpp:91
 #, fuzzy
 msgid ""
 "You have to restart enigma to apply the new Timezone\n"
 "Restart now?"
-msgstr "Morate ugasiti i upaliti za promenu teme"
+msgstr ""
+"Enigma restart pt a schimba skin\n"
+"Acum restart ?"
 
 #: src/setup_timezone.cpp:91
 #, fuzzy
 msgid "Timezone changed"
-msgstr "Promenjena tema"
+msgstr "Skin schimbat"
 
 #: src/setupengrab.cpp:25
-#, fuzzy
 msgid "Ngrab Server"
-msgstr "Dodati servis"
+msgstr "Ngrab Server"
 
 #: src/setupengrab.cpp:49
-#, fuzzy
 msgid "enter IP Adress of the Ngrab Server (0..9, left, right)"
-msgstr "Ubaciti IP adresu za DreamBox (0...9, Levo, desno)"
+msgstr "Introduceti adresa IP pt Ngrab Server(0..9, left, right) "
 
 #: src/setupengrab.cpp:61
 msgid "enter ngrab server port (standard is 4000)"
-msgstr ""
+msgstr "Introduceti ngrab server port (standard este 4000)"
 
 #: src/setupengrab.cpp:72
 msgid "enter MAC address of server (for wake on lan)"
-msgstr ""
+msgstr "Introduceti MAC adresa pt server (for wake on lan)"
 
 #: src/setupengrab.cpp:91
 msgid "detect MAC Adress"
-msgstr ""
+msgstr "detect MAC Adress"
 
 #: src/setupengrab.cpp:92
 msgid "try to autodetect server MAC address"
-msgstr ""
+msgstr "try to autodetect server MAC address"
 
 #: src/setupengrab.cpp:180
 msgid "Please check your NGrab Server or the IP"
-msgstr ""
+msgstr "Please check your NGrab Server or the IP"
 
 #: src/setupengrab.cpp:181
 msgid "HW Address(MAC) detection failed"
-msgstr ""
+msgstr "HW Address(MAC) detection failed"
 
 #: src/setupnetwork.cpp:385
-#, fuzzy
 msgid "Communication setup"
-msgstr "Otvoriti video podesavanje"
+msgstr "Comunicatie Setup"
 
 #: src/setupnetwork.cpp:456
 msgid "enter IP Address of the box (0..9, left, right)"
-msgstr "Ubaciti IP adresu za DreamBox (0...9, Levo, desno)"
+msgstr "Introduceti IP Address of the box (0..9, left, right)"
 
 #: src/setupnetwork.cpp:464
 msgid "get Network data from a DHCP Server in the local Network"
@@ -4971,91 +4781,86 @@ msgstr ""
 
 #: src/setupnetwork.cpp:477
 msgid "enter netmask of your network (0..9, left, right)"
-msgstr "Ubaciti mask za network od DreamBoxa (0...9, Levo, desno)"
+msgstr "introduceti netmask (0..9, stinga, dreapta)"
 
 #: src/setupnetwork.cpp:491
-#, fuzzy
 msgid "press ok to change connection type"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasati ok pt a schimba tipul conectare"
 
 #: src/setupnetwork.cpp:497 src/setupnetwork.cpp:505
-#, fuzzy
 msgid "LAN"
-msgstr "LNB"
+msgstr "LAN"
 
 #: src/setupnetwork.cpp:497 src/setupnetwork.cpp:505
 msgid "communicate to Local Area Network"
-msgstr ""
+msgstr "communicate to Local Area Network"
 
 #: src/setupnetwork.cpp:499 src/setupnetwork.cpp:506
 msgid "WAN(PPPoE)"
-msgstr ""
+msgstr "WAN(PPPoE)"
 
 #: src/setupnetwork.cpp:499 src/setupnetwork.cpp:506
 msgid "communicate to the Internet via DSL"
-msgstr ""
+msgstr "comunicatie Internet via DSL"
 
 #: src/setupnetwork.cpp:515
 msgid "T-Online User press ok here"
-msgstr ""
+msgstr "T-Online User apasati aici ok"
 
 #: src/setupnetwork.cpp:529
 msgid "enter your domain name server (0..9, left, right)"
-msgstr "Ubacite DNS (0...9, Levo, desno)"
+msgstr "introduceti domain name server (0..9, stinga, dreapta)"
 
 #: src/setupnetwork.cpp:535
-#, fuzzy
 msgid "Login:"
-msgstr "Longitude:"
+msgstr "Login:"
 
 #: src/setupnetwork.cpp:547
-#, fuzzy
 msgid "press ok to edit your provider login name"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasati ok pt a edita provider login name"
 
 #: src/setupnetwork.cpp:564
 msgid "enter your gateways IP Address (0..9, left, right)"
-msgstr "Ubacite adresu paserele (0...9, Levo, desno)"
+msgstr "introduceti gateways IP Address (0..9, stinga, dreapta)"
 
 #: src/setupnetwork.cpp:570
 msgid "Password:"
-msgstr ""
+msgstr "Password:"
 
 #: src/setupnetwork.cpp:579
-#, fuzzy
 msgid "press ok to edit your provider password"
-msgstr "Stisnuti OK da startujete mod editiranja"
+msgstr "apasati ok pt a edita provider password\t"
 
 #: src/setupnetwork.cpp:585
 #, fuzzy
 msgid "Enable Network"
-msgstr "Dodati novi sat(ok)"
+msgstr "adauga nou Network"
 
 #: src/setupnetwork.cpp:588
 #, fuzzy
 msgid "enable/disable network (ok)"
-msgstr "Aktiviranje/desaktiviranje mod za podesavanje networka (OK)"
+msgstr "armeaza/dezarmeaza network config (ok)"
 
 #: src/setupnetwork.cpp:599
 #, fuzzy
 msgid "enter port of the Web Interface (0..9, left, right)"
-msgstr "Ubaciti IP adresu za DreamBox (0...9, Levo, desno)"
+msgstr "Introduceti adresa IP pt Ngrab Server(0..9, left, right) "
 
 #: src/setupnetwork.cpp:610
 msgid "reject incoming connections on port 80"
-msgstr ""
+msgstr "eject incoming connections on port 80"
 
 #: src/setupnetwork.cpp:624
 msgid "reject incoming connections on port 23"
-msgstr ""
+msgstr "reject incoming connections on port 23"
 
 #: src/setupnetwork.cpp:631
 msgid "reject incoming connections on ports 137,138,139"
-msgstr ""
+msgstr "reject incoming connections on ports 137,138,139"
 
 #: src/setupnetwork.cpp:638
 msgid "reject incoming connections on ports 21"
-msgstr ""
+msgstr "reject incoming connections on ports 21"
 
 #: src/setupnetwork.cpp:656
 msgid "mounts"
@@ -5068,12 +4873,12 @@ msgstr ""
 #: src/setupnetwork.cpp:991
 #, fuzzy
 msgid "enter IP Address (0..9, left, right)"
-msgstr "Ubaciti IP adresu za DreamBox (0...9, Levo, desno)"
+msgstr "Introduceti IP Address of the box (0..9, left, right)"
 
 #: src/setupnetwork.cpp:998
 #, fuzzy
 msgid "press ok to change mount type"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasati ok pt a schimba tipul conectare"
 
 #: src/setupnetwork.cpp:1003
 msgid "Samba File System(to mount share from another Dreambox)"
@@ -5086,52 +4891,52 @@ msgstr ""
 #: src/setupnetwork.cpp:1033
 #, fuzzy
 msgid "press ok to change mount options"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pt a schimba directia"
 
 #: src/setupnetwork.cpp:1059
 #, fuzzy
 msgid "press ok to edit extra options"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pt a schimba directia"
 
 #: src/setupnetwork.cpp:1069
 #, fuzzy
 msgid "press ok to edit username"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru a introduce numele"
 
 #: src/setupnetwork.cpp:1079
 #, fuzzy
 msgid "press ok to edit password"
-msgstr "Stisnuti OK da startujete mod editiranja"
+msgstr "apasati ok pt a edita provider password\t"
 
 #: src/setupnetwork.cpp:1084
 #, fuzzy
 msgid "enable/disable automount (ok)"
-msgstr "Aktiviraj/desaktiviraj izlaz AC3 uvak(OK)"
+msgstr "armeaza/dezarmeaza ac3 default output (ok)"
 
 #: src/setupnetwork.cpp:1093
 #, fuzzy
 msgid "go to previous share"
-msgstr "Marka index prebacivanja"
+msgstr "cauta semnul de index anterior"
 
 #: src/setupnetwork.cpp:1101
 #, fuzzy
 msgid "press ok to unmount this share"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru a introduce numele"
 
 #: src/setupnetwork.cpp:1111
 #, fuzzy
 msgid "press ok to mount this share"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru a introduce numele"
 
 #: src/setupnetwork.cpp:1121
 #, fuzzy
 msgid "press ok to save this share"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pentru salvare"
 
 #: src/setupnetwork.cpp:1132
 #, fuzzy
 msgid "go to next share"
-msgstr "Ici u prethodni servis"
+msgstr "zap spre urmatorul share"
 
 #: src/setupnetwork.cpp:1183
 msgid "enter the name of the share without trailing slash"
@@ -5143,33 +4948,31 @@ msgstr ""
 
 #: src/setupnetwork.cpp:1305 src/setupnetwork.cpp:1346
 msgid "invalid or missing dir or local dir"
-msgstr ""
+msgstr "dir sau dir local inexistent"
 
 #: src/setupnetwork.cpp:1323
 msgid "NFS/CIFS-Entry stored. Further entry?\n"
-msgstr ""
+msgstr "NFS/CIFS-adauga valori. noi valori?\n"
 
 #: src/setupnetwork.cpp:1324
 msgid "NFS/CIFS-Setup..."
-msgstr ""
+msgstr "NFS/CIFS-Setup..."
 
 #: src/setupnetwork.cpp:1353
 msgid "NFS/CIFS mount error already mounted"
-msgstr ""
+msgstr "NFS/CIFS eroare, deja mounted"
 
 #: src/setupvideo.cpp:57 src/system_settings.cpp:43
-#, fuzzy
 msgid "A/V Settings"
-msgstr "Podesavanje motora..."
+msgstr "A/V Settings"
 
 #: src/setupvideo.cpp:62
-#, fuzzy
 msgid "Color Format:"
-msgstr "Video format"
+msgstr "Color Format:"
 
 #: src/setupvideo.cpp:72
 msgid "CVBS"
-msgstr ""
+msgstr "CVBS"
 
 #: src/setupvideo.cpp:73
 msgid "RGB"
@@ -5181,21 +4984,19 @@ msgstr "SVideo"
 
 #: src/setupvideo.cpp:75
 msgid "YPbPr"
-msgstr ""
+msgstr "YPbPr"
 
 #: src/setupvideo.cpp:82
-#, fuzzy
 msgid "choose color format ( left, right )"
-msgstr "Izaberite format boja (Levo, Desno )"
+msgstr "alege color format ( stinga, dreapta )"
 
 #: src/setupvideo.cpp:86
-#, fuzzy
 msgid "Aspect Ratio:"
-msgstr "Bliznost repetirabja"
+msgstr "Aspect Ratio:"
 
 #: src/setupvideo.cpp:96
 msgid "choose aspect ratio ( left, right )"
-msgstr "Izaberite izgled radia (Levo, Desno)"
+msgstr "alege aspect ratio ( stinga, dreapta )"
 
 #: src/setupvideo.cpp:97
 msgid "4:3 letterbox"
@@ -5207,87 +5008,83 @@ msgstr "4:3 panscan"
 
 #: src/setupvideo.cpp:99
 msgid "16:9"
-msgstr ""
+msgstr "16:9"
 
 #: src/setupvideo.cpp:102
 msgid "always 16:9"
-msgstr ""
+msgstr "mereu 16:9"
 
 #: src/setupvideo.cpp:107 src/setupvideo.cpp:371
 msgid "TV System:"
-msgstr ""
+msgstr "Sistem TV"
 
 #: src/setupvideo.cpp:130 src/setupvideo.cpp:395
 #, fuzzy
 msgid "choose TV system ( left, right )"
-msgstr "Izabrati FEC (levo/desno)"
+msgstr "alege sistem TV (stinga, dreapta)"
 
 #: src/setupvideo.cpp:150
 msgid "Disable WSS on 4:3"
-msgstr ""
+msgstr "Dezarmeaza  WSS on 4:3\t"
 
 #: src/setupvideo.cpp:151
 msgid "don't send WSS signal when A-ratio is 4:3"
-msgstr ""
+msgstr "don't send WSS signal when A-ratio is 4:3"
 
 #: src/setupvideo.cpp:158
 msgid "AC3 default output"
-msgstr ""
+msgstr "AC3 default output"
 
 #: src/setupvideo.cpp:161
 msgid "enable/disable ac3 default output (ok)"
-msgstr "Aktiviraj/desaktiviraj izlaz AC3 uvak(OK)"
+msgstr "armeaza/dezarmeaza ac3 default output (ok)"
 
 #: src/setupvideo.cpp:167
 msgid "Auto VCR switching"
-msgstr ""
+msgstr "Auto VCR switching"
 
 #: src/setupvideo.cpp:170
-#, fuzzy
 msgid "auto switch to VCR connector"
-msgstr "Preci u TV mod"
+msgstr "auto switch to VCR connector"
 
 #: src/setupvideo.cpp:186
 #, fuzzy
 msgid "test"
-msgstr "Zapad"
+msgstr "test"
 
 #: src/setupvideo.cpp:191
 msgid "show testpicture"
-msgstr ""
+msgstr "arata imagine de test"
 
 #: src/setupvideo.cpp:366
 msgid "TV System Wizard"
-msgstr ""
+msgstr "TV System Configuratie"
 
 #: src/software_update.cpp:34
-#, fuzzy
 msgid "Internet Update"
-msgstr "Ubaci novo ime"
+msgstr "Internet Update"
 
 #: src/software_update.cpp:34
-#, fuzzy
 msgid "open internet update"
-msgstr "Otvoriti video podesavanje"
+msgstr "deschide internet update"
 
 #: src/software_update.cpp:35
 #, fuzzy
 msgid "Manual Update"
-msgstr "Rucni Upload"
+msgstr "Manual update"
 
 #: src/software_update.cpp:35
-#, fuzzy
 msgid "open manual update"
-msgstr "Trazenje vise transpondera"
+msgstr "deschide manual update"
 
 #: src/software_update.cpp:37
 msgid "Expert Flash Save/Restore"
-msgstr ""
+msgstr "Expert Flash Salvati/restaurare"
 
 #: src/software_update.cpp:37
 #, fuzzy
 msgid "open expert flash tool"
-msgstr "Otvoriti podesavanje kanala"
+msgstr "deschide expert setup"
 
 #: src/software_update.cpp:59
 msgid ""
@@ -5295,252 +5092,234 @@ msgid ""
 "'root.cramfs' and press ok.In the upcomming list select 'manual update' and "
 "follow the instructions."
 msgstr ""
+"Introduceti firmware via FTP sau Samba in fisierul '/tmp'.Redenumiti in "
+"'root.cramfs' si apasati ok.In lista ce apare selectati 'manual update' si "
+"faceti update conform lista afisata."
 
 #: src/software_update.cpp:61
-#, fuzzy
 msgid "Manual update"
-msgstr "Rucni Upload"
+msgstr "Manual update"
 
 #: src/sselect.cpp:53
-#, fuzzy
 msgid "EPG Style Selector"
-msgstr "Otvoriti podesavanje teme"
+msgstr "EPG Style Selector"
 
 #: src/sselect.cpp:54
-#, fuzzy
 msgid "open the EPG with selected style"
-msgstr "Izbrisati satelit ubacen"
+msgstr "deschide EPG with selected style"
 
 #: src/sselect.cpp:61
-#, fuzzy
 msgid "EPG Style"
-msgstr "Naslov"
+msgstr "EPG Style"
 
 #: src/sselect.cpp:72
-#, fuzzy
 msgid "Channel EPG"
-msgstr "Kanali"
+msgstr "Channel EPG"
 
 #: src/sselect.cpp:72
 msgid "open EPG for selected Channel"
-msgstr ""
+msgstr "deschide EPG pt canal selectat"
 
 #: src/sselect.cpp:73
 msgid "Multi EPG"
-msgstr ""
+msgstr "Multi EPG"
 
 #: src/sselect.cpp:73
 msgid "open EPG for next five channels"
-msgstr ""
+msgstr "deschide EPG pt urmatoarele 5 canale"
 
 #: src/sselect.cpp:79
 #, fuzzy
 msgid "External EPG"
-msgstr "Unutrasnje"
+msgstr "internal"
 
 #: src/sselect.cpp:79
 msgid "open external plugin EPG"
-msgstr ""
+msgstr "dechideti plugin EPG extern"
 
 #: src/sselect.cpp:124
 msgid "service selector"
-msgstr "Selector servisa"
+msgstr "service selector"
 
 #: src/sselect.cpp:125
 msgid "switch to next bouquet"
-msgstr "Prebaciti na sledeci buket"
+msgstr "switch to next bouquet"
 
 #: src/sselect.cpp:126
 msgid "switch to previous bouquet"
-msgstr "Prebaciti na prethodni buket"
+msgstr "switch to previous bouquet"
 
 #: src/sselect.cpp:127
 msgid "go up a directory"
-msgstr "Podici za jedan repertoar"
+msgstr "go up a directory"
 
 #: src/sselect.cpp:128
 msgid "shows the EPG selector for the highlighted channel"
-msgstr "Videti selector EPGa za kanale stavljene unapred"
+msgstr "shows the EPG selector for the highlighted channel"
 
 #: src/sselect.cpp:129
 msgid "show service selector menu"
-msgstr "Videti meni za selector servisa"
+msgstr "show service selector menu"
 
 #: src/sselect.cpp:131
-#, fuzzy
 msgid "add service to a specific bouquet"
-msgstr "Dodati specifican favorit "
+msgstr "add service to a specific bouquet"
 
 #: src/sselect.cpp:135
 msgid "toggle between classic and multi column style"
-msgstr "Preci iz klasicnog moda u mod vise kolona"
+msgstr "toggle between classic and multi column style"
 
 #: src/sselect.cpp:136
-#, fuzzy
 msgid "toggle focus between service and bouquet list (in combi column style)"
-msgstr "Prebaciti na listu buketa ili servisa"
+msgstr "toggle focus between service and bouquet list (in combi column style)"
 
 #: src/sselect.cpp:137
 msgid "go to the prev Marker if exist.. else goto first service"
-msgstr ""
+msgstr "go to the prev Marker if exist.. else goto first service"
 
 #: src/sselect.cpp:138
 msgid "go to the next Marker if exist.. else goto last service"
-msgstr ""
+msgstr "go to the next Marker if exist.. else goto last service\t"
 
 #: src/sselect.cpp:140
-#, fuzzy
 msgid "show all services"
-msgstr "Prikazi selector servisa"
+msgstr "arata toate serviciile"
 
 #: src/sselect.cpp:141
-#, fuzzy
 msgid "show satellite list"
-msgstr "Ici u satelit"
+msgstr "arata lista sateliti"
 
 #: src/sselect.cpp:142
-#, fuzzy
 msgid "show provider list"
-msgstr "Videti provajdere"
+msgstr "arata provider list"
 
 #: src/sselect.cpp:143
-#, fuzzy
 msgid "show bouquet list"
-msgstr "Kopiraj u licni buket"
+msgstr "arata bouquet list"
 
 #: src/sselect.cpp:145
-#, fuzzy
 msgid "delete selected entry"
-msgstr "Izbrisati ulaz izabran"
+msgstr "sterge selected entry"
 
 #: src/sselect.cpp:146
-#, fuzzy
 msgid "mark selected entry for move"
-msgstr "Izbrisati ulaz izabran"
+msgstr "marcheaza selected entry for move"
 
 #: src/sselect.cpp:147
-#, fuzzy
 msgid "rename selected entry"
-msgstr "Izbrisati ulaz izabran"
+msgstr "redenumeste selected entry"
 
 #: src/sselect.cpp:148
-#, fuzzy
 msgid "create new marker entry"
-msgstr "Kreiranje novog licnog buketa"
+msgstr "creeaza un nou marker entry"
 
 #: src/sselect.cpp:297
 msgid "[GO UP]"
-msgstr "[Popeti se]"
+msgstr "[GO UP]"
 
 #: src/sselect.cpp:299
 msgid "(removed service)"
-msgstr "(Izbrisan servis)"
+msgstr "(removed service)"
 
 #: src/sselect.cpp:372
 msgid "mark"
-msgstr ""
+msgstr "mark"
 
 #: src/sselect.cpp:374
 msgid "marker"
-msgstr ""
+msgstr "marker"
 
 #: src/sselect.cpp:382
-#, fuzzy
 msgid "All Services"
-msgstr "Servisis"
+msgstr "All Services"
 
 #: src/sselect.cpp:384
-#, fuzzy
 msgid "Satellites"
-msgstr "Satelit"
+msgstr "Satellites"
 
 #: src/sselect.cpp:387
-#, fuzzy
 msgid "Providers"
-msgstr "Videti provajdere"
+msgstr "Providers"
 
 #: src/sselect.cpp:392
 msgid "Root"
-msgstr ""
+msgstr "Root"
 
 #: src/sselect.cpp:393
-#, fuzzy
 msgid "Movies"
-msgstr "Filmovi"
+msgstr "Movies"
 
 #: src/sselect.cpp:887
 msgid "Select No or press Abort to lock/unlock the complete directory"
-msgstr ""
+msgstr "Select No or press Abort to lock/unlock the complete directory"
 
 #: src/sselect.cpp:887
 msgid "Enter Directory"
-msgstr ""
+msgstr "Enter Directory\t"
 
 #: src/streaminfo.cpp:165
 msgid "album"
-msgstr "Albumi"
+msgstr "album"
 
 #: src/streaminfo.cpp:167
 msgid "title"
-msgstr "Naslov"
+msgstr "title"
 
 #: src/streaminfo.cpp:169
 msgid "artist"
-msgstr "Licnost"
+msgstr "artist"
 
 #: src/streaminfo.cpp:171
 msgid "genre"
-msgstr "Zanr"
+msgstr "genre"
 
 #: src/streaminfo.cpp:173
 msgid "year"
-msgstr "Godina"
+msgstr "year"
 
 #: src/streaminfo.cpp:175
-#, fuzzy
 msgid "composer"
-msgstr "Zatvoriti"
+msgstr "composer"
 
 #: src/streaminfo.cpp:177
-#, fuzzy
 msgid "track"
-msgstr "Povratak"
+msgstr "track"
 
 #: src/streaminfo.cpp:179
 msgid "length"
-msgstr ""
+msgstr "length"
 
 #: src/streaminfo.cpp:398
 msgid "Video format:"
-msgstr "Video format"
+msgstr "Video format:"
 
 #: src/streaminfo.cpp:477
 msgid "supported coding systems:"
-msgstr "Podneti sistemi kodiranja :"
+msgstr "supported coding systems:"
 
 #: src/streaminfo.cpp:517
 msgid "Systems used in service:"
-msgstr "Sistem servis upotrebljen:"
+msgstr "Systems used in service:"
 
 #: src/streaminfo.cpp:554
 msgid "Record mode - read manual"
-msgstr ""
+msgstr "Record mode - read manual"
 
 #: src/streaminfo.cpp:664
 msgid "Service information (right)"
-msgstr "Servis informacije ( desno )"
+msgstr "Service information (dreapta)"
 
 #: src/streaminfo.cpp:665
 msgid "Scrambled system information (left, right)"
-msgstr "Kodiraj informacije sistema (Levo, desno)"
+msgstr "Scrambled system information (stinga, dreapta)"
 
 #: src/streaminfo.cpp:666
 msgid "Transponder information (left)"
-msgstr "Informacije o transponderu (Levo)"
+msgstr "Transponder information (stinga)"
 
 #: src/timer.cpp:286
 msgid "Timerlist"
-msgstr "Lista sata"
+msgstr "Timerlist"
 
 #: src/timer.cpp:1585
 #, fuzzy
@@ -5548,17 +5327,17 @@ msgid ""
 "You would delete the running event..\n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"Hocete li izbrisati dogadjaj u toku... \n"
-"To ce zaustaviti sat mod (snimanje)!"
+"You would to delete the running event..\n"
+"this stops the timer mode (recording)!"
 
 #: src/timer.cpp:1586
 #, fuzzy
 msgid "Delete the event from the timer list"
-msgstr "Izbrisati dogadjaj iz liste"
+msgstr "Vreti sa stergeti din timerlist"
 
 #: src/timer.cpp:1587
 msgid "Really delete this event?"
-msgstr "Hocete li zaista izbrisati ?"
+msgstr "Sunteti sigur?"
 
 #: src/timer.cpp:1591
 #, fuzzy
@@ -5566,33 +5345,33 @@ msgid ""
 "You would update the running event.. \n"
 "this stops the timer mode (recording)!"
 msgstr ""
-"Da li ste sigurni da hocete promeniti to? \n"
-"To ce zaustaviti snimanje u modu sat!"
+"You would to update the running event.. \n"
+"this stops the timer mode (recording)!"
 
 #: src/timer.cpp:1592
 #, fuzzy
 msgid "Update event in timer list"
-msgstr "Aktualizacija dogadjaja u sat?"
+msgstr "Update event in timerlist"
 
 #: src/timer.cpp:1593 src/timer.cpp:2511
 msgid "Really update this event?"
-msgstr "Aktualizacija tog dogadjaja?"
+msgstr "Really update this event?"
 
 #: src/timer.cpp:1743
 msgid "This event is already in the timerlist."
-msgstr "Taj dogadjaj je vec dodat u sat"
+msgstr "This event is already in the timerlist."
 
 #: src/timer.cpp:1744 src/timer.cpp:1795
 msgid "Add event to timerlist"
-msgstr "Dodati dogadjaj u sat"
+msgstr "Add event to timerlist"
 
 #: src/timer.cpp:1784
 msgid "The Endtime overlaps with another event in the timerlist"
-msgstr "Sat kraja je pre sata za pocetak."
+msgstr "The Endtime overlaps with another event in the timerlist"
 
 #: src/timer.cpp:1784
 msgid "Set Stop Time"
-msgstr "Ubaciti cas za kraj"
+msgstr "Set Stop Time"
 
 #: src/timer.cpp:1793
 msgid ""
@@ -5600,398 +5379,379 @@ msgid ""
 "The event overlaps with another event in the timerlist\n"
 "Please check the timerlist manually."
 msgstr ""
-"Taj dogadjaj se ne moze ubaciti u listu snimanja.\n"
-"On se poklapa sa dogadjajom vec programiranim \n"
-"  Proverite rucno casove."
+"This event cannot added to the timerlist.\n"
+"The event overlaps with another event in the timerlist\n"
+"Please check the timerlist manually."
 
 #: src/timer.cpp:1874
 msgid "timerView"
-msgstr "Vid Sata"
+msgstr "timerView"
 
 #: src/timer.cpp:1875
-#, fuzzy
 msgid "add new event to Timerlist"
-msgstr "Dodati dogadjaj u sat"
+msgstr "adauga nou event la Timerlist"
 
 #: src/timer.cpp:1876
 msgid "remove this entry from timer list"
-msgstr "Izbrisati to iz sata"
+msgstr "sterge event din timer list"
 
 #: src/timer.cpp:2075
 msgid "Timer list"
-msgstr "Lista satova"
+msgstr "Timer list"
 
 #: src/timer.cpp:2153
-#, fuzzy
 msgid "Timer Edit View"
-msgstr "Lista satova"
+msgstr "Timer Edit View"
 
 #: src/timer.cpp:2154
 msgid "increase the event begin time in 1 minute steps"
-msgstr ""
+msgstr "increase the event begin time in 1 minute steps"
 
 #: src/timer.cpp:2155
 msgid "decrease the event begin time in 1 minute steps"
-msgstr ""
+msgstr "decrease the event begin time in 1 minute steps\t"
 
 #: src/timer.cpp:2156
 msgid "increase the event end time in 1 minute steps"
-msgstr ""
+msgstr "increase the event end time in 1 minute steps"
 
 #: src/timer.cpp:2157
 msgid "decrease the event end time in 1 minute steps"
-msgstr ""
+msgstr "decrease the event end time in 1 minute steps"
 
 #: src/timer.cpp:2166
 msgid "January"
-msgstr "Januar"
+msgstr "Ianuarie"
 
 #: src/timer.cpp:2166
 msgid "February"
-msgstr "Februar"
+msgstr "Februarie"
 
 #: src/timer.cpp:2166
 msgid "March"
-msgstr "Mart"
+msgstr "Martie"
 
 #: src/timer.cpp:2167
 msgid "April"
-msgstr "April"
+msgstr "Aprilie"
 
 #: src/timer.cpp:2167
 msgid "May"
-msgstr "Maj"
+msgstr "Mai"
 
 #: src/timer.cpp:2167
 msgid "June"
-msgstr "Jun"
+msgstr "Iunie"
 
 #: src/timer.cpp:2167
 msgid "July"
-msgstr "Juli"
+msgstr "Iulie"
 
 #: src/timer.cpp:2168
 msgid "August"
-msgstr "Avgust"
+msgstr "August"
 
 #: src/timer.cpp:2168
 msgid "September"
-msgstr "Septembar"
+msgstr "Septembrie"
 
 #: src/timer.cpp:2168
 msgid "October"
-msgstr "Octobar"
+msgstr "Octombrie"
 
 #: src/timer.cpp:2169
 msgid "November"
-msgstr "Novembar"
+msgstr "Noiembrie"
 
 #: src/timer.cpp:2169
 msgid "December"
-msgstr "Decembar"
+msgstr "Decembrie"
 
 #: src/timer.cpp:2185
 #, fuzzy
 msgid "Nothing"
-msgstr "Sever"
+msgstr "[nimic]"
 
 #: src/timer.cpp:2185
+#, fuzzy
 msgid "do nothing"
-msgstr ""
+msgstr "[nimic]"
 
 #: src/timer.cpp:2186
 #, fuzzy
 msgid "Standby"
-msgstr "Pauza"
+msgstr "Standby:"
 
 #: src/timer.cpp:2186
 #, fuzzy
 msgid "put box into standby"
-msgstr "Preci u pauzu mode (stisnuti)"
+msgstr "goto standby"
 
 #: src/timer.cpp:2188
 #, fuzzy
 msgid "put box into deep standby"
-msgstr " Ugasiti DreamBox posle snimanja (ok)"
+msgstr "deepstandby (ok)"
 
 #: src/timer.cpp:2287
 msgid "record DVR"
-msgstr "Snimanje DVRa"
+msgstr "record DVR"
 
 #: src/timer.cpp:2291
 msgid "Ngrab"
 msgstr "Ngrab"
 
 #: src/timer.cpp:2297
-#, fuzzy
 msgid "Record VCR"
-msgstr "Snimanje"
+msgstr "Record VCR"
 
 #: src/timer.cpp:2367
-#, fuzzy
 msgid "unknown service"
-msgstr "Nepoznato"
+msgstr "Serviciu necunoscut"
 
 #: src/timer.cpp:2509
 msgid ""
 "The new endtime is before now time!\n"
 "This stops the running timer(recording)\n"
 msgstr ""
+"The new endtime is before now time!\n"
+"This stops the running timer(recording)\n"
 
 #: src/timer.cpp:2515 src/timer.cpp:2530 src/timer.cpp:2543 src/timer.cpp:2564
 msgid "Update event in timerlist"
-msgstr "Aktualizacija dogadjaja u sat?"
+msgstr "Update event in timerlist"
 
 #: src/timer.cpp:2529
 msgid "New endtime are now adjusted"
-msgstr ""
+msgstr "New endtime are now adjusted"
 
 #: src/timer.cpp:2542
 #, fuzzy
 msgid "The event has already finished... you can not change endtime!"
-msgstr "Taj dogadjaj je vec dodat u sat"
+msgstr "This event is already in the timerlist."
 
 #: src/timer.cpp:2564
 msgid ""
 "Invalid begin or end time.!\n"
 "Please check time and date"
 msgstr ""
-"Cas za pocetak ili kraj nisu u redu\n"
-" Proverite stelovanja"
+"Invalid begin or end time.!\n"
+"Please check time and date"
 
 #: src/timer.cpp:2736
 msgid ""
 "Sorry, you can not add a time shifted service manually to the timer.\n"
 "Please close the Timer and use the EPG of the service you wish to add!"
 msgstr ""
-"Izvinite, ne mozete dodati rucno snimanje.\n"
-" Molim vas zatvorite meni i upotrebite EPG za dodavanje servisa!"
+"Sorry, you can not add a time shifted service manually to the timer.\n"
+"Please close the Timer and use the EPG of the service you wish to add!"
 
 #: src/timer.cpp:2797
-#, fuzzy
 msgid "no description found"
-msgstr "Nema deskripcije"
+msgstr "nu este descris"
 
 #: src/tpeditwindow.cpp:57
-#, fuzzy
 msgid "Satellite Edit"
-msgstr "Satelit"
+msgstr "Editare Satelit"
 
 #: src/tpeditwindow.cpp:63
-#, fuzzy
 msgid "press ok to change satellite name"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pt a schimba sat name"
 
 #: src/tpeditwindow.cpp:81
-#, fuzzy
 msgid "press ok to change direction"
-msgstr "Stisnuti OK pa ubaciti naziv"
+msgstr "apasa ok pt a schimba directia"
 
 #: src/tpeditwindow.cpp:90
-#, fuzzy
 msgid "Network search"
-msgstr "Trazi network"
+msgstr "Network search"
 
 #: src/tpeditwindow.cpp:91
 msgid ""
 "scan Network Information Table(s)\n"
 "this is recommend"
 msgstr ""
+"scan Network Information Table(s)\n"
+"este recomandat"
 
 #: src/tpeditwindow.cpp:96
-#, fuzzy
 msgid "Extended networks search"
-msgstr "Trazi network"
+msgstr "Extended networks search"
 
 #: src/tpeditwindow.cpp:97
 msgid ""
 "scan NITs of other transponders\n"
 "this is slower, but sometimes needed)"
-msgstr ""
+msgstr "scan NITs of other transponders"
 
 #: src/tpeditwindow.cpp:102
-#, fuzzy
 msgid "Use BAT"
-msgstr "Upotrebiti BAT"
+msgstr "Use BAT"
 
 #: src/tpeditwindow.cpp:103
 msgid "use Provider DVB Bouquet Tables if exist"
-msgstr ""
+msgstr "use Provider DVB Bouquet Tables if exist"
 
 #: src/tpeditwindow.cpp:178
-#, fuzzy
 msgid "add new Network"
-msgstr "Dodati novi sat(ok)"
+msgstr "adauga nou Network"
 
 #: src/tpeditwindow.cpp:179
-#, fuzzy
 msgid "remove selected Network"
-msgstr "Izbrisati ulaz izabran"
+msgstr "sterge Network selectat"
 
 #: src/tpeditwindow.cpp:246
-#, fuzzy
 msgid "Save changed Transponders?"
-msgstr "Zadrzati izmene i zatvoriti prozor"
+msgstr "Salveaza schimbari?"
 
 #: src/tpeditwindow.cpp:247
-#, fuzzy
 msgid "Transponders changed"
-msgstr "Skeniranje transpondera"
+msgstr "Transponderi schimbati"
 
 #: src/tpeditwindow.cpp:258
-#, fuzzy
 msgid "Transponders couldn't be written to file!"
-msgstr "Izabrati transponder koji zelite naci"
+msgstr "Transponderi nu pot fi salvati in file!"
 
 #: src/tpeditwindow.cpp:259
-#, fuzzy
 msgid "Write Error"
-msgstr "Greska"
+msgstr "Eroare gasita"
 
 #: src/tpeditwindow.cpp:439
-#, fuzzy
 msgid "new Satellite"
-msgstr "Satelit"
+msgstr "Nou Satelit"
 
 #: src/tpeditwindow.cpp:468
-#, fuzzy
 msgid "Really delete the selected satellite?"
-msgstr "Izbrisati satelit ubacen"
+msgstr "Sterge Satelit?"
 
 #: src/tpeditwindow.cpp:469
-#, fuzzy, c-format
+#, c-format
 msgid "Delete %s"
-msgstr "Izbrisi me"
+msgstr "Sterge %s"
 
 #: src/upgrade.cpp:147
 msgid "Please select the software version to upgrade to:"
-msgstr "Izaberite verziju Softwara koju zelite instalirati"
+msgstr "Alegeti vers Software pt upgrade:"
 
 #: src/upgrade.cpp:184
 msgid "manual upload"
-msgstr "Rucni Upload"
+msgstr "manual upload"
 
 #: src/upgrade.cpp:202
 msgid "downloading catalog..."
-msgstr "Downloadiranje kataloga..."
+msgstr "downloading catalog..."
 
 #: src/upgrade.cpp:222
 msgid "downloading changelog..."
-msgstr "Downloadiranje fajla notacije..."
+msgstr "downloading changelog..."
 
 #: src/upgrade.cpp:247
 msgid "downloading image..."
-msgstr "Downloadiranje Image fajla..."
+msgstr "downloading imagine..."
 
 #: src/upgrade.cpp:305
 msgid "Please select version to upgrade or LAME! to abort"
-msgstr "Nova verzija kod www.dm7000.be? ili lame tipka za stopiranje"
+msgstr "Selectati vers upgrade sau parasiti menu"
 
 #: src/upgrade.cpp:426 src/upgrade.cpp:508 src/upgrade.cpp:522
 msgid "Error!"
-msgstr "Greska!"
+msgstr "Eroare!"
 
 #: src/upgrade.cpp:482
 msgid "Download aborted."
-msgstr "Ponisteno downloadiranje."
+msgstr "Renunta download."
 
 #: src/upgrade.cpp:501
 msgid "checking consistency of file..."
-msgstr "Proveravanje fajlova..."
+msgstr "control consistenta file..."
 
 #: src/upgrade.cpp:505 src/upgrade.cpp:507
 msgid "write error while downloading..."
-msgstr "Greska u downloadiranju..."
+msgstr "eroare gasita la control download..."
 
 #: src/upgrade.cpp:519 src/upgrade.cpp:521
 msgid "Data error. The checksum didn't match."
-msgstr "Greska u podacima.checksum nije korektan"
+msgstr "Data error. The checksum didn't match."
 
 #: src/upgrade.cpp:531
 msgid "Checksum OK. Ready to upgrade."
-msgstr "Checksum OK, spreman sa upgrade."
+msgstr "Checksum OK. Sunt gata pt upgrade."
 
 #: src/upgrade.cpp:533
 msgid "Are you sure you want to upgrade to this new version?"
-msgstr "Zelie li zaista ubaciti novu verziju?"
+msgstr "Esti sigur ca vrei o noua versiune de Soft?"
 
 #: src/upgrade.cpp:534
 msgid "Ready to upgrade"
-msgstr "Spreman za upgrade"
+msgstr "Sunt gata pt upgrade"
 
 #: src/upgrade.cpp:570
 msgid "Can't read flashimage.img!"
-msgstr ""
+msgstr "Nu pot citi flashimage.img!"
 
 #: src/upgrade.cpp:570 src/upgrade.cpp:583 src/upgrade.cpp:706
 #: src/upgrade.cpp:717
 msgid "Flash"
-msgstr ""
+msgstr "Flash"
 
 #: src/upgrade.cpp:583
 msgid "flashimage.img has filesize of 0byte!"
-msgstr ""
+msgstr "flashimage.img has filesize of 0byte!"
 
 #: src/upgrade.cpp:613 src/upgrade.cpp:691
-#, fuzzy
 msgid "Please wait... do NOT switch off the receiver!"
-msgstr ""
-"Brisanje...\n"
-" Ne gasiti vas DreamBox !!!!"
+msgstr "Asteptati... nu opriti receiver!"
 
 #: src/upgrade.cpp:614 src/upgrade.cpp:692
 msgid "upgrade in progress"
-msgstr "Upgrade u toku ... www.dm7000.be"
+msgstr "upgrade in progres"
 
 #: src/upgrade.cpp:617 src/upgrade.cpp:703
-#, fuzzy
 msgid "Erasing Flash..."
-msgstr "Super podesavanje"
+msgstr "Sterge Flash..."
 
 #: src/upgrade.cpp:642 src/upgrade.cpp:732
 msgid "Writing Software to Flash..."
-msgstr ""
+msgstr "Scrie Software in Flash..."
 
 #: src/upgrade.cpp:706
-#, fuzzy
 msgid "Erase error!"
-msgstr "Greska!"
+msgstr "Erase eroare!"
 
 #: src/upgrade.cpp:717
 msgid "Can't open mtd!"
-msgstr ""
+msgstr "Nu pot deschide mtd!"
 
 #: src/upgrade.cpp:756
 msgid ""
 "upgrade successful!\n"
 "restarting..."
 msgstr ""
-"Upgrade vaseg Dreamboxa je uspeo! \n"
-" Restartiranje..."
+"upgrade successful!\n"
+"restarting..."
 
 #: src/upgrade.cpp:757
 msgid "upgrade ok"
-msgstr "Upgrade OK"
+msgstr "upgrade ok"
 
 #: src/upgrade.cpp:819
 msgid "This is the currently installed release."
-msgstr "Ta verzija je vec ubacena."
+msgstr "Acesta este Soft instalant curent."
 
 #: src/upgrade.cpp:822
 msgid "This is an older release."
-msgstr "To je druga verzija."
+msgstr "Acesta este un Soft vechi."
 
 #: src/upgrade.cpp:825
 msgid "No changelog data available."
-msgstr "Nema zamene u notacijama dostupnim"
+msgstr "Nu gasesc changelog data."
 
 #: src/upgrade.cpp:839
 msgid "No new features were added in this release."
-msgstr "Sada su nove zamene dodate u tu verziju."
+msgstr "Nimic nou in acest release."
 
 #: src/upgrade.cpp:842
 msgid "The following new features were added in this release:\n"
-msgstr "Ove zamene su dodate u toj verziji:\n"
+msgstr "Urmatoarele imbunatatiri sau facut in acest release:\n"
 
 #: src/wizard_fpupdate.cpp:13
 msgid ""
@@ -5999,11 +5759,14 @@ msgid ""
 "Your Dreambox must upgrade now!\n"
 "DO NOT TURN OFF THE POWER DURING UPDATE !!!."
 msgstr ""
+"Nou Software pentru frontprocesor.\n"
+"Deine Dreambox va porni acum Upgrade!\n"
+"ATENTIE, nu opri receiver in aceasta perioada !!!."
 
 #: src/wizard_fpupdate.cpp:16
 #, fuzzy
 msgid "New software avail"
-msgstr "Upgradovanje softwarea"
+msgstr "deschide software update"
 
 #: src/wizard_fpupdate.cpp:24
 msgid ""
@@ -6011,120 +5774,112 @@ msgid ""
 "DO NOT TURN OFF THE POWER!\n"
 "THE DREAMBOX WILL AUTOMATICALLY REBOOT!\n"
 msgstr ""
+"Upgrading frontprocessor...\n"
+"Nu interveniti in proces!\n"
+"Dreambox va reporni automat!\n"
 
 #: src/wizard_fpupdate.cpp:27
 #, fuzzy
 msgid "Upgrade in process..."
-msgstr "Upgrade u toku ... www.dm7000.be"
+msgstr "upgrade in progres"
 
 #: src/wizard_language.cpp:172
 msgid "Choose your language..."
-msgstr "Vas jezik"
+msgstr "Alegeti Limba..."
 
 #: src/wizard_language.cpp:173
 msgid "press up/down/ok"
-msgstr "Stisnuti Gore/Dole/ OK"
+msgstr "apasati sus/jos/ok"
 
 #: src/wizard_scan.cpp:116
-#, fuzzy
 msgid "Direct connection to one LNB"
-msgstr "Direktna konekcija"
+msgstr "Conectare directa la un LNB"
 
 #: src/wizard_scan.cpp:119
 msgid "Simple DiSEqC (2 LNBs/satellites)"
-msgstr ""
+msgstr "Simple DiSEqC (2 LNBs/satellites)"
 
 #: src/wizard_scan.cpp:122
 msgid "Complex configuration (including DiSEqC 1.2)"
-msgstr ""
+msgstr "Configuratie complexa (including DiSEqC 1.2)"
 
 #: src/system_settings.cpp:41 src/time_settings.cpp:32
-#, fuzzy
 msgid "Time Settings"
-msgstr "Direkcija :"
+msgstr "Time Settings"
 
 #: src/system_settings.cpp:41
-#, fuzzy
 msgid "open time settings"
-msgstr "Otvoriti video podesavanje"
+msgstr "deschide time settings"
 
 #: src/system_settings.cpp:43
 msgid "open A/V settings"
-msgstr ""
+msgstr "deschide A/V settings"
 
 #: src/system_settings.cpp:46
-#, fuzzy
 msgid "UHF Modulator"
-msgstr "Podesavanje modulatora RF"
+msgstr "UHF Modulator"
 
 #: src/system_settings.cpp:46
-#, fuzzy
 msgid "open UHF-Modulator setup"
-msgstr "Podesavanje modulatora RF"
+msgstr "deschide UHF-Modulator setup"
 
 #: src/system_settings.cpp:51
-#, fuzzy
 msgid "Harddisc Setup"
-msgstr "Podesavanje hard diska"
+msgstr "Harddisc Setup"
 
 #: src/system_settings.cpp:51
-#, fuzzy
 msgid "open harddisc setup"
-msgstr "Podesavanje hard diska..."
+msgstr "deschide harddisc setup"
 
 #: src/system_settings.cpp:56
 #, fuzzy
 msgid "open keyboard setup"
-msgstr "Podesavanje hard diska..."
+msgstr "deschide harddisc setup"
 
 #: src/system_settings.cpp:59
-#, fuzzy
 msgid "open on screen display settings"
-msgstr "Podesavanje hard diska..."
+msgstr "deschide OSD settings"
 
 #: src/system_settings.cpp:60
 msgid "open language selector"
-msgstr "Otvoriti podesavanje jezika"
+msgstr "deschide selectie limba"
 
 #: src/system_settings.cpp:63
 msgid "LCD Settings"
-msgstr ""
+msgstr "LCD Settings"
 
 #: src/system_settings.cpp:63
 msgid "open LCD settings"
-msgstr ""
+msgstr "deschide LCD settings"
 
 #: src/system_settings.cpp:126
 msgid "sorry, no harddisks found!"
-msgstr "Izvinite,nijedan hard disk nadjen !"
+msgstr "scuze, nu aveti placa de date!"
 
 #: src/system_settings.cpp:126
 msgid "Harddisk setup..."
-msgstr "Podesavanje hard diska"
+msgstr "Placa de date setup..."
 
 #: src/time_settings.cpp:36
-#, fuzzy
 msgid "Timezone Configuration"
-msgstr "Podesavanje LNBa"
+msgstr "Timezone Configuration"
 
 #: src/time_settings.cpp:36
-#, fuzzy
 msgid "open timezone selector"
-msgstr "Otvoriti video podesavanje"
+msgstr "deschideti timezone selector"
 
 #: src/time_settings.cpp:37
-#, fuzzy
 msgid "Time Correction"
-msgstr "Direkcija :"
+msgstr "Corectie Timp"
 
 #: src/time_settings.cpp:37
 msgid "open time correction window"
-msgstr ""
+msgstr "deschideti fereastra time correction"
 
 #: src/time_settings.cpp:72
 msgid "To change time correction you must tune first to any transponder"
-msgstr ""
+msgstr "Pt a schimba time correction va rugam sa alegeti un transponder"
 
 #: src/time_settings.cpp:72
 msgid "time correction change error"
-msgstr ""
+msgstr "eroare in time correction"
