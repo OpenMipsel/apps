@@ -1,6 +1,27 @@
+#include <config.h>
+#if HAVE_DVB_API_VERSION < 3
+#include <ost/dmx.h>
+#include <ost/video.h>
+#include <ost/audio.h>
 #define VIDEO_DEV "/dev/dvb/card0/video0"
 #define AUDIO_DEV "/dev/dvb/card0/audio0"
 #define DEMUX_DEV "/dev/dvb/card0/demux0"
+#else
+#include <linux/dvb/dmx.h>
+#include <linux/dvb/video.h>
+#include <linux/dvb/audio.h>
+#define VIDEO_DEV "/dev/dvb/adapter0/video0"
+#define AUDIO_DEV "/dev/dvb/adapter0/audio0"
+#define DEMUX_DEV "/dev/dvb/adapter0/demux0"
+#define audioStatus audio_status
+#define videoStatus video_status
+#define pesType pes_type
+#define playState play_state
+#define audioStreamSource_t audio_stream_source_t
+#define videoStreamSource_t video_stream_source_t
+#define streamSource stream_source
+#define dmxPesFilterParams dmx_pes_filter_params
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,18 +32,15 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+#include <lib/dvb/servicedvb.h>
+#include <lib/dvb/record.h>
 
 // #define OLD_VBI
 
 #undef strcpy
 #undef strcmp
 #undef strlen
-#undef strnicmp
 #undef strncmp
-
-#include <ost/dmx.h>
-#include <ost/video.h>
-#include <ost/audio.h>
 
 #ifdef OLD_VBI  // oldvbi header
 #include <dbox/avia_gt_vbi.h>
@@ -30,8 +48,17 @@
 
 typedef unsigned char __u8;
 
+#include <lib/system/econfig.h>
 #include <lib/dvb/decoder.h>
+#include <lib/dvb/dvbservice.h>
 #include <lib/base/eerror.h>
+
+#ifndef TUXTXT_CFG_STANDALONE
+extern "C" int  tuxtxt_init();
+extern "C" int  tuxtxt_start(int tpid);
+extern "C" int  tuxtxt_stop();
+extern "C" void tuxtxt_close();
+#endif
 
 decoderParameters Decoder::current;
 decoderParameters Decoder::parms;
@@ -41,9 +68,16 @@ int Decoder::fd::demux_video;
 int Decoder::fd::demux_audio;
 int Decoder::fd::demux_pcr;
 int Decoder::fd::demux_vtxt;
+int Decoder::fd::mpeg;
+int Decoder::locked=0;
 
-static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int casystemid, int descriptor_length, __u8 *descriptors)
+static void SetECM(int vpid, int apid, int pmtpid, int descriptor_length, __u8 *descriptors)
 {
+#if 0
+// to use this old code you should read my comment in addCADescriptor..
+	if ( eDVB::getInstance()->recorder && eServiceInterface::getInstance()->service.path )
+		return;
+
 	eDebug("-------------------Set ECM-----------------");
 	static int lastpid=-1;
 
@@ -57,122 +91,149 @@ static void SetECM(int vpid, int apid, int ecmpid, int emmpid, int pmtpid, int c
 	if (!descriptor_length)
 		return;
 
-	char buffer[6][5];
+	char buffer[3][5];
 	sprintf(buffer[0], "%x", vpid);
 	sprintf(buffer[1], "%x", apid);
-	sprintf(buffer[2], "%x", ecmpid);
-	sprintf(buffer[3], "%x", emmpid);
-	sprintf(buffer[4], "%x", pmtpid);
-	sprintf(buffer[5], "%x", casystemid);
-	
+	eDVBServiceController *sapi=eDVB::getInstance()->getServiceAPI();
+	if (!sapi)
+		return;
+	sprintf(buffer[2], "%x", sapi->service.getServiceID().get());
+
 	char descriptor[2048];
-	
+
 	for (int i=0; i<descriptor_length; i++)
 		sprintf(descriptor+i*2, "%02x", descriptors[i]);
-	
+
 	switch (lastpid=fork())
 	{
 	case -1:
 		eDebug("fork failed!");
 		return;
 	case 0:
-	{ 
+	{
 #if 0
 		close(0);
 		close(1);
 		close(2);
 #endif
+		for (unsigned int i=0; i < 90; ++i )
+			close(i);
 
-		if (execlp("camd", "camd", buffer[0], buffer[1], buffer[4], descriptor, 0)<0)
+		if (execlp("camd", "camd", buffer[0], buffer[1], buffer[2], descriptor, 0)<0)
 			eDebug("camd");
 
 		_exit(0);
 		break;
 	}
 	}
+#endif
 }
 
 int Decoder::Initialize()
 {
-	parms.vpid = parms.apid = parms.tpid = parms.pcrpid = parms.ecmpid = -1;
+	parms.vpid = parms.apid = parms.tpid = parms.pcrpid = parms.pmtpid = -1;
 	parms.audio_type=0;
-	parms.emmpid=-2;
-	parms.recordmode=0;
 	parms.descriptor_length=0;
+	parms.restart_camd=0;
 	current=parms;
-	fd.video = fd.audio = fd.demux_video = fd.demux_audio =	fd.demux_pcr = fd.demux_vtxt = -1;
+	fd.video = fd.audio = fd.demux_video = fd.demux_audio = fd.demux_pcr = fd.demux_vtxt = fd.mpeg = -1;
+#ifndef TUXTXT_CFG_STANDALONE
+	int disable_background_caching=0;
+	eConfig::getInstance()->getKey("/ezap/extra/teletext_caching", disable_background_caching);
+	if ( !disable_background_caching )
+		tuxtxt_init();
+#endif
 	return 0;
 }
 
 void Decoder::Close()
-{	
+{
 	Flush();
-	eDebug("fd video = %d, audio = %d, demux_video = %d, demux_audio = %d, demux_pcr = %d, demux_vtxt = %d",
-					fd.video, fd.audio, fd.demux_video, fd.demux_audio, fd.demux_pcr, fd.demux_vtxt);
+#ifndef TUXTXT_CFG_STANDALONE
+	int disable_background_caching=0;
+	eConfig::getInstance()->getKey("/ezap/extra/teletext_caching", disable_background_caching);
+	if ( !disable_background_caching )
+		tuxtxt_close();
+#endif
+	eDebug("fd video = %d, audio = %d, demux_video = %d, demux_audio = %d, demux_pcr = %d, demux_vtxt = %d, mpeg = %d",
+					fd.video, fd.audio, fd.demux_video, fd.demux_audio, fd.demux_pcr, fd.demux_vtxt, fd.mpeg);
 }
 
-void Decoder::Flush()
+void Decoder::Flush(int keepaudiotype)
 {
-	eDebug("Decoder::Flush()");
-	parms.vpid = parms.apid = parms.tpid = parms.pcrpid = parms.ecmpid = -1;
-	parms.audio_type=0;
-	parms.descriptor_length=0;
-	parms.emmpid=-2;
-	parms.recordmode=0;
+//	eDebug("Decoder::Flush()");
+	parms.vpid = parms.apid = parms.tpid = parms.pcrpid = parms.pmtpid = -1;
+	if (!keepaudiotype)
+		parms.audio_type=0;
+	parms.descriptor_length=parms.restart_camd=0;
 	Set();
 }
-
-void Decoder::Pause()
+void Decoder::Flush() // for Binary compatibility
+{ 
+	Flush(0); 
+} 
+void Decoder::Pause( int flags )
+// flags & 1 = disableAudio
+// flags & 2 = onlyFreeze
 {
+	eDebug("Decoder::Pause()");
 	if (fd.video != -1)
 	{
-		int err=0;
-		if (::ioctl(fd.video, VIDEO_FREEZE)<0)
-		{
+		if ( ::ioctl(fd.video, VIDEO_FREEZE) < 0 )
 			eDebug("VIDEO_FREEZE failed (%m)");
-			err=1;
-		}
-		if ( fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 0)<0)
+		if ( flags & 2 )
+			return;
+		if ( fd.audio != -1 )
 		{
-			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
-			err=1;
+#if HAVE_DVB_API_VERSION >= 3
+			if (::ioctl(fd.audio, AUDIO_STOP)<0)
+				eDebug("AUDIO_STOP failed(%m)");
+			else
+				eDebug("audio_pause (success)");
+#else
+			if ( ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 0) < 0 )
+				eDebug("AUDIO_SET_AV_SYNC failed (%m)");
+			if ( flags & 1 )
+			{
+				if ( ::ioctl(fd.audio, AUDIO_SET_MUTE, 1 )<0)
+					eDebug("AUDIO_SET_MUTE failed (%m)");
+			}
+#endif
 		}
-		if (!err)
-			eDebug("video_pause (success)");
-	}
-	if (fd.audio != -1)
-	{
-		if (::ioctl(fd.audio, AUDIO_STOP)<0)
-			eDebug("AUDIO_STOP failed(%m)");
-		else
-			eDebug("audio_pause (success)");
 	}
 }
 
-void Decoder::Resume()
+void Decoder::Resume(bool enableAudio)
 {
+	eDebug("Decoder::Resume()");
 	if (fd.video != -1)
 	{
-		int err=0;
+//		clearScreen();
+#if HAVE_DVB_API_VERSION >= 3
+		if (::ioctl(fd.video, VIDEO_STOP)<0)
+			eDebug("VIDEO_STOP failed(%m)");
+		if (::ioctl(fd.video, VIDEO_PLAY)<0)
+			eDebug("VIDEO_PLAY failed(%m)");
+#else
 		if (::ioctl(fd.video, VIDEO_CONTINUE)<0)
-		{
 			eDebug("VIDEO_CONTINUE failed(%m)");
-			err=1;
-		}
-		if ( fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 1)<0)
-		{
+		if ( ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 1 ) < 0 )
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
-			err=1;
+#endif
+		if ( enableAudio )  // Video Clip Mode
+		{
+#if HAVE_DVB_API_VERSION >= 3
+			if (::ioctl(fd.audio, AUDIO_PLAY)<0)
+				eDebug("AUDIO_PLAY failed (%m)");
+			else
+				eDebug("audio continue (success)");
+#else
+			if (::ioctl(fd.audio, AUDIO_SET_MUTE, 0 )<0)
+				eDebug("AUDIO_SET_MUTE failed (%m)");
+			else
+				eDebug("audio_pause (success)");
+#endif
 		}
-		if (!err)
-			eDebug("video continue (success)");
-	}
-	if (fd.audio != -1)
-	{
-		if (::ioctl(fd.audio, AUDIO_PLAY)<0)
-			eDebug("AUDIO_PLAY failed (%m)");
-		else
-			eDebug("audio continue (success)");
 	}
 }
 
@@ -182,8 +243,6 @@ void Decoder::flushBuffer()
 		eDebug("VIDEO_CLEAR_BUFFER failed (%m)");
 	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_CLEAR_BUFFER)<0 )
 		eDebug("AUDIO_CLEAR_BUFFER failed (%m)");
-//	parms.flushbuffer=1;
-//	Set();
 }
 
 void Decoder::SetStreamType(int type)
@@ -207,9 +266,10 @@ void Decoder::SetStreamType(int type)
 
 int Decoder::Set()
 {
-	int changed=0;
+	if (locked)
+		return -1;
 
-	dmxPesFilterParams pes_filter;
+	int changed=0;
 
 	if (parms.vpid != current.vpid)
 		changed |= 1;
@@ -219,106 +279,28 @@ int Decoder::Set()
 		changed |= 4;
 	if (parms.pcrpid != current.pcrpid)
 		changed |= 8;
-	if (parms.ecmpid != current.ecmpid)
-		changed |= 0x10;
-	if (parms.emmpid != current.emmpid)
-		changed |= 0x20;
 	if (parms.pmtpid != current.pmtpid)
 		changed |= 0x40;
-	if (parms.casystemid != current.casystemid)
+	if (parms.descriptor_length != current.descriptor_length)
 		changed |= 0x80;
 	if (parms.audio_type != current.audio_type)
 		changed |= 0x100;
-/*	if (parms.recordmode != current.recordmode)
-		changed |= 0xF;*/
-		
-	if (parms.flushbuffer)
-		changed |= 9;
 
-	parms.flushbuffer=0;
-	
 	eDebug(" ------------> changed! %x", changed);
+	if (!changed)
+		return 0;
 
-	if (changed & 0xF7)
-		SetECM(parms.vpid, parms.apid, parms.ecmpid, parms.emmpid, parms.pmtpid, parms.casystemid, parms.descriptor_length, parms.descriptors);
-
-	if (changed & 4)
-	{
-#ifdef OLD_VBI // for old drivers in alexW Image...
-		// vtxt reinsertion (ost api)
-		if ( fd.demux_vtxt == -1 )
-		{
-			fd.demux_vtxt=open("/dev/dbox/vbi0", O_RDWR);
-			if (fd.demux_vtxt<0)
-				eDebug("fd.demux_vtxt couldn't be opened");
-/*			else
-				eDebug("fd.demux_vtxt opened");*/
-		}
-		if ( current.tpid != -1 ) // we stop old vbi vtxt insertion
-		{
-			eDebugNoNewLine("VBI_DEV_STOP - vtxt - ");
-			if (::ioctl(fd.demux_vtxt, AVIA_VBI_STOP_VTXT )<0)
-				eDebug("failed (%m)");
-			else
-				eDebug("ok");
-		}
-		if ( parms.tpid != -1 )  // we start old vbi vtxt insertion
-		{
-			eDebugNoNewLine("VBI_DEV_START - vtxt - ");
-			if (::ioctl(fd.demux_vtxt, AVIA_VBI_START_VTXT, parms.tpid)<0)
-				eDebug("failed (%m)");
-			else
-				eDebug("ok");
-		}
-		else  // we have no tpid ... close device
-		{
-			close(fd.demux_vtxt);
-			fd.demux_vtxt = -1;
-//			eDebug("fd.demux_vtxt closed");
-		}
-#else
-    // vtxt reinsertion (ost api)
-    if ( fd.demux_vtxt == -1 )
-		{
-			fd.demux_vtxt=open(DEMUX_DEV, O_RDWR);
-			if (fd.demux_vtxt<0)
-				eDebug("fd.demux_vtxt couldn't be opened");
-/*			else
-				eDebug("fd.demux_vtxt opened");*/
-		}
-		if ( current.tpid != -1 ) // we stop dmx vtxt
-		{
-			eDebugNoNewLine("DEMUX_STOP - vtxt - ");
-			if (::ioctl(fd.demux_vtxt, DMX_STOP)<0)
-				eDebug("failed (%m)");
-			else
-				eDebug("ok");
-		}
-		if ( parms.tpid != -1 )
-		{
-			pes_filter.pid=parms.tpid;
-			pes_filter.input=DMX_IN_FRONTEND;
-			pes_filter.output=DMX_OUT_DECODER;
-			pes_filter.pesType=DMX_PES_TELETEXT;
-			pes_filter.flags=DMX_IMMEDIATE_START;
-			eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - vtxt - ", parms.tpid);
-			if (::ioctl(fd.demux_vtxt, DMX_SET_PES_FILTER, &pes_filter)<0)
-				eDebug("failed (%m)");
-			else
-				eDebug("ok");
-			eDebugNoNewLine("DEMUX_START - vtxt - ");
-			if (::ioctl(fd.demux_vtxt, DMX_START)<0)
-				eDebug("failed (%m)");
-			else
-				eDebug("ok");
-		}
-		else  // we have no tpid
-		{
-			close(fd.demux_vtxt);
-			fd.demux_vtxt = -1;
-//			eDebug("fd.demux_vtxt closed");
-		}
+#ifndef TUXTXT_CFG_STANDALONE
+	int disable_background_caching=0;
+	eConfig::getInstance()->getKey("/ezap/extra/teletext_caching", disable_background_caching);
 #endif
+
+	dmxPesFilterParams pes_filter;
+
+	if (changed & 0xC7 || parms.restart_camd)
+	{
+		SetECM(parms.vpid, parms.apid, parms.pmtpid, parms.descriptor_length, parms.descriptors);
+		parms.restart_camd=0;
 	}
 
 	if ( changed & 11 )
@@ -343,6 +325,7 @@ int Decoder::Set()
 
 		// get audio status
 		audioStatus astatus;
+
 		eDebugNoNewLine("AUDIO_GET_STATUS - ");
 		if (::ioctl(fd.audio, AUDIO_GET_STATUS, &astatus)<0)
 			eDebug("failed (%m)");
@@ -412,7 +395,6 @@ int Decoder::Set()
 				else
 					eDebug("ok");
 			}
-			usleep(100);
 
 			if ( astatus.playState != AUDIO_STOPPED /* current.apid != -1*/ )
 			{
@@ -518,15 +500,35 @@ int Decoder::Set()
 		case DECODE_AUDIO_AC3:
 			bypass=0;
 			break;
+		case DECODE_AUDIO_AC3_VOB:
+			bypass=3;
+			break;
 		case DECODE_AUDIO_DTS:
 			bypass=2;
 			break;
 		}
 		eDebugNoNewLine("AUDIO_SET_BYPASS_MODE to %d - ", bypass);
+		int wasclosed = 0;
+		if ( fd.audio == -1 )  // open audio dev... if not open..
+		{
+			fd.audio=open(AUDIO_DEV, O_RDWR);
+			if (fd.audio<0)
+				eDebug("fd.audio couldn't be opened");
+/*			else
+				eDebug("fd.audio opened");*/
+			wasclosed = 1;
+		}
 		if (::ioctl( fd.audio , AUDIO_SET_BYPASS_MODE, bypass ) < 0)
 			eDebug("failed (%m)");
 		else
 			eDebug("ok");
+		if ( wasclosed && fd.audio != -1 )  // audio dev was closed before
+		{
+			close(fd.audio);
+			fd.audio = -1;
+//			eDebug("fd.audio closed");
+		}
+		
 	}
 
 	if (changed & 11)
@@ -553,6 +555,30 @@ int Decoder::Set()
 		}
 		if ( (changed & 0x0F) != 2 )  //  only apid changed
 		{
+			if ( parms.pcrpid != -1 )
+			{
+				eDebugNoNewLine("DMX_START (pcr) - ");
+				if (::ioctl(fd.demux_pcr, DMX_START)<0)
+					eDebug("failed (%m)");
+				else
+					eDebug("ok");
+			}
+			else if ( parms.apid != -1 && parms.vpid != -1 )
+			{
+				eDebugNoNewLine("enabling av sync mode - ");
+				if (::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 1)<0)
+					eDebug("failed (%m)");
+				else
+					eDebug("ok");
+			}
+			if ( parms.vpid != -1 )
+			{
+				eDebugNoNewLine("DMX_START (video) - ");
+				if (::ioctl(fd.demux_video, DMX_START)<0)
+					eDebug("failed (%m)");
+				else
+						eDebug("ok");
+			}
 			if ( parms.vpid != -1 )
 			{
 				eDebugNoNewLine("VIDEO_PLAY - ");
@@ -581,31 +607,6 @@ int Decoder::Set()
 				fd.audio = -1;
 //				eDebug("fd.audio closed");
 			}
-
-			if ( parms.pcrpid != -1 )
-			{
-				eDebugNoNewLine("DMX_START (pcr) - ");
-				if (::ioctl(fd.demux_pcr, DMX_START)<0)
-					eDebug("failed (%m)");
-				else
-					eDebug("ok");
-			}
-			else if ( parms.apid != -1 && parms.vpid != -1 )
-			{
-				eDebugNoNewLine("enabling av sync mode - ");
-				if (::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 1)<0)
-					eDebug("failed (%m)");
-				else
-					eDebug("ok");
-			}
-			if ( parms.vpid != -1 )
-			{
-				eDebugNoNewLine("DMX_START (video) - ");
-				if (::ioctl(fd.demux_video, DMX_START)<0)
-					eDebug("failed (%m)");
-				else
-						eDebug("ok");
-			}
 		}
 
 		if ( parms.apid != -1 )
@@ -616,6 +617,93 @@ int Decoder::Set()
 			else
 				eDebug("ok");
 		}
+	}
+
+	if (changed & 4)
+	{
+#ifdef OLD_VBI // for old drivers in alexW Image...
+		// vtxt reinsertion (ost api)
+		if ( fd.demux_vtxt == -1 )
+		{
+			fd.demux_vtxt=open("/dev/dbox/vbi0", O_RDWR);
+			if (fd.demux_vtxt<0)
+				eDebug("fd.demux_vtxt couldn't be opened");
+/*			else
+				eDebug("fd.demux_vtxt opened");*/
+		}
+		if ( current.tpid != -1 ) // we stop old vbi vtxt insertion
+		{
+			eDebugNoNewLine("VBI_DEV_STOP - vtxt - ");
+			if (::ioctl(fd.demux_vtxt, AVIA_VBI_STOP_VTXT )<0)
+				eDebug("failed (%m)");
+			else
+				eDebug("ok");
+		}
+		if ( parms.tpid != -1 )  // we start old vbi vtxt insertion
+		{
+			eDebugNoNewLine("VBI_DEV_START - vtxt - ");
+			if (::ioctl(fd.demux_vtxt, AVIA_VBI_START_VTXT, parms.tpid)<0)
+				eDebug("failed (%m)");
+			else
+				eDebug("ok");
+		}
+		else  // we have no tpid ... close device
+		{
+			close(fd.demux_vtxt);
+			fd.demux_vtxt = -1;
+//			eDebug("fd.demux_vtxt closed");
+		}
+#else
+		// vtxt reinsertion (ost api)
+		if ( fd.demux_vtxt == -1 )
+		{
+			fd.demux_vtxt=open(DEMUX_DEV, O_RDWR);
+			if (fd.demux_vtxt<0)
+				eDebug("fd.demux_vtxt couldn't be opened");
+/*			else
+				eDebug("fd.demux_vtxt opened");*/
+		}
+		if ( current.tpid != -1 ) // we stop dmx vtxt
+		{
+#ifndef TUXTXT_CFG_STANDALONE
+			if ( !disable_background_caching )
+				tuxtxt_stop();
+#endif
+			eDebugNoNewLine("DEMUX_STOP - vtxt - ");
+			if (::ioctl(fd.demux_vtxt, DMX_STOP)<0)
+				eDebug("failed (%m)");
+			else
+				eDebug("ok");
+		}
+		if ( parms.tpid != -1 )
+		{
+#ifndef TUXTXT_CFG_STANDALONE
+			if ( !disable_background_caching )
+				tuxtxt_start(parms.tpid);
+#endif
+			pes_filter.pid=parms.tpid;
+			pes_filter.input=DMX_IN_FRONTEND;
+			pes_filter.output=DMX_OUT_DECODER;
+			pes_filter.pesType=DMX_PES_TELETEXT;
+			pes_filter.flags=0;
+			eDebugNoNewLine("DMX_SET_PES_FILTER(0x%02x) - vtxt - ", parms.tpid);
+			if (::ioctl(fd.demux_vtxt, DMX_SET_PES_FILTER, &pes_filter)<0)
+				eDebug("failed (%m)");
+			else
+				eDebug("ok");
+			eDebugNoNewLine("DEMUX_START - vtxt - ");
+			if (::ioctl(fd.demux_vtxt, DMX_START)<0)
+				eDebug("failed (%m)");
+			else
+				eDebug("ok");
+		}
+		else  // we have no tpid
+		{
+			close(fd.demux_vtxt);
+			fd.demux_vtxt = -1;
+//			eDebug("fd.demux_vtxt closed");
+		}
+#endif
 	}
 
 	current=parms;
@@ -632,9 +720,9 @@ void Decoder::startTrickmode()
 			eDebug("VIDEO_FAST_FORWARD failed (%m)");
 		if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 0)<0)
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
+		if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,1)<0)
+			eDebug("AUDIO_SET_MUTE failed (%m)");
 	}
-	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,1)<0)
-		eDebug("AUDIO_SET_MUTE failed (%m)");
 }
 
 void Decoder::stopTrickmode()
@@ -646,15 +734,21 @@ void Decoder::stopTrickmode()
 			eDebug("VIDEO_CONTINUE failed (%m)");
 		if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_AV_SYNC, 1)<0)
 			eDebug("AUDIO_SET_AV_SYNC failed (%m)");
+		if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,0)<0)
+			eDebug("AUDIO_SET_MUTE failed (%m)");
 	}
-	if (fd.audio != -1 && ::ioctl(fd.audio, AUDIO_SET_MUTE,0)<0)
-		eDebug("AUDIO_SET_MUTE failed (%m)");
 }
 
 void Decoder::addCADescriptor(__u8 *descriptor)
 {
+#if 0
+	// this code is broken.. do not use this..
+	// on PMT updates parms.descriptor_length are not set to 0 ..
+	// so after many pmt updates parms.descriptor_length is longer than 2048..
+	// and then .. *booom*
 	memcpy(parms.descriptors+parms.descriptor_length, descriptor, descriptor[1]+2);
 	parms.descriptor_length+=descriptor[1]+2;
+#endif
 }
 
 int Decoder::displayIFrame(const char *frame, int len)
@@ -666,20 +760,38 @@ int Decoder::displayIFrame(const char *frame, int len)
 	if (fdv < 0)
 		return -1;
 
-	parms.vpid=0x1FFF;
-	parms.pcrpid=-1;
-	Set();
+	if ( fd.video != -1 )
+	{
+		parms.vpid=-1;
+		Set();
+	}
+
+	int wasOpen = fd.video != -1;
+	if (!wasOpen)
+		fd.video = open(VIDEO_DEV, O_RDWR);
+	if (::ioctl(fd.video, VIDEO_SELECT_SOURCE, VIDEO_SOURCE_MEMORY )<0)
+		eDebug("VIDEO_SELECT_SOURCE failed (%m)");
+	if ( ::ioctl(fd.video, VIDEO_CLEAR_BUFFER)<0 )
+		eDebug("VIDEO_CLEAR_BUFFER failed (%m)");
+	if ( ::ioctl(fd.video, VIDEO_PLAY) < 0 )
+		eDebug("VIDEO_PLAY failed (%m)");
+
+	for ( int i=0; i < 2; i++ )
+		write(fdv, frame, len);
 
 	unsigned char buf[128];
 	memset(&buf, 0, 128);
-	for ( int i=0; i < 20; i++ )
-	{
-		write(fdv, frame, len);
-		write(fdv, &buf, 128);
-	}
+	write(fdv, &buf, 128);
 
-	if (::ioctl(fd.video, VIDEO_SET_BLANK, 0) < 0 )
+	setAutoFlushScreen(0);
+	if ( ::ioctl(fd.video, VIDEO_SET_BLANK, 0) < 0 )
 		eDebug("VIDEO_SET_BLANK failed (%m)");
+	if ( !wasOpen )
+	{
+		::close(fd.video);
+		fd.video=-1;
+	}
+	setAutoFlushScreen(1);
 
 	close(fdv);
 	return 0;
@@ -704,3 +816,117 @@ int Decoder::displayIFrameFromFile(const char *filename)
 	delete[] buffer;
 	return res;
 }
+
+// Non DVB API Functions and ioctls
+
+#define VIDEO_FLUSH_CLIP_BUFFER 0
+#define VIDEO_GET_PTS           _IOR('o', 1, unsigned int*)
+#define VIDEO_SET_AUTOFLUSH     _IOW('o', 2, int)
+#define VIDEO_CLEAR_SCREEN      3
+#define VIDEO_SET_FASTZAP	_IOW('o', 4, int)
+
+#ifndef DMX_GET_STC
+struct dmx_stc
+{
+	unsigned int num;	/* input : which STC? O..N */
+	unsigned int base;	/* output: divisor for stc to get 90 kHz clock */
+	unsigned long long stc; /* output: src in 'base'*90 kHz units */
+};
+#define DMX_GET_STC		_IOR('o', 50, struct dmx_stc)
+#endif
+
+void Decoder::flushClipBuffer()
+{
+	int wasOpen = fd.mpeg != -1;
+	if ( !wasOpen )
+		fd.mpeg = ::open("/dev/video", O_RDONLY);
+	{
+		if (::ioctl(fd.mpeg, VIDEO_FLUSH_CLIP_BUFFER) < 0)
+			eDebug("VIDEO_FLUSH_BUFFER failed (%m)");
+	}
+	if (!wasOpen)
+	{
+		::close(fd.mpeg);
+		fd.mpeg = -1;
+	}
+}
+
+void Decoder::clearScreen()
+{
+	int wasOpen = fd.mpeg != -1;
+	if ( !wasOpen )
+		fd.mpeg=::open("/dev/video", O_RDONLY);
+	if ( fd.mpeg > -1 )
+	{
+		if ( ::ioctl(fd.mpeg, VIDEO_CLEAR_SCREEN) < 0 )
+			eDebug("VIDEO_CLEAR_SCREEN failed (%m)");
+		if (!wasOpen)
+		{
+			::close(fd.mpeg);
+			fd.mpeg = -1;
+		}
+	}
+}
+
+void Decoder::getVideoPTS( unsigned int &dest )
+{
+	if ( fd.mpeg == -1 )
+	{
+		eDebug("MPEG Decoder fd not valid.. dont get PTS");
+		return;
+	}
+	if ( ::ioctl(fd.mpeg, VIDEO_GET_PTS, &dest) < 0 )
+		eDebug("VIDEO_GET_PTS failed (%m)");
+}
+
+
+int Decoder::getSTC(unsigned long long &dst)
+{
+	struct dmx_stc stc;
+	stc.num = 0;
+
+	int f = fd.demux_video;
+	if (f < 0)
+		f = fd.demux_audio;
+	if (f < 0)
+		return -1;
+	if (ioctl(f, DMX_GET_STC, &stc) < 0)
+		return -errno;
+	dst = stc.stc;
+	return 0;
+}
+
+void Decoder::setFastZap(int val)
+{
+	int wasOpen = fd.mpeg != -1;
+	if ( !wasOpen )
+		fd.mpeg = ::open("/dev/video", O_RDONLY);
+	if ( fd.mpeg > -1 )
+	{
+		if ( ::ioctl(fd.mpeg, VIDEO_SET_FASTZAP, val) < 0 )
+			eDebug("VIDEO_SET_FASTZAP failed (%m)");
+		if (!wasOpen)
+		{
+			::close(fd.mpeg);
+			fd.mpeg = -1;
+		}
+	}
+}
+
+void Decoder::setAutoFlushScreen( int on )
+{
+	int wasOpen = fd.mpeg != -1;
+	if ( !wasOpen )
+		fd.mpeg = ::open("/dev/video", O_RDONLY);
+	if ( fd.mpeg > -1 )
+	{
+		if ( ::ioctl(fd.mpeg, VIDEO_SET_AUTOFLUSH, on) < 0 )
+			eDebug("VIDEO_SET_AUTOFLUSH failed (%m)");
+		if (!wasOpen)
+		{
+			::close(fd.mpeg);
+			fd.mpeg = -1;
+		}
+	}
+}
+

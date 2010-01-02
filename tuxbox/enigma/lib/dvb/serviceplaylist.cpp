@@ -3,8 +3,9 @@
 #include <lib/system/init.h>
 #include <lib/system/init_num.h>
 #include <lib/system/econfig.h>
+#include <lib/system/file_eraser.h>
 #include <lib/base/i18n.h>
-#include <unistd.h>
+#include <sys/stat.h>
 
 /*
 		eServicePlaylistHandler hooks into the file handler eServiceFileHandler
@@ -53,57 +54,85 @@ int ePlaylist::load(const char *filename)
 		return -1;
 	}
 	int ignore_next=0;
+	int indescr = 0;
 	char line[256];
+	line[255] = 0;
 	while (1)
 	{
-		if (!fgets(line, 256, fp))
+		if (!fgets(line, 255, fp))
 			break;
-		line[strlen(line)-1]=0;
+		if (strlen(line) && line[strlen(line)-1]=='\n')
+			line[strlen(line)-1]=0;
 		if (strlen(line) && line[strlen(line)-1]=='\r')
 			line[strlen(line)-1]=0;
+		if (!strlen(line))
+			continue;
 		if (line[0]=='#')
 		{
-			if (!strncmp(line, "#SERVICE: ", 10))
+			indescr = 0;
+			if (!strncmp(line, "#SERVICE", 8))
 			{
-				eServiceReference ref(line+10);
+				int offs = line[8] == ':' ? 10 : 9;
+				eServicePath path(line+offs);
 				entries++;
-				list.push_back(ref);
+				list.push_back(path);
+#ifndef DISABLE_FILE
+				int slice=0;
+				struct stat64 s;
+				int filelength = 0;
+				char* p = strchr(line+offs,'/');
+				if (p && !strncmp(p,"/hdd",4))
+				{
+					eDebug("Checking filesize:%s",p);
+					eString file(p);
+					while (!::stat64((file + (slice ? eString().sprintf(".%03d", slice) : eString(""))).c_str(), &s))
+					{
+						filelength+=s.st_size/1024;
+						slice++;
+					}
+				}				
+				((eServiceReferenceDVB&)list.back().service).setFileLength(filelength);
+#endif
 				ignore_next=1;
 			}
-			if (!strncmp(line, "#DESCRIPTION: ", 14))
+			else if (!strncmp(line, "#DESCRIPTION", 12))
 			{
-				list.back().service.descr=line+14;				
-				ignore_next=1;
+				int offs = line[12] == ':' ? 14 : 13;
+				list.back().service.descr=line+offs;
+				indescr = 1;
 			}
-			if (!strcmp(line, "#CURRENT"))
+			else if (!strcmp(line, "#CURRENT"))
 			{
 				current=list.end();
 				current--;
 			}
-			if (!strncmp(line, "#LAST_ACTIVATION ", 17))
+			else if (!strncmp(line, "#LAST_ACTIVATION ", 17))
 				list.back().last_activation=atoi(line+17);
-			if (!strncmp(line, "#CURRENT_POSITION ", 18))
+			else if (!strncmp(line, "#CURRENT_POSITION ", 18))
 				list.back().current_position=atoi(line+18);
-			if (!strncmp(line, "#TYPE ", 6))
-				list.back().type=atoi(line+6);		
-			if (!strncmp(line, "#EVENT_ID ", 10))
+			else if (!strncmp(line, "#TYPE ", 6))
+				list.back().type=atoi(line+6);
+			else if (!strncmp(line, "#EVENT_ID ", 10))
 				list.back().event_id=atoi(line+10);
-			if (!strncmp(line, "#TIME_BEGIN ", 12))
+			else if (!strncmp(line, "#TIME_BEGIN ", 12))
 				list.back().time_begin=atoi(line+12);
-			if (!strncmp(line, "#DURATION ", 10))
+			else if (!strncmp(line, "#DURATION ", 10))
 				list.back().duration=atoi(line+10);
-			if (!strncmp(line, "#NAME ", 6))
+			else if (!strncmp(line, "#NAME ", 6))
 			{
 				service_name=line+6;
 				service_name_set=1;
 			}
-				 
+			continue;
+		}
+		if (indescr)
+		{
+			list.back().service.descr+=line;
 			continue;
 		}
 
 		if (!line[0])
 			break;
-
 		if (ignore_next)
 		{
 			ignore_next=0;
@@ -134,40 +163,81 @@ int ePlaylist::load(const char *filename)
 
 int ePlaylist::save(const char *filename)
 {
-	if (changed)
+	if (!changed)
+		return 0;
+	if (!filename)
+		filename=this->filename.c_str();
+	FILE *f=0;
+	if ( strstr(filename,"/hdd") )
 	{
-		if (!filename)
-			filename=this->filename.c_str();
-		FILE *f=fopen(filename, "wt");
-		if (!f)
-			return -1;
-		fprintf(f, "#NAME %s\r\n", service_name.c_str());		
-		for (std::list<ePlaylistEntry>::iterator i(list.begin()); i != list.end(); ++i)
-		{
-			fprintf(f, "#SERVICE: %s\r\n", i->service.toString().c_str());
-			if (i->service.descr)
-				fprintf(f, "#DESCRIPTION: %s\r\n", i->service.descr.c_str());
-			if (i->type & ePlaylistEntry::PlaylistEntry && i->current_position != -1)
-				fprintf(f, "#CURRENT_POSITION %d\r\n", i->current_position);
-			else if ( i->type & ePlaylistEntry::isRepeating && i->last_activation != -1 )
-				fprintf(f, "#LAST_ACTIVATION %d\r\n", i->last_activation);
-			else if ( i->event_id != -1)
-				fprintf(f, "#EVENT_ID %d\r\n", i->event_id);
-			if ((int)i->type != ePlaylistEntry::PlaylistEntry)
-				fprintf(f, "#TYPE %d\r\n", i->type);
-			if ((int)i->time_begin != -1)
-				fprintf(f, "#TIME_BEGIN %d\r\n", (int)i->time_begin);
-			if ((int)i->duration != -1)
-				fprintf(f, "#DURATION %d\r\n", (int)i->duration);
-			if (current == i)
-				fprintf(f, "#CURRENT\n");
-			if (i->service.path.size())
-				fprintf(f, "%s\r\n", i->service.path.c_str());
-		}
-		fclose(f);
-		changed=0;
+		eString tmpfile = filename;
+		tmpfile.insert( tmpfile.rfind('/')+1, 1, '$' );
+		f = fopen(tmpfile.c_str(), "wt");
 	}
+	else
+		f = fopen(filename, "wt");
+	if (!f)
+		return -1;
+	if ( fprintf(f, "#NAME %s\r\n", service_name.c_str()) < 0 )
+		goto err;
+	for (std::list<ePlaylistEntry>::iterator i(list.begin()); i != list.end(); ++i)
+	{
+		if ( i->services.size() > 1 )
+		{
+			eServicePath p = i->services;
+			if ( fprintf(f, "#SERVICE: %s\r\n", p.toString().c_str()) < 0 )
+				goto err;
+		}
+		else if ( fprintf(f, "#SERVICE: %s\r\n", i->service.toString().c_str()) < 0 )
+			goto err;
+		if ( i->service.descr &&
+			fprintf(f, "#DESCRIPTION: %s\r\n#END_DESCRIPTION\r\n", i->service.descr.c_str()) < 0 )
+			goto err;
+		if ( i->type & ePlaylistEntry::PlaylistEntry && i->current_position != -1 )
+		{
+			if ( fprintf(f, "#CURRENT_POSITION %d\r\n", i->current_position) < 0 )
+				goto err;
+		}
+		else if ( i->type & ePlaylistEntry::isRepeating && i->last_activation != -1 )
+		{
+			if ( fprintf(f, "#LAST_ACTIVATION %d\r\n", i->last_activation) < 0 )
+				goto err;
+		}
+		else if ( i->event_id != -1)
+		{
+			if ( fprintf(f, "#EVENT_ID %d\r\n", i->event_id) < 0 )
+				goto err;
+		}
+		if ((int)i->type != ePlaylistEntry::PlaylistEntry &&
+			fprintf(f, "#TYPE %d\r\n", i->type) < 0 )
+			goto err;
+		if ((int)i->time_begin != -1 &&
+			fprintf(f, "#TIME_BEGIN %d\r\n", (int)i->time_begin) < 0 )
+			goto err;
+		if ((int)i->duration != -1 &&
+			fprintf(f, "#DURATION %d\r\n", (int)i->duration) < 0 )
+			goto err;
+		if (current == i &&
+			fprintf(f, "#CURRENT\n") < 0 )
+			goto err;
+		if (i->service.path.size() &&
+			fprintf(f, "%s\r\n", i->service.path.c_str()) < 0 )
+			goto err;
+	}
+	fclose(f);
+	if ( strstr(filename,"/hdd") )
+	{
+		eString tmpfile = filename;
+		tmpfile.insert( tmpfile.rfind('/')+1, 1, '$' );
+		unlink(filename);
+		rename(tmpfile.c_str(), filename);
+	}
+	changed=0;
 	return 0;
+err:
+	fclose(f);
+	eDebug("couldn't write file %s", filename);
+	return -1;
 }
 
 int ePlaylist::deleteService(std::list<ePlaylistEntry>::iterator it)
@@ -177,14 +247,17 @@ int ePlaylist::deleteService(std::list<ePlaylistEntry>::iterator it)
 		if ((it->type & ePlaylistEntry::boundFile) && (it->service.path.size()))
 		{
 			int slice=0;
+			eString filename;
 			while (1)
 			{
-				eString filename=it->service.path;
+				filename=it->service.path;
 				if (slice)
 					filename+=eString().sprintf(".%03d", slice);
 				slice++;
-				if (::unlink(filename.c_str()))
+				struct stat64 s;
+				if (::stat64(filename.c_str(), &s) < 0)
 					break;
+				eBackgroundFileEraser::getInstance()->erase(filename.c_str());
 			}
 		}
 		list.erase(it);
@@ -254,29 +327,23 @@ void eServicePlaylistHandler::removeRef(const eServiceReference &service)
 
 void eServicePlaylistHandler::enterDirectory(const eServiceReference &dir, Signal1<void,const eServiceReference&> &callback)
 {
-//	int pLockActive = eConfig::getInstance()->pLockActive();
-
-	if (dir.type == id)
+	if (dir.type == id)  // for playlists in other playlists..
 	{
 		ePlaylist *service=(ePlaylist*)addRef(dir);
 		if (!service)
 			return;
-	
+
 		for (std::list<ePlaylistEntry>::const_iterator i(service->getConstList().begin()); i != service->getConstList().end(); ++i)
-		{
-/*			if ( (pLockActive & 2) && i->service.isLocked() )
-				continue;*/
 			callback(*i);
-		}
-	
+
 		removeRef(dir);
+		return;
 	}
+	// for playlists in any other root.. but not in another playlist..
 	std::pair<std::multimap<eServiceReference,eServiceReference>::const_iterator,std::multimap<eServiceReference,eServiceReference>::const_iterator>
 		range=playlists.equal_range(dir);
 	while (range.first != range.second)
 	{
-/*		if ( (pLockActive & 2) && range.first->second.isLocked() )
-			continue;*/
 		callback(range.first->second);
 		++range.first;
 	}
@@ -326,13 +393,17 @@ void eServicePlaylistHandler::removePlaylist(const eServiceReference &service)
 	while (found)
 	{
 		found=0;
-		for (std::multimap<eServiceReference,eServiceReference>::iterator i(playlists.begin()); i != playlists.end(); i++)
+		for (std::multimap<eServiceReference,eServiceReference>::iterator i(playlists.begin()); i != playlists.end();)
+		{
 			if (i->second == service)
 			{
 				usedUniqueIDs.erase( service.data[1] );
 				found=1;
-				playlists.erase(i);
+				playlists.erase(i++);
 			}
+			else
+				++i;
+		}
 	}
 }
 
