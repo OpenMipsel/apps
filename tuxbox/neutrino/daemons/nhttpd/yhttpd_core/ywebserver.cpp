@@ -416,6 +416,10 @@ bool CWebserver::handle_connection(CySocket *newSock)
 
 	// create arguments
 	TWebserverConnectionArgs *newConn = new TWebserverConnectionArgs;
+	if (!newConn) {
+		dperror("CWebserver TWebserverConnectionArgs error!\n");
+		return false;
+	}
 	newConn->ySock = newSock;
 	newConn->ySock->handling = true;
 	newConn->WebserverBackref = this;
@@ -456,23 +460,27 @@ bool CWebserver::handle_connection(CySocket *newSock)
 //-------------------------------------------------------------------------
 void *WebThread(void *args)
 {
-	CWebserverConnection *con;
-	CWebserver *ws;
 	TWebserverConnectionArgs *newConn = (TWebserverConnectionArgs *) args;
-	ws = newConn->WebserverBackref;
+	if (!newConn) {
+		dperror("WebThread called without arguments!\n");
+		return NULL;
+	}
 
 	bool is_threaded = newConn->is_treaded;
 	if(is_threaded)
 		log_level_printf(1,"++ Thread 0x06%X gestartet\n", (int) pthread_self());
 
-	if (!newConn) {
-		dperror("WebThread called without arguments!\n");
-		if(newConn->is_treaded)
-			pthread_exit(NULL);
-	}
-
 	// (1) create & init Connection
-	con = new CWebserverConnection(ws);
+	CWebserver *ws = newConn->WebserverBackref;
+	if (!ws) {
+		dperror("WebThread CWebserver error!\n");
+		return NULL;
+	}
+	CWebserverConnection *con = new CWebserverConnection(ws);
+	if (!con) {
+		dperror("WebThread CWebserverConnection error!\n");
+		return NULL;
+	}
 	con->Request.UrlData["clientaddr"] = newConn->ySock->get_client_ip(); // TODO:here?
 	con->sock = newConn->ySock;		// give socket reference
 	newConn->ySock->handling = true;	// dont handle this socket now be webserver main loop
