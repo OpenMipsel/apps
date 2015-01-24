@@ -123,7 +123,7 @@ int CPictureViewerGui::exec(CMenuTarget* parent, const std::string & /*actionKey
 	width = w_max (710, 30);
 	height = h_max (570, 0);
 	sheight      = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getHeight();
-	buttonHeight = std::min(25, sheight);
+	buttonHeight = std::max(25, sheight);
 	frameBuffer->getIconSize(NEUTRINO_ICON_MP3, &ticonwidth, &ticonheight);
 	theight      = std::max(ticonheight, g_Font[SNeutrinoSettings::FONT_TYPE_MENU_TITLE]->getHeight());
 	fheight      = g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->getHeight();

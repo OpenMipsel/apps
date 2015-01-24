@@ -251,7 +251,7 @@ int CAudioPlayerGui::exec(CMenuTarget* parent, const std::string &)
 	m_width = w_max(720, 2 * ConnectLineBox_Width);
 	m_height = h_max(570, 0);
 	m_sheight = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getHeight();
-	m_buttonHeight = std::min(25, m_sheight);
+	m_buttonHeight = std::max(25, m_sheight);
 	m_frameBuffer->getIconSize(NEUTRINO_ICON_MP3, &m_ticonwidth, &m_ticonheight);
 	m_theight = std::max(m_ticonheight, g_Font[SNeutrinoSettings::FONT_TYPE_MENU_TITLE]->getHeight());
 	m_fheight = g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->getHeight();
