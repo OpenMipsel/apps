@@ -836,15 +836,20 @@ int CAudioPlayerGui::show()
 		{
 			CNeutrinoApp::getInstance()->handleMsg( msg, data );
 		}
+		else if(msg == g_settings.key_volume_up ||
+				msg == g_settings.key_volume_down ||
+				msg == NeutrinoMessages::EVT_VOLCHANGED ||
+				msg == NeutrinoMessages::EVT_MUTECHANGED)
+		{
+			CNeutrinoApp::getInstance()->handleMsg( msg, data );
+			paintLCD();
+		}
 		else
 		{
 			if( CNeutrinoApp::getInstance()->handleMsg( msg, data ) & messages_return::cancel_all )
 			{
 				loop = false;
 			}
-			// update mute icon
-			paintHead();
-			paintLCD();
 		}
 	}
 	hide();
