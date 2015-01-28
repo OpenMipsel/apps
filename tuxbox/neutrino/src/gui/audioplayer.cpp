@@ -759,36 +759,11 @@ int CAudioPlayerGui::show()
 			{
 				//printf("select by name\n");
 				unsigned char smsKey = 0;				
-				do 
-				{
-					smsKey = m_SMSKeyInput.handleMsg(msg);
-					//printf("  new key: %c", smsKey);
-					g_RCInput->getMsg_ms(&msg, &data, AUDIOPLAYERGUI_SMSKEY_TIMEOUT - 200);
-
-
-/* show a hint box with current char (too slow at the moment?)*/
-// 					char selectedKey[1];
-// 					sprintf(selectedKey,"%c",smsKey);
-// 					int x1 = getScreenStartX(0) - 50;
-// 					int y1 = getScreenStartY(0);
-// 					int h = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getHeight();
-// 					int w = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(selectedKey);
-// 					m_frameBuffer->paintBoxRel(x1 - 7, y1 - h - 5, w + 14, h + 10, COL_MENUCONTENT_PLUS_6);
-// 					m_frameBuffer->paintBoxRel(x1 - 4, y1 - h - 3, w +  8, h +  6, COL_MENUCONTENTSELECTED_PLUS_0);
-// 					g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]
-// 						->RenderString(x1,y1,w+1,selectedKey,COL_MENUCONTENTSELECTED,0);
-
-
-				} while (CRCInput::isNumeric(msg) && !(m_playlist.empty()));
-
-				if (msg == CRCInput::RC_timeout
-						|| msg == CRCInput::RC_nokey)
+				if (getSMSKeyInput(msg, smsKey))
 				{
 					//printf("selected key: %c\n",smsKey);
 					selectTitle(smsKey);
-					update = true;
 				}
-				m_SMSKeyInput.resetOldKey();
 			} 
 			else 
 			{
@@ -796,9 +771,8 @@ int CAudioPlayerGui::show()
 				int val = 0;
 				if (getNumericInput(msg,val)) 
 					m_selected = std::min((int)m_playlist.size(), val) - 1;
-				update = true;
 			}
-
+			update = true;
 		}
 
 #ifdef ENABLE_GUI_MOUNT
@@ -2324,13 +2298,14 @@ bool CAudioPlayerGui::getNumericInput(neutrino_msg_t& msg, int& val) {
 	neutrino_msg_data_t data;
 	int x1 = getScreenStartX(0) - 50;
 	int y1 = getScreenStartY(0);
+	int w = 0;
+	int h = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getHeight();
 	char str[11];
 	do
 	{
 		val = val * 10 + CRCInput::getNumericValue(msg);
 		sprintf(str, "%d", val);
-		int w = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(str);
-		int h = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getHeight();
+		w = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(str);
 		m_frameBuffer->paintBoxRel(x1 - 7, y1 - h - 5, w + 14, h + 10, COL_MENUCONTENT_PLUS_6);
 		m_frameBuffer->paintBoxRel(x1 - 4, y1 - h - 3, w +  8, h +  6, COL_MENUCONTENTSELECTED_PLUS_0);
 		g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->RenderString(x1, y1, w + 1, str, COL_MENUCONTENTSELECTED, 0);
@@ -2346,8 +2321,44 @@ bool CAudioPlayerGui::getNumericInput(neutrino_msg_t& msg, int& val) {
 				continue;
 			break;
 		}
-	} while (g_RCInput->isNumeric(msg) && val < 1000000);
+	} while (CRCInput::isNumeric(msg) && val < 1000000);
 	return (msg == CRCInput::RC_ok);
+}
+
+//------------------------------------------------------------------------
+
+bool CAudioPlayerGui::getSMSKeyInput(neutrino_msg_t& msg, unsigned char& smsKey)
+{
+	neutrino_msg_data_t data;
+	int x1 = getScreenStartX(0) - 50;
+	int y1 = getScreenStartY(0);
+	int w = 0;
+	int h = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getHeight();
+	char selectedKey[2];
+	do
+	{
+		smsKey = m_SMSKeyInput.handleMsg(msg);
+		//printf("  new key: %c\n", smsKey);
+		sprintf(selectedKey, "%c", smsKey);
+		w = std::max(w, g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(selectedKey));
+		m_frameBuffer->paintBoxRel(x1 - 7, y1 - h - 5, w + 14, h + 10, COL_MENUCONTENT_PLUS_6);
+		m_frameBuffer->paintBoxRel(x1 - 4, y1 - h - 3, w +  8, h +  6, COL_MENUCONTENTSELECTED_PLUS_0);
+		g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->RenderString(x1, y1, w + 1, selectedKey, COL_MENUCONTENTSELECTED, 0);
+		while (true)
+		{
+			g_RCInput->getMsg_ms(&msg, &data, AUDIOPLAYERGUI_SMSKEY_TIMEOUT - 200);
+			if (msg > CRCInput::RC_MaxRC && msg != CRCInput::RC_timeout)
+			{	// not a key event
+				CNeutrinoApp::getInstance()->handleMsg(msg, data);
+				continue;
+			}
+			if (msg & (CRCInput::RC_Repeat|CRCInput::RC_Release)) // repeat / release
+				continue;
+			break;
+		}
+	} while (CRCInput::isNumeric(msg));
+	m_SMSKeyInput.resetOldKey();
+	return (msg == CRCInput::RC_timeout || msg == CRCInput::RC_nokey);
 }
 
 //------------------------------------------------------------------------
@@ -2525,21 +2536,8 @@ void CAudioPlayerGui::selectTitle(unsigned char selectionChar)
 		return;
 	}		
 
-	int prevselected = m_selected;
 	m_selected = i;
-
-	paintItem(prevselected - m_liststart);
-	unsigned int oldliststart = m_liststart;
 	m_liststart = (m_selected / m_listmaxshow)*m_listmaxshow;
-	//printf("before paint\n");
-	if(oldliststart != m_liststart)
-	{
-		paint();
-	}
-	else
-	{
-		paintItem(m_selected - m_liststart);
-	}
 }
 //------------------------------------------------------------------------
 

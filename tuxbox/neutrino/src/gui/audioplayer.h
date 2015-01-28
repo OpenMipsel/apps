@@ -168,6 +168,7 @@ class CAudioPlayerGui : public CMenuTarget
 	void showMetaData();
 	void screensaver(bool on);
 	bool getNumericInput(neutrino_msg_t& msg,int& val);
+	bool getSMSKeyInput(neutrino_msg_t& msg, unsigned char& smsKey);
 
 	void addToPlaylist(CAudiofileExt &file);
 	void removeFromPlaylist(long pos);
