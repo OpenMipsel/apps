@@ -70,7 +70,7 @@ int my_system(const char * cmd)
 
 int my_system(int argc, const char *arg, ...)
 {
-	int i = 0, ret = 0, childExit = 0;
+	int i = 0, ret, childExit = 0;
 #define ARGV_MAX 64
 	/* static right now but could be made dynamic if necessary */
 	int argv_max = ARGV_MAX;
@@ -100,6 +100,7 @@ int my_system(int argc, const char *arg, ...)
 			ret = -errno;
 			break;
 		case 0: /* child process */
+			ret = 0;
 			for(i = 3; i < maxfd; i++)
 				close(i);
 			if (setsid() == -1)
@@ -112,6 +113,7 @@ int my_system(int argc, const char *arg, ...)
 			}
 			_exit(ret); // terminate c h i l d proces s only
 		default: /* parent returns to calling process */
+			ret = 0;
 			waitpid(pid, &childExit, 0);
 			if (WEXITSTATUS(childExit) != 0)
 				ret = (signed char)WEXITSTATUS(childExit);
