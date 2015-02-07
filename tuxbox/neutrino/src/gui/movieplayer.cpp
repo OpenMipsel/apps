@@ -1357,15 +1357,6 @@ void updateLcd(const std::string & big, const std::string & small)
 		case CMoviePlayerGui::PAUSE:
 			playmode = CLCD::PLAYMODE_PAUSE;
 			break;
-
-		case CMoviePlayerGui::REW:
-			playmode = CLCD::PLAYMODE_REV;
-			break;
-
-		case CMoviePlayerGui::FF:
-			playmode = CLCD::PLAYMODE_FF;
-			break;
-
 		default:
 			playmode = CLCD::PLAYMODE_PLAY;
 			break;

@@ -577,7 +577,41 @@ void CLCD::setMoviePlaymode(const PLAYMODES playmode)
 	if (mode != MODE_MOVIE)
 		return;
 
-	showAudioPlayMode(movie_playmode);
+	switch (g_settings.lcd_setting[SNeutrinoSettings::LCD_SHOW_VOLUME])
+	{
+		case STATUSLINE_PLAYTIME:
+			showAudioPlayMode(movie_playmode);
+			break;
+		case STATUSLINE_BOTH:
+		case STATUSLINE_BOTH_AUDIO:
+			display.draw_fill_rect(0, 0, 10, 10, CLCDDisplay::PIXEL_OFF);
+			switch (movie_playmode)
+			{
+				case PLAYMODE_PLAY:
+					{
+						int x = 3, y = 1;
+						display.draw_line(x  , y  , x  , y+8, CLCDDisplay::PIXEL_ON);
+						display.draw_line(x+1, y+1, x+1, y+7, CLCDDisplay::PIXEL_ON);
+						display.draw_line(x+2, y+2, x+2, y+6, CLCDDisplay::PIXEL_ON);
+						display.draw_line(x+3, y+3, x+3, y+5, CLCDDisplay::PIXEL_ON);
+						display.draw_line(x+4, y+4, x+4, y+4, CLCDDisplay::PIXEL_ON);
+					}
+					break;
+				case PLAYMODE_PAUSE:
+					display.draw_line(1, 2, 1, 8, CLCDDisplay::PIXEL_ON);
+					display.draw_line(2, 2, 2, 8, CLCDDisplay::PIXEL_ON);
+					display.draw_line(6, 2, 6, 8, CLCDDisplay::PIXEL_ON);
+					display.draw_line(7, 2, 7, 8, CLCDDisplay::PIXEL_ON);
+					break;
+				default:
+					break;
+			}
+			wake_up();
+			displayUpdate();
+			break;
+		default:
+			break;
+	}
 }
 
 void CLCD::setMovieInfo(const std::string big, const std::string small)
