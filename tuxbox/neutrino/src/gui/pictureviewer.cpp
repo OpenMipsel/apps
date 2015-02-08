@@ -324,7 +324,7 @@ int CPictureViewerGui::show()
 					CViewList::iterator p = playlist.begin() + selected;
 					playlist.erase(p);
 					if (selected >= playlist.size())
-						selected = playlist.size()-1;
+						selected = playlist.empty() ? 0 : playlist.size() - 1;
 					update = true;
 				}
 			}
