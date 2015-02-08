@@ -567,9 +567,11 @@ int CAudioPlayerGui::show()
 						m_current--;
 						//stop(); // Stop if song is deleted, next song will be startet automat.
 					}
-					if(m_selected >= m_playlist.size())
-						m_selected = m_playlist.empty() ? m_playlist.size() : m_playlist.size() - 1;
-						update = true;
+					if (m_selected >= m_playlist.size())
+						m_selected = m_playlist.empty() ? 0 : m_playlist.size() - 1;
+					if (m_playlist.empty())
+						clear_before_update = true;
+					update = true;
 				}
 			}
 			else if(m_key_level == 1)
