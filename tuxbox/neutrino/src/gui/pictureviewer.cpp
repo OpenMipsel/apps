@@ -374,6 +374,7 @@ int CPictureViewerGui::show()
 						std::sort(playlist.begin(), playlist.end(), comparePictureByDate);
 				}
 				update = true;
+				CLCD::getInstance()->setMode(CLCD::MODE_MENU_UTF8, g_Locale->getText(LOCALE_PICTUREVIEWER_HEAD));
 			}
 		}
 		else if (msg == CRCInput::RC_yellow)
@@ -555,6 +556,11 @@ void CPictureViewerGui::paintItem(int pos)
 		int w = g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->getRenderWidth(timestring);
 		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+10,ypos+fheight, width-30 - w, tmp, color, fheight);
 		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+width-20-w,ypos+fheight, w, timestring, color, fheight);
+		if (liststart+pos == selected)
+		{
+			CLCD::getInstance()->showMenuText(0, tmp.c_str());
+			CLCD::getInstance()->showMenuText(1, timestring);
+		}
 	}
 //	printf("paintItem}\n");
 }
