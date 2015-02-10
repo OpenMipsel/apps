@@ -44,6 +44,7 @@
 
 #include <daemonc/remotecontrol.h>
 
+#include <driver/encoding.h>
 #include <driver/fontrenderer.h>
 #include <driver/rcinput.h>
 #include <driver/screen_max.h>
@@ -357,6 +358,7 @@ int CPictureViewerGui::show()
 							CPicture pic;
 							pic.Filename = files->Name;
 							std::string tmp   = files->Name.substr(files->Name.rfind('/')+1);
+							tmp          = FILESYSTEM_ENCODING_TO_UTF8_STRING(tmp);
 							pic.Name     = tmp.substr(0,tmp.rfind('.'));
 							pic.Type     = tmp.substr(tmp.rfind('.')+1);
 							struct stat statbuf;
@@ -554,11 +556,11 @@ void CPictureViewerGui::paintItem(int pos)
 		char timestring[18];
 		strftime(timestring, 18, "%d-%m-%Y %H:%M", gmtime(&playlist[liststart+pos].Date));
 		int w = g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->getRenderWidth(timestring);
-		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+10,ypos+fheight, width-30 - w, tmp, color, fheight);
+		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+10,ypos+fheight, width-30 - w, tmp, color, fheight, true); // UTF-8
 		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+width-20-w,ypos+fheight, w, timestring, color, fheight);
 		if (liststart+pos == selected)
 		{
-			CLCD::getInstance()->showMenuText(0, tmp.c_str());
+			CLCD::getInstance()->showMenuText(0, tmp.c_str(), -1, true); // UTF-8
 			CLCD::getInstance()->showMenuText(1, timestring);
 		}
 	}
@@ -663,7 +665,7 @@ void CPictureViewerGui::view(unsigned int index, bool unscaled)
 {
 	selected=index;
 	
-	CLCD::getInstance()->showMenuText(0, playlist[index].Name.c_str());
+	CLCD::getInstance()->showMenuText(0, playlist[index].Name.c_str(), -1, true); // UTF-8
 	char timestring[19];
 	strftime(timestring, 18, "%d-%m-%Y %H:%M", gmtime(&playlist[index].Date));
 	CLCD::getInstance()->showMenuText(1, timestring);
