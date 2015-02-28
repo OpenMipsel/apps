@@ -1432,11 +1432,13 @@ void CMovieBrowser::refreshFilterList(void)
 			}
 			sort(m_FilterLines.lineArray[0].begin() + 1, m_FilterLines.lineArray[0].end(), sortByAlpha);
 		}
+#ifdef MB_SEARCH_INFO2
 		else if(m_settings.filter.item == MB_INFO_INFO2)
 		{
 			string_item = "->Eingabe";
 			m_FilterLines.lineArray[0].push_back(string_item);
 		}
+#endif
 		else if(m_settings.filter.item == MB_INFO_MAJOR_GENRE)
 		{
 			for(int i = 0; i < GENRE_ALL_COUNT; i++)
@@ -2063,11 +2065,18 @@ bool CMovieBrowser::onButtonPressFilterList(neutrino_msg_t msg)
 		int selected_line = m_pcFilter->getSelectedLine();
 		if(m_settings.filter.item == MB_INFO_MAX_NUMBER)
 		{
-			if(selected_line == 0) m_settings.filter.item = MB_INFO_MAJOR_GENRE;
-			if(selected_line == 1) m_settings.filter.item = MB_INFO_INFO1;
-			if(selected_line == 4) m_settings.filter.item = MB_INFO_INFO2;
-			if(selected_line == 2) m_settings.filter.item = MB_INFO_FILEPATH;
-			if(selected_line == 3) m_settings.filter.item = MB_INFO_SERIE;
+			if(selected_line == 0)
+				m_settings.filter.item = MB_INFO_MAJOR_GENRE;
+			else if(selected_line == 1)
+				m_settings.filter.item = MB_INFO_INFO1;
+#ifdef MB_SEARCH_INFO2
+			else if(selected_line == 4)
+				m_settings.filter.item = MB_INFO_INFO2;
+#endif
+			else if(selected_line == 2)
+				m_settings.filter.item = MB_INFO_FILEPATH;
+			else if(selected_line == 3)
+				m_settings.filter.item = MB_INFO_SERIE;
 			refreshFilterList();
 			m_pcFilter->setSelectedLine(0);
 		}
@@ -2794,6 +2803,7 @@ void CMovieBrowser::updateFilterSelection(void)
 	{
 		m_settings.filter.optionString = m_FilterLines.lineArray[0][selected_line+1];
 	}
+#ifdef MB_SEARCH_INFO2
 	else if(m_settings.filter.item == MB_INFO_INFO2)
 	{
 		std::string text;
@@ -2803,6 +2813,7 @@ void CMovieBrowser::updateFilterSelection(void)
 		refreshFilterList(); 
 		refreshTitle();   
 	}
+#endif
 	else if(m_settings.filter.item == MB_INFO_MAJOR_GENRE)
 	{
 		m_settings.filter.optionString = m_FilterLines.lineArray[0][selected_line+1];
@@ -3355,10 +3366,12 @@ bool CMovieBrowser::isFiltered(MI_MOVIE_INFO& movie_info)
 			if(strcmp(m_settings.filter.optionString.c_str(),movie_info.epgInfo1.c_str()) == 0) 
 				result = false;
 			break;
+#ifdef MB_SEARCH_INFO2
 		case MB_INFO_INFO2:
 			if(movie_info.epgInfo2.find(m_settings.filter.optionString) != std::string::npos )
 				 result = false;
 			break;
+#endif
 		case MB_INFO_MAJOR_GENRE:
 			if(m_settings.filter.optionVar == movie_info.genreMajor)
 				result = false;
