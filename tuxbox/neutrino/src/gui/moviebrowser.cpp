@@ -50,10 +50,6 @@
 
 // experimental stuff 8)
 //#define MB_SEARCH_INFO2
-//#define MOVEMANAGER 1
-#ifdef MOVEMANAGER
-#include <gui/movemanager.h>
-#endif // MOVEMANAGER
 
 #include <algorithm>
 
@@ -1912,46 +1908,6 @@ bool CMovieBrowser::onButtonPressMainFrame(neutrino_msg_t msg)
 		if(m_playstate == CMoviePlayerGui::STOPPED && m_movieSelectionHandler != NULL)
 			showMenu(m_movieSelectionHandler);
 	}
-#ifdef MOVEMANAGER	
-	else if (msg == CRCInput::RC_1) 
-	{
-		std::string source;
-		static std::string dest =	"/hdd/Filme";
-		source = m_movieSelectionHandler->file.Name;
-		CDirChooser dir(&dest,"/mnt/","/hdd");
-		dir.exec(NULL,"");   
-		if(!dest.empty())
-		{
-				dest += "/";
-				dest += m_movieSelectionHandler->file.getFileName();
-				CMoveManager::getInstance()->newMove(dest,source,MOVE_TYPE_COPY);
-		
-				if(m_movieInfo.convertTs2XmlName(&source) == true)  
-					if(m_movieInfo.convertTs2XmlName(&dest) == true)  
-						CMoveManager::getInstance()->newMove(dest,source,MOVE_TYPE_COPY);
-		}
-		refresh();
-	}
-	else if (msg == CRCInput::RC_0) 
-	{
-		std::string source;
-		std::string dest =	"/hdd/Filme";
-		source = m_movieSelectionHandler->file.Name;
-		CDirChooser dir(&dest,"/mnt/","/hdd");
-		dir.exec(NULL,"");   
-		if(!dest.empty())
-		{
-				dest += "/";
-				dest += m_movieSelectionHandler->file.getFileName();
-				CMoveManager::getInstance()->newMove(dest,source,MOVE_STATE_MOVE);
-		
-				if(m_movieInfo.convertTs2XmlName(&source) == true)  
-					if(m_movieInfo.convertTs2XmlName(&dest) == true)  
-						CMoveManager::getInstance()->newMove(dest,source,MOVE_STATE_MOVE);
-		}
-		refresh();
-	}
-#endif //MOVEMANAGER	
 	else
 	{
 		//TRACE("[mb]->onButtonPressMainFrame none\r\n");
@@ -3247,10 +3203,6 @@ bool CMovieBrowser::showMenu(MI_MOVIE_INFO* /*movie_info*/)
 #ifdef ENABLE_GUI_MOUNT
 	//mainMenu.addItem( new CMenuForwarder(LOCALE_MOVIEBROWSER_MENU_NFS_HEAD, true, NULL, nfs, NULL, CRCInput::RC_setup));
 #endif
-#ifdef MOVEMANAGER
-	mainMenu.addItem(GenericMenuSeparatorLine);
-	mainMenu.addItem( new CMenuForwarder("Kopierwerk", true, NULL, CMoveManager::getInstance()));
-#endif // MOVEMANAGER
 	mainMenu.addItem(GenericMenuSeparatorLine);
 	mainMenu.addItem( new CMenuForwarder(LOCALE_MOVIEBROWSER_MENU_HELP_HEAD, true, NULL, movieHelp, NULL, CRCInput::RC_help));
 	mainMenu.exec(NULL, " ");
