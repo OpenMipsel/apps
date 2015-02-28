@@ -298,7 +298,12 @@ void CNeutrinoApp::InitMenuSettings()
 	
 	//yellow (miscSettings)
 	personalize->addItem(MENU_SETTINGS, new CMenuForwarder(LOCALE_MAINSETTINGS_MISC, true, NULL, new CMiscMenue(LOCALE_MAINMENU_SETTINGS), NULL, CRCInput::RC_yellow), &g_settings.personalize_misc);
-	
+
+#ifdef _EXPERIMENTAL_SETTINGS_
+	//experimental settings
+	personalize->addItem(MENU_SETTINGS, new CMenuForwarder(LOCALE_EXPERIMENTALSETTINGS, true, NULL, new CExperimentalSettingsMenuHandler()), NULL, false, CPersonalizeGui::PERSONALIZE_SHOW_NO);
+#endif
+
 	//separator
  	personalize->addSeparator(MENU_SETTINGS);
 	
@@ -392,6 +397,7 @@ bool CNeutrinoApp::showUserMenu(int button)
 	int menu_items = 0;
 	int menu_prev = -1;
 	int cnt = 0;
+	int dummy = 0;
 
 	// define classes
 	CFavorites* tmpFavorites				= NULL;
@@ -439,7 +445,6 @@ bool CNeutrinoApp::showUserMenu(int button)
 	// go through any postition number
 	for(int pos = 0; pos < SNeutrinoSettings::ITEM_MAX ; pos++)
 	{
-		int dummy;
 		// now compare pos with the position of any item. Add this item if position is the same 
 		switch(g_settings.usermenu[button][pos])
 		{
@@ -648,31 +653,7 @@ bool CNeutrinoApp::showUserMenu(int button)
 				break;
 		}
 	} 
-	
-	// Allow some tailoring for privat image bakers ;)
-	if (button == SNeutrinoSettings::BUTTON_RED)
-	{
-	}
-	else if( button == SNeutrinoSettings::BUTTON_GREEN)
-	{
-	}
-	else if( button == SNeutrinoSettings::BUTTON_YELLOW)
-	{
-	}
-	else if( button == SNeutrinoSettings::BUTTON_BLUE)
-	{	
-#ifdef _EXPERIMENTAL_SETTINGS_
-		//Experimental Settings
-		if(menu_prev != -1)
-			menu->addItem(GenericMenuSeparatorLine);
-		menu_items ++;
-		menu_key++;
-		// FYI: there is a memory leak with 'new CExperimentalSettingsMenuHandler()
-		menu_item = new CMenuForwarder(LOCALE_EXPERIMENTALSETTINGS, true, NULL, new CExperimentalSettingsMenuHandler(), "-1", CRCInput::convertDigitToKey(menu_key));
-		menu->addItem(menu_item, false);
-#endif
-	}
-	
+
 	if(menu_items >	1 ) 				// show menu if there are more than 2 items only
 	{
 		menu->exec(NULL,"");
@@ -682,9 +663,6 @@ bool CNeutrinoApp::showUserMenu(int button)
 		menu_item->exec( NULL );
 	}									// neither nor, we do nothing
 
-	// restore mute symbol
-	//AudioMute(current_muted, true);
-	
 	// clear the heap
 	delete menu;
 	delete tmpFavorites;
