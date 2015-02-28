@@ -2477,29 +2477,13 @@ OutputThread(void *arg)
 
 //== updateLcd ==
 //===============
-void updateLcd(const std::string &big, const std::string &small)
+void updateLcd(const std::string &big, std::string small)
 {
-	static int  l_playstate = -1;
-	std::string lcd_small = small;
-	CLCD::PLAYMODES playmode;
-
-	if (l_playstate == g_playstate)
-		return;
-
-	switch (g_playstate)
-	{
-	case CMoviePlayerGui::PAUSE:
-		playmode = CLCD::PLAYMODE_PAUSE;
-		break;
-	default:
-		playmode = CLCD::PLAYMODE_PLAY;
-		break;
-	}
-	StrSearchReplace(lcd_small, "_", " ");
-	if (lcd_small.length() > 80)
-		lcd_small = lcd_small.substr(0, 80);
-	CLCD::getInstance()->setMoviePlaymode(playmode);
-	CLCD::getInstance()->setMovieInfo(big, lcd_small);
+	StrSearchReplace(small, "_", " ");
+	if (small.length() > 80)
+		small = small.substr(0, 80);
+	CLCD::getInstance()->setMoviePlaymode(CLCD::PLAYMODE_PLAY);
+	CLCD::getInstance()->setMovieInfo(big, small);
 }
 
 //== seek to pos with sync to next proper TS packet ==
