@@ -195,13 +195,23 @@ bool CPlugins::parseCfg(plugin *plugin_data)
 		{
 			plugin_data->index = atoi(parm.c_str());
 		}
-		else if (cmd == "name")
+		else if (cmd == std::string("name.") + g_settings.language)
 		{
 			plugin_data->name = parm;
 		}
-		else if (cmd == "desc")
+		else if (cmd == "name")
+		{
+			if (plugin_data->name.empty())
+				plugin_data->name = parm;
+		}
+		else if (cmd == std::string("desc.") + g_settings.language)
 		{
 			plugin_data->description = parm;
+		}
+		else if (cmd == "desc")
+		{
+			if (plugin_data->description.empty())
+				plugin_data->description = parm;
 		}
 		else if (cmd == "depend")
 		{
@@ -249,6 +259,9 @@ bool CPlugins::parseCfg(plugin *plugin_data)
 		}
 
 	}
+
+	if (plugin_data->name.empty())
+		plugin_data->name = plugin_data->filename;
 
 	inFile.close();
 	return !reject;
