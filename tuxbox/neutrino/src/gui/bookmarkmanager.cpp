@@ -82,11 +82,15 @@ inline int CBookmarkManager::createBookmark (const std::string & name, const std
 }
 
 int CBookmarkManager::createBookmark (const std::string & url, const std::string & time) {
-    char bookmarkname[26]="";
-    CStringInputSMS bookmarkname_input(LOCALE_MOVIEPLAYER_BOOKMARKNAME, bookmarkname, 25, LOCALE_MOVIEPLAYER_BOOKMARKNAME_HINT1, LOCALE_MOVIEPLAYER_BOOKMARKNAME_HINT2, "abcdefghijklmnopqrstuvwxyz\xE4\xF6\xFC\xDF""0123456789-_");
-    bookmarkname_input.exec(NULL, "");
-    // TODO: return -1 if no name was entered
-    return createBookmark(ZapitTools::Latin1_to_UTF8(bookmarkname), url, time);
+	char bookmarkname[26]="";
+	CStringInputSMS bookmarkname_input(LOCALE_MOVIEPLAYER_BOOKMARKNAME, bookmarkname, 25, LOCALE_MOVIEPLAYER_BOOKMARKNAME_HINT1, LOCALE_MOVIEPLAYER_BOOKMARKNAME_HINT2, "abcdefghijklmnopqrstuvwxyz\xE4\xF6\xFC\xDF""0123456789-_", this);
+	bookmarkname_input.exec(NULL, "");
+	if (bookmarkname_entered)
+	{
+		bookmarkname_entered = false;
+		return createBookmark(ZapitTools::Latin1_to_UTF8(bookmarkname), url, time);
+	}
+	return -1;
 }
 
 //------------------------------------------------------------------------
@@ -185,6 +189,7 @@ void CBookmarkManager::writeBookmarkFile() {
 
 CBookmarkManager::CBookmarkManager() : bookmarkfile ('\t')
 {
+	bookmarkname_entered = false;
 	bookmarksmodified = false;
 	readBookmarkFile();
 }
@@ -193,6 +198,14 @@ CBookmarkManager::CBookmarkManager() : bookmarkfile ('\t')
 
 CBookmarkManager::~CBookmarkManager () {
 	flush();   
+}
+
+//------------------------------------------------------------------------
+
+bool CBookmarkManager::changeNotify(const neutrino_locale_t, void *)
+{
+	bookmarkname_entered = true;
+	return false;
 }
 
 //------------------------------------------------------------------------
