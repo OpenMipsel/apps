@@ -183,6 +183,8 @@ void CBookmarkManager::writeBookmarkFile() {
 	}
 	bookmarkfile.setInt32("bookmarkcount", bookmarks.size());
 	bookmarkfile.saveConfig(BOOKMARKFILE);
+
+	bookmarksmodified = false;
 }
 
 //------------------------------------------------------------------------
