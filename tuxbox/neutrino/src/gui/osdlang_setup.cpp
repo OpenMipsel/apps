@@ -74,6 +74,8 @@ int COsdLangSetup::exec(CMenuTarget* parent, const std::string & actionKey)
 		const char * locale = actionKey.c_str();
 		strcpy(g_settings.language, locale);
 
+		g_PluginList->loadPlugins();
+
 		int unicode_locale = g_Locale->loadLocale(locale);
 		if(CNeutrinoApp::getInstance()->ChangeFonts(unicode_locale))
 		{
