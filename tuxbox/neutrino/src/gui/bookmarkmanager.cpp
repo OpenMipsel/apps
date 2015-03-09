@@ -156,8 +156,6 @@ void CBookmarkManager::readBookmarkFile() {
 			bookmarkstring[BOOKMARKSTRINGMODIFICATIONPOINT]++;
 		}
 	}
-	else
-		bookmarkfile.clear();
 }
 
 //------------------------------------------------------------------------
@@ -167,6 +165,7 @@ void CBookmarkManager::writeBookmarkFile() {
 
 	printf("CBookmarkManager: Writing bookmark file\n");
 	
+	bookmarkfile.clear();
 	for (std::vector<CBookmark>::const_iterator it = bookmarks.begin(); it != bookmarks.end(); ++it)
 	{
 		std::string tmp = bookmarkstring;
