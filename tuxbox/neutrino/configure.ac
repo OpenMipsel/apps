@@ -272,6 +272,7 @@ daemons/nhttpd/Makefile
 daemons/nhttpd/web/Makefile
 daemons/nhttpd/web/images/Makefile
 daemons/nhttpd/web/scripts/Makefile
+daemons/nhttpd/web/styles/Makefile
 daemons/nhttpd/tuxboxapi/Makefile
 daemons/nhttpd/yhttpd_core/Makefile
 daemons/nhttpd/yhttpd_mods/Makefile
