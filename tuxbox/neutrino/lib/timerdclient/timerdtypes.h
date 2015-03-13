@@ -127,8 +127,8 @@ class CTimerd
 						recordingSafety = e.recordingSafety;
 						return *this;
 					}
-				unsigned char apids;
 				int eventID;
+				CTimerEventRepeat eventRepeat;
 				char recordingDir[RECORD_DIR_MAXLEN];
 				char epgTitle[EPG_TITLE_MAXLEN];
 			};

@@ -1176,6 +1176,7 @@ void CTimerEvent_Record::fireEvent()
 	Refresh();
 	CTimerd::RecordingInfo ri=eventInfo;
 	ri.eventID=eventID;
+	ri.eventRepeat=eventRepeat;
 	strcpy(ri.recordingDir, recordingDir.substr(0,sizeof(ri.recordingDir)-1).c_str());						
 	strcpy(ri.epgTitle, epgTitle.substr(0,sizeof(ri.epgTitle)-1).c_str());						
 	CTimerManager::getInstance()->getEventServer()->sendEvent(CTimerdClient::EVT_RECORD_START,
@@ -1190,6 +1191,7 @@ void CTimerEvent_Record::announceEvent()
 	Refresh();
 	CTimerd::RecordingInfo ri=eventInfo;
 	ri.eventID=eventID;
+	ri.eventRepeat=eventRepeat;
 	strcpy(ri.recordingDir, recordingDir.substr(0,sizeof(ri.recordingDir)-1).c_str());						
 	strcpy(ri.epgTitle, epgTitle.substr(0,sizeof(ri.epgTitle)-1).c_str());						
 	CTimerManager::getInstance()->getEventServer()->sendEvent(CTimerdClient::EVT_ANNOUNCE_RECORD,

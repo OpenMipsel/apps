@@ -1734,6 +1734,7 @@ bool CNeutrinoApp::doGuiRecord(char * preselectedDir, bool addTimer, char * file
 				perror(NEUTRINO_RECORDING_START_SCRIPT " failed");
 
 			eventinfo.channel_id = g_Zapit->getCurrentServiceID();
+			eventinfo.eventRepeat = CTimerd::TIMERREPEAT_ONCE;
 			CEPGData epgData;
 			if (filename == NULL && g_Sectionsd->getActualEPGServiceKey(g_RemoteControl->current_channel_id, &epgData))
 			{

@@ -132,7 +132,7 @@ bool CVCRControl::Record(const CTimerd::RecordingInfo * const eventinfo)
 {
 	int mode = g_Zapit->isChannelTVChannel(eventinfo->channel_id) ? NeutrinoMessages::mode_tv : NeutrinoMessages::mode_radio;
 
-	return Device->Record(eventinfo->channel_id, mode, eventinfo->epgID, eventinfo->epgTitle, eventinfo->apids, eventinfo->epg_starttime);
+	return Device->Record(eventinfo->channel_id, mode, eventinfo->epgID, eventinfo->epgTitle, eventinfo->apids, eventinfo->epg_starttime, eventinfo->eventRepeat);
 }
 
 //-------------------------------------------------------------------------
@@ -261,7 +261,8 @@ bool CVCRControl::CVCRDevice::Stop()
 
 //-------------------------------------------------------------------------
 bool CVCRControl::CVCRDevice::Record(const t_channel_id channel_id, int mode, const event_id_t epgid,
-				     const std::string& /*epgTitle*/, unsigned char apids, const time_t /*epg_time*/)
+				     const std::string& /*epgTitle*/, unsigned char apids, const time_t /*epg_time*/,
+				     const CTimerd::CTimerEventRepeat /*eventRepeat*/)
 {
 	printf("Record channel_id: "
 	       PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS
@@ -442,6 +443,7 @@ void CVCRControl::CFileAndServerDevice::CutBackNeutrino(const t_channel_id chann
 std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channel_id channel_id,
 								  const event_id_t epgid, const time_t epg_time,
 								  const std::string& epgTitle, unsigned char apids,
+								  const CTimerd::CTimerEventRepeat eventRepeat,
 								  const bool save_vtxt_pid, const bool save_sub_pids)
 {
 	std::string extMessage;
@@ -524,6 +526,9 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 		movieInfo.audioPids.push_back(audio_pids);
 	}
 
+	if (eventRepeat != CTimerd::TIMERREPEAT_ONCE)
+		movieInfo.serieName = movieInfo.epgTitle;
+
 	if (save_vtxt_pid)
 		movieInfo.epgVTXPID = si.vtxtpid;
 
@@ -544,13 +549,15 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 	return extMessage;
 }
 
-std::string CVCRControl::CFileAndServerDevice::getCommandString(const CVCRCommand command, const t_channel_id channel_id, const event_id_t epgid, const std::string& epgTitle, unsigned char apids)
+std::string CVCRControl::CFileAndServerDevice::getCommandString(const CVCRCommand command, const t_channel_id channel_id,
+								  const event_id_t epgid, const std::string& epgTitle, unsigned char apids,
+								  const CTimerd::CTimerEventRepeat eventRepeat)
 {
 	char tmp[40];
 	std::string apids_selected;
 	const char * extCommand;
 //		std::string extAudioPID= "error";
-	std::string info1, info2;
+	std::string title, info1, info2;
 	std::string extMessage = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<neutrino commandversion=\"1\">\n\t<record command=\"";
 	switch(command)
 	{
@@ -604,19 +611,19 @@ std::string CVCRControl::CFileAndServerDevice::getCommandString(const CVCRComman
 	extMessage += "</channelname>\n\t\t<epgtitle>";
 	
 //		CSectionsdClient::responseGetCurrentNextInfoChannelID current_next;
-	tmpstring = (epgTitle.empty()) ? "not available" : Latin1_to_UTF8(epgTitle);
+	title = (epgTitle.empty()) ? "not available" : Latin1_to_UTF8(epgTitle);
 	if (epgid != 0)
 	{
 		CShortEPGData epgdata;
 		if (g_Sectionsd->getEPGidShort(epgid, &epgdata))
 		{
 #warning fixme sectionsd should deliver data in UTF-8 format
-			tmpstring = Latin1_to_UTF8(epgdata.title);
+			title = Latin1_to_UTF8(epgdata.title);
 			info1 = Latin1_to_UTF8(epgdata.info1);
 			info2 = Latin1_to_UTF8(epgdata.info2);
 		}
 	}
-	extMessage += ZapitTools::UTF8_to_UTF8XML(tmpstring.c_str());
+	extMessage += ZapitTools::UTF8_to_UTF8XML(title.c_str());
 	
 	extMessage += "</epgtitle>\n\t\t<id>";
 	
@@ -676,6 +683,12 @@ std::string CVCRControl::CFileAndServerDevice::getCommandString(const CVCRComman
 	if (!tmpstring.empty())
 		tmpstring += "\t\t</subpids>\n";
 	extMessage += tmpstring;
+	if (eventRepeat != CTimerd::TIMERREPEAT_ONCE)
+	{
+		extMessage += "\t\t<seriename>";
+		extMessage += ZapitTools::UTF8_to_UTF8XML(title.c_str());
+		extMessage += "</seriename>\n";
+	}
 	extMessage +=
 		"\t</record>\n"
 		"</neutrino>\n";
@@ -709,7 +722,9 @@ bool CVCRControl::CFileDevice::Stop()
 	return return_value;
 }
 
-bool CVCRControl::CFileDevice::Record(const t_channel_id channel_id, int mode, const event_id_t epgid, const std::string &epgTitle, unsigned char apids,const time_t epg_time) 
+bool CVCRControl::CFileDevice::Record(const t_channel_id channel_id, int mode, const event_id_t epgid,
+					const std::string &epgTitle, unsigned char apids, const time_t epg_time,
+					const CTimerd::CTimerEventRepeat eventRepeat)
 {
 	printf("Record channel_id: "
 	       PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS
@@ -877,7 +892,7 @@ bool CVCRControl::CFileDevice::Record(const t_channel_id channel_id, int mode, c
 	} else
 	{
 		error_msg = ::start_recording(filename,
-					      getMovieInfoString(channel_id, epgid, epg_time, epgTitle, apids, save_vtxt_pid, save_sub_pids).c_str(),
+					      getMovieInfoString(channel_id, epgid, epg_time, epgTitle, apids, eventRepeat, save_vtxt_pid, save_sub_pids).c_str(),
 					      mode,
 					      Use_O_Sync,
 					      Use_Fdatasync,
@@ -1067,7 +1082,8 @@ bool CVCRControl::CServerDevice::Stop()
 
 //-------------------------------------------------------------------------
 bool CVCRControl::CServerDevice::Record(const t_channel_id channel_id, int mode, const event_id_t epgid,
-					const std::string &epgTitle, unsigned char apids, const time_t /*epg_time*/)
+					const std::string &epgTitle, unsigned char apids, const time_t /*epg_time*/,
+					const CTimerd::CTimerEventRepeat eventRepeat)
 {
 	printf("Record channel_id: "
 	       PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS
@@ -1101,7 +1117,7 @@ bool CVCRControl::CServerDevice::Record(const t_channel_id channel_id, int mode,
 	}
 #endif
 
-	if(!sendCommand(CMD_VCR_RECORD, channel_id, epgid, epgTitle, apids))
+	if(!sendCommand(CMD_VCR_RECORD, channel_id, epgid, epgTitle, apids, eventRepeat))
 	{
 		RestoreNeutrino();
 
@@ -1121,7 +1137,9 @@ void CVCRControl::CServerDevice::serverDisconnect()
 }
 
 //-------------------------------------------------------------------------
-bool CVCRControl::CServerDevice::sendCommand(CVCRCommand command, const t_channel_id channel_id, const event_id_t epgid, const std::string& epgTitle, unsigned char apids)
+bool CVCRControl::CServerDevice::sendCommand(CVCRCommand command, const t_channel_id channel_id,
+								  const event_id_t epgid, const std::string& epgTitle, unsigned char apids,
+								  const CTimerd::CTimerEventRepeat eventRepeat)
 {
 	printf("Send command: %d channel_id: "
 	       PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS
@@ -1132,7 +1150,7 @@ bool CVCRControl::CServerDevice::sendCommand(CVCRCommand command, const t_channe
 	       epgid);
 	if(serverConnect())
 	{
-		std::string extMessage = getCommandString(command, channel_id, epgid, epgTitle, apids);
+		std::string extMessage = getCommandString(command, channel_id, epgid, epgTitle, apids, eventRepeat);
 
 		printf("sending to vcr-client:\n\n%s\n", extMessage.c_str());
 		write(sock_fd, extMessage.c_str() , extMessage.length() );

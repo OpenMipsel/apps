@@ -70,7 +70,8 @@ class CVCRControl
 			CVCRStates  deviceState;
 			virtual bool Stop() = 0;
 			virtual bool Record(const t_channel_id channel_id = 0, int mode = NeutrinoMessages::mode_tv, const event_id_t epgid = 0,
-					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0) = 0;
+					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0,
+					    const CTimerd::CTimerEventRepeat eventRepeat = CTimerd::TIMERREPEAT_ONCE) = 0;
 			virtual bool Pause() = 0;
 			virtual bool Resume() = 0;
 			virtual bool IsAvailable() = 0;
@@ -96,7 +97,8 @@ class CVCRControl
 				};
 			virtual bool Stop(); 
 			virtual bool Record(const t_channel_id channel_id = 0, int mode = NeutrinoMessages::mode_tv, const event_id_t epgid = 0,
-					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0);
+					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0,
+					    const CTimerd::CTimerEventRepeat eventRepeat = CTimerd::TIMERREPEAT_ONCE);
 			virtual bool Pause();
 			virtual bool Resume();
 			virtual bool IsAvailable() { return true; };
@@ -109,8 +111,11 @@ class CVCRControl
 		protected:
 			void RestoreNeutrino(void);
 			void CutBackNeutrino(const t_channel_id channel_id, const int mode);
-			std::string getCommandString(const CVCRCommand command, const t_channel_id channel_id, const event_id_t epgid, const std::string& epgTitle, unsigned char apids);
-			std::string getMovieInfoString(const t_channel_id channel_id, const event_id_t epgid, const time_t epg_time, const std::string& epgTitle, unsigned char apids, const bool save_vtxt_pid, const bool save_sub_pids);
+			std::string getCommandString(const CVCRCommand command, const t_channel_id channel_id, const event_id_t epgid,
+						const std::string& epgTitle, unsigned char apids, const CTimerd::CTimerEventRepeat eventRepeat);
+			std::string getMovieInfoString(const t_channel_id channel_id, const event_id_t epgid, const time_t epg_time,
+						const std::string& epgTitle, unsigned char apids, const CTimerd::CTimerEventRepeat eventRepeat,
+						const bool save_vtxt_pid, const bool save_sub_pids);
 
 		public:
 			bool	StopPlayBack;
@@ -153,7 +158,8 @@ class CVCRControl
 				
 			virtual bool Stop(); 
 			virtual bool Record(const t_channel_id channel_id = 0, int mode = NeutrinoMessages::mode_tv, const event_id_t epgid = 0,
-					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0);
+					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0,
+					    const CTimerd::CTimerEventRepeat eventRepeat = CTimerd::TIMERREPEAT_ONCE);
 			
 			CFileDevice(const bool stopplayback, const int stopsectionsd, const char * const directory, const unsigned int splitsize, const bool use_o_sync, const bool use_fdatasync, const bool stream_vtxt_pid, const bool stream_subtitle_pid, const unsigned int ringbuffers, const bool gen_psi, bool createTemplateDirectories)
 				
@@ -182,7 +188,9 @@ class CVCRControl
 			bool serverConnect();
 			void serverDisconnect();
 
-			bool sendCommand(CVCRCommand command, const t_channel_id channel_id = 0, const event_id_t epgid = 0, const std::string& epgTitle="", unsigned char apids = 0);
+			bool sendCommand(CVCRCommand command, const t_channel_id channel_id = 0, const event_id_t epgid = 0,
+						const std::string& epgTitle = "", unsigned char apids = 0,
+						const CTimerd::CTimerEventRepeat eventRepeat = CTimerd::TIMERREPEAT_ONCE);
 
 		public:
 			std::string  ServerAddress;
@@ -195,7 +203,8 @@ class CVCRControl
 
 			virtual bool Stop();
 			virtual bool Record(const t_channel_id channel_id = 0, int mode = NeutrinoMessages::mode_tv, const event_id_t epgid = 0,
-					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0);
+					    const std::string& epgTitle = "", unsigned char apids = 0, const time_t epg_time = 0,
+					    const CTimerd::CTimerEventRepeat eventRepeat = CTimerd::TIMERREPEAT_ONCE);
 
 			CServerDevice(const bool stopplayback, const int stopsectionsd, const char * const serveraddress, const unsigned int serverport)
 				{
