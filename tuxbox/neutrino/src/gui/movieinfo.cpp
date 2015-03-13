@@ -502,6 +502,7 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
 		print_buffer += "\n";
 		print_buffer += movie_info.epgInfo2;
 	}
+	print_buffer += "\n";
 
 	 if( !movie_info.productionCountry.empty() || movie_info.productionDate != 0)
 	 {
@@ -514,14 +515,14 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
 
     if(!movie_info.serieName.empty())
     {
-    	print_buffer += "\n\n"; 
+    	print_buffer += "\n";
     	print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_SERIE);
      	print_buffer += ": "; 
     	print_buffer += movie_info.serieName; 
     }
     if(!movie_info.epgChannel.empty())
     {
-    	print_buffer += "\n\n"; 
+    	print_buffer += "\n";
     	print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_CHANNEL);
       	print_buffer += ": "; 
     	print_buffer += movie_info.epgChannel; 
