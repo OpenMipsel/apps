@@ -449,7 +449,6 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 	std::string extMessage;
 	CMovieInfo cMovieInfo;
 	MI_MOVIE_INFO movieInfo;
-	std::string info1, info2;
 	event_id_t epg_id = epgid;
 
 	cMovieInfo.clearMovieInfo(&movieInfo);
@@ -457,13 +456,11 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 	g_Zapit->getPIDS (pids);
 	CZapitClient::CCurrentServiceInfo si = g_Zapit->getCurrentServiceInfo ();
 
-	std::string tmpstring = g_Zapit->getChannelName(channel_id);
-	if (tmpstring.empty())
+	movieInfo.epgChannel = g_Zapit->getChannelName(channel_id);
+	if (movieInfo.epgChannel.empty())
 		movieInfo.epgChannel = "unknown";
-	else
-		movieInfo.epgChannel = tmpstring;
 
-	tmpstring = (epgTitle.empty()) ? "not available" : Latin1_to_UTF8(epgTitle);
+	movieInfo.epgTitle = (epgTitle.empty()) ? "not available" : Latin1_to_UTF8(epgTitle);
 	if (epg_id != 0)
 	{
 //#define SHORT_EPG
@@ -472,9 +469,9 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 		if (g_Sectionsd->getEPGidShort(epg_id, &epgdata))
 		{
 #warning fixme sectionsd should deliver data in UTF-8 format
-			tmpstring = Latin1_to_UTF8(epgdata.title);
-			info1 = Latin1_to_UTF8(epgdata.info1);
-			info2 = Latin1_to_UTF8(epgdata.info2);
+			movieInfo.epgTitle = Latin1_to_UTF8(epgdata.title);
+			movieInfo.epgInfo1 = Latin1_to_UTF8(epgdata.info1);
+			movieInfo.epgInfo2 = Latin1_to_UTF8(epgdata.info2);
 		}
 #else
 		CEPGData epgdata;
@@ -490,9 +487,9 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 		if (has_epgdata)
 		{
 #warning fixme sectionsd should deliver data in UTF-8 format
-			tmpstring = Latin1_to_UTF8(epgdata.title);
-			info1 = Latin1_to_UTF8(epgdata.info1);
-			info2 = Latin1_to_UTF8(epgdata.info2);
+			movieInfo.epgTitle = Latin1_to_UTF8(epgdata.title);
+			movieInfo.epgInfo1 = Latin1_to_UTF8(epgdata.info1);
+			movieInfo.epgInfo2 = Latin1_to_UTF8(epgdata.info2);
 			
 			movieInfo.parentalLockAge = epgdata.fsk;
 			if (!epgdata.contentClassification.empty())
@@ -504,10 +501,7 @@ std::string CVCRControl::CFileAndServerDevice::getMovieInfoString(const t_channe
 		}
 #endif
 	}
-	movieInfo.epgTitle = 	tmpstring;
 	movieInfo.epgId = 		channel_id;
-	movieInfo.epgInfo1 = 	info1;
-	movieInfo.epgInfo2 = 	info2;
 	movieInfo.epgEpgId =  	epg_id;
 	movieInfo.epgMode = 	g_Zapit->getMode();
 	movieInfo.epgVideoPid = si.vpid;
