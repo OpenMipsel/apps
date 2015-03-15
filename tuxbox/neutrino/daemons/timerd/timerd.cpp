@@ -207,10 +207,11 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 			CTimerManager::getInstance()->unlockEvents();
 			break;
 
-		case CTimerdMsg::CMD_RESCHEDULETIMER:			// event nach vorne oder hinten schieben
+		case CTimerdMsg::CMD_RESCHEDULETIMER:			// event verschieben
 			{
-				CBasicServer::receive_data(connfd,&msgModifyTimer, sizeof(msgModifyTimer));
-				int ret=CTimerManager::getInstance()->rescheduleEvent(msgModifyTimer.eventID,msgModifyTimer.announceTime,msgModifyTimer.alarmTime, msgModifyTimer.stopTime);
+				CTimerdMsg::commandRescheduleTimer msgRescheduleTimer;
+				CBasicServer::receive_data(connfd, &msgRescheduleTimer, sizeof(msgRescheduleTimer));
+				int ret = CTimerManager::getInstance()->rescheduleEvent(msgRescheduleTimer.eventID);
 				CTimerdMsg::responseStatus rspStatus;
 				rspStatus.status = (ret!=0);
 				CBasicServer::send_data(connfd, &rspStatus, sizeof(rspStatus));

@@ -274,8 +274,6 @@ bool CTimerManager::removeEvent(int ev_ID)
 		events[ev_ID]->eventState = CTimerd::TIMERSTATE_TERMINATED;	// set the state to terminated
 		res = true;							// so timerthread will do the rest for us
 	}
-	else
-		res = false;
 	pthread_mutex_unlock(&tm_eventsMutex);
 	return res;
 }
@@ -291,8 +289,6 @@ bool CTimerManager::stopEvent(int ev_ID)
 		events[ev_ID]->eventState = CTimerd::TIMERSTATE_HASFINISHED;	// set the state to finished
 		res = true;							// so timerthread will do the rest for us
 	}
-	else
-		res = false;
 	pthread_mutex_unlock(&tm_eventsMutex);
 	return res;
 }
@@ -333,8 +329,6 @@ CTimerd::CTimerEventTypes* CTimerManager::getEventType(int ev_ID)
 	{
 		res = &(events[ev_ID]->eventType);
 	}
-	else
-		res = NULL;
 	pthread_mutex_unlock(&tm_eventsMutex);
 	return res;
 }
@@ -391,8 +385,6 @@ int CTimerManager::modifyEvent(int ev_ID, time_t announceTime, time_t alarmTime,
 		m_saveEvents=true;
 		res = ev_ID;
 	}
-	else
-		res = 0;
 	pthread_mutex_unlock(&tm_eventsMutex);
 	return res;
 }
@@ -422,26 +414,20 @@ int CTimerManager::modifyEvent(int ev_ID, unsigned char apids)
 	return res;
 }
 
-int CTimerManager::rescheduleEvent(int ev_ID, time_t announceTime, time_t alarmTime, time_t stopTime)
+int CTimerManager::rescheduleEvent(int ev_ID)
 {
 	int res = 0;
 	pthread_mutex_lock(&tm_eventsMutex);
-
 	if (events.find(ev_ID) != events.end())
 	{
 		CTimerEvent *event = events[ev_ID];
-		if(event->announceTime > 0)
-			event->announceTime += announceTime;
-		if(event->alarmTime > 0)
-			event->alarmTime += alarmTime;
-		if(event->stopTime > 0)
-			event->stopTime += stopTime;
-		event->eventState = CTimerd::TIMERSTATE_SCHEDULED;
-		m_saveEvents=true;
-		res = ev_ID;
+		if (event->eventRepeat != CTimerd::TIMERREPEAT_ONCE && event->repeatCount != 1)
+		{
+			event->Reschedule(true);
+			m_saveEvents=true;
+			res = ev_ID;
+		}
 	}
-	else
-		res = 0;
 	pthread_mutex_unlock(&tm_eventsMutex);
 	return res;
 }
@@ -886,7 +872,7 @@ CTimerEvent::CTimerEvent(CTimerd::CTimerEventTypes evtype,CConfigFile *config, i
 	dprintf("read PREVIOUS_STATE_%s %d\n",id.c_str(),previousState);
 }
 //------------------------------------------------------------
-void CTimerEvent::Reschedule()
+void CTimerEvent::Reschedule(bool force)
 {
 	if(eventRepeat == CTimerd::TIMERREPEAT_ONCE)
 	{
@@ -896,7 +882,7 @@ void CTimerEvent::Reschedule()
 	else
 	{
 		time_t now = time(NULL);
-		while(alarmTime <= now)
+		while(alarmTime <= now || force)
 		{
 			time_t diff = 0;
 			struct tm *t= localtime(&alarmTime);
@@ -964,10 +950,12 @@ void CTimerEvent::Reschedule()
 				announceTime += diff;
 			if(stopTime > 0)
 				stopTime += diff;
+			if(force)
+				break;
 		}
 		eventState = CTimerd::TIMERSTATE_SCHEDULED;
 		if (repeatCount > 0)
-			repeatCount -= 1;
+			repeatCount--;
 		dprintf("event %d rescheduled\n",eventID);
 	}
 }
@@ -1240,12 +1228,12 @@ void CTimerEvent_Record::saveToConfig(CConfigFile *config)
 	dprintf("set EPG_TITLE_%s to %s (%p)\n",id.c_str(),epgTitle.c_str(), &epgTitle);
 }
 //------------------------------------------------------------
-void CTimerEvent_Record::Reschedule()
+void CTimerEvent_Record::Reschedule(bool force)
 {
 	// clear epgId on reschedule
 	eventInfo.epgID = 0;
 	eventInfo.epg_starttime = 0;
-	CTimerEvent::Reschedule();
+	CTimerEvent::Reschedule(force);
 	getEpgId();
 }
 //------------------------------------------------------------
@@ -1407,12 +1395,12 @@ void CTimerEvent_NextProgram::saveToConfig(CConfigFile *config)
 	dprintf("set EVENT_INFO_APIDS_%s to 0x%X (%p)\n",id.c_str(),eventInfo.apids,&eventInfo.apids);
 }
 //------------------------------------------------------------
-void CTimerEvent_NextProgram::Reschedule()
+void CTimerEvent_NextProgram::Reschedule(bool force)
 {
 	// clear eogId on reschedule
 	eventInfo.epgID = 0;
 	eventInfo.epg_starttime = 0;
-	CTimerEvent::Reschedule();
+	CTimerEvent::Reschedule(force);
 }
 //=============================================================
 // Remind Event

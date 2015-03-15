@@ -93,12 +93,8 @@ class CTimerdClient:private CBasicClient
 		// returns remaining mins, -1 if no sleeptimer exists
 		int getSleepTimerRemaining();
 
-
-		// add diff to existing timer event
-		bool rescheduleTimerEvent(int eventid, time_t diff);
-
-		// add diff to existing timer event
-		bool rescheduleTimerEvent(int eventid, time_t announcediff, time_t alarmdiff, time_t stoptime);
+		// reschedule existing timer event
+		bool rescheduleTimerEvent(int eventid);
 
 		// adds new sleeptimer event
 		int addSleepTimerEvent(time_t announcetime,time_t alarmtime)	// sleeptimer setzen

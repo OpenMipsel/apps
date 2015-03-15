@@ -194,22 +194,12 @@ bool CTimerdClient::modifyRecordTimerEvent(int eventid, time_t announcetime, tim
 }
 //-------------------------------------------------------------------------
 
-bool CTimerdClient::rescheduleTimerEvent(int eventid, time_t diff)
+bool CTimerdClient::rescheduleTimerEvent(int eventid)
 {
-	rescheduleTimerEvent(eventid,diff,diff,diff);
-	return true;
-}
-//-------------------------------------------------------------------------
+	CTimerdMsg::commandRescheduleTimer msgRescheduleTimer;
+	msgRescheduleTimer.eventID = eventid;
 
-bool CTimerdClient::rescheduleTimerEvent(int eventid, time_t announcediff, time_t alarmdiff, time_t stopdiff)
-{
-	CTimerdMsg::commandModifyTimer msgModifyTimer;
-	msgModifyTimer.eventID = eventid;
-	msgModifyTimer.announceTime = announcediff;
-	msgModifyTimer.alarmTime = alarmdiff;
-	msgModifyTimer.stopTime = stopdiff;
-
-	send(CTimerdMsg::CMD_RESCHEDULETIMER, (char*) &msgModifyTimer, sizeof(msgModifyTimer));
+	send(CTimerdMsg::CMD_RESCHEDULETIMER, (char*) &msgRescheduleTimer, sizeof(msgRescheduleTimer));
 
 	CTimerdMsg::responseStatus response;
 	receive_data((char*)&response, sizeof(response));

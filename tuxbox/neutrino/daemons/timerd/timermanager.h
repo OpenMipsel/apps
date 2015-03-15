@@ -63,7 +63,7 @@ class CTimerEvent
 
 	static int remain_min(const time_t t) {return (t - time(NULL)) / 60;};
 	void printEvent(void);
-	virtual void Reschedule();
+	virtual void Reschedule(bool force = false);
 
 	virtual void fireEvent(){};
 	virtual void stopEvent(){};
@@ -133,7 +133,7 @@ class CTimerEvent_Record : public CTimerEvent
 	virtual void announceEvent();
 	virtual void stopEvent();
 	virtual void saveToConfig(CConfigFile *config);
-	virtual void Reschedule();
+	virtual void Reschedule(bool force = false);
 	virtual void getEpgId();
 	virtual void Refresh();
 };
@@ -175,7 +175,7 @@ class CTimerEvent_NextProgram : public CTimerEvent
 	virtual void fireEvent();
 	virtual void announceEvent();
 	virtual void saveToConfig(CConfigFile *config);
-	virtual void Reschedule();
+	virtual void Reschedule(bool force = false);
 };
 
 class CTimerEvent_Remind : public CTimerEvent
@@ -243,7 +243,7 @@ public:
 //	int modifyEvent(int eventID, time_t announceTime, time_t alarmTime, time_t stopTime, uint repeatcount, CTimerd::CTimerEventRepeat evrepeat = CTimerd::TIMERREPEAT_ONCE);
 	int modifyEvent(int eventID, time_t announceTime, time_t alarmTime, time_t stopTime, uint repeatcount, CTimerd::CTimerEventRepeat evrepeat, CTimerd::responseGetTimer& data);
 	int modifyEvent(int eventID, unsigned char apids);
-	int rescheduleEvent(int eventID, time_t announceTime, time_t alarmTime, time_t stopTime);
+	int rescheduleEvent(int eventID);
 	void saveEventsToConfig();
 	void loadEventsFromConfig();
 	bool shutdown();

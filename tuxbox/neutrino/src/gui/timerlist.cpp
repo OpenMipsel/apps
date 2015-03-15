@@ -504,7 +504,8 @@ int CTimerList::show()
 		}
 		else if (msg == CRCInput::RC_blue && !timerlist.empty())
 		{
-			update = skipTimer();
+			// skip timer
+			update = Timer->rescheduleTimerEvent(timerlist[selected].eventID);
 		}
 		else if (CRCInput::isNumeric(msg))
 		{
@@ -1147,89 +1148,6 @@ int CTimerList::newTimer()
 		delete toDelete[count];
 
 	return ret;
-}
-
-bool CTimerList::skipTimer()
-{
-	CTimerd::responseGetTimer* timer = &timerlist[selected];
-	if (timer->eventRepeat != CTimerd::TIMERREPEAT_ONCE && timer->repeatCount != 1)
-	{
-		struct tm *t = localtime(&timer->alarmTime);
-		int isdst1 = t->tm_isdst;
-		switch (timer->eventRepeat)
-		{
-			case CTimerd::TIMERREPEAT_DAILY:
-				t->tm_mday++;
-				break;
-			case CTimerd::TIMERREPEAT_WEEKLY:
-				t->tm_mday += 7;
-				break;
-			case CTimerd::TIMERREPEAT_BIWEEKLY:
-				t->tm_mday += 14;
-				break;
-			case CTimerd::TIMERREPEAT_FOURWEEKLY:
-				t->tm_mday += 28;
-				break;
-			case CTimerd::TIMERREPEAT_MONTHLY:
-				t->tm_mon++;
-				break;
-			default:
-				if (timer->eventRepeat >= CTimerd::TIMERREPEAT_WEEKDAYS)
-				{
-					int weekdays = ((int)timer->eventRepeat) >> 9;
-					if (weekdays > 0)
-					{
-						bool weekday_arr[7];
-						weekday_arr[0] = ((weekdays & 0x40) > 0); //So
-						weekday_arr[1] = ((weekdays & 0x1)  > 0); //Mo
-						weekday_arr[2] = ((weekdays & 0x2)  > 0); //Di
-						weekday_arr[3] = ((weekdays & 0x4)  > 0); //Mi
-						weekday_arr[4] = ((weekdays & 0x8)  > 0); //Do
-						weekday_arr[5] = ((weekdays & 0x10) > 0); //Fr
-						weekday_arr[6] = ((weekdays & 0x20) > 0); //Sa
-						struct tm *t2 = localtime(&timer->alarmTime);
-						int day = 1;
-						for (; !weekday_arr[(t2->tm_wday + day) % 7]; day++);
-						t2->tm_mday += day;
-					}
-				}
-		}
-		time_t diff = mktime(t) - timer->alarmTime;
-		timer->alarmTime += diff;
-		t = localtime(&timer->alarmTime);
-		int isdst2 = t->tm_isdst;
-		if (isdst2 > isdst1) //change from winter to summer
-		{
-			diff -= 3600;
-			timer->alarmTime -= 3600;
-		}
-		else if (isdst1 > isdst2) //change from summer to winter
-		{
-			diff += 3600;
-			timer->alarmTime += 3600;
-		}
-		if (timer->announceTime > 0)
-			timer->announceTime += diff;
-		if (timer->stopTime > 0)
-			timer->stopTime += diff;
-		if (timer->repeatCount > 0)
-			timer->repeatCount--;
-
-		if (timer->eventType == CTimerd::TIMER_RECORD)
-		{
-			Timer->modifyRecordTimerEvent(timer->eventID, timer->announceTime, timer->alarmTime,
-						timer->stopTime, timer->eventRepeat, timer->repeatCount, timer->recordingDir);
-		}
-		else
-		{
-			Timer->modifyTimerEvent(timer->eventID, timer->announceTime, timer->alarmTime,
-						timer->stopTime, timer->eventRepeat, timer->repeatCount);
-		}
-
-		return true;
-	}
-
-	return false;
 }
 
 bool askUserOnTimerConflict(time_t announceTime, time_t stopTime)

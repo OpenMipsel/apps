@@ -88,6 +88,10 @@ class CTimerdMsg : public CBasicMessage
 		uint                       repeatCount;
 	};
 
+	struct commandRescheduleTimer
+	{
+		int   eventID;
+	};
 
 	struct commandRemind
 	{
