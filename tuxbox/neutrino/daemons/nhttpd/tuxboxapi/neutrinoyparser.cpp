@@ -843,8 +843,10 @@ std::string  CNeutrinoYParser::func_get_timer_list(CyhookHandler */*hh*/, std::s
 
 			default:{}
 		}
+		std::string show_reschedule = (timer->eventRepeat != CTimerd::TIMERREPEAT_ONCE && timer->repeatCount != 1) ? "visible" : "hidden";
 		yresult += string_printf(para.c_str(), classname, zAlarmTime, zStopTime, zRep.c_str(), zRepCount.c_str(),
-					zType.c_str(), sAddData.c_str(),timer->eventID,timer->eventID);
+					zType.c_str(), sAddData.c_str(), timer->eventID, show_reschedule.c_str(), timer->eventID,
+					timer->eventID);
 	}
 	classname = (i++&1)?'a':'b';
 
