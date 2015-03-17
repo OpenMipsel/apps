@@ -156,7 +156,7 @@
 #define HTTPD_NAME 			"nhttpd"
 #define HTTPD_STANDARD_PORT		80
 #define HTTPD_MAX_CONNECTIONS		10
-#define HTTPD_CONFIGDIR 		"/var/tuxbox/config"
+#define HTTPD_CONFIGDIR 		CONFIGDIR
 #define HTTPD_CONFIGFILE HTTPD_CONFIGDIR "/nhttpd.conf"
 #define HTTPD_REQUEST_LOG 		"/tmp/httpd_log"
 #define HTTPD_ERRORPAGE			"/Y_ErrorPage.yhtm"
@@ -165,13 +165,13 @@
 
 #define AUTHUSER			"root"
 #define AUTHPASSWORD			"dbox2"
-#define PRIVATEDOCUMENTROOT		"/share/tuxbox/neutrino/httpd-y"
+#define PRIVATEDOCUMENTROOT		DATADIR "/neutrino/httpd-y"
 #define PUBLICDOCUMENTROOT		"/var/httpd"
-#define NEUTRINO_CONFIGFILE		"/var/tuxbox/config/neutrino.conf"
+#define NEUTRINO_CONFIGFILE		CONFIGDIR "/neutrino.conf"
 #define HOSTEDDOCUMENTROOT		"/mnt/hosted"
 #define EXTRASDOCUMENTROOT		"/mnt/hosted/extras"
 #define EXTRASDOCUMENTURL		"/hosted/extras"
-#define ZAPITXMLPATH			"/var/tuxbox/config/zapit"
+#define ZAPITXMLPATH			CONFIGDIR "/zapit"
 
 #define SSL_PEMFILE			HTTPD_CONFIGDIR "/server.pem"
 #define SSL_CA_FILE			HTTPD_CONFIGDIR "/cacert.pem"
