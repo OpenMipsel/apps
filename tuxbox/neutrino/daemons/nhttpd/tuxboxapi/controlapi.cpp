@@ -116,6 +116,11 @@ void CControlAPI::compatibility_Timer(CyhookHandler *hh)
 			unsigned removeId = atoi(hh->ParamList["id"].c_str());
 			NeutrinoAPI->Timerd->removeTimerEvent(removeId);
 		}
+		else if(hh->ParamList["action"] == "reschedule")
+		{
+			unsigned rescheduleId = atoi(hh->ParamList["id"].c_str());
+			NeutrinoAPI->Timerd->rescheduleTimerEvent(rescheduleId);
+		}
 		else if(hh->ParamList["action"] == "modify")
 			doModifyTimer(hh);
 		else if(hh->ParamList["action"] == "new")
@@ -263,6 +268,14 @@ void CControlAPI::TimerCGI(CyhookHandler *hh)
 				unsigned removeId = atoi(hh->ParamList["id"].c_str());
 				NeutrinoAPI->Timerd->removeTimerEvent(removeId);
 				hh->SendOk();
+			}
+			else if (hh->ParamList["action"] == "reschedule")
+			{
+				unsigned rescheduleId = atoi(hh->ParamList["id"].c_str());
+				if (NeutrinoAPI->Timerd->rescheduleTimerEvent(rescheduleId))
+					hh->SendOk();
+				else
+					hh->SendError();
 			}
 			else if(!hh->ParamList["get"].empty())
 			{
