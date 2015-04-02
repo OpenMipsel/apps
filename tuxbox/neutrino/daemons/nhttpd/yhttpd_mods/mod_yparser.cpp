@@ -56,8 +56,8 @@ void CyParser::init(CyhookHandler *hh)
 {
 	if(HTML_DIRS[0].empty())
 	{
-		CyParser::HTML_DIRS[0]=hh->WebserverConfigList["PublicDocumentRoot"];
-		HTML_DIRS[1]=hh->WebserverConfigList["PrivatDocumentRoot"];
+		CyParser::HTML_DIRS[0]=hh->WebserverConfigList["WebsiteMain.override_directory"];
+		HTML_DIRS[1]=hh->WebserverConfigList["WebsiteMain.directory"];
 		PLUGIN_DIRS[0]=HTML_DIRS[0];
 		PLUGIN_DIRS[0].append("/scripts");
 		PLUGIN_DIRS[1]=HTML_DIRS[1];

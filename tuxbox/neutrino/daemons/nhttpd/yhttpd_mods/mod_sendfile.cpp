@@ -167,14 +167,14 @@ std::string CmodSendfile::GetFileName(CyhookHandler *hh, std::string path, std::
 	else
 		tmpfilename = path + filename;
 
-	if( access(std::string(hh->WebserverConfigList["PublicDocumentRoot"] + tmpfilename).c_str(),4) == 0)
-		tmpfilename = hh->WebserverConfigList["PublicDocumentRoot"] + tmpfilename;
-	else if( access(std::string(hh->WebserverConfigList["PublicDocumentRoot"] + tmpfilename + ".gz").c_str(),4) == 0)
-		tmpfilename = hh->WebserverConfigList["PublicDocumentRoot"] + tmpfilename + ".gz";
-	else if(access(std::string(hh->WebserverConfigList["PrivatDocumentRoot"] + tmpfilename).c_str(),4) == 0)
-		tmpfilename = hh->WebserverConfigList["PrivatDocumentRoot"] + tmpfilename;
-	else if(access(std::string(hh->WebserverConfigList["PrivatDocumentRoot"] + tmpfilename + ".gz").c_str(),4) == 0)
-		tmpfilename = hh->WebserverConfigList["PrivatDocumentRoot"] + tmpfilename + ".gz";
+	if( access(std::string(hh->WebserverConfigList["WebsiteMain.override_directory"] + tmpfilename).c_str(),4) == 0)
+		tmpfilename = hh->WebserverConfigList["WebsiteMain.override_directory"] + tmpfilename;
+	else if( access(std::string(hh->WebserverConfigList["WebsiteMain.override_directory"] + tmpfilename + ".gz").c_str(),4) == 0)
+		tmpfilename = hh->WebserverConfigList["WebsiteMain.override_directory"] + tmpfilename + ".gz";
+	else if(access(std::string(hh->WebserverConfigList["WebsiteMain.directory"] + tmpfilename).c_str(),4) == 0)
+		tmpfilename = hh->WebserverConfigList["WebsiteMain.directory"] + tmpfilename;
+	else if(access(std::string(hh->WebserverConfigList["WebsiteMain.directory"] + tmpfilename + ".gz").c_str(),4) == 0)
+		tmpfilename = hh->WebserverConfigList["WebsiteMain.directory"] + tmpfilename + ".gz";
 #ifdef Y_CONFIG_FEATUE_SENDFILE_CAN_ACCESS_ALL
 	else if(access(tmpfilename.c_str(),4) == 0)
 		;

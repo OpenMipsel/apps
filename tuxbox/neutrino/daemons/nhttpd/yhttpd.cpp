@@ -4,7 +4,6 @@
 //=============================================================================
 
 // system
-#include <cstdio>
 #include <csignal>
 #include <unistd.h>
 #include <pwd.h>
@@ -416,7 +415,7 @@ void Cyhttpd::ReadConfig(void)
 	log_level_printf(3,"ReadConfig Start\n");
 	CConfigFile *Config = new CConfigFile(',');
 	bool have_config = false;
-	if(access(HTTPD_CONFIGFILE,4) == 0)
+	if(access(HTTPD_CONFIGFILE, R_OK) == 0)
 		have_config = true;
 	Config->loadConfig(HTTPD_CONFIGFILE);
 	// convert old config files
@@ -435,10 +434,6 @@ void Cyhttpd::ReadConfig(void)
 			Config->setString("WebsiteMain.directory", OrgConfig.getString("PrivatDocRoot", PRIVATEDOCUMENTROOT));
 			if(!OrgConfig.getString("PublicDocRoot", "").empty())
 				Config->setString("WebsiteMain.override_directory", OrgConfig.getString("PublicDocRoot", PRIVATEDOCUMENTROOT));
-			if(!OrgConfig.getString("HostedDocRoot", "").empty())
-				Config->setString("WebsiteMain.special_locations", "/hosted/="+OrgConfig.getString("HostedDocRoot", PRIVATEDOCUMENTROOT));
-			if(!OrgConfig.getString("HostedDocRoot", "").empty())
-				Config->setString("Tuxbox.HostedDocumentRoot", OrgConfig.getString("HostedDocRoot", PRIVATEDOCUMENTROOT));
 			// mod_auth
 			Config->setString("mod_auth.username", OrgConfig.getString("AuthUser", AUTHUSER));
 			Config->setString("mod_auth.password", OrgConfig.getString("AuthPassword", AUTHPASSWORD));
@@ -450,11 +445,21 @@ void Cyhttpd::ReadConfig(void)
 			Config->saveConfig(HTTPD_CONFIGFILE);
 
 		}
+		// Add Defaults for Version2
 		if (Config->getInt32("configfile.version") < 2)
 		{
 			Config->setString("mod_sendfile.mime_types", HTTPD_SENDFILE_EXT);
 			Config->setInt32("configfile.version", CONF_VERSION);
 			Config->setString("mod_sendfile.sendAll","false");
+			Config->saveConfig(HTTPD_CONFIGFILE);
+		}
+		// Add Defaults for Version 4
+		if (Config->getInt32("configfile.version") < 4) {
+			Config->setInt32("configfile.version", CONF_VERSION);
+			Config->setString("Language.selected", HTTPD_DEFAULT_LANGUAGE);
+			Config->setString("Language.directory", HTTPD_LANGUAGEDIR);
+			if (Config->getString("WebsiteMain.hosted_directory", "").empty())
+				Config->setString("WebsiteMain.hosted_directory", HOSTEDDOCUMENTROOT);
 			Config->saveConfig(HTTPD_CONFIGFILE);
 		}
 	}
@@ -473,9 +478,9 @@ void Cyhttpd::ReadConfig(void)
 	webserver->conf_no_keep_alive_ips = Config->getStringVector("server.no_keep-alive_ips");
 
 	// MainSite
-	ConfigList["PrivatDocumentRoot"]= Config->getString("WebsiteMain.directory", PRIVATEDOCUMENTROOT);
-	ConfigList["PublicDocumentRoot"]= Config->getString("WebsiteMain.override_directory", PUBLICDOCUMENTROOT);
-	ConfigList["HostedDocumentRoot"]= Config->getString("Tuxbox.HostedDocumentRoot", HOSTEDDOCUMENTROOT);
+	ConfigList["WebsiteMain.directory"] = Config->getString("WebsiteMain.directory", PRIVATEDOCUMENTROOT);
+	ConfigList["WebsiteMain.override_directory"] = Config->getString("WebsiteMain.override_directory", PUBLICDOCUMENTROOT);
+	ConfigList["WebsiteMain.hosted_directory"] = Config->getString("WebsiteMain.hosted_directory", HOSTEDDOCUMENTROOT);
 #ifdef Y_CONFIG_USE_OPEN_SSL
 	ConfigList["SSL"]		= Config->getString("WebsiteMain.ssl", "false");
 	ConfigList["SSL_pemfile"]	= Config->getString("WebsiteMain.ssl_pemfile", SSL_PEMFILE);
@@ -490,6 +495,9 @@ void Cyhttpd::ReadConfig(void)
 	ConfigList["server.group_name"]= Config->getString("server.group_name", "");
 	ConfigList["server.chroot"]= Config->getString("server.chroot", "");
 
+	// language
+	ConfigList["Language.directory"] = Config->getString("Language.directory", HTTPD_LANGUAGEDIR);
+	ConfigList["Language.selected"] = Config->getString("Language.selected", HTTPD_DEFAULT_LANGUAGE);
 
 	// Read App specifig settings by Hook
 	CyhookHandler::Hooks_ReadConfig(Config, ConfigList);

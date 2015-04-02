@@ -38,7 +38,7 @@
 #define HTTPD_NAME 		"yhttpd"			// Webserver name (can be overloaded)
 #define YHTTPD_NAME 		"yhttpd_core"			// Webserver name (Name of yhttpd-core!)
 #define AUTH_NAME_MSG		"yhhtpd"			// Name in Authentication Dialogue
-#define CONF_VERSION            3                               // Version of yhttpd-conf file
+#define CONF_VERSION            4                               // Version of yhttpd-conf file
 
 #define HTTPD_KEEPALIVE_TIMEOUT	500000				// Timeout for Keep-Alive in mircoseconds
 //=============================================================================
@@ -107,6 +107,8 @@
 #define HTTPD_ERRORPAGE			"/Y_ErrorPage.yhtm"
 #define HTTPD_SENDFILE_EXT		"htm:text/html,html:text/html,xml:text/xml,txt:text/plain,jpg:image/jpeg,jpeg:image/jpeg,gif:image/gif,png:image/png,bmp:image/bmp,css:text/css,js:text/plain,img:application/octet-stream,ico:image/x-icon,m3u:application/octet-stream,tar:application/octet-stream"
 #define HTTPD_SENDFILE_ALL		false
+#define HTTPD_LANGUAGEDIR 		"languages"
+#define HTTPD_DEFAULT_LANGUAGE 	"English"
 
 #define AUTHUSER			"test"
 #define AUTHPASSWORD			"test1"
@@ -132,6 +134,8 @@
 #define HTTPD_ERRORPAGE			"/Y_ErrorPage.yhtm"
 #define HTTPD_SENDFILE_EXT		"htm:text/html,html:text/html,xml:text/xml,txt:text/plain,jpg:image/jpeg,jpeg:image/jpeg,gif:image/gif,png:image/png,bmp:image/bmp,css:text/css,js:text/plain,img:application/octet-stream,ico:image/x-icon,m3u:application/octet-stream,tar:application/octet-stream"
 #define HTTPD_SENDFILE_ALL		"false"
+#define HTTPD_LANGUAGEDIR 		"languages"
+#define HTTPD_DEFAULT_LANGUAGE 	"English"
 
 #define AUTHUSER			"test"
 #define AUTHPASSWORD			"test1"
@@ -162,6 +166,8 @@
 #define HTTPD_ERRORPAGE			"/Y_ErrorPage.yhtm"
 #define HTTPD_SENDFILE_EXT		"htm:text/html,html:text/html,xml:text/xml,txt:text/plain,jpg:image/jpeg,jpeg:image/jpeg,gif:image/gif,png:image/png,bmp:image/bmp,css:text/css,js:text/plain,img:application/octet-stream,ico:image/x-icon,m3u:application/octet-stream,tar:application/octet-stream,gz:text/x-gzip"
 #define HTTPD_SENDFILE_ALL		"false"
+#define HTTPD_LANGUAGEDIR 		"languages"
+#define HTTPD_DEFAULT_LANGUAGE 	"English"
 
 #define AUTHUSER			"root"
 #define AUTHPASSWORD			"dbox2"
@@ -197,6 +203,8 @@
 #define HTTPD_ERRORPAGE			"/Y_ErrorPage.yhtm"
 #define HTTPD_SENDFILE_EXT		"htm:text/html,html:text/html,xml:text/xml,txt:text/plain,jpg:image/jpeg,jpeg:image/jpeg,gif:image/gif,png:image/png,bmp:image/bmp,css:text/css,js:text/plain,img:application/octet-stream,ico:image/x-icon,m3u:application/octet-stream,tar:application/octet-stream"
 #define HTTPD_SENDFILE_ALL		"false"
+#define HTTPD_LANGUAGEDIR 		"languages"
+#define HTTPD_DEFAULT_LANGUAGE 	"English"
 
 #define AUTHUSER			"root"
 #define AUTHPASSWORD			"oxmox"

@@ -53,9 +53,9 @@ void CControlAPI::init(CyhookHandler *hh)
 {
 	if(PLUGIN_DIRS[0].empty())
 	{	// given in nhttpd.conf
-		PLUGIN_DIRS[0]=hh->WebserverConfigList["PublicDocumentRoot"];
+		PLUGIN_DIRS[0]=hh->WebserverConfigList["WebsiteMain.override_directory"];
 		PLUGIN_DIRS[0].append("/scripts");
-		PLUGIN_DIRS[1]=hh->WebserverConfigList["PrivatDocumentRoot"];
+		PLUGIN_DIRS[1]=hh->WebserverConfigList["WebsiteMain.directory"];
 		PLUGIN_DIRS[1].append("/scripts");
 		PLUGIN_DIRS[2]="/var/tuxbox/plugins";
 		PLUGIN_DIRS[3]=PLUGINDIR;
