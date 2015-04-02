@@ -132,7 +132,7 @@ void CmodCache::AddToCache(CyhookHandler */*hh*/, std::string url, std::string c
 			CacheList[url].mime_type = mime_type;
 			CacheList[url].category = category;
 			CacheList[url].created = time(NULL);
-			std::string test = CacheList[url].filename;
+//			std::string test = CacheList[url].filename;
 		}
 		fflush(fd);							// flush and close file
 		fclose(fd);

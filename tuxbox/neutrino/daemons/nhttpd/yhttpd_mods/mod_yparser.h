@@ -88,6 +88,8 @@ private:
 	std::string func_get_config_data(CyhookHandler *hh, std::string para);
 	std::string func_do_reload_httpd_config(CyhookHandler *hh, std::string para);
 	std::string func_change_httpd(CyhookHandler *hh, std::string para);
+	std::string func_get_languages_as_dropdown(CyhookHandler *hh, std::string para);
+	std::string func_set_language(CyhookHandler *, std::string para);
 
 	// helpers
 	std::string YWeb_cgi_get_ini(CyhookHandler *hh, std::string filename, std::string varname, std::string yaccess);

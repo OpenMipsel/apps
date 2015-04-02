@@ -14,5 +14,10 @@ noinst_LIBRARIES = libyhttpd.a
 
 libyhttpd_a_SOURCES = \
 	ylogging.cpp helper.cpp \
-	ywebserver.cpp yconnection.cpp yrequest.cpp yresponse.cpp yhook.cpp ysocket.cpp
-
+	ywebserver.cpp \
+	yconnection.cpp \
+	yrequest.cpp \
+	yresponse.cpp \
+	yhook.cpp \
+	ysocket.cpp \
+	ylanguage.cpp

@@ -12,6 +12,7 @@
 // yhttpd
 #include "yconfig.h"
 #include "ylogging.h"
+#include "ylanguage.h"
 #include "yhook.h"
 
 #ifdef Y_CONFIG_USE_YPARSER
@@ -95,6 +96,11 @@ static void sig_catch(int msignal)
 	}
 }
 
+//-----------------------------------------------------------------------------
+void yhttpd_reload_config() {
+	if (yhttpd)
+		yhttpd->ReadConfig();
+}
 //-----------------------------------------------------------------------------
 // Main Entry
 //-----------------------------------------------------------------------------
@@ -201,6 +207,7 @@ Cyhttpd::~Cyhttpd()
 {
 	if(webserver)
 		delete webserver;
+	CLanguage::deleteInstance();
 	webserver = NULL;
 }
 
@@ -498,6 +505,7 @@ void Cyhttpd::ReadConfig(void)
 	// language
 	ConfigList["Language.directory"] = Config->getString("Language.directory", HTTPD_LANGUAGEDIR);
 	ConfigList["Language.selected"] = Config->getString("Language.selected", HTTPD_DEFAULT_LANGUAGE);
+	yhttpd->ReadLanguage();
 
 	// Read App specifig settings by Hook
 	CyhookHandler::Hooks_ReadConfig(Config, ConfigList);
@@ -507,4 +515,14 @@ void Cyhttpd::ReadConfig(void)
 		Config->saveConfig(HTTPD_CONFIGFILE);
 	log_level_printf(3,"ReadConfig End\n");
 	delete Config;
+}
+//-----------------------------------------------------------------------------
+// Read Webserver Configurationfile for languages
+//-----------------------------------------------------------------------------
+void Cyhttpd::ReadLanguage(void) {
+	// Init Class vars
+	CLanguage *lang = CLanguage::getInstance();
+	log_level_printf(3, "ReadLanguage:%s\n",
+			ConfigList["Language.selected"].c_str());
+	lang->setLanguage(ConfigList["Language.selected"]);
 }
