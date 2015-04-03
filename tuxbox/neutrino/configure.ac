@@ -271,6 +271,7 @@ daemons/Makefile
 daemons/nhttpd/Makefile
 daemons/nhttpd/web/Makefile
 daemons/nhttpd/web/images/Makefile
+daemons/nhttpd/web/languages/Makefile
 daemons/nhttpd/web/scripts/Makefile
 daemons/nhttpd/web/styles/Makefile
 daemons/nhttpd/tuxboxapi/Makefile
