@@ -479,7 +479,7 @@ void Cyhttpd::ReadConfig(void)
 	// informational use
 	ConfigList["WebsiteMain.port"]= itoa(Config->getInt32("WebsiteMain.port", HTTPD_STANDARD_PORT));
 	ConfigList["webserver.threading"]= Config->getString("webserver.threading", "true");
-	ConfigList["configfile.version"]= Config->getInt32("configfile.version", CONF_VERSION);
+	ConfigList["configfile.version"]= itoa(Config->getInt32("configfile.version", CONF_VERSION));
 	ConfigList["server.log.loglevel"]= itoa(Config->getInt32("server.log.loglevel", 0));
 	ConfigList["server.no_keep-alive_ips"]= Config->getString("server.no_keep-alive_ips", "");
 	webserver->conf_no_keep_alive_ips = Config->getStringVector("server.no_keep-alive_ips");
