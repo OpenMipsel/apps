@@ -262,13 +262,14 @@ void CyParser::ParseAndSendFile(CyhookHandler *hh)
 	else
 	{
 		hh->addResult(yresult,HANDLED_READY);
-		if(!ycgi_vars["cancache"].empty())
+/*		TEMPORARY DISABLED  //
+		if(!ycgi_vars["cancache"].empty()) 
 		{
 			hh->HookVarList["CacheCategory"]=ycgi_vars["cancache"];
 			hh->HookVarList["CacheMimeType"]= hh->ResponseMimeType;
 			hh->status = HANDLED_CONTINUE;
 		}
-	}
+*/	}
 }
 
 //=============================================================================
