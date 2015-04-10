@@ -379,10 +379,10 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 				channel->name,
 				(channel->service_type == ST_NVOD_REFERENCE_SERVICE) ? " (NVOD)" : "",
 				channel->channel_id,
-				((NeutrinoAPI->ChannelListEvents[channel->channel_id]) ? "<img src=\"/images/elist.gif\" alt=\"Programmvorschau\" style=\"border: 0px\" />" : ""));
+				((NeutrinoAPI->ChannelListEvents[channel->channel_id]) ? "<img src=\"/images/elist.gif\" alt=\"{=L:9800=}\" style=\"border: 0px\" />" : ""));
 
 		if (channel->channel_id == current_channel)
-			yresult += string_printf("\n&nbsp;&nbsp;<a href=\"javascript:do_streaminfo()\"><img src=\"/images/streaminfo.png\" alt=\"Streaminfo\" style=\"border: 0px\" /></a>");
+			yresult += string_printf("\n&nbsp;&nbsp;<a href=\"javascript:do_streaminfo()\"><img src=\"/images/streaminfo.png\" alt=\"{=L:9801=}\" style=\"border: 0px\" /></a>");
 
 		yresult += string_printf("</td></tr></table>\n</td>\n</tr>\n");
 
@@ -440,7 +440,7 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 
 			yresult += string_printf("<tr><td class=\"%cepg\">",classname);
 			yresult += string_printf("%s&nbsp;%s&nbsp;"
-			                "<span style=\"font-size: 8pt; white-space: nowrap\">(%ld von %d min, %d%%)</span>"
+			                "<span style=\"font-size: 8pt; white-space: nowrap\">(%ld {=L:9802=} %d {=L:9803=}, %d%%)</span>"
 					, timestr.c_str()
 					, event->description.c_str()
 					, (time(NULL) - event->startTime)/60
@@ -683,9 +683,9 @@ std::string  CNeutrinoYParser::func_get_current_stream_info(CyhookHandler *hh, s
 	hh->ParamList["tsid"] = itoh(serviceinfo.tsid);
 	hh->ParamList["vpid"] = itoh(serviceinfo.vpid);
 	hh->ParamList["apid"] = itoh(serviceinfo.apid);
-	hh->ParamList["vtxtpid"] = (serviceinfo.vtxtpid != 0)?itoh(serviceinfo.vtxtpid):"nicht verf&uuml;gbar";
-	hh->ParamList["pmtpid"] = (serviceinfo.pmtpid != 0)?itoh(serviceinfo.pmtpid):"nicht verf&uuml;gbar";
-	hh->ParamList["pcrpid"] = (serviceinfo.pcrpid != 0)?itoh(serviceinfo.pcrpid):"nicht verf&uuml;gbar";
+	hh->ParamList["vtxtpid"] = (serviceinfo.vtxtpid != 0)?itoh(serviceinfo.vtxtpid):"{=L:9804=}";
+	hh->ParamList["pmtpid"] = (serviceinfo.pmtpid != 0)?itoh(serviceinfo.pmtpid):"{=L:9804=}";
+	hh->ParamList["pcrpid"] = (serviceinfo.pcrpid != 0)?itoh(serviceinfo.pcrpid):"{=L:9804=}";
 	if (serviceinfo.polarisation != 2) /* only satellite has polarisation */
 	{
 		hh->ParamList["tsfrequency"] = string_printf("%d.%03d MHz", serviceinfo.tsfrequency / 1000, serviceinfo.tsfrequency % 1000);
@@ -789,7 +789,7 @@ std::string  CNeutrinoYParser::func_get_timer_list(CyhookHandler */*hh*/, std::s
 			{
 				sAddData = NeutrinoAPI->GetServiceName(timer->channel_id);
 				if (sAddData.empty())
-					sAddData = NeutrinoAPI->Zapit->isChannelTVChannel(timer->channel_id) ? "Unbekannter TV-Kanal" : "Unbekannter Radiokanal";
+					sAddData = NeutrinoAPI->Zapit->isChannelTVChannel(timer->channel_id) ? "{=L:9805=}" : "{=L:9806=}";
 
 				if( timer->apids != TIMERD_APIDS_CONF)
 				{
@@ -829,9 +829,9 @@ std::string  CNeutrinoYParser::func_get_timer_list(CyhookHandler */*hh*/, std::s
 			{
 				sAddData = "Standby: ";
 				if(timer->standby_on)
-					sAddData+= "An";
+					sAddData+= "{=L:0031=}";
 				else
-					sAddData+="Aus";
+					sAddData+="{=L:0032=}";
 			}
 			break;
 			case CTimerd::TIMER_REMIND :
