@@ -146,6 +146,7 @@ const CControlAPI::TyCgiCall CControlAPI::yCgiCallList[]=
 	{"epgsearch",		&CControlAPI::EpgSearchTXTCGI,	""},
 	{"epgsearchxml",	&CControlAPI::EpgSearchXMLCGI,	""},
 	{"zapto", 		&CControlAPI::ZaptoCGI,		"text/plain"},
+	{"signal", 		&CControlAPI::SignalInfoCGI,			"text/plain"},
 	{"getonidsid", 		&CControlAPI::GetChannel_IDCGI,	"text/plain"},
 	// boxcontrol - system
 	{"standby", 		&CControlAPI::StandbyCGI,	"text/plain"},
@@ -1787,6 +1788,43 @@ void CControlAPI::SendChannelList(CyhookHandler *hh)
 				" %s\n",
 				channel->channel_id,
 				channel->name);
+}
+
+//-----------------------------------------------------------------------------
+void CControlAPI::SignalInfoCGI(CyhookHandler *hh)
+{
+	CZapitClient::responseFESignal s;
+	NeutrinoAPI->Zapit->getFESignal(s);
+
+		bool parame_empty = false;
+
+		if (hh->ParamList["1"].empty())
+			parame_empty = true;
+
+		if ( parame_empty || (hh->ParamList["1"] == "sig") ){
+			signal.sig = s.sig & 0xFFFF;
+			unsigned int sig = signal.sig * 100 / 65535;
+			if (parame_empty)
+				hh->printf("SIG: ");
+			hh->printf("%3u\n", sig);
+		}
+		if ( parame_empty || (hh->ParamList["1"] == "snr") ){
+			signal.snr = s.snr & 0xFFFF;
+			unsigned int snr = signal.snr * 100 / 65535;
+			if (parame_empty)
+				hh->printf("SNR: ");
+			hh->printf("%3u\n", snr);
+		}
+		if ( parame_empty || (hh->ParamList["1"] == "ber") ){
+			signal.ber = (s.ber < 0x3FFFF) ? s.ber : 0x3FFFF;
+			unsigned int ber = signal.ber / 2621;
+			if ((signal.ber > 0) && (signal.ber < 2621))
+				ber = 1;
+			if (parame_empty)
+				hh->printf("BER: ");
+			hh->printf("%3u\n", ber);
+		}
+
 }
 
 //-----------------------------------------------------------------------------

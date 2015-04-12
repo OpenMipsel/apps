@@ -28,6 +28,12 @@ private:
 
 	int rc_send(int ev, unsigned int code, unsigned int value);
 
+	struct feSignal {
+		unsigned long sig;
+		unsigned long ber;
+		unsigned long snr;
+	} signal;
+
 	// send functions for ExecuteCGI (controld api)
 	void SendEventList(CyhookHandler *hh,t_channel_id channel_id);
 	void SendFoundEvents(CyhookHandler *hh, bool xml_format = false);
@@ -100,6 +106,7 @@ private:
 	void changeBouquetCGI(CyhookHandler *hh);
 	void updateBouquetCGI(CyhookHandler *hh);
 	void build_live_url(CyhookHandler *hh);
+	void SignalInfoCGI(CyhookHandler *hh);
 
 protected:
 	static const unsigned int PLUGIN_DIR_COUNT = 5;
