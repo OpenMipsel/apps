@@ -21,6 +21,7 @@ nhttpd_LDADD = \
 	$(top_srcdir)/daemons/nhttpd/yhttpd_core/libyhttpd.a \
 	$(top_builddir)/lib/sectionsdclient/libsectionsdclient.la \
 	$(top_builddir)/lib/timerdclient/libtimerdclient.la \
+	$(top_builddir)/src/system/libneutrino_system.a \
 	@LCDDISPLAY_LIBS@ \
 	@FREETYPE_LIBS@ \
 	@CONFIGFILE_LIBS@ \
