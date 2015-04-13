@@ -34,4 +34,6 @@ int my_system(int argc, const char *arg, ...); /* argc is number of arguments in
 
 bool file_exists(const char *filename);
 
+std::string find_executable(const char *name);
+
 #endif

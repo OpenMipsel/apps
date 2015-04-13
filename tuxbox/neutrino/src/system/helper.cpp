@@ -122,3 +122,34 @@ int my_system(int argc, const char *arg, ...)
 	va_end(args);
 	return ret;
 }
+
+std::string find_executable(const char *name)
+{
+	struct stat s;
+	char *tmpPath = getenv("PATH");
+	char *p, *n, *path;
+	if (tmpPath)
+		path = strdupa(tmpPath);
+	else
+		path = strdupa("/bin:/var/bin:/sbin:/var/sbin");
+	if (name[0] == '/') { /* full path given */
+		if (!access(name, X_OK) && !stat(name, &s) && S_ISREG(s.st_mode))
+			return std::string(name);
+		return "";
+	}
+
+	p = path;
+	while (p) {
+		n = strchr(p, ':');
+		if (n)
+			*n++ = '\0';
+		if (*p != '\0') {
+			std::string tmp = std::string(p) + "/" + std::string(name);
+			const char *f = tmp.c_str();
+			if (!access(f, X_OK) && !stat(f, &s) && S_ISREG(s.st_mode))
+				return tmp;
+		}
+		p = n;
+	}
+	return "";
+}
