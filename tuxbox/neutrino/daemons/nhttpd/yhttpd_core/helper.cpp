@@ -253,7 +253,7 @@ std::string encodeString(std::string decodedString)
 			if(isalnum(one_char)) 
 				*newString++ = one_char;
 			else 
-				newString += sprintf(newString, "&#%d;", (unsigned char) one_char);
+				newString += snprintf(newString, result.length(), "&#%d;", (unsigned char) one_char);
 		}
 
 		*newString='\0'; /* when done copying the string,need to terminate w/ null char */
