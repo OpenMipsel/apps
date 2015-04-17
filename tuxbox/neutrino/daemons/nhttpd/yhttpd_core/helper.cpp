@@ -239,31 +239,24 @@ std::string decodeString(std::string encodedString)
 //-----------------------------------------------------------------------------
 // HTMLEncode std::string
 //-----------------------------------------------------------------------------
-std::string encodeString(std::string decodedString)
+std::string encodeString(const std::string &decodedString)
 {
-	unsigned int len = sizeof(char) * decodedString.length()*5 + 1;
-	std::string result( len, '\0' ); 
-	char *newString = (char *)result.c_str();
-	char *dstring = (char *)decodedString.c_str();
-	char one_char;
-	if(len == result.length()) // got memory needed
-	{
-		while(one_char = *dstring++) /* use the null character as a loop terminator */
-		{
-			if(isalnum(one_char)) 
-				*newString++ = one_char;
-			else 
-				newString += snprintf(newString, result.length(), "&#%d;", (unsigned char) one_char);
-		}
+	std::string result="";
+	char buf[10]= {0};
 
-		*newString='\0'; /* when done copying the string,need to terminate w/ null char */
-		result.resize((unsigned int)(newString - result.c_str()), '\0');
-		return result;
-	}
-	else
+	for (unsigned int i=0; i<decodedString.length(); i++)
 	{
-		return "";
-	}
+		const char one_char = decodedString[i];
+		if (isalnum(one_char)) {
+			result += one_char;
+		} else {
+ 			snprintf(buf,sizeof(buf), "&#%d;",(unsigned char) one_char);
+ 			result +=buf;
+ 		}
+ 	}
+ 	result+='\0';
+ 	result.reserve();
+ 	return result;
 }
 
 //-----------------------------------------------------------------------------
