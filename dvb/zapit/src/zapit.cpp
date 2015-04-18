@@ -1965,7 +1965,6 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		}
 
 		uint32_t satlength;
-		char * satname;
 		xmlNodePtr search = xmlDocGetRootElement(scanInputParser)->xmlChildrenNode;
 		const char * frontendname = getFrontendName();
 		CZapitClient::responseGetSatelliteList sat;
@@ -1973,7 +1972,7 @@ bool parse_command(CBasicMessage::Header &rmsg, int connfd)
 		if (frontendname != NULL) {
 			while ((search = xmlGetNextOccurence(search, frontendname)) != NULL)
 			{
-				satname = xmlGetAttribute(search, "name");
+				const char * satname = xmlGetAttribute(search, "name");
 				strncpy(sat.satName, satname, 29);
 				sat.satName[29] = '\0';
 				sat.satPosition = satellitePositions[satname];

@@ -51,7 +51,7 @@ void cp(char * from, char * to);
 
 #define GET_ATTR(node, name, fmt, arg)                                  \
         do {                                                            \
-                char * ptr = xmlGetAttribute(node, name);               \
+                const char * ptr = xmlGetAttribute(node, name);               \
                 if ((ptr == NULL) || (sscanf(ptr, fmt, &arg) <= 0))     \
                         arg = 0;                                        \
         }                                                               \
@@ -378,15 +378,15 @@ void CBouquetManager::parseBouquetsXml(const xmlNodePtr root)
 		while ((search = xmlGetNextOccurence(search, "Bouquet")) != NULL)
 		{
 			CBouquet *newBouquet;
-			char *name = xmlGetAttribute(search, "name");
+			const char *name = xmlGetAttribute(search, "name");
 			int bnum = existsBouquet(name);
 			if (bnum != -1)
 				newBouquet = Bouquets[bnum];
 			else
 			{
 				newBouquet = addBouquet(name);
-				char* hidden = xmlGetAttribute(search, "hidden");
-				char* locked = xmlGetAttribute(search, "locked");
+				const char* hidden = xmlGetAttribute(search, "hidden");
+				const char* locked = xmlGetAttribute(search, "locked");
 				newBouquet->type = xmlGetNumericAttribute(search, "type", 16);
 				newBouquet->bouquet_id = xmlGetNumericAttribute(search, "bouquet_id", 16);
 				newBouquet->bHidden = hidden ? (strcmp(hidden, "1") == 0) : false;

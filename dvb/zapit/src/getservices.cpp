@@ -146,7 +146,7 @@ void ParseChannels(xmlNodePtr node, const t_transport_stream_id transport_stream
 		name = xmlGetAttribute(node, "name");
 		service_type = xmlGetNumericAttribute(node, "service_type", 16);
 
-		char *ptr = xmlGetAttribute(node, "action");
+		const char *ptr = xmlGetAttribute(node, "action");
 		bool remove = ptr ? (!strcmp(ptr, "remove") || !strcmp(ptr, "replace")) : false;
 		bool add    = ptr ? (!strcmp(ptr, "add")    || !strcmp(ptr, "replace")) : true;
 		if (remove) {

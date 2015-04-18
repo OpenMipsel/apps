@@ -471,7 +471,7 @@ bool CFileBrowser::readDir_vlc(const std::string & dirname, CFileList* flist)
 		if (answer_parser != NULL) {
 			xmlNodePtr element = xmlDocGetRootElement(answer_parser);
 			element = element->xmlChildrenNode;
-			char *ptr;
+			const char *ptr;
 			if (element == NULL) {
 				printf("[FileBrowser] vlc: Drive is not readable. Possibly no disc inserted\n");
 				CFile file;
@@ -590,7 +590,7 @@ and add to neutrino playlist
 		xmlDocPtr answer_parser = parseXml(answer.c_str());
 
 		if (answer_parser != NULL) {
-			char *ptr;
+			const char *ptr;
 			unsigned char xml_decode = 0;
 			xmlNodePtr element = xmlDocGetRootElement(answer_parser);
 
@@ -609,7 +609,7 @@ and add to neutrino playlist
 				file.Time = 0;
 				flist->push_back(file);
 			} else {
-				char * tunein_base = NULL;
+				const char * tunein_base = NULL;
 
 				if (xml_decode == 1) {
 					CFile file;

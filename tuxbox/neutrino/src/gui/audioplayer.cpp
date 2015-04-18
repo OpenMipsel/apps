@@ -1098,10 +1098,10 @@ void CAudioPlayerGui::scanXmlData(xmlDocPtr answer_parser, const char *nametag, 
 			neutrino_msg_data_t data;
 			g_RCInput->getMsg(&msg, &data, 0);
 			while (element && msg != CRCInput::RC_home) {
-				char *ptr = NULL;
-				char *name = NULL;
-				char *url = NULL;
-				char *type = NULL;
+				const char *ptr = NULL;
+				const char *name = NULL;
+				const char *url = NULL;
+				const char *type = NULL;
 				time_t bitrate = 0;
 				bool skip = true;
 				listPos++;

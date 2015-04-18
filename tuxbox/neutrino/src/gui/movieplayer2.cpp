@@ -831,7 +831,7 @@ int VlcGetStatus(const char *attribute)
 			element = element->xmlChildrenNode;
 			while (element)
 			{
-				char* tmp = xmlGetName(element);
+				const char* tmp = xmlGetName(element);
 				if (strcmp(tmp, attribute) == 0)
 				{
 					ret = atoi(xmlGetData(element));
@@ -3680,7 +3680,7 @@ void CMoviePlayerGui::showFileInfoVLC()
 			}
 			while (element)
 			{
-				char *data = xmlGetAttribute(element, "name");
+				const char *data = xmlGetAttribute(element, "name");
 				if (data)
 					helpbox.addLine(NEUTRINO_ICON_BUTTON_RED, data);
 				xmlNodePtr element1 = element->xmlChildrenNode;

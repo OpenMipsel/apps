@@ -724,7 +724,7 @@ int VlcGetStreamTime()
             xmlNodePtr element = xmlDocGetRootElement(answer_parser);
             element = element->xmlChildrenNode;
             while (element) {
-                  char* tmp = xmlGetName(element);
+                  const char* tmp = xmlGetName(element);
                   if (strcmp(tmp, "time") == 0) {
                      return atoi(xmlGetData(element));
                   }
@@ -756,7 +756,7 @@ int VlcGetStreamLength()
             xmlNodePtr element = xmlDocGetRootElement(answer_parser);
             element = element->xmlChildrenNode;
             while (element) {
-                  char* tmp = xmlGetName(element);
+                  const char* tmp = xmlGetName(element);
                   if (strcmp(tmp, "length") == 0) {
                      return atoi(xmlGetData(element));
                   }
@@ -4682,7 +4682,7 @@ void CMoviePlayerGui::showFileInfoVLC()
 			}
 			while (element)
 			{
-				char *data = xmlGetAttribute(element, "name");
+				const char *data = xmlGetAttribute(element, "name");
 				if (data)
 					helpbox.addLine(NEUTRINO_ICON_BUTTON_RED, data);
 				xmlNodePtr element1 = element->xmlChildrenNode;
