@@ -115,6 +115,7 @@
 #define PRIVATEDOCUMENTROOT		"/home/y/nhttpd-y"
 #define PUBLICDOCUMENTROOT		"/var/httpd"
 #define HOSTEDDOCUMENTROOT		"/mnt/hosted"
+#define HOSTEDDOCUMENTURL		"/hosted/"
 
 #define SSL_PEMFILE			HTTPD_CONFIGDIR "/server.pem"
 #define SSL_CA_FILE			HTTPD_CONFIGDIR "/cacert.pem"
@@ -142,6 +143,7 @@
 #define PRIVATEDOCUMENTROOT		"/cygdrive/d/Work/y/ws/nhttpd30/web"
 #define PUBLICDOCUMENTROOT		"/var/httpd"
 #define HOSTEDDOCUMENTROOT		"/mnt/hosted"
+#define HOSTEDDOCUMENTURL		"/hosted/"
 
 #define SSL_PEMFILE			HTTPD_CONFIGDIR "/server.pem"
 #define SSL_CA_FILE			HTTPD_CONFIGDIR "/cacert.pem"
@@ -175,6 +177,7 @@
 #define PUBLICDOCUMENTROOT		"/var/httpd"
 #define NEUTRINO_CONFIGFILE		CONFIGDIR "/neutrino.conf"
 #define HOSTEDDOCUMENTROOT		"/mnt/hosted"
+#define HOSTEDDOCUMENTURL		"/hosted/"
 #define EXTRASDOCUMENTROOT		"/mnt/hosted/extras"
 #define EXTRASDOCUMENTURL		"/hosted/extras"
 #define ZAPITXMLPATH			CONFIGDIR "/zapit"
@@ -211,6 +214,7 @@
 #define PRIVATEDOCUMENTROOT		"/tmp/web" //FIXME: Test
 #define PUBLICDOCUMENTROOT		"/var/httpd"
 #define HOSTEDDOCUMENTROOT		"/mnt/hosted"
+#define HOSTEDDOCUMENTURL		"/hosted/"
 
 #define SSL_PEMFILE			HTTPD_CONFIGDIR "/server.pem"
 #define SSL_CA_FILE			HTTPD_CONFIGDIR "/cacert.pem"

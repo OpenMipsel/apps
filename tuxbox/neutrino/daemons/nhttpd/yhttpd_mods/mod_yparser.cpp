@@ -285,19 +285,26 @@ std::string CyParser::cgi_file_parsing(CyhookHandler *hh, std::string htmlfilena
 	bool found = false;
 	std::string htmlfullfilename, yresult, html_template;
 
-	for (unsigned int i=0;i<HTML_DIR_COUNT && !found;i++)
-	{
-		htmlfullfilename = HTML_DIRS[i]+"/"+htmlfilename;
+	bool isHosted = false;
+#ifdef Y_CONFIG_USE_HOSTEDWEB
+	// for hosted webs: search in hosted_directory only
+	std::string _hosted=hh->WebserverConfigList["WebsiteMain.hosted_directory"];
+	if((hh->UrlData["path"]).compare(0,_hosted.length(),hh->WebserverConfigList["WebsiteMain.hosted_directory"]) == 0) // hosted Web ?
+		isHosted = true;
+#endif //Y_CONFIG_USE_HOSTEDWEB
+
+	char cwd[255];
+	getcwd(cwd, 254);
+	for (unsigned int i = 0; i < (isHosted ? 1 : HTML_DIR_COUNT) && !found; i++) {
+		htmlfullfilename = (isHosted ? "" : HTML_DIRS[i]) + "/" + htmlfilename;
 		std::fstream fin(htmlfullfilename.c_str(), std::fstream::in);
-		if(fin.good())
-		{
+		if (fin.good()) {
 			found = true;
 			chdir(HTML_DIRS[i].c_str()); // set working dir
 
 			// read whole file into html_template
 			std::string ytmp;
-			while (!fin.eof())
-			{
+			while (!fin.eof()) {
 				getline(fin, ytmp);
 				html_template = html_template + ytmp + "\r\n";
 			}
@@ -305,12 +312,13 @@ std::string CyParser::cgi_file_parsing(CyhookHandler *hh, std::string htmlfilena
 			fin.close();
 		}
 	}
-	if (!found)
-	{
-		printf("[CyParser] Y-cgi:template %s not found in\n",htmlfilename.c_str());
-		for (unsigned int i=0;i<HTML_DIR_COUNT;i++) {
-			printf("%s\n",HTML_DIRS[i].c_str());
-		}
+	chdir(cwd);
+	if (!found) {
+		printf("[CyParser] Y-cgi:template %s not found %s\n", htmlfilename.c_str(), isHosted ? "" : "in");
+		if (!isHosted)
+			for (unsigned int i = 0; i < HTML_DIR_COUNT; i++) {
+				printf("%s\n", HTML_DIRS[i].c_str());
+			}
 	}
 	return yresult;
 }
