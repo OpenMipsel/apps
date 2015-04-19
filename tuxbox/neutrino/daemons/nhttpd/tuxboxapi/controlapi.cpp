@@ -229,7 +229,7 @@ void CControlAPI::Execute(CyhookHandler *hh)
 	}
 
 	// send header
-	else if(std::string(yCgiCallList[index].mime_type) == "")	// decide in function
+	else if(std::string(yCgiCallList[index].mime_type).empty())	// decide in function
 		;
 	else if(std::string(yCgiCallList[index].mime_type) == "+xml")		// Parameter xml?
 		if (!hh->ParamList["xml"].empty())

@@ -139,7 +139,7 @@ void CyParser::Execute(CyhookHandler *hh)
 	}
 
 	// send header
-	if(std::string(yCgiCallList[index].mime_type) == "")		// set by self
+	if(std::string(yCgiCallList[index].mime_type).empty())		// set by self
 		;
 	else if(std::string(yCgiCallList[index].mime_type) == "+xml")		// Parameter xml?
 		if (!hh->ParamList["xml"].empty())
