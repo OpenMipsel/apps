@@ -3112,6 +3112,7 @@ else
 	//--------------------------------
 	ctx->inFd = -1;
 	mp_closeDVBDevices(ctx);
+	g_fileposition = 0L;
 
 	//-- on exit after film end this will force any --
 	//-- action in ::PlayFile() - do not remove !   --
