@@ -530,9 +530,13 @@ std::string  CNeutrinoYParser::func_get_audio_pids_as_dropdown(CyhookHandler */*
 	std::string yresult;
 	static bool init_iso=true;
 	bool idx_as_id=true;
+	unsigned int selected_apid = 0;
 	
 	if(para == "apid") 
 		idx_as_id=false;
+	else if (!para.empty()) {
+		sscanf(para.c_str(), "audio=%i:", &selected_apid);
+	}
 	if(init_iso)
 	{
 		if(initialize_iso639_map())
@@ -559,8 +563,9 @@ std::string  CNeutrinoYParser::func_get_audio_pids_as_dropdown(CyhookHandler */*
 				{
  					if(!tags[i].component.empty())
 					{
-						yresult += string_printf("<option value=%05u>%s%s</option>\r\n",
+						yresult += string_printf("<option value=%05u %s>%s%s</option>\r\n",
 							idx_as_id ? j : pids.APIDs[j].pid,
+							(j==selected_apid) ? "selected=\"selected\"" : "",
 							encodeString(tags[i].component).c_str(),
 							pids.APIDs[j].is_ac3 && tags[i].component.find("AC3") == std::string::npos ? " (AC3)": "");
 						eit_not_ok = false;
@@ -576,8 +581,9 @@ std::string  CNeutrinoYParser::func_get_audio_pids_as_dropdown(CyhookHandler */*
 					strncpy( pids.APIDs[j].desc, getISO639Description( pids.APIDs[j].desc ), desc_maxlen );
 					pids.APIDs[j].desc[desc_maxlen] = 0;
 				}
-	 			yresult += string_printf("<option value=%05u>%s%s</option>\r\n",
+	 			yresult += string_printf("<option value=%05u %s>%s%s</option>\r\n",
 					idx_as_id ? j : pids.APIDs[j].pid,
+					(j==selected_apid) ? "selected=\"selected\"" : "",
 					encodeString(std::string(pids.APIDs[j].desc)).c_str(),
 					pids.APIDs[j].is_ac3 && strstr(pids.APIDs[j].desc, "AC3") == NULL ? " (AC3)": "");
 			}
@@ -594,8 +600,9 @@ std::string  CNeutrinoYParser::func_get_audio_pids_as_dropdown(CyhookHandler */*
 				strncpy( it->desc, getISO639Description( it->desc ), desc_maxlen );
 				it->desc[desc_maxlen] = 0;
 			}
- 			yresult += string_printf("<option value=%05u>%s%s</option>\r\n",
+ 			yresult += string_printf("<option value=%05u %s>%s%s</option>\r\n",
 				idx_as_id ? i : it->pid,
+				(i==selected_apid) ? "selected=\"selected\"" : "",
 				encodeString(std::string(it->desc)).c_str(),
 				it->is_ac3 && strstr(it->desc, "AC3") == NULL ? " (AC3)": "");
 			i++;
