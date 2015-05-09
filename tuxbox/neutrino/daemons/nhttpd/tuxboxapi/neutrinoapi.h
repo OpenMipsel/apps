@@ -75,6 +75,7 @@ class CNeutrinoAPI
 
 	std::string timerEventType2Str(CTimerd::CTimerEventTypes type);
 	std::string timerEventRepeat2Str(CTimerd::CTimerEventRepeat rep);
+	std::string getLogoFile(std::string _logoURL, t_channel_id channelId);
 
 public:
 	CNeutrinoAPI();

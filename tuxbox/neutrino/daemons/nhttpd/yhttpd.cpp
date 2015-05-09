@@ -488,6 +488,28 @@ void Cyhttpd::ReadConfig(void)
 	ConfigList["WebsiteMain.directory"] = Config->getString("WebsiteMain.directory", PRIVATEDOCUMENTROOT);
 	ConfigList["WebsiteMain.override_directory"] = Config->getString("WebsiteMain.override_directory", PUBLICDOCUMENTROOT);
 	ConfigList["WebsiteMain.hosted_directory"] = Config->getString("WebsiteMain.hosted_directory", HOSTEDDOCUMENTROOT);
+
+	// Logos
+	ConfigList["Tuxbox.DisplayLogos"] = Config->getString("Tuxbox.DisplayLogos", "true");
+	// Check location of logos
+	if (Config->getString("Tuxbox.LogosURL", "").empty()) {
+#ifdef Y_CONFIG_USE_HOSTEDWEB
+		if (access((ConfigList["WebsiteMain.hosted_directory"] + "/logos").c_str(), R_OK) == 0){
+			Config->setString("Tuxbox.LogosURL", ConfigList["WebsiteMain.hosted_directory"] + "/logos");
+			have_config = false; //save config
+		}
+#endif
+		else if (access((ConfigList["WebsiteMain.override_directory"] + "/logos").c_str(), R_OK) == 0) {
+			Config->setString("Tuxbox.LogosURL", ConfigList["WebsiteMain.override_directory"] + "/logos");
+			have_config = false; //save config
+		}
+		else if (access((ConfigList["WebsiteMain.directory"] + "/logos").c_str(), R_OK) == 0){
+			Config->setString("Tuxbox.LogosURL", ConfigList["WebsiteMain.directory"] + "/logos");
+			have_config = false; //save config
+		}
+	}
+	ConfigList["Tuxbox.LogosURL"] = Config->getString("Tuxbox.LogosURL", "");
+
 #ifdef Y_CONFIG_USE_OPEN_SSL
 	ConfigList["SSL"]		= Config->getString("WebsiteMain.ssl", "false");
 	ConfigList["SSL_pemfile"]	= Config->getString("WebsiteMain.ssl_pemfile", SSL_PEMFILE);

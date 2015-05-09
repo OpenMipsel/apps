@@ -74,7 +74,6 @@ THandleStatus CNeutrinoYParser::Hook_ReadConfig(CConfigFile *Config, CStringList
 	ConfigList["ExtrasDocumentURL"]	= Config->getString("ExtrasDocURL", EXTRASDOCUMENTURL);
 //	ConfigList["NewGui"]		= Config->getString("NewGui", "true");
 	ConfigList["Zapit_XML_Path"]	= Config->getString("Zapit_XML_Path", ZAPITXMLPATH);
-        ConfigList["TUXBOX_LOGOS_URL"]= Config->getString("Tuxbox.LogosURL", TUXBOX_LOGOS_URL);
         
         if (Config->getInt32("configfile.version") < 3)
         {
@@ -99,6 +98,7 @@ const CNeutrinoYParser::TyFuncCall CNeutrinoYParser::yFuncCallList[]=
 	{"get_channels_as_dropdown",	&CNeutrinoYParser::func_get_channels_as_dropdown},
 	{"get_bouquets_with_epg",	&CNeutrinoYParser::func_get_bouquets_with_epg},
 	{"get_actual_channel_id",	&CNeutrinoYParser::func_get_actual_channel_id},
+	{"get_logo_name",		&CNeutrinoYParser::func_get_logo_name},
 	{"get_mode",			&CNeutrinoYParser::func_get_mode},
 	{"get_video_pids",		&CNeutrinoYParser::func_get_video_pids},
 	{"get_audio_pid",		&CNeutrinoYParser::func_get_radio_pid},
@@ -317,7 +317,7 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 	std::string timestr;
 	bool have_logos = false;
 	
-	if(!hh->WebserverConfigList["TUXBOX_LOGOS_URL"].empty())
+	if (!hh->WebserverConfigList["Tuxbox.LogosURL"].empty() && hh->WebserverConfigList["Tuxbox.DisplayLogos"] == "true" )
 		have_logos = true;
 	CZapitClient::BouquetChannelList::iterator channel = channellist->begin();
 	for (; channel != channellist->end(); ++channel)
@@ -330,14 +330,34 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 
 		std::string bouquetstr = (BouquetNr >= 0) ? ("&amp;bouquet=" + itoa(BouquetNr)) : "";
 		yresult += "<tr>";
-		if(have_logos)
-			yresult += string_printf("<td class=\"%c\" width=\"44\" rowspan=\"2\"><a href=\"javascript:do_zap('"
-					PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS
-					"')\"><img class=\"channel_logo\" src=\"%s/"
-					PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS
-					".gif\" alt=\"%s\"/></a></td>", classname, channel->channel_id, 
-					(hh->WebserverConfigList["TUXBOX_LOGOS_URL"]).c_str(),
-					channel->channel_id, channel->name);
+
+		if(have_logos) {
+			std::string channel_logo = NeutrinoAPI->getLogoFile(hh->WebserverConfigList["Tuxbox.LogosURL"], channel->channel_id);
+			std::string zaplink;
+			if (channel_logo.empty())
+				zaplink = channel->name;
+			else
+				zaplink = string_printf(
+						"<img class=\"channel_logo\" src=\"%s\" title=\"%s\" alt=\"%s\" />"
+						, channel_logo.c_str()
+						, channel->name
+						, channel->name
+					);
+
+			yresult += string_printf(
+					"<td class=\"%c logo_cell %s\" width=\"44\" rowspan=\"2\">"
+					"<a href=\"javascript:do_zap('"PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS"')\">"
+					"%s"
+					"</a>"
+					"</td>"
+					, classname
+					, (channel_logo.empty() ? "no_logo" : "")
+					, channel->channel_id
+					, zaplink.c_str()
+					, channel->name
+					, channel->name
+				);
+		}
 		
 		/* timer slider */
 		if(event && event->duration > 0)
@@ -466,6 +486,20 @@ std::string  CNeutrinoYParser::func_get_actual_channel_id(CyhookHandler */*hh*/,
 {
 	return string_printf(PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS,NeutrinoAPI->Zapit->getCurrentServiceID());	
 }
+
+//-------------------------------------------------------------------------
+// func: Get Logo Name
+//-------------------------------------------------------------------------
+std::string  CNeutrinoYParser::func_get_logo_name(CyhookHandler *hh, std::string channelId)
+{
+	if (hh->WebserverConfigList["Tuxbox.DisplayLogos"] == "true") {
+		t_channel_id cid;
+		if (1 == sscanf(channelId.c_str(), "%llx", &cid))
+			return NeutrinoAPI->getLogoFile(hh->WebserverConfigList["Tuxbox.LogosURL"], cid);
+	}
+	return "";
+}
+
 //-------------------------------------------------------------------------
 // y-func : get_mode (returns tv|radio|unknown)
 //-------------------------------------------------------------------------

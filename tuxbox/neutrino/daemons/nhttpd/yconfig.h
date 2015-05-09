@@ -191,8 +191,6 @@
 #define UPLOAD_TMP_FILE 		"/tmp/upload.tmp"
 #define CACHE_DIR			"/tmp/.cache"
 
-#define TUXBOX_LOGOS_URL                ""
-
 #endif
 //-----------------------------------------------------------------------------
 // Configurations for AVM FritzBox
