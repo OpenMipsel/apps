@@ -57,7 +57,6 @@ class CNetworkSetup : public CMenuTarget, CChangeObserver
 		int old_network_automatic_start;
 		std::string old_network_address;
 		std::string old_network_netmask;
-		std::string old_network_broadcast;
 		std::string old_network_nameserver;
 		std::string old_network_gateway;
 
@@ -106,9 +105,9 @@ class CNetworkSetup : public CMenuTarget, CChangeObserver
 class CDHCPNotifier : public CChangeObserver
 {
 	private:
-		CMenuForwarder* toDisable[5];
+		CMenuForwarder* toDisable[4];
 	public:
-		CDHCPNotifier( CMenuForwarder*, CMenuForwarder*, CMenuForwarder*, CMenuForwarder*, CMenuForwarder*);
+		CDHCPNotifier(CMenuForwarder*, CMenuForwarder*, CMenuForwarder*, CMenuForwarder*);
 		bool changeNotify(const neutrino_locale_t, void * data);
 };
 

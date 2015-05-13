@@ -85,29 +85,19 @@ CNetworkSetup::CNetworkSetup()
 	width = w_max (500, 100);
 	selected = -1;
 
-	network_automatic_start = networkConfig->automatic_start;
-	network_dhcp 		= networkConfig->inet_static ? NETWORK_DHCP_OFF : NETWORK_DHCP_ON;
-	network_address		= networkConfig->address;
-	network_netmask		= networkConfig->netmask;
-	network_broadcast	= networkConfig->broadcast;
-	network_nameserver	= networkConfig->nameserver;
-	network_gateway		= networkConfig->gateway;
-
-	old_network_automatic_start 	= networkConfig->automatic_start;
-	old_network_dhcp 		= networkConfig->inet_static ? NETWORK_DHCP_OFF : NETWORK_DHCP_ON;
-	old_network_address		= networkConfig->address;
-	old_network_netmask		= networkConfig->netmask;
-	old_network_broadcast		= networkConfig->broadcast;
-	old_network_nameserver		= networkConfig->nameserver;
-	old_network_gateway		= networkConfig->gateway;
-
+	network_automatic_start = old_network_automatic_start = networkConfig->automatic_start;
+	network_dhcp            = old_network_dhcp            = networkConfig->inet_static ? NETWORK_DHCP_OFF : NETWORK_DHCP_ON;
+	network_address         = old_network_address         = networkConfig->address;
+	network_netmask         = old_network_netmask         = networkConfig->netmask;
+	network_broadcast                                     = networkConfig->broadcast;
+	network_nameserver      = old_network_nameserver      = networkConfig->nameserver;
+	network_gateway         = old_network_gateway         = networkConfig->gateway;
 }
 
 CNetworkSetup::~CNetworkSetup()
 {
 
 }
-
 
 int CNetworkSetup::exec(CMenuTarget* parent, const std::string &actionKey)
 {
@@ -146,6 +136,7 @@ int CNetworkSetup::exec(CMenuTarget* parent, const std::string &actionKey)
 	
 	return res;
 }
+
 void CNetworkSetup::setBroadcast(void)
 {
 	in_addr_t na = inet_addr(network_address.c_str());
@@ -179,11 +170,9 @@ int CNetworkSetup::showNetworkSetup()
 	
 		//prepare input entries
 		CIPInput networkSettings_NetworkIP  (LOCALE_NETWORKMENU_IPADDRESS , network_address   , LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2, this);
-		CIPInput networkSettings_NetMask    (LOCALE_NETWORKMENU_NETMASK   , network_netmask   );
-		CIPInput networkSettings_Broadcast  (LOCALE_NETWORKMENU_BROADCAST , network_broadcast );
+		CIPInput networkSettings_NetMask    (LOCALE_NETWORKMENU_NETMASK   , network_netmask   , LOCALE_IPSETUP_HINT_1, LOCALE_IPSETUP_HINT_2, this);
 		CIPInput networkSettings_Gateway    (LOCALE_NETWORKMENU_GATEWAY   , network_gateway   );
 		CIPInput networkSettings_NameServer (LOCALE_NETWORKMENU_NAMESERVER, network_nameserver);
-	
 
 		//auto start
 		CMenuOptionChooser* o1 = new CMenuOptionChooser(LOCALE_NETWORKMENU_SETUPONSTARTUP, &network_automatic_start, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true);
@@ -194,11 +183,11 @@ int CNetworkSetup::showNetworkSetup()
 		CMenuForwarder *m1 = new CMenuForwarder(LOCALE_NETWORKMENU_IPADDRESS , networkConfig->inet_static, network_address   , &networkSettings_NetworkIP );
 		CMenuForwarder *m2 = new CMenuForwarder(LOCALE_NETWORKMENU_NETMASK   , networkConfig->inet_static, network_netmask   , &networkSettings_NetMask   );
 		setBroadcast();
-		CMenuForwarder *m3 = new CMenuForwarder(LOCALE_NETWORKMENU_BROADCAST , false,                      network_broadcast);
+		CMenuForwarder *m3 = new CMenuForwarder(LOCALE_NETWORKMENU_BROADCAST , false                     , network_broadcast );
 		CMenuForwarder *m4 = new CMenuForwarder(LOCALE_NETWORKMENU_GATEWAY   , networkConfig->inet_static, network_gateway   , &networkSettings_Gateway   );
 		CMenuForwarder *m5 = new CMenuForwarder(LOCALE_NETWORKMENU_NAMESERVER, networkConfig->inet_static, network_nameserver, &networkSettings_NameServer);
 		
-		CDHCPNotifier dhcpNotifier(m1,m2,m3,m4,m5);
+		CDHCPNotifier dhcpNotifier(m1,m2,m4,m5);
 		CMenuOptionChooser* o2 = new CMenuOptionChooser(LOCALE_NETWORKMENU_DHCP, &network_dhcp, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true, &dhcpNotifier);
 		
 		//paint menu items
@@ -241,7 +230,6 @@ int CNetworkSetup::showNetworkSetup()
 		ntp->addItem( ntp1);
 		ntp->addItem( ntp2);
 		ntp->addItem( ntp3);
-	
 
 	#ifdef ENABLE_GUI_MOUNT
 		CMenuWidget* networkmounts = new CMenuWidget(LOCALE_MAINSETTINGS_NETWORK, NEUTRINO_ICON_SETTINGS, width);
@@ -558,10 +546,9 @@ void CNetworkSetup::showCurrentNetworkSettings()
 
 bool CNetworkSetup::changeNotify(const neutrino_locale_t OptionName, void * /*Data*/)
 {
-	if (ARE_LOCALES_EQUAL(OptionName, LOCALE_NETWORKMENU_IPADDRESS)) {
-		setBroadcast();
-	}
-	else if(OptionName == LOCALE_NETWORKMENU_NETMASK) {
+	if (ARE_LOCALES_EQUAL(OptionName, LOCALE_NETWORKMENU_IPADDRESS) ||
+	    ARE_LOCALES_EQUAL(OptionName, LOCALE_NETWORKMENU_NETMASK))
+	{
 		setBroadcast();
 	}
 	else if (ARE_LOCALES_EQUAL(OptionName, LOCALE_NETWORKMENU_NTPSERVER) ||
@@ -573,19 +560,18 @@ bool CNetworkSetup::changeNotify(const neutrino_locale_t OptionName, void * /*Da
 	return false;
 }
 
-CDHCPNotifier::CDHCPNotifier( CMenuForwarder* a1, CMenuForwarder* a2, CMenuForwarder* a3, CMenuForwarder* a4, CMenuForwarder* a5)
+CDHCPNotifier::CDHCPNotifier(CMenuForwarder* a1, CMenuForwarder* a2, CMenuForwarder* a3, CMenuForwarder* a4)
 {
 	toDisable[0] = a1;
 	toDisable[1] = a2;
 	toDisable[2] = a3;
 	toDisable[3] = a4;
-	toDisable[4] = a5;
 }
 
 bool CDHCPNotifier::changeNotify(const neutrino_locale_t, void * data)
 {
 	CNetworkConfig::getInstance()->inet_static = ((*(int*)(data)) == CNetworkSetup::NETWORK_DHCP_OFF);
-	for(int x=0;x<5;x++)
+	for (int x = 0; x < 4; x++)
 		toDisable[x]->setActive(CNetworkConfig::getInstance()->inet_static);	
 	return false;
 }
