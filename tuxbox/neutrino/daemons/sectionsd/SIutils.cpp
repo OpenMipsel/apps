@@ -162,7 +162,7 @@ time_t changeUTCtoCtime(const unsigned char *buffer, int local_time)
 }
 
 // Thanks to tmbinc
-int saveStringToXMLfile(FILE *out, const char *c, int withControlCodes)
+int saveStringToXMLfile(FILE *out, const char *c /*, int withControlCodes*/)
 {
   if(!c)
     return 1;
@@ -178,15 +178,28 @@ int saveStringToXMLfile(FILE *out, const char *c, int withControlCodes)
 */
   for(;*c; c++) {
     switch ((unsigned char)*c) {
-      case '&':
-        fprintf(out, "&amp;");
-        break;
-      case '<':
-        fprintf(out, "&lt;");
-        break;
-      case '\"':
-        fprintf(out, "&quot;");
-	break;
+		case '<':
+			fprintf(out, "&lt;");
+			break;
+		case '>':
+			fprintf(out, "&gt;");
+			break;
+		case '&':
+			fprintf(out, "&amp;");
+			break;
+		case '\"':
+			fprintf(out, "&quot;");
+			break;
+		case '\'':
+			fprintf(out, "&apos;");
+			break;
+		case 0x0a:
+			fprintf(out,"&#x0a;");
+			break;
+		case 0x0d:
+			fprintf(out,"&#x0d;");
+			break;
+#if 0
       case 0x81:
       case 0x82:
         break;
@@ -209,6 +222,12 @@ int saveStringToXMLfile(FILE *out, const char *c, int withControlCodes)
           fprintf(out, "%c", *c);
         else
           fprintf(out, "&#%d;", *c);
+#else
+		default:
+			if ((unsigned char)*c<32)
+				break;
+			fprintf(out, "%c", *c);
+#endif
      } // case
 
   } // for
