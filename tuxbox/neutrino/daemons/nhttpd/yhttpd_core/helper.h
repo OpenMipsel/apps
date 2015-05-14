@@ -5,9 +5,9 @@
 
 #ifndef __yhttpd_helper_h__
 #define __yhttpd_helper_h__
-// c
-#include <ctime>
+
 // c++
+#include <time.h>
 #include <string>
 #include <vector>
 #include "ytypes_globals.h"
@@ -36,7 +36,7 @@ bool ySplitStringExact(std::string str, std::string delimiter, std::string& left
 bool ySplitStringLast(std::string str, std::string delimiter, std::string& left, std::string& right);
 CStringArray ySplitStringVector(std::string str, std::string delimiter);
 bool nocase_compare (char c1, char c2);
-std::string timeString(time_t time);
+std::string timeString(const time_t *time);
 bool write_to_file(std::string filename, std::string content);
 
 #endif /* __yhttpd_helper_h__ */

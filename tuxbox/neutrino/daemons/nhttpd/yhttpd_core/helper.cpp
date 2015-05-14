@@ -64,11 +64,12 @@ std::string itoa(unsigned int conv)
 //-------------------------------------------------------------------------
 // convert timer_t to "<hour>:<minutes>" String
 //-------------------------------------------------------------------------
-std::string timeString(time_t time)
+std::string timeString(const time_t *time)
 {
 	char tmp[7]={'\0'};
-	struct tm *tm = localtime(&time);
-	if (strftime(tmp, 6, "%H:%M", tm))
+	struct tm t;
+	localtime_r(time, &t);
+	if (strftime(tmp, 6, "%H:%M", &t))
 		return std::string(tmp);
 	else
 		return std::string("??:??");

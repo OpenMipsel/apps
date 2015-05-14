@@ -157,12 +157,12 @@ void CmWebLog::AddLogEntry_CLF(CyhookHandler *hh)
 	int s_status = hh->httpStatus;
 	int bytes	= hh->GetContentLength();
 	
-	struct tm *time_now;
+	struct tm time_now;
 	time_t now = time(NULL);
 	char request_time[80];
 
-	time_now = localtime(&now);
-	strftime(request_time, 80, "[%d/%b/%Y:%H:%M:%S]", time_now);
+	localtime_r(&now, &time_now);
+	strftime(request_time, 80, "[%d/%b/%Y:%H:%M:%S]", &time_now);
 	
 	printf("%s - - %s \"%s\" %d %d\n", 
 		c_ip.c_str(),
@@ -331,18 +331,18 @@ void CmWebLog::AddLogEntry_ELF(CyhookHandler *hh)
 	int bytes	= hh->GetContentLength();
 	int cached = (hh->HookVarList["CacheCategory"].empty()) ? 0 : 1;
 	
-	struct tm *time_now;
+	struct tm time_now;
 	time_t now = time(NULL);
-	time_now = localtime(&now);
+	localtime_r(&now, &time_now);
 
 	char request_time[80];
-	strftime(request_time, 80, "[%d/%b/%Y:%H:%M:%S]", time_now);
+	strftime(request_time, 80, "[%d/%b/%Y:%H:%M:%S]", &time_now);
 
 	char _date[11];
-	strftime(_date, 11, "%Y-%m-%d", time_now);
+	strftime(_date, 11, "%Y-%m-%d", &time_now);
 
 	char _time[11];
-	strftime(_time, 11, "%H:%M:%S", time_now);
+	strftime(_time, 11, "%H:%M:%S", &time_now);
 
 	std::string time_taken_request = hh->HookVarList["enlapsed_request"]; 
 	std::string time_taken_response = hh->HookVarList["enlapsed_response"];

@@ -504,12 +504,13 @@ void CControlAPI::GetDateCGI(CyhookHandler *hh)
 	if (hh->ParamList.empty())
 	{
 		//paramlos
-		char *timestr = new char[50];
-		struct timeval tm;
-		gettimeofday(&tm, NULL);
-		strftime(timestr, 20, "%d.%m.%Y\n", localtime(&tm.tv_sec) );
-		hh->Write(timestr);
-		delete[] timestr;
+		char tmp[16];
+		struct timeval tv;
+		struct tm tm_t;
+		gettimeofday(&tv, NULL);
+		localtime_r(&tv.tv_sec, &tm_t); 
+		strftime(tmp, sizeof(tmp), "%d.%m.%Y\n", &tm_t);
+		hh->Write(tmp);
 	}
 	else
 		hh->SendError();
@@ -526,11 +527,11 @@ void CControlAPI::GetTimeCGI(CyhookHandler *hh)
 	if (hh->ParamList.empty())
 	{
 		//paramlos
-		char *timestr = new char[50];
-		struct tm *tm = localtime(&now);
-		strftime(timestr, 20, "%H:%M:%S\n", tm );
-		hh->Write(timestr);
-		delete[] timestr;
+		char tmp[16];
+		struct tm t;
+		localtime_r(&now, &t);
+		strftime(tmp, sizeof(tmp), "%H:%M:%S\n", &t);
+		hh->Write(tmp);
 	}
 	else if (hh->ParamList["1"].compare("rawtime") == 0)
 		hh->printf("%ld\n",now);
@@ -1074,7 +1075,7 @@ void CControlAPI::GetBouquetCGI(CyhookHandler *hh)
 						std::string timestr;
 						if (currentNextInfo.flags & CSectionsdClient::epgflags::has_current)
 						{
-							timestr = timeString(currentNextInfo.current_zeit.startzeit);
+							timestr = timeString(&currentNextInfo.current_zeit.startzeit);
 							time_t now = time(NULL);
 							int percentage = 100;
 							if (currentNextInfo.current_zeit.dauer > 0)
@@ -1098,7 +1099,7 @@ void CControlAPI::GetBouquetCGI(CyhookHandler *hh)
 						}
 						if (currentNextInfo.flags & CSectionsdClient::epgflags::has_next)
 						{
-							timestr = timeString(currentNextInfo.next_zeit.startzeit);
+							timestr = timeString(&currentNextInfo.next_zeit.startzeit);
 							hh->WriteLn("\t<secondEPG>");
 							hh->printf("\t\t<eventid>%llu</eventid>\n"
 								"\t\t<startTime>%s</startTime>\n"
@@ -1321,16 +1322,17 @@ void CControlAPI::EpgCGI(CyhookHandler *hh)
 				hh->printf("\t<eventid_hex>%llx</eventid_hex>\r\n", eventIterator->eventID);
 				hh->printf("\t<start_sec>%ld</start_sec>\r\n", eventIterator->startTime);
 				char zbuffer[25] = {0};
-				struct tm *mtime = localtime(&eventIterator->startTime);
-				strftime(zbuffer,20,"%H:%M",mtime);
+				struct tm mtime_t;
+				localtime_r(&eventIterator->startTime, &mtime_t);
+				strftime(zbuffer,20,"%H:%M", &mtime_t);
 				hh->printf("\t<start_t>%s</start_t>\r\n", zbuffer);
 				memset(zbuffer, 0, 25);
-				strftime(zbuffer,20,"%d.%m.%Y",mtime);
+				strftime(zbuffer,20,"%d.%m.%Y", &mtime_t);
 				hh->printf("\t<date>%s</date>\r\n", zbuffer);
 				hh->printf("\t<stop_sec>%ld</stop_sec>\r\n", eventIterator->startTime+eventIterator->duration);
 				long _stoptime = eventIterator->startTime+eventIterator->duration;
-				mtime = localtime(&_stoptime);
-				strftime(zbuffer,20,"%H:%M",mtime);
+				localtime_r(&_stoptime, &mtime_t);
+				strftime(zbuffer,20,"%H:%M", &mtime_t);
 				hh->printf("\t<stop_t>%s</stop_t>\r\n", zbuffer);
 				hh->printf("\t<duration_min>%d</duration_min>\r\n", (int)(eventIterator->duration/60));
 				hh->printf("\t<description><![CDATA[%s]]></description>\r\n", eventIterator->description.c_str());
@@ -1723,7 +1725,8 @@ void CControlAPI::SendFoundEvents(CyhookHandler *hh, bool xml_format)
 		{
 			if (NeutrinoAPI->Sectionsd->getEPGidShort(eventIterator->eventID, &epg))
 			{
-				struct tm *tmStartZeit = localtime(&eventIterator->startTime);
+				struct tm StartZeit_t;
+				localtime_r(&eventIterator->startTime, &StartZeit_t);
 				if (xml_format)
 				{
 					hh->WriteLn("\t<epgsearch>");
@@ -1731,9 +1734,9 @@ void CControlAPI::SendFoundEvents(CyhookHandler *hh, bool xml_format)
 					hh->printf("\t\t<epgtitle><![CDATA[%s]]></epgtitle>\n", epg.title.c_str());
 					hh->printf("\t\t<info1><![CDATA[%s]]></info1>\n", epg.info1.c_str());
 					hh->printf("\t\t<info2><![CDATA[%s]]></info2>\n", epg.info2.c_str());
-					strftime(tmpstr, sizeof(tmpstr), "%Y-%m-%d", tmStartZeit);
+					strftime(tmpstr, sizeof(tmpstr), "%Y-%m-%d", &StartZeit_t);
 					hh->printf("\t\t<date>%s</date>\n", tmpstr);
-					strftime(tmpstr, sizeof(tmpstr), "%H:%M", tmStartZeit);
+					strftime(tmpstr, sizeof(tmpstr), "%H:%M", &StartZeit_t);
 					hh->printf("\t\t<time>%s</time>\n", tmpstr);
 					hh->printf("\t\t<duration>%d</duration>\n", eventIterator->duration);
 					hh->printf("\t\t<channel_id>" PRINTF_CHANNEL_ID_TYPE_NO_LEADING_ZEROS "</channel_id>\n", eventIterator->get_channel_id());
@@ -1743,7 +1746,7 @@ void CControlAPI::SendFoundEvents(CyhookHandler *hh, bool xml_format)
 				else
 				{
 					std::string datetime_str;
-					strftime(tmpstr, sizeof(tmpstr), "%Y-%m-%d %H:%M", tmStartZeit);
+					strftime(tmpstr, sizeof(tmpstr), "%Y-%m-%d %H:%M", &StartZeit_t);
 					datetime_str = tmpstr;
 					snprintf(tmpstr, sizeof(tmpstr), " [%d min]", eventIterator->duration / 60);
 					datetime_str += tmpstr;
@@ -2075,6 +2078,7 @@ void CControlAPI::SendTimersXML(CyhookHandler *hh)
 
 	for(; timer != timerlist.end(); ++timer)
 	{
+		struct tm lt;
 		hh->WriteLn("\t\t<timer>");
 		hh->printf("\t\t\t<type>%s</type>\n", (NeutrinoAPI->timerEventType2Str(timer->eventType)).c_str());
 		hh->printf("\t\t\t<id>%d</id>\n", timer->eventID);
@@ -2084,30 +2088,30 @@ void CControlAPI::SendTimersXML(CyhookHandler *hh)
 		// alarmtime
 		hh->WriteLn("\t\t\t<alarm>");
 
-		struct tm *alarmTime = localtime(&(timer->alarmTime));
+		localtime_r(&timer->alarmTime, &lt);
 		hh->WriteLn("\t\t\t\t<normal>");
-		_SendTime(hh, alarmTime, (int)timer->alarmTime);
+		_SendTime(hh, &lt, (int)timer->alarmTime);
 		hh->WriteLn("\t\t\t\t</normal>");
 
 		time_t real_alarmTimeT = timer->alarmTime - pre;
-		struct tm *safetyAlarmTime = localtime(&real_alarmTimeT);
+		localtime_r(&real_alarmTimeT, &lt);
 		hh->WriteLn("\t\t\t\t<safety>");
-		_SendTime(hh, safetyAlarmTime, (int)real_alarmTimeT);
+		_SendTime(hh, &lt, (int)real_alarmTimeT);
 		hh->WriteLn("\t\t\t\t</safety>");
 
 		hh->WriteLn("\t\t\t</alarm>");
 
 		// announcetime
 		hh->WriteLn("\t\t\t<announce>");
-		struct tm *announceTime = localtime(&(timer->announceTime));
+		localtime_r(&timer->announceTime, &lt);
 		hh->WriteLn("\t\t\t\t<normal>");
-		_SendTime(hh, announceTime, (int)timer->announceTime);
+		_SendTime(hh, &lt, (int)timer->announceTime);
 		hh->WriteLn("\t\t\t\t</normal>");
 
 		time_t real_announceTimeT = timer->announceTime - pre;
-		struct tm *safetyAnnounceTime = localtime(&real_announceTimeT);
+		localtime_r(&real_announceTimeT, &lt);
 		hh->WriteLn("\t\t\t\t<safety>");
-		_SendTime(hh, safetyAnnounceTime, (int)real_announceTimeT);
+		_SendTime(hh, &lt, (int)real_announceTimeT);
 		hh->WriteLn("\t\t\t\t</safety>");
 
 		hh->WriteLn("\t\t\t</announce>");
@@ -2116,15 +2120,15 @@ void CControlAPI::SendTimersXML(CyhookHandler *hh)
 		if (timer->stopTime > 0)
 		{
 			hh->WriteLn("\t\t\t<stop>");
-			struct tm *stopTime = localtime(&(timer->stopTime));
+			localtime_r(&timer->stopTime, &lt);
 			hh->WriteLn("\t\t\t\t<normal>");
-			_SendTime(hh, stopTime, (int)timer->stopTime);
+			_SendTime(hh, &lt, (int)timer->stopTime);
 			hh->WriteLn("\t\t\t\t</normal>");
 
 			time_t real_stopTimeT = timer->stopTime - post;
-			struct tm *safetyStopTime = localtime(&real_stopTimeT);
+			localtime_r(&real_stopTimeT, &lt);
 			hh->WriteLn("\t\t\t\t<safety>");
-			_SendTime(hh, safetyStopTime, (int)real_stopTimeT);
+			_SendTime(hh, &lt, (int)real_stopTimeT);
 			hh->WriteLn("\t\t\t\t</safety>");
 
 			hh->WriteLn("\t\t\t</stop>");
@@ -2395,61 +2399,64 @@ void CControlAPI::doNewTimer(CyhookHandler *hh)
 	{
 		// Alarm Date - Format exact! DD.MM.YYYY
 		tnull = time(NULL);
-		struct tm *alarmTime=localtime(&tnull);
-		alarmTime->tm_sec = 0;
-		if(sscanf(hh->ParamList["alDate"].c_str(),"%2d.%2d.%4d",&(alarmTime->tm_mday), &(alarmTime->tm_mon), &(alarmTime->tm_year)) == 3)
+		struct tm alarmTime;
+		localtime_r(&tnull, &alarmTime);
+		alarmTime.tm_sec = 0;
+		if(sscanf(hh->ParamList["alDate"].c_str(),"%2d.%2d.%4d", &alarmTime.tm_mday, &alarmTime.tm_mon, &alarmTime.tm_year) == 3)
 		{
-			alarmTime->tm_mon -= 1;
-			alarmTime->tm_year -= 1900;
+			alarmTime.tm_mon -= 1;
+			alarmTime.tm_year -= 1900;
 		}
 
 		// Alarm Time - Format exact! HH:MM
 		if(!hh->ParamList["alTime"].empty())
-			sscanf(hh->ParamList["alTime"].c_str(),"%2d.%2d",&(alarmTime->tm_hour), &(alarmTime->tm_min));
-		alHour = alarmTime->tm_hour;
-		correctTime(alarmTime);
-		alarmTimeT = mktime(alarmTime);
+			sscanf(hh->ParamList["alTime"].c_str(),"%2d.%2d", &alarmTime.tm_hour, &alarmTime.tm_min);
+		alHour = alarmTime.tm_hour;
+		correctTime(&alarmTime);
+		alarmTimeT = mktime(&alarmTime);
 		announceTimeT = alarmTimeT;
-		struct tm *stopTime = localtime(&alarmTimeT);
-		stopTime->tm_sec = 0;
+		struct tm stopTime;
+		localtime_r(&alarmTimeT, &stopTime);
+		stopTime.tm_sec = 0;
 		// Stop Time - Format exact! HH:MM
 		if(!hh->ParamList["stTime"].empty())
-			sscanf(hh->ParamList["stTime"].c_str(),"%2d.%2d",&(stopTime->tm_hour), &(stopTime->tm_min));
+			sscanf(hh->ParamList["stTime"].c_str(),"%2d.%2d", &stopTime.tm_hour, &stopTime.tm_min);
 
 		// Stop Date - Format exact! DD.MM.YYYY
 		if(!hh->ParamList["stDate"].empty())
-			if(sscanf(hh->ParamList["stDate"].c_str(),"%2d.%2d.%4d",&(stopTime->tm_mday), &(stopTime->tm_mon), &(stopTime->tm_year)) == 3)
+			if(sscanf(hh->ParamList["stDate"].c_str(),"%2d.%2d.%4d", &stopTime.tm_mday, &stopTime.tm_mon, &stopTime.tm_year) == 3)
 			{
-				stopTime->tm_mon -= 1;
-				stopTime->tm_year -= 1900;
+				stopTime.tm_mon -= 1;
+				stopTime.tm_year -= 1900;
 			}
-		correctTime(stopTime);
-		stopTimeT = mktime(stopTime);
-		if(hh->ParamList["stDate"].empty() && alHour > stopTime->tm_hour)
+		correctTime(&stopTime);
+		stopTimeT = mktime(&stopTime);
+		if(hh->ParamList["stDate"].empty() && alHour > stopTime.tm_hour)
 			stopTimeT += 24* 60 * 60; // add 1 Day
 	}
 	else	// alarm/stop time given in pieces
 	{
 		// alarm time
 		time_t now = time(NULL);
-		struct tm *alarmTime=localtime(&now);
+		struct tm alarmTime;
+		localtime_r(&now, &alarmTime);
 		if(!hh->ParamList["ad"].empty())
-			alarmTime->tm_mday = atoi(hh->ParamList["ad"].c_str());
+			alarmTime.tm_mday = atoi(hh->ParamList["ad"].c_str());
 		if(!hh->ParamList["amo"].empty())
-			alarmTime->tm_mon = atoi(hh->ParamList["amo"].c_str())-1;
+			alarmTime.tm_mon = atoi(hh->ParamList["amo"].c_str())-1;
 		if(!hh->ParamList["ay"].empty())
-			alarmTime->tm_year = atoi(hh->ParamList["ay"].c_str())-1900;
+			alarmTime.tm_year = atoi(hh->ParamList["ay"].c_str())-1900;
 		if(!hh->ParamList["ah"].empty())
-			alarmTime->tm_hour = atoi(hh->ParamList["ah"].c_str());
+			alarmTime.tm_hour = atoi(hh->ParamList["ah"].c_str());
 		if(!hh->ParamList["ami"].empty())
-			alarmTime->tm_min = atoi(hh->ParamList["ami"].c_str());
-		alarmTime->tm_sec = 0;
-		correctTime(alarmTime);
-		alarmTimeT = mktime(alarmTime);
+			alarmTime.tm_min = atoi(hh->ParamList["ami"].c_str());
+		alarmTime.tm_sec = 0;
+		correctTime(&alarmTime);
+		alarmTimeT = mktime(&alarmTime);
 		announceTimeT = alarmTimeT;
 
 		// stop time
-		struct tm *stopTime = alarmTime;
+		struct tm *stopTime = &alarmTime;
 		if(!hh->ParamList["sd"].empty())
 			stopTime->tm_mday = atoi(hh->ParamList["sd"].c_str());
 		if(!hh->ParamList["smo"].empty())

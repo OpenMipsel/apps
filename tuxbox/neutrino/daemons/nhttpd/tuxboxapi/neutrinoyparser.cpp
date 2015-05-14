@@ -427,7 +427,7 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 
 					t_channel_id channel_id = CREATE_CHANNEL_ID_FROM_SERVICE_ORIGINALNETWORK_TRANSPORTSTREAM_ID(cmd.service_id, cmd.original_network_id, cmd.transport_stream_id);
 					
-					timestr = timeString(ni->zeit.startzeit); // FIXME: time is wrong (at least on little endian)!
+					timestr = timeString(&ni->zeit.startzeit); // FIXME: time is wrong (at least on little endian)!
 
 					NeutrinoAPI->Sectionsd->getActualEPGServiceKey(channel_id, &epg); // FIXME: der scheissendreck geht nit!!!
 
@@ -456,7 +456,7 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 		else if ((event = NeutrinoAPI->ChannelListEvents[channel->channel_id]))
 		{
 			bool has_current_next = NeutrinoAPI->Sectionsd->getCurrentNextServiceKey(channel->channel_id, currentNextInfo);
-			timestr = timeString(event->startTime);
+			timestr = timeString(&event->startTime);
 
 			yresult += string_printf("<tr><td class=\"%cepg\">",classname);
 			yresult += string_printf("%s&nbsp;%s&nbsp;"
@@ -467,7 +467,7 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 					, event->duration / 60,prozent);
 
 			if ((has_current_next) && (currentNextInfo.flags & CSectionsdClient::epgflags::has_next)) {
-				timestr = timeString(currentNextInfo.next_zeit.startzeit);
+				timestr = timeString(&currentNextInfo.next_zeit.startzeit);
 				yresult += string_printf("<br />%s&nbsp;%s", timestr.c_str(), currentNextInfo.next_name.c_str());
 			}
 
@@ -798,18 +798,19 @@ std::string  CNeutrinoYParser::func_get_timer_list(CyhookHandler */*hh*/, std::s
 
 		// build alarm/stoptime
 		char zAlarmTime[25] = {0};
-		struct tm *alarmTime = localtime(&(timer->alarmTime));
-		strftime(zAlarmTime,20,"%d.%m. %H:%M",alarmTime);
+		struct tm lt;
+		localtime_r(&timer->alarmTime, &lt);
+		strftime(zAlarmTime, 20,"%d.%m. %H:%M", &lt);
 
 		char zAnnounceTime[25] = {0};
-		struct tm *announceTime = localtime(&(timer->announceTime));
-		strftime(zAnnounceTime,20,"%d.%m. %H:%M",announceTime);
+		localtime_r(&timer->announceTime, &lt);
+		strftime(zAnnounceTime, 20,"%d.%m. %H:%M", &lt);
 
 		char zStopTime[25] = {0};
 		if(timer->stopTime > 0)
 		{
-			struct tm *stopTime = localtime(&(timer->stopTime));
-			strftime(zStopTime,20,"%d.%m. %H:%M",stopTime);     
+			localtime_r(&timer->stopTime, &lt);
+			strftime(zStopTime, 20,"%d.%m. %H:%M", &lt);     
 		}
 		// repeat
 		std::string zRep = NeutrinoAPI->timerEventRepeat2Str(timer->eventRepeat);
@@ -924,22 +925,32 @@ std::string  CNeutrinoYParser::func_set_timer_form(CyhookHandler *hh, std::strin
 		hh->ParamList["zType"] = zType;
 	}
 	// Alarm/StopTime
-	struct tm *alarmTime = (cmd == "new") ? localtime(&now_t) : localtime(&(timer.alarmTime));
+	struct tm alarmTime;
+	if (cmd == "new")
+		localtime_r(&now_t, &alarmTime);
+	else
+		localtime_r(&timer.alarmTime, &alarmTime);
 
-	hh->ParamList["alarm_mday"] = string_printf("%02d", alarmTime->tm_mday);
-	hh->ParamList["alarm_mon"]  = string_printf("%02d", alarmTime->tm_mon +1);
-	hh->ParamList["alarm_year"] = string_printf("%04d", alarmTime->tm_year + 1900);
-	hh->ParamList["alarm_hour"] = string_printf("%02d", alarmTime->tm_hour);
-	hh->ParamList["alarm_min"]  = string_printf("%02d", alarmTime->tm_min);
+	hh->ParamList["alarm_mday"] = string_printf("%02d", alarmTime.tm_mday);
+	hh->ParamList["alarm_mon"]  = string_printf("%02d", alarmTime.tm_mon +1);
+	hh->ParamList["alarm_year"] = string_printf("%04d", alarmTime.tm_year + 1900);
+	hh->ParamList["alarm_hour"] = string_printf("%02d", alarmTime.tm_hour);
+	hh->ParamList["alarm_min"]  = string_printf("%02d", alarmTime.tm_min);
 
-	struct tm *stopTime = (cmd == "new") ? alarmTime : ( (timer.stopTime > 0) ? localtime(&(timer.stopTime)) : NULL );
-	if(stopTime != NULL)
+	struct tm stopTime;
+	memset(&stopTime, 0, sizeof(struct tm));
+	if (cmd == "new")
+		stopTime = alarmTime;
+	else if (timer.stopTime > 0)
+		localtime_r(&timer.stopTime, &stopTime);
+
+	if(stopTime.tm_mday > 0)
 	{
-		hh->ParamList["stop_mday"] = string_printf("%02d", stopTime->tm_mday);
-		hh->ParamList["stop_mon"]  = string_printf("%02d", stopTime->tm_mon +1);
-		hh->ParamList["stop_year"] = string_printf("%04d", stopTime->tm_year + 1900);
-		hh->ParamList["stop_hour"] = string_printf("%02d", stopTime->tm_hour);
-		hh->ParamList["stop_min"]  = string_printf("%02d", stopTime->tm_min);
+		hh->ParamList["stop_mday"] = string_printf("%02d", stopTime.tm_mday);
+		hh->ParamList["stop_mon"]  = string_printf("%02d", stopTime.tm_mon +1);
+		hh->ParamList["stop_year"] = string_printf("%04d", stopTime.tm_year + 1900);
+		hh->ParamList["stop_hour"] = string_printf("%02d", stopTime.tm_hour);
+		hh->ParamList["stop_min"]  = string_printf("%02d", stopTime.tm_min);
 
 		// APid settings for Record
 		if(timer.apids == TIMERD_APIDS_CONF)
@@ -953,6 +964,7 @@ std::string  CNeutrinoYParser::func_set_timer_form(CyhookHandler *hh, std::strin
 	}
 	else
 		hh->ParamList["stop_mday"] = "0";
+
 	// event type
 	for(int i=1; i<=8;i++)
 	{
