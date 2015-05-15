@@ -112,8 +112,9 @@ THandleStatus CmodSendfile::Hook_PrepareResponse(CyhookHandler *hh)
 			}
 
 			// normalize obj_last_modified to GMT
-			struct tm *tmp = gmtime(&(hh->LastModified));
-			time_t LastModifiedGMT = mktime(tmp);
+			struct tm lt;
+			gmtime_r(&hh->LastModified, &lt);
+			time_t LastModifiedGMT = mktime(&lt);
 			bool modified = (if_modified_since == (time_t)-1) || (if_modified_since < LastModifiedGMT);
 
 			// Send normal or not-modified header

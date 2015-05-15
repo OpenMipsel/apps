@@ -51,8 +51,9 @@ THandleStatus CmodCache::Hook_PrepareResponse(CyhookHandler *hh)
 		}
 
 		// normalize obj_last_modified to GMT
-		struct tm *tmp = gmtime(&(CacheList[url].created));
-		time_t obj_last_modified_gmt = mktime(tmp);
+		struct tm lt;
+		gmtime_r(&CacheList[url].created, &lt);
+		time_t obj_last_modified_gmt = mktime(&lt);
 		bool modified = (if_modified_since == (time_t)-1) || (if_modified_since < obj_last_modified_gmt);
 
 		// Send file or not-modified header
@@ -210,7 +211,8 @@ void CmodCache::yshowCacheInfo(CyhookHandler *hh)
 	{
 		TCache *item = &((*i).second);
 		char timeStr[80];
-		strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime(&(item->created)) );
+		struct tm lt;
+		strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&item->created, &lt) );
 		yresult += string_printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>" \
 					"<td><a href=\"/y/cache-clear?url=%s\">url</a>&nbsp;" \
 					"<a href=\"/y/cache-clear?category=%s\">category</a></td></tr>\n", 

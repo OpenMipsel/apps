@@ -262,20 +262,21 @@ std::string CyhookHandler::BuildHeader(bool cache)
 			time_t timer = time(0);
 			char timeStr[80];
 			// cache
+			struct tm lt;
 			if(!cache && (HookVarList["CacheCategory"]).empty() )
 				result += "Cache-Control: no-cache\r\n";
 			else
 			{
 				time_t x_time = time(NULL);
-				struct tm *ptm = gmtime(&x_time);
-				ptm->tm_mday+=1;
-				x_time = mktime(ptm);
-				strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime(&x_time));
+				gmtime_r(&x_time, &lt);
+				lt.tm_mday+=1;
+				x_time = mktime(&lt);
+				strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&x_time, &lt));
 				result += string_printf("Expires: %s\r\n", timeStr);
 			}
 			result += "Server: " WEBSERVERNAME "\r\n";
 			// actual date
-			strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime(&timer));
+			strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&timer, &lt));
 			result += string_printf("Date: %s\r\n", timeStr);
 			// connection type
 #ifdef Y_CONFIG_FEATURE_KEEP_ALIVE
@@ -296,7 +297,7 @@ std::string CyhookHandler::BuildHeader(bool cache)
 				if(LastModified != (time_t)-1)
 					mod_time = LastModified;
 
-				strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime(&mod_time));
+				strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&mod_time, &lt));
 				result += string_printf("Last-Modified: %s\r\nContent-Length: %ld\r\n", timeStr, GetContentLength());
 			}
 			result += "\r\n";	// End of Header
