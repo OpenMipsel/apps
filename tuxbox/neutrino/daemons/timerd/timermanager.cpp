@@ -829,16 +829,17 @@ CTimerEvent::CTimerEvent( CTimerd::CTimerEventTypes evtype, int mon, int day, in
 { 
 
 	time_t mtime = time(NULL);
-	struct tm *tmtime = localtime(&mtime);
+	struct tm tmtime;
+	localtime_r(&mtime, &tmtime);
 
 	if(mon > 0)
-		tmtime->tm_mon = mon -1;
+		tmtime.tm_mon = mon -1;
 	if(day > 0)
-		tmtime->tm_mday = day;
-	tmtime->tm_hour = hour;
-	tmtime->tm_min = min;
+		tmtime.tm_mday = day;
+	tmtime.tm_hour = hour;
+	tmtime.tm_min = min;
 
-	CTimerEvent(evtype, (time_t) 0, mktime(tmtime), (time_t)0, evrepeat, repeatcount);
+	CTimerEvent(evtype, (time_t) 0, mktime(&tmtime), (time_t)0, evrepeat, repeatcount);
 }
 //------------------------------------------------------------
 CTimerEvent::CTimerEvent(CTimerd::CTimerEventTypes evtype,CConfigFile *config, int iId)
@@ -885,26 +886,27 @@ void CTimerEvent::Reschedule(bool force)
 		while(alarmTime <= now || force)
 		{
 			time_t diff = 0;
-			struct tm *t= localtime(&alarmTime);
-			int isdst1=t->tm_isdst;
+			struct tm t;
+			localtime_r(&alarmTime, &t);
+			int isdst1=t.tm_isdst;
 			switch(eventRepeat)
 			{
 				case CTimerd::TIMERREPEAT_ONCE :
 					break;
 				case CTimerd::TIMERREPEAT_DAILY:
-					t->tm_mday++;
+					t.tm_mday++;
 				break;
 				case CTimerd::TIMERREPEAT_WEEKLY: 
-					t->tm_mday+=7;
+					t.tm_mday+=7;
 				break;
 				case CTimerd::TIMERREPEAT_BIWEEKLY: 
-					t->tm_mday+=14;
+					t.tm_mday+=14;
 				break;
 				case CTimerd::TIMERREPEAT_FOURWEEKLY: 
-					t->tm_mday+=28;
+					t.tm_mday+=28;
 				break;
 				case CTimerd::TIMERREPEAT_MONTHLY: 
-					t->tm_mon++;
+					t.tm_mon++;
 				break;
 				case CTimerd::TIMERREPEAT_BYEVENTDESCRIPTION :
 					// todo !!
@@ -923,19 +925,20 @@ void CTimerEvent::Reschedule(bool force)
 							weekday_arr[4]=((weekdays & 0x8) > 0); //Do
 							weekday_arr[5]=((weekdays & 0x10) > 0); //Fr
 							weekday_arr[6]=((weekdays & 0x20) > 0); //Sa
-							struct tm *t2= localtime(&alarmTime);
+							struct tm t2;
+							localtime_r(&alarmTime, &t2);
 							int day;
-							for(day=1 ; !weekday_arr[(t2->tm_wday+day)%7] ; day++){}
-							t2->tm_mday+=day;
+							for(day=1 ; !weekday_arr[(t2.tm_wday+day)%7] ; day++){}
+							t2.tm_mday+=day;
 						}
 					}
 					else
 						dprintf("unknown repeat type %d\n",eventRepeat);
 			}
-			diff = mktime(t)-alarmTime;
+			diff = mktime(&t)-alarmTime;
 			alarmTime += diff;
-			t = localtime(&alarmTime);
-			int isdst2 = t->tm_isdst;
+			localtime_r(&alarmTime, &t);
+			int isdst2 = t.tm_isdst;
 			if(isdst2 > isdst1) //change from winter to summer
 			{
 				diff-=3600;
@@ -964,12 +967,12 @@ void CTimerEvent::Reschedule(bool force)
 //------------------------------------------------------------
 void CTimerEvent::printEvent(void)
 {
-	struct tm *alarmtime, *announcetime;
+	struct tm alarmtime, announcetime;
 	dprintf("eventID: %03d type: %d state: %d repeat: %d ,repeatCount %d\n",eventID,eventType,eventState,((int)eventRepeat)&0x1FF,repeatCount);
-	announcetime = localtime(&announceTime);
-	dprintf(" announce: %u %02d.%02d. %02d:%02d:%02d\n",(uint) announceTime,announcetime->tm_mday,announcetime->tm_mon+1,announcetime->tm_hour,announcetime->tm_min,announcetime->tm_sec);
-	alarmtime = localtime(&alarmTime);
-	dprintf(" alarm: %u %02d.%02d. %02d:%02d:%02d\n",(uint) alarmTime,alarmtime->tm_mday,alarmtime->tm_mon+1,alarmtime->tm_hour,alarmtime->tm_min,alarmtime->tm_sec);
+	localtime_r(&announceTime, &announcetime);
+	dprintf(" announce: %u %02d.%02d. %02d:%02d:%02d\n",(uint) &announceTime,announcetime.tm_mday,announcetime.tm_mon+1,announcetime.tm_hour,announcetime.tm_min,announcetime.tm_sec);
+	localtime_r(&alarmTime, &alarmtime);
+	dprintf(" alarm: %u %02d.%02d. %02d:%02d:%02d\n",(uint) &alarmTime,alarmtime.tm_mday,alarmtime.tm_mon+1,alarmtime.tm_hour,alarmtime.tm_min,alarmtime.tm_sec);
 	switch(eventType)
 	{
 		case CTimerd::TIMER_ZAPTO :
