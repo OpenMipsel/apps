@@ -256,7 +256,7 @@ int CTimerList::exec(CMenuTarget* parent, const std::string & actionKey)
 	{
 		timerlist[selected].announceTime = timerlist[selected].alarmTime -60;
 		if(timerlist[selected].eventRepeat >= CTimerd::TIMERREPEAT_WEEKDAYS)
-			Timer->getWeekdaysFromStr((int *)&timerlist[selected].eventRepeat, m_weekdaysStr);
+			Timer->getWeekdaysFromStr(&timerlist[selected].eventRepeat, m_weekdaysStr);
 		if(timerlist[selected].eventType == CTimerd::TIMER_RECORD)
 		{
 			timerlist[selected].announceTime -= 120; // 2 more mins for rec timer
@@ -323,7 +323,7 @@ int CTimerList::exec(CMenuTarget* parent, const std::string & actionKey)
 			data= timerNew.pluginName;
 		}
 		if(timerNew.eventRepeat >= CTimerd::TIMERREPEAT_WEEKDAYS)
-			Timer->getWeekdaysFromStr((int *)&timerNew.eventRepeat, m_weekdaysStr);
+			Timer->getWeekdaysFromStr(&timerNew.eventRepeat, m_weekdaysStr);
 
 		if (Timer->addTimerEvent(timerNew.eventType,data,timerNew.announceTime,timerNew.alarmTime,
 					 timerNew.stopTime,timerNew.eventRepeat,timerNew.repeatCount,false) == -1)

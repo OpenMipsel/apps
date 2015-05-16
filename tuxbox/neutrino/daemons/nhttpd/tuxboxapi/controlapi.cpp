@@ -2492,7 +2492,7 @@ void CControlAPI::doNewTimer(CyhookHandler *hh)
 	else // default: no repeat
 		rep = (CTimerd::CTimerEventRepeat)0;
 	if(((int)rep) >= ((int)CTimerd::TIMERREPEAT_WEEKDAYS) && !hh->ParamList["wd"].empty())
-		NeutrinoAPI->Timerd->getWeekdaysFromStr((int*)&rep, hh->ParamList["wd"].c_str());
+		NeutrinoAPI->Timerd->getWeekdaysFromStr(&rep, hh->ParamList["wd"].c_str());
 
 	// apids
 	bool changeApids=false;

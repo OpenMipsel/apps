@@ -449,22 +449,24 @@ void CTimerdClient::getZaptoSafety(int &pre)
 }
 
 //-------------------------------------------------------------------------
-void CTimerdClient::getWeekdaysFromStr(int *rep, const char* str)
+void CTimerdClient::getWeekdaysFromStr(CTimerd::CTimerEventRepeat *eventRepeat, const char* str)
 {
-	if(*rep >= (int)CTimerd::TIMERREPEAT_WEEKDAYS)
+	int rep = (int) *eventRepeat;
+	if(rep >= (int)CTimerd::TIMERREPEAT_WEEKDAYS)
 	{
 		for(int n=0;n<7;n++)
 		{
 			if(str[n]=='X' || str[n]=='x')
 			{
-				*rep |= (1 << (n+9));
+				rep |= (1 << (n+9));
 			}
 			else
 			{
-				*rep &= (~(1 << (n+9)));
+				rep &= (~(1 << (n+9)));
 			}
 		}
 	}
+	*eventRepeat = (CTimerd::CTimerEventRepeat) rep;
 }
 //-------------------------------------------------------------------------
 void CTimerdClient::setWeekdaysToStr(CTimerd::CTimerEventRepeat rep, char* str)
