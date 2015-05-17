@@ -725,8 +725,6 @@ std::string decodeXmlSpecialChars(std::string s)
 	StrSearchReplace(s,"&amp;","&");
 	StrSearchReplace(s,"&quot;","\"");
 	StrSearchReplace(s,"&apos;","\'");
-	StrSearchReplace(s,"&#x0a;","\n");
-	StrSearchReplace(s,"&#x0d;","\n");
 	return s;
 }
 
