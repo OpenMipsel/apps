@@ -2808,62 +2808,49 @@ void sendChannels(int connfd, const CZapitClient::channelsMode mode, const CZapi
 
 int startPlayBack(CZapitChannel *thisChannel)
 {
-	bool have_pcr = false;
-	bool have_audio = false;
-	bool have_video = false;
-	bool have_teletext = false;
-
-	if ((playbackStopForced == true) || (!thisChannel))
+	if (playbackStopForced || !thisChannel)
 		return -1;
 
-	if (thisChannel->getPcrPid() != 0) {
-		have_pcr = true;
-	}
-	if (thisChannel->getAudioPid() != NONE) {
-		have_audio = true;
-	}
-	if ((thisChannel->getVideoPid() != NONE) && (currentMode & TV_MODE)) {
-		have_video = true;
-	}
-	if (thisChannel->getTeletextPid() != 0) {
-		have_teletext = true;
-	}
+	unsigned short pcr_pid = thisChannel->getPcrPid();
+	unsigned short audio_pid = thisChannel->getAudioPid();
+	unsigned short video_pid = (currentMode & TV_MODE) ? thisChannel->getVideoPid() : 0;
+	unsigned short teletext_pid = thisChannel->getTeletextPid();
+	printf("[zapit] vpid %X apid %X pcr %X\n", video_pid, audio_pid, pcr_pid);
 
-	if ((!have_audio) && (!have_video) && (!have_teletext)) {
+	if (!audio_pid && !video_pid && !teletext_pid)
 		return -1;
-	}
 
 	/* set demux filters */
-	if (have_video) {
+	if (video_pid) {
 		if (!videoDemux)
 			videoDemux = new CDemux();
-		if (videoDemux->pesFilter(thisChannel->getVideoPid(), DMX_OUT_DECODER, DMX_PES_VIDEO) < 0)
+		if (videoDemux->pesFilter(video_pid, DMX_OUT_DECODER, DMX_PES_VIDEO) < 0)
 			return -1;
 		if (videoDemux->start() < 0)
 			return -1;
 	}
-	if (have_audio) {
+	if (audio_pid) {
 		if (!audioDemux)
 			audioDemux = new CDemux();
-		if (audioDemux->pesFilter(thisChannel->getAudioPid(), DMX_OUT_DECODER, DMX_PES_AUDIO) < 0)
+		if (audioDemux->pesFilter(audio_pid, DMX_OUT_DECODER, DMX_PES_AUDIO) < 0)
 			return -1;
 		if (audioDemux->start() < 0)
 			return -1;
 	}
-	if (have_pcr) {
+	if (pcr_pid) {
 		if (!pcrDemux)
 			pcrDemux = new CDemux();
-		if (pcrDemux->pesFilter(thisChannel->getPcrPid(), DMX_OUT_DECODER, DMX_PES_PCR) < 0)
+		if (pcrDemux->pesFilter(pcr_pid, DMX_OUT_DECODER, DMX_PES_PCR) < 0)
 			return -1;
 		if (pcrDemux->start() < 0)
 			return -1;
 	}
 #ifdef HAVE_DBOX_HARDWARE
 /* AFAIK only the dbox2 can reinsert telextext... */
-	if (have_teletext) {
+	if (teletext_pid) {
 		if (!teletextDemux)
 			teletextDemux = new CDemux();
-		if (teletextDemux->pesFilter(thisChannel->getTeletextPid(), DMX_OUT_DECODER, DMX_PES_TELETEXT) < 0)
+		if (teletextDemux->pesFilter(teletext_pid, DMX_OUT_DECODER, DMX_PES_TELETEXT) < 0)
 			return -1;
 		if (teletextDemux->start() < 0)
 			return -1;
@@ -2881,14 +2868,14 @@ int startPlayBack(CZapitChannel *thisChannel)
 	 */
 #ifndef HAVE_TRIPLEDRAGON
 	/* start video */
-	if (have_video) {
+	if (video_pid) {
 		videoDecoder->setSource(VIDEO_SOURCE_DEMUX);
 		videoDecoder->start();
 	}
 #endif
 
 	/* select audio output and start audio */
-	if (have_audio) {
+	if (audio_pid) {
 		if (thisChannel->getAudioChannel()->isAc3)
 			audioDecoder->enableBypass();
 		else
@@ -2900,7 +2887,7 @@ int startPlayBack(CZapitChannel *thisChannel)
 
 #ifdef HAVE_TRIPLEDRAGON
 	/* start video */
-	if (have_video) {
+	if (video_pid) {
 		videoDecoder->setBlank(true);
 		videoDecoder->setSource(VIDEO_SOURCE_DEMUX);
 		videoDecoder->start();
@@ -3144,8 +3131,7 @@ unsigned zapTo(const unsigned int channel)
 	CBouquetManager::ChannelIterator cit = ((currentMode & RADIO_MODE) ? bouquetManager->radioChannelsBegin() : bouquetManager->tvChannelsBegin()).FindChannelNr(channel);
 	if (!(cit.EndOfChannels()))
 		return zapTo_ChannelID((*cit)->getChannelID(), false);
-	else
-		return 0;
+	return 0;
 }
 
 void signal_handler(int signum)
