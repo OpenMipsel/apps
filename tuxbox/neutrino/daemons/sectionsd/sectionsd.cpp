@@ -846,6 +846,7 @@ static void addEvent(const SIevent &evt, const time_t zeit, bool cn = false)
 						continue;
 					/* else: keep the old event with the lower table_id */
 					unlockEvents();
+					delete eptr;
 					return;
 				}
 				if ((*x)->times.begin()->startzeit >= end_time)
@@ -861,6 +862,7 @@ static void addEvent(const SIevent &evt, const time_t zeit, bool cn = false)
 					dprintf("%s: don't replace 0x%016llx.%02x with 0x%016llx.%02x\n",
 						__func__, x_key, (*x)->table_id, e_key, e->table_id);
 					unlockEvents();
+					delete eptr;
 					return;
 				}
 				/* SRF special case: advertising is inserted with start time of
