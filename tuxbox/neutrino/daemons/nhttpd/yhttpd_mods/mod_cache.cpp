@@ -212,7 +212,8 @@ void CmodCache::yshowCacheInfo(CyhookHandler *hh)
 		TCache *item = &((*i).second);
 		char timeStr[80];
 		struct tm lt;
-		strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&item->created, &lt) );
+		gmtime_r(&item->created, &lt);
+		strftime(timeStr, sizeof(timeStr), RFC1123FMT, &lt );
 		yresult += string_printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>" \
 					"<td><a href=\"/y/cache-clear?url=%s\">url</a>&nbsp;" \
 					"<a href=\"/y/cache-clear?category=%s\">category</a></td></tr>\n", 

@@ -167,8 +167,8 @@ void SIsectionEIT::parsePDCDescriptor(const char *buf, SIevent &e, unsigned maxl
 	{
 		const struct descr_pdc_header *s = (struct descr_pdc_header *)buf;
 		time_t now = time(NULL);
-		struct tm tm_r;
-		struct tm t = *localtime_r(&now, &tm_r); // this initializes the time zone in 't'
+		struct tm t;
+		localtime_r(&now, &t); // this initializes the time zone in 't'
 		t.tm_isdst = -1; // makes sure mktime() will determine the correct DST setting
 		int month = t.tm_mon;
 		t.tm_mon = ((s->pil1 >> 3) & 0x0F) - 1;

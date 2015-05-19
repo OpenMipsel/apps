@@ -271,12 +271,14 @@ std::string CyhookHandler::BuildHeader(bool cache)
 				gmtime_r(&x_time, &lt);
 				lt.tm_mday+=1;
 				x_time = mktime(&lt);
-				strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&x_time, &lt));
+				gmtime_r(&x_time, &lt);
+				strftime(timeStr, sizeof(timeStr), RFC1123FMT, &lt);
 				result += string_printf("Expires: %s\r\n", timeStr);
 			}
 			result += "Server: " WEBSERVERNAME "\r\n";
 			// actual date
-			strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&timer, &lt));
+			gmtime_r(&timer, &lt);
+			strftime(timeStr, sizeof(timeStr), RFC1123FMT, &lt);
 			result += string_printf("Date: %s\r\n", timeStr);
 			// connection type
 #ifdef Y_CONFIG_FEATURE_KEEP_ALIVE
@@ -297,7 +299,8 @@ std::string CyhookHandler::BuildHeader(bool cache)
 				if(LastModified != (time_t)-1)
 					mod_time = LastModified;
 
-				strftime(timeStr, sizeof(timeStr), RFC1123FMT, gmtime_r(&mod_time, &lt));
+				gmtime_r(&mod_time, &lt);
+				strftime(timeStr, sizeof(timeStr), RFC1123FMT, &lt);
 				result += string_printf("Last-Modified: %s\r\nContent-Length: %ld\r\n", timeStr, GetContentLength());
 			}
 			result += "\r\n";	// End of Header
