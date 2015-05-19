@@ -1296,7 +1296,9 @@ void CFileBrowser::paintItem(unsigned int pos)
 				char timestring[18];
 				time_t rawtime;
 				rawtime = actual_file->Time;
-				strftime(timestring, 18, "%d-%m-%Y %H:%M", gmtime(&rawtime));
+				struct tm tm;
+				gmtime_r(&rawtime, &tm);
+				strftime(timestring, sizeof(timestring), "%d-%m-%Y %H:%M", &tm);
 				/* right align directory time */
 				int time_w = fnt_item->getRenderWidth(timestring);
 				fnt_item->RenderString(x + width - time_w - 25, ypos+ fheight, time_w, timestring, color);

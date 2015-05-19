@@ -835,7 +835,7 @@ bool CVCRControl::CFileDevice::Record(const t_channel_id channel_id, int mode, c
 	// Create filename for recording
 	pos = Directory.size();
 	strcpy(filename, Directory.c_str());
-	
+
 	if ((pos == 0) ||
 	    (filename[pos - 1] != '/'))
 	{
@@ -843,9 +843,7 @@ bool CVCRControl::CFileDevice::Record(const t_channel_id channel_id, int mode, c
 		pos++;
 		filename[pos] = '\0';
 	}
-	
-	time_t t = time(NULL);
-	
+
 	// %C == channel, %T == title, %I == info1, %d == date, %t == time
 	if (FilenameTemplate.empty())
 		FilenameTemplate = "%C_%T_%d_%t";
@@ -870,10 +868,13 @@ bool CVCRControl::CFileDevice::Record(const t_channel_id channel_id, int mode, c
 	appendEPGInfo(buf, 255, epgid);
 	StrSearchReplace(expandedTemplate, "%I", buf);
 
-	strftime(buf,11,"%Y-%m-%d",localtime(&t));
+	time_t t = time(NULL);
+	struct tm tm;
+	localtime_r(&t, &tm);
+	strftime(buf,11,"%Y-%m-%d", &tm);
 	StrSearchReplace(expandedTemplate, "%d", buf);
 	
-	strftime(buf,7,"%H%M%S",localtime(&t));
+	strftime(buf,7,"%H%M%S", &tm);
 	StrSearchReplace(expandedTemplate, "%t", buf);
 
 	//printf("[CFileDevice] filename: %s, expandedTemplate: %s\n",filename,expandedTemplate.c_str());

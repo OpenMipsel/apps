@@ -614,13 +614,13 @@ fprintf(stderr, "MEC=0x%02x DSN=0x%02x PSN=0x%02x MEL=%02d STATUS=0x%02x MFL=%02
 
 		if (rtp_itoggle) {
 			if (S_Verbose >= 1) {
-				struct tm tm_store;
-				struct tm *ts = localtime_r(&RTP_Starttime, &tm_store);
+				struct tm ts;
+				localtime_r(&RTP_Starttime, &ts);
 				if (rtp_idiffs > 0)
 					printf("  StartTime : %02d:%02d:%02d  (last Title elapsed = %d s)\n",
-						ts->tm_hour, ts->tm_min, ts->tm_sec, rtp_idiffs);
+						ts.tm_hour, ts.tm_min, ts.tm_sec, rtp_idiffs);
 				else
-					printf("  StartTime : %02d:%02d:%02d\n", ts->tm_hour, ts->tm_min, ts->tm_sec);
+					printf("  StartTime : %02d:%02d:%02d\n", ts.tm_hour, ts.tm_min, ts.tm_sec);
 				printf("  RTp-Title : %s\n  RTp-Artist: %s\n", RTP_Title, RTP_Artist);
 			}
 			RTP_ItemToggle = mtext[10] & 0x10;

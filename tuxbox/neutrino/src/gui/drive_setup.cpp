@@ -4564,9 +4564,11 @@ bool CDriveSetup::isIdeInterfaceActive()
 // returns current time string
 string CDriveSetup::getTimeStamp()
 {
-	time_t now = time(0);
 	char ret[22];
-	strftime(ret, 22, "%d.%m.%Y - %H:%M:%S", localtime(&now));
+	time_t now = time(0);
+	struct tm lt;
+	localtime_r(&now, &lt);
+	strftime(ret, sizeof(ret), "%d.%m.%Y - %H:%M:%S", &lt);
 
 	return (string)ret;
 }

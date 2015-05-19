@@ -901,18 +901,20 @@ void CEpgData::GetEPGData(const t_channel_id channel_id, unsigned long long id, 
 			reformatExtendedEvents("Presenter", g_Locale->getText(LOCALE_EPGEXTENDED_PRESENTER), false, epgData);
 		}
 
-		struct tm *pStartZeit = localtime(&(epgData.epg_times).startzeit);
+		struct tm pStartZeit;
+		localtime_r(&epgData.epg_times.startzeit, &pStartZeit);
 		char temp[11] = {0};
-		strftime( temp, sizeof(temp), "%d.%m.%Y", pStartZeit);
-		epg_date = g_Locale->getText(CLocaleManager::getWeekday(pStartZeit));
+		strftime( temp, sizeof(temp), "%d.%m.%Y", &pStartZeit);
+		epg_date = g_Locale->getText(CLocaleManager::getWeekday(&pStartZeit));
 		epg_date += ". ";
 		epg_date += temp;
-		strftime( temp, sizeof(temp), "%H:%M", pStartZeit);
+		strftime( temp, sizeof(temp), "%H:%M", &pStartZeit);
 		epg_start= temp;
 
 		long int uiEndTime((epgData.epg_times).startzeit+ (epgData.epg_times).dauer);
-		struct tm *pEndeZeit = localtime((time_t*)&uiEndTime);
-		strftime( temp, sizeof(temp), "%H:%M", pEndeZeit);
+		struct tm pEndeZeit;
+		localtime_r((time_t*)&uiEndTime, &pEndeZeit);
+		strftime( temp, sizeof(temp), "%H:%M", &pEndeZeit);
 		epg_end= temp;
 
 		epg_done= -1;
@@ -963,7 +965,7 @@ void CEpgData::GetPrevNextEPGData( unsigned long long id, time_t* startzeit )
 void CEpgData::FollowScreenings(const time_t startzeit)
 {
 	CChannelEventList::iterator e;
-	struct  tm		*tmStartZeit;
+	struct  tm		tmStartZeit;
 	std::string		screening_dates, screening_nodual;
 	int 			flag = SCREENING_AFTER;
 	char			tmpstr[256] = {0};
@@ -972,17 +974,17 @@ void CEpgData::FollowScreenings(const time_t startzeit)
 
 	for (e = followlist.begin(); e != followlist.end(); ++e)
 	{
-		tmStartZeit = localtime(&(e->startTime));
+		localtime_r(&e->startTime, &tmStartZeit);
 
-		screening_dates = g_Locale->getText(CLocaleManager::getWeekday(tmStartZeit));
+		screening_dates = g_Locale->getText(CLocaleManager::getWeekday(&tmStartZeit));
 		screening_dates += '.';
 
-		strftime(tmpstr, sizeof(tmpstr), " %d.", tmStartZeit );
+		strftime(tmpstr, sizeof(tmpstr), " %d.", &tmStartZeit );
 		screening_dates += tmpstr;
 
-		screening_dates += g_Locale->getText(CLocaleManager::getMonth(tmStartZeit));
+		screening_dates += g_Locale->getText(CLocaleManager::getMonth(&tmStartZeit));
 
-		strftime(tmpstr, sizeof(tmpstr), ". %H:%M ", tmStartZeit );
+		strftime(tmpstr, sizeof(tmpstr), ". %H:%M ", &tmStartZeit );
 		screening_dates += tmpstr;
 
 		flag = (e->startTime <= startzeit) ? SCREENING_BEFORE : SCREENING_AFTER;

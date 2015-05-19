@@ -1076,7 +1076,9 @@ ReceiveStreamThread(void *arg)
 					skipvalue[0] = '+';
 				o = 1;
 			}
-			strftime(&skipvalue[o], 9, "%T", gmtime(&s));
+			struct tm tm;
+			gmtime_r(&s, &tm);
+			strftime(&skipvalue[o], 9, "%T", &tm);
 			counter = 0;
 			skipurl = baseurl;
 			skipurl += "requests/status.xml?command=seek&val=";

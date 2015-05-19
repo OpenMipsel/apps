@@ -493,7 +493,7 @@ void CMovieInfo::showMovieInfo(const char* filename)
 void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
 {
     std::string print_buffer; 
-	tm* date_tm;
+	struct tm date_tm;
 	char date_char[100];			
     // prepare print buffer  
     print_buffer = movie_info.epgInfo1; 
@@ -609,14 +609,14 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
     print_buffer += "\n\n"; 
    	print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_PREVPLAYDATE);
       	print_buffer += ": "; 
-  		 date_tm = localtime(&movie_info.dateOfLastPlay);
-		snprintf(date_char, 12,"%02d.%02d.%04d",date_tm->tm_mday,date_tm->tm_mon+1,date_tm->tm_year +1900);
+  		localtime_r(&movie_info.dateOfLastPlay, &date_tm);
+		snprintf(date_char, 12,"%02d.%02d.%04d",date_tm.tm_mday,date_tm.tm_mon+1,date_tm.tm_year +1900);
      	print_buffer += date_char; 
     print_buffer += "\n"; 
     print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_RECORDDATE);
       	print_buffer += ": "; 
- 		date_tm = localtime(&movie_info.file.Time);
-		snprintf(date_char, 12,"%02d.%02d.%04d",date_tm->tm_mday,date_tm->tm_mon+1,date_tm->tm_year +1900);
+ 		localtime_r(&movie_info.file.Time, &date_tm);
+		snprintf(date_char, 12,"%02d.%02d.%04d",date_tm.tm_mday,date_tm.tm_mon+1,date_tm.tm_year +1900);
     	print_buffer += date_char; 
       if(movie_info.file.Size != 0 )
     {

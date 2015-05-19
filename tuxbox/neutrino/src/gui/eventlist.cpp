@@ -676,13 +676,14 @@ void EventList::paintItem(unsigned int pos)
 		if (evtlist[curpos].eventID != 0)
 		{
 			char tmpstr[256];
-			struct tm *tmStartZeit = localtime(&evtlist[curpos].startTime);
+			struct tm tmStartZeit;
+			localtime_r(&evtlist[curpos].startTime, &tmStartZeit);
 
-			strftime(tmpstr, sizeof(tmpstr), ". %H:%M, ", tmStartZeit );
-			datetime1_str = (std::string)g_Locale->getText(CLocaleManager::getWeekday(tmStartZeit)) + tmpstr;
+			strftime(tmpstr, sizeof(tmpstr), ". %H:%M, ", &tmStartZeit );
+			datetime1_str = (std::string)g_Locale->getText(CLocaleManager::getWeekday(&tmStartZeit)) + tmpstr;
 
-			strftime(tmpstr, sizeof(tmpstr), " %d. ", tmStartZeit );
-			datetime2_str = (std::string)tmpstr + g_Locale->getText(CLocaleManager::getMonth(tmStartZeit)) + '.';
+			strftime(tmpstr, sizeof(tmpstr), " %d. ", &tmStartZeit );
+			datetime2_str = (std::string)tmpstr + g_Locale->getText(CLocaleManager::getMonth(&tmStartZeit)) + '.';
 
 			if (m_showSearchResults) // show the channel if we made a event search only (which could be made through all channels)
 			{

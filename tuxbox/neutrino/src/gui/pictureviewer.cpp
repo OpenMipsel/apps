@@ -554,7 +554,9 @@ void CPictureViewerGui::paintItem(int pos)
 		tmp += playlist[liststart+pos].Type;
 		tmp += ')';
 		char timestring[18];
-		strftime(timestring, 18, "%d-%m-%Y %H:%M", gmtime(&playlist[liststart+pos].Date));
+		struct tm tm;
+		gmtime_r(&playlist[liststart+pos].Date, &tm);
+		strftime(timestring, sizeof(timestring), "%d-%m-%Y %H:%M", &tm);
 		int w = g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->getRenderWidth(timestring);
 		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+10,ypos+fheight, width-30 - w, tmp, color, fheight, true); // UTF-8
 		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+width-20-w,ypos+fheight, w, timestring, color, fheight);
@@ -667,7 +669,9 @@ void CPictureViewerGui::view(unsigned int index, bool unscaled)
 	
 	CLCD::getInstance()->showMenuText(0, playlist[index].Name.c_str(), -1, true); // UTF-8
 	char timestring[19];
-	strftime(timestring, 18, "%d-%m-%Y %H:%M", gmtime(&playlist[index].Date));
+	struct tm tm;
+	gmtime_r(&playlist[index].Date, &tm);
+	strftime(timestring, sizeof(timestring), "%d-%m-%Y %H:%M", &tm);
 	CLCD::getInstance()->showMenuText(1, timestring);
 	
 	if(m_state == MENU)

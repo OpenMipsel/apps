@@ -220,9 +220,11 @@ void CInfoViewer::paintTime( bool show_dot, bool firstPaint )
 
 		char timestr[10];
 		struct timeval tm;
+		struct tm lt;
 
 		gettimeofday(&tm, NULL);
-		strftime((char*) &timestr, 10, "%H:%M", localtime(&tm.tv_sec) );
+		localtime_r(&tm.tv_sec, &lt);
+		strftime(timestr, sizeof(timestr), "%H:%M", &lt);
 
 		if ( ( !firstPaint ) && ( strcmp( timestr, old_timestr ) == 0 ) )
 		{
@@ -1725,6 +1727,7 @@ void CInfoViewer::show_Data(bool calledFromEvent)
 #endif
 	
 	time_t jetzt=time(NULL);
+	struct tm pStartZeit;
 	if (info_CurrentNext.flags & CSectionsdClient::epgflags::has_current)
 	{
 		int seit = (abs(jetzt - info_CurrentNext.current_zeit.startzeit) + 30) / 60;
@@ -1742,8 +1745,8 @@ void CInfoViewer::show_Data(bool calledFromEvent)
 			else 
 				sprintf((char*)&runningRest, "%d +%d min", info_CurrentNext.current_zeit.dauer / 60, -rest);
 		}
-		struct tm *pStartZeit = localtime(&info_CurrentNext.current_zeit.startzeit);
-		sprintf((char*)&runningStart, "%02d:%02d", pStartZeit->tm_hour, pStartZeit->tm_min);
+		localtime_r(&info_CurrentNext.current_zeit.startzeit, &pStartZeit);
+		sprintf((char*)&runningStart, "%02d:%02d", pStartZeit.tm_hour, pStartZeit.tm_min);
 	} else
 		last_curr_id = 0;
 
@@ -1751,8 +1754,8 @@ void CInfoViewer::show_Data(bool calledFromEvent)
 	{
 		unsigned dauer = info_CurrentNext.next_zeit.dauer / 60;
 		sprintf((char*)&nextDuration, "%d min", dauer);
-		struct tm *pStartZeit = localtime(&info_CurrentNext.next_zeit.startzeit);
-		sprintf((char*)&nextStart, "%02d:%02d", pStartZeit->tm_hour, pStartZeit->tm_min);
+		localtime_r(&info_CurrentNext.next_zeit.startzeit, &pStartZeit);
+		sprintf((char*)&nextStart, "%02d:%02d", pStartZeit.tm_hour, pStartZeit.tm_min);
 	} else
 		last_next_id = 0;
 
@@ -2085,8 +2088,9 @@ void CInfoViewer::showEpgInfo()   //message on event change
 {
 	char nextStart[10];
 	int mode = CNeutrinoApp::getInstance()->getMode();
-	struct tm *pnStartZeit = localtime(&info_CurrentNext.next_zeit.startzeit);
-	sprintf((char*)&nextStart, "%02d:%02d", pnStartZeit->tm_hour, pnStartZeit->tm_min);
+	struct tm pnStartZeit;
+	localtime_r(&info_CurrentNext.next_zeit.startzeit, &pnStartZeit);
+	sprintf((char*)&nextStart, "%02d:%02d", pnStartZeit.tm_hour, pnStartZeit.tm_min);
 
 	/* show epg info only if we in TV- or Radio mode and current event is not the same like before */
 	if ((eventname != info_CurrentNext.current_name) && (mode != 0))

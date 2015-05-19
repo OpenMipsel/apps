@@ -77,14 +77,14 @@ int CSubChannelSelectMenu::doMenu()
 		{
 			char nvod_time_a[50], nvod_time_e[50], nvod_time_x[50];
 			char nvod_s[100];
-			struct tm *tmZeit;
+			struct tm tmZeit;
 
-			tmZeit = localtime(&e->startzeit);
-			sprintf(nvod_time_a, "%02d:%02d", tmZeit->tm_hour, tmZeit->tm_min);
+			localtime_r(&e->startzeit, &tmZeit);
+			sprintf(nvod_time_a, "%02d:%02d", tmZeit.tm_hour, tmZeit.tm_min);
 
 			time_t endtime = e->startzeit + e->dauer;
-			tmZeit = localtime(&endtime);
-			sprintf(nvod_time_e, "%02d:%02d", tmZeit->tm_hour, tmZeit->tm_min);
+			localtime_r(&endtime, &tmZeit);
+			sprintf(nvod_time_e, "%02d:%02d", tmZeit.tm_hour, tmZeit.tm_min);
 
 			time_t jetzt = time(NULL);
 			if (e->startzeit > jetzt)

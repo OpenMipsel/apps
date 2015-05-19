@@ -909,7 +909,8 @@ int EpgPlus::exec(CChannelList* _channelList, int selectedChannelIndex, CBouquet
 		is_visible = true;
 
 		time_t currentTime = time(NULL);
-		tm tmStartTime = *localtime(&currentTime);
+		struct tm tmStartTime;
+		localtime_r(&currentTime, &tmStartTime);
 		tmStartTime.tm_sec = 0;
 		tmStartTime.tm_min = int(tmStartTime.tm_min/15) * 15;
 
@@ -1493,9 +1494,10 @@ void EpgPlus::paintChannelEntry(int position)
 std::string EpgPlus::getTimeString(const time_t& time, const std::string& format)
 {
 	char tmpstr[256];
-	struct tm *tmStartTime = localtime(&time);
+	struct tm tmStartTime;
+	localtime_r(&time, &tmStartTime);
 
-	strftime(tmpstr, sizeof(tmpstr), format.c_str(), tmStartTime );
+	strftime(tmpstr, sizeof(tmpstr), format.c_str(), &tmStartTime );
 	// TODO: check scope of tmpstr!
 	return tmpstr;
 }

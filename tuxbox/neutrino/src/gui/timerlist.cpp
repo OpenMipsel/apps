@@ -109,10 +109,11 @@ public:
 		if(type == CTimerd::TIMER_RECORD)
 		{
 			*stopTime=(time(NULL)/60)*60;
-			struct tm *tmTime2 = localtime(stopTime);
-			sprintf( display, "%02d.%02d.%04d %02d:%02d", tmTime2->tm_mday, tmTime2->tm_mon+1,
-						tmTime2->tm_year+1900,
-						tmTime2->tm_hour, tmTime2->tm_min);
+			struct tm tmTime2;
+			localtime_r(stopTime, &tmTime2);
+			sprintf( display, "%02d.%02d.%04d %02d:%02d", tmTime2.tm_mday, tmTime2.tm_mon+1,
+						tmTime2.tm_year+1900,
+						tmTime2.tm_hour, tmTime2.tm_min);
 			m1->setActive(true);
 			m6->setActive((g_settings.recording_type == RECORDING_FILE));
 		}
@@ -594,12 +595,14 @@ void CTimerList::paintItem(int pos)
 	if(liststart+pos<timerlist.size())
 	{
 		CTimerd::responseGetTimer & timer = timerlist[liststart+pos];
-		char zAlarmTime[25] = {0};
-		struct tm *alarmTime = localtime(&(timer.alarmTime));
-		strftime(zAlarmTime,20,"%d.%m. %H:%M",alarmTime);
-		char zStopTime[25] = {0};
-		struct tm *stopTime = localtime(&(timer.stopTime));
-		strftime(zStopTime,20,"%d.%m. %H:%M",stopTime);
+		char zAlarmTime[20];
+		struct tm alarmTime;
+		localtime_r(&timer.alarmTime, &alarmTime);
+		strftime(zAlarmTime, sizeof(zAlarmTime), "%d.%m. %H:%M", &alarmTime);
+		char zStopTime[20];
+		struct tm stopTime;
+		localtime_r(&timer.stopTime, &stopTime);
+		strftime(zStopTime,sizeof(zStopTime), "%d.%m. %H:%M", &stopTime);
 		g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->RenderString(x+10, ypos+fheight, time_width, zAlarmTime, color, fheight, true); // UTF-8
 		if(timer.stopTime != 0)
 		{
@@ -1158,14 +1161,15 @@ bool askUserOnTimerConflict(time_t announceTime, time_t stopTime)
 
 	std::string timerbuf = g_Locale->getText(LOCALE_TIMERLIST_OVERLAPPING_TIMER1); 
 	timerbuf += "\n";
-	char rec[25] = {0};
-	struct tm *recTime = localtime(&announceTime);
-	strftime(rec,20,"%d.%m. %H:%M",recTime);
+	char rec[20];
+	struct tm recTime;
+	localtime_r(&announceTime, &recTime);
+	strftime(rec, sizeof(rec), "%d.%m. %H:%M", &recTime);
 	timerbuf += rec;
-	recTime = localtime(&stopTime);
+	localtime_r(&stopTime, &recTime);
 	if(stopTime > announceTime)
 	{
-		strftime(rec,20,"- %d.%m. %H:%M",recTime);
+		strftime(rec, sizeof(rec), "- %d.%m. %H:%M", &recTime);
 		timerbuf += rec;
 	}
 	
@@ -1175,15 +1179,17 @@ bool askUserOnTimerConflict(time_t announceTime, time_t stopTime)
 	for (CTimerd::TimerList::iterator it = overlappingTimers.begin();
 	     it != overlappingTimers.end(); ++it)
 	{
-		char at[25] = {0};
-		struct tm *annTime = localtime(&(it->alarmTime));
-		strftime(at,20,"%d.%m. %H:%M",annTime);
+		char at[20];
+		struct tm annTime;
+		localtime_r(&it->alarmTime, &annTime);
+		strftime(at, sizeof(at), "%d.%m. %H:%M", &annTime);
 		timerbuf += at;
 		timerbuf += " - ";
 
-		char st[25] = {0};
-		struct tm *sTime = localtime(&(it->stopTime));
-		strftime(st,20,"%d.%m. %H:%M",sTime);
+		char st[20];
+		struct tm sTime;
+		localtime_r(&it->stopTime, &sTime);
+		strftime(st, sizeof(st), "%d.%m. %H:%M", &sTime);
 		timerbuf += st;
 		timerbuf += " -> ";
 		timerbuf += CTimerList::convertTimerType2String(it->eventType);

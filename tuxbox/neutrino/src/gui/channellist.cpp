@@ -1092,14 +1092,15 @@ void CChannelList::paintDetails(unsigned int index)
 		char cNoch[50] = {0}; // UTF-8
 		char cSeit[50] = {0}; // UTF-8
 
-		struct		tm *pStartZeit = localtime(&p_event->startTime);
+		struct		tm pStartZeit;
+		localtime_r(&p_event->startTime, &pStartZeit);
 		unsigned    seit = ( time(NULL) - p_event->startTime + 30) / 60;
 
 		if (displayNext) {
 			snprintf(cNoch, sizeof(cNoch), "(%d min)", p_event->duration / 60);
-			snprintf(cSeit, sizeof(cSeit), g_Locale->getText(LOCALE_CHANNELLIST_START), pStartZeit->tm_hour, pStartZeit->tm_min);
+			snprintf(cSeit, sizeof(cSeit), g_Locale->getText(LOCALE_CHANNELLIST_START), pStartZeit.tm_hour, pStartZeit.tm_min);
 		} else {
-			snprintf(cSeit, sizeof(cSeit), g_Locale->getText(LOCALE_CHANNELLIST_SINCE), pStartZeit->tm_hour, pStartZeit->tm_min);
+			snprintf(cSeit, sizeof(cSeit), g_Locale->getText(LOCALE_CHANNELLIST_SINCE), pStartZeit.tm_hour, pStartZeit.tm_min);
 			int noch = (p_event->duration / 60) - seit;
 			if ((noch< 0) || (noch>=10000))
 				noch= 0;
@@ -1222,8 +1223,9 @@ void CChannelList::paintDetails(unsigned int index)
 		CSectionsdClient::CurrentNextInfo CurrentNext;
 		g_Sectionsd->getCurrentNextServiceKey(chanlist[index]->channel_id, CurrentNext);
 		if (!(CurrentNext.next_name.empty())) {
-			struct tm *pStartZeit = localtime (& CurrentNext.next_zeit.startzeit);
-			snprintf(cFrom, sizeof(cFrom), "%s %02d:%02d",g_Locale->getText(LOCALE_WORD_FROM),pStartZeit->tm_hour, pStartZeit->tm_min );
+			struct tm pStartZeit;
+			localtime_r(&CurrentNext.next_zeit.startzeit, &pStartZeit);
+			snprintf(cFrom, sizeof(cFrom), "%s %02d:%02d",g_Locale->getText(LOCALE_WORD_FROM),pStartZeit.tm_hour, pStartZeit.tm_min );
 			snprintf(buf, sizeof(buf), "%s",  Latin1_to_UTF8(CurrentNext.next_name).c_str());
 			int from_len = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNELLIST_DESCR]->getRenderWidth(cFrom, true); // UTF-8
 
@@ -1385,9 +1387,10 @@ void CChannelList::paintItem(int pos)
 			{		
 				if(displayNext)
 				{
-					struct		tm *pStartZeit = localtime(&p_event->startTime);
+					struct		tm pStartZeit;
+					localtime_r(&p_event->startTime, &pStartZeit);
 			
-					snprintf((char*) tmp, sizeof(tmp), "%02d:%02d", pStartZeit->tm_hour, pStartZeit->tm_min);
+					snprintf((char*) tmp, sizeof(tmp), "%02d:%02d", pStartZeit.tm_hour, pStartZeit.tm_min);
 					g_Font[SNeutrinoSettings::FONT_TYPE_CHANNELLIST_NUMBER]->RenderString(x + 5 + numwidth + 6, ypos + xtheight, width - numwidth - 20 - 12 - prg_offset, tmp, tcolor, 0, true);
 				}
 				else
@@ -1467,12 +1470,13 @@ void CChannelList::paintHead()
 	char timestr[10];
 	char provstr[20];
 	time_t now = time(NULL);
-	struct tm *tm = localtime(&now);
+	struct tm tm;
+	localtime_r(&now, &tm);
 
 	bool gotTime = g_Sectionsd->getIsTimeSet();
 
 	if(gotTime){
-		strftime(timestr, 10, "%H:%M", tm);
+		strftime(timestr, 10, "%H:%M", &tm);
 		timestr_len = g_Font[SNeutrinoSettings::FONT_TYPE_MENU_TITLE]->getRenderWidth(timestr, true); // UTF-8
 		timestr_offset = timestr_len + 10;
 	}
@@ -1641,8 +1645,9 @@ void CChannelList::paint_events(int index)
 		{
 			if (e->eventID)
 			{
-				struct tm *tmStartZeit = localtime(&e->startTime);
-				strftime(startTime, sizeof(startTime), "%H:%M", tmStartZeit );
+				struct tm tmStartZeit;
+				localtime_r(&e->startTime, &tmStartZeit);
+				strftime(startTime, sizeof(startTime), "%H:%M", &tmStartZeit );
 				//printf("%s %s\n", startTime, e->description.c_str());
 				startTimeWidth = eventStartTimeWidth;
 				g_Font[eventFont]->RenderString(x+ width+5, y+ theight+ pig_height + i*ffheight, startTimeWidth, startTime, /*(g_settings.colored_events_channellist == 2) ? COL_COLORED_EVENTS_CHANNELLIST :*/ COL_MENUCONTENTINACTIVE, 0, true);

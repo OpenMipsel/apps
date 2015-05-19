@@ -3396,7 +3396,7 @@ bool CMovieBrowser::getMovieInfoItem(MI_MOVIE_INFO& movie_info, MB_INFO_ITEM ite
 	char str_tmp[MAX_STR_TMP];
 	bool result = true;
 	*item_string="";
-	tm* tm_tmp;
+	struct tm tm_tmp;
 	
 	char text[20];
 	int i=0;
@@ -3458,13 +3458,13 @@ bool CMovieBrowser::getMovieInfoItem(MI_MOVIE_INFO& movie_info, MB_INFO_ITEM ite
 			*item_string = str_tmp;
 			break;
 		case MB_INFO_PREVPLAYDATE: 			// 		= 12,
-			tm_tmp = localtime(&movie_info.dateOfLastPlay);
-			snprintf(str_tmp,MAX_STR_TMP,"%02d.%02d.%02d",tm_tmp->tm_mday,(tm_tmp->tm_mon)+ 1, tm_tmp->tm_year >= 100 ? tm_tmp->tm_year-100 : tm_tmp->tm_year);
+			localtime_r(&movie_info.dateOfLastPlay, &tm_tmp);
+			snprintf(str_tmp,MAX_STR_TMP,"%02d.%02d.%02d",tm_tmp.tm_mday,(tm_tmp.tm_mon)+ 1, tm_tmp.tm_year >= 100 ? tm_tmp.tm_year-100 : tm_tmp.tm_year);
 			*item_string = str_tmp;
 			break;
 		case MB_INFO_RECORDDATE: 			// 		= 13,
-			tm_tmp = localtime(&movie_info.file.Time);
-			snprintf(str_tmp,MAX_STR_TMP,"%02d.%02d.%02d",tm_tmp->tm_mday,(tm_tmp->tm_mon) + 1,tm_tmp->tm_year >= 100 ? tm_tmp->tm_year-100 : tm_tmp->tm_year);
+			localtime_r(&movie_info.file.Time, &tm_tmp);
+			snprintf(str_tmp,MAX_STR_TMP,"%02d.%02d.%02d",tm_tmp.tm_mday,(tm_tmp.tm_mon) + 1,tm_tmp.tm_year >= 100 ? tm_tmp.tm_year-100 : tm_tmp.tm_year);
 			*item_string = str_tmp;
 			break;
 		case MB_INFO_PRODDATE: 				// 		= 14,

@@ -82,7 +82,9 @@ void CTimeOSD::update()
 		}
 		if(tDisplayTime < 0)
 			tDisplayTime=0;
-		strftime(cDisplayTime, 9, "%T", gmtime(&tDisplayTime));
+		struct tm tm;
+		gmtime_r(&tDisplayTime, &tm);
+		strftime(cDisplayTime, 9, "%T", &tm);
 		frameBuffer->paintBoxRel(m_xend - m_width - 10, m_y , m_width + 10 , m_height, color, RADIUS_MID);
 		g_Font[TIMEOSD_FONT]->RenderString(m_xend - m_width - 5,m_y + m_height,
 																				m_width+5, cDisplayTime, color);

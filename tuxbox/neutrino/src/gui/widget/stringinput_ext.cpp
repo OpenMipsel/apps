@@ -486,10 +486,11 @@ CDateInput::~CDateInput()
 }
 void CDateInput::onBeforeExec()
 {
-	struct tm *tmTime = localtime(time);
-	snprintf(value, 20, "%02d.%02d.%04d %02d:%02d", tmTime->tm_mday, tmTime->tm_mon+1,
-				tmTime->tm_year+1900,
-				tmTime->tm_hour, tmTime->tm_min);
+	struct tm tmTime;
+	localtime_r(time, &tmTime);
+	snprintf(value, 20, "%02d.%02d.%04d %02d:%02d", tmTime.tm_mday, tmTime.tm_mon+1,
+				tmTime.tm_year+1900,
+				tmTime.tm_hour, tmTime.tm_min);
 }
 
 void CDateInput::onAfterExec()
@@ -528,10 +529,11 @@ void CDateInput::onAfterExec()
    if(tmTime.tm_sec<0)
       tmTime.tm_sec=0;
 	*time=mktime(&tmTime);
-	struct tm *tmTime2 = localtime(time);
-	snprintf(value, 20, "%02d.%02d.%04d %02d:%02d", tmTime2->tm_mday, tmTime2->tm_mon+1,
-				tmTime2->tm_year+1900,
-				tmTime2->tm_hour, tmTime2->tm_min);
+	struct tm tmTime2;
+	localtime_r(time, &tmTime2);
+	snprintf(value, 20, "%02d.%02d.%04d %02d:%02d", tmTime2.tm_mday, tmTime2.tm_mon+1,
+				tmTime2.tm_year+1900,
+				tmTime2.tm_hour, tmTime2.tm_min);
 }
 //-----------------------------#################################-------------------------------------------------------
 

@@ -642,18 +642,18 @@ void CLCD::showTime()
 {
 	if (showclock)
 	{
-		char timestr[21];
+		char timestr[20];
 		struct timeval tm;
-		struct tm * t;
+		struct tm lt;
 
 		gettimeofday(&tm, NULL);
-		t = localtime(&tm.tv_sec);
+		localtime_r(&tm.tv_sec, &lt);
 
 		if (mode == MODE_STANDBY)
 		{
 			display.draw_fill_rect(-1, -1, LCD_COLS, 64, CLCDDisplay::PIXEL_OFF); // clear lcd
 
-			ShowNewClock(&display, t->tm_hour, t->tm_min, t->tm_sec, t->tm_wday, t->tm_mday, t->tm_mon, CNeutrinoApp::getInstance()->recordingstatus);
+			ShowNewClock(&display, lt.tm_hour, lt.tm_min, lt.tm_sec, lt.tm_wday, lt.tm_mday, lt.tm_mon, CNeutrinoApp::getInstance()->recordingstatus);
 		}
 		else
 		{
@@ -664,7 +664,7 @@ void CLCD::showTime()
 			}
 			else
 			{
-				strftime((char*) &timestr, 20, "%H:%M", t);
+				strftime(timestr, sizeof(timestr), "%H:%M", &lt);
 				clearClock = 1;
 			}
 
