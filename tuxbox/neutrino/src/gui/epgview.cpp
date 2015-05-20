@@ -36,6 +36,7 @@
 #endif
 
 #include <algorithm>
+#include <sstream>
 
 #include <gui/epgview.h>
 
@@ -455,6 +456,15 @@ static bool sortByDateTime (const CChannelEvent& a, const CChannelEvent& b)
 	return a.startTime< b.startTime;
 }
 
+bool CEpgData::isCurrentEPG(const t_channel_id channel_id)
+{
+	t_channel_id live_channel_id = g_Zapit->getCurrentServiceID();
+	if(( epg_done != -1 ) && live_channel_id == channel_id){
+		return true;
+	}
+	return false;
+}
+
 int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_t* a_startzeit, bool doLoop, bool callFromfollowlist )
 {
 	int res = menu_return::RETURN_REPAINT;
@@ -630,7 +640,9 @@ int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_
 	showText(showPos, sy + toph);
 
 	// show Timer Event Buttons
-	showTimerEventBar (true);
+	bool wzap = isCurrentEPG(channel_id);
+	frameBuffer->paintBoxRel(sx, sy + oy, ox, buttonheight, COL_INFOBAR_SHADOW_PLUS_1, RADIUS_MID, CORNER_BOTTOM);
+	showTimerEventBar (true, wzap);
 
 	//show Content&Component for Dolby & 16:9
 	if (hasComponentTags)
@@ -678,6 +690,7 @@ int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_
 		while(loop)
 		{
 			g_RCInput->getMsgAbsoluteTimeout( &msg, &data, &timeoutEnd );
+			neutrino_msg_t msg_repeatok = msg & ~CRCInput::RC_Repeat;
 
 			scrollCount = medlinecount;
 
@@ -715,6 +728,29 @@ int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_
 						showPos = 0;
 					else
 						showText(showPos, sy + toph);
+					break;
+				case CRCInput::RC_plus:
+					if(isCurrentEPG(channel_id)){
+						if(g_settings.wzap_time> 14)
+							g_settings.wzap_time+=5;
+						else
+							g_settings.wzap_time++;
+						if(g_settings.wzap_time>60)
+							g_settings.wzap_time = 0;
+						showTimerEventBar(true, true);
+					}
+					break;
+				case CRCInput::RC_minus:
+					if (isCurrentEPG(channel_id)) {
+						if(g_settings.wzap_time> 19)
+							g_settings.wzap_time-=5;
+						else
+							g_settings.wzap_time--;
+
+						if(g_settings.wzap_time<0)
+							g_settings.wzap_time = 60;
+						showTimerEventBar(true, true);
+					}
 					break;
 
 				// 31.05.2002 dirch		record timer
@@ -779,14 +815,19 @@ int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_
 				// 31.05.2002 dirch		zapto timer
 				case CRCInput::RC_yellow:
 				{
-					CTimerdClient timerdclient;
-					if(timerdclient.isTimerdAvailable())
+					if(g_Timerd->isTimerdAvailable())
 					{
-						timerdclient.addZaptoTimerEvent(channel_id,
-																  epgData.epg_times.startzeit,
-																  epgData.epg_times.startzeit - ANNOUNCETIME, 0,
-																  epgData.eventID, epgData.epg_times.startzeit, 0, true);
-						ShowLocalizedMessage(LOCALE_TIMER_EVENTTIMED_TITLE, LOCALE_TIMER_EVENTTIMED_MSG, CMessageBox::mbrBack, CMessageBox::mbBack, NEUTRINO_ICON_INFO);
+						if (!g_Timerd->adzap_eventID && g_settings.wzap_time && isCurrentEPG(channel_id)) {
+							g_Timerd->addAdZaptoTimerEvent(channel_id,
+											time (NULL) + (g_settings.wzap_time * 60));
+							loop = false;
+						} else {
+							g_Timerd->addZaptoTimerEvent(channel_id,
+											epgData.epg_times.startzeit,
+											epgData.epg_times.startzeit - ANNOUNCETIME, 0,
+											epgData.eventID, epgData.epg_times.startzeit, 0, true);
+							ShowLocalizedMessage(LOCALE_TIMER_EVENTTIMED_TITLE, LOCALE_TIMER_EVENTTIMED_MSG, CMessageBox::mbrBack, CMessageBox::mbBack, NEUTRINO_ICON_INFO);
+						}
 					}
 					else
 						printf("timerd not available\n");
@@ -848,6 +889,8 @@ int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_
 					// konfigurierbare Keys handlen...
 					if (msg == g_settings.key_channelList_cancel)
 						loop = false;
+					else if (msg_repeatok == CRCInput::RC_plus || msg_repeatok == CRCInput::RC_minus)
+						;
 					else
 					{
 						if ( CNeutrinoApp::getInstance()->handleMsg( msg, data ) & messages_return::cancel_all )
@@ -1001,16 +1044,16 @@ void CEpgData::FollowScreenings(const time_t startzeit)
 // -- Just display or hide TimerEventbar
 // -- 2002-05-13 rasc
 //
-const struct button_label epgviewButtons[3] =
+struct button_label epgviewButtons[3] =
 {
 	{ NEUTRINO_ICON_BUTTON_RED    , LOCALE_TIMERBAR_RECORDEVENT            },
-	{ NEUTRINO_ICON_BUTTON_YELLOW , LOCALE_TIMERBAR_CHANNELSWITCH          },
+	{ NEUTRINO_ICON_BUTTON_YELLOW , LOCALE_GENERIC_EMPTY                   }, // channelswitch / adZap
 	{ NEUTRINO_ICON_BUTTON_BLUE   , LOCALE_EPGVIEWER_MORE_SCREENINGS_SHORT }
 };
 
-void CEpgData::showTimerEventBar(bool _show)
+void CEpgData::showTimerEventBar(bool _show, bool webzap)
 {
-	int ButtonWidth = (ox - 12) / 4; // 4 cells
+	int ButtonWidth = (ox - 70) / 3; // 3 cells + 16:9 & dd
 	int by = sy + oy + 2;
 
 	// hide only?
@@ -1020,14 +1063,27 @@ void CEpgData::showTimerEventBar(bool _show)
 		return;
 	}
 
-	frameBuffer->paintBoxRel(sx, sy + oy, ox, buttonheight, COL_INFOBAR_SHADOW_PLUS_1, RADIUS_MID, CORNER_BOTTOM);
+	frameBuffer->paintBoxRel(sx, sy + oy, ox-60, buttonheight, COL_INFOBAR_SHADOW_PLUS_1, RADIUS_MID, CORNER_LEFT);
+
+	std::string tmp_but_name;
+	std::stringstream s;
+	s << g_settings.wzap_time;
+	const char *but_name = NULL;
+	if (g_settings.wzap_time && webzap && !g_Timerd->adzap_eventID) {
+		tmp_but_name = g_Locale->getText(LOCALE_ADZAP);
+		tmp_but_name += " "+ s.str() + " ";
+		tmp_but_name += g_Locale->getText(LOCALE_WORD_MINUTES_SHORT);
+		but_name = tmp_but_name.c_str();
+	}
+	else
+		epgviewButtons[1].locale = LOCALE_TIMERBAR_CHANNELSWITCH;
 
 	// Button: Timer Record & Channelswitch
 	if (g_settings.recording_type != CNeutrinoApp::RECORDING_OFF)
 		::paintButtons(frameBuffer, g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL],	g_Locale, sx + 6, by, ButtonWidth, 1, &epgviewButtons[0]);
 
-	// Button: Timer Channelswitch
-	::paintButtons(frameBuffer, g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL],	g_Locale, sx + 6 + ButtonWidth, by, ButtonWidth, 1, &epgviewButtons[1]);
+	// Button: Timer Channelswitch / AdZap
+	::paintButtons(frameBuffer, g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL],	g_Locale, sx + 6 + ButtonWidth-25, by, ButtonWidth, 1, &epgviewButtons[1], 0, false, COL_INFOBAR_SHADOW_PLUS_1, but_name);
 
 	// Button: more screenings
 	if (!followlist.empty() && !call_fromfollowlist)

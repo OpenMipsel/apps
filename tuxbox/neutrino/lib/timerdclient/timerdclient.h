@@ -62,7 +62,9 @@ class CTimerdClient:private CBasicClient
 
 		void registerEvent(unsigned int eventID, unsigned int clientID, const char * const udsName);
 		void unRegisterEvent(unsigned int eventID, unsigned int clientID);
+		static int adzap_eventID;
 
+		void resetAdZap_EventID();
 		bool isTimerdAvailable();			// check if timerd is running
 
 		CTimerd::TimerList getOverlappingTimers(time_t& announcetime, time_t& stoptime);
@@ -147,6 +149,17 @@ class CTimerdClient:private CBasicClient
 			eventInfo.apids = apids;
 			eventInfo.recordingSafety = safety;
 			return addTimerEvent(CTimerd::TIMER_ZAPTO, &eventInfo, announcetime, alarmtime, stoptime);
+		};
+		// adds new adzap timer event //pseudo TIMER_ADZAP
+		int addAdZaptoTimerEvent(const t_channel_id channel_id, time_t alarmtime)
+		{
+			CTimerd::EventInfo eventInfo;
+			eventInfo.channel_id = channel_id;
+			eventInfo.epgID = 1;
+			eventInfo.epg_starttime = 0;
+			eventInfo.apids = 0;
+			eventInfo.recordingSafety = false;
+			return addTimerEvent(CTimerd::TIMER_ADZAP, &eventInfo, 0, alarmtime, 0);
 		};
 
 		int addNextProgramTimerEvent(CTimerd::EventInfo eventInfo,time_t alarmtime, time_t announcetime = 0, time_t stoptime = 0)

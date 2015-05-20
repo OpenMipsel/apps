@@ -400,8 +400,9 @@ int CNeutrinoApp::loadSetup()
 	g_settings.infobar_show_channellogo	= configfile.getInt32("infobar_show_channellogo"		, CInfoViewer::NO_LOGO);
 	g_settings.infobar_channellogo_background		= configfile.getInt32("infobar_channellogo_background"		, CInfoViewer::NO_BACKGROUND);
 	g_settings.startmode			= configfile.getInt32("startmode" , STARTMODE_RESTORE );
-
+	g_settings.wzap_time			= configfile.getInt32("wzap_time", 3 );
 	g_settings.radiotext_enable		= configfile.getBool("radiotext_enable"          , false);
+
 	//audio
 	g_settings.audio_AnalogMode 		= configfile.getInt32( "audio_AnalogMode"        , 0 );
 	g_settings.audio_DolbyDigital		= configfile.getBool("audio_DolbyDigital"        , false);
@@ -959,6 +960,7 @@ void CNeutrinoApp::saveSetup()
 	configfile.setString("infobar_channel_logodir"	, g_settings.infobar_channel_logodir);
 	configfile.setInt32( "infobar_channellogo_background"	, g_settings.infobar_channellogo_background);
 	configfile.setInt32("startmode"                , g_settings.startmode);
+	configfile.setInt32("wzap_time"                , g_settings.wzap_time);
 	configfile.setBool("radiotext_enable"          , g_settings.radiotext_enable);
 
 	//audio
@@ -2924,6 +2926,9 @@ int CNeutrinoApp::handleMsg(const neutrino_msg_t m, neutrino_msg_data_t data)
 					channelsInit(init_mode_switch, mode_tv);
 				}
 				channelList->zapTo_ChannelID(eventinfo->channel_id);
+				if (eventinfo->epgID == 1) {
+					g_Timerd->resetAdZap_EventID();
+				}
 			}
 			delete [] (unsigned char*) data;
 			return messages_return::handled;
