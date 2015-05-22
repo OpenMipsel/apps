@@ -36,7 +36,6 @@
 #endif
 
 #include <algorithm>
-#include <sstream>
 
 #include <gui/epgview.h>
 
@@ -47,8 +46,8 @@
 #include <gui/widget/mountchooser.h>
 #include <gui/widget/dirchooser.h>
 #include <gui/widget/progressbar.h>
-
 #include <gui/timerlist.h>
+#include <system/helper.h>
 
 #include <global.h>
 #include <neutrino.h>
@@ -1066,12 +1065,10 @@ void CEpgData::showTimerEventBar(bool _show, bool webzap)
 	frameBuffer->paintBoxRel(sx, sy + oy, ox-60, buttonheight, COL_INFOBAR_SHADOW_PLUS_1, RADIUS_MID, CORNER_LEFT);
 
 	std::string tmp_but_name;
-	std::stringstream s;
-	s << g_settings.wzap_time;
 	const char *but_name = NULL;
 	if (g_settings.wzap_time && webzap && !g_Timerd->adzap_eventID) {
 		tmp_but_name = g_Locale->getText(LOCALE_ADZAP);
-		tmp_but_name += " "+ s.str() + " ";
+		tmp_but_name += " "+ to_string(g_settings.wzap_time) + " ";
 		tmp_but_name += g_Locale->getText(LOCALE_WORD_MINUTES_SHORT);
 		but_name = tmp_but_name.c_str();
 	}

@@ -26,6 +26,7 @@
 #define __neutrino_helper__
 
 #include <string>
+#include <sstream>
 
 void StrSearchReplace( std::string &s, const std::string &to_find, const std::string& repl_with );
 
@@ -36,4 +37,10 @@ bool file_exists(const char *filename);
 
 std::string find_executable(const char *name);
 
+std::string to_string(int);
+std::string to_string(unsigned int);
+std::string to_string(long);
+std::string to_string(unsigned long);
+std::string to_string(long long);
+std::string to_string(unsigned long long);
 #endif

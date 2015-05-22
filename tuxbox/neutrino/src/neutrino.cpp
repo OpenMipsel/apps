@@ -447,29 +447,19 @@ int CNeutrinoApp::loadSetup()
 #endif
 
 	//network
-	char cfg_key[81];
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 	{
-		sprintf(cfg_key, "network_nfs_ip_%d", i);
-		g_settings.network_nfs_ip[i] = configfile.getString(cfg_key, "");
-		sprintf(cfg_key, "network_nfs_dir_%d", i);
-		strcpy( g_settings.network_nfs_dir[i], configfile.getString( cfg_key, "" ).c_str() );
-		sprintf(cfg_key, "network_nfs_local_dir_%d", i);
-		strcpy( g_settings.network_nfs_local_dir[i], configfile.getString( cfg_key, "" ).c_str() );
-		sprintf(cfg_key, "network_nfs_automount_%d", i);
-		g_settings.network_nfs_automount[i] = configfile.getInt32( cfg_key, 0);
-		sprintf(cfg_key, "network_nfs_type_%d", i);
-		g_settings.network_nfs_type[i] = configfile.getInt32( cfg_key, 0);
-		sprintf(cfg_key, "network_nfs_username_%d", i);
-		strcpy( g_settings.network_nfs_username[i], configfile.getString( cfg_key, "" ).c_str() );
-		sprintf(cfg_key, "network_nfs_password_%d", i);
-		strcpy( g_settings.network_nfs_password[i], configfile.getString( cfg_key, "" ).c_str() );
-		sprintf(cfg_key, "network_nfs_mount_options1_%d", i);
-		strcpy( g_settings.network_nfs_mount_options1[i], configfile.getString( cfg_key, "ro,soft,udp" ).c_str() );
-		sprintf(cfg_key, "network_nfs_mount_options2_%d", i);
-		strcpy( g_settings.network_nfs_mount_options2[i], configfile.getString( cfg_key, "nolock,rsize=8192,wsize=8192" ).c_str() );
-		sprintf(cfg_key, "network_nfs_mac_%d", i);
-		strcpy( g_settings.network_nfs_mac[i], configfile.getString( cfg_key, "11:22:33:44:55:66").c_str() );
+		std::string i_str(to_string(i));
+		g_settings.network_nfs_ip[i]                    = configfile.getString("network_nfs_ip_" + i_str, "");
+		strcpy( g_settings.network_nfs_dir[i]           , configfile.getString("network_nfs_dir_" + i_str, "").c_str() );
+		strcpy( g_settings.network_nfs_local_dir[i]     , configfile.getString("network_nfs_local_dir_" + i_str, "").c_str() );
+		g_settings.network_nfs_automount[i]             = configfile.getInt32 ("network_nfs_automount_" + i_str, 0);
+		g_settings.network_nfs_type[i]                  = configfile.getInt32 ("network_nfs_type_" + i_str, 0);
+		strcpy( g_settings.network_nfs_username[i]      , configfile.getString("network_nfs_username_" + i_str, "").c_str() );
+		strcpy( g_settings.network_nfs_password[i]      , configfile.getString("network_nfs_password_" + i_str, "").c_str() );
+		strcpy( g_settings.network_nfs_mount_options1[i], configfile.getString("network_nfs_mount_options1_" + i_str, "ro,soft,udp" ).c_str() );
+		strcpy( g_settings.network_nfs_mount_options2[i], configfile.getString("network_nfs_mount_options2_" + i_str, "nolock,rsize=8192,wsize=8192" ).c_str() );
+		strcpy( g_settings.network_nfs_mac[i]           , configfile.getString("network_nfs_mac" + i_str, "11:22:33:44:55:66").c_str() );
 	}
 	g_settings.filesystem_is_utf8              = configfile.getBool("filesystem_is_utf8"                 , true );
 
@@ -581,12 +571,10 @@ int CNeutrinoApp::loadSetup()
 	g_settings.recording_dir_permissions[3] = '\0';
 	for(int i=0 ; i < MAX_RECORDING_DIR ; i++)
 	{
-		sprintf(cfg_key, "recording_dir_%d", i);
-		g_settings.recording_dir[i] = configfile.getString( cfg_key, "" );
-		sprintf(cfg_key, "recording_filename_template_%d", i);
-		g_settings.recording_filename_template[i] = configfile.getString( cfg_key, "" );
-		sprintf(cfg_key, "recording_splitsize_%d", i);
-		strcpy(g_settings.recording_splitsize[i], configfile.getString( cfg_key, "" ).c_str());
+		std::string i_str(to_string(i));
+		g_settings.recording_dir[i] = configfile.getString("recording_dir_" + i_str, "" );
+		g_settings.recording_filename_template[i] = configfile.getString("recording_filename_template_" + i_str, "" );
+		strcpy(g_settings.recording_splitsize[i], configfile.getString("recording_splitsize_" + i_str, "" ).c_str());
 	}
 	g_settings.recording_gen_psi = configfile.getBool("recordingmenu.gen_psi", true);
 
@@ -990,29 +978,19 @@ void CNeutrinoApp::saveSetup()
 	configfile.setBool( "menu_numbers_as_icons", g_settings.menu_numbers_as_icons );
 
 	//network
-	char cfg_key[81];
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 	{
-		sprintf(cfg_key, "network_nfs_ip_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_ip[i] );
-		sprintf(cfg_key, "network_nfs_dir_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_dir[i] );
-		sprintf(cfg_key, "network_nfs_local_dir_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_local_dir[i] );
-		sprintf(cfg_key, "network_nfs_automount_%d", i);
-		configfile.setInt32( cfg_key, g_settings.network_nfs_automount[i]);
-		sprintf(cfg_key, "network_nfs_type_%d", i);
-		configfile.setInt32( cfg_key, g_settings.network_nfs_type[i]);
-		sprintf(cfg_key,"network_nfs_username_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_username[i] );
-		sprintf(cfg_key, "network_nfs_password_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_password[i] );
-		sprintf(cfg_key, "network_nfs_mount_options1_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_mount_options1[i]);
-		sprintf(cfg_key, "network_nfs_mount_options2_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_mount_options2[i]);
-		sprintf(cfg_key, "network_nfs_mac_%d", i);
-		configfile.setString( cfg_key, g_settings.network_nfs_mac[i]);
+		std::string i_str(to_string(i));
+		configfile.setString("network_nfs_ip_" + i_str            , g_settings.network_nfs_ip[i] );
+		configfile.setString("network_nfs_dir_" + i_str           , g_settings.network_nfs_dir[i] );
+		configfile.setString("network_nfs_local_dir_" + i_str     , g_settings.network_nfs_local_dir[i] );
+		configfile.setInt32 ("network_nfs_automount_" + i_str     , g_settings.network_nfs_automount[i]);
+		configfile.setInt32 ("network_nfs_type_" + i_str          , g_settings.network_nfs_type[i]);
+		configfile.setString("network_nfs_username_" + i_str      , g_settings.network_nfs_username[i] );
+		configfile.setString("network_nfs_password_" + i_str      , g_settings.network_nfs_password[i] );
+		configfile.setString("network_nfs_mount_options1_" + i_str, g_settings.network_nfs_mount_options1[i]);
+		configfile.setString("network_nfs_mount_options2_" + i_str, g_settings.network_nfs_mount_options2[i]);
+		configfile.setString("network_nfs_mac_" + i_str           , g_settings.network_nfs_mac[i]);
 	}
 	configfile.setBool  ( "filesystem_is_utf8" , g_settings.filesystem_is_utf8);
 #ifdef ENABLE_SAMBASERVER
@@ -1103,12 +1081,10 @@ void CNeutrinoApp::saveSetup()
 	configfile.setString("recording_dir_permissions"          , g_settings.recording_dir_permissions);
 	for(int i=0 ; i < MAX_RECORDING_DIR ; i++)
 	{
-		sprintf(cfg_key, "recording_dir_%d", i);
-		configfile.setString( cfg_key, g_settings.recording_dir[i] );
-		sprintf(cfg_key, "recording_filename_template_%d", i);
-		configfile.setString( cfg_key, g_settings.recording_filename_template[i] );
-		sprintf(cfg_key, "recording_splitsize_%d", i);
-		configfile.setString( cfg_key, g_settings.recording_splitsize[i] );
+		std::string i_str(to_string(i));
+		configfile.setString("recording_dir_" + i_str              , g_settings.recording_dir[i] );
+		configfile.setString("recording_filename_template_" + i_str, g_settings.recording_filename_template[i] );
+		configfile.setString("recording_splitsize_" + i_str        , g_settings.recording_splitsize[i] );
 	}
 
 	//streaming
