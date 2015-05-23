@@ -48,6 +48,7 @@
 #include <driver/rcinput.h>
 #include <daemonc/remotecontrol.h>
 #include <system/settings.h>
+#include <system/helper.h>
 
 #include <global.h>
 #include <neutrino.h>
@@ -333,8 +334,7 @@ void CBouquetList::paintItem(int pos)
 	{
 		CBouquet* bouq = Bouquets[liststart+pos];
 		//number - for direct jump
-		char tmp[10];
-		sprintf((char*) tmp, "%d", liststart+pos+ 1);
+		std::string tmp = to_string(liststart+pos+ 1);
 
 		if (liststart + pos == selected)
 			CLCD::getInstance()->showMenuText(0, bouq->channelList->getName(), -1, true); // UTF-8

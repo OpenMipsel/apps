@@ -3051,7 +3051,6 @@ CMoviePlayerGui::PlayStream(int streamtype)
 			g_apidchanged = false;
 			CAPIDSelectExec *APIDChanger = new CAPIDSelectExec;
 			unsigned int digit = 0;
-			char show_pid_number[5];
 			std::string apidtitle = "";
 			bool sep_added = false;
 
@@ -3062,9 +3061,8 @@ CMoviePlayerGui::PlayStream(int streamtype)
 					continue;
 
 				bool mi_found = false, current = false;
-				sprintf(show_pid_number, "%u", g_apids[count]);
 
-				apidtitle.assign(show_pid_number);
+				apidtitle.assign(to_string(g_apids[count]));
 				apidtitle.append(" : ");
 				if (movieinfo_valid)
 				{
@@ -3107,9 +3105,8 @@ CMoviePlayerGui::PlayStream(int streamtype)
 					continue;
 
 				bool mi_found = false, current = false;
-				sprintf(show_pid_number, "%u", g_apids[count]);
 
-				apidtitle.assign(show_pid_number);
+				apidtitle.assign(to_string(g_apids[count]));
 				apidtitle.append(" : ");
 				if (movieinfo_valid)
 				{
@@ -3158,8 +3155,6 @@ CMoviePlayerGui::PlayStream(int streamtype)
 				if (!movieinfo_valid)
 					break; // only one teletext pid possible
 
-				sprintf(show_pid_number, "%d", vtxtpid);
-
 				for (unsigned int i = 0; i < movieinfo.subPids.size(); i++)
 				{
 					if (movieinfo.subPids[i].subPid == vtxtpid)
@@ -3170,7 +3165,7 @@ CMoviePlayerGui::PlayStream(int streamtype)
 							sep_added = true;
 						}
 
-						apidtitle.assign(show_pid_number);
+						apidtitle.assign(to_string(vtxtpid));
 						apidtitle.append(" : ");
 						apidtitle.append(movieinfo.subPids[i].subName);
 						apidtitle.append(" (TTX)");
@@ -3198,7 +3193,6 @@ CMoviePlayerGui::PlayStream(int streamtype)
 
 				bool mi_found = false;
 				subpid = g_apids[count];
-				sprintf(show_pid_number, "%d", subpid);
 
 				if (!sep_added)
 				{
@@ -3206,7 +3200,7 @@ CMoviePlayerGui::PlayStream(int streamtype)
 					sep_added = true;
 				}
 
-				apidtitle.assign(show_pid_number);
+				apidtitle.assign(to_string(subpid));
 				apidtitle.append(" : ");
 				if (movieinfo_valid)
 				{

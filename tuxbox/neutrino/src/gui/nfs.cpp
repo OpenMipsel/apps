@@ -41,6 +41,7 @@
 #include <gui/widget/hintbox.h>
 #include <gui/widget/stringinput.h>
 #include <gui/widget/stringinput_ext.h>
+#include <system/helper.h>
 
 #include <fstream>
 
@@ -156,13 +157,12 @@ int CNFSMountGui::menu()
 {
 	CMenuWidget mountMenuW(LOCALE_NFS_MOUNT, NEUTRINO_ICON_STREAMING, 720);
 	mountMenuW.addIntroItems();
-	char s2[12];
 
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 	{
-		sprintf(s2,"mountentry%d",i);
+		std::string s2 = "mountentry" + to_string(i);
 		sprintf(ISO_8859_1_entry[i],ZapitTools::UTF8_to_Latin1(m_entry[i]).c_str());
-		mountMenuEntry[i] = new CMenuForwarder("", true, ISO_8859_1_entry[i], this, s2);
+		mountMenuEntry[i] = new CMenuForwarder("", true, ISO_8859_1_entry[i], this, s2.c_str());
 		if (CFSMounter::isMounted(g_settings.network_nfs_local_dir[i]))
 			mountMenuEntry[i]->iconName = NEUTRINO_ICON_MOUNTED;
 		else
@@ -194,8 +194,8 @@ int CNFSMountGui::menuEntry(int nr)
 	char *dir,*local_dir, *username, *password, *options1, *options2, *mac;
 	int* automount;
 	int* type;
-	char cmd[9];
-	char cmd2[9];
+	std::string cmd  = "domount" + to_string(nr);
+	std::string cmd2 = "dir"     + to_string(nr);
 
 	dir = g_settings.network_nfs_dir[nr];
 	local_dir = g_settings.network_nfs_local_dir[nr];
@@ -206,9 +206,6 @@ int CNFSMountGui::menuEntry(int nr)
 	options1 = g_settings.network_nfs_mount_options1[nr];
 	options2 = g_settings.network_nfs_mount_options2[nr];
 	mac = g_settings.network_nfs_mac[nr];
-
-	sprintf(cmd,"domount%d",nr);
-	sprintf(cmd2,"dir%d",nr);
 
    /* rewrite fstype in new entries */
    if(strlen(local_dir)==0)
@@ -243,7 +240,7 @@ int CNFSMountGui::menuEntry(int nr)
 	CMenuForwarder *password_fwd = new CMenuForwarder(LOCALE_NFS_PASSWORD, (*type != (int)CFSMounter::NFS), NULL, &passInput);
 	CMACInput macInput(LOCALE_RECORDINGMENU_SERVER_MAC, g_settings.network_nfs_mac[nr]);
 	CMenuForwarder * macInput_fwd = new CMenuForwarder(LOCALE_RECORDINGMENU_SERVER_MAC, true, g_settings.network_nfs_mac[nr], &macInput);
-	CMenuForwarder *mountnow_fwd = new CMenuForwarder(LOCALE_NFS_MOUNTNOW, !(CFSMounter::isMounted(g_settings.network_nfs_local_dir[nr])), NULL, this, cmd);
+	CMenuForwarder *mountnow_fwd = new CMenuForwarder(LOCALE_NFS_MOUNTNOW, !(CFSMounter::isMounted(g_settings.network_nfs_local_dir[nr])), NULL, this, cmd.c_str());
 	mountnow_fwd->setItemButton(NEUTRINO_ICON_BUTTON_OKAY, true);
 
 	COnOffNotifier notifier(CFSMounter::NFS);
@@ -253,7 +250,7 @@ int CNFSMountGui::menuEntry(int nr)
 	mountMenuEntryW.addItem(new CMenuOptionChooser(LOCALE_NFS_TYPE, type, NFS_TYPE_OPTIONS, NFS_TYPE_OPTION_COUNT, typeEnabled, &notifier));
 	mountMenuEntryW.addItem(new CMenuForwarder(LOCALE_NFS_IP      , true, g_settings.network_nfs_ip[nr], &ipInput       ));
 	mountMenuEntryW.addItem(new CMenuForwarder(LOCALE_NFS_DIR     , true, dir                          , &dirInput      ));
-	mountMenuEntryW.addItem(new CMenuForwarder(LOCALE_NFS_LOCALDIR, true, local_dir                    , this     , cmd2));
+	mountMenuEntryW.addItem(new CMenuForwarder(LOCALE_NFS_LOCALDIR, true, local_dir                    , this     , cmd2.c_str()));
 	mountMenuEntryW.addItem(automountInput);
 	mountMenuEntryW.addItem(options1_fwd);
 	mountMenuEntryW.addItem(options2_fwd);

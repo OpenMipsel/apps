@@ -55,6 +55,7 @@
 #include <gui/widget/messagebox.h>
 #include <gui/widget/hintbox.h>
 
+#include <system/helper.h>
 #include <system/flashtool.h>
 #include <sectionsdclient/sectionsdclient.h>
 #ifndef DISABLE_INTERNET_UPDATE
@@ -550,11 +551,8 @@ CFlashExpert::CFlashExpert()
 
 void CFlashExpert::readmtd(int mtd)
 {
-	char tmp[10];
-	sprintf(tmp, "%d", mtd);
-	std::string filename = "/tmp/mtd";
-	filename += tmp;
-	filename += ".img"; // US-ASCII (subset of UTF-8 and ISO8859-1)
+
+	std::string filename = "/tmp/mtd" + to_string(mtd) + ".img"; // US-ASCII (subset of UTF-8 and ISO8859-1)
 	if (mtd == -1)
 	{
 		filename = "/tmp/flashimage.img"; // US-ASCII (subset of UTF-8 and ISO8859-1)

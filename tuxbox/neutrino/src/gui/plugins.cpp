@@ -34,6 +34,7 @@
 #endif
 
 #include <gui/plugins.h>
+#include <system/helper.h>
 
 #include <sstream>
 #include <fstream>
@@ -280,11 +281,7 @@ PluginParam * CPlugins::makeParam(const char * const id, const char * const valu
 
 PluginParam * CPlugins::makeParam(const char * const id, const int value, PluginParam * const next)
 {
-	char aval[10];
-
-	sprintf(aval, "%d", value);
-
-	return makeParam(id, aval, next);
+	return makeParam(id, to_string(value).c_str(), next);
 }
 
 void CPlugins::start_plugin_by_name(const std::string & filename,int param)

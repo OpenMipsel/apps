@@ -161,7 +161,6 @@ bool CMovieInfo::convertTs2XmlName(std::string* filename)
 bool CMovieInfo::encodeMovieInfoXml(std::string* extMessage,MI_MOVIE_INFO &movie_info)
 {
 	//TRACE("[mi]->encodeMovieInfoXml\r\n");
-	char tmp[40];
 
 	*extMessage =	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n";
 	*extMessage +=	"<"MI_XML_TAG_NEUTRINO" commandversion=\"1\">\n";
@@ -179,15 +178,13 @@ bool CMovieInfo::encodeMovieInfoXml(std::string* extMessage,MI_MOVIE_INFO &movie
 	if (!movie_info.audioPids.empty())
 	{
 		*extMessage +=	"\t\t<"MI_XML_TAG_AUDIOPIDS" selected=\"";
-		sprintf(tmp, "%u", movie_info.audioPids[0].epgAudioPid); //pids.APIDs[i].pid);
-		*extMessage += tmp;
+		*extMessage += to_string(movie_info.audioPids[0].epgAudioPid); //pids.APIDs[i].pid);
 		*extMessage	+=	"\">\n";
 
 		for(unsigned int i = 0; i < movie_info.audioPids.size(); i++) // pids.APIDs.size()
 		{
 			*extMessage += "\t\t\t<"MI_XML_TAG_AUDIO" "MI_XML_TAG_PID"=\"";
-			sprintf(tmp, "%u", movie_info.audioPids[i].epgAudioPid); //pids.APIDs[i].pid);
-			*extMessage += tmp;
+			*extMessage += to_string(movie_info.audioPids[i].epgAudioPid); //pids.APIDs[i].pid);
 			*extMessage += "\" "MI_XML_TAG_NAME"=\"";
 			*extMessage += ZapitTools::UTF8_to_UTF8XML(movie_info.audioPids[i].epgAudioPidName.c_str());
 			*extMessage += "\"/>\n";
@@ -201,11 +198,9 @@ bool CMovieInfo::encodeMovieInfoXml(std::string* extMessage,MI_MOVIE_INFO &movie
 		for(unsigned int i = 0; i < movie_info.subPids.size(); i++)
 		{
 			*extMessage += "\t\t\t<"MI_XML_TAG_SUB" "MI_XML_TAG_PID"=\"";
-			sprintf(tmp, "%u", movie_info.subPids[i].subPid);
-			*extMessage += tmp;
+			*extMessage += to_string(movie_info.subPids[i].subPid);
 			*extMessage += "\" "MI_XML_TAG_PAGE"=\"";
-			sprintf(tmp, "%u", movie_info.subPids[i].subPage);
-			*extMessage += tmp;
+			*extMessage += to_string(movie_info.subPids[i].subPage);
 			*extMessage += "\" "MI_XML_TAG_NAME"=\"";
 			*extMessage += ZapitTools::UTF8_to_UTF8XML(movie_info.subPids[i].subName.c_str());
 			*extMessage += "\"/>\n";
@@ -234,11 +229,9 @@ bool CMovieInfo::encodeMovieInfoXml(std::string* extMessage,MI_MOVIE_INFO &movie
 		{
 			// encode any valid book, at least 1
 			*extMessage += "\t\t\t<"MI_XML_TAG_BOOKMARK_USER" "MI_XML_TAG_BOOKMARK_USER_POS"=\"";
-			sprintf(tmp, "%d", movie_info.bookmarks.user[i].pos); //pids.APIDs[i].pid);
-			*extMessage += tmp;
+			*extMessage += to_string(movie_info.bookmarks.user[i].pos); //pids.APIDs[i].pid);
 			*extMessage += "\" "MI_XML_TAG_BOOKMARK_USER_TYPE"=\"";
-			sprintf(tmp, "%d", movie_info.bookmarks.user[i].length); //pids.APIDs[i].pid);
-			*extMessage += tmp;
+			*extMessage += to_string(movie_info.bookmarks.user[i].length); //pids.APIDs[i].pid);
 			*extMessage += "\" "MI_XML_TAG_BOOKMARK_USER_NAME"=\"";
 			*extMessage += ZapitTools::UTF8_to_UTF8XML(movie_info.bookmarks.user[i].name.c_str());
 			*extMessage += "\"/>\n";
@@ -509,8 +502,7 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
 		print_buffer += "\n"; 
   		print_buffer += movie_info.productionCountry; 
 		print_buffer += " "; 
-		snprintf(date_char, 12,"%4d",movie_info.productionDate); 
-		print_buffer += date_char; 
+		print_buffer += to_string(movie_info.productionDate); 
      }
 
     if(!movie_info.serieName.empty())
@@ -532,16 +524,14 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
     	print_buffer += "\n"; 
     	print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_QUALITY);
       	print_buffer += ": "; 
- 		snprintf(date_char, 12,"%2d",movie_info.quality); 
-    	print_buffer += date_char; 
+    	print_buffer += to_string(movie_info.quality); 
     }
      if(movie_info.parentalLockAge != 0 )
     {
     	print_buffer += "\n"; 
    		print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_PARENTAL_LOCKAGE);
       	print_buffer += ": "; 
- 		snprintf(date_char, 12,"%2d",movie_info.parentalLockAge); 
-    	print_buffer += date_char; 
+    	print_buffer += to_string(movie_info.parentalLockAge); 
  		print_buffer += " Jahre"; 
     }
     if(movie_info.rec_length != 0 )
@@ -549,8 +539,8 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
     	print_buffer += "\n"; 
    		print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_LENGTH);
       	print_buffer += ": "; 
- 	 	snprintf(date_char, 12, "%3d:%02d", movie_info.rec_length / 60, movie_info.rec_length % 60);
-    	print_buffer += date_char; 
+		snprintf(date_char, 12, "%3d:%02d", movie_info.rec_length / 60, movie_info.rec_length % 60);
+		print_buffer += date_char;
     }
     else if(movie_info.length != 0 )
     {
@@ -558,7 +548,7 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
    		print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_LENGTH);
       	print_buffer += ": "; 
 		snprintf(date_char, 12, "%3d", movie_info.length);
-    	print_buffer += date_char; 
+		print_buffer += date_char;
     }
     if (!movie_info.audioPids.empty())
      {
@@ -623,8 +613,7 @@ void CMovieInfo::showMovieInfo(MI_MOVIE_INFO& movie_info)
  		print_buffer += "\n"; 
    		print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_SIZE);
      	print_buffer += ": "; 
- 	 	snprintf(date_char, 12,"%4llu",movie_info.file.Size>>20);
-		print_buffer += date_char; 
+		print_buffer += to_string(movie_info.file.Size>>20); 
    }
     print_buffer += "\n" ;
         print_buffer += g_Locale->getText(LOCALE_MOVIEBROWSER_INFO_PATH);

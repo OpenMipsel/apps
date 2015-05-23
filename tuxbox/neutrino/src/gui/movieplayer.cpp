@@ -208,9 +208,7 @@ bool get_movie_info_apid_name(int apid,MI_MOVIE_INFO* movie_info,std::string* ap
        if( movie_info->audioPids[i].epgAudioPid == apid && 
           !movie_info->audioPids[i].epgAudioPidName.empty())
        {
-            char show_pid_number[5];
-            sprintf(show_pid_number, "%u", apid);
-            apidtitle->assign(show_pid_number);
+            apidtitle->assign(to_string(apid));
             apidtitle->append(" : ");
             apidtitle->append(movie_info->audioPids[i].epgAudioPidName);
             return true;
@@ -230,9 +228,7 @@ bool get_movie_info_subpid_name(int subpid, MI_MOVIE_INFO* movie_info, std::stri
        if( movie_info->subPids[i].subPid == subpid && 
           !movie_info->subPids[i].subName.empty())
        {
-            char show_pid_number[5];
-            sprintf(show_pid_number, "%u", subpid);
-            subpidtitle->assign(show_pid_number);
+            subpidtitle->assign(to_string(subpid));
             subpidtitle->append(" : ");
             subpidtitle->append(movie_info->subPids[i].subName);
             return true;
@@ -1152,9 +1148,7 @@ PlayStreamThread (void *mrl)
 			if(g_startposition > 0)
 			{
 				printf ("[movieplayer.cpp] Was Bookmark. Skipping to startposition\n");
-				char tmpbuf[30];
-				sprintf(tmpbuf,"%lld",g_startposition);
-				skipvalue = tmpbuf;
+				skipvalue = to_string(g_startposition);
 				g_startposition = 0;
 				g_playstate = CMoviePlayerGui::SKIP;
 			}

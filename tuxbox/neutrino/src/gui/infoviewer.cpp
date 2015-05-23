@@ -55,6 +55,7 @@ extern CRemoteControl * g_RemoteControl; /* neutrino.cpp */
 #include <algorithm>
 #include <string>
 #include <system/settings.h>
+#include <system/helper.h>
 
 #include <time.h>
 #include <sys/param.h>
@@ -157,8 +158,8 @@ void CInfoViewer::showSatfind()
 	signal.ber = (s.ber < 0x3FFFF) ? s.ber : 0x3FFFF;
 
 	char freq[20];
-	char percent[10];
 	char pos[6];
+	std::string percent;
 	int percent_width;
 	int sig;
 	int snr;
@@ -186,17 +187,17 @@ void CInfoViewer::showSatfind()
 
 		frameBuffer->paintBoxRel(ChanInfoX, BoxEndY, BoxEndX-ChanInfoX, 30, COL_INFOBAR_PLUS_0);
 
-		sprintf (percent, "sig %d%%", sig);
+		percent = "sig " + to_string(sig) + "%";
 		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(ChanInfoX+ 10, BoxEndY+ 25, BoxEndX- ChanInfoX- 10, percent, COL_INFOBAR_PLUS_0);
 		percent_width = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getRenderWidth(percent);
 		pbsig.paintProgressBar(ChanInfoX+ 10+ percent_width+ 5, BoxEndY+ 7, 60, 15, sig, 100, 0, 0, COL_INFOBAR_PLUS_0, 0, "", COL_INFOBAR);
 
-		sprintf (percent, "snr %d%%", snr);
+		percent = "snr " + to_string(snr) + "%";
 		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(ChanInfoX+ 140, BoxEndY+ 25, BoxEndX- ChanInfoX- 140, percent, COL_INFOBAR_PLUS_0);
 		percent_width = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getRenderWidth(percent);
 		pbsnr.paintProgressBar(ChanInfoX+ 140+ percent_width+ 5, BoxEndY+ 7, 60, 15, snr, 100, 0, 0, COL_INFOBAR_PLUS_0, 0, "", COL_INFOBAR);
 
-		sprintf (percent, "ber %d%%", ber);
+		percent = "ber " + to_string(ber); // no unit
 		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(ChanInfoX+ 270, BoxEndY+ 25, BoxEndX- ChanInfoX- 270, percent, COL_INFOBAR_PLUS_0);
 
 		g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(ChanInfoX+ 345, BoxEndY+ 25, BoxEndX- ChanInfoX- 345, freq, COL_INFOBAR_PLUS_0);
@@ -431,9 +432,8 @@ void CInfoViewer::showMovieTitle(const int _playstate, const std::string &title,
 	showIcon_VTXT(vtxtpid);
 	showIcon_SubT(subpid);
 
-	char runningRest[32]; // %d can be 10 digits max...
-	sprintf(runningRest, "%ld / %ld min", (time_elapsed + 30) / 60, (time_remaining + 30) / 60);
-	display_Info(title.c_str(), sub_title.c_str(), true, false, (percent * 112) / 100, NULL, runningRest);
+	std::string runningRest = to_string((time_elapsed + 30) / 60) + " / " + to_string((time_remaining + 30) / 60) + " min";
+	display_Info(title.c_str(), sub_title.c_str(), true, false, (percent * 112) / 100, NULL, runningRest.c_str());
 
 	infobarLoop(false, fadeIn);
 }
@@ -1260,12 +1260,10 @@ void CInfoViewer::showFailure()
 void CInfoViewer::showMotorMoving(int duration)
 {
 	char text[256];
-	char buffer[10];
-	
-	sprintf(buffer, "%d", duration);
+
 	strcpy(text, g_Locale->getText(LOCALE_INFOVIEWER_MOTOR_MOVING));
 	strcat(text, " (");
-	strcat(text, buffer);
+	strcat(text, to_string(duration).c_str());
 	strcat(text, " s)");
 	
 	ShowHintUTF(LOCALE_MESSAGEBOX_INFO, text, g_Font[SNeutrinoSettings::FONT_TYPE_MENU]->getRenderWidth(text, true) + 10, duration); // UTF-8

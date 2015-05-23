@@ -655,7 +655,6 @@ int CAudioPlayerGui::show()
 			if (m_key_level == 0)
 			{
 				if (m_inetmode) {
-					char cnt[5];
 					CMenuWidget InputSelector(LOCALE_AUDIOPLAYER_LOAD_RADIO_STATIONS, NEUTRINO_ICON_AUDIO, 400);
 					int count = 0;
 					int select = -1;
@@ -663,20 +662,17 @@ int CAudioPlayerGui::show()
 					// -- setup menue for inetradio input
 					InputSelector.addIntroItems(NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, CMenuWidget::BTN_TYPE_CANCEL);
 
-					sprintf(cnt, "%d", count);
 					InputSelector.addItem(new CMenuForwarder(
 						LOCALE_AUDIOPLAYER_ADD_LOC, true, NULL, &InetRadioInputChanger,
-						cnt, CRCInput::convertDigitToKey(count + 1)), true);
+						to_string(count).c_str(), CRCInput::convertDigitToKey(count + 1)), true);
 	
-					sprintf(cnt, "%d", ++count);
 					InputSelector.addItem(new CMenuForwarder(
 						LOCALE_AUDIOPLAYER_ADD_SC, true, NULL, &InetRadioInputChanger,
-						cnt, CRCInput::convertDigitToKey(count + 1)), false);
+						to_string(count).c_str(), CRCInput::convertDigitToKey(count + 1)), false);
 
-					sprintf(cnt, "%d", ++count);
 					InputSelector.addItem(new CMenuForwarder(
 						LOCALE_AUDIOPLAYER_ADD_IC, true, NULL, &InetRadioInputChanger,
-						cnt, CRCInput::convertDigitToKey(count + 1)), false);
+						to_string(count).c_str(), CRCInput::convertDigitToKey(count + 1)), false);
 
 					hide();
 					InputSelector.exec(NULL, "");
@@ -2302,15 +2298,14 @@ bool CAudioPlayerGui::getNumericInput(neutrino_msg_t& msg, int& val) {
 	int y1 = getScreenStartY(0);
 	int w = 0;
 	int h = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getHeight();
-	char str[11];
 	do
 	{
 		val = val * 10 + CRCInput::getNumericValue(msg);
-		sprintf(str, "%d", val);
-		w = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(str);
+		std::string value = to_string(val);
+		w = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(value);
 		m_frameBuffer->paintBoxRel(x1 - 7, y1 - h - 5, w + 14, h + 10, COL_MENUCONTENT_PLUS_6);
 		m_frameBuffer->paintBoxRel(x1 - 4, y1 - h - 3, w +  8, h +  6, COL_MENUCONTENTSELECTED_PLUS_0);
-		g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->RenderString(x1, y1, w + 1, str, COL_MENUCONTENTSELECTED, 0);
+		g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->RenderString(x1, y1, w + 1, value, COL_MENUCONTENTSELECTED, 0);
 		while (true)
 		{
 			g_RCInput->getMsg(&msg, &data, 100); 

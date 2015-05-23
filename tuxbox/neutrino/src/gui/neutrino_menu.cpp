@@ -41,6 +41,7 @@
 #include <neutrino.h>
 
 #include <system/debug.h>
+#include <system/helper.h>
 #include <unistd.h>
 
 #include <driver/encoding.h>
@@ -393,7 +394,6 @@ bool CNeutrinoApp::showUserMenu(int button)
 	neutrino_msg_t key = CRCInput::RC_nokey;
 	const char * icon = NULL; 
 	
-	char id[5];
 	int menu_items = 0;
 	int menu_prev = -1;
 	int cnt = 0;
@@ -466,13 +466,12 @@ bool CNeutrinoApp::showUserMenu(int button)
 					std::string tmp = g_PluginList->getName(count);
 					if (g_PluginList->getType(count)== CPlugins::P_TYPE_TOOL && !g_PluginList->isHidden(count) && tmp.find("Teletext") != std::string::npos)
 					{
-						sprintf(id, "%d", count);
 						menu_items++;
 						menu_prev = SNeutrinoSettings::ITEM_VTXT;
 						if (StreamFeaturesChanger == NULL)
 							StreamFeaturesChanger = new CStreamFeaturesChangeExec();
 						keyhelper.get(&key, &icon, cnt == 0 ? CRCInput::RC_blue : CRCInput::RC_nokey);
-						menu_item = new CMenuForwarder(g_PluginList->getName(count), true, NULL, StreamFeaturesChanger, id, key, icon);
+						menu_item = new CMenuForwarder(g_PluginList->getName(count), true, NULL, StreamFeaturesChanger, to_string(count).c_str(), key, icon);
 						menu->addItem(menu_item, (cnt == 0));
 						cnt++;
 					}
@@ -485,13 +484,12 @@ bool CNeutrinoApp::showUserMenu(int button)
 					std::string tmp = g_PluginList->getName(count);
 					if (g_PluginList->getType(count)== CPlugins::P_TYPE_TOOL && !g_PluginList->isHidden(count) && tmp.find("Teletext") == std::string::npos)
 					{
-						sprintf(id, "%d", count);
 						menu_items++;
 						menu_prev = SNeutrinoSettings::ITEM_PLUGIN;
 						if (StreamFeaturesChanger == NULL)
 							StreamFeaturesChanger = new CStreamFeaturesChangeExec();
 						keyhelper.get(&key, &icon, cnt == 0 ? CRCInput::RC_blue : CRCInput::RC_nokey);
-						menu_item = new CMenuForwarder(g_PluginList->getName(count), true, NULL, StreamFeaturesChanger, id, key, icon);
+						menu_item = new CMenuForwarder(g_PluginList->getName(count), true, NULL, StreamFeaturesChanger, to_string(count).c_str(), key, icon);
 						menu->addItem(menu_item, (cnt == 0));
 						cnt++;
 					}

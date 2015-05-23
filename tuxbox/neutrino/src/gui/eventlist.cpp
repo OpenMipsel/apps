@@ -44,7 +44,7 @@
 #include <gui/widget/messagebox.h>
 #include <gui/widget/mountchooser.h>
 #include <gui/widget/dirchooser.h>
-
+#include <system/helper.h>
 
 #include <global.h>
 #include <neutrino.h>
@@ -691,8 +691,7 @@ void EventList::paintItem(unsigned int pos)
 				datetime2_str += "           " + g_Zapit->getChannelName(channel);
 			}
 
-			sprintf(tmpstr, "[%d min]", evtlist[curpos].duration / 60 );
-			duration_str = tmpstr;
+			duration_str = "[" + to_string(evtlist[curpos].duration / 60) + " min]";
 		}
 
 		// 1st line
@@ -702,8 +701,7 @@ void EventList::paintItem(unsigned int pos)
 		int seit = (evtlist[curpos].startTime - time(NULL)) / 60;
 		if ((seit > 0) && (seit < 100) && !duration_str.empty())
 		{
-			char beginnt[100];
-			sprintf((char*) &beginnt, "in %d min", seit);
+			std::string beginnt = "in " + to_string(seit)  + " min";
 			int w = g_Font[SNeutrinoSettings::FONT_TYPE_EVENTLIST_ITEMSMALL]->getRenderWidth(beginnt) + 10;
 
 			g_Font[SNeutrinoSettings::FONT_TYPE_EVENTLIST_ITEMSMALL]->RenderString(x+width-fwidth2-5- 20- w, ypos+ fheight2+3, w, beginnt, color);

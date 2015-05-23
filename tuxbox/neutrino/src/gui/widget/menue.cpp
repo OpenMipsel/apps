@@ -48,6 +48,7 @@
 
 #include <gui/widget/stringinput.h>
 #include <gui/widget/stringinput_ext.h>
+#include <system/helper.h>
 
 #include <global.h>
 #include <neutrino.h>
@@ -935,7 +936,6 @@ int CMenuOptionChooser::exec(CMenuTarget* parent)
 	if (pulldown)
 	{
 		int select = -1;
-		char cnt[5];
 		CMenuWidget* menu = new CMenuWidget(optionNameString.c_str(), "", dx);
 		menu->addIntroItems(NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, CMenuWidget::BTN_TYPE_CANCEL);
 		CMenuSelectorTarget * selector = new CMenuSelectorTarget(&select);
@@ -944,8 +944,7 @@ int CMenuOptionChooser::exec(CMenuTarget* parent)
 			bool selected = false;
 			if (options[count]->key == (*optionValue))
 				selected = true;
-			sprintf(cnt, "%d", count);
-			CMenuForwarder *mn_option = new CMenuForwarder(options[count]->value, true, NULL, selector, cnt);
+			CMenuForwarder *mn_option = new CMenuForwarder(options[count]->value, true, NULL, selector, to_string(count).c_str());
 			mn_option->setItemButton(NEUTRINO_ICON_BUTTON_OKAY, true /*for selected item*/);
 			menu->addItem(mn_option, selected);
 		}
@@ -1066,7 +1065,6 @@ int CMenuOptionStringChooser::exec(CMenuTarget* parent)
 	if (pulldown)
 	{
 		int select = -1;
-		char cnt[5];
 		CMenuWidget* menu = new CMenuWidget(optionName, "", dx);
 		menu->addIntroItems(NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, CMenuWidget::BTN_TYPE_CANCEL);
 		CMenuSelectorTarget * selector = new CMenuSelectorTarget(&select);
@@ -1075,8 +1073,7 @@ int CMenuOptionStringChooser::exec(CMenuTarget* parent)
 			bool selected = false;
 			if (strcmp(options[count].c_str(), optionValue) == 0)
 				selected = true;
-			sprintf(cnt, "%d", count);
-			CMenuForwarder *mn_option = new CMenuForwarder(options[count].c_str(), true, NULL, selector, cnt);
+			CMenuForwarder *mn_option = new CMenuForwarder(options[count].c_str(), true, NULL, selector, to_string(count).c_str());
 			mn_option->setItemButton(NEUTRINO_ICON_BUTTON_OKAY, true /*for selected item*/);
 			menu->addItem(mn_option, selected);
 		}

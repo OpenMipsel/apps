@@ -66,6 +66,8 @@
 #include <gui/widget/mountchooser.h>
 #include <gui/widget/dirchooser.h>
 #include <gui/widget/stringinput.h>
+#include <system/helper.h>
+
 #include <dirent.h>
 #include <sys/stat.h>
 #ifdef ENABLE_GUI_MOUNT
@@ -733,11 +735,10 @@ bool CMovieBrowser::loadSettings(MB_SETTINGS* settings)
 		settings->parentalLockAge = (MI_PARENTAL_LOCKAGE)configfile.getInt32("mb_parentalLockAge", MI_PARENTAL_OVER18);
 		settings->parentalLock = (MB_PARENTAL_LOCK)configfile.getInt32("mb_parentalLock", MB_PARENTAL_LOCK_ACTIVE);
 	
-		char cfg_key[81];
+//		char cfg_key[81];
 		for(int i = 0; i < MAX_RECORDING_DIR ; i++)
 		{
-			sprintf(cfg_key, "mb_storageDir_rec_%d", i);
-			settings->storageDirRecUsed[i] = (bool)configfile.getInt32(cfg_key, true );
+			settings->storageDirRecUsed[i] = (bool)configfile.getInt32("mb_storageDir_rec_" + to_string(i), true );
 		}
 		settings->storageDirMovieUsed = (bool)configfile.getInt32("mb_storageDir_movie", true );
 		
@@ -746,20 +747,16 @@ bool CMovieBrowser::loadSettings(MB_SETTINGS* settings)
 
 		for(int i = 0; i < MB_MAX_DIRS; i++)
 		{
-			sprintf(cfg_key, "mb_dir_%d", i);
-			settings->storageDir[i] = configfile.getString( cfg_key, "" );
-			sprintf(cfg_key, "mb_dir_used%d", i);
-			settings->storageDirUsed[i] = configfile.getInt32( cfg_key,false );
+			settings->storageDir[i] = configfile.getString("mb_dir_" + to_string(i), "" );
+			settings->storageDirUsed[i] = configfile.getInt32("mb_dir_used" + to_string(i), false );
 		}
 		/* these variables are used for the listframes */	
 		settings->browserFrameHeight  = configfile.getInt32("mb_browserFrameHeight", 250);
 		settings->browserRowNr  = configfile.getInt32("mb_browserRowNr", 0);
 		for(int i = 0; i < MB_MAX_ROWS && i < settings->browserRowNr; i++)
 		{
-			sprintf(cfg_key, "mb_browserRowItem_%d", i);
-			settings->browserRowItem[i] = (MB_INFO_ITEM)configfile.getInt32(cfg_key, MB_INFO_MAX_NUMBER);
-			sprintf(cfg_key, "mb_browserRowWidth_%d", i);
-			settings->browserRowWidth[i] = configfile.getInt32(cfg_key, 50);
+			settings->browserRowItem[i] = (MB_INFO_ITEM)configfile.getInt32("mb_browserRowItem_" + to_string(i), MB_INFO_MAX_NUMBER);
+			settings->browserRowWidth[i] = configfile.getInt32("mb_browserRowWidth_" + to_string(i), 50);
 		}
 	}
 	else
@@ -793,11 +790,9 @@ bool CMovieBrowser::saveSettings(MB_SETTINGS* settings)
 	configfile.setString("mb_filter_optionString", settings->filter.optionString);
 	configfile.setInt32("mb_filter_optionVar", settings->filter.optionVar);
 	
-	char cfg_key[81];
 	for(int i = 0; i < MAX_RECORDING_DIR ; i++)
 	{
-		sprintf(cfg_key, "mb_storageDir_rec_%d", i);
-		configfile.setInt32(cfg_key, settings->storageDirRecUsed[i] );
+		configfile.setInt32("mb_storageDir_rec_" + to_string(i), settings->storageDirRecUsed[i] );
 	}
 	configfile.setInt32("mb_storageDir_movie", settings->storageDirMovieUsed );
 	
@@ -809,20 +804,16 @@ bool CMovieBrowser::saveSettings(MB_SETTINGS* settings)
 
 	for(int i = 0; i < MB_MAX_DIRS; i++)
 	{
-		sprintf(cfg_key, "mb_dir_%d", i);
-		configfile.setString( cfg_key, settings->storageDir[i] );
-		sprintf(cfg_key, "mb_dir_used%d", i);
-		configfile.setInt32( cfg_key, settings->storageDirUsed[i] ); // do not save this so far
+		configfile.setString("mb_dir_" + to_string(i)  , settings->storageDir[i] );
+		configfile.setInt32("mb_dir_used" + to_string(i), settings->storageDirUsed[i] ); // do not save this so far
 	}
 	/* these variables are used for the listframes */	
 	configfile.setInt32("mb_browserFrameHeight", settings->browserFrameHeight);
 	configfile.setInt32("mb_browserRowNr",settings->browserRowNr);
 	for(int i = 0; i < MB_MAX_ROWS && i < settings->browserRowNr; i++)
 	{
-		sprintf(cfg_key, "mb_browserRowItem_%d", i);
-		configfile.setInt32(cfg_key, settings->browserRowItem[i]);
-		sprintf(cfg_key, "mb_browserRowWidth_%d", i);
-		configfile.setInt32(cfg_key, settings->browserRowWidth[i]);
+		configfile.setInt32("mb_browserRowItem_" + to_string(i) , settings->browserRowItem[i]);
+		configfile.setInt32("mb_browserRowWidth_" + to_string(i), settings->browserRowWidth[i]);
 	}
 
 	if (configfile.getModifiedFlag())
@@ -3398,7 +3389,6 @@ bool CMovieBrowser::getMovieInfoItem(MI_MOVIE_INFO& movie_info, MB_INFO_ITEM ite
 	*item_string="";
 	struct tm tm_tmp;
 	
-	char text[20];
 	int i=0;
 	int counter=0;
 
@@ -3449,9 +3439,7 @@ bool CMovieBrowser::getMovieInfoItem(MI_MOVIE_INFO& movie_info, MB_INFO_ITEM ite
 				if(movie_info.bookmarks.user[i].pos != 0) 
 					counter++;
 			}
-			snprintf(text, 8,"%d",counter);
-			text[9] = 0; // just to make sure string is terminated
-			*item_string = text;
+			*item_string = to_string(counter);
 			break;
 		case MB_INFO_QUALITY: 				// 		= 11,
 			snprintf(str_tmp,MAX_STR_TMP,"%d",movie_info.quality);
@@ -3480,10 +3468,7 @@ bool CMovieBrowser::getMovieInfoItem(MI_MOVIE_INFO& movie_info, MB_INFO_ITEM ite
 		case MB_INFO_AUDIO: 				// 		= 17,
 #if 1  // MB_INFO_AUDIO test
 			// we just return the number of audiopids
-			char text2[10];
-			snprintf(text2, 8,"%d",movie_info.audioPids.size());
-			text2[9] = 0; // just to make sure string is terminated
-			*item_string = text2;
+			*item_string = to_string(movie_info.audioPids.size());
 #else // MB_INFO_AUDIO test
 			for(i=0; i < movie_info.audioPids.size() && i < 10; i++)
 			{
@@ -3662,11 +3647,7 @@ const char * CSelectedMenu::getTargetValue()
 	{
 		if (*value > 0)
 		{
-			char tmp[16];
-			sprintf(tmp, "%d", *value / 60);
-			value_string = tmp;
-			value_string += " ";
-			value_string += g_Locale->getText(LOCALE_WORD_MINUTES_SHORT);
+			value_string = to_string(*value/60) + " " + g_Locale->getText(LOCALE_WORD_MINUTES_SHORT);
 		}
 		else
 			value_string = "---";

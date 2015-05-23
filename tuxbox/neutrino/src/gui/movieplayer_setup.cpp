@@ -43,6 +43,7 @@
 #include <gui/widget/stringinput.h>
 #include <gui/widget/stringinput_ext.h>
 #include <gui/widget/dirchooser.h>
+#include <system/helper.h>
 
 #include "gui/movieplayer.h"
 #include "gui/filebrowser.h"
@@ -260,7 +261,6 @@ int CMoviePlayerSetup::showMoviePlayerSelectPlugin()
 	MoviePluginSelector->addIntroItems(LOCALE_MOVIEPLAYER_DEFPLUGIN, NONEXISTANT_LOCALE, CMenuWidget::BTN_TYPE_CANCEL);
 
 	std::string pluginName;
-	char id[5];
 	int enabled_count = 0;
 	for(unsigned int count=0;count < (unsigned int) g_PluginList->getNumberOfPlugins();count++)
 	{
@@ -268,11 +268,10 @@ int CMoviePlayerSetup::showMoviePlayerSelectPlugin()
 		{
 			// zB vtxt-plugins
 			pluginName = g_PluginList->getName(count);
-			sprintf(id, "%d", count);
 			enabled_count++;
 
 			CMenuForwarder* fw = new CMenuForwarder(pluginName.c_str(),
-				true, NULL, this, id, CRCInput::convertDigitToKey(enabled_count));
+				true, NULL, this, to_string(count).c_str(), CRCInput::convertDigitToKey(enabled_count));
 			fw->setItemButton(NEUTRINO_ICON_BUTTON_OKAY, true);
 
 			MoviePluginSelector->addItem(fw, (g_settings.movieplayer_plugin.compare(pluginName) == 0));

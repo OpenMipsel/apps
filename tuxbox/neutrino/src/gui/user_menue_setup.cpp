@@ -43,6 +43,7 @@
 #include <gui/widget/icons.h>
 #include <gui/widget/stringinput.h>
 #include <gui/widget/keychooser.h>
+#include <system/helper.h>
 
 #include <driver/screen_max.h>
 
@@ -107,13 +108,10 @@ int CUserMenuSetup::showSetup()
 	//-------------------------------------
 	ums->addItem(mf);
 	ums->addItem(GenericMenuSeparatorLine);
-	//-------------------------------------
-	char text[10];
-	for(int item = 0; item < SNeutrinoSettings::ITEM_MAX && item <13; item++) // Do not show more than 13 items
+	//---------------------------
+	for(int item = 1; item < SNeutrinoSettings::ITEM_MAX && item <14; item++) // Do not show more than 13 items
 	{
-		snprintf(text,10,"%d:",item+1);
-		text[9]=0;// terminate for sure
-		ums->addItem( new CMenuOptionChooser(text, &g_settings.usermenu[button][item], USERMENU_ITEM_OPTIONS, USERMENU_ITEM_OPTION_COUNT, true, NULL, CRCInput::RC_nokey, "", true, true));
+		ums->addItem( new CMenuOptionChooser((to_string(item)+":").c_str(), &g_settings.usermenu[button][item], USERMENU_ITEM_OPTIONS, USERMENU_ITEM_OPTION_COUNT, true, NULL, CRCInput::RC_nokey, "", true, true));
 	}
 
 	int res = ums->exec(NULL, "");
