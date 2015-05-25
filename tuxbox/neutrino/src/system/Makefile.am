@@ -15,10 +15,15 @@ endif
 noinst_LIBRARIES = libneutrino_system.a
 
 libneutrino_system_a_SOURCES = \
-	localize.cpp setting_helpers.cpp debug.cpp \
-	ping.c flashtool.cpp \
-	settings.cpp lastchannel.cpp \
-	configure_network.cpp helper.cpp
+	localize.cpp \
+	setting_helpers.cpp \
+	debug.cpp \
+	ping.c \
+	flashtool.cpp \
+	settings.cpp \
+	lastchannel.cpp \
+	configure_network.cpp \
+	helper.cpp
 
 if !DISABLE_INTERNET_UPDATE
 libneutrino_system_a_SOURCES += httptool.cpp

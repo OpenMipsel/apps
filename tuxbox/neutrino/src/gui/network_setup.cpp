@@ -455,11 +455,9 @@ void CNetworkSetup::restoreNetworkSettings(bool show_message)
 
 void CNetworkSetup::testNetworkSettings()
 {
-	char our_ip[16];
-	char our_mask[16];
-	char our_broadcast[16];
-	char our_gateway[16];
-	char our_nameserver[16];
+	std::string ifname = "eth0";
+	std::string our_ip, our_mask, our_broadcast, our_gateway, our_nameserver;
+
 	std::string text, ethID, testsite;
 	//set default testdomain and wiki-IP
 	std::string defaultsite = "www.google.de", wiki_IP = "91.224.67.93";
@@ -479,36 +477,36 @@ void CNetworkSetup::testNetworkSettings()
 		testsite = defaultsite; 
 
 	if (networkConfig->inet_static) {
-		strcpy(our_ip, networkConfig->address.c_str());
-		strcpy(our_mask, networkConfig->netmask.c_str());
-		strcpy(our_broadcast, networkConfig->broadcast.c_str());
-		strcpy(our_gateway, networkConfig->gateway.c_str());
-		strcpy(our_nameserver, networkConfig->nameserver.c_str());
+		our_ip = networkConfig->address;
+		our_mask = networkConfig->netmask;
+		our_broadcast = networkConfig->broadcast;
+		our_gateway = networkConfig->gateway;
+		our_nameserver = networkConfig->nameserver;
 	}
 	else {
-		netGetIP("eth0", our_ip, our_mask, our_broadcast);
+		netGetIP(ifname, our_ip, our_mask, our_broadcast);
 		netGetDefaultRoute(our_gateway);
 		netGetNameserver(our_nameserver);
 	}
 	
-	printf("testNw IP: %s\n", our_ip);
+	printf("testNw IP: %s\n", our_ip.c_str());
 	printf("testNw MAC-address: %s\n", ethID.c_str());
-	printf("testNw Netmask: %s\n", our_mask);
-	printf("testNw Broadcast: %s\n", our_broadcast);
-	printf("testNw Gateway: %s\n", our_gateway);
-	printf("testNw Nameserver: %s\n", our_nameserver);
+	printf("testNw Netmask: %s\n", our_mask.c_str());
+	printf("testNw Broadcast: %s\n", our_broadcast.c_str());
+	printf("testNw Gateway: %s\n", our_gateway.c_str());
+	printf("testNw Nameserver: %s\n", our_nameserver.c_str());
 	printf("testNw Testsite %s\n", testsite.c_str());
  
 	text = (std::string)"dbox:\n"
-	     + "    " + our_ip + ": " + mypinghost(our_ip) + '\n'
+	     + "    " + our_ip + ": " + mypinghost(our_ip.c_str()) + '\n'
 		 + "    " + "eth-ID: " + ethID + '\n'
 	     + g_Locale->getText(LOCALE_NETWORKMENU_GATEWAY) + ":\n"
-	     + "    " + our_gateway + ": " + ' ' + mypinghost(our_gateway) + '\n'
+	     + "    " + our_gateway + ": " + ' ' + mypinghost(our_gateway.c_str()) + '\n'
 	     + g_Locale->getText(LOCALE_NETWORKMENU_NAMESERVER) + ":\n"
-	     + "    " + our_nameserver + ": " + ' ' + mypinghost(our_nameserver) + '\n'
+	     + "    " + our_nameserver + ": " + ' ' + mypinghost(our_nameserver.c_str()) + '\n'
 	     + "wiki.tuxbox.org:\n"
 	     + "    via IP (" + wiki_IP + "): " + mypinghost(wiki_IP.c_str()) + '\n';
-	if (1 == pinghost(our_nameserver)) text += (std::string)
+	if (1 == pinghost(our_nameserver.c_str())) text += (std::string)
 	       "    via DNS: " + mypinghost("wiki.tuxbox.org") + '\n'
 	     + testsite + ":\n"
 	     + "    via DNS: " + mypinghost(testsite.c_str()) + '\n';
@@ -518,15 +516,11 @@ void CNetworkSetup::testNetworkSettings()
 
 void CNetworkSetup::showCurrentNetworkSettings()
 {
-	char ip[16];
-	char mask[16];
-	char broadcast[16];
-	char router[16];
-	char nameserver[16];
-	std::string text;
-	
-	netGetIP("eth0", ip, mask, broadcast);
-	if (ip[0] == 0) {
+	std::string ifname = "eth0";
+	std::string ip, mask, broadcast, router, nameserver, text;
+	netGetIP(ifname, ip, mask, broadcast);
+
+	if (ip.empty()) {
 		text = g_Locale->getText(LOCALE_NETWORKMENU_INACTIVE);
 	}
 	else {

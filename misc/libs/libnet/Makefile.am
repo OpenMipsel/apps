@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libtuxbox-net.la
 
-libtuxbox_net_la_SOURCES = libnet.c network_interfaces.cpp
+libtuxbox_net_la_SOURCES = libnet.cpp network_interfaces.cpp
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = tuxbox-net.pc

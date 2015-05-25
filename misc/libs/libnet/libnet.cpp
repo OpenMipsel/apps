@@ -9,6 +9,10 @@
 #include <netdb.h>
 #include <linux/route.h>
 
+#include "libnet.h"
+
+#if 0
+//never used
 static	void	scanip( char *str, unsigned char *to )
 {
 	int		val;
@@ -33,7 +37,7 @@ static	void	scanip( char *str, unsigned char *to )
 		sp++;
 	}
 }
-	
+
 int	netSetIP( char *dev, char *ip, char *mask, char *brdcast )
 {
 	int					fd;
@@ -53,24 +57,24 @@ int	netSetIP( char *dev, char *ip, char *mask, char *brdcast )
 	scanip( brdcast, adr_brdcast );
 
 	/* init structures */
-	memset(&req, 0, sizeof(req));
+	memset(&req,0,sizeof(req));
 	strcpy(req.ifr_name,dev);
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr,0,sizeof(addr));
 	addr.sin_family = AF_INET;
 
 	addr.sin_addr.s_addr = *((unsigned long *) adr_ip);
-	memcpy(&req.ifr_addr,&addr,sizeof(addr));
+	memmove(&req.ifr_addr,&addr,sizeof(addr));
 	if( ioctl(fd,SIOCSIFADDR,&req) < 0 )
 		goto abbruch;
 
 	addr.sin_addr.s_addr = *((unsigned long *) adr_mask);
-	memcpy(&req.ifr_addr,&addr,sizeof(addr));
+	memmove(&req.ifr_addr,&addr,sizeof(addr));
 	if( ioctl(fd,SIOCSIFNETMASK,&req) < 0 )
 		goto abbruch;
 
 	addr.sin_addr.s_addr = *((unsigned long *) adr_brdcast);
-	memcpy(&req.ifr_addr,&addr,sizeof(addr));
+	memmove(&req.ifr_addr,&addr,sizeof(addr));
 	if( ioctl(fd,SIOCSIFBRDADDR,&req) < 0 )
 		goto abbruch;
 
@@ -80,48 +84,53 @@ abbruch:
 
 	return rc;
 }
-
-void	netGetIP( char *dev, char *ip, char *mask, char *brdcast )
+#endif
+void	netGetIP(std::string &dev, std::string &ip, std::string &mask, std::string &brdcast)
 {
 	int					fd;
 	struct ifreq		req;
 	struct sockaddr_in	*saddr;
 	unsigned char		*addr;
 
-	*ip=0;
-	*mask=0;
-	*brdcast=0;
+	ip = "";
+	mask = "";
+	brdcast = "";
 
 	fd=socket(AF_INET,SOCK_DGRAM,0);
 	if ( !fd )
 		return;
 
 
-	memset(&req, 0, sizeof(req));
-	strcpy(req.ifr_name,dev);
+	memset(&req,0,sizeof(req));
+	strncpy(req.ifr_name, dev.c_str(), sizeof(req.ifr_name));
 	saddr = (struct sockaddr_in *) &req.ifr_addr;
 	addr= (unsigned char*) &saddr->sin_addr.s_addr;
 
+	char tmp[80];
+
 	if( ioctl(fd,SIOCGIFADDR,&req) == 0 )
-		sprintf(ip,"%d.%d.%d.%d",addr[0],addr[1],addr[2],addr[3]);
+		snprintf(tmp, sizeof(tmp),"%d.%d.%d.%d",addr[0],addr[1],addr[2],addr[3]);
+	ip = std::string(tmp);
 
 	if( ioctl(fd,SIOCGIFNETMASK,&req) == 0 )
-		sprintf(mask,"%d.%d.%d.%d",addr[0],addr[1],addr[2],addr[3]);
+		snprintf(tmp, sizeof(tmp),"%d.%d.%d.%d",addr[0],addr[1],addr[2],addr[3]);
+	mask = std::string(tmp);
 
 	if( ioctl(fd,SIOCGIFBRDADDR,&req) == 0 )
-		sprintf(brdcast,"%d.%d.%d.%d",addr[0],addr[1],addr[2],addr[3]);
+		snprintf(tmp, sizeof(tmp),"%d.%d.%d.%d",addr[0],addr[1],addr[2],addr[3]);
+	brdcast = std::string(tmp);
 
 	close(fd);
-	return;
 }
-
+#if 0
+//never used
 void	netSetDefaultRoute( char *gw )
 {
 	struct rtentry		re;
 	struct sockaddr_in	*in_addr;
 	unsigned char		*addr;
 	int					fd;
-	unsigned char		adr_gw[4];
+	unsigned char		adr_gw[4] = {0};
 
 	scanip( gw, adr_gw );
 
@@ -142,44 +151,48 @@ void	netSetDefaultRoute( char *gw )
 		return;
 
 	re.rt_flags = RTF_GATEWAY | RTF_UP;
-	memcpy(addr,adr_gw,4);
+	memmove(addr,adr_gw,4);
 
 	ioctl(fd,SIOCADDRT,&re);
 
 	close(fd);
 	return;
 }
-
-void netGetDefaultRoute( char *ip )
+#endif
+void netGetDefaultRoute( std::string &ip )
 {
 	FILE *fp;
 	char interface[9];
-	unsigned char destination[4];
-	unsigned char gateway[4];
+	uint32_t destination;
+	uint32_t gw;
+	uint8_t gateway[4];
 	char zeile[256];
 
-	*ip = 0 ;
+	ip = "";
 	fp = fopen("/proc/net/route","r");
 	if (fp == NULL)
 		return;
-	fgets(zeile,sizeof(zeile),fp);
+	fgets(zeile,sizeof(zeile),fp); /* skip header */
 	while(fgets(zeile,sizeof(zeile),fp))
 	{
-		sscanf(zeile,"%8s %x %x",interface,(unsigned *) destination,(unsigned *) gateway);
-		if (*(unsigned *)destination == 0)
-		{
-			sprintf(ip,"%d.%d.%d.%d",gateway[0],gateway[1],gateway[2],gateway[3]);
-			break;
-		}
+		destination = 1; /* in case sscanf fails */
+		sscanf(zeile,"%8s %x %x", interface, &destination, &gw);
+		if (destination)
+			continue;
+		/* big/little endian kernels have reversed entries, so this is correct */
+		memcpy(gateway, &gw, 4);
+		char tmp[80];
+		snprintf(tmp, sizeof(tmp), "%d.%d.%d.%d", gateway[0], gateway[1], gateway[2], gateway[3]);
+		ip = std::string(tmp);
+		break;
 	}
 	fclose(fp);
 }
 
+#if 0
 static	char	dombuf[256];
-static	char	hostbuf[256];
 static	char	domis=0;
-static	char	hostis=0;
-
+//never used
 char	*netGetDomainname( void )
 {
 	if (!domis)
@@ -194,50 +207,55 @@ void	netSetDomainname( char *dom )
 	domis=1;
 	setdomainname(dombuf,strlen(dombuf)+1);
 }
-
-char	*netGetHostname( void )
+#endif
+void netGetHostname( std::string &host )
 {
-	if (!hostis)
-		gethostname( hostbuf, 256 );
-	hostis=1;
-	return hostbuf;
+	host = "";
+	char hostbuf[256];
+	if (!gethostname(hostbuf, sizeof(hostbuf)))
+		host = std::string(hostbuf);
 }
 
-void	netSetHostname( char *host )
+void	netSetHostname( std::string &host )
 {
-	strcpy(hostbuf,host);
-	hostis=1;
-	sethostname(hostbuf,strlen(hostbuf)+1);
+	FILE * fp;
+
+	sethostname(host.c_str(), host.length());
+	fp = fopen("/etc/hostname", "w");
+	if(fp != NULL) {
+		fprintf(fp, "%s\n", host.c_str());
+		fclose(fp);
+	}
 }
 
-void	netSetNameserver(const char * const ip)
+void	netSetNameserver(std::string &ip)
 {
 	FILE	*fp;
-	char	*dom;
 
 	fp = fopen("/etc/resolv.conf","w");
 	if (!fp)
 		return;
 
 #if 0
+	char	*dom;
 	dom=netGetDomainname();
 	if (dom && strlen(dom)>2)
 		fprintf(fp,"search %s\n",dom);
 #endif
 	fprintf(fp, "# generated by neutrino\n");
-	if ((ip != NULL) && (strlen(ip) > 0))
-		fprintf(fp,"nameserver %s\n",ip);
+	if (!ip.empty())
+		fprintf(fp,"nameserver %s\n",ip.c_str());
 	fclose(fp);
 }
 
-void	netGetNameserver( char *ip )
+void	netGetNameserver( std::string &ip )
 {
 	FILE *fp;
 	char zeile[256];
-	char *index;
+	char *indexLocal;
 	unsigned zaehler;
 
-	*ip = 0;
+	ip = "";
 	fp = fopen("/etc/resolv.conf","r");
 	if (!fp)
 		return;
@@ -246,15 +264,36 @@ void	netGetNameserver( char *ip )
 	{
 		if (!strncasecmp(zeile,"nameserver",10))
 		{
-			index = zeile + 10;
-			while ( (*index == ' ') || (*index == '\t') )
-				index++;
+			char tmp[20];
+			indexLocal = zeile + 10;
+			while ( (*indexLocal == ' ') || (*indexLocal == '\t') )
+				indexLocal++;
 			zaehler = 0;
-			while ( (zaehler < 15) && ( ((*index >= '0') && (*index <= '9')) || (*index == '.')))
-				ip[zaehler++] = *(index++);
-			ip[zaehler] = 0;
+			while ( (zaehler < 15) && ( ((*indexLocal >= '0') && (*indexLocal <= '9')) || (*indexLocal == '.')))
+				tmp[zaehler++] = *(indexLocal++);
+			tmp[zaehler] = 0;
+			ip = std::string(tmp);
 			break;
 		}
 	}
 	fclose(fp);
+}
+
+void netGetMacAddr(std::string &ifname, unsigned char *mac)
+{
+	int fd;
+	struct ifreq ifr;
+
+	memset(mac, 0, 6);
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if(fd < 0)
+		return;
+
+	ifr.ifr_addr.sa_family = AF_INET;
+	strncpy(ifr.ifr_name, ifname.c_str(), sizeof(ifr.ifr_name));
+
+	if(ioctl(fd, SIOCGIFHWADDR, &ifr) < 0)
+		return;
+
+	memmove(mac, ifr.ifr_hwaddr.sa_data, 6);
 }

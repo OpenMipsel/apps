@@ -27,9 +27,7 @@
 
 CNetworkConfig::CNetworkConfig(void)
 {
-	char our_nameserver[16];
-	netGetNameserver(our_nameserver);
-	nameserver = our_nameserver;
+	netGetNameserver(nameserver);
 	inet_static = getInetAttributes("eth0", automatic_start, address, netmask, broadcast, gateway);
 	copy_to_orig();
 }
@@ -93,7 +91,7 @@ void CNetworkConfig::commitConfig(void)
 	if (nameserver != orig_nameserver)
 	{
 		orig_nameserver = nameserver;
-		netSetNameserver(nameserver.c_str());
+		netSetNameserver(nameserver);
 	}
 }
 

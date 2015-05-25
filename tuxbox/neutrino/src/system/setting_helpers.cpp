@@ -241,22 +241,18 @@ std::string getPidof(const std::string& process_name)
 //returns interface
 std::string getInterface()
 {
-	char ret[19];
-	char ip[3][16];
-	char our_ip[3][16];
+	std::string ifname = "eth0";
+	std::string our_ip, our_mask, our_broadcast;
 
 	CNetworkConfig  *network = CNetworkConfig::getInstance();
 	
 	if (network->inet_static)
 	{
-		sprintf(ip[0], "%s", network->address.c_str());
-		strcpy(our_ip[0], ip[0]);
+		our_ip = network->address;
 	}
 	else 	//Note: netGetIP returns also mask and broadcast, but not needed here 
-		netGetIP("eth0", our_ip[0]/*IP*/, our_ip[1]/*MASK*/, our_ip[2]/*BROADCAST*/);
-
-	sprintf(ret, "%s/24", our_ip[0]);
+		netGetIP(ifname, our_ip, our_mask, our_broadcast);
 	
-	return ret;
+	return our_ip + "/24";
 }
 
