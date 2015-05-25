@@ -166,7 +166,7 @@ void CRecDirChooser::initMenu(void)
 			//printf("dir %d = nfs: %d\n",i,nfsIndex[i]);
 			if( nfsIndex[i] != -1)
 			{ 
-				int retvalue = pingthost(g_settings.network_nfs_ip[nfsIndex[i]].c_str(),60); // send ping and wait 60ms
+				int retvalue = pingthost(g_settings.network_nfs[nfsIndex[i]].ip.c_str(),60); // send ping and wait 60ms
 				if (retvalue == 0)//LOCALE_PING_UNREACHABLE
 				{
 					dirOptionText[i] = g_Locale->getText(LOCALE_RECDIRCHOOSER_SERVER_DOWN); 
@@ -176,7 +176,7 @@ void CRecDirChooser::initMenu(void)
 				else if (retvalue == 1)//LOCALE_PING_OK
 				{
 					// check if we can get more dir informations
-					if(	CFSMounter::isMounted (g_settings.network_nfs_local_dir[nfsIndex[i]]) == 0)
+					if (CFSMounter::isMounted (g_settings.network_nfs[nfsIndex[i]].local_dir))
 					{
 						dirOptionText[i] = g_Locale->getText(LOCALE_RECDIRCHOOSER_NOT_MOUNTED); 
 						get_size = false;
@@ -288,8 +288,8 @@ int getNFSIDOfDir(const char * dir)
 	bool loop = true;
 	for (int i = 0; i < NETWORK_NFS_NR_OF_ENTRIES && loop; i++)
 	{
-		if (g_settings.network_nfs_local_dir[i][0] != 0 &&
-		    strstr(dir,g_settings.network_nfs_local_dir[i]) == dir)
+		if (g_settings.network_nfs[i].local_dir[0] != 0 &&
+		    g_settings.network_nfs[i].local_dir == dir)
 		{
 			result = i;
 			loop = false;
@@ -330,7 +330,7 @@ int getFirstFreeRecDirNr(int min_free_gb)
 		if(	nfs_id != -1 )
 		{
 			printf("NFS%d", nfs_id);
-			int retvalue = pingthost(g_settings.network_nfs_ip[nfs_id].c_str(),60); //  ping for 60 ms
+			int retvalue = pingthost(g_settings.network_nfs[nfs_id].ip.c_str(), 60); //  ping for 60 ms
 			if (retvalue == 0) //LOCALE_PING_UNREACHABLE
 			{
 				printf(",Server down ");
@@ -338,16 +338,16 @@ int getFirstFreeRecDirNr(int min_free_gb)
 #ifdef ENABLE_GUI_MOUNT
 			else if (retvalue == 1) //LOCALE_PING_OK
 			{
-				if(CFSMounter::isMounted (g_settings.network_nfs_local_dir[nfs_id]) == 0)
+				if (CFSMounter::isMounted (g_settings.network_nfs[nfs_id].local_dir))
 				{
-					CFSMounter::MountRes mres =	CFSMounter::mount(g_settings.network_nfs_ip[nfs_id].c_str(),
-												g_settings.network_nfs_dir[nfs_id],
-												g_settings.network_nfs_local_dir[nfs_id],
-												(CFSMounter::FSType) g_settings.network_nfs_type[nfs_id],
-												g_settings.network_nfs_username[nfs_id],
-												g_settings.network_nfs_password[nfs_id],
-												g_settings.network_nfs_mount_options1[nfs_id],
-												g_settings.network_nfs_mount_options2[nfs_id]);
+					CFSMounter::MountRes mres =	CFSMounter::mount(g_settings.network_nfs[nfs_id].ip,
+												g_settings.network_nfs[nfs_id].dir,
+												g_settings.network_nfs[nfs_id].local_dir,
+												(CFSMounter::FSType) g_settings.network_nfs[nfs_id].type,
+												g_settings.network_nfs[nfs_id].username,
+												g_settings.network_nfs[nfs_id].password,
+												g_settings.network_nfs[nfs_id].mount_options1,
+												g_settings.network_nfs[nfs_id].mount_options2 );
 					if (mres != CFSMounter::MRES_OK)
 					{
 						printf(",mount failed");

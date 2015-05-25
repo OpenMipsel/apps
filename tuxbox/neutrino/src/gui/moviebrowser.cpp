@@ -962,8 +962,8 @@ int CMovieBrowser::exec(const char* path, const int playstate)
 		//umount automount dirs
 		for(int i = 0; i < NETWORK_NFS_NR_OF_ENTRIES; i++)
 		{
-			if(g_settings.network_nfs_automount[i])
-				umount2(g_settings.network_nfs_local_dir[i],MNT_FORCE);
+			if(g_settings.network_nfs[i].automount)
+				umount2(g_settings.network_nfs[i].local_dir.c_str(), MNT_FORCE);
 		}
 #ifdef ENABLE_GUI_MOUNT
 		CFSMounter::automount();
@@ -3771,9 +3771,9 @@ CDirMenu::CDirMenu(std::vector<MB_DIR>* dir_list)
 	{
 		for(int nfs = 0; nfs < NETWORK_NFS_NR_OF_ENTRIES; nfs++)
 		{
-			if(g_settings.network_nfs_local_dir[nfs][0] != 0)
+			if(!g_settings.network_nfs[nfs].local_dir.empty())
 			{
-			std::string tmp = g_settings.network_nfs_local_dir[nfs];
+			std::string tmp = g_settings.network_nfs[nfs].local_dir;
 			int result = (*dirList)[i].name.compare( 0,tmp.size(),tmp) ;
 			//printf("[CDirMenu] (nfs%d) %s == (mb%d) %s (%d)\n",nfs,g_settings.network_nfs_local_dir[nfs],i,(*dirList)[i].name.c_str(),result);
 
@@ -3809,27 +3809,25 @@ int CDirMenu::exec(CMenuTarget* parent, const std::string & actionKey)
 		{
 			if(dirState[number] == DIR_STATE_SERVER_DOWN)
 			{
-				std::string command = "ether-wake ";
-				command += g_settings.network_nfs_mac[dirNfsMountNr[number]];
-				printf("try to start server: %s\n",command.c_str());
-				if(system(command.c_str()) != 0)
+				printf("try to start server: %s %s\n","ether-wake", g_settings.network_nfs[dirNfsMountNr[number]].mac.c_str());
+				if (my_system(2, "ether-wake", g_settings.network_nfs[dirNfsMountNr[number]].mac.c_str()) != 0)
 					perror("ether-wake failed");
 
-				dirOptionText[number]="STARTE SERVER";
+				dirOptionText[number] = "STARTE SERVER";
 			}
 #ifdef ENABLE_GUI_MOUNT
 			else if(dirState[number] == DIR_STATE_NOT_MOUNTED)
 			{
 				printf("[CDirMenu] try to mount %d,%d\n",number,dirNfsMountNr[number]);
 				CFSMounter::MountRes res;
-				res = CFSMounter::mount(  g_settings.network_nfs_ip[dirNfsMountNr[number]].c_str(),
-				g_settings.network_nfs_dir[dirNfsMountNr[number]] ,
-				g_settings.network_nfs_local_dir[dirNfsMountNr[number]] ,
-				(CFSMounter::FSType)g_settings.network_nfs_type[dirNfsMountNr[number]] ,
-				g_settings.network_nfs_username[dirNfsMountNr[number]] ,
-				g_settings.network_nfs_password[dirNfsMountNr[number]] ,
-				g_settings.network_nfs_mount_options1[dirNfsMountNr[number]] ,
-				g_settings.network_nfs_mount_options2[dirNfsMountNr[number]] );
+				res = CFSMounter::mount (g_settings.network_nfs[dirNfsMountNr[number]].ip,
+				g_settings.network_nfs[dirNfsMountNr[number]].dir,
+				g_settings.network_nfs[dirNfsMountNr[number]].local_dir,
+				(CFSMounter::FSType)g_settings.network_nfs[dirNfsMountNr[number]].type,
+				g_settings.network_nfs[dirNfsMountNr[number]].username,
+				g_settings.network_nfs[dirNfsMountNr[number]].password,
+				g_settings.network_nfs[dirNfsMountNr[number]].mount_options1,
+				g_settings.network_nfs[dirNfsMountNr[number]].mount_options2 );
 				if(res ==  CFSMounter::MRES_OK) // if mount is successful we set the state to active in any case
 				{
 					*(*dirList)[number].used = true;
@@ -3872,7 +3870,7 @@ void CDirMenu::updateDirState(void)
 		// 1st ping server
 		if(dirNfsMountNr[i] != -1)
 		{
-			int retvalue = pingthost(g_settings.network_nfs_ip[dirNfsMountNr[i]].c_str(), 500); // get ping for 60ms - increased
+			int retvalue = pingthost(g_settings.network_nfs[dirNfsMountNr[i]].ip.c_str(), 500); // get ping for 60ms - increased
 			if (retvalue == 0)//LOCALE_PING_UNREACHABLE
 			{
 				dirOptionText[i] = g_Locale->getText(LOCALE_RECDIRCHOOSER_SERVER_DOWN);
@@ -3881,7 +3879,7 @@ void CDirMenu::updateDirState(void)
 #ifdef ENABLE_GUI_MOUNT
 			else if (retvalue == 1)//LOCALE_PING_OK
 			{
-				if(CFSMounter::isMounted (g_settings.network_nfs_local_dir[dirNfsMountNr[i]]) == 0)
+				if(CFSMounter::isMounted (g_settings.network_nfs[dirNfsMountNr[i]].local_dir))
 				{
 					dirOptionText[i] = g_Locale->getText(LOCALE_RECDIRCHOOSER_NOT_MOUNTED);
 					dirState[i] = DIR_STATE_NOT_MOUNTED;

@@ -192,16 +192,18 @@ struct SNeutrinoSettings
 
 	//network
 #define NETWORK_NFS_NR_OF_ENTRIES 8
-	std::string network_nfs_ip[NETWORK_NFS_NR_OF_ENTRIES];
-	char network_nfs_mac[NETWORK_NFS_NR_OF_ENTRIES][31];
-	char network_nfs_local_dir[NETWORK_NFS_NR_OF_ENTRIES][100];
-	char network_nfs_dir[NETWORK_NFS_NR_OF_ENTRIES][100];
-	int  network_nfs_automount[NETWORK_NFS_NR_OF_ENTRIES];
-	char network_nfs_mount_options1[NETWORK_NFS_NR_OF_ENTRIES][31];
-	char network_nfs_mount_options2[NETWORK_NFS_NR_OF_ENTRIES][31];
-	int  network_nfs_type[NETWORK_NFS_NR_OF_ENTRIES];
-	char network_nfs_username[NETWORK_NFS_NR_OF_ENTRIES][31];
-	char network_nfs_password[NETWORK_NFS_NR_OF_ENTRIES][31];
+struct {
+	std::string ip;
+	std::string mac;
+	std::string local_dir;
+	std::string dir;
+	int  automount;
+	std::string mount_options1;
+	std::string mount_options2;
+	int  type;
+	std::string username;
+	std::string password;
+} network_nfs[NETWORK_NFS_NR_OF_ENTRIES];
 
 	//personalization
 	int personalize_pinstatus;
@@ -261,7 +263,7 @@ struct SNeutrinoSettings
 	std::string recording_server_ip;
 	char recording_server_port[10];
 	int  recording_server_wakeup;
-	char recording_server_mac[31];
+	std::string recording_server_mac;
 	int  recording_vcr_no_scart;
 	int  recording_max_rectime;
 	char recording_splitsize_default[10];

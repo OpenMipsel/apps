@@ -537,40 +537,41 @@ void CDateInput::onAfterExec()
 }
 //-----------------------------#################################-------------------------------------------------------
 
-CMACInput::CMACInput(const neutrino_locale_t Name, char* Value, const neutrino_locale_t Hint_1, const neutrino_locale_t Hint_2, CChangeObserver* Observ)
-	: CExtendedInput(Name, Value, Hint_1, Hint_2, Observ)
+CMACInput::CMACInput(const neutrino_locale_t Name, std::string & Value, const neutrino_locale_t Hint_1, const neutrino_locale_t Hint_2, CChangeObserver* Observ)
+	: CExtendedInput(Name, MAC, Hint_1, Hint_2, Observ)
 {
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
+	mac = &Value;
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
 	addInputField( new CExtendedInput_Item_Spacer(20) );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
 	addInputField( new CExtendedInput_Item_Spacer(20) );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
 	addInputField( new CExtendedInput_Item_Spacer(20) );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
 	addInputField( new CExtendedInput_Item_Spacer(20) );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
 	addInputField( new CExtendedInput_Item_Spacer(20) );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
-	addInputField( new CExtendedInput_Item_Char("0123456789ABCDEF") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
+	addInputField( new CExtendedInput_Item_Char("0123456789abcdef") );
 	addInputField( new CExtendedInput_Item_newLiner(30) );
 	calculateDialog();
 }
 
 void CMACInput::onBeforeExec()
 {
-	if (value[0] == 0) /* strcmp(value, "") == 0 */
+	if (mac->empty())
 	{
 		strcpy(value, "00:00:00:00:00:00");
 		//printf("[neutrino] value-before(2): %s\n", value);
 		return;
 	}
 	int _mac[6];
-	sscanf( value, "%x:%x:%x:%x:%x:%x", &_mac[0], &_mac[1], &_mac[2], &_mac[3], &_mac[4], &_mac[5] );
+	sscanf( mac->c_str(), "%x:%x:%x:%x:%x:%x", &_mac[0], &_mac[1], &_mac[2], &_mac[3], &_mac[4], &_mac[5] );
 	snprintf(value, 20, "%02x:%02x:%02x:%02x:%02x:%02x", _mac[0], _mac[1], _mac[2], _mac[3], _mac[4], _mac[5]);
 }
 
@@ -580,7 +581,11 @@ void CMACInput::onAfterExec()
 	sscanf( value, "%x:%x:%x:%x:%x:%x", &_mac[0], &_mac[1], &_mac[2], &_mac[3], &_mac[4], &_mac[5] );
 	snprintf(value, 20, "%02x:%02x:%02x:%02x:%02x:%02x", _mac[0], _mac[1], _mac[2], _mac[3], _mac[4], _mac[5]);
 	if(strcmp(value,"00:00:00:00:00:00")==0)
-		value[0] = 0; /* strcpy(value, ""); */
+	{
+		(*mac) = "";
+	}
+	else
+		(*mac) = value;
 }
 
 //-----------------------------#################################-------------------------------------------------------

@@ -450,16 +450,16 @@ int CNeutrinoApp::loadSetup()
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 	{
 		std::string i_str(to_string(i));
-		g_settings.network_nfs_ip[i]                    = configfile.getString("network_nfs_ip_" + i_str, "");
-		strcpy( g_settings.network_nfs_dir[i]           , configfile.getString("network_nfs_dir_" + i_str, "").c_str() );
-		strcpy( g_settings.network_nfs_local_dir[i]     , configfile.getString("network_nfs_local_dir_" + i_str, "").c_str() );
-		g_settings.network_nfs_automount[i]             = configfile.getInt32 ("network_nfs_automount_" + i_str, 0);
-		g_settings.network_nfs_type[i]                  = configfile.getInt32 ("network_nfs_type_" + i_str, 0);
-		strcpy( g_settings.network_nfs_username[i]      , configfile.getString("network_nfs_username_" + i_str, "").c_str() );
-		strcpy( g_settings.network_nfs_password[i]      , configfile.getString("network_nfs_password_" + i_str, "").c_str() );
-		strcpy( g_settings.network_nfs_mount_options1[i], configfile.getString("network_nfs_mount_options1_" + i_str, "ro,soft,udp" ).c_str() );
-		strcpy( g_settings.network_nfs_mount_options2[i], configfile.getString("network_nfs_mount_options2_" + i_str, "nolock,rsize=8192,wsize=8192" ).c_str() );
-		strcpy( g_settings.network_nfs_mac[i]           , configfile.getString("network_nfs_mac" + i_str, "11:22:33:44:55:66").c_str() );
+		g_settings.network_nfs[i].ip             = configfile.getString("network_nfs_ip_" + i_str, "");
+		g_settings.network_nfs[i].dir            = configfile.getString("network_nfs_dir_" + i_str, "");
+		g_settings.network_nfs[i].local_dir      = configfile.getString("network_nfs_local_dir_" + i_str, "");
+		g_settings.network_nfs[i].automount      = configfile.getInt32 ("network_nfs_automount_" + i_str, 0);
+		g_settings.network_nfs[i].type           = configfile.getInt32 ("network_nfs_type_" + i_str, 0);
+		g_settings.network_nfs[i].username       = configfile.getString("network_nfs_username_" + i_str, "");
+		g_settings.network_nfs[i].password       = configfile.getString("network_nfs_password_" + i_str, "");
+		g_settings.network_nfs[i].mount_options1 = configfile.getString("network_nfs_mount_options1_" + i_str, "ro,soft,udp" );
+		g_settings.network_nfs[i].mount_options2 = configfile.getString("network_nfs_mount_options2_" + i_str, "nolock,rsize=8192,wsize=8192" );
+		g_settings.network_nfs[i].mac            = configfile.getString("network_nfs_mac" + i_str, "11:22:33:44:55:66");
 	}
 	g_settings.filesystem_is_utf8              = configfile.getBool("filesystem_is_utf8"                 , true );
 
@@ -542,7 +542,7 @@ int CNeutrinoApp::loadSetup()
 	g_settings.recording_server_ip = configfile.getString("recording_server_ip", "10.10.10.10");
 	strcpy( g_settings.recording_server_port, configfile.getString( "recording_server_port", "4000").c_str() );
 	g_settings.recording_server_wakeup = configfile.getInt32( "recording_server_wakeup", 0 );
-	strcpy( g_settings.recording_server_mac, configfile.getString( "recording_server_mac", "11:22:33:44:55:66").c_str() );
+	g_settings.recording_server_mac = configfile.getString("recording_server_mac", "11:22:33:44:55:66");
 	g_settings.recording_vcr_no_scart = configfile.getInt32( "recording_vcr_no_scart", false);
 	g_settings.recording_max_rectime = configfile.getInt32( "recording_max_rectime", 4 );
 	strcpy( g_settings.recording_splitsize_default, configfile.getString( "recording_splitsize_default", "2048").c_str() );
@@ -981,16 +981,16 @@ void CNeutrinoApp::saveSetup()
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 	{
 		std::string i_str(to_string(i));
-		configfile.setString("network_nfs_ip_" + i_str            , g_settings.network_nfs_ip[i] );
-		configfile.setString("network_nfs_dir_" + i_str           , g_settings.network_nfs_dir[i] );
-		configfile.setString("network_nfs_local_dir_" + i_str     , g_settings.network_nfs_local_dir[i] );
-		configfile.setInt32 ("network_nfs_automount_" + i_str     , g_settings.network_nfs_automount[i]);
-		configfile.setInt32 ("network_nfs_type_" + i_str          , g_settings.network_nfs_type[i]);
-		configfile.setString("network_nfs_username_" + i_str      , g_settings.network_nfs_username[i] );
-		configfile.setString("network_nfs_password_" + i_str      , g_settings.network_nfs_password[i] );
-		configfile.setString("network_nfs_mount_options1_" + i_str, g_settings.network_nfs_mount_options1[i]);
-		configfile.setString("network_nfs_mount_options2_" + i_str, g_settings.network_nfs_mount_options2[i]);
-		configfile.setString("network_nfs_mac_" + i_str           , g_settings.network_nfs_mac[i]);
+		configfile.setString("network_nfs_ip_" + i_str            , g_settings.network_nfs[i].ip );
+		configfile.setString("network_nfs_dir_" + i_str           , g_settings.network_nfs[i].dir );
+		configfile.setString("network_nfs_local_dir_" + i_str     , g_settings.network_nfs[i].local_dir );
+		configfile.setInt32 ("network_nfs_automount_" + i_str     , g_settings.network_nfs[i].automount );
+		configfile.setInt32 ("network_nfs_type_" + i_str          , g_settings.network_nfs[i].type );
+		configfile.setString("network_nfs_username_" + i_str      , g_settings.network_nfs[i].username );
+		configfile.setString("network_nfs_password_" + i_str      , g_settings.network_nfs[i].password );
+		configfile.setString("network_nfs_mount_options1_" + i_str, g_settings.network_nfs[i].mount_options1 );
+		configfile.setString("network_nfs_mount_options2_" + i_str, g_settings.network_nfs[i].mount_options2 );
+		configfile.setString("network_nfs_mac_" + i_str           , g_settings.network_nfs[i].mac );
 	}
 	configfile.setBool  ( "filesystem_is_utf8" , g_settings.filesystem_is_utf8);
 #ifdef ENABLE_SAMBASERVER
@@ -1752,24 +1752,24 @@ bool CNeutrinoApp::doGuiRecord(char * preselectedDir, bool addTimer, char * file
 						int nfs_nr = getNFSIDOfDir(recDir.c_str());
 						if(nfs_nr != -1)
 						{
-							recDir = g_settings.network_nfs_local_dir[nfs_nr];
+							recDir = g_settings.network_nfs[nfs_nr].local_dir;
 #ifdef ENABLE_GUI_MOUNT
-							if (!CFSMounter::isMounted(g_settings.network_nfs_local_dir[nfs_nr]))
+							if (!CFSMounter::isMounted(g_settings.network_nfs[nfs_nr].local_dir))
 							{
 				         		printf("not mounted, try to mount: %d\n",nfs_nr);
 								CFSMounter::MountRes mres =
-									CFSMounter::mount(g_settings.network_nfs_ip[nfs_nr].c_str(),
-											  g_settings.network_nfs_dir[nfs_nr],
-											  g_settings.network_nfs_local_dir[nfs_nr],
-											  (CFSMounter::FSType) g_settings.network_nfs_type[nfs_nr],
-											  g_settings.network_nfs_username[nfs_nr],
-											  g_settings.network_nfs_password[nfs_nr],
-											  g_settings.network_nfs_mount_options1[nfs_nr],
-											  g_settings.network_nfs_mount_options2[nfs_nr]);
+									CFSMounter::mount(g_settings.network_nfs[nfs_nr].ip,
+											  g_settings.network_nfs[nfs_nr].dir,
+											  g_settings.network_nfs[nfs_nr].local_dir,
+											  (CFSMounter::FSType) g_settings.network_nfs[nfs_nr].type,
+											  g_settings.network_nfs[nfs_nr].username,
+											  g_settings.network_nfs[nfs_nr].password,
+											  g_settings.network_nfs[nfs_nr].mount_options1,
+											  g_settings.network_nfs[nfs_nr].mount_options2);
 								if (mres != CFSMounter::MRES_OK)
 								{
 									doRecord = false;
-									std::string msg = mntRes2Str(mres) + "\nDir: " + g_settings.network_nfs_local_dir[nfs_nr];
+									std::string msg = mntRes2Str(mres) + "\nDir: " + g_settings.network_nfs[nfs_nr].local_dir;
 									ShowMsgUTF(LOCALE_MESSAGEBOX_ERROR, msg.c_str(),
 											CMessageBox::mbrBack, CMessageBox::mbBack,NEUTRINO_ICON_ERROR, 450, 10); // UTF-8
 								}
@@ -2969,7 +2969,8 @@ int CNeutrinoApp::handleMsg(const neutrino_msg_t m, neutrino_msg_data_t data)
 
 			if( g_settings.recording_server_wakeup )
 			{
-				if (my_system(2, "ether-wake", g_settings.recording_server_mac) != 0)
+				printf("[neutrino] waking up %s (rec-server)\n", g_settings.recording_server_mac.c_str());
+				if (my_system(2, "ether-wake", g_settings.recording_server_mac.c_str()) != 0)
 					perror("ether-wake failed");
 			}
 			if (g_settings.recording_type == RECORDING_FILE)
@@ -2977,10 +2978,10 @@ int CNeutrinoApp::handleMsg(const neutrino_msg_t m, neutrino_msg_data_t data)
 				char * recDir = eventinfo->recordingDir;
 				for (int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 				{
-					if (strcmp(g_settings.network_nfs_local_dir[i],recDir) == 0)
+					if (g_settings.network_nfs[i].local_dir == recDir)
 					{
-						printf("[neutrino] waking up %s (%s)\n",g_settings.network_nfs_ip[i].c_str(),recDir);
-						if (my_system(2, "ether-wake", g_settings.network_nfs_mac[i]) != 0)
+						printf("[neutrino] waking up %s (%s)\n", g_settings.network_nfs[i].ip.c_str(), recDir);
+						if (my_system(2, "ether-wake", g_settings.network_nfs[i].mac.c_str()) != 0)
 							perror("ether-wake failed");
 						break;
 					}
@@ -3897,13 +3898,13 @@ void CNeutrinoApp::startNextRecording()
 					printf("[neutrino.cpp] trying to mount %s\n",recDir);
 					for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 					{
-						if (strcmp(g_settings.network_nfs_local_dir[i],recDir) == 0)
+						if (g_settings.network_nfs[i].local_dir == recDir)
 						{
 							CFSMounter::MountRes mres =
-								CFSMounter::mount(g_settings.network_nfs_ip[i].c_str(), g_settings.network_nfs_dir[i],
-										  g_settings.network_nfs_local_dir[i], (CFSMounter::FSType) g_settings.network_nfs_type[i],
-										  g_settings.network_nfs_username[i], g_settings.network_nfs_password[i],
-										  g_settings.network_nfs_mount_options1[i], g_settings.network_nfs_mount_options2[i]);
+								CFSMounter::mount(g_settings.network_nfs[i].ip, g_settings.network_nfs[i].dir,
+										  g_settings.network_nfs[i].local_dir, (CFSMounter::FSType) g_settings.network_nfs[i].type,
+										  g_settings.network_nfs[i].username, g_settings.network_nfs[i].password,
+										  g_settings.network_nfs[i].mount_options1, g_settings.network_nfs[i].mount_options2);
 							if (mres == CFSMounter::MRES_OK)
 							{
 								printf("[neutrino.cpp] mount successful\n");
