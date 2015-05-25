@@ -459,7 +459,7 @@ int CNeutrinoApp::loadSetup()
 		g_settings.network_nfs[i].password       = configfile.getString("network_nfs_password_" + i_str, "");
 		g_settings.network_nfs[i].mount_options1 = configfile.getString("network_nfs_mount_options1_" + i_str, "ro,soft,udp" );
 		g_settings.network_nfs[i].mount_options2 = configfile.getString("network_nfs_mount_options2_" + i_str, "nolock,rsize=8192,wsize=8192" );
-		g_settings.network_nfs[i].mac            = configfile.getString("network_nfs_mac" + i_str, "11:22:33:44:55:66");
+		g_settings.network_nfs[i].mac            = configfile.getString("network_nfs_mac_" + i_str, "11:22:33:44:55:66");
 	}
 	g_settings.filesystem_is_utf8              = configfile.getBool("filesystem_is_utf8"                 , true );
 
