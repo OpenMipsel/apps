@@ -210,7 +210,7 @@ int CExtendedInput::exec( CMenuTarget* parent, const std::string & )
 				}
 			}
 		}
-		else if ((CRCInput::getUnicodeValue(msg) != -1) || (msg == CRCInput::RC_red)
+		else if ((*CRCInput::getUnicodeValue(msg)) || (msg == CRCInput::RC_red)
 			|| (msg == CRCInput::RC_green) || (msg == CRCInput::RC_blue) || (msg == CRCInput::RC_yellow)
 			|| (msg_repeatok == CRCInput::RC_up) || (msg_repeatok == CRCInput::RC_down))
 		{
@@ -365,12 +365,12 @@ int CExtendedInput_Item_Char::getCharID( char ch )
 
 void CExtendedInput_Item_Char::keyPressed(const int key)
 {
-	int value = CRCInput::getUnicodeValue(key);
-	if (value != -1)
+	const char *value = CRCInput::getUnicodeValue(key);
+	if (*value)
 	{
-		if (isAllowedChar((char)value))
+		if (isAllowedChar(*value))
 		{
-			*data = (char)value;
+			*data = *value;
 			g_RCInput->postMsg( CRCInput::RC_right, 0 );
 		}
 	}
