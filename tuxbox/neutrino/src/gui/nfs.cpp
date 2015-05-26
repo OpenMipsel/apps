@@ -55,6 +55,8 @@
 
 #include <zapit/client/zapittools.h>
 
+extern int pinghost (const std::string &hostname, std::string *ip = NULL);
+
 CNFSMountGui::CNFSMountGui()
 {
 #warning move probing from exec() to fsmounter
@@ -106,6 +108,27 @@ int CNFSMountGui::exec( CMenuTarget* parent, const std::string & actionKey )
 			m_entry[i] = getEntryString(i);
 		}
 		returnval = menu();
+	}
+	else if(actionKey.substr(0,10)=="refreshMAC")
+	{
+		int nr=atoi(actionKey.substr(10,1).c_str());
+		std::string h;
+		pinghost(g_settings.network_nfs[nr].ip, &h);
+		if (!h.empty()) {
+			FILE *arptable = fopen("/proc/net/arp", "r");
+			if (arptable) {
+				char line[120], ip[120], mac[120];
+				while (fgets(line, sizeof(line), arptable)) {
+					if (2 == sscanf(line, "%s %*s %*s %s %*[^\n]", ip, mac)) {
+						if (!strcmp(ip, h.c_str())) {
+							g_settings.network_nfs[nr].mac = std::string(mac);
+							break;
+						}
+					}
+				}
+				fclose(arptable);
+			}
+		}
 	}
 	else if(actionKey.substr(0,10)=="mountentry")
 	{
@@ -217,11 +240,13 @@ int CNFSMountGui::menuEntry(int nr)
 	CMenuForwarder *password_fwd = new CMenuForwarder(LOCALE_NFS_PASSWORD, (g_settings.network_nfs[nr].type != (int)CFSMounter::NFS), NULL, &passInput);
 
 	CMACInput macInput(LOCALE_RECORDINGMENU_SERVER_MAC, g_settings.network_nfs[nr].mac);
-	CMenuForwarder * macInput_fwd = new CMenuForwarder(LOCALE_RECORDINGMENU_SERVER_MAC, true, g_settings.network_nfs[nr].mac, &macInput);
+	CMenuForwarder *macInput_fwd = new CMenuForwarder(LOCALE_RECORDINGMENU_SERVER_MAC, true, g_settings.network_nfs[nr].mac, &macInput);
+
+	CMenuForwarder *refreshMAC_fwd = new CMenuForwarder(LOCALE_NFS_REFRESH_MAC, true, NULL, this, ("refreshMAC" + to_string(nr)).c_str(), CRCInput::RC_yellow);
 
 	CMenuForwarder *mountnow_fwd = new CMenuForwarder(LOCALE_NFS_MOUNTNOW, !(CFSMounter::isMounted(g_settings.network_nfs[nr].local_dir)), NULL, this, ("domount" + to_string(nr)).c_str(), CRCInput::RC_red);
-	mountnow_fwd->setItemButton(NEUTRINO_ICON_BUTTON_OKAY, true);
 
+	mountnow_fwd->setItemButton(NEUTRINO_ICON_BUTTON_OKAY, true);
 	COnOffNotifier notifier(CFSMounter::NFS);
 	notifier.addItem(username_fwd);
 	notifier.addItem(password_fwd);
@@ -236,6 +261,7 @@ int CNFSMountGui::menuEntry(int nr)
 	mountMenuEntryW.addItem(username_fwd);
 	mountMenuEntryW.addItem(password_fwd);
 	mountMenuEntryW.addItem(macInput_fwd);
+	mountMenuEntryW.addItem(refreshMAC_fwd);
 	mountMenuEntryW.addItem(GenericMenuSeparatorLine);
 	mountMenuEntryW.addItem(mountnow_fwd);
 

@@ -1037,6 +1037,7 @@ nfs.mountnow Jetzt mounten
 nfs.mountok Mount erfolgreich
 nfs.mounttimeout Mount-Fehler: Timeout
 nfs.password Passwort
+nfs.refresh_mac MAC-Adresse ermitteln
 nfs.remount Verzeichnisse erneut mounten
 nfs.type Typ
 nfs.type_cifs CIFS
@@ -1213,7 +1214,7 @@ recordingmenu.sectionsd.run nicht anhalten
 recordingmenu.sectionsd.stop anhalten
 recordingmenu.server Server
 recordingmenu.server_ip Aufnahmeserver IP
-recordingmenu.server_mac Mac Adresse
+recordingmenu.server_mac MAC-Adresse
 recordingmenu.server_port Aufnahmeserver Port
 recordingmenu.server_wakeup Aufnahmeserver WOL
 recordingmenu.setupnow Einstellungen jetzt übernehmen
