@@ -39,8 +39,6 @@
 #include <signal.h>
 #include "libnet.h"
 
-#include <sstream>
-#include <iomanip>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -464,8 +462,7 @@ void CNetworkSetup::testNetworkSettings()
 	std::string defaultsite = "www.google.de", wiki_IP = "91.224.67.93", wiki_URL = "wiki.tuxbox.org";
 	
 	//set physical adress
-	static CNetAdapter netadapter;
-	ethID = netadapter.getMacAddr();
+	std::string mac_addr = networkConfig->mac_addr;
 	
 	//get www-domain testsite from /.version 	
 	CConfigFile config('\t');
@@ -491,7 +488,7 @@ void CNetworkSetup::testNetworkSettings()
 	}
 	
 	printf("testNw IP: %s\n", our_ip.c_str());
-	printf("testNw MAC-address: %s\n", ethID.c_str());
+	printf("testNw MAC-address: %s\n", mac_addr.c_str());
 	printf("testNw Netmask: %s\n", our_mask.c_str());
 	printf("testNw Broadcast: %s\n", our_broadcast.c_str());
 	printf("testNw Gateway: %s\n", our_gateway.c_str());
@@ -505,7 +502,7 @@ void CNetworkSetup::testNetworkSettings()
 	else
 	{
 		// Box
-		text = "dbox (" + ethID + "):\n";
+		text = "dbox (" + mac_addr + "):\n";
 		text += offset + our_ip + ": " + mypinghost(our_ip) + "\n";
 		// Gateway
 		text += (std::string)g_Locale->getText(LOCALE_NETWORKMENU_GATEWAY) + " (Router):\n";
@@ -581,67 +578,4 @@ bool CDHCPNotifier::changeNotify(const neutrino_locale_t, void * data)
 	for (int x = 0; x < 4; x++)
 		toDisable[x]->setActive(CNetworkConfig::getInstance()->inet_static);	
 	return false;
-}
-
-long CNetAdapter::mac_addr_sys ( u_char *addr) //only for function getMacAddr()
-{
-	struct ifreq ifr;
-	struct ifreq *IFR;
-	struct ifconf ifc;
-	char buf[1024];
-	int s, i;
-	int ok = 0;
-	s = socket(AF_INET, SOCK_DGRAM, 0);
-	if (s==-1) 
-	{
-		return -1;
-	}
-
-	ifc.ifc_len = sizeof(buf);
-	ifc.ifc_buf = buf;
-	ioctl(s, SIOCGIFCONF, &ifc);
-	IFR = ifc.ifc_req;
-	for (i = ifc.ifc_len / sizeof(struct ifreq); --i >= 0; IFR++)
-	{
-		strcpy(ifr.ifr_name, IFR->ifr_name);
-		if (ioctl(s, SIOCGIFFLAGS, &ifr) == 0) 
-		{
-			if (! (ifr.ifr_flags & IFF_LOOPBACK)) 
-			{
-				if (ioctl(s, SIOCGIFHWADDR, &ifr) == 0) 
-				{
-					ok = 1;
-					break;
-				}
-			}
-		}
-	}
-	close(s);
-	if (ok)
-	{
-		memmove(addr, ifr.ifr_hwaddr.sa_data, 6);
-	}
-	else
-	{
-		return -1;
-	}
-	return 0;
-}
-
-std::string CNetAdapter::getMacAddr(void)
-{
-	long stat;
-	u_char addr[6];
-	stat = mac_addr_sys( addr);
-	if (0 == stat)
-	{
-		std::stringstream mac_tmp;
-		for(int i=0;i<6;++i)
-		mac_tmp<<std::hex<<std::setfill('0')<<std::setw(2)<<(int)addr[i]<<':';
-		return mac_tmp.str().substr(0,17);
-	}
-	else
-	{
-		return "not found";
-	}
 }

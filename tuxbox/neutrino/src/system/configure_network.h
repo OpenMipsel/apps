@@ -36,6 +36,7 @@ class CNetworkConfig
 	bool        orig_inet_static;
 
 	void copy_to_orig(void);
+	void init_vars(void);
 
  public:
 	bool        automatic_start;
@@ -44,6 +45,7 @@ class CNetworkConfig
 	std::string broadcast;
 	std::string gateway;
 	std::string nameserver;
+	std::string mac_addr;
 	bool        inet_static;
 
 	CNetworkConfig();

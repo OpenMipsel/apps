@@ -24,11 +24,15 @@
 #include "network_interfaces.h" /* getInetAttributes, setInetAttributes */
 #include <stdlib.h>             /* system                               */
 #include <stdio.h>
+#include <iomanip>
+#include <sstream>
 
 CNetworkConfig::CNetworkConfig(void)
 {
 	netGetNameserver(nameserver);
 	inet_static = getInetAttributes("eth0", automatic_start, address, netmask, broadcast, gateway);
+
+	init_vars();
 	copy_to_orig();
 }
 
@@ -47,6 +51,20 @@ CNetworkConfig* CNetworkConfig::getInstance()
 CNetworkConfig::~CNetworkConfig()
 {
 
+}
+
+void CNetworkConfig::init_vars(void)
+{
+	std::string ifname = "eth0";
+	unsigned char addr[6];
+
+	netGetMacAddr(ifname, addr);
+
+	std::stringstream mac_tmp;
+	for(int i=0;i<6;++i)
+		mac_tmp<<std::hex<<std::setfill('0')<<std::setw(2)<<(int)addr[i]<<':';
+
+	mac_addr = mac_tmp.str().substr(0,17);
 }
 
 void CNetworkConfig::copy_to_orig(void)

@@ -110,13 +110,4 @@ class CDHCPNotifier : public CChangeObserver
 		CDHCPNotifier(CMenuForwarder*, CMenuForwarder*, CMenuForwarder*, CMenuForwarder*);
 		bool changeNotify(const neutrino_locale_t, void * data);
 };
-
-class CNetAdapter
-{
-	private:
-		long mac_addr_sys ( u_char *addr);	
-	public:
-		std::string getMacAddr(void);
-};
-
 #endif
