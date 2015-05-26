@@ -76,7 +76,7 @@
 
 #include <system/debug.h>
 
-extern "C" int pinghost( const char *hostname );
+extern int pinghost (const std::string &hostname, std::string *ip = NULL);
 
 CNetworkSetup::CNetworkSetup()
 {
@@ -331,7 +331,7 @@ bool CNetworkSetup::checkForIP()
 	return ret;
 }
 
-const char * CNetworkSetup::mypinghost(const char * const host)
+const char * CNetworkSetup::mypinghost(std::string &host)
 {
 	int retvalue = pinghost(host);
 	switch (retvalue)
@@ -458,9 +458,10 @@ void CNetworkSetup::testNetworkSettings()
 	std::string ifname = "eth0";
 	std::string our_ip, our_mask, our_broadcast, our_gateway, our_nameserver;
 
-	std::string text, ethID, testsite;
+	std::string text, ethID, testsite, offset = "    ";
+
 	//set default testdomain and wiki-IP
-	std::string defaultsite = "www.google.de", wiki_IP = "91.224.67.93";
+	std::string defaultsite = "www.google.de", wiki_IP = "91.224.67.93", wiki_URL = "wiki.tuxbox.org";
 	
 	//set physical adress
 	static CNetAdapter netadapter;
@@ -496,20 +497,32 @@ void CNetworkSetup::testNetworkSettings()
 	printf("testNw Gateway: %s\n", our_gateway.c_str());
 	printf("testNw Nameserver: %s\n", our_nameserver.c_str());
 	printf("testNw Testsite %s\n", testsite.c_str());
- 
-	text = (std::string)"dbox:\n"
-	     + "    " + our_ip + ": " + mypinghost(our_ip.c_str()) + '\n'
-		 + "    " + "eth-ID: " + ethID + '\n'
-	     + g_Locale->getText(LOCALE_NETWORKMENU_GATEWAY) + ":\n"
-	     + "    " + our_gateway + ": " + ' ' + mypinghost(our_gateway.c_str()) + '\n'
-	     + g_Locale->getText(LOCALE_NETWORKMENU_NAMESERVER) + ":\n"
-	     + "    " + our_nameserver + ": " + ' ' + mypinghost(our_nameserver.c_str()) + '\n'
-	     + "wiki.tuxbox.org:\n"
-	     + "    via IP (" + wiki_IP + "): " + mypinghost(wiki_IP.c_str()) + '\n';
-	if (1 == pinghost(our_nameserver.c_str())) text += (std::string)
-	       "    via DNS: " + mypinghost("wiki.tuxbox.org") + '\n'
-	     + testsite + ":\n"
-	     + "    via DNS: " + mypinghost(testsite.c_str()) + '\n';
+
+	if (our_ip.empty())
+	{
+		text = g_Locale->getText(LOCALE_NETWORKMENU_INACTIVE);
+	}
+	else
+	{
+		// Box
+		text = "dbox (" + ethID + "):\n";
+		text += offset + our_ip + ": " + mypinghost(our_ip) + "\n";
+		// Gateway
+		text += (std::string)g_Locale->getText(LOCALE_NETWORKMENU_GATEWAY) + " (Router):\n";
+		text += offset + our_gateway + ": " + " " + mypinghost(our_gateway) + "\n";
+		// Nameserver
+		text += (std::string)g_Locale->getText(LOCALE_NETWORKMENU_NAMESERVER) + ":\n";
+		text += offset + our_nameserver + ": " + " " + mypinghost(our_nameserver) + "\n";
+		// Wiki
+		text += wiki_URL + ":\n";
+		text += offset + "via IP (" + wiki_IP + "): " + mypinghost(wiki_IP) + "\n";
+		if (pinghost(our_nameserver) == 1)
+		{
+			text += offset + "via DNS: " + mypinghost(wiki_URL) + "\n";
+			text += testsite + ":\n";
+			text += offset + "via DNS: " + mypinghost(testsite) + "\n";
+		}
+	}
 
 	ShowMsgUTF(LOCALE_NETWORKMENU_TEST, text, CMessageBox::mbrBack, CMessageBox::mbBack); // UTF-8
 }

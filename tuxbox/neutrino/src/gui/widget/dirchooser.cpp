@@ -39,7 +39,8 @@
 #include <system/fsmounter.h>
 #endif
 //#include <system/ping.h>
-extern "C" int pingthost ( const char *hostname, int t );
+extern int pingthost (const std::string &hostname, int t );
+
 #include <gui/filebrowser.h>
 
 #include <sys/vfs.h> // for statfs

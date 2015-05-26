@@ -79,7 +79,7 @@
 #include <sys/mount.h>
 #include <unistd.h>
 //#include <system/ping.h>
-extern "C" int pingthost ( const char *hostname, int t );
+extern int pingthost (const std::string &hostname, int t );
 
 #define my_scandir scandir64
 #define my_alphasort alphasort64

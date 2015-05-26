@@ -18,7 +18,7 @@ libneutrino_system_a_SOURCES = \
 	localize.cpp \
 	setting_helpers.cpp \
 	debug.cpp \
-	ping.c \
+	ping.cpp \
 	flashtool.cpp \
 	settings.cpp \
 	lastchannel.cpp \
