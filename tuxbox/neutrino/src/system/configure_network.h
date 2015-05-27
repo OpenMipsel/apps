@@ -46,6 +46,7 @@ class CNetworkConfig
 	std::string gateway;
 	std::string nameserver;
 	std::string mac_addr;
+	std::string ifname;
 	bool        inet_static;
 
 	CNetworkConfig();

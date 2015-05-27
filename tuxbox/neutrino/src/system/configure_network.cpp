@@ -27,10 +27,13 @@
 #include <iomanip>
 #include <sstream>
 
+#include <system/helper.h>
+
 CNetworkConfig::CNetworkConfig(void)
 {
 	netGetNameserver(nameserver);
-	inet_static = getInetAttributes("eth0", automatic_start, address, netmask, broadcast, gateway);
+	ifname = "eth0";
+	inet_static = getInetAttributes(ifname, automatic_start, address, netmask, broadcast, gateway);
 
 	init_vars();
 	copy_to_orig();
@@ -55,7 +58,6 @@ CNetworkConfig::~CNetworkConfig()
 
 void CNetworkConfig::init_vars(void)
 {
-	std::string ifname = "eth0";
 	unsigned char addr[6];
 
 	netGetMacAddr(ifname, addr);
@@ -98,12 +100,12 @@ void CNetworkConfig::commitConfig(void)
 		if (inet_static)
 		{
 			addLoopbackDevice("lo", true);
-			setStaticAttributes("eth0", automatic_start, address, netmask, broadcast, gateway);
+			setStaticAttributes(ifname, automatic_start, address, netmask, broadcast, gateway);
 		}
 		else
 		{
 			addLoopbackDevice("lo", true);
-			setDhcpAttributes("eth0", automatic_start);
+			setDhcpAttributes(ifname, automatic_start);
 		}
 	}
 	if (nameserver != orig_nameserver)
@@ -115,11 +117,15 @@ void CNetworkConfig::commitConfig(void)
 
 void CNetworkConfig::startNetwork(void)
 {
-	system("ifup eth0");
+	std::string cmd = "/sbin/ifup " + ifname;
+
+	my_system(3, "/bin/sh", "-c", cmd.c_str());
 }
 
 void CNetworkConfig::stopNetwork(void)
 {
-	system("ifdown eth0");
+	std::string cmd = "/sbin/ifdown " + ifname;
+
+	my_system(3, "/bin/sh", "-c", cmd.c_str());
 }
 
