@@ -52,6 +52,7 @@ class Font
 	// these are HACKED values, because the font metrics were unusable.
 	int height,ascender,descender,upper,lower;
 	int fontwidth;
+	int maxdigitwidth;
 
  public:
 	enum fontmodifier
@@ -67,6 +68,7 @@ class Font
 	int getRenderWidth(const char *        text, const bool utf8_encoded = false);
 	int getRenderWidth(const std::string & text, const bool utf8_encoded = false);
 	int getHeight(void);
+	int getMaxDigitWidth(void);
 	int getSize(){return font.width;}
 	int setSize(int isize);
 

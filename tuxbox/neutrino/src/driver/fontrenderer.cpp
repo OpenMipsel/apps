@@ -221,6 +221,8 @@ Font::Font(FBFontRenderClass *render, FTC_FaceID faceid, const int isize, const 
 	font.height    = isize;
 	font.flags     = FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT;
 
+	maxdigitwidth = 0;
+
 	scaler.face_id = font.face_id;
 	scaler.width   = isize * 64;
 	scaler.height  = isize * 64;
@@ -281,6 +283,21 @@ int Font::setSize(int isize)
 int Font::getHeight(void)
 {
 	return height;
+}
+
+int Font::getMaxDigitWidth(void)
+{
+	if (maxdigitwidth < 1) {
+		char b[2];
+		b[1] = 0;
+		for (char c = '0'; c <= '9'; c++) {
+			*b = c;
+			int w = getRenderWidth(b);
+			if (w > maxdigitwidth)
+				maxdigitwidth = w;
+		}
+	}
+	return maxdigitwidth;
 }
 
 int UTF8ToUnicode(const char * &text, const bool utf8_encoded) // returns -1 on error

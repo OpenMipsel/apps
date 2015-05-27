@@ -785,7 +785,7 @@ int CChannelList::numericZap(neutrino_msg_t key)
 
 	int ox=300;
 	int oy=200;
-	int sx = 4 * g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(widest_number) + 14;
+	int sx = 4 * g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getMaxDigitWidth() + 14;
 	int sy = g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getHeight() + 6;
 	char valstr[10];
 	int chn = CRCInput::getNumericValue(key);
