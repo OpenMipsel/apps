@@ -137,7 +137,7 @@ int CNFSMountGui::exec( CMenuTarget* parent, const std::string & actionKey )
 		for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES; i++)
 		{
 			m_entry[i] = getEntryString(i);
-			ISO_8859_1_entry[i] = ZapitTools::UTF8_to_Latin1(m_entry[i].c_str());
+			ISO_8859_1_entry[i] = ZapitTools::UTF8_to_Latin1(m_entry[i]);
 		}
 	}
 	else if(actionKey.substr(0,7)=="domount")
@@ -178,7 +178,7 @@ int CNFSMountGui::menu()
 	for(int i=0 ; i < NETWORK_NFS_NR_OF_ENTRIES ; i++)
 	{
 		std::string s2 = "mountentry" + to_string(i);
-		ISO_8859_1_entry[i] = ZapitTools::UTF8_to_Latin1(m_entry[i].c_str());
+		ISO_8859_1_entry[i] = ZapitTools::UTF8_to_Latin1(m_entry[i]);
 		mountMenuEntry[i] = new CMenuForwarder("", true, ISO_8859_1_entry[i], this, s2.c_str());
 		if (CFSMounter::isMounted(g_settings.network_nfs[i].local_dir))
 			mountMenuEntry[i]->iconName = NEUTRINO_ICON_MOUNTED;
