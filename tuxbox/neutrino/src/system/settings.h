@@ -477,7 +477,7 @@ struct {
 	int	uboot_lcd_bias;
 
 	//osd
-	char	font_file[100];
+	std::string font_file;
 
 	// USERMENU
 	typedef enum

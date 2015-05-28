@@ -668,7 +668,7 @@ int CNeutrinoApp::loadSetup()
 	strcpy(g_settings.softupdate_proxypassword, configfile.getString("softupdate_proxypassword", "" ).c_str());
 #endif
 	// GUI font
-	strcpy(g_settings.font_file, configfile.getString( "font_file", FONTDIR"/LiberationSans-Regular.ttf" ).c_str());
+	g_settings.font_file = configfile.getString( "font_file", FONTDIR"/LiberationSans-Regular.ttf" );
 
 	//BouquetHandling
 	g_settings.bouquetlist_mode = configfile.getInt32( "bouquetlist_mode", bsmChannels );
@@ -1611,9 +1611,9 @@ bool CNeutrinoApp::ChangeFonts(int unicode_locale)
 	{
 		loadLocale_ret = unicode_locale;
 		if (unicode_locale == CLocaleManager::UNICODE_FONT &&
-		    strcmp(g_settings.font_file, FONTDIR"/LiberationSans-Regular.ttf") != 0)
+		    g_settings.font_file == FONTDIR"/LiberationSans-Regular.ttf")
 		{
-			strcpy(g_settings.font_file, FONTDIR"/LiberationSans-Regular.ttf");
+			g_settings.font_file = FONTDIR"/LiberationSans-Regular.ttf";
 			SetupFonts();
 		}
 		if (lcd_font.filename[0] == NULL)
@@ -1636,12 +1636,12 @@ void CNeutrinoApp::SetupFonts()
 	if(font.filename != NULL)
 		free((void *)font.filename);
 
-	printf("[neutrino] settings font file %s\n", g_settings.font_file);
+	printf("[neutrino] settings font file %s\n", g_settings.font_file.c_str());
 
-	if(access(g_settings.font_file, F_OK)) {
+	if(access(g_settings.font_file.c_str(), F_OK)) {
 		if(!access(FONTDIR"/LiberationSans-Regular.ttf", F_OK)){
 			font.filename = strdup(FONTDIR"/LiberationSans-Regular.ttf");
-			strcpy(g_settings.font_file, font.filename);
+			g_settings.font_file = font.filename;
 		}
 		else{
 			fprintf( stderr,"[neutrino] font file [%s] not found\n neutrino exit\n",FONTDIR"/LiberationSans-Regular.ttf");
@@ -1650,7 +1650,7 @@ void CNeutrinoApp::SetupFonts()
 
 	}
 	else{
-		font.filename = strdup(g_settings.font_file);
+		font.filename = strdup(g_settings.font_file.c_str());
 	}
 	style[FONT_STYLE_REGULAR] = g_fontRenderer->AddFont(font.filename);
 
@@ -2050,7 +2050,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 
 	unsigned int use_true_unicode_font = (loadLocale_ret == CLocaleManager::ISO_8859_1_FONT) ? 0 : 1;
 	if (use_true_unicode_font)
-		strcpy(g_settings.font_file, FONTDIR"/LiberationSans-Regular.ttf");
+		g_settings.font_file = FONTDIR"/LiberationSans-Regular.ttf";
 	if (lcd_font.filename[0] == NULL) /* no lcd font specified in command line */
 	{
 		CLCD::getInstance()->init(predefined_lcd_font[use_true_unicode_font].filename[0],
