@@ -91,19 +91,18 @@ bool CHTTPTool::downloadFile(const std::string & URL, const char * const downloa
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION,1);
 		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 
-		if(strcmp(g_settings.softupdate_proxyserver,"")!=0)
+		if(!g_settings.softupdate_proxyserver.empty())
 		{//use proxyserver
 			//printf("use proxyserver\n");
-			curl_easy_setopt(curl, CURLOPT_PROXY, g_settings.softupdate_proxyserver);
+			curl_easy_setopt(curl, CURLOPT_PROXY, g_settings.softupdate_proxyserver.c_str());
 
-			if(strcmp(g_settings.softupdate_proxyusername,"")!=0)
+			if(!g_settings.softupdate_proxyusername.empty())
 			{//use auth
 				//printf("use proxyauth\n");
-				char tmp[200];
-				strcpy(tmp, g_settings.softupdate_proxyusername);
-				strcat(tmp, ":");
-				strcat(tmp, g_settings.softupdate_proxypassword);
-				curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, tmp);
+				std::string tmp = g_settings.softupdate_proxyusername;
+				tmp += ":";
+				tmp += g_settings.softupdate_proxypassword;
+				curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, tmp.c_str());
 			}
 		}
 

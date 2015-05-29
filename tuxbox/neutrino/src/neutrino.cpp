@@ -661,11 +661,11 @@ int CNeutrinoApp::loadSetup()
 
 #ifndef DISABLE_INTERNET_UPDATE
 	//Software-update
-	g_settings.softupdate_mode = configfile.getInt32( "softupdate_mode", CFlashUpdate::UPDATEMODE_INTERNET );
-	strcpy(g_settings.softupdate_url_file, configfile.getString("softupdate_url_file", "/etc/update.urls").c_str());
-	strcpy(g_settings.softupdate_proxyserver, configfile.getString("softupdate_proxyserver", "" ).c_str());
-	strcpy(g_settings.softupdate_proxyusername, configfile.getString("softupdate_proxyusername", "" ).c_str());
-	strcpy(g_settings.softupdate_proxypassword, configfile.getString("softupdate_proxypassword", "" ).c_str());
+	g_settings.softupdate_mode          = configfile.getInt32( "softupdate_mode", CFlashUpdate::UPDATEMODE_INTERNET );
+	g_settings.softupdate_url_file      = configfile.getString("softupdate_url_file", "/etc/update.urls" );
+	g_settings.softupdate_proxyserver   = configfile.getString("softupdate_proxyserver", "" );
+	g_settings.softupdate_proxyusername = configfile.getString("softupdate_proxyusername", "" );
+	g_settings.softupdate_proxypassword = configfile.getString("softupdate_proxypassword", "" );
 #endif
 	// GUI font
 	g_settings.font_file = configfile.getString( "font_file", FONTDIR"/LiberationSans-Regular.ttf" );

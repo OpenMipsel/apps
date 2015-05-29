@@ -353,10 +353,10 @@ struct {
 #ifndef DISABLE_INTERNET_UPDATE
 	//Software-update
 	int softupdate_mode;
-	char softupdate_url_file[31];
-	char softupdate_proxyserver[31];
-	char softupdate_proxyusername[31];
-	char softupdate_proxypassword[31];
+	std::string softupdate_url_file;
+	std::string softupdate_proxyserver;
+	std::string softupdate_proxyusername;
+	std::string softupdate_proxypassword;
 #endif
 
 	//BouquetHandling

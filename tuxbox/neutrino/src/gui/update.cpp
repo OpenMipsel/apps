@@ -146,7 +146,7 @@ bool CFlashUpdate::selectHttpImage(void)
 	SelectionWidget.addItem(GenericMenuSeparator);
 	SelectionWidget.addItem(GenericMenuBack);
 
-	std::ifstream urlFile(g_settings.softupdate_url_file);
+	std::ifstream urlFile(g_settings.softupdate_url_file.c_str());
 
 	unsigned int i = 0;
 	bool update_prefix_tried = false;

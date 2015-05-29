@@ -79,13 +79,13 @@ int CProxySetup::showProxySetup()
 
 	mn->addIntroItems(menue_title != LOCALE_FLASHUPDATE_PROXYSERVER_SEP ? LOCALE_FLASHUPDATE_PROXYSERVER_SEP : NONEXISTANT_LOCALE);
 
-	CStringInputSMS softUpdate_proxy(LOCALE_FLASHUPDATE_PROXYSERVER, g_settings.softupdate_proxyserver, 23, LOCALE_FLASHUPDATE_PROXYSERVER_HINT1, LOCALE_FLASHUPDATE_PROXYSERVER_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789-.: ");
+	CStringInputSMS softUpdate_proxy(LOCALE_FLASHUPDATE_PROXYSERVER, &g_settings.softupdate_proxyserver, 23, false, LOCALE_FLASHUPDATE_PROXYSERVER_HINT1, LOCALE_FLASHUPDATE_PROXYSERVER_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789-.: ");
 	mn->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYSERVER, true, g_settings.softupdate_proxyserver, &softUpdate_proxy, NULL, CRCInput::RC_red));
 
-	CStringInputSMS softUpdate_proxyuser(LOCALE_FLASHUPDATE_PROXYUSERNAME, g_settings.softupdate_proxyusername, 23, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT1, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""\xA7$%&/()=?-. ");
+	CStringInputSMS softUpdate_proxyuser(LOCALE_FLASHUPDATE_PROXYUSERNAME, &g_settings.softupdate_proxyusername, 23, false, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT1, LOCALE_FLASHUPDATE_PROXYUSERNAME_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""\xA7$%&/()=?-. ");
 	mn->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYUSERNAME, true, g_settings.softupdate_proxyusername, &softUpdate_proxyuser, NULL, CRCInput::RC_green));
 
-	CStringInputSMS softUpdate_proxypass(LOCALE_FLASHUPDATE_PROXYPASSWORD, g_settings.softupdate_proxypassword, 20, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT1, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""\xA7$%&/()=?-. ");
+	CStringInputSMS softUpdate_proxypass(LOCALE_FLASHUPDATE_PROXYPASSWORD, &g_settings.softupdate_proxypassword, 20, false, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT1, LOCALE_FLASHUPDATE_PROXYPASSWORD_HINT2, "abcdefghijklmnopqrstuvwxyz0123456789!""\xA7$%&/()=?-. ");
 	mn->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_PROXYPASSWORD, true, g_settings.softupdate_proxypassword, &softUpdate_proxypass, NULL, CRCInput::RC_yellow));
 
 	int res = mn->exec(NULL, "");
