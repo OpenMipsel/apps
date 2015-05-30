@@ -3335,6 +3335,7 @@ void CNeutrinoApp::ExitRun(const bool write_si)
 			if (!g_settings.epg_dir.empty()) {
 				waitforshutdown = true;
 				AudioMute(true);
+				g_Sectionsd->setPauseScanning(true);
 				g_Sectionsd->writeSI2XML(g_settings.epg_dir.c_str());
 			}
 			else {
