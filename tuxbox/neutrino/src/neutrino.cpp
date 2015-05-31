@@ -409,10 +409,10 @@ int CNeutrinoApp::loadSetup()
 	g_settings.audio_initial_volume		= configfile.getInt32( "audio_initial_volume"    , 0 );
 #ifdef HAVE_DBOX_HARDWARE
 	g_settings.audio_avs_Control 		= configfile.getInt32( "audio_avs_Control", CControld::TYPE_AVS );
-	strcpy( g_settings.audio_step,		configfile.getString( "audio_step" , "5" ).c_str() );
+	g_settings.audio_step               = configfile.getInt32( "audio_step" , 5 );
 #else
 	// the dreambox 500 (and the TD) has 32 volume steps, so a stepwidth of 3 matches the hardware better
-	strcpy( g_settings.audio_step,		configfile.getString( "audio_step" , "3" ).c_str() );
+	g_settings.audio_step               = configfile.getInt32( "audio_step" , 3 );
 #ifdef HAVE_TRIPLEDRAGON
 	g_settings.audio_avs_Control 		= configfile.getInt32("audio_avs_Control", CControld::TYPE_AVS);
 #else
@@ -420,7 +420,7 @@ int CNeutrinoApp::loadSetup()
 	g_settings.audio_avs_Control 		= CControld::TYPE_OST;
 #endif
 #endif
-	strcpy( g_settings.audio_PCMOffset, configfile.getString( "audio_PCMOffset", "0" ).c_str() );
+	g_settings.audio_PCMOffset      = configfile.getInt32( "audio_PCMOffset", 0 );
 
 	//vcr
 	g_settings.vcr_AutoSwitch		= configfile.getBool("vcr_AutoSwitch"            , true );
@@ -640,12 +640,12 @@ int CNeutrinoApp::loadSetup()
 	g_settings.key_menu_pagedown = (neutrino_msg_t)configfile.getInt32("key_menu_pagedown", CRCInput::RC_page_down);
 
 #ifdef HAVE_DBOX_HARDWARE
-	strcpy(g_settings.repeat_blocker, configfile.getString("repeat_blocker", g_info.box_Type == CControld::TUXBOX_MAKER_PHILIPS ? "150" : "25").c_str());
-	strcpy(g_settings.repeat_genericblocker, configfile.getString("repeat_genericblocker", g_info.box_Type == CControld::TUXBOX_MAKER_PHILIPS ? "25" : "0").c_str());
+	g_settings.repeat_blocker        = configfile.getInt32("repeat_blocker"       , g_info.box_Type == CControld::TUXBOX_MAKER_PHILIPS ? 150 : 25);
+	g_settings.repeat_genericblocker = configfile.getInt32("repeat_genericblocker", g_info.box_Type == CControld::TUXBOX_MAKER_PHILIPS ?  25 :  0);
 #else
 	// my dm500s and tripledragon works good with those - seife
-	strcpy(g_settings.repeat_blocker, configfile.getString("repeat_blocker", "300").c_str());
-	strcpy(g_settings.repeat_genericblocker, configfile.getString("repeat_genericblocker", "100").c_str());
+	g_settings.repeat_blocker        = configfile.getInt32("repeat_blocker", 300);
+	g_settings.repeat_genericblocker = configfile.getInt32("repeat_genericblocker", 100);
 #endif
 	g_settings.audiochannel_up_down_enable = configfile.getBool("audiochannel_up_down_enable", false);
 	g_settings.audio_left_right_selectable = configfile.getBool("audio_left_right_selectable", false);
@@ -956,8 +956,8 @@ void CNeutrinoApp::saveSetup()
 	configfile.setBool("audio_DolbyDigital" , g_settings.audio_DolbyDigital);
 	configfile.setInt32( "audio_initial_volume" , g_settings.audio_initial_volume);
 	configfile.setInt32( "audio_avs_Control", g_settings.audio_avs_Control);
-	configfile.setString( "audio_PCMOffset" , g_settings.audio_PCMOffset);
-	configfile.setString( "audio_step"	, g_settings.audio_step);
+	configfile.setInt32( "audio_PCMOffset" , g_settings.audio_PCMOffset);
+	configfile.setInt32( "audio_step"	, g_settings.audio_step);
 
 	//vcr
 	configfile.setBool("vcr_AutoSwitch"     , g_settings.vcr_AutoSwitch);
@@ -1139,8 +1139,8 @@ void CNeutrinoApp::saveSetup()
 	configfile.setInt32( "key_menu_pageup", (int)g_settings.key_menu_pageup );
 	configfile.setInt32( "key_menu_pagedown", (int)g_settings.key_menu_pagedown );
 
-	configfile.setString( "repeat_blocker", g_settings.repeat_blocker );
-	configfile.setString( "repeat_genericblocker", g_settings.repeat_genericblocker );
+	configfile.setInt32( "repeat_blocker", g_settings.repeat_blocker );
+	configfile.setInt32( "repeat_genericblocker", g_settings.repeat_genericblocker );
 	configfile.setBool  ( "audiochannel_up_down_enable", g_settings.audiochannel_up_down_enable );
 	configfile.setBool  ( "audio_left_right_selectable", g_settings.audio_left_right_selectable );
 
@@ -2627,11 +2627,8 @@ int CNeutrinoApp::handleMsg(const neutrino_msg_t m, neutrino_msg_data_t data)
 						struct timeval      endtime;
 						time_t              seconds;
 
-						int timeout = 0;
-						int timeout1 = 0;
-
-						sscanf(g_settings.repeat_blocker, "%d", &timeout);
-						sscanf(g_settings.repeat_genericblocker, "%d", &timeout1);
+						int timeout = g_settings.repeat_blocker;
+						int timeout1 = g_settings.repeat_genericblocker;
 
 						if (timeout1 > timeout)
 							timeout = timeout1;
@@ -3458,7 +3455,7 @@ void CNeutrinoApp::setVolume(const neutrino_msg_t key, const bool bDoPaint)
 	const int bwtop = 20; 	// border width y from top
 	const int bwbot = 20; 	// border width y from bottom
 	int x, y;
-	int a_step = atoi(g_settings.audio_step);
+	int a_step = g_settings.audio_step;
 	volumeBarIsVisible = ((g_settings.volumebar_disp_pos != VOLUMEBAR_DISP_POS_OFF) ? true : false);
 	
 	if( g_settings.volumebar_disp_pos == VOLUMEBAR_DISP_POS_TOP_RIGHT )

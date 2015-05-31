@@ -91,9 +91,9 @@ const CMenuOptionChooser::keyval AUDIOMENU_ANALOGOUT_OPTIONS[AUDIOMENU_ANALOGOUT
 const CMenuOptionChooser::keyval AUDIOMENU_AVS_CONTROL_OPTIONS[AUDIOMENU_AVS_CONTROL_OPTION_COUNT] =
 {
 	{ CControld::TYPE_OST , LOCALE_AUDIOMENU_OST  },
-	{ CControld::TYPE_AVS , LOCALE_AUDIOMENU_AVS  },
+	{ CControld::TYPE_AVS , LOCALE_AUDIOMENU_AVS  }
 #ifdef ENABLE_LIRC
-	{ CControld::TYPE_LIRC, LOCALE_AUDIOMENU_LIRC }
+	,{ CControld::TYPE_LIRC, LOCALE_AUDIOMENU_LIRC }
 #endif
 };
 #endif
@@ -149,8 +149,7 @@ int CAudioSetup::showAudioSetup()
 	audioSettings->addItem(GenericMenuSeparatorLine);
 
 #ifdef HAVE_DBOX_HARDWARE
-	CStringInput audio_PCMOffset(LOCALE_AUDIOMENU_PCMOFFSET, g_settings.audio_PCMOffset, 2, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ", &audioSetupNotifier);
-	CMenuForwarder *mf = new CMenuForwarder(LOCALE_AUDIOMENU_PCMOFFSET, (g_settings.audio_avs_Control == CControld::TYPE_LIRC), g_settings.audio_PCMOffset, &audio_PCMOffset);
+	CMenuOptionNumberChooser *mf = new CMenuOptionNumberChooser(LOCALE_AUDIOMENU_PCMOFFSET, &g_settings.audio_PCMOffset, (g_settings.audio_avs_Control == CControld::TYPE_LIRC), 0, 99, 0, 0, NONEXISTANT_LOCALE, NULL, &audioSetupNotifier, CRCInput::RC_nokey, "", true);
 	CAudioSetupNotifier2 audioSetupNotifier2(mf);
 
 	oj = new CMenuOptionChooser(LOCALE_AUDIOMENU_AVS_CONTROL, &g_settings.audio_avs_Control, AUDIOMENU_AVS_CONTROL_OPTIONS, AUDIOMENU_AVS_CONTROL_OPTION_COUNT, true, &audioSetupNotifier2);
@@ -164,8 +163,7 @@ int CAudioSetup::showAudioSetup()
 #endif
 	
 	// volume bar steps
-	CStringInput audio_step(LOCALE_AUDIOMENU_VOLUMEBAR_AUDIOSTEPS, g_settings.audio_step, 2, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
-	CMenuForwarder *as = new CMenuForwarder(LOCALE_AUDIOMENU_VOLUMEBAR_AUDIOSTEPS, true, g_settings.audio_step, &audio_step);
+	CMenuOptionNumberChooser *as = new CMenuOptionNumberChooser(LOCALE_AUDIOMENU_VOLUMEBAR_AUDIOSTEPS, &g_settings.audio_step, true, 0, 25, 0, 0, NONEXISTANT_LOCALE, NULL, NULL, CRCInput::RC_nokey, "", true);
 	audioSettings->addItem(as);
 
 	// initial volume
@@ -187,7 +185,7 @@ bool CAudioSetupNotifier::changeNotify(const neutrino_locale_t OptionName, void 
 	if (ARE_LOCALES_EQUAL(OptionName, LOCALE_AUDIOMENU_PCMOFFSET))
 	{
 		if (g_settings.audio_avs_Control == CControld::TYPE_LIRC)
-			g_Controld->setVolume(100 - atoi(g_settings.audio_PCMOffset), CControld::TYPE_OST);
+			g_Controld->setVolume(100 - g_settings.audio_PCMOffset, CControld::TYPE_OST);
 	}
 	else if (ARE_LOCALES_EQUAL(OptionName, LOCALE_AUDIOMENU_ANALOGOUT))
 	{
@@ -207,7 +205,7 @@ bool CAudioSetupNotifier2::changeNotify(const neutrino_locale_t, void *)
 		toDisable[0]->setActive(g_settings.audio_avs_Control == CControld::TYPE_LIRC);
 
 	if (g_settings.audio_avs_Control == CControld::TYPE_LIRC)
-		g_Controld->setVolume(100 - atoi(g_settings.audio_PCMOffset), CControld::TYPE_OST);
+		g_Controld->setVolume(100 - g_settings.audio_PCMOffset, CControld::TYPE_OST);
 	// tell controld the new volume_type
 	g_Controld->setVolume(g_Controld->getVolume((CControld::volume_type)g_settings.audio_avs_Control),
 									 (CControld::volume_type)g_settings.audio_avs_Control);

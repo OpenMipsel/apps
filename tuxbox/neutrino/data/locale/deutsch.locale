@@ -1227,8 +1227,6 @@ recordingmenu.use_o_sync Synchrones Schreiben (O_SYNC)
 recordingmenu.vcr Videorekorder
 recordingmenu.zap_on_announce Umschalten bei Ankündigung
 recordtimer.announce Die Aufnahme beginnt in wenigen Minuten.
-repeatblocker.hint_1 Mindestzeit (in ms) zwischen 2 Tastendrücken
-repeatblocker.hint_2 0 schaltet den Blocker aus (Rot ist " ")
 sambaserver.setup Globale Samba-Einstellungen
 sambaserver.setup_configfile_path Konfigurationsdatei
 sambaserver.setup_configfile_path_hint1 Bitte Pfad zur Samba-Konfigurationsdatei eingeben!
@@ -1559,6 +1557,7 @@ videomenu.videosignal_yuv_c YUV + CVBS
 videomenu.videosignal_yuv_v YUV + VBS
 word.from ab
 word.hours_short Std.
+word.milliseconds_short ms
 word.minutes_short Min.
 zapit.scantype Service-Auswahl
 zapit.scantype.all Alle Services

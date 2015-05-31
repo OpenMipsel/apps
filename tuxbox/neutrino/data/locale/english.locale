@@ -1227,8 +1227,6 @@ recordingmenu.use_o_sync Write Synchronous (O_SYNC)
 recordingmenu.vcr vcr
 recordingmenu.zap_on_announce Announce zap
 recordtimer.announce Recording starts in a few minutes
-repeatblocker.hint_1 Shortest time (in ms) to recognize 2 keystrokes
-repeatblocker.hint_2 Enter 0 to switch of the blocker (red is space)
 sambaserver.setup Global Samba-settings
 sambaserver.setup_configfile_path Configfile
 sambaserver.setup_configfile_path_hint1 Please enter path for samba config file!
@@ -1559,6 +1557,7 @@ videomenu.videosignal_yuv_c YUV + CVBS
 videomenu.videosignal_yuv_v YUV + VBS
 word.from from
 word.hours_short hr.
+word.milliseconds_short ms
 word.minutes_short min.
 zapit.scantype scan for services
 zapit.scantype.all all services

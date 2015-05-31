@@ -100,8 +100,8 @@ struct SNeutrinoSettings
 	int audio_DolbyDigital;
 	int audio_avs_Control;
 	int audio_initial_volume;
-	char audio_step[3];
-	char audio_PCMOffset[3];
+	int audio_step;
+	int audio_PCMOffset;
 
 	//vcr
 	int vcr_AutoSwitch;
@@ -337,8 +337,8 @@ struct {
 	neutrino_msg_t key_menu_pageup;
 	neutrino_msg_t key_menu_pagedown;
 
-	char repeat_blocker[4];
-	char repeat_genericblocker[4];
+	int repeat_blocker;
+	int repeat_genericblocker;
 	int audiochannel_up_down_enable;
 	int audio_left_right_selectable;
 

@@ -181,10 +181,12 @@ int CKeybindSetup::showSetup()
 	CMenuWidget * ks_rc 		= new CMenuWidget(menue_title, menue_icon, width);
 	CMenuForwarder *ks_rc_fw 	= new CMenuForwarder(LOCALE_KEYBINDINGMENU, true, NULL, ks_rc, NULL, CRCInput::RC_red);
 
-	CStringInput keySettings_repeat_genericblocker(LOCALE_KEYBINDINGMENU_REPEATBLOCKGENERIC, g_settings.repeat_genericblocker, 3, LOCALE_REPEATBLOCKER_HINT_1, LOCALE_REPEATBLOCKER_HINT_2, "0123456789 ", this);
-	CStringInput keySettings_repeatBlocker(LOCALE_KEYBINDINGMENU_REPEATBLOCK, g_settings.repeat_blocker, 3, LOCALE_REPEATBLOCKER_HINT_1, LOCALE_REPEATBLOCKER_HINT_2, "0123456789 ", this);
-	CMenuForwarder *ks_rc_repeat_fw = new CMenuForwarder(LOCALE_KEYBINDINGMENU_REPEATBLOCK, true, g_settings.repeat_blocker, &keySettings_repeatBlocker);
-	CMenuForwarder *ks_rc_repeat_generic_fw = new CMenuForwarder(LOCALE_KEYBINDINGMENU_REPEATBLOCKGENERIC, true, g_settings.repeat_genericblocker, &keySettings_repeat_genericblocker);
+	std::string ms_number_format("%d ");
+	ms_number_format += g_Locale->getText(LOCALE_WORD_MILLISECONDS_SHORT);
+	CMenuOptionNumberChooser *ks_rc_repeat_fw         = new CMenuOptionNumberChooser(LOCALE_KEYBINDINGMENU_REPEATBLOCK       , &g_settings.repeat_blocker       , true, 0, 999, 0, 0, NONEXISTANT_LOCALE, NULL, this, CRCInput::RC_nokey, "", true);
+	ks_rc_repeat_fw->setNumberFormat(ms_number_format);
+	CMenuOptionNumberChooser *ks_rc_repeat_generic_fw = new CMenuOptionNumberChooser(LOCALE_KEYBINDINGMENU_REPEATBLOCKGENERIC, &g_settings.repeat_genericblocker, true, 0, 999, 0, 0, NONEXISTANT_LOCALE, NULL, this, CRCInput::RC_nokey, "", true);
+	ks_rc_repeat_generic_fw->setNumberFormat(ms_number_format);
 
 	//mode change
 	CMenuForwarder * ks_mc_fw = new CMenuForwarder(keydescription[VIRTUALKEY_TV_RADIO_MODE], true, keychooser[VIRTUALKEY_TV_RADIO_MODE]->getKeyName(), keychooser[VIRTUALKEY_TV_RADIO_MODE]);
@@ -246,7 +248,7 @@ bool CKeybindSetup::changeNotify(const neutrino_locale_t OptionName, void *)
 	if (ARE_LOCALES_EQUAL(OptionName, LOCALE_KEYBINDINGMENU_REPEATBLOCK) ||
 	    ARE_LOCALES_EQUAL(OptionName, LOCALE_KEYBINDINGMENU_REPEATBLOCKGENERIC))
 	{
-		g_RCInput->setRepeat(atoi(g_settings.repeat_blocker), atoi(g_settings.repeat_genericblocker));
+		g_RCInput->setRepeat(g_settings.repeat_blocker, g_settings.repeat_genericblocker);
 	}
 	return false;
 }
