@@ -66,6 +66,7 @@ CySocket::~CySocket()
 //-----------------------------------------------------------------------------
 void CySocket::init(void)
 {
+	BytesSend = 0;
 	handling 	= false;
 	isOpened	= false;
 	isValid		= true;
@@ -302,7 +303,7 @@ int CySocket::Send(char const *buffer, unsigned int length)
 	else
 #endif
 		len = ::send(sock, buffer, length, MSG_NOSIGNAL);
-	if(len >= 0)
+	if(len > 0)
 		BytesSend += len;
 	return len;
 }
@@ -311,7 +312,7 @@ int CySocket::Send(char const *buffer, unsigned int length)
 //-----------------------------------------------------------------------------
 bool CySocket::CheckSocketOpen()
 {
-	char buffer[32];
+	char buffer[32] = { 0 };
 
 #ifdef CONFIG_SYSTEM_CYGWIN
 	return !(recv(sock, buffer, sizeof(buffer), MSG_PEEK | MSG_NOSIGNAL) == 0);
