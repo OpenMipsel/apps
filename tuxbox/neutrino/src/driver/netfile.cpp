@@ -883,7 +883,7 @@ FILE *f_open(const char *filename, const char *acctype)
 								return NULL;
 							}
 
-							dprintf(stderr, "f_open: adding stream %x to cache[%d]\n", fd, i);
+							dprintf(stderr, "f_open: adding stream %p to cache[%d]\n", fd, i);
 
 							cache[i].fd       = fd;
 							cache[i].csize    = CACHESIZE;
@@ -1136,7 +1136,7 @@ int f_close(FILE *stream)
 
 	if(cache[i].fd == stream)
 	{
-		dprintf(stderr, "f_close: removing stream %lx from cache[%d]\n", (size_t)stream, i);
+		dprintf(stderr, "f_close: removing stream %p from cache[%d]\n", stream, i);
 
 		cache[i].closed = 1;		/* indicate that the cache is closed */
 
@@ -1270,7 +1270,7 @@ const char *f_type(FILE *stream, const char *type)
 	/* if the stream could not be found, look for a free slot ... */
 	if(i == CACHEENTMAX)
 	{
-	dprintf(stderr, "stream %x not in type table, ", stream);
+	dprintf(stderr, "stream %p not in type table, ", stream);
 
 	for(i=0 ; (i<CACHEENTMAX) && (stream_type[i].stream != NULL); i++){};
 
@@ -1281,7 +1281,7 @@ const char *f_type(FILE *stream, const char *type)
 		{
 			stream_type[i].stream = stream;
 			strncpy(stream_type[i].type, type, 64);
-			dprintf(stderr, "added entry (%s) for %x\n", type, stream);
+			dprintf(stderr, "added entry (%s) for %p\n", type, stream);
 		}
 		return type;
 	}
@@ -1293,7 +1293,7 @@ const char *f_type(FILE *stream, const char *type)
 	/* the stream is already in the table */
 	else
 	{
-		dprintf(stderr, "stream %x lookup in type table succeded\n", stream);
+		dprintf(stderr, "stream %p lookup in type table succeded\n", stream);
 
 		if(!type)
 			return stream_type[i].type;
@@ -1441,12 +1441,12 @@ int push(FILE *fd, char *buf, long len)
 	}
 	else
 	{
-		dprintf(stderr, "push: no cache present for stream %0x\n", fd);
+		dprintf(stderr, "push: no cache present for stream %p\n", fd);
 		rval = -1;
 	}
 
 //  dprintf(stderr, "push: exitstate: [filled: %d of %d], stream: %x\n", cache[i].filled, CACHESIZE, fd);
-	dprintf(stderr, "push: exitstate: [filled: %3.1f %%], stream: %x\r", 100.0 * (float)cache[i].filled / (float)cache[i].csize, fd);
+	dprintf(stderr, "push: exitstate: [filled: %3.1f %%], stream: %p\r", 100.0 * (float)cache[i].filled / (float)cache[i].csize, fd);
 
 	return rval;
 }
@@ -1461,8 +1461,8 @@ int pop(FILE *fd, char *buf, long len)
 	if(i < 0)
 		return -1;
 
-	dprintf(stderr, "pop: %d bytes requested [filled: %d of %d], stream: %lx\n",
-		len, cache[i].filled, CACHESIZE, (size_t)fd);
+	dprintf(stderr, "pop: %d bytes requested [filled: %d of %d], stream: %p buf %p\n",
+		(int)len, (int)cache[i].filled, (int)CACHESIZE, fd, buf);
 
 	if(cache[i].fd == fd)
 	{
@@ -1508,8 +1508,8 @@ int pop(FILE *fd, char *buf, long len)
 
 					if(amt[j])
 					{
-						dprintf(stderr, "pop(): rptr: 0x%08x, buf: 0x%08x, amt[%d]=%d, blen=%d, len=%d, rval=%d\n",
-							cache[i].rptr, buf, j, amt[j], blen, len, rval);
+						dprintf(stderr, "pop(): rptr: %p, buf: %p, amt[%d]=%d, blen=%d, len=%d, rval=%d\n",
+							cache[i].rptr, buf, j, amt[j], blen, (int)len, rval);
 
 						memmove(buf, cache[i].rptr, amt[j]);
 
@@ -1523,7 +1523,7 @@ int pop(FILE *fd, char *buf, long len)
 					}
 				}
 
-				dprintf(stderr, "pop: %d/%d/%d bytes read [filled: %d of %d], stream: %x\n", amt[0] + amt[1], rval, len, cache[i].filled, CACHESIZE, fd);
+				dprintf(stderr, "pop: %d/%d/%d bytes read [filled: %d of %d], stream: %p\n", amt[0] + amt[1], rval, (int)len, (int)cache[i].filled, (int)CACHESIZE, fd);
 
 				/* if the cache is closed and empty, then */
 				/* force the end condition to be met */
@@ -1556,7 +1556,7 @@ int pop(FILE *fd, char *buf, long len)
 	}
 	else
 	{
-		dprintf(stderr, "pop: no cache present for stream %0x\n", fd);
+		dprintf(stderr, "pop: no cache present for stream %p\n", fd);
 		rval = -1;
 	}
 
@@ -1581,7 +1581,7 @@ void CacheFillThread(void *c)
 	if(scache->closed)
 		return;
 
-	dprintf(stderr, "CacheFillThread: thread started, using stream %8x\n", scache->fd);
+	dprintf(stderr, "CacheFillThread: thread started, using stream %p\n", scache->fd);
 
 	buf = (char*)malloc(CACHEBTRANS);
 
@@ -1627,7 +1627,7 @@ void CacheFillThread(void *c)
 	pthread_mutex_unlock( &scache->readable );
 
 	/* ... and exit this thread. */
-	dprintf(stderr, "CacheFillThread: thread exited, stream %8x  \n", scache->fd);
+	dprintf(stderr, "CacheFillThread: thread exited, stream %p  \n", scache->fd);
 
 	free(buf);
 	pthread_exit(0);
@@ -1681,7 +1681,7 @@ void ShoutCAST_ParseMetaData(char *md, CSTATE *state)
 	if((!md) || (!state))
 		return;
 
-	dprintf(stderr, "ShoutCAST_ParseMetaData(%x : %s, %x)\n", md, md, state);
+	dprintf(stderr, "ShoutCAST_ParseMetaData(%p : %s, %p)\n", md, md, state);
 
 	ptr = strstr(md, "StreamTitle=");
 
