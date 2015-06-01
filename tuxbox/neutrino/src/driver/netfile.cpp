@@ -202,7 +202,7 @@ static int  base64_encode(char *dest, const char *src);
 
 void getOpts()
 {
-	char *dirs[] = { "/var/etc", ".", NULL };
+	const char *dirs[] = { "/var/etc", ".", NULL };
 	char buf[4096], *ptr;
 	int i;
 	FILE *fd = NULL;
@@ -1084,7 +1084,7 @@ FILE *f_open(const char *filename, const char *acctype)
 				{
 					if (((*(uint32_t *)&(magic[0])) & *(uint32_t *)&(known_magic[i].mask[0])) == *(uint32_t *)&(known_magic[i].mode[0]))
 					{
-						f_type(fd, (char *)known_magic[i].type);
+						f_type(fd, known_magic[i].type);
 						goto magic_found;
 					}
 				}
@@ -1260,7 +1260,7 @@ size_t f_read (void *ptr, size_t size, size_t nitems, FILE *stream)
 	return rval;
 }
 
-char *f_type(FILE *stream, char *type)
+const char *f_type(FILE *stream, const char *type)
 {
 	int i;
 
