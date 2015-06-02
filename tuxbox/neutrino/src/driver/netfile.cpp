@@ -370,7 +370,7 @@ int request_file(URL *url)
 				/* if we have a entity, announce it to the server */
 				if(url->entity[0])
 				{
-					snprintf(str, sizeof(str)-1, "Content-Length: %d\r\n", strlen(url->entity));
+					snprintf(str, sizeof(str)-1, "Content-Length: %d\r\n", (int)strlen(url->entity));
 					dprintf(stderr, "> %s", str);
 					send(url->fd, str, strlen(str), 0);
 				}
@@ -548,7 +548,7 @@ void readln(int fd, char *buf)
 
 int parse_response(URL *url, void *opt, CSTATE *state)
 {
-	char header[2049], /*str[255]*/ str[2048]; // combined with 2nd local str from id3 part
+	char header[2048], /*str[255]*/ str[2048]; // combined with 2nd local str from id3 part
 	char *ptr, chr=0, lastchr=0;
 	int hlen = 0, response;
 	int meta_interval = 0, rval;
