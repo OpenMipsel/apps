@@ -1154,6 +1154,8 @@ int f_close(FILE *stream)
 		dprintf(stderr, "f_close: waiting for fill tread to finish\n");
 		pthread_join(cache[i].fill_thread, NULL);
 
+		cache[i].fill_thread = 0;
+
 		dprintf(stderr, "f_close: closing cache\n");
 		rval = fclose(cache[i].fd);	/* close the stream */
 		free(cache[i].cache);		/* free the cache */
