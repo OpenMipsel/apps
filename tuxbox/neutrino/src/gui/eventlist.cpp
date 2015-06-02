@@ -555,6 +555,20 @@ int EventList::exec(const t_channel_id channel_id, const std::string& channelnam
 		{
 			loop= false;
 		}
+		else if (msg == CRCInput::RC_0) {
+			hide();
+
+			CTimerList *Timerlist = new CTimerList;
+			Timerlist->exec(NULL, "");
+			delete Timerlist;
+			timerlist.clear();
+			g_Timerd->getTimerList (timerlist);
+
+			paintHead();
+			paint();
+			showFunctionBar(true);
+			timeoutEnd = CRCInput::calcTimeoutEnd(g_settings.timing[SNeutrinoSettings::TIMING_EPG]);
+		}
 #ifdef ENABLE_EPGPLUS
 		else if (msg == CRCInput::RC_epg)
 		{
@@ -814,13 +828,14 @@ void EventList::updateSelection(unsigned int newpos)
 // -- Just display/hide function bar
 // -- 2004-04-12 rasc
 //
-struct button_label EventListButtons[5] =
+struct button_label EventListButtons[6] =
 {
 	{ "", LOCALE_GENERIC_EMPTY          },  // timerlist delete / record button
 	{ "", LOCALE_EVENTFINDER_SEARCH     },  // search button
 	{ "", LOCALE_GENERIC_EMPTY          },  // timerlist delete / channelswitch
 	{ "", LOCALE_EVENTLISTBAR_EVENTSORT },  // sort button
-	{ "", LOCALE_EVENTLISTBAR_RELOAD    }   // reload button
+	{ "", LOCALE_EVENTLISTBAR_RELOAD    },   // reload button
+	{ "", LOCALE_TIMERLIST_NAME         }   // Timerlist button
 };
 
 void  EventList::showFunctionBar (bool show)
@@ -976,9 +991,17 @@ void  EventList::showFunctionBar (bool show)
 			keyhelper.get(&dummy, &icon, g_settings.key_channelList_reload);
 		EventListButtons[4].button = icon;
 
+		btncaption =  g_Locale->getText(LOCALE_EVENTLISTBAR_RELOAD);
+		cellwidth = std::min(ButtonWidth, iconw + 4 + space + g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getRenderWidth(btncaption, true));
+
 		// paint 5th button
 		::paintButtons(frameBuffer, g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL], g_Locale, bx, by, ButtonWidth, 1, &EventListButtons[4]);
+		bx += cellwidth;
 	}
+	// Button 6 Timerlist - show always
+	EventListButtons[5].locale = LOCALE_TIMERLIST_NAME;
+	EventListButtons[5].button = NEUTRINO_ICON_BUTTON_0;
+	::paintButtons(frameBuffer, g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL], g_Locale, bx, by, ButtonWidth, 1, &EventListButtons[5]);
 
 }
 

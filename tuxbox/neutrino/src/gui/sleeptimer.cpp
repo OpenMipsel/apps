@@ -85,9 +85,15 @@ int CSleepTimerWidget::exec(CMenuTarget* parent, const std::string &)
 			sprintf(value, "%03d", g_settings.sleeptimer_min);
 	}
 	inbox = new CStringInput(LOCALE_SLEEPTIMERBOX_TITLE, value, 3, LOCALE_SLEEPTIMERBOX_HINT1, LOCALE_SLEEPTIMERBOX_HINT2, "0123456789 ", this, NEUTRINO_ICON_TIMER);
-	inbox->exec (NULL, "");
+	int ret = inbox->exec (NULL, "");
 
 	delete inbox;
+
+	/* exit pressed, cancel timer setup */
+	if(ret == menu_return::RETURN_REPAINT)
+	{
+		return ret;
+	}
 	return res;
 }
 
