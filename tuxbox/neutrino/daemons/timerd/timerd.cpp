@@ -4,8 +4,6 @@
 	Copyright (C) 2001 Steffen Hehn 'McClean'
 	Homepage: http://dbox.cyberphoria.org/
 
-	$Id: timerd.cpp,v 1.67 2012/11/01 19:37:34 rhabarber1848 Exp $
-
 	License: GPL
 
 	This program is free software; you can redistribute it and/or modify
@@ -36,6 +34,8 @@
 
 #include <connection/basicserver.h>
 #include <timerdclient/timerdmsg.h>
+
+#define TIMERD_VERSION	"1.68"
 
 int timerd_debug = 0;
 char *config_file_name = CONFIGFILE;
@@ -505,6 +505,8 @@ void usage(FILE *dest)
 
 int main(int argc, char **argv)
 {
+	fprintf(stdout, "$Id: timerd.cpp, v%s\n", TIMERD_VERSION);
+
 	bool do_fork = true;
 
 	dprintf("startup\n");

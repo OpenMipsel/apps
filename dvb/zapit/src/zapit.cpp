@@ -1,6 +1,4 @@
 /*
- * $Id: zapit.cpp,v 1.463 2012/08/14 18:24:12 rhabarber1848 Exp $
- *
  * zapit - d-box2 linux project
  *
  * (C) 2001, 2002 by Philipp Leusmann <faralla@berlios.de>
@@ -88,6 +86,9 @@
 #ifdef HAVE_TRIPLEDRAGON
 #include <tdgfx/stb04gfx.h>
 #endif
+
+#define ZAPIT_VERSION	"1.464"
+
 /* the conditional access module */
 CCam *cam = NULL;
 /* the configuration file */
@@ -3164,7 +3165,7 @@ void loadScanSettings(void)
 
 int main(int argc, char **argv)
 {
-	fprintf(stdout, "$Id: zapit.cpp,v 1.463 2012/08/14 18:24:12 rhabarber1848 Exp $\n");
+	fprintf(stdout, "$Id: zapit.cpp, v%s\n", ZAPIT_VERSION);
 
 	bool check_lock = true;
 	int opt;
