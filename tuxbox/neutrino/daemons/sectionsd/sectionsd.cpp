@@ -1,6 +1,4 @@
 //
-//  $Id: sectionsd.cpp,v 1.346 2013/03/20 22:40:00 GetAway Exp $
-//
 //    sectionsd.cpp (network daemon for SI-sections)
 //    (dbox-II-project)
 //
@@ -85,8 +83,7 @@
 #include "SIsections.hpp"
 #include "SIlanguage.hpp"
 
-//#include "timerdclient.h"
-//#include "../timermanager.h"
+#define SECTIONSD_VERSION "1.347"
 
 // 60 Minuten Zyklus...
 #define TIME_EIT_SCHEDULED_PAUSE 60 * 60
@@ -238,6 +235,8 @@ static DMX dmxNIT(0x10, 128);
 static DMX dmxPPT(0x00, 256);
 unsigned int privatePid=0;
 #endif
+
+static int sectionsd_stop = 0;
 
 inline void readLockServices(void)
 {
@@ -2621,7 +2620,7 @@ static void commandDumpStatusInformation(int connfd, char* /*data*/, const unsig
 	char tbuf[26];
 
 	snprintf(stati, MAX_SIZE_STATI,
-		"$Id: sectionsd.cpp,v 1.346 2013/03/20 22:40:00 GetAway Exp $\n"
+		"$Id: sectionsd.cpp, v%s\n"
 		"%sCurrent time: %s"
 		"Hours to cache: %ld\n"
 		"Hours to cache extended text: %ld\n"
@@ -2637,6 +2636,7 @@ static void commandDumpStatusInformation(int connfd, char* /*data*/, const unsig
 		"handed out by malloc: %d (%dkb)\n"
 		"Total bytes memory allocated with `sbrk' by malloc,\n"
 		"in bytes: %d (%dkb)\n",
+		SECTIONSD_VERSION,
 #ifdef ENABLE_FREESATEPG
 		"FreeSat enabled\n"
 #else
@@ -8228,7 +8228,7 @@ static void *houseKeepingThread(void *)
 		char servicename[MAX_SIZE_SERVICENAME];
 		dprintf("housekeeping-thread started.\n");
 
-		for (;;)
+		while (!sectionsd_stop)
 		{
 			if (count == META_HOUSEKEEPING) {
 				dprintf("meta housekeeping - deleting all transponders, services, bouquets.\n");
@@ -8617,7 +8617,7 @@ int main(int argc, char **argv)
 	
 	struct sched_param parm;
 
-	printf("$Id: sectionsd.cpp,v 1.346 2013/03/20 22:40:00 GetAway Exp $\n");
+	printf("$Id: sectionsd.cpp, v%s\n", SECTIONSD_VERSION);
 #ifdef ENABLE_FREESATEPG
 	printf("[sectionsd] FreeSat enabled\n");
 #endif
