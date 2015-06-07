@@ -83,7 +83,7 @@
 #include "SIsections.hpp"
 #include "SIlanguage.hpp"
 
-#define SECTIONSD_VERSION "1.347"
+#define SECTIONSD_VERSION "1.348"
 
 // 60 Minuten Zyklus...
 #define TIME_EIT_SCHEDULED_PAUSE 60 * 60
@@ -353,6 +353,18 @@ static int	messaging_got_CN = 0x00;	// 0x01 = CURRENT, 0x02 = NEXT
 static time_t	messaging_last_requested = time(NULL);
 static bool	messaging_neutrino_sets_time = false;
 //static bool 	messaging_WaitForServiceDesc = false;
+
+/* helper function for the housekeeping-thread */
+static void print_meminfo(void)
+{
+	if (!debug)
+		return;
+
+	struct mallinfo meminfo = mallinfo();
+	dprintf("total size of memory occupied by chunks handed out by malloc: %d\n"
+		"total bytes memory allocated with `sbrk' by malloc, in bytes: %d (%dkB)\n",
+		meminfo.uordblks, meminfo.arena, meminfo.arena / 1024);
+}
 
 inline bool waitForTimeset(void)
 {
@@ -1178,18 +1190,18 @@ xmlNodePtr FindTransponder(xmlNodePtr provider, const t_original_network_id onid
 
 static void removeOldEvents(const long seconds)
 {
-	bool goodtimefound;
 	std::vector<event_id_t> to_delete;
 
 	// Alte events loeschen
 	time_t zeit = time(NULL);
 	
 	readLockEvents();
+	unsigned total_events = mySIeventsOrderUniqueKey.size();
 
 	MySIeventsOrderFirstEndTimeServiceIDEventUniqueKey::iterator e = mySIeventsOrderFirstEndTimeServiceIDEventUniqueKey.begin();
 
 	while ((e != mySIeventsOrderFirstEndTimeServiceIDEventUniqueKey.end()) && (!messaging_zap_detected)) {
-		goodtimefound = false;
+		bool goodtimefound = false;
 		for (SItimes::iterator t = (*e)->times.begin(); t != (*e)->times.end(); ++t) {
 			if (t->startzeit + (long)t->dauer >= zeit - seconds) {
 				goodtimefound=true;
@@ -1201,13 +1213,20 @@ static void removeOldEvents(const long seconds)
 		if (false == goodtimefound)
 			to_delete.push_back((*e)->uniqueKey());
 		++e;
-	}	
+	}
 	unlockEvents();
 
 	while (!to_delete.empty())
 	{
 		deleteEvent(to_delete.back());
 		to_delete.pop_back();
+	}
+
+	if (debug) {
+		readLockEvents();
+		print_meminfo();
+		xprintf("[sectionsd] Removed %d old events (%d left), zap detected %d.\n", (int)(total_events - mySIeventsOrderUniqueKey.size()), (int)mySIeventsOrderUniqueKey.size(), messaging_zap_detected);
+		unlockEvents();
 	}
 
 	return;
@@ -1229,6 +1248,7 @@ static void removeWasteEvents()
 	bool lastidfound = true;
 
 	readLockEvents();
+	unsigned total_events = mySIeventsOrderUniqueKey.size();
 
 	MySIeventsOrderUniqueKey::iterator e = mySIeventsOrderUniqueKey.begin();
 
@@ -1298,6 +1318,13 @@ static void removeWasteEvents()
 	{
 		deleteEvent(to_delete.back());
 		to_delete.pop_back();
+	}
+
+	if (debug) {
+		readLockEvents();
+		print_meminfo();
+		xprintf("[sectionsd] Removed %d waste events (%d left), zap detected %d.\n", (int)(total_events - mySIeventsOrderUniqueKey.size()), (int)mySIeventsOrderUniqueKey.size(), messaging_zap_detected);
+		unlockEvents();
 	}
 
 	xmlFreeDoc(service_parser);
@@ -8204,18 +8231,6 @@ static void *pptThread(void *)
 
 #endif
 
-/* helper function for the housekeeping-thread */
-static void print_meminfo(void)
-{
-	if (!debug)
-		return;
-
-	struct mallinfo meminfo = mallinfo();
-	dprintf("total size of memory occupied by chunks handed out by malloc: %d\n"
-		"total bytes memory allocated with `sbrk' by malloc, in bytes: %d (%dkB)\n",
-		meminfo.uordblks, meminfo.arena, meminfo.arena / 1024);
-}
-	
 //---------------------------------------------------------------------
 // housekeeping-thread
 // does cleaning on fetched datas
@@ -8248,39 +8263,16 @@ static void *houseKeepingThread(void *)
 
 // TODO: maybe we need to stop scanning here?...
 
-			readLockEvents();
-
-			unsigned anzEventsAlt = mySIeventsOrderUniqueKey.size();
-			dprintf("before removeoldevents\n");
-			unlockEvents();
 			removeOldEvents(oldEventsAre); // alte Events
-			dprintf("after removeoldevents\n");
-			readLockEvents();
-			if (mySIeventsOrderUniqueKey.size() != anzEventsAlt)
-			{
-				print_meminfo();
-				dprintf("Removed %d old events.\n", anzEventsAlt - mySIeventsOrderUniqueKey.size());
-			}
-			unlockEvents();
-//			usleep(100);
-//			lockEvents();
-			anzEventsAlt = mySIeventsOrderUniqueKey.size();
-			dprintf("before removewasteepg\n");
-			removeWasteEvents(); // Events for channels not in services.xml
-			dprintf("after removewasteepg\n");
-			readLockEvents();
-			if (mySIeventsOrderUniqueKey.size() != anzEventsAlt)
-			{
-				print_meminfo();
-				dprintf("Removed %d waste events.\n", anzEventsAlt - mySIeventsOrderUniqueKey.size());
-			}
 
+			removeWasteEvents(); // Events for channels not in services.xml
+
+			readLockEvents();
 			dprintf("Number of sptr events (event-ID): %u\n", mySIeventsOrderUniqueKey.size());
 			dprintf("Number of sptr events (service-id, start time, event-id): %u\n", mySIeventsOrderServiceUniqueKeyFirstStartTimeEventUniqueKey.size());
 			dprintf("Number of sptr events (end time, service-id, event-id): %u\n", mySIeventsOrderFirstEndTimeServiceIDEventUniqueKey.size());
 			dprintf("Number of sptr nvod events (event-ID): %u\n", mySIeventsNVODorderUniqueKey.size());
 			dprintf("Number of cached meta-services: %u\n", mySIeventUniqueKeysMetaOrderServiceUniqueKey.size());
-
 			unlockEvents();
 
 			readLockServices();
