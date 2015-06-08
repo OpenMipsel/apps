@@ -83,7 +83,7 @@
 #include "SIsections.hpp"
 #include "SIlanguage.hpp"
 
-#define SECTIONSD_VERSION "1.348"
+#define SECTIONSD_VERSION "1.349"
 
 // 60 Minuten Zyklus...
 #define TIME_EIT_SCHEDULED_PAUSE 60 * 60
@@ -170,6 +170,7 @@ static long secondsExtendedTextCache;
 //static long oldEventsAre = 60*60L; // 2h  (sometimes want to know something about current/last movie)
 static long oldEventsAre;
 static int scanning = 1;
+static long long timediff;
 
 std::string epg_filter_dir = "/var/tuxbox/config/zapit/epgfilter.xml";
 static bool epg_filter_is_whitelist = false;
@@ -6822,6 +6823,62 @@ static void parseDescriptors(const char *des, unsigned len, const char *countryC
 }
 
 */
+static void setSystemTime(time_t tim)
+{
+	struct timeval tv;
+	struct tm t;
+	time_t now = time(NULL);
+	struct tm *tmTime = localtime_r(&now, &t);
+
+	gettimeofday(&tv, NULL);
+	timediff = (long long)(tim * 1000000 - (tv.tv_usec + tv.tv_sec * 1000000));
+	char tbuf[26];
+	ctime_r(&tim, tbuf);
+	xprintf("[%sThread] timediff %lld, current: %02d.%02d.%04d %02d:%02d:%02d, dvb: %s", "time", timediff,
+			tmTime->tm_mday, tmTime->tm_mon+1, tmTime->tm_year+1900, 
+			tmTime->tm_hour, tmTime->tm_min, tmTime->tm_sec, tbuf);
+
+
+	if (timediff == 0) /* very unlikely... :-) */
+		return;
+
+	time_t diff_time = tim - tv.tv_sec;
+	if (timeset && abs(diff_time) < 120) { /* abs() is int */
+		struct timeval oldd;
+		tv.tv_sec = time_t(timediff / 1000000LL);
+		tv.tv_usec = suseconds_t(timediff % 1000000LL);
+		if (adjtime(&tv, &oldd))
+			xprintf("adjtime(%d, %d) failed: %m\n", (int)tv.tv_sec, (int)tv.tv_usec);
+		else {
+			xprintf("difference is < 120s (%lds), using adjtime(%d, %d). oldd(%d, %d)\n", diff_time,
+				(int)tv.tv_sec, (int)tv.tv_usec, (int)oldd.tv_sec, (int)oldd.tv_usec);
+			timediff = 0;
+			return;
+		}
+	}
+	
+	if (timeset)
+		xprintf("[%sThread] difference is %lds, stepping...\n", "time", diff_time);
+	tv.tv_sec = tim;
+	tv.tv_usec = 0;
+	if (settimeofday(&tv, NULL) < 0)
+		perror("[sectionsd] settimeofday");
+}
+
+static void setTimeSet(void)
+{
+	pthread_mutex_lock(&timeIsSetMutex);
+	timeset = true;
+	pthread_cond_broadcast(&timeIsSetCond);
+	pthread_mutex_unlock(&timeIsSetMutex );
+}
+
+static void sendTimeEvent(void)
+{
+	if (timediff)
+		eventServer->sendEvent(CSectionsdClient::EVT_TIMESET, CEventServer::INITID_SECTIONSD, &timediff, sizeof(timediff));
+	setTimeSet();
+}
 
 static void *timeThread(void *)
 {
@@ -6833,7 +6890,6 @@ static void *timeThread(void *)
 	struct timeval now;
 	bool time_ntp = false;
 	bool success = true;
-	long long timediff;
 
 	try
 	{
@@ -6844,32 +6900,18 @@ static void *timeThread(void *)
 
 		while(1)
 		{
-			timediff = 0;
 			if (bTimeCorrect == true){		// sectionsd started with parameter "-tc"
 				if (first_time == true) {	// only do this once!
-					time_t actTime;
-					actTime=time(NULL);
-					pthread_mutex_lock(&timeIsSetMutex);
-					timeset = true;
-					pthread_cond_broadcast(&timeIsSetCond);
-					pthread_mutex_unlock(&timeIsSetMutex );
-					eventServer->sendEvent(CSectionsdClient::EVT_TIMESET, CEventServer::INITID_SECTIONSD, &actTime, sizeof(actTime) );
+					sendTimeEvent();
 					printf("[timeThread] Time is already set by system, no further timeThread work!\n");
 					break;
 				}
 			}
-
 			else if ( ntpenable && system( ntp_system_cmd.c_str() ) == 0)
 			{
-				time_t actTime;
-				actTime=time(NULL);
 				first_time = false;
-				pthread_mutex_lock(&timeIsSetMutex);
-				timeset = true;
 				time_ntp = true;
-				pthread_cond_broadcast(&timeIsSetCond);
-				pthread_mutex_unlock(&timeIsSetMutex );
-				eventServer->sendEvent(CSectionsdClient::EVT_TIMESET, CEventServer::INITID_SECTIONSD, &actTime, sizeof(actTime) );
+				sendTimeEvent();
 			}
 			else if (scanning && dvb_time_update)
 			{
@@ -6890,21 +6932,9 @@ static void *timeThread(void *)
 							}
 						}
 					}
-
-					struct tm tmTime;
-					time_t actTime = time(NULL);
-					localtime_r(&actTime, &tmTime);
-					struct timeval lt;
-					gettimeofday(&lt, NULL);
-					timediff = (long long)tim * 1000000LL - (lt.tv_usec + lt.tv_sec * 1000000LL);
-					char tbuf[26];
-					xprintf("[%sThread] timediff %lld, current: %02d.%02d.%04d %02d:%02d:%02d, dvb: %s", "time", timediff, tmTime.tm_mday, tmTime.tm_mon+1, tmTime.tm_year+1900, tmTime.tm_hour, tmTime.tm_min, tmTime.tm_sec, ctime_r(&tim, tbuf));
-					pthread_mutex_lock(&timeIsSetMutex);
-					timeset = true;
+					setSystemTime(tim);
 					time_ntp= false;
-					pthread_cond_broadcast(&timeIsSetCond);
-					pthread_mutex_unlock(&timeIsSetMutex );
-					eventServer->sendEvent(CSectionsdClient::EVT_TIMESET, CEventServer::INITID_SECTIONSD, &tim, sizeof(tim));
+					sendTimeEvent();
 				}
 			}
 
