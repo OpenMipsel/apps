@@ -20,8 +20,9 @@ $Id: genpsi.c,v 1.2 2006/01/16 12:45:54 sat_man Exp $
  along with this program; if not, write to the Free Software Foundation,
  Inc., 675 Mass Ave, Cambridge MA 02139, USA.
 
- Mit diesem Programm koennen Neutrino TS Streams für das Abspielen unter Enigma gepatched werden 
+ Mit diesem Programm koennen Neutrino TS Streams für das Abspielen unter Enigma und Coolstream Neutrino-HD gepatched werden
  */
+
 #include <transform.h>
 #include <driver/genpsi.h>
 
@@ -76,6 +77,12 @@ void reset_pids(void)
 	avPids.nba = 0;
 }
 
+static short nhd_ts = 0;
+void activate_compatible_ts(const short compatible)
+{
+	nhd_ts = compatible;
+}
+
 //-- special enigma stream description packet for  --
 //-- at least 1 video, 1 audo and 1 PCR-Pid stream --
 //------------------------------------------------------------------------------------
@@ -85,7 +92,7 @@ static uint8_t pkt_enigma[] =
 	0x7F, 0x80, 0x24,
 	0x00, 0x00, 0x01, 0x00, 0x00,
 	0x00, 0x00, 0x6D, 0x66, 0x30, 0x19, 
-	0x80, 0x13, 'N','E','U','T','R','I','N','O','N','G',	// tag(8), len(8), text(10) -> NG hihi ;)
+	0x80, 0x13, 'N','E','U','T','R','I','N','O','N','G',	// tag(8), len(8), text(10)
 	0x00, 0x02, 0x00, 0x6e,				// cVPID(8), len(8), PID(16)
 	0x01, 0x03, 0x00, 0x78, 0x00,			// cAPID(8), len(8), PID(16), ac3flag(8)
 // 0x02, 0x02, 0x00, 0x82,// cTPID(8), len(8), ...
@@ -169,8 +176,25 @@ int genpsi(int fd2)
  
 //-- calculate CRC --
 	calc_crc32psi(&pkt[data_len], &pkt[OFS_HDR_2], data_len-OFS_HDR_2 );
+	if (nhd_ts)
+	{
+		//-- after all add dummy record length (60sec = 60000ms) to TS packet
+		//   so that basic playback on Coolstream PVRs is possible
+		//   correct record length is added in stream2file.cpp
+		//   60sec = 60000ms (dez) -> 0000EA60 hex
+		pkt[SIZE_TS_PKT-8] = 0x60;
+		pkt[SIZE_TS_PKT-7] = 0xEA;
+		pkt[SIZE_TS_PKT-6] = 0x00;
+		pkt[SIZE_TS_PKT-5] = 0x00;
+		//-- and finally add coolstream "magic bytes" to TS packet
+		pkt[SIZE_TS_PKT-4] = 0xBC;
+		pkt[SIZE_TS_PKT-3] = 0x00;
+		pkt[SIZE_TS_PKT-2] = 0x00;
+		pkt[SIZE_TS_PKT-1] = 0x00;
+	}
 //-- write TS packet --
 	bytes += write(fd2, pkt, SIZE_TS_PKT);
+
 //-- (II) build PAT --
 	data_len = COPY_TEMPLATE(pkt, pkt_pat);
 //-- calculate CRC --

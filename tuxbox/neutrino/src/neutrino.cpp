@@ -576,7 +576,8 @@ int CNeutrinoApp::loadSetup()
 		g_settings.recording_filename_template[i] = configfile.getString("recording_filename_template_" + i_str, "" );
 		strcpy(g_settings.recording_splitsize[i], configfile.getString("recording_splitsize_" + i_str, "" ).c_str());
 	}
-	g_settings.recording_gen_psi = configfile.getBool("recordingmenu.gen_psi", true);
+	g_settings.recording_gen_psi           = configfile.getBool("recordingmenu.gen_psi", true);
+	g_settings.recording_nhd_compatible_ts = configfile.getBool("recordingmenu.nhd_compatible_ts", true); 
 
 	//streaming (server)
 	g_settings.streaming_type = configfile.getInt32( "streaming_type", 0 );
@@ -1074,6 +1075,7 @@ void CNeutrinoApp::saveSetup()
 	configfile.setBool  ("recordingmenu.stream_subtitle_pid"  , g_settings.recording_stream_subtitle_pid);
 	configfile.setInt32 ("recordingmenu.ringbuffers"          , g_settings.recording_ringbuffers);
 	configfile.setBool  ("recordingmenu.gen_psi"              , g_settings.recording_gen_psi);
+	configfile.setBool  ("recordingmenu.nhd_compatible_ts"    , g_settings.recording_nhd_compatible_ts);
 	configfile.setInt32 ("recording_choose_direct_rec_dir"    , g_settings.recording_choose_direct_rec_dir);
 	configfile.setBool  ("recording_in_spts_mode"             , g_settings.recording_in_spts_mode         );
 	configfile.setBool  ("recording_zap_on_announce"          , g_settings.recording_zap_on_announce      );
@@ -1960,7 +1962,16 @@ void CNeutrinoApp::setupRecordingDevice(void)
 		sscanf(g_settings.recording_splitsize_default, "%u", &splitsize);
 		ringbuffers = g_settings.recording_ringbuffers;
 
-		recordingdevice = new CVCRControl::CFileDevice(g_settings.recording_stopplayback, g_settings.recording_stopsectionsd, g_settings.recording_dir[0].c_str(), splitsize, g_settings.recording_use_o_sync, g_settings.recording_use_fdatasync, g_settings.recording_stream_vtxt_pid, g_settings.recording_stream_subtitle_pid, ringbuffers, g_settings.recording_gen_psi, true);
+		recordingdevice = new CVCRControl::CFileDevice (g_settings.recording_stopplayback,
+														g_settings.recording_stopsectionsd,
+														g_settings.recording_dir[0].c_str(),
+														splitsize,
+														g_settings.recording_use_o_sync,
+														g_settings.recording_use_fdatasync,
+														g_settings.recording_stream_vtxt_pid,
+														g_settings.recording_stream_subtitle_pid,
+														ringbuffers, g_settings.recording_gen_psi,
+														g_settings.recording_nhd_compatible_ts, true);
 
 		CVCRControl::getInstance()->registerDevice(recordingdevice);
 	}

@@ -1224,6 +1224,7 @@ const char * locale_real_names[] =
 	"recordingmenu.head",
 	"recordingmenu.help",
 	"recordingmenu.max_rectime",
+	"recordingmenu.nhd_compatible_ts",
 	"recordingmenu.no_scart",
 	"recordingmenu.off",
 	"recordingmenu.record_in_spts_mode",

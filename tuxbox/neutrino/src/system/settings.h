@@ -283,6 +283,7 @@ struct {
 	std::string recording_filename_template[MAX_RECORDING_DIR];
 	char recording_splitsize[MAX_RECORDING_DIR][10];
 	int recording_gen_psi;
+	int recording_nhd_compatible_ts;
 
 	//streaming
 	int  streaming_type;

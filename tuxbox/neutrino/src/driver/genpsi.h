@@ -34,5 +34,6 @@ $Id: genpsi.h,v 1.1 2005/08/15 14:47:52 metallica Exp $
 int genpsi(int fd2);
 void transfer_pids(uint16_t pid,uint16_t pidart,short isAC3);
 void reset_pids(void);
+void activate_compatible_ts(const short compatible);
 
 #endif

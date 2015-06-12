@@ -115,6 +115,7 @@ static pthread_t demux_thread[MAXPIDS];
 static bool use_o_sync;
 static bool use_fdatasync;
 static bool gen_psi;
+static bool nhd_ts;
 static unsigned long long limit;
 static unsigned int ringbuffersize;
 static time_t record_start_time = 0;
@@ -129,8 +130,8 @@ typedef struct filenames_t
 	ringbuffer_t * ringbuffer;
 };
 
-static int sync_byte_offset(const unsigned char * buf, const unsigned int len) {
-
+static int sync_byte_offset(const unsigned char * buf, const unsigned int len)
+{
 	unsigned int i;
 
 	for (i = 0; i < len; i++)
@@ -206,6 +207,9 @@ void * FileThread(void * v_arg)
 {
 	ringbuffer_data_t vec[2];
 	size_t readsize;
+	time_t file_start_time = 0;
+	time_t file_end_time = 0;
+	unsigned long cs_file_time = 0;
 	unsigned int filecount = 0;
 	char radio_extension[5];
 	const unsigned long long splitsize = (limit / TS_SIZE) * TS_SIZE;
@@ -236,8 +240,26 @@ void * FileThread(void * v_arg)
 				printf("[stream2file] filename: '%s'\n"
 				       "            myfilename: '%s'\n", filename, myfilename);
 				if (fd2 != -1)
+				{
+					if (nhd_ts)
+					{
+						time(&file_end_time);
+						// calculate record time for coolstream neutrino-hd (record time in ms, little endian format)
+						printf("[stream2file] file record time is: %lu sec \n", file_end_time - file_start_time);
+						//printf("DEBUG - stream2file.cpp: CS file_record_time is: %lX \n", (file_end_time - file_start_time) * 1000);
+                                // conversion into little endian
+						cs_file_time =  ((((file_end_time - file_start_time) * 1000)>>24)&0xff) |      // move byte 3 to byte 0
+										((((file_end_time - file_start_time) * 1000)<<8)&0xff0000) |   // move byte 1 to byte 2
+										((((file_end_time - file_start_time) * 1000)>>8)&0xff00) |      // move byte 2 to byte 1
+										((((file_end_time - file_start_time) * 1000)<<24)&0xff000000);   // byte 0 to byte 3
+						//printf("DEBUG - stream2file.cpp: CS file_record_time stored in ts file: %lX \n", cs_file_time);
+						lseek(fd2, 180, SEEK_SET);
+						write(fd2, &cs_file_time, 4);
+					}
 					close(fd2);
+				}
 
+				time(&file_start_time);
 				if ((fd2 = open(filename, flags, REC_FILE_PERMISSIONS)) < 0)
 				{
 					if (errno == EEXIST) {
@@ -316,8 +338,24 @@ void * FileThread(void * v_arg)
 	}
  terminate_thread:
 	if (fd2 != -1)
-		close (fd2);
-
+	{
+		if (nhd_ts)
+		{
+			time(&file_end_time);
+			// calculate record time for coolstream neutrino-hd (record time in ms, little endian format)
+			printf("[stream2file] file record time is: %lu sec \n", file_end_time - file_start_time);
+			//printf("DEBUG - stream2file.cpp: CS file_record_time is: %lX \n", (file_end_time - file_start_time) * 1000);
+					// conversion into little endian
+			cs_file_time =  ((((file_end_time - file_start_time) * 1000)>>24)&0xff) |      // move byte 3 to byte 0
+							((((file_end_time - file_start_time) * 1000)<<8)&0xff0000) |   // move byte 1 to byte 2
+							((((file_end_time - file_start_time) * 1000)>>8)&0xff00) |      // move byte 2 to byte 1
+							((((file_end_time - file_start_time) * 1000)<<24)&0xff000000);   // byte 0 to byte 3
+			//printf("DEBUG - stream2file.cpp: CS file_record_time stored in ts file: %lX \n", cs_file_time);
+			lseek(fd2, 180, SEEK_SET);
+			write(fd2, &cs_file_time, 4);
+		}
+		close(fd2);
+	}
 	pthread_exit(NULL);
 }
 
@@ -522,7 +560,7 @@ stream2file_error_msg_t start_recording(const char * const filename,
 					const unsigned short * const pids,
 					const bool write_ts,
 					const unsigned int ringbuffers,
-					const bool with_gen_psi )
+					const bool with_gen_psi, const bool nhd_compatible_ts )
 {
 	int fd;
 	char buf[FILENAMEBUFFERSIZE];
@@ -576,6 +614,9 @@ stream2file_error_msg_t start_recording(const char * const filename,
 	use_o_sync    = with_o_sync;
 	use_fdatasync = with_fdatasync;
 	gen_psi       = with_gen_psi;
+	nhd_ts        = nhd_compatible_ts;
+
+	activate_compatible_ts(nhd_ts);
 
 	if (ringbuffers > 4)
 		ringbuffersize = ((1 << 19) << 4);
@@ -683,7 +724,7 @@ stream2file_error_msg_t stop_recording(void)
 		mi.clearMovieInfo(&movieinfo);
 
 		time(&record_end_time);
-		printf("record time: %lu \n",record_end_time-record_start_time);
+		printf("[stream2file] record time: %lu sec \n",record_end_time - record_start_time);
 		//load MovieInfo and set record time
 		movieinfo.file.Name = myfilename;
 		movieinfo.file.Name += ".ts";
