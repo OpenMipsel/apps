@@ -51,6 +51,8 @@
 #include <global.h>
 #include <neutrino.h>
 
+#include <system/helper.h>
+
 #include <zapit/client/zapittools.h>
 #include <daemonc/remotecontrol.h>
 
@@ -73,19 +75,6 @@ int CPlugins::find_plugin(const std::string & filename)
 			return i;
 	}
 	return -1;
-}
-
-bool CPlugins::pluginfile_exists(const std::string & filename)
-{
-	FILE *file = fopen(filename.c_str(),"r");
-	if (file != NULL)
-	{
-		fclose(file);
-		return true;
-	} else
-	{
-		return false;
-	}
 }
 
 void CPlugins::scanDir(const char *dir)
@@ -309,7 +298,7 @@ void CPlugins::startScriptPlugin(int number)
 {
 	const char *script = plugin_list[number].pluginfile.c_str();
 	printf("[CPlugins] executing %s\n",script);
-	if (!pluginfile_exists(plugin_list[number].pluginfile))
+	if (!file_exists(script))
 	{
 		printf("[CPlugins] could not find %s,\nperhaps wrong plugin type in %s\n",
 			   script, plugin_list[number].cfgfile.c_str());
@@ -343,7 +332,7 @@ void CPlugins::startPlugin(int number, int param, int param2)
 		startScriptPlugin(number);
 		return;
 	}
-	if (!pluginfile_exists(plugin_list[number].pluginfile))
+	if (!file_exists(plugin_list[number].pluginfile.c_str()))
 	{
 		printf("[CPlugins] could not find %s,\nperhaps wrong plugin type in %s\n",
 			   plugin_list[number].pluginfile.c_str(), plugin_list[number].cfgfile.c_str());
@@ -566,7 +555,7 @@ bool CPlugins::hasPlugin(const char * const filename)
 		 it != plugin_list.end(); ++it)
 	{
 		if (it->filename.compare(filename) == 0)
-			return pluginfile_exists(it->pluginfile);
+			return file_exists(it->pluginfile.c_str());
 	}
 	return false;
 }
