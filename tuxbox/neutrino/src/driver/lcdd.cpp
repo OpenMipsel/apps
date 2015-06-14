@@ -35,6 +35,7 @@
 #include <global.h>
 #include <neutrino.h>
 #include <system/settings.h>
+#include <system/helper.h>
 
 #include <driver/encoding.h>
 #include <driver/newclock.h>
@@ -47,7 +48,6 @@
 #include <fcntl.h>
 #include <time.h>
 #include <unistd.h>
-#include <sys/stat.h>
 
 #include <daemonc/remotecontrol.h>
 extern CRemoteControl * g_RemoteControl; /* neutrino.cpp */
@@ -108,8 +108,7 @@ void* CLCD::TimeThread(void *)
 	while(1)
 	{
 		sleep(1);
-		struct stat buf;
-		if (stat("/tmp/lcd.locked", &buf) == -1) {
+		if (!file_exists("/tmp/lcd.locked")) {
 			CLCD::getInstance()->showTime();
 			CLCD::getInstance()->count_down();
 		} else
@@ -277,8 +276,7 @@ bool CLCD::lcdInit(const char *fontfile, const char *fontfile2, const char *font
 
 void CLCD::displayUpdate()
 {
-	struct stat buf;
-	if (stat("/tmp/lcd.locked", &buf) == -1)
+	if (!file_exists("/tmp/lcd.locked"))
 		display.update();
 }
 
