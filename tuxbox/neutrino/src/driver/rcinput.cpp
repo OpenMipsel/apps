@@ -1311,7 +1311,6 @@ void CRCInput::getMsg_us(neutrino_msg_t *msg, neutrino_msg_data_t *data, unsigne
 						{
 							case CSectionsdClient::EVT_TIMESET:
 							{
-#if 0
 								gettimeofday(&tv, NULL);
 								long long timeOld = tv.tv_usec + tv.tv_sec * 1000000LL;
 								long long timediff;
@@ -1337,7 +1336,7 @@ void CRCInput::getMsg_us(neutrino_msg_t *msg, neutrino_msg_data_t *data, unsigne
 										tv.tv_usec = timediff % 1000000LL;
 										if (adjtime(&tv, &oldd))
 											perror("adjtime");
-										printf("difference is %ld s (< 120s), using adjtime(%d, %d). oldd(%d, %d)\n", diff_time,
+										printf("difference is < 120s (%lds), using adjtime(%d, %d). oldd(%d, %d)\n", diff_time,
 											(int)tv.tv_sec, (int)tv.tv_usec, (int)oldd.tv_sec, (int)oldd.tv_usec);
 									}
 									else
@@ -1350,17 +1349,15 @@ void CRCInput::getMsg_us(neutrino_msg_t *msg, neutrino_msg_data_t *data, unsigne
 								delete [] p;
 								p = new unsigned char[sizeof(long long)];
 								*(long long*) p = timeNew - timeOld;
-#endif
-								printf("[neutrino] CSectionsdClient::EVT_TIMESET: timediff %lld \n", *(long long*) p);
-								/* FIXME what this code really do ? */
+
 								if ((long long)last_keypress > *(long long*)p)
 									last_keypress += *(long long *)p;
 
-#if 0								// Timer anpassen
+								// Timer anpassen
 								for (std::vector<timer>::iterator e = timers.begin(); e != timers.end(); ++e)
 									if (e->correct_time)
 										e->times_out += *(long long*) p;
-#endif
+
 								*msg  = NeutrinoMessages::EVT_TIMESET;
 								*data = (neutrino_msg_data_t) p;
 								dont_delete_p = true;
