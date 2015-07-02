@@ -36,8 +36,8 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#define RECEIVE_TIMEOUT_IN_SECONDS 5
-#define SEND_TIMEOUT_IN_SECONDS 5
+#define RECEIVE_TIMEOUT_IN_SECONDS 60
+#define SEND_TIMEOUT_IN_SECONDS 60
 
 bool CBasicServer::receive_data(int fd, void * data, const size_t size)
 {

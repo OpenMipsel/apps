@@ -29,22 +29,24 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 #include <poll.h>
 
 bool send_data(int fd, const void * data, const size_t size, const timeval timeout)
 {
-	char *buffer = (char *)data;
 	size_t left = size;
 
 	while (left > 0)
 	{
+		const void * buffer = (void *)((char *)data + (size - left));
 		int len = ::send(fd, buffer, left, MSG_DONTWAIT | MSG_NOSIGNAL);
 
-		if (len < 0)
+		if (len == -1)
 		{
-			perror("[basicsocket] send_data");
-
-			if (errno != EINTR && errno != EAGAIN)
+			int olderr = errno;
+			if (errno != EAGAIN) // this is "write would block...", which is not an error
+				fprintf(stderr,"[basicsocket] send_data: %m (n = %d/%d, pid = %d)\n", left, size, getpid());
+			if (olderr == EPIPE || olderr == ESPIPE)
 				return false;
 
 			struct pollfd pfd;
@@ -59,7 +61,7 @@ bool send_data(int fd, const void * data, const size_t size, const timeval timeo
 				printf("[basicsocket] send timed out.\n");
 				return false;
 			}
-			if (rc < 0)
+			if (rc == -1)
 			{
 				perror("[basicsocket] send_data poll");
 				return false;
@@ -71,10 +73,7 @@ bool send_data(int fd, const void * data, const size_t size, const timeval timeo
 			}
 		}
 		else
-		{
-			buffer += len;
 			left -= len;
-		}
 	}
 	return true;
 }
@@ -82,7 +81,6 @@ bool send_data(int fd, const void * data, const size_t size, const timeval timeo
 
 bool receive_data(int fd, void * data, const size_t size, const timeval timeout)
 {
-	char *buffer = (char *)data;
 	size_t left = size;
 
 	while (left > 0)
@@ -92,45 +90,48 @@ bool receive_data(int fd, void * data, const size_t size, const timeval timeout)
 		pfd.events = POLLIN;
 		pfd.revents = 0;
 
-		int to = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
-
-		int rc = poll(&pfd, 1, to);
+		int rc = poll(&pfd, 1, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
 
 		if (rc == 0)
 		{
-			printf("[basicsocket] recv timed out.\n");
+			printf("[basicsocket] receive timed out. waiting process %d\n", getpid());
 			return false;
 		}
-		if (rc < 0)
+		if (rc == -1)
 		{
 			perror("[basicsocket] recv_data poll");
 			return false;
 		}
 		if (!(pfd.revents & POLLIN))
 		{
-			perror("[basicsocket] recv_data POLLIN");
+			perror("[basicsocket] receive_data POLLIN");
 			return false;
 		}
-		int len = ::recv(fd, data, left, MSG_DONTWAIT | MSG_NOSIGNAL);
+		void * buffer = (void *)((char *)data + (size - left));
+		int len = ::recv(fd, buffer, left, MSG_DONTWAIT | MSG_NOSIGNAL);
 
-		if (len > 0) {
-			left -= len;
-			buffer += len;
-		} else if (len < 0)
+		if ((len == 0) || (len == -1))
 		{
-			perror("[basicsocket] receive_data");
-			if (errno != EINTR && errno != EAGAIN)
+			if (len == -1)
+			{
+				perror("[basicsocket] receive_data");
+
+				if (errno == EPIPE || errno == ESPIPE)
+					return false;
+			}
+			else
+			{
+				/*
+				 * silently return false
+				 *
+				 * printf("[basicsocket] no more data\n");
+				 */
 				return false;
+			}
+
 		}
-		else // len == 0
-		{
-			/*
-			 * silently return false
-			 *
-			 * printf("[basicsocket] no more data\n");
-			 */
-			return false;
-		}
+		else
+			left -= len;
 	}
 	return true;
 }
